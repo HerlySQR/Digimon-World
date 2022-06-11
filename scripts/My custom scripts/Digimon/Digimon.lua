@@ -1,0 +1,427 @@
+do
+    local LocalPlayer
+
+    ---@class Rank
+    Rank = {
+        ROOKIE = 0,     ---@type Rank
+        CHAMPION = 1,   ---@type Rank
+        ULTIMATE = 2,   ---@type Rank
+        MEGA = 3        ---@type Rank
+    }
+
+    ---@class Rarity
+    Rarity = {
+        COMMON = 0,     ---@type Rarity
+        RARE = 1,       ---@type Rarity
+        LEGENDARY = 2   ---@type Rarity
+    }
+
+    ---@param s string
+    ---@return string
+    local function GetToken(s)
+        if not s or s == "" then
+            return ""
+        else
+            local m = string.len(s)
+            for i = 1, m do
+                if string.sub(s, i, i) == " " then
+                    return string.sub(s, 1, i - 1)
+                end
+            end
+        end
+        return s
+    end
+
+    -- The actual digimon class
+
+    ---@class Digimon
+    ---@field root unit
+    ---@field rank Rank
+    ---@field rarity Rarity
+    ---@field environment Environment
+    Digimon = {
+        _instance = {}
+    }
+    Digimon.__index = Digimon
+
+    ---Instance digimons that are created with other methods
+    ---@param u unit
+    ---@return Digimon
+    function Digimon.add(u)
+        local self = Digimon._instance[u]
+        if not self then
+            self = setmetatable({}, Digimon)
+
+            self.root = u
+
+            local check = GetToken(GetUnitName(u))
+
+            if check == "Rookie" then
+                self.rank = Rank.ROOKIE
+            elseif check == "Champion" then
+                self.rank = Rank.CHAMPION
+            elseif check == "Ultimate" then
+                self.rank = Rank.ULTIMATE
+            elseif check == "Mega" then
+                self.rank = Rank.MEGA
+            end
+
+            self.environment = Environment.allMap
+
+            Digimon._instance[u] = self
+        end
+        return self
+    end
+
+    ---Create an instantiated digimon
+    ---@param p player
+    ---@param id integer
+    ---@param x real
+    ---@param y real
+    ---@param facing real
+    ---@return Digimon
+    function Digimon.create(p, id, x, y, facing)
+        return Digimon.add(GetRecycledHero(p, id, x, y, facing))
+    end
+
+    ---@return player
+    function Digimon:getOwner()
+        return GetOwningPlayer(self.root)
+    end
+
+    ---@param p player
+    function Digimon:setOwner(p)
+        SetUnitOwner(self.root, p, true)
+    end
+
+    ---@return integer
+    function Digimon:getLevel()
+        return GetHeroLevel(self.root)
+    end
+
+    ---@param l integer
+    function Digimon:setLevel(l)
+        SetHeroLevel(self.root, l, false)
+    end
+
+    ---@return integer
+    function Digimon:getExp()
+        return GetHeroXP(self.root)
+    end
+
+    ---@param e integer
+    function Digimon:setExp(e)
+        SetHeroXP(self.root, e, false)
+    end
+
+    ---@return boolean
+    function Digimon:isAlive()
+        return UnitAlive(self.root)
+    end
+
+    ---@return integer
+    function Digimon:getTypeId()
+        return GetUnitTypeId(self.root)
+    end
+
+    ---@return real
+    function Digimon:getX()
+        return GetUnitX(self.root)
+    end
+
+    ---@param x real
+    function Digimon:setX(x)
+        return SetUnitX(self.root, x)
+    end
+
+    ---@return real
+    function Digimon:getY()
+        return GetUnitY(self.root)
+    end
+
+    ---@param y real
+    function Digimon:setY(y)
+        return SetUnitY(self.root, y)
+    end
+
+    ---@return location
+    function Digimon:getLoc()
+        return GetUnitLoc(self.root)
+    end
+
+    ---@param l location
+    function Digimon:setLoc(l)
+        SetUnitPositionLoc(self.root, l)
+    end
+
+    ---@param x real
+    ---@param y real
+    function Digimon:setPos(x, y)
+        return SetUnitPosition(self.root, x, y)
+    end
+
+    function Digimon:hideInTheCorner()
+        ShowUnitHide(self.root)
+        SetUnitPosition(self.root, WorldBounds.maxX, WorldBounds.maxY)
+    end
+
+    ---@param x real
+    ---@param y real
+    function Digimon:showFromTheCorner(x, y)
+        ShowUnitShow(self.root)
+        SetUnitPosition(self.root, x, y)
+    end
+
+    ---@param u unit
+    ---@return Digimon
+    function Digimon.getInstance(u)
+        return Digimon._instance[u]
+    end
+
+    -- Enumaration
+
+    ---@param where rect
+    ---@param callback fun(d:Digimon)
+    function Digimon.enumInRect(where, callback)
+        ForUnitsInRect(where, function (u)
+            callback(Digimon.getInstance(u))
+        end)
+    end
+
+    ---@param x real
+    ---@param y real
+    ---@param range real
+    ---@param callback fun(d:Digimon)
+    function Digimon.enumInRange(x, y, range, callback)
+        ForUnitsInRange(x, y, range, function (u)
+            callback(Digimon.getInstance(u))
+        end)
+    end
+
+    -- Events
+
+    -- Destroy
+
+    ---@param func fun(d:Digimon)
+    Digimon.destroyEvent = Event.create()
+
+    function Digimon:destroy()
+        Digimon.destroyEvent:run(self)
+
+        RecycleHero(self.root)
+        Digimon._instance[self.root] = nil
+    end
+
+    ---@param delay real
+    function Digimon:remove(delay)
+        Timed.call(delay, function () self:destroy() end)
+    end
+
+    -- Kill
+
+    ---@param func fun(killer:Digimon, dead:Digimon)
+    Digimon.killEvent = Event.create()
+
+    OnMapInit(function ()
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
+        TriggerAddAction(t, function ()
+            local killer = GetKillingUnit()
+            local target = Digimon.getInstance(GetDyingUnit())
+
+            if target then
+                Digimon.killEvent:run(killer and Digimon.getInstance(killer), target)
+    
+                if target:getOwner() == Digimon.NEUTRAL or target:getOwner() == Digimon.PASSIVE then
+                    target:remove(6.)
+                end
+            end
+        end)
+    end)
+
+    -- Captured
+
+    ---@param func fun(captor:Digimon, captured:Digimon)
+    Digimon.capturedEvent = Event.create() -- I prefer running it in the Digimon Capture script
+
+    -- Level Up
+
+    Digimon.levelUpEvent = Event.create()
+
+    OnMapInit(function ()
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_HERO_LEVEL)
+        TriggerAddAction(t, function ()
+            local d = Digimon.getInstance(GetLevelingUnit())
+            if d then
+                Digimon.levelUpEvent:run(d)
+            end
+        end)
+    end)
+
+    -- Evolution
+
+    Digimon.evolutionEvent = Event.create()
+
+    ---Evolves the digimon
+    ---@param evolveForm integer
+    function Digimon:evolveTo(evolveForm)
+        local old = self.root
+        local oldExp = self:getExp()
+        local hidden = IsUnitHidden(old)
+        local paused = IsUnitPaused(old)
+        local select = IsUnitSelected(old, LocalPlayer)
+        local items = {}
+
+        for i = 0, 5 do
+            items[i] = UnitItemInSlot(old, i)
+            if items[i] then
+                UnitRemoveItemFromSlot(old, i)
+            end
+        end
+
+        ShowUnitHide(old)
+        self.root = GetRecycledHero(GetOwningPlayer(old), evolveForm, GetUnitX(old), GetUnitY(old), GetUnitFacing(old))
+
+        Digimon._instance[old] = nil
+        Digimon._instance[self.root] = self
+
+        local check = GetToken(GetUnitName(self.root))
+
+        if check == "Rookie" then
+            self.rank = Rank.ROOKIE
+        elseif check == "Champion" then
+            self.rank = Rank.CHAMPION
+        elseif check == "Ultimate" then
+            self.rank = Rank.ULTIMATE
+        elseif check == "Mega" then
+            self.rank = Rank.MEGA
+        end
+        
+        self:setExp(oldExp)
+
+        for i = 0, 5 do
+            if items[i] then
+                UnitAddItem(self.root, items[i])
+                UnitDropItemSlot(self.root, items[i], i)
+            end
+        end
+
+        if select then
+            SelectUnit(self.root, true)
+        end
+
+        if hidden then
+            ShowUnitHide(self.root)
+        else
+            ShowUnitShow(self.root)
+        end
+
+        if paused then
+            PauseUnit(self.root, true)
+        end
+
+        RecycleHero(old)
+
+        Digimon.evolutionEvent:run(self)
+    end
+
+    -- Pre-damage
+
+    Digimon.preDamageEvent = Event.create()
+
+    OnTrigInit(function ()
+        local t = CreateTrigger()
+        TriggerRegisterVariableEvent(t, "udg_PreDamageEvent", EQUAL, 1.00)
+        TriggerAddAction(t, function ()
+            local info = {
+                source = Digimon.getInstance(udg_DamageEventSource),
+                target = Digimon.getInstance(udg_DamageEventTarget),
+                amount = udg_DamageEventAmount
+            }
+
+            Digimon.preDamageEvent:run(info)
+
+            udg_DamageEventAmount = info.amount
+        end)
+    end)
+
+    -- Post-damage
+
+    Digimon.postDamageEvent = Event.create()
+
+    OnTrigInit(function ()
+        local t = CreateTrigger()
+        TriggerRegisterVariableEvent(t, "udg_AfterDamageEvent", EQUAL, 1.00)
+        TriggerAddAction(t, function ()
+            local info = {
+                source = Digimon.getInstance(udg_DamageEventSource),
+                target = Digimon.getInstance(udg_DamageEventTarget),
+                amount = udg_DamageEventAmount
+            }
+
+            Digimon.postDamageEvent:run(info)
+        end)
+    end)
+
+    -- Selection
+
+    Digimon.selectionEvent = Event.create()
+
+    OnTrigInit(function ()
+        local t = CreateTrigger()
+        for user in User.loop() do
+            TriggerRegisterPlayerSelectionEventBJ(t, user:toPlayer(), true)
+        end
+        TriggerAddAction(t, function ()
+            local d = Digimon.getInstance(GetTriggerUnit())
+            if d then
+                Digimon.selectionEvent:run(GetTriggerPlayer(), d)
+            end
+        end)
+    end)
+
+    -- Double-click
+
+    Digimon.doubleclickEvent = Event.create()
+
+    local clicks = __jarray(0)
+    local delay = 0.27
+
+    OnTrigInit(function ()
+        Digimon.selectionEvent(function (p, d)
+            clicks[d] = clicks[d] + 1
+            Timed.call(delay, function ()
+                clicks[d] = clicks[d] > 0 and clicks[d] - 1 or 0
+            end)
+            if clicks[d] == 2 then
+                clicks[d] = 0
+                Digimon.doubleclickEvent:run(p, d)
+            end
+        end)
+    end)
+
+    -- Initialization
+
+    OnGlobalInit(function ()
+        Digimon.NEUTRAL = Player(12)
+        Digimon.PASSIVE = Player(PLAYER_NEUTRAL_AGGRESSIVE)
+    end)
+
+    OnMapInit(function ()
+        -- Add the current digimons in the map
+        ForUnitsInRect(bj_mapInitialPlayableArea, function (u)
+            Digimon.add(u)
+        end)
+
+        LocalPlayer = GetLocalPlayer()
+
+        -- Change the environment when double-click a Digimon
+        Digimon.doubleclickEvent(function (p, d)
+            if p == LocalPlayer then
+                d.environment:apply()
+            end
+        end)
+    end)
+
+end
