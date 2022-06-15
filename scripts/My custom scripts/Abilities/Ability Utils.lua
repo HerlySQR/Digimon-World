@@ -26,6 +26,16 @@ do
     SLOW_SPELL = FourCC('A02G')
     SLOW_ORDER = Orders.slow
 
+    -- Remove sleep when is attacked
+    local SLEEP_BUFF = FourCC('B005')
+    OnMapInit(function ()
+        Digimon.postDamageEvent(function (info)
+            if info.target:hasAbility(SLEEP_BUFF) then
+                info.target:removeAbility(SLEEP_BUFF)
+            end
+        end)
+    end)
+
     ---Return a damage based in the hero attributes
     ---@param caster unit
     ---@param strFactor real

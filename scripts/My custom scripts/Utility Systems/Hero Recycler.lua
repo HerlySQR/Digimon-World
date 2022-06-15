@@ -29,7 +29,7 @@ if LinkedList and Timed then
         return IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitIllusion(u) and not IsUnitType(u, UNIT_TYPE_SUMMONED)
     end
 
-    local originalScale = {} ---@type real[]
+    local originalScale = __jarray(1) ---@type real[]
 
     -- When recycling a unit back to the stock, these resets will be applied to the
     -- unit. You can add more actions to this or you can delete this module if you

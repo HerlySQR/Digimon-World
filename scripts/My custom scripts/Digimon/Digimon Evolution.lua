@@ -1,215 +1,349 @@
 do
-    -- I don't know why isn't this in normal W3
-    PLAYER_COLOR_UNKNOWN1 = ConvertPlayerColor(bj_PLAYER_NEUTRAL_VICTIM)
-    PLAYER_COLOR_BLACK_PASSIVE = ConvertPlayerColor(PLAYER_NEUTRAL_PASSIVE)
+    local EvolveDialog = {} ---@type dialog[]
+    local EvolveClicked = __jarray(-1) ---@type integer[]
+    local EvolveOption = {} ---@type button[][]
 
-    local TOTAL = 74
+    EvolveAbil = CreateFourCCTable(true)
+    local EvolveReq = CreateFourCCTable(true)
 
-    local function Start(data, normalForm, EvolveForm, color, level, useStone)
-        data.normalForm = normalForm
-        data.EvolveForm = EvolveForm
-        data.color = color
-        data.level = level
-        data.useStone = useStone
+    -- Register when a digimon enters/leaves in a rect for evolution
+
+    local rectsE = {} ---@type trigger[rect]
+
+    ---@param r rect
+    ---@param callback fun(evolve: Digimon)
+    local function RegisterEnterRect(r, callback)
+        local t = rectsE[r]
+        if not t then
+            t = CreateTrigger()
+            TriggerRegisterEnterRectSimple(t, r)
+            rectsE[r] = t
+        end
+        TriggerAddAction(t, function ()
+            local d = Digimon.getInstance(GetEnteringUnit())
+            if d then
+                callback(d)
+            end
+        end)
     end
 
-    local EvolutionData = {}
+    local rectsL = {} ---@type trigger[rect]
 
-    local function Get(digimon)
-        local id = digimon:getTypeId()
-        for i = 1, TOTAL do
-            if EvolutionData[i].normalForm == id then
-                return EvolutionData[i]
+    ---@param r rect
+    ---@param callback fun(evolve: Digimon)
+    local function RegisterLeaveRect(r, callback)
+        local t = rectsL[r]
+        if not t then
+            t = CreateTrigger()
+            TriggerRegisterLeaveRectSimple(t, r)
+            rectsL[r] = t
+        end
+        TriggerAddAction(t, function ()
+            local d = Digimon.getInstance(GetLeavingUnit())
+            if d then
+                callback(d)
+            end
+        end)
+    end
+
+    -- Register when a digimon acquires/loses an item for evolution
+
+    local itemsP = {} ---@type trigger[integer]
+
+    ---@param m integer
+    ---@param callback fun(evolve: Digimon)
+    local function RegisterItemPick(m, callback)
+        local t = itemsP[m]
+        if not t then
+            t = CreateTrigger()
+            TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+            TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == m end))
+            itemsP[m] = t
+        end
+        TriggerAddAction(t, function ()
+            local d = Digimon.getInstance(GetTriggerUnit())
+            if d then
+                callback(d)
+            end
+        end)
+    end
+
+    local itemsD = {} ---@type trigger[integer]
+
+    ---@param m integer
+    ---@param callback fun(evolve: Digimon)
+    local function RegisterItemDrop(m, callback)
+        local t = itemsD[m]
+        if not t then
+            t = CreateTrigger()
+            TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DROP_ITEM)
+            TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == m end))
+            itemsD[m] = t
+        end
+        TriggerAddAction(t, function ()
+            local d = Digimon.getInstance(GetTriggerUnit())
+            if d then
+                callback(d)
+            end
+        end)
+    end
+
+    local PossibleEvolution = {} ---@type Set[]
+
+    ---@param evolve Digimon
+    ---@param toEvolve integer
+    local function AddPossibleEvolution(evolve, toEvolve)
+        local set = PossibleEvolution[evolve]
+        if not set then
+            set = Set.create()
+            PossibleEvolution[evolve] = set
+        end
+        if set:contains(toEvolve) then
+            return
+        end
+        set:addSingle(toEvolve)
+        if set:size() == 1 then
+            local index = GetBankIndex(evolve:getOwner(), evolve) + 1
+            SetPlayerTechResearched(evolve:getOwner(), EvolveReq[index], 1)
+        end
+    end
+
+    ---@param evolve Digimon
+    ---@param toEvolve integer
+    local function RemovePossibleEvolution(evolve, toEvolve)
+        local set = PossibleEvolution[evolve]
+        if not set or not set:contains(toEvolve)then
+            return
+        end
+        set:removeSingle(toEvolve)
+        if set:isEmpty() then
+            local index = GetBankIndex(evolve:getOwner(), evolve) + 1
+            SetPlayerTechResearched(evolve:getOwner(), EvolveReq[index], 0)
+        end
+    end
+
+    ---@param evolve Digimon
+    local function ClearPossibleEvolutions(evolve)
+        PossibleEvolution[evolve]:clear()
+        local index = GetBankIndex(evolve:getOwner(), evolve) + 1
+        SetPlayerTechResearched(evolve:getOwner(), EvolveReq[index], 0)
+    end
+
+    ---The conditions to evolve (to ignore level just set the param level to 0)
+    ---@param initial integer
+    ---@param toEvolve integer
+    ---@param level integer
+    ---@param place rect nilable
+    ---@param stone item nilable
+    local function CreateSpecificCondtions(initial, toEvolve, level, place, stone)
+        ---Unlock evolve
+        ---@param evolve Digimon
+        ---@param otherCond? fun(evo: Digimon) is an aditional condition that uses evolve as parameter, if is not set, then is ignored
+        local function active(evolve, otherCond)
+            local p = evolve:getOwner()
+            if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE and evolve:getTypeId() == initial and evolve:getLevel() >= level and (not otherCond or otherCond(evolve)) then
+                AddPossibleEvolution(evolve, toEvolve)
             end
         end
-        return nil
+
+        ---Lock evolve
+        ---@param evolve Digimon
+        local function deactive(evolve)
+            local p = evolve:getOwner()
+            if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE and evolve:getTypeId() == initial then
+                RemovePossibleEvolution(evolve, toEvolve)
+            end
+        end
+
+        -- Case 1: Only level
+        if not place and not stone then
+            Digimon.levelUpEvent(active)
+        end
+
+        -- Case 2: Level and place
+        if place and not stone then
+            Digimon.levelUpEvent(function (evolve)
+                active(evolve, function (evo)
+                    return RectContainsCoords(place, evo:getX(), evo:getY())
+                end)
+            end)
+            RegisterEnterRect(place, active)
+            RegisterLeaveRect(place, deactive)
+        end
+
+        -- Case 3: Level and stone
+        if not place and stone then
+            Digimon.levelUpEvent(function (evolve)
+                active(evolve, function (evo)
+                    return UnitHasItemOfTypeBJ(evo.root, stone)
+                end)
+            end)
+            RegisterItemPick(stone, active)
+            RegisterItemDrop(stone, deactive)
+        end
+
+        -- Case 4: Level, place and stone
+        if place and stone then
+            local newActive = function (evolve)
+                active(evolve, function (evo)
+                    return RectContainsCoords(place, evo:getX(), evo:getY()) and UnitHasItemOfTypeBJ(evo.root, stone)
+                end)
+            end
+            Digimon.levelUpEvent(newActive)
+
+            newActive = function (evolve)
+                active(evolve, function (evo)
+                    return UnitHasItemOfTypeBJ(evo.root, stone)
+                end)
+            end
+            RegisterEnterRect(place, newActive)
+            RegisterLeaveRect(place, deactive)
+
+            newActive = function (evolve)
+                active(evolve, function (evo)
+                    return RectContainsCoords(place, evo:getX(), evo:getY())
+                end)
+            end
+            RegisterItemPick(stone, newActive)
+            RegisterItemDrop(stone, deactive)
+        end
+
     end
 
-    -- Evolve Setup
+    OnGameStart(function ()
+        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+            local p = Player(i)
+            EvolveDialog[p] = DialogCreate()
+            EvolveOption[p] = {}
+        end
 
-    OnMapInit(function ()
-        for i = 1 , TOTAL do EvolutionData[i] = {} end
-        -- Agumon -> Graymon
-        Start(EvolutionData[1], FourCC('H000'), FourCC('O01F'), PLAYER_COLOR_ORANGE, 20, false)
-        -- Aruraumon -> Redvegiemon
-        Start(EvolutionData[2], FourCC('H002'), FourCC('O02D'), PLAYER_COLOR_PURPLE, 20, false)
-        -- Betamon -> Seadramon
-        Start(EvolutionData[3], FourCC('H001'), FourCC('O02H'), PLAYER_COLOR_VIOLET, 20, false)
-        -- Kunemon -> Kuwamon
-        Start(EvolutionData[4], FourCC('H00Z'), FourCC('O01T'), PLAYER_COLOR_RED, 20, false)
-        -- Floramon -> Vegiemon
-        Start(EvolutionData[5], FourCC('H00I'), FourCC('O033'), PLAYER_COLOR_CYAN, 20, false)
-        -- Aruraumon -> Armadilomon
-        Start(EvolutionData[6], FourCC('H002'), FourCC('H003'), PLAYER_COLOR_BLUE, 25, false)
-        -- Armadilomon -> Biyomon
-        Start(EvolutionData[7], FourCC('H003'), FourCC('H004'), PLAYER_COLOR_BLUE, 45, false)
-        -- Mushroomon -> Otamamon
-        Start(EvolutionData[8], FourCC('H016'), FourCC('H017'), PLAYER_COLOR_RED, 40, false)
-        -- Terriermon -> Toyagumon
-        Start(EvolutionData[9], FourCC('H01O'), FourCC('H01P'), PLAYER_COLOR_RED, 50, false)
-        -- Black Agumon -> Candlemon
-        Start(EvolutionData[10], FourCC('H006'), FourCC('H007'), PLAYER_COLOR_CYAN, 45, false)
-        -- Gabumon -> Gizamon
-        Start(EvolutionData[11], FourCC('H00J'), FourCC('H00M'), PLAYER_COLOR_UNKNOWN1, 9, false)
-        -- Gizamon -> Goburimon
-        Start(EvolutionData[12], FourCC('H00M'), FourCC('H00N'), PLAYER_COLOR_UNKNOWN1, 18, false)
-        -- Gaomon -> Gazimon
-        Start(EvolutionData[13], FourCC('H00K'), FourCC('H00L'), PLAYER_COLOR_UNKNOWN1, 9, false)
-        -- Gazimon -> Gomamon
-        Start(EvolutionData[14], FourCC('H00L'), FourCC('H00O'), PLAYER_COLOR_UNKNOWN1, 18, false)
-        -- Gotsumon -> Guilmon
-        Start(EvolutionData[15], FourCC('H00P'), FourCC('H00Q'), PLAYER_COLOR_BLUE, 16, false)
-        -- Guilmon -> Hackmon
-        Start(EvolutionData[16], FourCC('H00Q'), FourCC('H00R'), PLAYER_COLOR_NAVY, 40, false)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[17], FourCC('H022'), FourCC('H023'), PLAYER_COLOR_UNKNOWN1, 22, false)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[18], FourCC('H023'), FourCC('H024'), PLAYER_COLOR_UNKNOWN1, 34, false)
-        -- Clearagumon -> Demidevimon
-        Start(EvolutionData[19], FourCC('H008'), FourCC('H00A'), PLAYER_COLOR_MAROON, 15, false)
-        -- Demidevimon -> Crabmon
-        Start(EvolutionData[20], FourCC('H00A'), FourCC('H009'), PLAYER_COLOR_MAROON, 28, false)
-        -- SnowGoburimon -> Solamon
-        Start(EvolutionData[21], FourCC('H01I'), FourCC('H01J'), PLAYER_COLOR_ORANGE, 22, false)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[22], FourCC('H02B'), FourCC('H02A'), PLAYER_COLOR_UNKNOWN1, 35, false)
-        -- Lopmon -> Lucemon
-        Start(EvolutionData[23], FourCC('H012'), FourCC('H013'), PLAYER_COLOR_COAL, 16, false)
-        -- Lucemon -> Modokibetamon
-        Start(EvolutionData[24], FourCC('H013'), FourCC('H014'), PLAYER_COLOR_COAL, 40, false)
-        -- Agumon -> Armadilomon
-        Start(EvolutionData[25], FourCC('H000'), FourCC('H003'), PLAYER_COLOR_LIGHT_BLUE, 50, false)
-        -- Falcomon -> Fanbeemon
-        Start(EvolutionData[26], FourCC('H00G'), FourCC('H00H'), PLAYER_COLOR_PEANUT, 15, false)
-        -- Arkadimon -> Commandramon
-        Start(EvolutionData[27], FourCC('H01S'), FourCC('H01T'), PLAYER_COLOR_PEACH, 15, false)
-        -- Commandramon -> Veemon
-        Start(EvolutionData[28], FourCC('H01T'), FourCC('H01U'), PLAYER_COLOR_BROWN, 25, false)
-        -- Fanbeemon -> Floramon
-        Start(EvolutionData[29], FourCC('H00H'), FourCC('H00I'), PLAYER_COLOR_NAVY, 25, false)
-        -- (Unused) Terriermon -> Veemon
-        Start(EvolutionData[30], FourCC('H01O'), FourCC('H01U'), PLAYER_COLOR_VIOLET, 45, false)
-        -- Dokunemon -> Dorumon
-        Start(EvolutionData[31], FourCC('H00B'), FourCC('H00C'), PLAYER_COLOR_BROWN, 16, false)
-        -- Dorumon -> Dracmon
-        Start(EvolutionData[32], FourCC('H00C'), FourCC('H00D'), PLAYER_COLOR_BROWN, 40, false)
-        -- Hawkmon -> Hagurumon
-        Start(EvolutionData[33], FourCC('H00T'), FourCC('H00S'), PLAYER_COLOR_SNOW, 24, false)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[34], FourCC('H038'), FourCC('H039'), PLAYER_COLOR_PEACH, 26, false)
-        -- Kudamon -> Kunemon
-        Start(EvolutionData[35], FourCC('H00Y'), FourCC('H00Z'), PLAYER_COLOR_VIOLET, 35, false)
-        -- Mega Digimon -> Air
-        Start(EvolutionData[36], FourCC('H030'), FourCC('Hmkg'), PLAYER_COLOR_UNKNOWN1, 20, false)
-        -- (Unused) Machine -> Air
-        Start(EvolutionData[37], FourCC('Hpal'), FourCC('Hmkg'), PLAYER_COLOR_UNKNOWN1, 22, false)
-        -- Renamon -> Ryudamon
-        Start(EvolutionData[38], FourCC('H01E'), FourCC('H01F'), PLAYER_COLOR_TURQUOISE, 24, false)
-        -- Labramon -> Lalamon
-        Start(EvolutionData[39], FourCC('H010'), FourCC('H011'), PLAYER_COLOR_EMERALD, 28, false)
-        -- Shamamon -> Salamon
-        Start(EvolutionData[40], FourCC('H01H'), FourCC('H01G'), PLAYER_COLOR_NAVY, 26, false)
-        -- Patamon -> Pawnchessmon B
-        Start(EvolutionData[41], FourCC('H019'), FourCC('H01A'), PLAYER_COLOR_MAROON, 40, false)
-        -- Impmon -> SnowAgumon
-        Start(EvolutionData[42], FourCC('H00V'), FourCC('H00U'), PLAYER_COLOR_SNOW, 40, false)
-        -- (Unused) Aquatic -> Nature
-        Start(EvolutionData[43], FourCC('Hamg'), FourCC('Hblm'), PLAYER_COLOR_AQUA, 46, false)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[44], FourCC('H027'), FourCC('H028'), PLAYER_COLOR_UNKNOWN1, 48, false)
-        -- Pawnchessmon W -> Penguimon
-        Start(EvolutionData[45], FourCC('H01B'), FourCC('H01C'), PLAYER_COLOR_PEACH, 26, false)
-        -- Penguimon -> Psychemon
-        Start(EvolutionData[46], FourCC('H01C'), FourCC('H01D'), PLAYER_COLOR_PEACH, 36, false)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[47], FourCC('H02S'), FourCC('H02T'), PLAYER_COLOR_MAROON, 48, false)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[48], FourCC('H03Q'), FourCC('H03R'), PLAYER_COLOR_AQUA, 24, false)
-        -- (Unused) Mega Digimon -> Air
-        Start(EvolutionData[49], FourCC('H026'), FourCC('Hmkg'), PLAYER_COLOR_AQUA, 27, false)
-        -- These Monsters use Evolution Stones
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[50], FourCC('H02W'), FourCC('H02X'), PLAYER_COLOR_PEACH, 999, true)
-        -- Solarmon -> Swimmon
-        Start(EvolutionData[51], FourCC('H01J'), FourCC('H01K'), PLAYER_COLOR_ORANGE, 999, true)
-        -- Machine -> Aquatic
-        Start(EvolutionData[52], FourCC('Hpal'), FourCC('Hamg'), PLAYER_COLOR_MAROON, 999, true)
-        -- Kamemon -> Kotemon
-        Start(EvolutionData[53], FourCC('H00W'), FourCC('H00X'), PLAYER_COLOR_NAVY, 999, true)
-        -- Mega Digimon -> Nature
-        Start(EvolutionData[54], FourCC('H03S'), FourCC('Hblm'), PLAYER_COLOR_MAROON, 999, true)
-        -- Tsukaimon -> Wormon
-        Start(EvolutionData[55], FourCC('H01Q'), FourCC('H01R'), PLAYER_COLOR_PEANUT, 999, true)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[56], FourCC('H02U'), FourCC('H02V'), PLAYER_COLOR_MINT, 999, true)
-        -- Dracomon -> Elecmon
-        Start(EvolutionData[57], FourCC('H00E'), FourCC('H00F'), PLAYER_COLOR_EMERALD, 999, true)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[58], FourCC('H027'), FourCC('H028'), PLAYER_COLOR_RED, 999, true)
-        -- Mega Digimon -> Mega Digimon
-        Start(EvolutionData[59], FourCC('H02A'), FourCC('H02C'), PLAYER_COLOR_BLACK_PASSIVE, 999, true)
-        -- Air -> Machine
-        Start(EvolutionData[60], FourCC('Hmkg'), FourCC('Hpal'), PLAYER_COLOR_VIOLET, 999, true)
-        -- Nature -> Aquatic
-        Start(EvolutionData[61], FourCC('Hblm'), FourCC('Hamg'), PLAYER_COLOR_NAVY, 999, true)
-        -- Machine -> Machine
-        Start(EvolutionData[62], FourCC('Hpal'), FourCC('Hpal'), PLAYER_COLOR_LIGHT_BLUE, 999, true)
-        -- Nature -> Machine
-        Start(EvolutionData[63], FourCC('Hblm'), FourCC('Hpal'), PLAYER_COLOR_ORANGE, 999, true)
-        -- Nature -> Aquatic
-        Start(EvolutionData[64], FourCC('Hblm'), FourCC('Hamg'), PLAYER_COLOR_VIOLET, 48, false)
-        -- Machine -> Aquatic
-        Start(EvolutionData[65], FourCC('Hpal'), FourCC('Hamg'), PLAYER_COLOR_BROWN, 46, false)
-        -- Nature -> Aquatic
-        Start(EvolutionData[66], FourCC('Hblm'), FourCC('Hamg'), PLAYER_COLOR_WHEAT, 49, false)
-        -- Nature -> Machine
-        Start(EvolutionData[67], FourCC('Hblm'), FourCC('Hpal'), PLAYER_COLOR_SNOW, 50, false)
-        -- Nature -> Machine
-        Start(EvolutionData[68], FourCC('Hblm'), FourCC('Hpal'), PLAYER_COLOR_LIGHT_BLUE, 46, false)
-        -- Air -> Nature
-        Start(EvolutionData[69], FourCC('Hmkg'), FourCC('Hblm'), PLAYER_COLOR_LIGHT_BLUE, 46, false)
-        -- Machine -> Nature
-        Start(EvolutionData[70], FourCC('Hpal'), FourCC('Hblm'), PLAYER_COLOR_SNOW, 51, false)
-        -- Nature -> Machine
-        Start(EvolutionData[71], FourCC('Hblm'), FourCC('Hpal'), PLAYER_COLOR_SNOW, 47, false)
-        -- Air -> Aquatic
-        Start(EvolutionData[72], FourCC('Hmkg'), FourCC('Hamg'), PLAYER_COLOR_SNOW, 51, false)
-        -- Air -> Machine
-        Start(EvolutionData[73], FourCC('Hmkg'), FourCC('Hpal'), PLAYER_COLOR_LIGHT_BLUE, 47, false)
-        -- Nature -> Machine
-        Start(EvolutionData[74], FourCC('Hblm'), FourCC('Hpal'), PLAYER_COLOR_BLUE, 49, false)
-    end)
+        -- Evolution abilities
 
-    -- Evolve Run
+        EvolveAbil[1] = 'A02H'
+        EvolveAbil[2] = 'A02I'
+        EvolveAbil[3] = 'A02J'
+        EvolveAbil[4] = 'A02K'
+        EvolveAbil[5] = 'A02L'
+        EvolveAbil[6] = 'A02M'
 
-    OnMapInit(function ()
-        Digimon.levelUpEvent(function (evolve)
-            if evolve:getOwner() ~= Digimon.NEUTRAL then
-                local data = Get(evolve)
+        EvolveReq[1] = 'R000'
+        EvolveReq[2] = 'R001'
+        EvolveReq[3] = 'R002'
+        EvolveReq[4] = 'R003'
+        EvolveReq[5] = 'R004'
+        EvolveReq[6] = 'R005'
 
-                if data and evolve:getLevel() >= data.level then
-                    local u = evolve.root
-                    local p = GetOwningPlayer(u)
-                    --local camera = GetCurrentCameraSetup()
+        -- Press the evolve button
+        for i = 1, 6 do
+            RegisterSpellEffectEvent(EvolveAbil[i], function ()
+                local u = GetSpellAbilityUnit()
+                local p = GetOwningPlayer(u)
+                EvolveClicked[p] = i
 
-                    local f = GetForceOfPlayer(p)
-                    TransmissionFromUnitWithNameBJ(f, u, GetHeroProperName(u), nil, "is digievolving into...", bj_TIMETYPE_SET, 2.00, true)
+                -- Update dialog
+                DialogClear(EvolveDialog[p])
+                DialogSetMessage(EvolveDialog[p], "What digimon you choose for " .. GetUnitName(u) .. "?")
+                EvolveOption[p] = {}
 
+                local set = PossibleEvolution[Digimon.getInstance(u)]
+                if set then
+                    local j = 0
+                    for v in set:elements() do
+                        j = j + 1
+                        EvolveOption[p][j] = DialogAddButton(EvolveDialog[p], GetObjectName(v), 0)
+                    end
+                end
+                DialogAddButton(EvolveDialog[p], "Cancel", 0)
+
+                DialogDisplay(p, EvolveDialog[p], true)
+            end)
+        end
+
+        -- Add the evolution ability to the new digimon
+        local function AddAbility(new)
+            -- The delay is to wait the digimon was send to the bank
+            Timed.call(function ()
+                local p = new:getOwner()
+                if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
+                    local index = GetBankIndex(new:getOwner(), new) + 1
+                    new:addAbility(EvolveAbil[index])
+                end
+            end)
+        end
+        Digimon.createEvent(AddAbility)
+        Digimon.capturedEvent(AddAbility)
+
+        -- Remove the evolution ability to destroyed digimon
+        Digimon.destroyEvent(function (old)
+            for j = 1, 6 do
+                old:removeAbility(EvolveAbil[j])
+            end
+        end)
+
+        -- Evolve Run
+
+        -- Press one of the options
+        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+            local p = Player(i)
+            local t = CreateTrigger()
+            TriggerRegisterDialogEvent(t, EvolveDialog[p])
+            TriggerAddAction(t, function ()
+                local evolve = GetBankDigimon(p, EvolveClicked[p] - 1)
+
+                -- Get clicked button
+                local index = 0
+                local toEvolve = nil
+                for v in PossibleEvolution[evolve]:elements() do
+                    index = index + 1
+                    if GetClickedButton() == EvolveOption[p][index] then
+                        toEvolve = v
+                        break
+                    end
+                end
+
+                if not toEvolve then
+                    return
+                end
+
+                ClearPossibleEvolutions(evolve)
+
+                local u = evolve.root
+                --local camera = GetCurrentCameraSetup()
+
+                local cur = Transmission.create(Force(p))
+                cur.isSkippable = false
+                cur:AddLine(u, nil, GetHeroProperName(u), nil, "is digievolving into...", Transmission.SET, 2.00, true)
+                cur:AddActions(function ()
                     SetUnitInvulnerable(u, true)
                     PauseUnit(u, true)
                     DestroyEffectTimed(AddSpecialEffect("Digievolution1.mdx", GetUnitX(u), GetUnitY(u)), 4.00) -- If the unit is hidden, the effect won't be shown
 
-                    evolve:evolveTo(data.EvolveForm) -- Here I added the more important things
+                    evolve:evolveTo(toEvolve) -- Here I added the more important things
                     u = evolve.root -- Have to refresh
                     DestroyEffectTimed(AddSpecialEffectTarget("origin", u, "Digievolution2.mdx"), 3.00)
-                    TransmissionFromUnitWithNameBJ(f, u, GetHeroProperName(u), nil, GetHeroProperName(u), bj_TIMETYPE_SET, 2.00, true)
 
+                    cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u), Transmission.SET, 2.00, true)
+                end)
+                cur:AddEnd(function ()
                     PauseUnit(u, false)
 
-                    SetUnitColor(u, data.color)
-                    DestroyForce(f)
-                end
-            end
+                    --SetUnitColor(u, data.color)
+                end)
+                cur:Start()
+            end)
+        end
+    end)
+
+    -- For GUI
+    OnTrigInit(function ()
+        udg_CreateEvolutionCondition = CreateTrigger()
+        TriggerAddAction(udg_CreateEvolutionCondition, function ()
+            CreateSpecificCondtions(udg_InitialForm, udg_EvolvedForm, udg_EvolveLevelCondition, udg_EvolveRegionCondition, udg_EvolveItemCondition)
+            udg_InitialForm = 0
+            udg_EvolvedForm = 0
+            udg_EvolveLevelCondition = 0
+            udg_EvolveRegionCondition = nil
+            udg_EvolveItemCondition = nil
         end)
     end)
 

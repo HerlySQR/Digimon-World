@@ -4,7 +4,7 @@ if LinkedList then
     local INTERVAL = 0.02
 
     local All = LinkedList.create()
-    local Knockbacked = {}
+    local Knockbacked = __jarray(0)
 
     local function Update()
         for node in All:loop() do
@@ -71,7 +71,7 @@ if LinkedList then
             effectCounter1 = 0,
             effectCounter2 = 0,
         }
-        Knockbacked[target] = (Knockbacked[target] or 0) + 1
+        Knockbacked[target] = Knockbacked[target] + 1
         All:insert(new)
         if new.next == All.head then
             Timed.echo(Update, INTERVAL)
@@ -82,6 +82,6 @@ if LinkedList then
     ---@param u unit
     ---@return boolean
     function IsKnockbacked(u)
-        return Knockbacked[u] and Knockbacked[u] > 0
+        return Knockbacked[u] > 0
     end
 end

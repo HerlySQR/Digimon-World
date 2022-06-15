@@ -13,8 +13,8 @@ do
         local enterX, enterY = GetLocationX(enterTP),  GetLocationY(enterTP)
         local leaveX, leaveY = GetLocationX(leaveTP),  GetLocationY(leaveTP)
 
-        local innerEnv = Environment.create(inner, enterMinimap)
-        local outerEnv = Environment.create(outer, leaveMinimap)
+        local innerEnv = Environment.create(enterText, inner, enterMinimap)
+        local outerEnv = Environment.create(leaveText, outer, leaveMinimap)
 
         RemoveLocation(enterTP)
         RemoveLocation(leaveTP)
@@ -26,14 +26,15 @@ do
             local u = GetEnteringUnit()
             local p = GetOwningPlayer(u)
             SetUnitPosition(u, enterX, enterY)
-            DisplayTimedTextToPlayer(p, 0, 0, 5., "|cffffff00[" .. enterText .. "]|r")
             local d = Digimon.getInstance(u)
             if d then
                 d.environment = innerEnv
             end
-            if p == LocalPlayer and IsUnitSelected(u, p) then
-                PanCameraToTimed(enterX, enterY, 0)
-                innerEnv:apply()
+            if IsUnitSelected(u, p) then
+                innerEnv:apply(p, true)
+                if p == LocalPlayer then
+                    PanCameraToTimed(enterX, enterY, 0)
+                end
             end
         end)
 
@@ -44,14 +45,15 @@ do
             local u = GetEnteringUnit()
             local p = GetOwningPlayer(u)
             SetUnitPosition(u, leaveX, leaveY)
-            DisplayTimedTextToPlayer(p, 0, 0, 5., "|cffffff00[" .. leaveText .. "]|r")
             local d = Digimon.getInstance(u)
             if d then
                 d.environment = outerEnv
             end
-            if p == LocalPlayer and IsUnitSelected(u, p) then
-                outerEnv:apply()
-                PanCameraToTimed(leaveX, leaveY, 0)
+            if IsUnitSelected(u, p) then
+                outerEnv:apply(p, true)
+                if p == LocalPlayer then
+                    PanCameraToTimed(leaveX, leaveY, 0)
+                end
             end
         end)
     end

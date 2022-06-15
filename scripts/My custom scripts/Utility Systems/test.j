@@ -1,240 +1,279 @@
-library BigNum
+scope IntroBattle
+  globals
+    private constant real MIN_SCREEN_X = -0.135
+    private constant real MAX_SCREEN_X = 0.935
+    private constant real MIN_SCREEN_Y = 0
+    private constant real MAX_SCREEN_Y = 0.6
 
-//prefer algebraic approach because of real subtraction issues
-function log takes real y, real base returns real
-    local real x
-    local real factor = 1.0
-    local real logy = 0.0
-    local real sign = 1.0
-    if(y < 0.) then
-        return 0.0
-    endif
-    if(y < 1.) then
-        set y = 1.0/y
-        set sign = -1.0
-    endif
-    //Chop out powers of the base
+    // INTRO DURATION
+    private constant real MAX_DURATION = 2.7
+
+    private constant string FRAME_TEXTURE = "UI\\Widgets\\EscMenu\\Human\\human-options-menu-background.blp"
+
+    // THESES NAMES ARE GENERATED IN FDF file
+    private constant string FRAME_NAME = "IntroBattleFh-"                     // IntroBattleFh-1  IntroBattleFh-2  IntroBattleFh-3 ....
+    private constant string FRAME_TEXTURE_NAME = "IntroBattleFhTexture-"      // IntroBattleFhTexture-1  IntroBattleFhTexture-2 ...
+
+    // USEFUL TO GENERATE FRAMES NAMES (nbr of frames names in the fdf file)
+    // it loops in the code the generated name num is re-set to 1 when it goes over the limit
+    private constant integer MAX_FRAME_NUM = 500
+
+    // INTRO RANDOM (DAMIER SPAWN RANDOM)
+    // private constant integer RANDOM_NBR_COLS = 4
+    // private constant integer RANDOM_NBR_LINE = 3
+    private constant integer RANDOM_NBR_COLS = 20
+    private constant integer RANDOM_NBR_LINE = 12
+
+    // VARIABLE USED TO SET THE ARRAY LENGTH
+    private constant integer RANDOM_ARRAY_SIZE = 245
+
+    // VARIABLES SET IN the "initIntrosBattle" function
+    // INTERVAL BETWEEN EACH APPARITION
+    private real RANDOM_INTERVAL
+
+    // FRAMES DIMENTIONS
+    private real RANDOM_FH_WIDTH
+    private real RANDOM_FH_HEIGHT
+
+    // END INTRO RANDOM
+
+    private integer NBR_FRAMES
+    private integer CURRENT_FRAME_NUM
+    private real SCREEN_WIDTH
+    private real SCREEN_HEIGHT
+
+  endglobals
+
+private function getFrameName takes nothing returns string
+  return FRAME_NAME + I2S(CURRENT_FRAME_NUM)
+endfunction
+
+private function getFrameTextureName takes nothing returns string
+  return FRAME_TEXTURE_NAME + I2S(CURRENT_FRAME_NUM)
+endfunction
+
+function showFrameForPlayers takes framehandle fh, player P, player P1 returns nothing
+  call BlzFrameSetVisible(fh, (P == GetLocalPlayer() or P1 == GetLocalPlayer()))
+endfunction
+
+private struct Random
+  static Random array R
+  static integer RT = 0
+  static timer T = null
+
+  player P
+  player P1
+  real duration
+  integer context
+  // the array where the hidden remaining frames are stored
+  framehandle array hiddenFh [RANDOM_ARRAY_SIZE]
+  // the number of remaining hidden frames
+  integer nbrFrames
+  boolean done
+
+  private method clearAllFrames takes nothing returns nothing
+    local integer I = 0
+
     loop
-        exitwhen y < 1.0001    //decrease this ( bounded below by 1) to improve precision
-        if(y > base) then
-            set y = y / base
-            set logy = logy + factor
-        else
-            set base = SquareRoot(base)     //If you use just one base a lot, precompute its squareroots
-            set factor = factor / 2.
-        endif
+      exitwhen I >= RANDOM_ARRAY_SIZE
+      set hiddenFh[I] = null
+      set I = I + 1
     endloop
-    return sign*logy
-endfunction
 
-struct BigNum_l
-	integer leaf
-	BigNum_l next
-    debug static integer nalloc = 0
-    
-    static method create takes nothing returns BigNum_l
-        local BigNum_l bl = BigNum_l.allocate()
-        set bl.next = 0
-        set bl.leaf = 0
-        debug set BigNum_l.nalloc = BigNum_l.nalloc + 1
-        return bl
-    endmethod
-    method onDestroy takes nothing returns nothing
-        debug set BigNum_l.nalloc = BigNum_l.nalloc - 1
-    endmethod
-	
-	//true:  want destroy
-	method Clean takes nothing returns boolean
-		if .next == 0 and .leaf == 0 then
-			return true
-		elseif .next != 0 and .next.Clean() then
-			call .next.destroy()
-			set .next = 0
-			return .leaf == 0
-		else
-			return false
-		endif
-	endmethod
-	
-	method DivSmall takes integer base, integer denom returns integer
-		local integer quotient
-		local integer remainder = 0
-		local integer num
-		
-		if .next != 0 then
-			set remainder = .next.DivSmall(base,denom)
-		endif
-		
-        set num = .leaf + remainder*base
-		set quotient = num/denom
-		set remainder = num - quotient*denom
-		set .leaf = quotient
-		return remainder
-	endmethod
-endstruct
+  endmethod
 
-struct BigNum
-	BigNum_l list
-    integer base
-    
-    static method create takes integer base returns BigNum
-        local BigNum b = BigNum.allocate()
-        set b.list = 0
-        set b.base = base
-        return b
-    endmethod
+  private method onDestroy takes nothing returns nothing
+    call .clearAllFrames()
 
-	method onDestroy takes nothing returns nothing
-		local BigNum_l cur = .list
-		local BigNum_l next
-		loop
-			exitwhen cur == 0
-			set next = cur.next
-			call cur.destroy()
-			set cur = next
-		endloop
-	endmethod
-	
-	method IsZero takes nothing returns boolean
-		local BigNum_l cur = .list
-		loop
-			exitwhen cur == 0
-			if cur.leaf != 0 then
-				return false
-			endif
-			set cur = cur.next
-		endloop
-		return true
-	endmethod
-	
-	method Dump takes nothing returns nothing
-		local BigNum_l cur = .list
-		local string s = ""
-		loop
-			exitwhen cur == 0
-			set s = I2S(cur.leaf)+" "+s
-			set cur = cur.next
-		endloop
-		call BJDebugMsg(s)
-	endmethod
-	
-	method Clean takes nothing returns nothing
-		local BigNum_l cur = .list
-		call cur.Clean()
-	endmethod
-	
-	//fails if bignum is null
-	//BASE() + carry must be less than MAXINT()
-	method AddSmall takes integer carry returns nothing
-		local BigNum_l next
-		local BigNum_l cur = .list
-		local integer sum
-		
-		if cur == 0 then
-			set cur = BigNum_l.create()
-			set .list = cur
-		endif
-		
-		loop
-			exitwhen carry == 0
-			set sum = cur.leaf + carry
-			set carry = sum / .base
-			set sum = sum - carry*.base
-			set cur.leaf = sum
-			
-			if cur.next == 0 then
-				set cur.next = BigNum_l.create()
-			endif
-			set cur = cur.next
-		endloop
-	endmethod
-	
-	//x*BASE() must be less than MAXINT()
-	method MulSmall takes integer x returns nothing
-		local BigNum_l cur = .list
-		local integer product
-		local integer remainder
-		local integer carry = 0
-		loop
-			exitwhen cur == 0 and carry == 0
-			set product = x * cur.leaf + carry
-			set carry = product/.base
-			set remainder = product - carry*.base
-			set cur.leaf = remainder
-			if cur.next == 0 and carry != 0 then
-				set cur.next = BigNum_l.create()
-			endif
-			set cur = cur.next
-		endloop
-	endmethod
-	
-	//Returns remainder
-	method DivSmall takes integer denom returns integer
-		return .list.DivSmall(.base,denom)
-	endmethod
-	
-	method LastDigit takes nothing returns integer
-		local BigNum_l cur = .list
-		local BigNum_l next
-		loop
-			set next = cur.next
-			exitwhen next == 0
-			set cur = next
-		endloop
-		return cur.leaf
-	endmethod
-endstruct
+    // A Struct that list framehandles and player to destroye all of them
+    call Frame.destroyForPlayer(.P)
 
-private function prop_Allocator1 takes nothing returns boolean
-    local BigNum b1
-    local BigNum b2
-    set b1 = BigNum.create(37)
-    call b1.destroy()
-    set b2 = BigNum.create(37)
-    call b2.destroy()
-    return b1 == b2
-endfunction
+    set .P = null
+    set .P1 = null
 
-private function prop_Allocator2 takes nothing returns boolean
-    local BigNum b1
-    local boolean b = false
-    set b1 = BigNum.create(37)
-    call b1.AddSmall(17)
-    call b1.MulSmall(19)
-    debug if BigNum_l.nalloc < 1 then
-    debug     return false
-    debug endif
-    call b1.destroy()
-    debug set b = BigNum_l.nalloc == 0
-    return b
-endfunction
+  endmethod
 
-private function prop_Arith takes nothing returns boolean
-    local BigNum b1
-    set b1 = BigNum.create(37)
-    call b1.AddSmall(73)
-    call b1.MulSmall(39)
-    call b1.AddSmall(17)
-    //n = 2864
-    if b1.DivSmall(100) != 64 then
-        return false
-    elseif b1.DivSmall(7) != 0 then
-        return false
-    elseif b1.IsZero() then
-        return false
-    elseif b1.DivSmall(3) != 1 then
-        return false
-    elseif b1.DivSmall(3) != 1 then
-        return false
-    elseif not b1.IsZero() then
-        return false
+  private method spawnFrameAtLoc takes framehandle parent, real xTopLeft, real yTopLeft returns nothing
+    local framehandle fh = BlzCreateSimpleFrame(getFrameName(), parent, .context)
+    local framehandle textureFrame = BlzGetFrameByName(getFrameTextureName(), .context)
+
+    // function that calculates XMax, XMin, YMax, YMin of the frame
+    // move it with top corner point
+    // and resize the frame
+    call setFramePos(fh, xTopLeft, yTopLeft, RANDOM_FH_WIDTH, RANDOM_FH_HEIGHT)
+
+    call BlzFrameSetTexture(textureFrame, FRAME_TEXTURE, 0, true)
+
+    // BY DEFAULT THEY ARE ALL HIDDEN
+    call BlzFrameSetVisible(fh, false)
+
+    set .nbrFrames = .nbrFrames + 1
+    set .hiddenFh[.nbrFrames] = fh
+
+    // when the frames are shown they are stored into a structure that will destroy them at the end of the intro
+    call Frame.addFrame(.P, fh, xTopLeft, yTopLeft, true)
+
+    set NBR_FRAMES = NBR_FRAMES + 1
+
+    set fh = null
+    set textureFrame = null
+
+  endmethod
+
+  // FRAMES ARE SUMMONED BY LINE
+  private method spawnLine takes framehandle parent, integer lineNum returns nothing
+    local real XTopLeft = MIN_SCREEN_X
+    local real YTopLeft = MAX_SCREEN_Y - ((lineNum - 1) * RANDOM_FH_HEIGHT)
+    local integer colNum = 0
+
+    loop
+      set colNum = colNum + 1
+      set CURRENT_FRAME_NUM = CURRENT_FRAME_NUM + 1
+
+      call .spawnFrameAtLoc(parent, XTopLeft, YTopLeft)
+
+      set XTopLeft = XTopLeft + RANDOM_FH_WIDTH
+
+      if CURRENT_FRAME_NUM >= MAX_FRAME_NUM then
+        set CURRENT_FRAME_NUM = 0
+      endif
+
+      exitwhen colNum >= RANDOM_NBR_COLS
+    endloop
+
+  endmethod
+
+  // USED TO COVER LE SCREEN BY HIDDEN FRAME TO INIT
+  private method createFrames takes nothing returns nothing
+    local framehandle parent = BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0)
+    local integer lineNum = 0
+
+    loop
+      set lineNum = lineNum + 1
+
+      call .spawnLine(parent, lineNum)
+
+      exitwhen lineNum >= RANDOM_NBR_LINE
+    endloop
+
+    set parent = null
+
+  endmethod
+
+  // SHOW A RANDOM FRAME
+  private method showRandomFrame takes nothing returns nothing
+    local integer num = GetRandomInt(1, .nbrFrames)
+    local framehandle fh = .hiddenFh[num]
+
+    call showFrameForPlayers(fh, .P, .P1)
+
+    set .hiddenFh[num] = .hiddenFh[.nbrFrames]
+    set .hiddenFh[.nbrFrames] = null
+    set .nbrFrames = .nbrFrames - 1
+
+    set fh = null
+
+  endmethod
+
+  // CHECK IF SOME FRAME ARE STILL HIDDEN
+  private method manageShowFrame takes nothing returns nothing
+    if .nbrFrames > 0 then
+      call .showRandomFrame()
+    else
+      set .done = true
     endif
-    return true
+
+  endmethod
+
+  private method initTable takes nothing returns nothing
+    local integer I = 0
+
+    loop
+      exitwhen I >= RANDOM_ARRAY_SIZE
+      set hiddenFh[I] = null
+      set I = I + 1
+    endloop
+
+  endmethod
+
+  static method update takes nothing returns nothing
+    local Random r
+    local integer I = 0
+
+    loop
+      set I = I + 1
+      set r = .R[I]
+
+      set r.duration = r.duration + RANDOM_INTERVAL
+
+      call r.manageShowFrame()
+
+      if r.done then
+        call r.destroy()
+
+        set .R[I] = .R[.RT]
+        set .RT = .RT - 1
+        set I = I - 1
+      endif
+
+      exitwhen I >= .RT
+    endloop
+
+    if .RT <= 0 then
+      call PauseTimer(.T)
+      set .RT = 0
+    endif
+
+  endmethod
+
+  static method addRandom takes player P, player P1 returns nothing
+    local Random r = Random.allocate()
+
+    set r.P = P
+    set r.P1 = P1
+    set r.context = GetPlayerId(P) + 3
+    set r.duration = 0
+    set r.nbrFrames = 0
+    set r.done = false
+
+    // A method to be sure that the bug is not due to the array
+    call r.initTable()
+
+    // An init methos that creates all the frames hidden
+    call r.createFrames()
+
+    set .RT = .RT + 1
+    set .R[.RT] = r
+
+    if .RT == 1 then
+      // The timer will show to the target players the given frames
+      call TimerStart(.T, RANDOM_INTERVAL, true, function Random.update)
+    endif
+
+  endmethod
+endstruct
+
+function startIntroForPlayers takes player P, player P1 returns nothing
+  call Random.addRandom(P, P1)
 endfunction
 
-endlibrary
+// INITIALIZATION OF INTROS VARIABLES
+function initIntrosBattle takes nothing returns nothing
+  local integer nbrCells = 0
 
-//===========================================================================
-function InitTrig_bignum_lib takes nothing returns nothing
+  set SCREEN_WIDTH = MAX_SCREEN_X - MIN_SCREEN_X
+  set SCREEN_HEIGHT = MAX_SCREEN_Y - MIN_SCREEN_Y
+  set NBR_FRAMES = 0
+
+    // "RANDOM" called like that because the screen will be randomly covered by frames over the time
+    set nbrCells = RANDOM_NBR_COLS * RANDOM_NBR_LINE
+    set RANDOM_FH_WIDTH = SCREEN_WIDTH / RANDOM_NBR_COLS
+    set RANDOM_FH_HEIGHT = SCREEN_HEIGHT / RANDOM_NBR_LINE
+    set RANDOM_INTERVAL = MAX_DURATION / (nbrCells + 1)
+    set Random.T = CreateTimer()
+
+  set CURRENT_FRAME_NUM = 0
+
 endfunction
 
+endscope

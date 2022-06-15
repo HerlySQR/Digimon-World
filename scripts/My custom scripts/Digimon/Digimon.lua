@@ -44,35 +44,6 @@ do
     }
     Digimon.__index = Digimon
 
-    ---Instance digimons that are created with other methods
-    ---@param u unit
-    ---@return Digimon
-    function Digimon.add(u)
-        local self = Digimon._instance[u]
-        if not self then
-            self = setmetatable({}, Digimon)
-
-            self.root = u
-
-            local check = GetToken(GetUnitName(u))
-
-            if check == "Rookie" then
-                self.rank = Rank.ROOKIE
-            elseif check == "Champion" then
-                self.rank = Rank.CHAMPION
-            elseif check == "Ultimate" then
-                self.rank = Rank.ULTIMATE
-            elseif check == "Mega" then
-                self.rank = Rank.MEGA
-            end
-
-            self.environment = Environment.allMap
-
-            Digimon._instance[u] = self
-        end
-        return self
-    end
-
     ---Create an instantiated digimon
     ---@param p player
     ---@param id integer
@@ -82,6 +53,24 @@ do
     ---@return Digimon
     function Digimon.create(p, id, x, y, facing)
         return Digimon.add(GetRecycledHero(p, id, x, y, facing))
+    end
+
+    ---@param id integer
+    ---@return boolean
+    function Digimon:addAbility(id)
+        return UnitAddAbility(self.root, id)
+    end
+
+    ---@param id integer
+    ---@return boolean
+    function Digimon:removeAbility(id)
+        return UnitRemoveAbility(self.root, id)
+    end
+
+    ---@param id integer
+    ---@return boolean
+    function Digimon:hasAbility(id)
+        return GetUnitAbilityLevel(self.root, id) > 0
     end
 
     ---@return player
@@ -200,6 +189,42 @@ do
 
     -- Events
 
+    -- Create
+
+    Digimon.createEvent = Event.create()
+
+    ---Instance digimons that are created with other methods
+    ---@param u unit
+    ---@return Digimon
+    function Digimon.add(u)
+        local self = Digimon._instance[u]
+        if not self then
+            self = setmetatable({}, Digimon)
+
+            self.root = u
+
+            local check = GetToken(GetUnitName(u))
+
+            if check == "Rookie" then
+                self.rank = Rank.ROOKIE
+            elseif check == "Champion" then
+                self.rank = Rank.CHAMPION
+            elseif check == "Ultimate" then
+                self.rank = Rank.ULTIMATE
+            elseif check == "Mega" then
+                self.rank = Rank.MEGA
+            end
+
+            self.environment = Environment.allMap
+
+            Digimon._instance[u] = self
+        end
+
+        Digimon.createEvent:run(self)
+
+        return self
+    end
+
     -- Destroy
 
     ---@param func fun(d:Digimon)
@@ -272,6 +297,7 @@ do
         local paused = IsUnitPaused(old)
         local select = IsUnitSelected(old, LocalPlayer)
         local items = {}
+        local index = GetBankIndex(self:getOwner(), self) + 1
 
         for i = 0, 5 do
             items[i] = UnitItemInSlot(old, i)
@@ -297,8 +323,6 @@ do
         elseif check == "Mega" then
             self.rank = Rank.MEGA
         end
-        
-        self:setExp(oldExp)
 
         for i = 0, 5 do
             if items[i] then
@@ -321,7 +345,12 @@ do
             PauseUnit(self.root, true)
         end
 
+        UnitRemoveAbility(old, EvolveAbil[index])
+        UnitAddAbility(self.root, EvolveAbil[index])
+
         RecycleHero(old)
+
+        self:setExp(oldExp) -- This could run the level up event
 
         Digimon.evolutionEvent:run(self)
     end
@@ -340,9 +369,11 @@ do
                 amount = udg_DamageEventAmount
             }
 
-            Digimon.preDamageEvent:run(info)
+            if info.source and info.target then
+                Digimon.preDamageEvent:run(info)
 
-            udg_DamageEventAmount = info.amount
+                udg_DamageEventAmount = info.amount
+            end
         end)
     end)
 
@@ -360,7 +391,9 @@ do
                 amount = udg_DamageEventAmount
             }
 
-            Digimon.postDamageEvent:run(info)
+            if info.source and info.target then
+                Digimon.postDamageEvent:run(info)
+            end
         end)
     end)
 
@@ -370,8 +403,8 @@ do
 
     OnTrigInit(function ()
         local t = CreateTrigger()
-        for user in User.loop() do
-            TriggerRegisterPlayerSelectionEventBJ(t, user:toPlayer(), true)
+        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+            TriggerRegisterPlayerSelectionEventBJ(t, Player(i), true)
         end
         TriggerAddAction(t, function ()
             local d = Digimon.getInstance(GetTriggerUnit())
@@ -386,7 +419,7 @@ do
     Digimon.doubleclickEvent = Event.create()
 
     local clicks = __jarray(0)
-    local delay = 0.27
+    local delay = 0.5
 
     OnTrigInit(function ()
         Digimon.selectionEvent(function (p, d)
@@ -418,8 +451,11 @@ do
 
         -- Change the environment when double-click a Digimon
         Digimon.doubleclickEvent(function (p, d)
-            if p == LocalPlayer then
-                d.environment:apply()
+            if d.environment ~= GetPlayerEnviroment(p) then
+                d.environment:apply(p)
+                if p == LocalPlayer then
+                    PanCameraToTimed(d:getX(), d:getY(), 0)
+                end
             end
         end)
     end)

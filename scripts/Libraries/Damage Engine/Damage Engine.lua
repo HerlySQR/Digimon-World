@@ -29,8 +29,8 @@ OnGlobalInit(function() Damage = {}
     local _USE_GUI          = GlobalRemap
     
     local _USE_EXTRA        = _USE_GUI  --If you don't use DamageEventLevel/DamageEventAOE/SourceDamageEvent, set this to false
-    local _USE_ARMOR_MOD    = true      --If you do not modify nor detect armor/defense, set this to false
-    local _USE_MELEE_RANGE  = true      --If you do not detect melee nor ranged damage, set this to false
+    local _USE_ARMOR_MOD    = false      --If you do not modify nor detect armor/defense, set this to false
+    local _USE_MELEE_RANGE  = false      --If you do not detect melee nor ranged damage, set this to false
     
     local _LIMBO            = 16        --When manually-enabled recursion is enabled via Damage.recurion, the engine will never go deeper than LIMBO.
     local _DEATH_VAL        = 0.405     --In case M$ or Bliz ever change this, it'll be a quick fix here.

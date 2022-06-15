@@ -22,7 +22,7 @@ do
         end
     end)
 
-    local onCombat = {} ---@type real[]
+    local onCombat = __jarray(0) ---@type real[]
 
     OnMapInit(function ()
         Digimon.postDamageEvent(function (info)
@@ -44,7 +44,19 @@ do
     end
 
     local function StoreDigimonConditions(bank)
-        return (onCombat[bank.stocked[bank.pressed]] or 0) <= 0
+        if onCombat[bank.stocked[bank.pressed]] > 0 then
+            return false
+        end
+        local max = 0
+        for i = 0, 5 do
+            if bank.inUse[i] then
+                max = max + 1
+            end
+        end
+        if max <= 1 then
+            return false
+        end
+        return true
     end
 
     local function FreeDigimonConditions(bank)
@@ -488,10 +500,9 @@ do
             if not bank.main then
                 bank.main = d
                 d:showFromTheCorner(bank.spawnPoint.x, bank.spawnPoint.y)
-                d.environment = Environment.initial
+                d.environment:apply(p, false)
                 if p == LocalPlayer then
-                    PanCameraToTimed(bank.spawnPoint.x, bank.spawnPoint.y, 1.)
-                    d.environment:apply()
+                    PanCameraToTimed(bank.spawnPoint.x, bank.spawnPoint.y, 0)
                 end
             else
                 d:showFromTheCorner(bank.main:getX(), bank.main:getY())
@@ -530,6 +541,9 @@ do
         return d
     end
 
+    ---@param p player
+    ---@param d Digimon
+    ---@return integer
     function GetBankIndex(p, d)
         local bank = Bank[GetPlayerId(p)]
         for i = 0, 5 do
@@ -538,6 +552,13 @@ do
             end
         end
         return -1
+    end
+
+    ---@param p player
+    ---@param index integer
+    ---@return Digimon
+    function GetBankDigimon(p, index)
+        return Bank[GetPlayerId(p)].stocked[index]
     end
 
     -- When dies
@@ -565,6 +586,8 @@ do
                     DisplayTextToPlayer(p, 0, 0, "All your digimons are death, they will respawn in the clinic")
                     bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
                     bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
+                    -- The player can see all the map if all their digimons are dead
+                    Environment.allMap:apply(p, false)
                 else
                     bank.spawnPoint.x = GetRectCenterX(gg_rct_Player_1_Spawn)
                     bank.spawnPoint.y = GetRectCenterY(gg_rct_Player_1_Spawn)

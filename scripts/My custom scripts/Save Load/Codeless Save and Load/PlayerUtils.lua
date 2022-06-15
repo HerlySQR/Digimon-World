@@ -181,7 +181,7 @@ if OnGlobalInit then
     function User.loop(backward)
         local user = User.NULL
         local direction = backward and "prev" or "next"
-        return function()
+        return function ()
             user = user[direction]
             return user ~= User.NULL and user or nil
         end
