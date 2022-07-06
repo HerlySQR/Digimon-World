@@ -13,7 +13,7 @@ do
         end
         return R2I(r - 0.5)
     end
-    
+
     -- This will give XP to the nearby allies of the killing digimon
     -- and if the difference levels of them and the dying digimon is less or equal to 5
     -- level of the unit*5 + ((5-level of the unit)/4) * Reduction
@@ -24,10 +24,11 @@ do
     OnMapInit(function ()
         local LocalPlayer = GetLocalPlayer()
         Digimon.killEvent(function (killer, dead)
-            if killer:getOwner() ~= Digimon.NEUTRAL then
+            local owner = Wc3Type(killer) == "unit" and GetOwningPlayer(killer) or killer:getOwner()
+            if owner ~= Digimon.NEUTRAL then
                 Digimon.enumInRange(dead:getX(), dead:getY(), AREA, function (picked)
                     local diff = math.abs(picked:getLevel() - dead:getLevel())
-                    if IsPlayerAlly(killer:getOwner(), picked:getOwner()) and diff <= 5 then
+                    if IsPlayerAlly(owner, picked:getOwner()) and diff <= 5 then
                         local XP = ConvertEXP(dead:getLevel(), diff)
                         picked:setExp(picked:getExp() + XP)
                         local tt = CreateTextTagUnitBJ("+" .. XP .. " exp", picked.root, ZOFSSET, SIZE, COLOR_R, COLOR_G, COLOR_B, 0.)

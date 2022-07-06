@@ -8,6 +8,10 @@ do
 
     Vec2.__index = Vec2
 
+    ---Creates a new Vec2
+    ---@param x real
+    ---@param y real
+    ---@return Vec2
     function Vec2.new(x, y)
         return setmetatable({x = x, y = y}, Vec2)
     end
@@ -15,38 +19,38 @@ do
     -- Operators
 
     function Vec2:__unm()
-        return Vec2(-self.x, -self.y)
+        return Vec2.new(-self.x, -self.y)
     end
 
     function Vec2:__add(other)
-        return Vec2(self.x + other.x, self.y + other.y)
+        return Vec2.new(self.x + other.x, self.y + other.y)
     end
 
     function Vec2:__sub(other)
-        return Vec2(self.x - other.x, self.y - other.y)
+        return Vec2.new(self.x - other.x, self.y - other.y)
     end
 
     function Vec2:__mul(other)
         if type(other == "number") then
-            return Vec2(self.x * other, self.y * other)
+            return Vec2.new(self.x * other, self.y * other)
         else
-            return Vec2(self.x * other.x, self.y * other.y)
+            return Vec2.new(self.x * other.x, self.y * other.y)
         end
     end
 
     function Vec2:__div(other)
         if type(other == "number") then
-            return Vec2(self.x / other, self.y / other)
+            return Vec2.new(self.x / other, self.y / other)
         else
-            return Vec2(self.x / other.x, self.y / other.y)
+            return Vec2.new(self.x / other.x, self.y / other.y)
         end
     end
 
     function Vec2:__idiv(other)
         if type(other == "number") then
-            return Vec2(self.x // other, self.y // other)
+            return Vec2.new(self.x // other, self.y // other)
         else
-            return Vec2(self.x // other.x, self.y // other.y)
+            return Vec2.new(self.x // other.x, self.y // other.y)
         end
     end
 
@@ -88,6 +92,13 @@ do
     ---@return real
     function Vec2.dist(vec1, vec2)
         return math.sqrt((vec1.x - vec2.x)^2 + (vec1.y - vec2.y)^2)
+    end
+
+    ---@param vec1 Vec2
+    ---@param vec2 Vec2
+    ---@return real
+    function Vec2.distSq(vec1, vec2)
+        return (vec1.x - vec2.x)^2 + (vec1.y - vec2.y)^2
     end
 
     ---Angle between points

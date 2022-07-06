@@ -22,6 +22,10 @@ if Vec2 then
         return whichLocation.y
     end
 
+    ---@param whichLocation Vec2
+    function RemoveLocation(whichLocation)
+    end
+
     ---@param locA Vec2
     ---@param locB Vec2
     ---@return real
@@ -41,7 +45,7 @@ if Vec2 then
     ---@param angle real
     ---@return Vec2
     function PolarProjectionBJ(source, dist, angle)
-        return source:polar(dist, angle)
+        return source:polar(dist, bj_DEGTORAD * angle)
     end
 
     ---@param loc Vec2

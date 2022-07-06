@@ -134,7 +134,7 @@ do
     ---@param toEvolve integer
     ---@param level integer
     ---@param place rect nilable
-    ---@param stone item nilable
+    ---@param stone integer nilable
     local function CreateSpecificCondtions(initial, toEvolve, level, place, stone)
         ---Unlock evolve
         ---@param evolve Digimon

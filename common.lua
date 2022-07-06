@@ -3,7 +3,7 @@
 --  possible to help prevent passing bad values to native functions
 --  all reference counted objects
 ---@class  real:number
----@class  code:fun()
+---@class  code:function
 ---@class  handle
 ---@class  agent:handle
 --  a reference to an event registration

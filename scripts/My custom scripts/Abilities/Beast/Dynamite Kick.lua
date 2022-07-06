@@ -19,12 +19,15 @@ OnMapInit(function ()
         BlzSetSpecialEffectScale(eff, 2.)
         DestroyEffect(eff)
         -- Push the target
-        Knockback(target,
-                  math.atan(GetUnitY(target) - GetUnitY(caster), GetUnitX(target) - GetUnitX(caster)),
-                  PushDist,
-                  2500.,
-                  "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl",
-                  nil)
+        if not IsUnitType(target, UNIT_TYPE_GIANT) then
+            Knockback(
+                target,
+                math.atan(GetUnitY(target) - GetUnitY(caster), GetUnitX(target) - GetUnitX(caster)),
+                PushDist,
+                2500.,
+                "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl",
+                nil)
+        end
     end)
 
 end)

@@ -11,6 +11,17 @@ do
 
     local used = {}
 
+    ---The camera bounds is not the same as the region that appears in the minimap
+    ---@param place rect
+    ---@return real x1, real y1, real x2, real y2, real x3, real y3, real x4, real y4
+    local function FixedCameraBounds(place)
+        local minX = GetRectMinX(place) + 512
+        local maxX = GetRectMaxX(place) - 384
+        local minY = GetRectMinY(place) + 256
+        local maxY = GetRectMaxY(place) - 256
+        return minX, minY, minX, maxY, maxX, maxY, maxX, minY
+    end
+
     ---@param name string
     ---@param place rect
     ---@param minimap string
@@ -50,7 +61,7 @@ do
         if env.name ~= "" then
             print("|cffffff00[" .. env.name .. "]|r")
         end
-        SetCameraBoundsToRect(env.place)
+        SetCameraBounds(FixedCameraBounds(env.place))
         BlzChangeMinimapTerrainTex(env.minimap)
     end
 
@@ -108,7 +119,7 @@ do
     OnGlobalInit(function ()
         LocalPlayer = GetLocalPlayer()
 
-        Environment.allMap = Environment.create("", bj_mapInitialCameraBounds, "entireMap.tga")
+        Environment.allMap = Environment.create("", bj_mapInitialPlayableArea, "entireMap.tga")
         BlzChangeMinimapTerrainTex("entireMap.tga")
 
         -- Just to be detected by the extension

@@ -36,5 +36,5 @@ OnMapInit(function ()
         end
         missile:launch()
     end)
-
+    
 end)

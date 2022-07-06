@@ -99,16 +99,13 @@ do
     local SummonADigimon = nil ---@type framehandle
     local StockedDigimonsMenu = nil ---@type framehandle
     local Exit = nil ---@type framehandle
-    local TriggerExit = nil ---@type framehandle
     local DigimonT = {} ---@type framehandle[]
     local BackdropDigimonT = {} ---@type framehandle[]
     local DigimonTUsed = {} ---@type framehandle[]
     local DigimonTSelected = {} ---@type framehandle[]
     local DigimonTCooldownT = {} ---@type framehandle[]
     local DigimonTTooltip = {} ---@type framehandle[]
-    local DigimonTTooltipTitle = {} ---@type framehandle[]
-    local DigimonTTooltipDescription = {} ---@type framehandle[]
-    local DigimonTTooltipStatus = {} ---@type framehandle[]
+    local DigimonTTooltipText = {} ---@type framehandle[]
     local Text = nil ---@type framehandle
     local Summon = nil ---@type framehandle
     local Store = nil ---@type framehandle
@@ -124,29 +121,34 @@ do
         for i = 0, MAX_STOCK - 1 do
             local d = bank.stocked[i] ---@type Digimon
             if d then
+                local id = d:getTypeId()
                 -- Button
                 BlzFrameSetEnable(DigimonT[i], true)
-                BlzFrameSetTexture(BackdropDigimonT[i], BlzGetAbilityIcon(d:getTypeId()), 0, true)
+                BlzFrameSetTexture(BackdropDigimonT[i], BlzGetAbilityIcon(id), 0, true)
                 -- Tooltip
-                BlzFrameSetText(DigimonTTooltipTitle[i], GetUnitName(d.root))
-                BlzFrameSetText(DigimonTTooltipDescription[i], BlzGetAbilityExtendedTooltip(d:getTypeId(), 0))
+                local text = GetHeroProperName(d.root) .. "\n\n" .. BlzGetAbilityExtendedTooltip(id, 0) .. "\n\n"
                 if bank.inUse[i] then
-                    BlzFrameSetText(DigimonTTooltipStatus[i], "|cff0000ffIn use|r")
+                    text = text .. "|cff0000ffIn use|r"
                     BlzFrameSetVisible(DigimonTUsed[i], true)
                     BlzFrameSetAlpha(DigimonTUsed[i], 127)
                 else
-                    BlzFrameSetText(DigimonTTooltipStatus[i], "|cff00ff00Stored|r")
+                    text = text .. "|cff00ff00Stored|r"
                     BlzFrameSetVisible(DigimonTUsed[i], false)
                 end
+                BlzFrameSetText(DigimonTTooltipText[i], text)
+                BlzFrameSetSize(DigimonTTooltipText[i], 0.25, 0)
             else
                 -- Button
                 BlzFrameSetEnable(DigimonT[i], false)
                 BlzFrameSetTexture(BackdropDigimonT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
                 -- Tooltip
-                BlzFrameSetText(DigimonTTooltipTitle[i], "Empty slot")
-                BlzFrameSetText(DigimonTTooltipDescription[i], "")
-                BlzFrameSetText(DigimonTTooltipStatus[i], "")
+                BlzFrameSetText(DigimonTTooltipText[i], "Empty slot")
+                BlzFrameSetSize(DigimonTTooltipText[i], 0, 0.005)
             end
+            -- Re-size
+            BlzFrameClearAllPoints(DigimonTTooltip[i])
+            BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, DigimonTTooltipText[i], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
+            BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, DigimonTTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
         end
     end
 
@@ -245,9 +247,9 @@ do
         BlzFrameSetAbsPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, 0.210000, 0.310000)
         BlzFrameSetText(Exit, "|cffFCD20DX|r")
         BlzFrameSetScale(Exit, 1.00)
-        TriggerExit = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerExit, Exit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerExit, function ()
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, function ()
             local bank = Bank[GetPlayerId(GetTriggerPlayer())]
             if GetTriggerPlayer() == LocalPlayer then
                 BlzFrameSetVisible(SummonADigimon, true)
@@ -296,33 +298,17 @@ do
             BlzFrameSetVisible(DigimonTCooldownT[i], false)
 
             DigimonTTooltip[i] = BlzCreateFrame("QuestButtonDisabledBackdropTemplate", DigimonT[i],0,0)
-            BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, DigimonT[i], FRAMEPOINT_TOPLEFT, 0.022437, 0.088828)
-            BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, DigimonT[i], FRAMEPOINT_BOTTOMRIGHT, 0.12277, 0.018440)
+
+            DigimonTTooltipText[i] = BlzCreateFrameByType("TEXT", "name", DigimonTTooltip[i], "", 0)
+            BlzFrameSetPoint(DigimonTTooltipText[i], FRAMEPOINT_BOTTOMLEFT, DigimonT[i], FRAMEPOINT_BOTTOMLEFT, 0.025000, 0.025000)
+            BlzFrameSetText(DigimonTTooltipText[i], "Empty slot")
+            BlzFrameSetScale(DigimonTTooltipText[i], 1.14)
+            BlzFrameSetTextAlignment(DigimonTTooltipText[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+            BlzFrameSetSize(DigimonTTooltipText[i], 0, 0.005)
+
+            BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, DigimonTTooltipText[i], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
+            BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, DigimonTTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
             BlzFrameSetTooltip(DigimonT[i], DigimonTTooltip[i])
-
-            DigimonTTooltipTitle[i] = BlzCreateFrameByType("TEXT", "name", DigimonTTooltip[i], "", 0)
-            BlzFrameSetPoint(DigimonTTooltipTitle[i], FRAMEPOINT_TOPLEFT, DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, 0.0075630, -0.012400)
-            BlzFrameSetPoint(DigimonTTooltipTitle[i], FRAMEPOINT_BOTTOMRIGHT, DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, -0.012437, 0.077600)
-            BlzFrameSetText(DigimonTTooltipTitle[i], "|cffFFCC00Title|r")
-            BlzFrameSetEnable(DigimonTTooltipTitle[i], false)
-            BlzFrameSetScale(DigimonTTooltipTitle[i], 1.14)
-            BlzFrameSetTextAlignment(DigimonTTooltipTitle[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
-
-            DigimonTTooltipDescription[i] = BlzCreateFrameByType("TEXT", "name", DigimonTTooltip[i], "", 0)
-            BlzFrameSetPoint(DigimonTTooltipDescription[i], FRAMEPOINT_TOPLEFT, DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, 0.0075630, -0.027400)
-            BlzFrameSetPoint(DigimonTTooltipDescription[i], FRAMEPOINT_BOTTOMRIGHT, DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, -0.012437, 0.032600)
-            BlzFrameSetText(DigimonTTooltipDescription[i], "|cffFFCC00Description|r")
-            BlzFrameSetEnable(DigimonTTooltipDescription[i], false)
-            BlzFrameSetScale(DigimonTTooltipDescription[i], 1.14)
-            BlzFrameSetTextAlignment(DigimonTTooltipDescription[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
-
-            DigimonTTooltipStatus[i] = BlzCreateFrameByType("TEXT", "name", DigimonTTooltip[i], "", 0)
-            BlzFrameSetPoint(DigimonTTooltipStatus[i], FRAMEPOINT_TOPLEFT, DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, 0.0075630, -0.077400)
-            BlzFrameSetPoint(DigimonTTooltipStatus[i], FRAMEPOINT_BOTTOMRIGHT, DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, -0.012437, 0.012600)
-            BlzFrameSetText(DigimonTTooltipStatus[i], "|cffFFCC00Status|r")
-            BlzFrameSetEnable(DigimonTTooltipStatus[i], false)
-            BlzFrameSetScale(DigimonTTooltipStatus[i], 1.14)
-            BlzFrameSetTextAlignment(DigimonTTooltipStatus[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
         end
 
         Text = BlzCreateFrameByType("TEXT", "name", StockedDigimonsMenu, "", 0)
@@ -355,9 +341,9 @@ do
         BlzFrameSetText(Store, "|cffFCD20DStore|r")
         BlzFrameSetScale(Store, 1.00)
         BlzFrameSetVisible(Store, false)
-        TriggerStore = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerStore, Store, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerStore, function ()
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, Store, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, function ()
             local p = GetTriggerPlayer()
             local bank = Bank[GetPlayerId(p)]
             StoreDigimon(bank, bank.pressed, true)
@@ -374,9 +360,9 @@ do
         BlzFrameSetText(Free, "|cffFCD20DFree|r")
         BlzFrameSetScale(Free, 1.00)
         BlzFrameSetEnable(Free, false)
-        TriggerFree = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerFree, Free, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerFree, function ()
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, Free, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, function ()
             if GetTriggerPlayer() == LocalPlayer then
                 BlzFrameSetFocus(StockedDigimonsMenu, false)
                 BlzFrameSetFocus(Warning, true)
@@ -403,9 +389,9 @@ do
         BlzFrameSetPoint(Yes, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.070000, 0.0050000)
         BlzFrameSetText(Yes, "|cffFCD20DYes|r")
         BlzFrameSetScale(Yes, 1.00)
-        TriggerYes = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerYes, Yes, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerYes, function ()
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, Yes, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, function ()
             local p = GetTriggerPlayer()
             local bank = Bank[GetPlayerId(p)]
             if p == LocalPlayer then
@@ -426,9 +412,9 @@ do
         BlzFrameSetPoint(No, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0050000)
         BlzFrameSetText(No, "|cffFCD20DNo|r")
         BlzFrameSetScale(No, 1.00)
-        TriggerNo = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerNo, No, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerNo, function ()
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, No, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, function ()
             if GetTriggerPlayer() == LocalPlayer then
                 BlzFrameCageMouse(Warning, false)
                 BlzFrameSetVisible(Warning, false)
@@ -465,7 +451,7 @@ do
 
     ---@param p player
     ---@param d Digimon
-    ---@return boolean
+    ---@return integer
     function SendToBank(p, d)
         local bank = Bank[GetPlayerId(p)]
         local index = -1

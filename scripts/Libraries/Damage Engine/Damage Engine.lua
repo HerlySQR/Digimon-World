@@ -29,8 +29,8 @@ OnGlobalInit(function() Damage = {}
     local _USE_GUI          = GlobalRemap
     
     local _USE_EXTRA        = _USE_GUI  --If you don't use DamageEventLevel/DamageEventAOE/SourceDamageEvent, set this to false
-    local _USE_ARMOR_MOD    = false      --If you do not modify nor detect armor/defense, set this to false
-    local _USE_MELEE_RANGE  = false      --If you do not detect melee nor ranged damage, set this to false
+    local _USE_ARMOR_MOD    = true      --If you do not modify nor detect armor/defense, set this to false
+    local _USE_MELEE_RANGE  = true      --If you do not detect melee nor ranged damage, set this to false
     
     local _LIMBO            = 16        --When manually-enabled recursion is enabled via Damage.recurion, the engine will never go deeper than LIMBO.
     local _DEATH_VAL        = 0.405     --In case M$ or Bliz ever change this, it'll be a quick fix here.
@@ -215,12 +215,12 @@ OnGlobalInit(function() Damage = {}
     local breakCheck = {}   ---@type function[]
     local override          ---@type boolean
     
-    breakCheck[_DAMAGING]   = function() return override or current.userType == _TYPE_PURE end
-    breakCheck[_ARMOR]      = function() return current.damage <= 0.00 end
+    breakCheck[_DAMAGING]   = function() return override or current and current.userType == _TYPE_PURE end
+    breakCheck[_ARMOR]      = function() return current and current.damage <= 0.00 end
     breakCheck[_LETHAL]     = function() return hasLethal and Damage.life > _DEATH_VAL end
     
     ---@return boolean
-    local function damageOrAfter() return current.damageType == DAMAGE_TYPE_UNKNOWN end
+    local function damageOrAfter() return current and current.damageType == DAMAGE_TYPE_UNKNOWN end
     breakCheck[_DAMAGED]    = damageOrAfter
     breakCheck[_AFTER]      = damageOrAfter
     
@@ -370,7 +370,7 @@ OnGlobalInit(function() Damage = {}
             GroupClear(Damage.targets)
         end
     end
-    
+
     ---Handle any desired armor modification.
     ---@param reset? boolean
     local function setArmor(reset)

@@ -14,7 +14,7 @@ do
 
     ---@param abil integer (raw-code)
     ---@param onCast function
-    ---@param event playerevent
+    ---@param event playerunitevent
     local function RegisterSpell(abil, onCast, event)
         if not trig then
             trig = CreateTrigger()

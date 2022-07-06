@@ -15,15 +15,17 @@ OnMapInit(function ()
         -- --
         Damage.apply(caster, target, damage, true, false, udg_Machine, DAMAGE_TYPE_NORMAL, WEAPON_TYPE_WHOKNOWS)
         -- Push the target
-        Knockback(
-            target,
-            math.atan(GetUnitY(target) - GetUnitY(caster), GetUnitX(target) - GetUnitX(caster)),
-            PushDist,
-            2000.,
-            "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl",
-            nil,
-            true
-        )
+        if not IsUnitType(target, UNIT_TYPE_GIANT) then
+            Knockback(
+                target,
+                math.atan(GetUnitY(target) - GetUnitY(caster), GetUnitX(target) - GetUnitX(caster)),
+                PushDist,
+                2000.,
+                "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl",
+                nil,
+                true
+            )
+        end
     end)
 
 end)

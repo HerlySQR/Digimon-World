@@ -23,7 +23,7 @@ OnMapInit(function ()
                 if IsUnitEnemy(u, owner) then
                     Damage.apply(caster, u, damage, true, false, udg_Beast, DAMAGE_TYPE_NORMAL, WEAPON_TYPE_WHOKNOWS)
                     -- Push the units
-                    if not IsUnitType(u, UNIT_TYPE_ANCIENT) then
+                    if not IsUnitType(u, UNIT_TYPE_GIANT) then
                         Knockback(
                             u,
                             math.atan(GetUnitY(u) - GetUnitY(caster), GetUnitX(u) - GetUnitX(caster)),

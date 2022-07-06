@@ -1,5 +1,5 @@
 do
-    local LocalPlayer
+    local LocalPlayer ---@type player
 
     ---@class Rank
     Rank = {
@@ -40,9 +40,10 @@ do
     ---@field rarity Rarity
     ---@field environment Environment
     Digimon = {
-        _instance = {}
+        _instance = {} ---@type Digimon[unit]
     }
     Digimon.__index = Digimon
+    Digimon.__name = "Digimon"
 
     ---Create an instantiated digimon
     ---@param p player
@@ -149,6 +150,11 @@ do
         return SetUnitPosition(self.root, x, y)
     end
 
+    ---@return real x, real y
+    function Digimon:getPos()
+        return GetUnitX(self.root), GetUnitY(self.root)
+    end
+
     function Digimon:hideInTheCorner()
         ShowUnitHide(self.root)
         SetUnitPosition(self.root, WorldBounds.maxX, WorldBounds.maxY)
@@ -173,7 +179,7 @@ do
     ---@param callback fun(d:Digimon)
     function Digimon.enumInRect(where, callback)
         ForUnitsInRect(where, function (u)
-            callback(Digimon.getInstance(u))
+            callback(Digimon._instance[u])
         end)
     end
 
@@ -183,7 +189,7 @@ do
     ---@param callback fun(d:Digimon)
     function Digimon.enumInRange(x, y, range, callback)
         ForUnitsInRange(x, y, range, function (u)
-            callback(Digimon.getInstance(u))
+            callback(Digimon._instance[u])
         end)
     end
 
@@ -252,12 +258,12 @@ do
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
         TriggerAddAction(t, function ()
             local killer = GetKillingUnit()
-            local target = Digimon.getInstance(GetDyingUnit())
+            local target = Digimon._instance[GetDyingUnit()]
 
             if target then
-                Digimon.killEvent:run(killer and Digimon.getInstance(killer), target)
-    
-                if target:getOwner() == Digimon.NEUTRAL or target:getOwner() == Digimon.PASSIVE then
+                Digimon.killEvent:run(Digimon._instance[killer] or killer, target)
+
+                if not IsUnitType(target.root, UNIT_TYPE_ANCIENT) and (target:getOwner() == Digimon.NEUTRAL or target:getOwner() == Digimon.PASSIVE) then
                     target:remove(6.)
                 end
             end
@@ -277,7 +283,7 @@ do
         local t = CreateTrigger()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_HERO_LEVEL)
         TriggerAddAction(t, function ()
-            local d = Digimon.getInstance(GetLevelingUnit())
+            local d = Digimon._instance[GetLevelingUnit()]
             if d then
                 Digimon.levelUpEvent:run(d)
             end
@@ -364,8 +370,8 @@ do
         TriggerRegisterVariableEvent(t, "udg_PreDamageEvent", EQUAL, 1.00)
         TriggerAddAction(t, function ()
             local info = {
-                source = Digimon.getInstance(udg_DamageEventSource),
-                target = Digimon.getInstance(udg_DamageEventTarget),
+                source = Digimon._instance[udg_DamageEventSource],
+                target = Digimon._instance[udg_DamageEventTarget],
                 amount = udg_DamageEventAmount
             }
 
@@ -386,8 +392,8 @@ do
         TriggerRegisterVariableEvent(t, "udg_AfterDamageEvent", EQUAL, 1.00)
         TriggerAddAction(t, function ()
             local info = {
-                source = Digimon.getInstance(udg_DamageEventSource),
-                target = Digimon.getInstance(udg_DamageEventTarget),
+                source = Digimon._instance[udg_DamageEventSource],
+                target = Digimon._instance[udg_DamageEventTarget],
                 amount = udg_DamageEventAmount
             }
 
@@ -396,7 +402,7 @@ do
             end
         end)
     end)
-
+ 
     -- Selection
 
     Digimon.selectionEvent = Event.create()
@@ -407,7 +413,7 @@ do
             TriggerRegisterPlayerSelectionEventBJ(t, Player(i), true)
         end
         TriggerAddAction(t, function ()
-            local d = Digimon.getInstance(GetTriggerUnit())
+            local d = Digimon._instance[GetTriggerUnit()]
             if d then
                 Digimon.selectionEvent:run(GetTriggerPlayer(), d)
             end
@@ -438,7 +444,7 @@ do
 
     OnGlobalInit(function ()
         Digimon.NEUTRAL = Player(12)
-        Digimon.PASSIVE = Player(PLAYER_NEUTRAL_AGGRESSIVE)
+        Digimon.PASSIVE = Player(PLAYER_NEUTRAL_PASSIVE)
     end)
 
     OnMapInit(function ()
@@ -451,7 +457,7 @@ do
 
         -- Change the environment when double-click a Digimon
         Digimon.doubleclickEvent(function (p, d)
-            if d.environment ~= GetPlayerEnviroment(p) then
+            if d:getOwner() == p and  d.environment ~= GetPlayerEnviroment(p) then
                 d.environment:apply(p)
                 if p == LocalPlayer then
                     PanCameraToTimed(d:getX(), d:getY(), 0)

@@ -74,7 +74,7 @@ OnMapInit(function ()
     end
     TriggerAddAction(enterTrigger, function ()
         if GetEnteringUnit() ~= boss then
-            IssuePointOrder(boss, Orders.attackground, GetUnitX(GetEnteringUnit()), GetUnitY(GetEnteringUnit()))
+            IssuePointOrderById(boss, Orders.attackground, GetUnitX(GetEnteringUnit()), GetUnitY(GetEnteringUnit()))
             -- Start the check timer
             if not currentTimer then
                 currentTimer = Timed.echo(BossFightActions, INTERVAL)
@@ -98,14 +98,14 @@ OnMapInit(function ()
     end)
 
     -- The chances of casting increases when has low hp
-    --[[local halfHP = BlzGetUnitMaxHP(boss) / 2
+    local halfHP = BlzGetUnitMaxHP(boss) / 2
     lowHP = CreateTrigger()
     TriggerRegisterUnitLifeEvent(lowHP, boss, LESS_THAN_OR_EQUAL, halfHP)
-    TriggerAddAction(function ()
+    TriggerAddAction(lowHP, function ()
         INTERVAL = 1.
         currentTimer:remove()
         currentTimer = Timed.echo(BossFightActions, INTERVAL)
         DisableTrigger(lowHP)
-    end)]]
+    end)
 
 end)

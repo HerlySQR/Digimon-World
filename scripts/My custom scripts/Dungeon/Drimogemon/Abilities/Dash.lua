@@ -31,14 +31,16 @@ OnMapInit(function ()
                             affected:addSingle(u)
                             Damage.apply(caster, u, DAMAGE, true, false, udg_Dark, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
                             -- Knockback
-                            Knockback(
-                                u,
-                                math.atan(GetUnitY(u) - GetUnitY(caster), GetUnitX(u) - GetUnitX(caster)),
-                                KB_DIST,
-                                500.,
-                                "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl",
-                                nil
-                            )
+                            if not IsUnitType(u, UNIT_TYPE_GIANT) then
+                                Knockback(
+                                    u,
+                                    math.atan(GetUnitY(u) - GetUnitY(caster), GetUnitX(u) - GetUnitX(caster)),
+                                    KB_DIST,
+                                    500.,
+                                    "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl",
+                                    nil
+                                )
+                            end
                         end
                     end)
                 end
