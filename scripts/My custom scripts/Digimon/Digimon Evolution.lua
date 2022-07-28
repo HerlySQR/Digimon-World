@@ -1,14 +1,16 @@
 do
-    local EvolveDialog = {} ---@type dialog[]
-    local EvolveClicked = __jarray(-1) ---@type integer[]
-    local EvolveOption = {} ---@type button[][]
+    local EvolveDialog = {} ---@type table<player, dialog>
+    local EvolveClicked = __jarray(-1) ---@type table<player, integer>
+    local EvolveOption = {} ---@type table<player, button>[]
 
-    EvolveAbil = CreateFourCCTable(true)
-    local EvolveReq = CreateFourCCTable(true)
+    -- Evolution abilities
+
+    EvolveAbil = FourCC('A02H')
+    EvolveAbilDis = FourCC('A02I')
 
     -- Register when a digimon enters/leaves in a rect for evolution
 
-    local rectsE = {} ---@type trigger[rect]
+    local rectsE = {} ---@type table<rect, trigger>
 
     ---@param r rect
     ---@param callback fun(evolve: Digimon)
@@ -27,7 +29,7 @@ do
         end)
     end
 
-    local rectsL = {} ---@type trigger[rect]
+    local rectsL = {} ---@type table<rect, trigger>
 
     ---@param r rect
     ---@param callback fun(evolve: Digimon)
@@ -48,7 +50,7 @@ do
 
     -- Register when a digimon acquires/loses an item for evolution
 
-    local itemsP = {} ---@type trigger[integer]
+    local itemsP = {} ---@type table<integer, trigger>
 
     ---@param m integer
     ---@param callback fun(evolve: Digimon)
@@ -68,7 +70,7 @@ do
         end)
     end
 
-    local itemsD = {} ---@type trigger[integer]
+    local itemsD = {} ---@type table<integer, trigger>
 
     ---@param m integer
     ---@param callback fun(evolve: Digimon)
@@ -103,8 +105,8 @@ do
         end
         set:addSingle(toEvolve)
         if set:size() == 1 then
-            local index = GetBankIndex(evolve:getOwner(), evolve) + 1
-            SetPlayerTechResearched(evolve:getOwner(), EvolveReq[index], 1)
+            evolve:removeAbility(EvolveAbilDis)
+            evolve:addAbility(EvolveAbil)
         end
     end
 
@@ -117,16 +119,16 @@ do
         end
         set:removeSingle(toEvolve)
         if set:isEmpty() then
-            local index = GetBankIndex(evolve:getOwner(), evolve) + 1
-            SetPlayerTechResearched(evolve:getOwner(), EvolveReq[index], 0)
+            evolve:removeAbility(EvolveAbil)
+            evolve:addAbility(EvolveAbilDis)
         end
     end
 
     ---@param evolve Digimon
     local function ClearPossibleEvolutions(evolve)
         PossibleEvolution[evolve]:clear()
-        local index = GetBankIndex(evolve:getOwner(), evolve) + 1
-        SetPlayerTechResearched(evolve:getOwner(), EvolveReq[index], 0)
+        evolve:removeAbility(EvolveAbil)
+        evolve:addAbility(EvolveAbilDis)
     end
 
     ---The conditions to evolve (to ignore level just set the param level to 0)
@@ -184,27 +186,24 @@ do
 
         -- Case 4: Level, place and stone
         if place and stone then
-            local newActive = function (evolve)
+            Digimon.levelUpEvent(function (evolve)
                 active(evolve, function (evo)
                     return RectContainsCoords(place, evo:getX(), evo:getY()) and UnitHasItemOfTypeBJ(evo.root, stone)
                 end)
-            end
-            Digimon.levelUpEvent(newActive)
+            end)
 
-            newActive = function (evolve)
+            RegisterEnterRect(place, function (evolve)
                 active(evolve, function (evo)
                     return UnitHasItemOfTypeBJ(evo.root, stone)
                 end)
-            end
-            RegisterEnterRect(place, newActive)
+            end)
             RegisterLeaveRect(place, deactive)
 
-            newActive = function (evolve)
+            RegisterItemPick(stone, function (evolve)
                 active(evolve, function (evo)
                     return RectContainsCoords(place, evo:getX(), evo:getY())
                 end)
-            end
-            RegisterItemPick(stone, newActive)
+            end)
             RegisterItemDrop(stone, deactive)
         end
 
@@ -217,67 +216,46 @@ do
             EvolveOption[p] = {}
         end
 
-        -- Evolution abilities
-
-        EvolveAbil[1] = 'A02H'
-        EvolveAbil[2] = 'A02I'
-        EvolveAbil[3] = 'A02J'
-        EvolveAbil[4] = 'A02K'
-        EvolveAbil[5] = 'A02L'
-        EvolveAbil[6] = 'A02M'
-
-        EvolveReq[1] = 'R000'
-        EvolveReq[2] = 'R001'
-        EvolveReq[3] = 'R002'
-        EvolveReq[4] = 'R003'
-        EvolveReq[5] = 'R004'
-        EvolveReq[6] = 'R005'
-
         -- Press the evolve button
-        for i = 1, 6 do
-            RegisterSpellEffectEvent(EvolveAbil[i], function ()
-                local u = GetSpellAbilityUnit()
-                local p = GetOwningPlayer(u)
-                EvolveClicked[p] = i
+        RegisterSpellEffectEvent(EvolveAbil, function ()
+            local u = GetSpellAbilityUnit()
+            local p = GetOwningPlayer(u)
+            EvolveClicked[p] = GetBankIndex(p, Digimon.getInstance(u))
 
-                -- Update dialog
-                DialogClear(EvolveDialog[p])
-                DialogSetMessage(EvolveDialog[p], "What digimon you choose for " .. GetUnitName(u) .. "?")
-                EvolveOption[p] = {}
+            -- Update dialog
+            DialogClear(EvolveDialog[p])
+            DialogSetMessage(EvolveDialog[p], "What digimon you choose for " .. GetHeroProperName(u) .. "?")
+            EvolveOption[p] = {}
 
-                local set = PossibleEvolution[Digimon.getInstance(u)]
-                if set then
-                    local j = 0
-                    for v in set:elements() do
-                        j = j + 1
-                        EvolveOption[p][j] = DialogAddButton(EvolveDialog[p], GetObjectName(v), 0)
-                    end
+            local set = PossibleEvolution[Digimon.getInstance(u)]
+            if set then
+                local j = 0
+                for v in set:elements() do
+                    j = j + 1
+                    local u2 = GetRecycledHero(Digimon.PASSIVE, v, 0, 0, 0)
+                    EvolveOption[p][j] = DialogAddButton(EvolveDialog[p], GetHeroProperName(u2), 0)
+                    RecycleHero(u2)
                 end
-                DialogAddButton(EvolveDialog[p], "Cancel", 0)
+            end
+            DialogAddButton(EvolveDialog[p], "Cancel", 0)
 
-                DialogDisplay(p, EvolveDialog[p], true)
-            end)
-        end
+            DialogDisplay(p, EvolveDialog[p], true)
+        end)
 
         -- Add the evolution ability to the new digimon
         local function AddAbility(new)
-            -- The delay is to wait the digimon was send to the bank
-            Timed.call(function ()
-                local p = new:getOwner()
-                if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
-                    local index = GetBankIndex(new:getOwner(), new) + 1
-                    new:addAbility(EvolveAbil[index])
-                end
-            end)
+            local p = new:getOwner()
+            if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
+                new:addAbility(EvolveAbilDis)
+            end
         end
         Digimon.createEvent(AddAbility)
         Digimon.capturedEvent(AddAbility)
 
         -- Remove the evolution ability to destroyed digimon
         Digimon.destroyEvent(function (old)
-            for j = 1, 6 do
-                old:removeAbility(EvolveAbil[j])
-            end
+            old:removeAbility(EvolveAbil)
+            old:removeAbility(EvolveAbilDis)
         end)
 
         -- Evolve Run
@@ -288,7 +266,7 @@ do
             local t = CreateTrigger()
             TriggerRegisterDialogEvent(t, EvolveDialog[p])
             TriggerAddAction(t, function ()
-                local evolve = GetBankDigimon(p, EvolveClicked[p] - 1)
+                local evolve = GetBankDigimon(p, EvolveClicked[p])
 
                 -- Get clicked button
                 local index = 0
@@ -306,28 +284,25 @@ do
                 end
 
                 ClearPossibleEvolutions(evolve)
-
+                local time = evolve.onCombat and 2. or 4.
                 local u = evolve.root
-                --local camera = GetCurrentCameraSetup()
 
                 local cur = Transmission.create(Force(p))
                 cur.isSkippable = false
-                cur:AddLine(u, nil, GetHeroProperName(u), nil, "is digievolving into...", Transmission.SET, 2.00, true)
+                cur:AddLine(u, nil, GetHeroProperName(u), nil, "is digievolving into...", Transmission.SET, time, true)
                 cur:AddActions(function ()
                     SetUnitInvulnerable(u, true)
                     PauseUnit(u, true)
-                    DestroyEffectTimed(AddSpecialEffect("Digievolution1.mdx", GetUnitX(u), GetUnitY(u)), 4.00) -- If the unit is hidden, the effect won't be shown
+                    DestroyEffectTimed(AddSpecialEffect("Digievolution1.mdx", GetUnitX(u), GetUnitY(u)), time * 2.)
 
                     evolve:evolveTo(toEvolve) -- Here I added the more important things
                     u = evolve.root -- Have to refresh
-                    DestroyEffectTimed(AddSpecialEffectTarget("origin", u, "Digievolution2.mdx"), 3.00)
+                    DestroyEffectTimed(AddSpecialEffectTarget("origin", u, "Digievolution2.mdx"), time * 1.5)
 
-                    cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u), Transmission.SET, 2.00, true)
+                    cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u), Transmission.SET, time, true)
                 end)
                 cur:AddEnd(function ()
                     PauseUnit(u, false)
-
-                    --SetUnitColor(u, data.color)
                 end)
                 cur:Start()
             end)

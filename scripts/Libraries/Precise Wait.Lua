@@ -1,5 +1,5 @@
 if AddHook then -- https://www.hiveworkshop.com/threads/hook.339153
-    --Precise Wait v1.4.0.1
+    --Precise Wait v1.4.0.2
     --This changes the default functionality of TriggerAddAction, PolledWait
     --and (because they don't work with manual coroutines) TriggerSleepAction and SyncSelections.
 
@@ -39,9 +39,9 @@ if AddHook then -- https://www.hiveworkshop.com/threads/hook.339153
     oldAdd = AddHook("TriggerAddAction", function(trig, func)
         if GlobalRemap and not init then
             init = true
-            GlobalRemap("udg_WaitIndex", function() return coroutine.running() end)
+            GlobalRemap("udg_WaitIndex", coroutine.running)
         end
-        oldAdd(trig, coroutine.wrap(func))
+        return oldAdd(trig, function() coroutine.resume(coroutine.create(func)) end)
     end, _ACTION_PRIORITY)
     
 end --End of library PolledWait

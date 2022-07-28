@@ -26,11 +26,14 @@ do
     SLOW_SPELL = FourCC('A02G')
     SLOW_ORDER = Orders.slow
 
+    PURGE_SPELL = FourCC('A034')
+    PURGE_ORDER = Orders.purge
+
     -- Remove sleep when is attacked
     local SLEEP_BUFF = FourCC('B005')
     OnMapInit(function ()
         Digimon.postDamageEvent(function (info)
-            if info.target:hasAbility(SLEEP_BUFF) then
+            if info.target:hasAbility(SLEEP_BUFF) and not udg_IsDamageCode then
                 info.target:removeAbility(SLEEP_BUFF)
             end
         end)

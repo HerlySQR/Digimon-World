@@ -1,0 +1,8 @@
+"UI\Widgets\Glues\GlueScreen-Pulldown-Arrow.blp"
+"UI\Widgets\Glues\GlueScreen-Pulldown-BackdropBackground.blp"
+
+
+
+Frame "EDITBOX" "Test" {
+
+}

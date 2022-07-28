@@ -39,9 +39,11 @@ do
     ---@field rank Rank
     ---@field rarity Rarity
     ---@field environment Environment
+    ---@field onCombat boolean
     Digimon = {
-        _instance = {} ---@type Digimon[unit]
+        _instance = {} ---@type table<unit, Digimon>
     }
+
     Digimon.__index = Digimon
     Digimon.__name = "Digimon"
 
@@ -222,6 +224,7 @@ do
             end
 
             self.environment = Environment.allMap
+            self.onCombat = false
 
             Digimon._instance[u] = self
         end
@@ -233,7 +236,6 @@ do
 
     -- Destroy
 
-    ---@param func fun(d:Digimon)
     Digimon.destroyEvent = Event.create()
 
     function Digimon:destroy()
@@ -250,7 +252,6 @@ do
 
     -- Kill
 
-    ---@param func fun(killer:Digimon, dead:Digimon)
     Digimon.killEvent = Event.create()
 
     OnMapInit(function ()
@@ -272,7 +273,6 @@ do
 
     -- Captured
 
-    ---@param func fun(captor:Digimon, captured:Digimon)
     Digimon.capturedEvent = Event.create() -- I prefer running it in the Digimon Capture script
 
     -- Level Up
@@ -303,7 +303,6 @@ do
         local paused = IsUnitPaused(old)
         local select = IsUnitSelected(old, LocalPlayer)
         local items = {}
-        local index = GetBankIndex(self:getOwner(), self) + 1
 
         for i = 0, 5 do
             items[i] = UnitItemInSlot(old, i)
@@ -351,8 +350,8 @@ do
             PauseUnit(self.root, true)
         end
 
-        UnitRemoveAbility(old, EvolveAbil[index])
-        UnitAddAbility(self.root, EvolveAbil[index])
+        UnitRemoveAbility(old, EvolveAbil)
+        UnitAddAbility(self.root, EvolveAbilDis)
 
         RecycleHero(old)
 
@@ -402,7 +401,46 @@ do
             end
         end)
     end)
- 
+
+    -- On/Off combat
+
+    Digimon.onCombatEvent = Event.create()
+    Digimon.offCombatEvent = Event.create()
+
+    OnTrigInit(function ()
+        local onCombat = __jarray(0) ---@type table<Digimon, integer>
+
+        Digimon.postDamageEvent(function (info)
+            local source = info.source ---@type Digimon
+            source.onCombat = true
+            Digimon.onCombatEvent:run(source)
+            onCombat[source] = 3.
+            Timed.echo(function ()
+                local cd = onCombat[source] - 1
+                onCombat[source] = cd
+                if cd <= 0 then
+                    source.onCombat = false
+                    Digimon.offCombatEvent:run(source)
+                    return true
+                end
+            end)
+
+            local target = info.target ---@type Digimon
+            target.onCombat = true
+            Digimon.onCombatEvent:run(target)
+            onCombat[target] = 3.
+            Timed.echo(function ()
+                local cd = onCombat[target] - 1
+                onCombat[target] = cd
+                if cd <= 0 then
+                    target.onCombat = false
+                    Digimon.offCombatEvent:run(target)
+                    return true
+                end
+            end)
+        end)
+    end)
+
     -- Selection
 
     Digimon.selectionEvent = Event.create()
@@ -431,7 +469,7 @@ do
         Digimon.selectionEvent(function (p, d)
             clicks[d] = clicks[d] + 1
             Timed.call(delay, function ()
-                clicks[d] = clicks[d] > 0 and clicks[d] - 1 or 0
+                clicks[d] = math.max(clicks[d] - 1, 0)
             end)
             if clicks[d] == 2 then
                 clicks[d] = 0
@@ -448,9 +486,14 @@ do
     end)
 
     OnMapInit(function ()
+        local exclude = Set.create(
+            FourCC('n00A') -- Digispirit
+        )
         -- Add the current digimons in the map
         ForUnitsInRect(bj_mapInitialPlayableArea, function (u)
-            Digimon.add(u)
+            if not exclude:contains(GetUnitTypeId(u)) then
+                Digimon.add(u)
+            end
         end)
 
         LocalPlayer = GetLocalPlayer()

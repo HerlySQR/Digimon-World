@@ -1,4 +1,4 @@
-if LinkedList and Timed then
+if LinkedList and Timed and AddHook then
     -- System based on UnitRecycler https://www.hiveworkshop.com/threads/286701/
     -- but with heros
 
@@ -36,6 +36,7 @@ if LinkedList and Timed then
     -- don't need it.
     local function HeroRecyclerResets(u)
         SetHeroXP(u, 0, false)
+        SetHeroLevel(u, 1, false)
         SetUnitScale(u, originalScale[u], 0., 0.)
         SetUnitVertexColor(u, 255, 255, 255, 255)
         SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
@@ -87,20 +88,15 @@ if LinkedList and Timed then
     end
 
     -- This is needed to store the original size and don't have conflict with the resets
-    local oldCreateUnit = CreateUnit
-    ---@param id player
-    ---@param unitid integer
-    ---@param x real
-    ---@param y real
-    ---@param face real
-    ---@return unit
-    function CreateUnit(id, unitid, x, y, face)
+    local oldCreateUnit
+
+    oldCreateUnit = AddHook("CreateUnit", function (id, unitid, x, y, face)
         local u = oldCreateUnit(id, unitid, x, y, face)
         if UnitTypeFilter(u) then
             originalScale[u] = BlzGetUnitRealField(u, UNIT_RF_SCALING_VALUE)
         end
         return u
-    end
+    end)
 
     ---Stores the hero to use it later and return if the process was successful
     ---you can add a delay

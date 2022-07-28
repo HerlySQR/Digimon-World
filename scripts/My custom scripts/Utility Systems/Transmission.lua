@@ -6,10 +6,10 @@ if LinkedList and
     -- See the API here https://www.hiveworkshop.com/threads/vjass-lua-unit-transmission.332814/
 
     -- A functions to use
-    local AllInstances = {}
-    local WhatForce = {}
-    local InGame = nil
-    local LocalPlayer = nil
+    local AllInstances = {} ---@type table<player, Transmission[]>
+    local WhatForce = {} ---@type table<player, force>
+    local InGame = nil ---@type force
+    local LocalPlayer = nil ---@type player
 
     ---@param force force
     ---@return boolean
@@ -204,25 +204,17 @@ if LinkedList and
     function Transmission:Resume()
         self._paused = false
         ResumeTimer(self._t)
-        --[[ This don't work correctly for some reason
-        if self._played then
-            if IsPlayerInForce(LocalPlayer, self.toForce) then
-                StartSound(self._played)
-            end
-            SetSoundOffsetBJ(TimerGetElapsed(self._t), self._played) -- In case of desync
-        end
-        ]]
     end
 
     ---Pauses the transmission and maybe resume it after an asigned seconds
     ---the boolean is to stop the sound with a fade out
-    ---@param fadeOut real
-    ---@param delay? boolean
+    ---@param fadeOut boolean
+    ---@param delay? real
     function Transmission:Pause(fadeOut, delay)
         self._paused = true
         PauseTimer(self._t)
         StopSound(self._played, false, fadeOut)
-        if delay and delay > 0 then
+        if delay then
             Timed.call(delay, function () self:Resume() end)
         end
     end
@@ -238,7 +230,7 @@ if LinkedList and
         self:_what_call()
     end
 
-    ---Adds action that will run when the transmission ends.
+    ---Adds actions that will run when the transmission ends.
     ---They will run even if the transmission was skipped.
     ---@param func fun(t?: Transmission)
     function Transmission:AddEnd(func)
@@ -262,6 +254,7 @@ if LinkedList and
     ---   - `boolean WillWait` (`nil` value false)
     ---
     ---In case you didn't add a parameter, the default values will be asign.
+    ---
     ---The returned value is a table with the fields previously explained
     ---@return table
     function Transmission:AddLine(...)
@@ -341,8 +334,8 @@ if LinkedList and
 
     ---Adds an actions, you can just add a delay or an actions.
     ---The returned value is a table with the fields:
-    ---   - real Delay
-    ---   - fun(t: Transmission) Actions
+    ---   - `real` Delay
+    ---   - `fun(t: Transmission)` Actions
     ---@param delay real|fun(t?: Transmission)
     ---@param func? fun(t?: Transmission)
     ---@return table
@@ -410,7 +403,7 @@ if LinkedList and
 
     ---Pause all the started transmissions, ideal for time-stop events
     ---the boolean is to stop the sound with a fade out
-    ---@param fadeOut boolean
+    ---@param fadeOut? boolean
     function Transmission.PauseAll(fadeOut)
         for node in All:loop() do
             node:Pause(fadeOut)
@@ -427,7 +420,6 @@ if LinkedList and
     ---Creates and runs a transmission with just 1 line, the expected values are:
     ---
     ---`[player toPlayer or force toForce], (unit whichUnit or integer unittype), playercolor whichColor, string unitName, sound soundHandle, string message, integer timeType, real timeVal`
-    ---@param ... unknown
     ---@return Transmission?
     function Transmission.Simple(...)
         local new = nil

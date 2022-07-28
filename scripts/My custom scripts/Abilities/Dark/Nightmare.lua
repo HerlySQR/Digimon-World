@@ -26,7 +26,7 @@ OnMapInit(function ()
         local dmg = damage * DmgPerSecFactor
         Timed.echo(function (node)
             if node.elapsed < 5. then
-                Damage.apply(caster, target, dmg, true, false, udg_Dark, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
+                Damage.apply(caster, target, dmg, true, false, udg_Dark, DAMAGE_TYPE_MIND, WEAPON_TYPE_WHOKNOWS)
             else
                 return true
             end

@@ -43,23 +43,11 @@ OnMapInit(function ()
             if IsUnitEnemy(u, missile.owner) and GetUnitAbilityLevel(u, LOCUST_ID) == 0 then
                 Damage.apply(caster, u, damage, true, false, udg_Water, DAMAGE_TYPE_COLD, WEAPON_TYPE_WHOKNOWS)
                 -- Ice effect
-                DummyCast(missile.owner,
-                          GetUnitX(caster), GetUnitY(caster),
-                          ICE_SPELL,
-                          ICE_ORDER,
-                          1,
-                          CastType.TARGET,
-                          u)
+                DummyCast(missile.owner, GetUnitX(caster), GetUnitY(caster), ICE_SPELL, ICE_ORDER, 1, CastType.TARGET, u)
                 -- Freeze effect
                 local chance = math.random(0, 100)
                 if chance <= FreezeChance then
-                    DummyCast(missile.owner,
-                              GetUnitX(caster), GetUnitY(caster),
-                              FREEZE_SPELL,
-                              FREEZE_ORDER,
-                              1,
-                              CastType.TARGET,
-                              u)
+                    DummyCast(missile.owner, GetUnitX(caster), GetUnitY(caster), FREEZE_SPELL, FREEZE_ORDER, 1, CastType.TARGET, u)
                 end
             end
         end

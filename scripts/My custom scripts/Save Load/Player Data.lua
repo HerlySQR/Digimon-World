@@ -73,8 +73,8 @@ do
 
         udg_SaveLoadDigimons = {}
         udg_SaveLoadInventories = {}
-        udg_SaveLoadLevels = {}
-        udg_SaveLoadExps = {}
+        udg_SaveLoadLevels = __jarray(0)
+        udg_SaveLoadExps = __jarray(0)
     end
 
     ---After store the data use this function from the slot to use them

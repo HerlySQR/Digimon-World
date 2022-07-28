@@ -9,14 +9,14 @@ do
     Environment = {}
     Environment.__index = Environment
 
-    local used = {}
+    local used = {} ---@type table<string, Environment>
 
     ---The camera bounds is not the same as the region that appears in the minimap
     ---@param place rect
     ---@return real x1, real y1, real x2, real y2, real x3, real y3, real x4, real y4
     local function FixedCameraBounds(place)
         local minX = GetRectMinX(place) + 512
-        local maxX = GetRectMaxX(place) - 384
+        local maxX = GetRectMaxX(place) - 512
         local minY = GetRectMinY(place) + 256
         local maxY = GetRectMaxY(place) - 256
         return minX, minY, minX, maxY, maxX, maxY, maxX, minY
@@ -42,15 +42,22 @@ do
         end
     end
 
-    local Enviroments = {} ---@type Environment[player]
+    ---Returns the enviroment that has the specified name
+    ---@param name string
+    ---@return Environment
+    function Environment.get(name)
+        return used[name] or Environment.allMap
+    end
+
+    local Environments = {} ---@type table<player, Environment>
 
     ---@param p player
     ---@return Environment
     function GetPlayerEnviroment(p)
-        return Enviroments[p]
+        return Environments[p]
     end
 
-    local InTranssition = __jarray(false) ---@type boolean[player]
+    local InTranssition = __jarray(false) ---@type table<player, boolean>
 
     ---This function should be in a "if player == GetLocalPlayer() then" block
     ---@param env Environment
@@ -61,14 +68,25 @@ do
         if env.name ~= "" then
             print("|cffffff00[" .. env.name .. "]|r")
         end
+        -- Prevent bad camera bounds if the player has the camera rotated
+        local rotation = GetCameraField(CAMERA_FIELD_ROTATION)*bj_RADTODEG
+        SetCameraField(CAMERA_FIELD_ROTATION, 90, 0)
         SetCameraBounds(FixedCameraBounds(env.place))
+        SetCameraField(CAMERA_FIELD_ROTATION, rotation, 0)
+
         BlzChangeMinimapTerrainTex(env.minimap)
     end
 
-    ---@param env Environment
+    ---@param env Environment|string
     ---@param p player
     ---@param fade? boolean
     function Environment.apply(env, p, fade)
+        if type(env) == "string" then
+            env = used[env]
+        end
+        if Environments[p] == env then
+            return
+        end
         if fade then
             if p == LocalPlayer then
                 FadeOut("ReplaceableTextures\\CameraMasks\\Black_mask.blp", 0.25)
@@ -85,7 +103,7 @@ do
                 internalApply(env)
             end
         end
-        Enviroments[p] = env
+        Environments[p] = env
     end
 
     ---@param texture string

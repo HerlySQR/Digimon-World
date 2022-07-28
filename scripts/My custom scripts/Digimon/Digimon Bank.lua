@@ -1,6 +1,14 @@
 do
     local MAX_STOCK = 6
 
+    ---@class Bank
+    ---@field stocked Digimon[]
+    ---@field inUse Digimon[]
+    ---@field pressed integer
+    ---@field p player
+    ---@field main Digimon
+    ---@field spawnPoint Vec2
+    ---@field allDead boolean
     local Bank = {}
     local LocalPlayer = nil ---@type player
 
@@ -22,29 +30,24 @@ do
         end
     end)
 
-    local onCombat = __jarray(0) ---@type real[]
-
-    OnMapInit(function ()
-        Digimon.postDamageEvent(function (info)
-            onCombat[info.target] = 3.
-            Timed.echo(function ()
-                local cd = onCombat[info.target] - 1
-                onCombat[info.target] = cd
-                if cd <= 0 then
-                    return true
-                end
-            end)
-        end)
-    end)
-
     -- Conditions
 
+    ---@param bank Bank
+    ---@return boolean
     local function UseDigimonConditions(bank)
+        if bank.pressed == -1 then
+            return false
+        end
         return GetDigimonCooldown(bank.stocked[bank.pressed]) <= 0
     end
 
+    ---@param bank Bank
+    ---@return boolean
     local function StoreDigimonConditions(bank)
-        if onCombat[bank.stocked[bank.pressed]] > 0 then
+        if bank.pressed == -1 then
+            return false
+        end
+        if bank.stocked[bank.pressed].onCombat then
             return false
         end
         local max = 0
@@ -59,10 +62,14 @@ do
         return true
     end
 
+    ---@param bank Bank
+    ---@return boolean
     local function FreeDigimonConditions(bank)
         return GetDigimonCount(bank.p) > 1
     end
 
+    ---@param bank Bank
+    ---@return boolean
     local function SearchMain(bank)
         for i = 0, MAX_STOCK - 1 do
             if bank.inUse[i] then
@@ -74,7 +81,11 @@ do
         return false
     end
 
-    -- Returns true if the player is using this Digimon
+    ---Returns true if the player is using this Digimon
+    ---@param bank Bank
+    ---@param index integer
+    ---@param hide boolean
+    ---@return boolean
     local function StoreDigimon(bank, index, hide)
         local d = bank.inUse[index] ---@type Digimon
         if d then
@@ -91,7 +102,10 @@ do
         return false
     end
 
-    -- Returns true if the slot has a digimon avaible to summon
+    ---Returns true if the slot has a digimon avaible to summon
+    ---@param bank Bank
+    ---@param index integer
+    ---@return boolean
     local function Avaible(bank, index)
         return index ~= -1 and bank.stocked[index] ~= nil and bank.inUse[index] == nil
     end
@@ -431,10 +445,12 @@ do
         Timed.echo(function ()
             for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
                 local bank = Bank[i]
-                if bank.p == LocalPlayer then
-                    BlzFrameSetEnable(Summon, UseDigimonConditions(bank) and Avaible(bank, bank.pressed))
-                    BlzFrameSetEnable(Store, StoreDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
-                    BlzFrameSetEnable(Free, FreeDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
+                if GetDigimonCount(bank.p) > 0 then
+                    if bank.p == LocalPlayer then
+                        BlzFrameSetEnable(Summon, UseDigimonConditions(bank) and Avaible(bank, bank.pressed))
+                        BlzFrameSetEnable(Store, StoreDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
+                        BlzFrameSetEnable(Free, FreeDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
+                    end
                 end
             end
         end, 0.03125)
@@ -555,7 +571,7 @@ do
         Digimon.killEvent(function (_, dead)
             local p = dead:getOwner()
             if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
-                local bank = Bank[GetPlayerId(p)]
+                local bank = Bank[GetPlayerId(p)] ---@type Bank
                 local allDead = true
                 local index = -1
                 for i = 0, 5 do

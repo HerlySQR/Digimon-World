@@ -61,12 +61,15 @@ do
     ---@param x real
     ---@param y real
     ---@param radius real
+    ---@param matching? fun(u: unit): boolean
     ---@param includeLocust? boolean
     ---@return unit
-    function GetRandomUnitOnRange(x, y, radius, includeLocust)
+    function GetRandomUnitOnRange(x, y, radius, matching, includeLocust)
         local units = {}
         ForUnitsInRange(x, y, radius, function (u)
-            table.insert(units, u)
+            if not matching or matching(u) then
+                table.insert(units, u)
+            end
         end, includeLocust)
         return units[math.random(#units)]
     end

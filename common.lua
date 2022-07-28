@@ -2,6 +2,7 @@
 --  Native types. All native functions take extended handle types when
 --  possible to help prevent passing bad values to native functions
 --  all reference counted objects
+
 ---@class  real:number
 ---@class  code:function
 ---@class  handle
