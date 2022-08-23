@@ -403,4 +403,11 @@ do
         windwalk				= 852129,
         wispharvest				= 852214
     }
+
+    setmetatable(Orders, {
+        -- If you wanna get an unregistered order, it throws an error
+        __index = function (t, k)
+            error("Invalid order", 2)
+        end
+    })
 end

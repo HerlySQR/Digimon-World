@@ -4,9 +4,9 @@ do
     local ENUM_GROUP = CreateGroup()
     local LOCUST_ID = FourCC('Aloc')
 
-    ---@param x real
-    ---@param y real
-    ---@param radius real
+    ---@param x number
+    ---@param y number
+    ---@param radius number
     ---@param callback fun(u:unit)
     ---@param includeLocust? boolean
     function ForUnitsInRange(x, y, radius, callback, includeLocust)
@@ -58,9 +58,9 @@ do
         DestroyBoolExpr(be)
     end
 
-    ---@param x real
-    ---@param y real
-    ---@param radius real
+    ---@param x number
+    ---@param y number
+    ---@param radius number
     ---@param matching? fun(u: unit): boolean
     ---@param includeLocust? boolean
     ---@return unit

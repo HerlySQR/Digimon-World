@@ -37,7 +37,7 @@ if AddHook then -- https://www.hiveworkshop.com/threads/hook.339153
 
     local oldAdd, init
     oldAdd = AddHook("TriggerAddAction", function(trig, func)
-        if GlobalRemap and not init then
+        if rawget(_G, "GlobalRemap") and not init then
             init = true
             GlobalRemap("udg_WaitIndex", coroutine.running)
         end

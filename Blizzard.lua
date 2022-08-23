@@ -5,38 +5,38 @@
 ---  Constants
 --- 
 ---  Misc constants
-bj_PI = 3.14159	---@type real	
-bj_E = 2.71828	---@type real	
-bj_CELLWIDTH = 128.0	---@type real	
-bj_CLIFFHEIGHT = 128.0	---@type real	
-bj_UNIT_FACING = 270.0	---@type real	
-bj_RADTODEG = 180.0 / bj_PI	---@type real	
-bj_DEGTORAD = bj_PI / 180.0	---@type real	
-bj_TEXT_DELAY_QUEST = 20.00	---@type real	
-bj_TEXT_DELAY_QUESTUPDATE = 20.00	---@type real	
-bj_TEXT_DELAY_QUESTDONE = 20.00	---@type real	
-bj_TEXT_DELAY_QUESTFAILED = 20.00	---@type real	
-bj_TEXT_DELAY_QUESTREQUIREMENT = 20.00	---@type real	
-bj_TEXT_DELAY_MISSIONFAILED = 20.00	---@type real	
-bj_TEXT_DELAY_ALWAYSHINT = 12.00	---@type real	
-bj_TEXT_DELAY_HINT = 12.00	---@type real	
-bj_TEXT_DELAY_SECRET = 10.00	---@type real	
-bj_TEXT_DELAY_UNITACQUIRED = 15.00	---@type real	
-bj_TEXT_DELAY_UNITAVAILABLE = 10.00	---@type real	
-bj_TEXT_DELAY_ITEMACQUIRED = 10.00	---@type real	
-bj_TEXT_DELAY_WARNING = 12.00	---@type real	
-bj_QUEUE_DELAY_QUEST = 5.00	---@type real	
-bj_QUEUE_DELAY_HINT = 5.00	---@type real	
-bj_QUEUE_DELAY_SECRET = 3.00	---@type real	
-bj_HANDICAP_EASY = 60.00	---@type real	
-bj_HANDICAP_NORMAL = 90.00	---@type real	
-bj_HANDICAPDAMAGE_EASY = 50.00	---@type real	
-bj_HANDICAPDAMAGE_NORMAL = 90.00	---@type real	
-bj_HANDICAPREVIVE_NOTHARD = 50.00	---@type real	
-bj_GAME_STARTED_THRESHOLD = 0.01	---@type real	
-bj_WAIT_FOR_COND_MIN_INTERVAL = 0.10	---@type real	
-bj_POLLED_WAIT_INTERVAL = 0.10	---@type real	
-bj_POLLED_WAIT_SKIP_THRESHOLD = 2.00	---@type real	
+bj_PI = 3.14159	---@type number	
+bj_E = 2.71828	---@type number	
+bj_CELLWIDTH = 128.0	---@type number	
+bj_CLIFFHEIGHT = 128.0	---@type number	
+bj_UNIT_FACING = 270.0	---@type number	
+bj_RADTODEG = 180.0 / bj_PI	---@type number	
+bj_DEGTORAD = bj_PI / 180.0	---@type number	
+bj_TEXT_DELAY_QUEST = 20.00	---@type number	
+bj_TEXT_DELAY_QUESTUPDATE = 20.00	---@type number	
+bj_TEXT_DELAY_QUESTDONE = 20.00	---@type number	
+bj_TEXT_DELAY_QUESTFAILED = 20.00	---@type number	
+bj_TEXT_DELAY_QUESTREQUIREMENT = 20.00	---@type number	
+bj_TEXT_DELAY_MISSIONFAILED = 20.00	---@type number	
+bj_TEXT_DELAY_ALWAYSHINT = 12.00	---@type number	
+bj_TEXT_DELAY_HINT = 12.00	---@type number	
+bj_TEXT_DELAY_SECRET = 10.00	---@type number	
+bj_TEXT_DELAY_UNITACQUIRED = 15.00	---@type number	
+bj_TEXT_DELAY_UNITAVAILABLE = 10.00	---@type number	
+bj_TEXT_DELAY_ITEMACQUIRED = 10.00	---@type number	
+bj_TEXT_DELAY_WARNING = 12.00	---@type number	
+bj_QUEUE_DELAY_QUEST = 5.00	---@type number	
+bj_QUEUE_DELAY_HINT = 5.00	---@type number	
+bj_QUEUE_DELAY_SECRET = 3.00	---@type number	
+bj_HANDICAP_EASY = 60.00	---@type number	
+bj_HANDICAP_NORMAL = 90.00	---@type number	
+bj_HANDICAPDAMAGE_EASY = 50.00	---@type number	
+bj_HANDICAPDAMAGE_NORMAL = 90.00	---@type number	
+bj_HANDICAPREVIVE_NOTHARD = 50.00	---@type number	
+bj_GAME_STARTED_THRESHOLD = 0.01	---@type number	
+bj_WAIT_FOR_COND_MIN_INTERVAL = 0.10	---@type number	
+bj_POLLED_WAIT_INTERVAL = 0.10	---@type number	
+bj_POLLED_WAIT_SKIP_THRESHOLD = 2.00	---@type number	
 ---  Game constants
 bj_MAX_INVENTORY = 6	---@type integer	
 bj_MAX_PLAYERS = GetBJMaxPlayers()	---@type integer	
@@ -51,8 +51,8 @@ bj_MAX_ITEM_LEVEL = 10	---@type integer
 bj_MAX_CHECKPOINTS = 5	---@type integer	
 ---  Ideally these would be looked up from Units/MiscData.txt,
 ---  but there is currently no script functionality exposed to do that
-bj_TOD_DAWN = 6.00	---@type real	
-bj_TOD_DUSK = 18.00	---@type real	
+bj_TOD_DAWN = 6.00	---@type number	
+bj_TOD_DUSK = 18.00	---@type number	
 ---  Melee game settings:
 ---    - Starting Time of Day (TOD)
 ---    - Starting Gold
@@ -62,7 +62,7 @@ bj_TOD_DUSK = 18.00	---@type real
 ---    - Max heroes allowed per hero type
 ---    - Distance from start loc to search for nearby mines
 --- 
-bj_MELEE_STARTING_TOD = 8.00	---@type real	
+bj_MELEE_STARTING_TOD = 8.00	---@type number	
 bj_MELEE_STARTING_GOLD_V0 = 750	---@type integer	
 bj_MELEE_STARTING_GOLD_V1 = 500	---@type integer	
 bj_MELEE_STARTING_LUMBER_V0 = 200	---@type integer	
@@ -70,17 +70,17 @@ bj_MELEE_STARTING_LUMBER_V1 = 150	---@type integer
 bj_MELEE_STARTING_HERO_TOKENS = 1	---@type integer	
 bj_MELEE_HERO_LIMIT = 3	---@type integer	
 bj_MELEE_HERO_TYPE_LIMIT = 1	---@type integer	
-bj_MELEE_MINE_SEARCH_RADIUS = 2000	---@type real	
-bj_MELEE_CLEAR_UNITS_RADIUS = 1500	---@type real	
-bj_MELEE_CRIPPLE_TIMEOUT = 120.00	---@type real	
-bj_MELEE_CRIPPLE_MSG_DURATION = 20.00	---@type real	
+bj_MELEE_MINE_SEARCH_RADIUS = 2000	---@type number	
+bj_MELEE_CLEAR_UNITS_RADIUS = 1500	---@type number	
+bj_MELEE_CRIPPLE_TIMEOUT = 120.00	---@type number	
+bj_MELEE_CRIPPLE_MSG_DURATION = 20.00	---@type number	
 bj_MELEE_MAX_TWINKED_HEROES_V0 = 3	---@type integer	
 bj_MELEE_MAX_TWINKED_HEROES_V1 = 1	---@type integer	
 ---  Delay between a creep's death and the time it may drop an item.
-bj_CREEP_ITEM_DELAY = 0.50	---@type real	
+bj_CREEP_ITEM_DELAY = 0.50	---@type number	
 ---  Timing settings for Marketplace inventories.
-bj_STOCK_RESTOCK_INITIAL_DELAY = 120	---@type real	
-bj_STOCK_RESTOCK_INTERVAL = 30	---@type real	
+bj_STOCK_RESTOCK_INITIAL_DELAY = 120	---@type number	
+bj_STOCK_RESTOCK_INTERVAL = 30	---@type number	
 bj_STOCK_MAX_ITERATIONS = 20	---@type integer	
 ---  Max events registered by a single "dest dies in region" event.
 bj_MAX_DEST_IN_REGION_EVENTS = 64	---@type integer	
@@ -93,42 +93,42 @@ bj_CAMERA_DEFAULT_FOV = 70	---@type integer
 bj_CAMERA_DEFAULT_ROLL = 0	---@type integer	
 bj_CAMERA_DEFAULT_ROTATION = 90	---@type integer	
 ---  Rescue
-bj_RESCUE_PING_TIME = 2.00	---@type real	
+bj_RESCUE_PING_TIME = 2.00	---@type number	
 ---  Transmission behavior settings
-bj_NOTHING_SOUND_DURATION = 5.00	---@type real	
-bj_TRANSMISSION_PING_TIME = 1.00	---@type real	
+bj_NOTHING_SOUND_DURATION = 5.00	---@type number	
+bj_TRANSMISSION_PING_TIME = 1.00	---@type number	
 bj_TRANSMISSION_IND_RED = 255	---@type integer	
 bj_TRANSMISSION_IND_BLUE = 255	---@type integer	
 bj_TRANSMISSION_IND_GREEN = 255	---@type integer	
 bj_TRANSMISSION_IND_ALPHA = 255	---@type integer	
-bj_TRANSMISSION_PORT_HANGTIME = 1.50	---@type real	
+bj_TRANSMISSION_PORT_HANGTIME = 1.50	---@type number	
 ---  Cinematic mode settings
-bj_CINEMODE_INTERFACEFADE = 0.50	---@type real	
+bj_CINEMODE_INTERFACEFADE = 0.50	---@type number	
 bj_CINEMODE_GAMESPEED = MAP_SPEED_NORMAL	---@type gamespeed	
 ---  Cinematic mode volume levels
-bj_CINEMODE_VOLUME_UNITMOVEMENT = 0.40	---@type real	
-bj_CINEMODE_VOLUME_UNITSOUNDS = 0.00	---@type real	
-bj_CINEMODE_VOLUME_COMBAT = 0.40	---@type real	
-bj_CINEMODE_VOLUME_SPELLS = 0.40	---@type real	
-bj_CINEMODE_VOLUME_UI = 0.00	---@type real	
-bj_CINEMODE_VOLUME_MUSIC = 0.55	---@type real	
-bj_CINEMODE_VOLUME_AMBIENTSOUNDS = 1.00	---@type real	
-bj_CINEMODE_VOLUME_FIRE = 0.60	---@type real	
+bj_CINEMODE_VOLUME_UNITMOVEMENT = 0.40	---@type number	
+bj_CINEMODE_VOLUME_UNITSOUNDS = 0.00	---@type number	
+bj_CINEMODE_VOLUME_COMBAT = 0.40	---@type number	
+bj_CINEMODE_VOLUME_SPELLS = 0.40	---@type number	
+bj_CINEMODE_VOLUME_UI = 0.00	---@type number	
+bj_CINEMODE_VOLUME_MUSIC = 0.55	---@type number	
+bj_CINEMODE_VOLUME_AMBIENTSOUNDS = 1.00	---@type number	
+bj_CINEMODE_VOLUME_FIRE = 0.60	---@type number	
 ---  Speech mode volume levels
-bj_SPEECH_VOLUME_UNITMOVEMENT = 0.25	---@type real	
-bj_SPEECH_VOLUME_UNITSOUNDS = 0.00	---@type real	
-bj_SPEECH_VOLUME_COMBAT = 0.25	---@type real	
-bj_SPEECH_VOLUME_SPELLS = 0.25	---@type real	
-bj_SPEECH_VOLUME_UI = 0.00	---@type real	
-bj_SPEECH_VOLUME_MUSIC = 0.55	---@type real	
-bj_SPEECH_VOLUME_AMBIENTSOUNDS = 1.00	---@type real	
-bj_SPEECH_VOLUME_FIRE = 0.60	---@type real	
+bj_SPEECH_VOLUME_UNITMOVEMENT = 0.25	---@type number	
+bj_SPEECH_VOLUME_UNITSOUNDS = 0.00	---@type number	
+bj_SPEECH_VOLUME_COMBAT = 0.25	---@type number	
+bj_SPEECH_VOLUME_SPELLS = 0.25	---@type number	
+bj_SPEECH_VOLUME_UI = 0.00	---@type number	
+bj_SPEECH_VOLUME_MUSIC = 0.55	---@type number	
+bj_SPEECH_VOLUME_AMBIENTSOUNDS = 1.00	---@type number	
+bj_SPEECH_VOLUME_FIRE = 0.60	---@type number	
 ---  Smart pan settings
-bj_SMARTPAN_TRESHOLD_PAN = 500	---@type real	
-bj_SMARTPAN_TRESHOLD_SNAP = 3500	---@type real	
+bj_SMARTPAN_TRESHOLD_PAN = 500	---@type number	
+bj_SMARTPAN_TRESHOLD_SNAP = 3500	---@type number	
 ---  QueuedTriggerExecute settings
 bj_MAX_QUEUED_TRIGGERS = 100	---@type integer	
-bj_QUEUED_TRIGGER_TIMEOUT = 180.00	---@type real	
+bj_QUEUED_TRIGGER_TIMEOUT = 180.00	---@type number	
 ---  Campaign indexing constants
 bj_CAMPAIGN_INDEX_T = 0	---@type integer	
 bj_CAMPAIGN_INDEX_H = 1	---@type integer	
@@ -382,7 +382,7 @@ bj_CAMPPINGSTYLE_CONTROL_ALLY = 6	---@type integer
 bj_CAMPPINGSTYLE_CONTROL_NEUTRAL = 7	---@type integer	
 bj_CAMPPINGSTYLE_CONTROL_ENEMY = 8	---@type integer	
 ---  Corpse creation settings
-bj_CORPSE_MAX_DEATH_TIME = 8.00	---@type real	
+bj_CORPSE_MAX_DEATH_TIME = 8.00	---@type number	
 ---  Corpse creation styles
 bj_CORPSETYPE_FLESH = 0	---@type integer	
 bj_CORPSETYPE_BONE = 1	---@type integer	
@@ -458,7 +458,7 @@ bj_meleeVisibilityIsDay = true	---@type boolean
 bj_meleeGrantHeroItems = false	---@type boolean	
 bj_meleeNearestMineToLoc = nil	---@type location	
 bj_meleeNearestMine = nil	---@type unit	
-bj_meleeNearestMineDist = 0.00	---@type real	
+bj_meleeNearestMineDist = 0.00	---@type number	
 bj_meleeGameOver = false	---@type boolean	
 bj_meleeDefeated = {}	---@type boolean	
 bj_meleeVictoried = {}	---@type boolean	
@@ -488,11 +488,11 @@ bj_cineModeSavedSeed = 0	---@type integer
 ---  Cinematic fade vars
 bj_cineFadeFinishTimer = nil	---@type timer	
 bj_cineFadeContinueTimer = nil	---@type timer	
-bj_cineFadeContinueRed = 0	---@type real	
-bj_cineFadeContinueGreen = 0	---@type real	
-bj_cineFadeContinueBlue = 0	---@type real	
-bj_cineFadeContinueTrans = 0	---@type real	
-bj_cineFadeContinueDuration = 0	---@type real	
+bj_cineFadeContinueRed = 0	---@type number	
+bj_cineFadeContinueGreen = 0	---@type number	
+bj_cineFadeContinueBlue = 0	---@type number	
+bj_cineFadeContinueTrans = 0	---@type number	
+bj_cineFadeContinueDuration = 0	---@type number	
 bj_cineFadeContinueTex = ""	---@type string	
 ---  QueuedTriggerExecute vars
 bj_queuedExecTotal = 0	---@type integer	
@@ -515,7 +515,7 @@ bj_groupLastCreatedDest = nil	---@type group
 bj_randomSubGroupGroup = nil	---@type group	
 bj_randomSubGroupWant = 0	---@type integer	
 bj_randomSubGroupTotal = 0	---@type integer	
-bj_randomSubGroupChance = 0	---@type real	
+bj_randomSubGroupChance = 0	---@type number	
 bj_destRandomConsidered = 0	---@type integer	
 bj_destRandomCurrentPick = nil	---@type destructable	
 bj_elevatorWallBlocker = nil	---@type destructable	
@@ -528,7 +528,7 @@ bj_makeUnitRescuableUnit = nil	---@type unit
 bj_makeUnitRescuableFlag = true	---@type boolean	
 bj_pauseAllUnitsFlag = true	---@type boolean	
 bj_enumDestructableCenter = nil	---@type location	
-bj_enumDestructableRadius = 0	---@type real	
+bj_enumDestructableRadius = 0	---@type number	
 bj_setPlayerTargetColor = nil	---@type playercolor	
 bj_isUnitGroupDeadResult = true	---@type boolean	
 bj_isUnitGroupEmptyResult = true	---@type boolean	
@@ -566,7 +566,7 @@ bj_lastCreatedLeaderboard = nil	---@type leaderboard
 bj_lastCreatedMultiboard = nil	---@type multiboard	
 bj_lastPlayedSound = nil	---@type sound	
 bj_lastPlayedMusic = ""	---@type string	
-bj_lastTransmissionDuration = 0	---@type real	
+bj_lastTransmissionDuration = 0	---@type number	
 bj_lastCreatedGameCache = nil	---@type gamecache	
 bj_lastCreatedHashtable = nil	---@type hashtable	
 bj_lastLoadedUnit = nil	---@type unit	
@@ -613,9 +613,9 @@ end
 --- ***************************************************************************
 -- ===========================================================================
 
----@param a real
----@param b real
----@return real
+---@param a number
+---@param b number
+---@return number
 function RMinBJ(a, b)
 	if (a < b) then
 		return a
@@ -625,9 +625,9 @@ function RMinBJ(a, b)
 end
 -- ===========================================================================
 
----@param a real
----@param b real
----@return real
+---@param a number
+---@param b number
+---@return number
 function RMaxBJ(a, b)
 	if (a < b) then
 		return b
@@ -637,8 +637,8 @@ function RMaxBJ(a, b)
 end
 -- ===========================================================================
 
----@param a real
----@return real
+---@param a number
+---@return number
 function RAbsBJ(a)
 	if (a >= 0) then
 		return a
@@ -648,8 +648,8 @@ function RAbsBJ(a)
 end
 -- ===========================================================================
 
----@param a real
----@return real
+---@param a number
+---@return number
 function RSignBJ(a)
 	if (a >= 0.0) then
 		return 1.0
@@ -705,51 +705,51 @@ function ISignBJ(a)
 end
 -- ===========================================================================
 
----@param degrees real
----@return real
+---@param degrees number
+---@return number
 function SinBJ(degrees)
 	return Sin(degrees * bj_DEGTORAD)
 end
 -- ===========================================================================
 
----@param degrees real
----@return real
+---@param degrees number
+---@return number
 function CosBJ(degrees)
 	return Cos(degrees * bj_DEGTORAD)
 end
 -- ===========================================================================
 
----@param degrees real
----@return real
+---@param degrees number
+---@return number
 function TanBJ(degrees)
 	return Tan(degrees * bj_DEGTORAD)
 end
 -- ===========================================================================
 
----@param degrees real
----@return real
+---@param degrees number
+---@return number
 function AsinBJ(degrees)
 	return Asin(degrees) * bj_RADTODEG
 end
 -- ===========================================================================
 
----@param degrees real
----@return real
+---@param degrees number
+---@return number
 function AcosBJ(degrees)
 	return Acos(degrees) * bj_RADTODEG
 end
 -- ===========================================================================
 
----@param degrees real
----@return real
+---@param degrees number
+---@return number
 function AtanBJ(degrees)
 	return Atan(degrees) * bj_RADTODEG
 end
 -- ===========================================================================
 
----@param y real
----@param x real
----@return real
+---@param y number
+---@param x number
+---@return number
 function Atan2BJ(y, x)
 	return Atan2(y, x) * bj_RADTODEG
 end
@@ -757,7 +757,7 @@ end
 
 ---@param locA location
 ---@param locB location
----@return real
+---@return number
 function AngleBetweenPoints(locA, locB)
 	return bj_RADTODEG * Atan2(GetLocationY(locB) - GetLocationY(locA), GetLocationX(locB) - GetLocationX(locA))
 end
@@ -765,7 +765,7 @@ end
 
 ---@param locA location
 ---@param locB location
----@return real
+---@return number
 function DistanceBetweenPoints(locA, locB)
 	local dx = GetLocationX(locB) - GetLocationX(locA)
 	local dy = GetLocationY(locB) - GetLocationY(locA)
@@ -774,8 +774,8 @@ end
 -- ===========================================================================
 
 ---@param source location
----@param dist real
----@param angle real
+---@param dist number
+---@param angle number
 ---@return location
 function PolarProjectionBJ(source, dist, angle)
 	local x = GetLocationX(source) + dist * Cos(angle * bj_DEGTORAD)
@@ -783,12 +783,12 @@ function PolarProjectionBJ(source, dist, angle)
 	return Location(x, y)
 end
 -- ===========================================================================
----@return real
+---@return number
 function GetRandomDirectionDeg()
 	return GetRandomReal(0, 360)
 end
 -- ===========================================================================
----@return real
+---@return number
 function GetRandomPercentageBJ()
 	return GetRandomReal(0, 100)
 end
@@ -822,9 +822,9 @@ end
 ---  Calculate the modulus/remainder of (dividend) divided by (divisor).
 ---  Examples:  13.000 mod 2.500 = 0.500.  -6.000 mod 2.500 = 1.500.
 --- 
----@param dividend real
----@param divisor real
----@return real
+---@param dividend number
+---@param divisor number
+---@return number
 function ModuloReal(dividend, divisor)
 	local modulus = dividend - I2R(R2I(dividend / divisor)) * divisor
 	
@@ -840,8 +840,8 @@ end
 -- ===========================================================================
 
 ---@param loc location
----@param dx real
----@param dy real
+---@param dx number
+---@param dy number
 ---@return location
 function OffsetLocation(loc, dx, dy)
 	return Location(GetLocationX(loc) + dx, GetLocationY(loc) + dy)
@@ -849,8 +849,8 @@ end
 -- ===========================================================================
 
 ---@param r rect
----@param dx real
----@param dy real
+---@param dx number
+---@param dy number
 ---@return rect
 function OffsetRectBJ(r, dx, dy)
 	return Rect(GetRectMinX(r) + dx, GetRectMinY(r) + dy, GetRectMaxX(r) + dx, GetRectMaxY(r) + dy)
@@ -858,8 +858,8 @@ end
 -- ===========================================================================
 
 ---@param center location
----@param width real
----@param height real
+---@param width number
+---@param height number
 ---@return rect
 function RectFromCenterSizeBJ(center, width, height)
 	local x = GetLocationX(center)
@@ -869,8 +869,8 @@ end
 -- ===========================================================================
 
 ---@param r rect
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function RectContainsCoords(r, x, y)
 	return (GetRectMinX(r) <= x) and (x <= GetRectMaxX(r)) and (GetRectMinY(r) <= y) and (y <= GetRectMaxY(r))
@@ -1150,7 +1150,7 @@ end
 -- ===========================================================================
 ---  We can't do game-time waits, so this simulates one by starting a timer and polling until the timer expires.
 
----@param duration real
+---@param duration number
 function PolledWait(duration)
 	local t
 	local timeRemaining
@@ -1228,9 +1228,9 @@ function GetBooleanOr(valueA, valueB)
 	return valueA or valueB
 end
 -- ===========================================================================
----  Converts a percentage (real, 0..100) into a scaled integer (0..max), clipping the result to 0..max in case the input is invalid.
+---  Converts a percentage (number, 0..100) into a scaled integer (0..max), clipping the result to 0..max in case the input is invalid.
 --- 
----@param percentage real
+---@param percentage number
 ---@param max integer
 ---@return integer
 function PercentToInt(percentage, max)
@@ -1247,30 +1247,30 @@ function PercentToInt(percentage, max)
 end
 -- ===========================================================================
 
----@param percentage real
+---@param percentage number
 ---@return integer
 function PercentTo255(percentage)
 	return PercentToInt(percentage, 255)
 end
 -- ===========================================================================
----@return real
+---@return number
 function GetTimeOfDay()
 	return GetFloatGameState(GAME_STATE_TIME_OF_DAY)
 end
 -- ===========================================================================
 
----@param whatTime real
+---@param whatTime number
 function SetTimeOfDay(whatTime)
 	SetFloatGameState(GAME_STATE_TIME_OF_DAY, whatTime)
 end
 -- ===========================================================================
 
----@param scalePercent real
+---@param scalePercent number
 function SetTimeOfDayScalePercentBJ(scalePercent)
 	SetTimeOfDayScale(scalePercent * 0.01)
 end
 -- ===========================================================================
----@return real
+---@return number
 function GetTimeOfDayScalePercentBJ()
 	return GetTimeOfDayScale() * 100
 end
@@ -1302,7 +1302,7 @@ end
 ---  Returns a square rect that exactly encompasses the specified circle.
 --- 
 ---@param center location
----@param radius real
+---@param radius number
 ---@return rect
 function GetRectFromCircleBJ(center, radius)
 	local centerX = GetLocationX(center)
@@ -1337,7 +1337,7 @@ end
 ---@param doPan boolean
 ---@param whichSetup camerasetup
 ---@param whichPlayer player
----@param duration real
+---@param duration number
 function CameraSetupApplyForPlayer(doPan, whichSetup, whichPlayer, duration)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1349,10 +1349,10 @@ end
 ---@param doPan boolean
 ---@param whichSetup camerasetup
 ---@param whichPlayer player
----@param forcedDuration real
----@param easeInDuration real
----@param easeOutDuration real
----@param smoothFactor real
+---@param forcedDuration number
+---@param easeInDuration number
+---@param easeOutDuration number
+---@param smoothFactor number
 function CameraSetupApplyForPlayerSmooth(doPan, whichSetup, whichPlayer, forcedDuration, easeInDuration, easeOutDuration, smoothFactor)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1363,7 +1363,7 @@ end
 
 ---@param whichField camerafield
 ---@param whichSetup camerasetup
----@return real
+---@return number
 function CameraSetupGetFieldSwap(whichField, whichSetup)
 	return CameraSetupGetField(whichSetup, whichField)
 end
@@ -1371,8 +1371,8 @@ end
 
 ---@param whichPlayer player
 ---@param whichField camerafield
----@param value real
----@param duration real
+---@param value number
+---@param duration number
 function SetCameraFieldForPlayer(whichPlayer, whichField, value, duration)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1383,8 +1383,8 @@ end
 
 ---@param whichPlayer player
 ---@param whichUnit unit
----@param xoffset real
----@param yoffset real
+---@param xoffset number
+---@param yoffset number
 ---@param inheritOrientation boolean
 function SetCameraTargetControllerNoZForPlayer(whichPlayer, whichUnit, xoffset, yoffset, inheritOrientation)
 	if (GetLocalPlayer() == whichPlayer) then
@@ -1395,8 +1395,8 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param x real
----@param y real
+---@param x number
+---@param y number
 function SetCameraPositionForPlayer(whichPlayer, x, y)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1415,10 +1415,10 @@ function SetCameraPositionLocForPlayer(whichPlayer, loc)
 end
 -- ===========================================================================
 
----@param degrees real
+---@param degrees number
 ---@param loc location
 ---@param whichPlayer player
----@param duration real
+---@param duration number
 function RotateCameraAroundLocBJ(degrees, loc, whichPlayer, duration)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1428,8 +1428,8 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param x real
----@param y real
+---@param x number
+---@param y number
 function PanCameraToForPlayer(whichPlayer, x, y)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1449,9 +1449,9 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 function PanCameraToTimedForPlayer(whichPlayer, x, y, duration)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1462,7 +1462,7 @@ end
 
 ---@param whichPlayer player
 ---@param loc location
----@param duration real
+---@param duration number
 function PanCameraToTimedLocForPlayer(whichPlayer, loc, duration)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1473,8 +1473,8 @@ end
 
 ---@param whichPlayer player
 ---@param loc location
----@param zOffset real
----@param duration real
+---@param zOffset number
+---@param duration number
 function PanCameraToTimedLocWithZForPlayer(whichPlayer, loc, zOffset, duration)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1485,7 +1485,7 @@ end
 
 ---@param whichPlayer player
 ---@param loc location
----@param duration real
+---@param duration number
 function SmartCameraPanBJ(whichPlayer, loc, duration)
 	local dist
 	local cameraLoc = GetCameraTargetPositionLoc()
@@ -1518,7 +1518,7 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param duration real
+---@param duration number
 function ResetToGameCameraForPlayer(whichPlayer, duration)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1528,8 +1528,8 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param magnitude real
----@param velocity real
+---@param magnitude number
+---@param velocity number
 function CameraSetSourceNoiseForPlayer(whichPlayer, magnitude, velocity)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1539,8 +1539,8 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param magnitude real
----@param velocity real
+---@param magnitude number
+---@param velocity number
 function CameraSetTargetNoiseForPlayer(whichPlayer, magnitude, velocity)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1550,7 +1550,7 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param magnitude real
+---@param magnitude number
 function CameraSetEQNoiseForPlayer(whichPlayer, magnitude)
 	local richter = magnitude
 	if (richter > 5.0) then
@@ -1626,10 +1626,10 @@ end
 -- ===========================================================================
 
 ---@param adjustMethod integer
----@param dxWest real
----@param dxEast real
----@param dyNorth real
----@param dySouth real
+---@param dxWest number
+---@param dxEast number
+---@param dyNorth number
+---@param dySouth number
 function AdjustCameraBoundsBJ(adjustMethod, dxWest, dxEast, dyNorth, dySouth)
 	local minX = 0
 	local minY = 0
@@ -1669,10 +1669,10 @@ end
 
 ---@param adjustMethod integer
 ---@param whichPlayer player
----@param dxWest real
----@param dxEast real
----@param dyNorth real
----@param dySouth real
+---@param dxWest number
+---@param dxEast number
+---@param dyNorth number
+---@param dySouth number
 function AdjustCameraBoundsForPlayerBJ(adjustMethod, whichPlayer, dxWest, dxEast, dyNorth, dySouth)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1682,8 +1682,8 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param x real
----@param y real
+---@param x number
+---@param y number
 function SetCameraQuickPositionForPlayer(whichPlayer, x, y)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1719,8 +1719,8 @@ end
 
 ---@param whichPlayer player
 ---@param whichUnit unit
----@param xoffset real
----@param yoffset real
+---@param xoffset number
+---@param yoffset number
 function SetCameraOrientControllerForPlayerBJ(whichPlayer, whichUnit, xoffset, yoffset)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -1729,7 +1729,7 @@ function SetCameraOrientControllerForPlayerBJ(whichPlayer, whichUnit, xoffset, y
 end
 -- ===========================================================================
 
----@param factor real
+---@param factor number
 function CameraSetSmoothingFactorBJ(factor)
 	CameraSetSmoothingFactor(factor)
 end
@@ -1755,7 +1755,7 @@ end
 -- ===========================================================================
 
 ---@param toForce force
----@param duration real
+---@param duration number
 ---@param message string
 function DisplayTimedTextToForce(toForce, duration, message)
 	if (IsPlayerInForce(GetLocalPlayer(), toForce)) then
@@ -1804,7 +1804,7 @@ end
 -- ===========================================================================
 
 ---@param trig trigger
----@param timeout real
+---@param timeout number
 ---@return event
 function TriggerRegisterTimerEventPeriodic(trig, timeout)
 	return TriggerRegisterTimerEvent(trig, timeout, true)
@@ -1812,7 +1812,7 @@ end
 -- ===========================================================================
 
 ---@param trig trigger
----@param timeout real
+---@param timeout number
 ---@return event
 function TriggerRegisterTimerEventSingle(trig, timeout)
 	return TriggerRegisterTimerEvent(trig, timeout, false)
@@ -1968,7 +1968,7 @@ end
 
 ---@param trig trigger
 ---@param opcode limitop
----@param limitval real
+---@param limitval number
 ---@return event
 function TriggerRegisterGameStateEventTimeOfDay(trig, opcode, limitval)
 	return TriggerRegisterGameStateEvent(trig, GAME_STATE_TIME_OF_DAY, opcode, limitval)
@@ -2014,7 +2014,7 @@ end
 ---@param trig trigger
 ---@param whichUnit unit
 ---@param condition boolexpr
----@param range real
+---@param range number
 ---@return event
 function TriggerRegisterDistanceBetweenUnits(trig, whichUnit, condition, range)
 	return TriggerRegisterUnitInRange(trig, whichUnit, range, condition)
@@ -2022,7 +2022,7 @@ end
 -- ===========================================================================
 
 ---@param trig trigger
----@param range real
+---@param range number
 ---@param whichUnit unit
 ---@return event
 function TriggerRegisterUnitInRangeSimple(trig, range, whichUnit)
@@ -2033,7 +2033,7 @@ end
 ---@param trig trigger
 ---@param whichUnit unit
 ---@param opcode limitop
----@param limitval real
+---@param limitval number
 ---@return event
 function TriggerRegisterUnitLifeEvent(trig, whichUnit, opcode, limitval)
 	return TriggerRegisterUnitStateEvent(trig, whichUnit, UNIT_STATE_LIFE, opcode, limitval)
@@ -2043,7 +2043,7 @@ end
 ---@param trig trigger
 ---@param whichUnit unit
 ---@param opcode limitop
----@param limitval real
+---@param limitval number
 ---@return event
 function TriggerRegisterUnitManaEvent(trig, whichUnit, opcode, limitval)
 	return TriggerRegisterUnitStateEvent(trig, whichUnit, UNIT_STATE_MANA, opcode, limitval)
@@ -2164,11 +2164,11 @@ function RemoveWeatherEffectBJ(whichWeatherEffect)
 end
 -- ===========================================================================
 
----@param duration real
+---@param duration number
 ---@param permanent boolean
 ---@param where location
----@param radius real
----@param depth real
+---@param radius number
+---@param depth number
 ---@return terraindeformation
 function TerrainDeformationCraterBJ(duration, permanent, where, radius, depth)
 	bj_lastCreatedTerrainDeformation = TerrainDeformCrater(GetLocationX(where), GetLocationY(where), radius, depth, R2I(duration * 1000), permanent)
@@ -2176,14 +2176,14 @@ function TerrainDeformationCraterBJ(duration, permanent, where, radius, depth)
 end
 -- ===========================================================================
 
----@param duration real
+---@param duration number
 ---@param limitNeg boolean
 ---@param where location
----@param startRadius real
----@param endRadius real
----@param depth real
----@param wavePeriod real
----@param waveWidth real
+---@param startRadius number
+---@param endRadius number
+---@param depth number
+---@param wavePeriod number
+---@param waveWidth number
 ---@return terraindeformation
 function TerrainDeformationRippleBJ(duration, limitNeg, where, startRadius, endRadius, depth, wavePeriod, waveWidth)
 	local spaceWave
@@ -2203,12 +2203,12 @@ function TerrainDeformationRippleBJ(duration, limitNeg, where, startRadius, endR
 end
 -- ===========================================================================
 
----@param duration real
+---@param duration number
 ---@param source location
 ---@param target location
----@param radius real
----@param depth real
----@param trailDelay real
+---@param radius number
+---@param depth number
+---@param trailDelay number
 ---@return terraindeformation
 function TerrainDeformationWaveBJ(duration, source, target, radius, depth, trailDelay)
 	local distance
@@ -2230,12 +2230,12 @@ function TerrainDeformationWaveBJ(duration, source, target, radius, depth, trail
 end
 -- ===========================================================================
 
----@param duration real
+---@param duration number
 ---@param where location
----@param radius real
----@param minDelta real
----@param maxDelta real
----@param updateInterval real
+---@param radius number
+---@param minDelta number
+---@param maxDelta number
+---@param updateInterval number
 ---@return terraindeformation
 function TerrainDeformationRandomBJ(duration, where, radius, minDelta, maxDelta, updateInterval)
 	bj_lastCreatedTerrainDeformation = TerrainDeformRandom(GetLocationX(where), GetLocationY(where), radius, minDelta, maxDelta, R2I(duration * 1000), R2I(updateInterval * 1000))
@@ -2244,7 +2244,7 @@ end
 -- ===========================================================================
 
 ---@param deformation terraindeformation
----@param duration real
+---@param duration number
 function TerrainDeformationStopBJ(deformation, duration)
 	TerrainDeformStop(deformation, R2I(duration * 1000))
 end
@@ -2282,38 +2282,38 @@ end
 -- ===========================================================================
 
 ---@param whichBolt lightning
----@return real
+---@return number
 function GetLightningColorABJ(whichBolt)
 	return GetLightningColorA(whichBolt)
 end
 -- ===========================================================================
 
 ---@param whichBolt lightning
----@return real
+---@return number
 function GetLightningColorRBJ(whichBolt)
 	return GetLightningColorR(whichBolt)
 end
 -- ===========================================================================
 
 ---@param whichBolt lightning
----@return real
+---@return number
 function GetLightningColorGBJ(whichBolt)
 	return GetLightningColorG(whichBolt)
 end
 -- ===========================================================================
 
 ---@param whichBolt lightning
----@return real
+---@return number
 function GetLightningColorBBJ(whichBolt)
 	return GetLightningColorB(whichBolt)
 end
 -- ===========================================================================
 
 ---@param whichBolt lightning
----@param r real
----@param g real
----@param b real
----@param a real
+---@param r number
+---@param g number
+---@param b number
+---@param a number
 ---@return boolean
 function SetLightningColorBJ(whichBolt, r, g, b, a)
 	return SetLightningColor(whichBolt, r, g, b, a)
@@ -2389,10 +2389,10 @@ function SetTerrainPathableBJ(where, t, flag)
 end
 -- ===========================================================================
 
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function SetWaterBaseColorBJ(red, green, blue, transparency)
 	SetWaterBaseColor(PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
@@ -2412,7 +2412,7 @@ end
 ---@param whichPlayer player
 ---@param whichFogState fogstate
 ---@param center location
----@param radius real
+---@param radius number
 ---@param afterUnits boolean
 ---@return fogmodifier
 function CreateFogModifierRadiusLocSimple(whichPlayer, whichFogState, center, radius, afterUnits)
@@ -2441,7 +2441,7 @@ end
 ---@param whichPlayer player
 ---@param whichFogState fogstate
 ---@param center location
----@param radius real
+---@param radius number
 ---@return fogmodifier
 function CreateFogModifierRadiusLocBJ(enabled, whichPlayer, whichFogState, center, radius)
 	bj_lastCreatedFogModifier = CreateFogModifierRadiusLoc(whichPlayer, whichFogState, center, radius, true, false)
@@ -2480,12 +2480,12 @@ end
 -- ===========================================================================
 
 ---@param style integer
----@param zstart real
----@param zend real
----@param density real
----@param red real
----@param green real
----@param blue real
+---@param zstart number
+---@param zend number
+---@param density number
+---@param red number
+---@param green number
+---@param blue number
 function SetTerrainFogExBJ(style, zstart, zend, density, red, green, blue)
 	SetTerrainFogEx(style, zstart, zend, density, red * 0.01, green * 0.01, blue * 0.01)
 end
@@ -2497,7 +2497,7 @@ end
 
 ---@param animName string
 ---@param doodadID integer
----@param radius real
+---@param radius number
 ---@param center location
 function SetDoodadAnimationBJ(animName, doodadID, radius, center)
 	SetDoodadAnimation(GetLocationX(center), GetLocationY(center), radius, doodadID, false, animName, false)
@@ -2522,9 +2522,9 @@ end
 -- ============================================================================
 
 ---@param file string
----@param size real
+---@param size number
 ---@param where location
----@param zOffset real
+---@param zOffset number
 ---@param imageType integer
 ---@return image
 function CreateImageBJ(file, size, where, zOffset, imageType)
@@ -2544,7 +2544,7 @@ end
 
 ---@param whichImage image
 ---@param where location
----@param zOffset real
+---@param zOffset number
 function SetImagePositionBJ(whichImage, where, zOffset)
 	SetImagePosition(whichImage, GetLocationX(where), GetLocationY(where), zOffset)
 end
@@ -2552,10 +2552,10 @@ end
 -- ============================================================================
 
 ---@param whichImage image
----@param red real
----@param green real
----@param blue real
----@param alpha real
+---@param red number
+---@param green number
+---@param blue number
+---@param alpha number
 function SetImageColorBJ(whichImage, red, green, blue, alpha)
 	SetImageColor(whichImage, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - alpha))
 end
@@ -2570,10 +2570,10 @@ end
 
 ---@param where location
 ---@param name string
----@param red real
----@param green real
----@param blue real
----@param alpha real
+---@param red number
+---@param green number
+---@param blue number
+---@param alpha number
 ---@param forcePaused boolean
 ---@param noBirthTime boolean
 ---@return ubersplat
@@ -2632,8 +2632,8 @@ end
 
 -- ============================================================================
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param red integer
 ---@param green integer
 ---@param blue integer
@@ -2803,13 +2803,13 @@ end
 -- ===========================================================================
 
 ---@param soundHandle sound
----@param volumePercent real
+---@param volumePercent number
 function SetSoundVolumeBJ(soundHandle, volumePercent)
 	SetSoundVolume(soundHandle, PercentToInt(volumePercent, 127))
 end
 -- ===========================================================================
 
----@param newOffset real
+---@param newOffset number
 ---@param soundHandle sound
 function SetSoundOffsetBJ(newOffset, soundHandle)
 	SetSoundPlayPosition(soundHandle, R2I(newOffset * 1000))
@@ -2817,14 +2817,14 @@ end
 -- ===========================================================================
 
 ---@param soundHandle sound
----@param cutoff real
+---@param cutoff number
 function SetSoundDistanceCutoffBJ(soundHandle, cutoff)
 	SetSoundDistanceCutoff(soundHandle, cutoff)
 end
 -- ===========================================================================
 
 ---@param soundHandle sound
----@param pitch real
+---@param pitch number
 function SetSoundPitchBJ(soundHandle, pitch)
 	SetSoundPitch(soundHandle, pitch)
 end
@@ -2832,7 +2832,7 @@ end
 
 ---@param soundHandle sound
 ---@param loc location
----@param z real
+---@param z number
 function SetSoundPositionLocBJ(soundHandle, loc, z)
 	SetSoundPosition(soundHandle, GetLocationX(loc), GetLocationY(loc), z)
 end
@@ -2846,9 +2846,9 @@ end
 -- ===========================================================================
 
 ---@param soundHandle sound
----@param inside real
----@param outside real
----@param outsideVolumePercent real
+---@param inside number
+---@param outside number
+---@param outsideVolumePercent number
 function SetSoundConeAnglesBJ(soundHandle, inside, outside, outsideVolumePercent)
 	SetSoundConeAngles(soundHandle, inside, outside, PercentToInt(outsideVolumePercent, 127))
 end
@@ -2861,9 +2861,9 @@ end
 -- ===========================================================================
 
 ---@param soundHandle sound
----@param volumePercent real
+---@param volumePercent number
 ---@param loc location
----@param z real
+---@param z number
 function PlaySoundAtPointBJ(soundHandle, volumePercent, loc, z)
 	SetSoundPositionLocBJ(soundHandle, loc, z)
 	SetSoundVolumeBJ(soundHandle, volumePercent)
@@ -2872,7 +2872,7 @@ end
 -- ===========================================================================
 
 ---@param soundHandle sound
----@param volumePercent real
+---@param volumePercent number
 ---@param whichUnit unit
 function PlaySoundOnUnitBJ(soundHandle, volumePercent, whichUnit)
 	AttachSoundToUnitBJ(soundHandle, whichUnit)
@@ -2882,8 +2882,8 @@ end
 -- ===========================================================================
 
 ---@param soundHandle sound
----@param volumePercent real
----@param startingOffset real
+---@param volumePercent number
+---@param startingOffset number
 function PlaySoundFromOffsetBJ(soundHandle, volumePercent, startingOffset)
 	SetSoundVolumeBJ(soundHandle, volumePercent)
 	PlaySoundBJ(soundHandle)
@@ -2899,15 +2899,15 @@ end
 -- ===========================================================================
 
 ---@param musicFileName string
----@param startingOffset real
----@param fadeInTime real
+---@param startingOffset number
+---@param fadeInTime number
 function PlayMusicExBJ(musicFileName, startingOffset, fadeInTime)
 	bj_lastPlayedMusic = musicFileName
 	PlayMusicEx(musicFileName, R2I(startingOffset * 1000), R2I(fadeInTime * 1000))
 end
 -- ===========================================================================
 
----@param newOffset real
+---@param newOffset number
 function SetMusicOffsetBJ(newOffset)
 	SetMusicPlayPosition(R2I(newOffset * 1000))
 end
@@ -2920,13 +2920,13 @@ end
 -- ===========================================================================
 
 ---@param musicName string
----@param startingOffset real
+---@param startingOffset number
 function PlayThematicMusicExBJ(musicName, startingOffset)
 	PlayThematicMusicEx(musicName, R2I(startingOffset * 1000))
 end
 -- ===========================================================================
 
----@param newOffset real
+---@param newOffset number
 function SetThematicMusicOffsetBJ(newOffset)
 	SetThematicMusicPlayPosition(R2I(newOffset * 1000))
 end
@@ -2946,20 +2946,20 @@ function ResumeMusicBJ()
 end
 -- ===========================================================================
 
----@param volumePercent real
+---@param volumePercent number
 function SetMusicVolumeBJ(volumePercent)
 	SetMusicVolume(PercentToInt(volumePercent, 127))
 end
 -- ===========================================================================
 
----@param volumePercent real
+---@param volumePercent number
 function SetThematicMusicVolumeBJ(volumePercent)
 	SetThematicMusicVolume(PercentToInt(volumePercent, 127))
 end
 -- ===========================================================================
 
 ---@param soundHandle sound
----@return real
+---@return number
 function GetSoundDurationBJ(soundHandle)
 	if (soundHandle == nil) then
 		return bj_NOTHING_SOUND_DURATION
@@ -2970,7 +2970,7 @@ end
 -- ===========================================================================
 
 ---@param musicFileName string
----@return real
+---@return number
 function GetSoundFileDurationBJ(musicFileName)
 	return I2R(GetSoundFileDuration(musicFileName)) * 0.001
 end
@@ -2987,7 +2987,7 @@ end
 -- ===========================================================================
 
 ---@param vgroup volumegroup
----@param percent real
+---@param percent number
 function VolumeGroupSetVolumeBJ(vgroup, percent)
 	VolumeGroupSetVolume(vgroup, percent * 0.01)
 end
@@ -3054,7 +3054,7 @@ end
 -- ===========================================================================
 
 ---@param soundHandle sound
----@param offset real
+---@param offset number
 function WaitForSoundBJ(soundHandle, offset)
 	TriggerWaitForSound(soundHandle, offset)
 end
@@ -3104,7 +3104,7 @@ end
 
 ---@param whichPlayer player
 ---@param vgroup volumegroup
----@param scale real
+---@param scale number
 function VolumeGroupSetVolumeForPlayerBJ(whichPlayer, vgroup, scale)
 	if (GetLocalPlayer() == whichPlayer) then
 		VolumeGroupSetVolume(vgroup, scale)
@@ -3306,14 +3306,14 @@ end
 -- ===========================================================================
 
 ---@param whichWidget widget
----@return real
+---@return number
 function GetItemLifeBJ(whichWidget)
 	return GetWidgetLife(whichWidget)
 end
 -- ===========================================================================
 
 ---@param whichWidget widget
----@param life real
+---@param life number
 function SetItemLifeBJ(whichWidget, life)
 	SetWidgetLife(whichWidget, life)
 end
@@ -3470,56 +3470,56 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param handicapPercent real
+---@param handicapPercent number
 function SetPlayerHandicapDamageBJ(whichPlayer, handicapPercent)
 	SetPlayerHandicapDamage(whichPlayer, handicapPercent * 0.01)
 end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerHandicapDamageBJ(whichPlayer)
 	return GetPlayerHandicapDamage(whichPlayer) * 100
 end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param handicapPercent real
+---@param handicapPercent number
 function SetPlayerHandicapReviveTimeBJ(whichPlayer, handicapPercent)
 	SetPlayerHandicapReviveTime(whichPlayer, handicapPercent * 0.01)
 end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerHandicapReviveTimeBJ(whichPlayer)
 	return GetPlayerHandicapReviveTime(whichPlayer) * 100
 end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param handicapPercent real
+---@param handicapPercent number
 function SetPlayerHandicapXPBJ(whichPlayer, handicapPercent)
 	SetPlayerHandicapXP(whichPlayer, handicapPercent * 0.01)
 end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerHandicapXPBJ(whichPlayer)
 	return GetPlayerHandicapXP(whichPlayer) * 100
 end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param handicapPercent real
+---@param handicapPercent number
 function SetPlayerHandicapBJ(whichPlayer, handicapPercent)
 	SetPlayerHandicap(whichPlayer, handicapPercent * 0.01)
 end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerHandicapBJ(whichPlayer)
 	return GetPlayerHandicap(whichPlayer) * 100
 end
@@ -3601,8 +3601,8 @@ end
 
 ---@param whichUnit unit
 ---@param whichItem item
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function UnitDropItemPointBJ(whichUnit, whichItem, x, y)
 	return UnitDropItemPoint(whichUnit, whichItem, x, y)
@@ -3805,7 +3805,7 @@ end
 -- ===========================================================================
 
 ---@param r rect
----@param actionFunc code
+---@param actionFunc function
 function EnumItemsInRectBJ(r, actionFunc)
 	EnumItemsInRect(r, nil, actionFunc)
 end
@@ -3971,7 +3971,7 @@ end
 ---@param id player
 ---@param unitid integer
 ---@param loc location
----@param face real
+---@param face number
 ---@return unit
 function CreateUnitAtLocSaveLast(id, unitid, loc, face)
 	if (unitid == FourCC('ugol')) then
@@ -3993,7 +3993,7 @@ end
 ---@param unitId integer
 ---@param whichPlayer player
 ---@param loc location
----@param face real
+---@param face number
 ---@return group
 function CreateNUnitsAtLoc(count, unitId, whichPlayer, loc, face)
 	GroupClear(bj_lastCreatedGroup)
@@ -4113,7 +4113,7 @@ end
 ---@param unitid integer
 ---@param whichPlayer player
 ---@param loc location
----@param facing real
+---@param facing number
 ---@return unit
 function CreatePermanentCorpseLocBJ(style, unitid, whichPlayer, loc, facing)
 	bj_lastCreatedUnit = CreateCorpse(whichPlayer, unitid, GetLocationX(loc), GetLocationY(loc), facing)
@@ -4138,7 +4138,7 @@ end
 
 ---@param whichState unitstate
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitStateSwap(whichState, whichUnit)
 	return GetUnitState(whichUnit, whichState)
 end
@@ -4147,7 +4147,7 @@ end
 ---@param whichUnit unit
 ---@param whichState unitstate
 ---@param whichMaxState unitstate
----@return real
+---@return number
 function GetUnitStatePercent(whichUnit, whichState, whichMaxState)
 	local value = GetUnitState(whichUnit, whichState)
 	local maxValue = GetUnitState(whichUnit, whichMaxState)
@@ -4162,14 +4162,14 @@ end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitLifePercent(whichUnit)
 	return GetUnitStatePercent(whichUnit, UNIT_STATE_LIFE, UNIT_STATE_MAX_LIFE)
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitManaPercent(whichUnit)
 	return GetUnitStatePercent(whichUnit, UNIT_STATE_MANA, UNIT_STATE_MAX_MANA)
 end
@@ -4257,28 +4257,28 @@ end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param newValue real
+---@param newValue number
 function SetUnitLifeBJ(whichUnit, newValue)
 	SetUnitState(whichUnit, UNIT_STATE_LIFE, RMaxBJ(0, newValue))
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param newValue real
+---@param newValue number
 function SetUnitManaBJ(whichUnit, newValue)
 	SetUnitState(whichUnit, UNIT_STATE_MANA, RMaxBJ(0, newValue))
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param percent real
+---@param percent number
 function SetUnitLifePercentBJ(whichUnit, percent)
 	SetUnitState(whichUnit, UNIT_STATE_LIFE, GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE) * RMaxBJ(0, percent) * 0.01)
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param percent real
+---@param percent number
 function SetUnitManaPercentBJ(whichUnit, percent)
 	SetUnitState(whichUnit, UNIT_STATE_MANA, GetUnitState(whichUnit, UNIT_STATE_MAX_MANA) * RMaxBJ(0, percent) * 0.01)
 end
@@ -4461,22 +4461,22 @@ end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param newHeight real
----@param rate real
+---@param newHeight number
+---@param rate number
 function SetUnitFlyHeightBJ(whichUnit, newHeight, rate)
 	SetUnitFlyHeight(whichUnit, newHeight, rate)
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param turnSpeed real
+---@param turnSpeed number
 function SetUnitTurnSpeedBJ(whichUnit, turnSpeed)
 	SetUnitTurnSpeed(whichUnit, turnSpeed)
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param propWindow real
+---@param propWindow number
 function SetUnitPropWindowBJ(whichUnit, propWindow)
 	local angle = propWindow
 	if (angle <= 0) then
@@ -4491,28 +4491,28 @@ end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitPropWindowBJ(whichUnit)
 	return GetUnitPropWindow(whichUnit) * bj_RADTODEG
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitDefaultPropWindowBJ(whichUnit)
 	return GetUnitDefaultPropWindow(whichUnit)
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param blendTime real
+---@param blendTime number
 function SetUnitBlendTimeBJ(whichUnit, blendTime)
 	SetUnitBlendTime(whichUnit, blendTime)
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param acquireRange real
+---@param acquireRange number
 function SetUnitAcquireRangeBJ(whichUnit, acquireRange)
 	SetUnitAcquireRange(whichUnit, acquireRange)
 end
@@ -4639,7 +4639,7 @@ function UnitPauseTimedLifeBJ(flag, whichUnit)
 end
 -- ===========================================================================
 
----@param duration real
+---@param duration number
 ---@param buffId integer
 ---@param whichUnit unit
 function UnitApplyTimedLifeBJ(duration, buffId, whichUnit)
@@ -4892,7 +4892,7 @@ end
 
 ---@param whichUnit unit
 ---@param loc location
----@param facing real
+---@param facing number
 function SetUnitPositionLocFacingBJ(whichUnit, loc, facing)
 	SetUnitPositionLoc(whichUnit, loc)
 	SetUnitFacing(whichUnit, facing)
@@ -4948,10 +4948,10 @@ end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param delay real
----@param radius real
+---@param delay number
+---@param radius number
 ---@param loc location
----@param amount real
+---@param amount number
 ---@param whichAttack attacktype
 ---@param whichDamage damagetype
 ---@return boolean
@@ -4962,7 +4962,7 @@ end
 
 ---@param whichUnit unit
 ---@param target unit
----@param amount real
+---@param amount number
 ---@param whichAttack attacktype
 ---@param whichDamage damagetype
 ---@return boolean
@@ -4978,8 +4978,8 @@ end
 
 ---@param objectid integer
 ---@param loc location
----@param facing real
----@param scale real
+---@param facing number
+---@param scale number
 ---@param variation integer
 ---@return destructable
 function CreateDestructableLoc(objectid, loc, facing, scale, variation)
@@ -4990,8 +4990,8 @@ end
 
 ---@param objectid integer
 ---@param loc location
----@param facing real
----@param scale real
+---@param facing number
+---@param scale number
 ---@param variation integer
 ---@return destructable
 function CreateDeadDestructableLocBJ(objectid, loc, facing, scale, variation)
@@ -5095,7 +5095,7 @@ end
 -- ===========================================================================
 ---  Enumerates within a rect, with a filter to narrow the enumeration down objects within a circular area.
 --- 
----@param radius real
+---@param radius number
 ---@param loc location
 ---@param actionFunc code
 function EnumDestructablesInCircleBJ(radius, loc, actionFunc)
@@ -5112,14 +5112,14 @@ end
 -- ===========================================================================
 
 ---@param d destructable
----@param percent real
+---@param percent number
 function SetDestructableLifePercentBJ(d, percent)
 	SetDestructableLife(d, GetDestructableMaxLife(d) * percent * 0.01)
 end
 -- ===========================================================================
 
 ---@param d destructable
----@param max real
+---@param max number
 function SetDestructableMaxLifeBJ(d, max)
 	SetDestructableMaxLife(d, max)
 end
@@ -5255,8 +5255,8 @@ function NearbyElevatorExistsEnum()
 end
 -- ===========================================================================
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function NearbyElevatorExists(x, y)
 	local findThreshold = 32
@@ -5277,9 +5277,9 @@ end
 -- ===========================================================================
 ---  This toggles pathing on or off for one wall of an elevator by killing or reviving a pathing blocker at the appropriate location (and creating the pathing blocker in the first place, if it does not yet exist).
 --- 
----@param x real
----@param y real
----@param facing real
+---@param x number
+---@param y number
+---@param facing number
 ---@param open boolean
 function ChangeElevatorWallBlocker(x, y, facing, open)
 	local blocker = nil
@@ -5622,7 +5622,7 @@ function GetUnitsInRectOfPlayer(r, whichPlayer)
 end
 -- ===========================================================================
 
----@param radius real
+---@param radius number
 ---@param whichLocation location
 ---@param filter boolexpr
 ---@return group
@@ -5634,7 +5634,7 @@ function GetUnitsInRangeOfLocMatching(radius, whichLocation, filter)
 end
 -- ===========================================================================
 
----@param radius real
+---@param radius number
 ---@param whichLocation location
 ---@return group
 function GetUnitsInRangeOfLocAll(radius, whichLocation)
@@ -5880,16 +5880,16 @@ end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param percentScale real
+---@param percentScale number
 function SetUnitTimeScalePercent(whichUnit, percentScale)
 	SetUnitTimeScale(whichUnit, percentScale * 0.01)
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param percentScaleX real
----@param percentScaleY real
----@param percentScaleZ real
+---@param percentScaleX number
+---@param percentScaleY number
+---@param percentScaleZ number
 function SetUnitScalePercent(whichUnit, percentScaleX, percentScaleY, percentScaleZ)
 	SetUnitScale(whichUnit, percentScaleX * 0.01, percentScaleY * 0.01, percentScaleZ * 0.01)
 end
@@ -5897,40 +5897,40 @@ end
 ---  This version differs from the common.j interface in that the alpha value is reversed so as to be displayed as transparency, and all four parameters are treated as percentages rather than bytes.
 --- 
 ---@param whichUnit unit
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function SetUnitVertexColorBJ(whichUnit, red, green, blue, transparency)
 	SetUnitVertexColor(whichUnit, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
 -- ===========================================================================
 
 ---@param whichUnit unit
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function UnitAddIndicatorBJ(whichUnit, red, green, blue, transparency)
 	AddIndicator(whichUnit, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
 -- ===========================================================================
 
 ---@param whichDestructable destructable
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function DestructableAddIndicatorBJ(whichDestructable, red, green, blue, transparency)
 	AddIndicator(whichDestructable, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
 -- ===========================================================================
 
 ---@param whichItem item
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function ItemAddIndicatorBJ(whichItem, red, green, blue, transparency)
 	AddIndicator(whichItem, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
@@ -5939,7 +5939,7 @@ end
 --- 
 ---@param whichUnit unit
 ---@param target location
----@param duration real
+---@param duration number
 function SetUnitFacingToFaceLocTimed(whichUnit, target, duration)
 	local unitLoc = GetUnitLoc(whichUnit)
 	
@@ -5951,7 +5951,7 @@ end
 --- 
 ---@param whichUnit unit
 ---@param target unit
----@param duration real
+---@param duration number
 function SetUnitFacingToFaceUnitTimed(whichUnit, target, duration)
 	local unitLoc = GetUnitLoc(target)
 	
@@ -5982,7 +5982,7 @@ end
 -- ===========================================================================
 
 ---@param d destructable
----@param percentScale real
+---@param percentScale number
 function SetDestAnimationSpeedPercent(d, percentScale)
 	SetDestructableAnimationSpeed(d, percentScale * 0.01)
 end
@@ -6882,7 +6882,7 @@ end
 
 ---@param t timer
 ---@param periodic boolean
----@param timeout real
+---@param timeout number
 ---@return timer
 function StartTimerBJ(t, periodic, timeout)
 	bj_lastStartedTimer = t
@@ -6892,7 +6892,7 @@ end
 -- ===========================================================================
 
 ---@param periodic boolean
----@param timeout real
+---@param timeout number
 ---@return timer
 function CreateTimerBJ(periodic, timeout)
 	bj_lastStartedTimer = CreateTimer()
@@ -6948,27 +6948,27 @@ end
 -- ===========================================================================
 
 ---@param td timerdialog
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function TimerDialogSetTitleColorBJ(td, red, green, blue, transparency)
 	TimerDialogSetTitleColor(td, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
 -- ===========================================================================
 
 ---@param td timerdialog
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function TimerDialogSetTimeColorBJ(td, red, green, blue, transparency)
 	TimerDialogSetTimeColor(td, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
 -- ===========================================================================
 
 ---@param td timerdialog
----@param speedMultFactor real
+---@param speedMultFactor number
 function TimerDialogSetSpeedBJ(td, speedMultFactor)
 	TimerDialogSetSpeed(td, speedMultFactor)
 end
@@ -7041,10 +7041,10 @@ end
 
 ---@param whichPlayer player
 ---@param lb leaderboard
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function LeaderboardSetPlayerItemLabelColorBJ(whichPlayer, lb, red, green, blue, transparency)
 	LeaderboardSetItemLabelColor(lb, LeaderboardGetPlayerIndex(lb, whichPlayer), PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
@@ -7052,30 +7052,30 @@ end
 
 ---@param whichPlayer player
 ---@param lb leaderboard
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function LeaderboardSetPlayerItemValueColorBJ(whichPlayer, lb, red, green, blue, transparency)
 	LeaderboardSetItemValueColor(lb, LeaderboardGetPlayerIndex(lb, whichPlayer), PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
 -- ===========================================================================
 
 ---@param lb leaderboard
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function LeaderboardSetLabelColorBJ(lb, red, green, blue, transparency)
 	LeaderboardSetLabelColor(lb, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
 -- ===========================================================================
 
 ---@param lb leaderboard
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function LeaderboardSetValueColorBJ(lb, red, green, blue, transparency)
 	LeaderboardSetValueColor(lb, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
@@ -7297,10 +7297,10 @@ end
 -- ===========================================================================
 
 ---@param mb multiboard
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function MultiboardSetTitleTextColorBJ(mb, red, green, blue, transparency)
 	MultiboardSetTitleTextColor(mb, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
@@ -7388,10 +7388,10 @@ end
 ---@param mb multiboard
 ---@param col integer
 ---@param row integer
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function MultiboardSetItemColorBJ(mb, col, row, red, green, blue, transparency)
 	local curRow = 0
 	local curCol = 0
@@ -7427,7 +7427,7 @@ end
 ---@param mb multiboard
 ---@param col integer
 ---@param row integer
----@param width real
+---@param width number
 function MultiboardSetItemWidthBJ(mb, col, row, width)
 	local curRow = 0
 	local curCol = 0
@@ -7502,34 +7502,34 @@ end
 -- ===========================================================================
 ---  Scale the font size linearly such that size 10 equates to height 0.023. Screen-relative font heights are harder to grasp and than font sizes.
 --- 
----@param size real
----@return real
+---@param size number
+---@return number
 function TextTagSize2Height(size)
 	return size * 0.023 / 10
 end
 -- ===========================================================================
 ---  Scale the speed linearly such that speed 128 equates to 0.071. Screen-relative speeds are hard to grasp.
 --- 
----@param speed real
----@return real
+---@param speed number
+---@return number
 function TextTagSpeed2Velocity(speed)
 	return speed * 0.071 / 128
 end
 -- ===========================================================================
 
 ---@param tt texttag
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 function SetTextTagColorBJ(tt, red, green, blue, transparency)
 	SetTextTagColor(tt, PercentTo255(red), PercentTo255(green), PercentTo255(blue), PercentTo255(100.0 - transparency))
 end
 -- ===========================================================================
 
 ---@param tt texttag
----@param speed real
----@param angle real
+---@param speed number
+---@param angle number
 function SetTextTagVelocityBJ(tt, speed, angle)
 	local vel = TextTagSpeed2Velocity(speed)
 	local xvel = vel * Cos(angle * bj_DEGTORAD)
@@ -7541,7 +7541,7 @@ end
 
 ---@param tt texttag
 ---@param s string
----@param size real
+---@param size number
 function SetTextTagTextBJ(tt, s, size)
 	local textHeight = TextTagSize2Height(size)
 	
@@ -7551,7 +7551,7 @@ end
 
 ---@param tt texttag
 ---@param loc location
----@param zOffset real
+---@param zOffset number
 function SetTextTagPosBJ(tt, loc, zOffset)
 	SetTextTagPos(tt, GetLocationX(loc), GetLocationY(loc), zOffset)
 end
@@ -7559,7 +7559,7 @@ end
 
 ---@param tt texttag
 ---@param whichUnit unit
----@param zOffset real
+---@param zOffset number
 function SetTextTagPosUnitBJ(tt, whichUnit, zOffset)
 	SetTextTagPosUnit(tt, whichUnit, zOffset)
 end
@@ -7580,21 +7580,21 @@ end
 -- ===========================================================================
 
 ---@param tt texttag
----@param age real
+---@param age number
 function SetTextTagAgeBJ(tt, age)
 	SetTextTagAge(tt, age)
 end
 -- ===========================================================================
 
 ---@param tt texttag
----@param lifespan real
+---@param lifespan number
 function SetTextTagLifespanBJ(tt, lifespan)
 	SetTextTagLifespan(tt, lifespan)
 end
 -- ===========================================================================
 
 ---@param tt texttag
----@param fadepoint real
+---@param fadepoint number
 function SetTextTagFadepointBJ(tt, fadepoint)
 	SetTextTagFadepoint(tt, fadepoint)
 end
@@ -7602,12 +7602,12 @@ end
 
 ---@param s string
 ---@param loc location
----@param zOffset real
----@param size real
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param zOffset number
+---@param size number
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 ---@return texttag
 function CreateTextTagLocBJ(s, loc, zOffset, size, red, green, blue, transparency)
 	bj_lastCreatedTextTag = CreateTextTag()
@@ -7621,12 +7621,12 @@ end
 
 ---@param s string
 ---@param whichUnit unit
----@param zOffset real
----@param size real
----@param red real
----@param green real
----@param blue real
----@param transparency real
+---@param zOffset number
+---@param size number
+---@param red number
+---@param green number
+---@param blue number
+---@param transparency number
 ---@return texttag
 function CreateTextTagUnitBJ(s, whichUnit, zOffset, size, red, green, blue, transparency)
 	bj_lastCreatedTextTag = CreateTextTag()
@@ -7692,7 +7692,7 @@ end
 -- ===========================================================================
 
 ---@param whichForce force
----@param fadeDuration real
+---@param fadeDuration number
 function ShowInterfaceForceOn(whichForce, fadeDuration)
 	if (IsPlayerInForce(GetLocalPlayer(), whichForce)) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -7702,7 +7702,7 @@ end
 -- ===========================================================================
 
 ---@param whichForce force
----@param fadeDuration real
+---@param fadeDuration number
 function ShowInterfaceForceOff(whichForce, fadeDuration)
 	if (IsPlayerInForce(GetLocalPlayer(), whichForce)) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -7712,9 +7712,9 @@ end
 -- ===========================================================================
 
 ---@param whichForce force
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 function PingMinimapForForce(whichForce, x, y, duration)
 	if (IsPlayerInForce(GetLocalPlayer(), whichForce)) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -7726,16 +7726,16 @@ end
 
 ---@param whichForce force
 ---@param loc location
----@param duration real
+---@param duration number
 function PingMinimapLocForForce(whichForce, loc, duration)
 	PingMinimapForForce(whichForce, GetLocationX(loc), GetLocationY(loc), duration)
 end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 function PingMinimapForPlayer(whichPlayer, x, y, duration)
 	if (GetLocalPlayer() == whichPlayer) then
 		---  Use only local code (no net traffic) within this block to avoid desyncs.
@@ -7747,20 +7747,20 @@ end
 
 ---@param whichPlayer player
 ---@param loc location
----@param duration real
+---@param duration number
 function PingMinimapLocForPlayer(whichPlayer, loc, duration)
 	PingMinimapForPlayer(whichPlayer, GetLocationX(loc), GetLocationY(loc), duration)
 end
 -- ===========================================================================
 
 ---@param whichForce force
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 ---@param style integer
----@param red real
----@param green real
----@param blue real
+---@param red number
+---@param green number
+---@param blue number
 function PingMinimapForForceEx(whichForce, x, y, duration, style, red, green, blue)
 	local red255 = PercentTo255(red)
 	local green255 = PercentTo255(green)
@@ -7791,11 +7791,11 @@ end
 
 ---@param whichForce force
 ---@param loc location
----@param duration real
+---@param duration number
 ---@param style integer
----@param red real
----@param green real
----@param blue real
+---@param red number
+---@param green number
+---@param blue number
 function PingMinimapLocForForceEx(whichForce, loc, duration, style, red, green, blue)
 	PingMinimapForForceEx(whichForce, GetLocationX(loc), GetLocationY(loc), duration, style, red, green, blue)
 end
@@ -7855,8 +7855,8 @@ end
 ---@param color playercolor
 ---@param speakerTitle string
 ---@param text string
----@param sceneDuration real
----@param voiceoverDuration real
+---@param sceneDuration number
+---@param voiceoverDuration number
 function SetCinematicSceneBJ(soundHandle, portraitUnitId, color, speakerTitle, text, sceneDuration, voiceoverDuration)
 	bj_cineSceneLastSound = soundHandle
 	SetCinematicScene(portraitUnitId, color, speakerTitle, text, sceneDuration, voiceoverDuration)
@@ -7866,8 +7866,8 @@ end
 
 ---@param soundHandle sound
 ---@param timeType integer
----@param timeVal real
----@return real
+---@param timeVal number
+---@return number
 function GetTransmissionDuration(soundHandle, timeType, timeVal)
 	local duration
 	
@@ -7892,7 +7892,7 @@ end
 
 ---@param soundHandle sound
 ---@param timeType integer
----@param timeVal real
+---@param timeVal number
 function WaitTransmissionDuration(soundHandle, timeType, timeVal)
 	if (timeType == bj_TIMETYPE_SET) then
 		---  If we have a static duration wait, just perform the wait.
@@ -7921,12 +7921,12 @@ end
 
 ---@param unitId integer
 ---@param color playercolor
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param soundHandle sound
 ---@param unitName string
 ---@param message string
----@param duration real
+---@param duration number
 function DoTransmissionBasicsXYBJ(unitId, color, x, y, soundHandle, unitName, message, duration)
 	SetCinematicSceneBJ(soundHandle, unitId, color, unitName, message, duration + bj_TRANSMISSION_PORT_HANGTIME, duration)
 	
@@ -7944,7 +7944,7 @@ end
 ---@param soundHandle sound
 ---@param message string
 ---@param timeType integer
----@param timeVal real
+---@param timeVal number
 ---@param wait boolean
 function TransmissionFromUnitWithNameBJ(toForce, whichUnit, unitName, soundHandle, message, timeType, timeVal, wait)
 	TryInitCinematicBehaviorBJ()
@@ -7984,7 +7984,7 @@ end
 ---@param speakerType integer
 ---@param soundHandle sound
 ---@param timeType integer
----@param timeVal real
+---@param timeVal number
 ---@param wait boolean
 ---@return boolean
 function PlayDialogueFromSpeakerEx(toForce, speaker, speakerType, soundHandle, timeType, timeVal, wait)
@@ -8024,7 +8024,7 @@ end
 ---@param loc location
 ---@param soundHandle sound
 ---@param timeType integer
----@param timeVal real
+---@param timeVal number
 ---@param wait boolean
 ---@return boolean
 function PlayDialogueFromSpeakerTypeEx(toForce, fromPlayer, speakerType, loc, soundHandle, timeType, timeVal, wait)
@@ -8061,7 +8061,7 @@ end
 ---@param soundHandle sound
 ---@param message string
 ---@param timeType integer
----@param timeVal real
+---@param timeVal number
 ---@param wait boolean
 function TransmissionFromUnitTypeWithNameBJ(toForce, fromPlayer, unitId, unitName, loc, soundHandle, message, timeType, timeVal, wait)
 	TryInitCinematicBehaviorBJ()
@@ -8085,7 +8085,7 @@ function TransmissionFromUnitTypeWithNameBJ(toForce, fromPlayer, unitId, unitNam
 	
 end
 -- ===========================================================================
----@return real
+---@return number
 function GetLastTransmissionDurationBJ()
 	return bj_lastTransmissionDuration
 end
@@ -8119,7 +8119,7 @@ end
 --- 
 ---@param cineMode boolean
 ---@param forForce force
----@param interfaceFadeTime real
+---@param interfaceFadeTime number
 function CinematicModeExBJ(cineMode, forForce, interfaceFadeTime)
 	---  If the game hasn't started yet, perform interface fades immediately
 	if ( not bj_gameStarted) then
@@ -8203,13 +8203,13 @@ function DisplayCineFilterBJ(flag)
 end
 -- ===========================================================================
 
----@param red real
----@param green real
----@param blue real
----@param duration real
+---@param red number
+---@param green number
+---@param blue number
+---@param duration number
 ---@param tex string
----@param startTrans real
----@param endTrans real
+---@param startTrans number
+---@param endTrans number
 function CinematicFadeCommonBJ(red, green, blue, duration, tex, startTrans, endTrans)
 	if (duration == 0) then
 		---  If the fade is instant, use the same starting and ending values,
@@ -8236,7 +8236,7 @@ function FinishCinematicFadeBJ()
 end
 -- ===========================================================================
 
----@param duration real
+---@param duration number
 function FinishCinematicFadeAfterBJ(duration)
 	---  Create a timer to end the cinematic fade.
 	bj_cineFadeFinishTimer = CreateTimer()
@@ -8250,11 +8250,11 @@ function ContinueCinematicFadeBJ()
 end
 -- ===========================================================================
 
----@param duration real
----@param red real
----@param green real
----@param blue real
----@param trans real
+---@param duration number
+---@param red number
+---@param green number
+---@param blue number
+---@param trans number
 ---@param tex string
 function ContinueCinematicFadeAfterBJ(duration, red, green, blue, trans, tex)
 	bj_cineFadeContinueRed = red
@@ -8281,12 +8281,12 @@ end
 -- ===========================================================================
 
 ---@param fadetype integer
----@param duration real
+---@param duration number
 ---@param tex string
----@param red real
----@param green real
----@param blue real
----@param trans real
+---@param red number
+---@param green number
+---@param blue number
+---@param trans number
 function CinematicFadeBJ(fadetype, duration, tex, red, green, blue, trans)
 	if (fadetype == bj_CINEFADETYPE_FADEOUT) then
 		---  Fade out to the requested color.
@@ -8311,17 +8311,17 @@ function CinematicFadeBJ(fadetype, duration, tex, red, green, blue, trans)
 end
 -- ===========================================================================
 
----@param duration real
+---@param duration number
 ---@param bmode blendmode
 ---@param tex string
----@param red0 real
----@param green0 real
----@param blue0 real
----@param trans0 real
----@param red1 real
----@param green1 real
----@param blue1 real
----@param trans1 real
+---@param red0 number
+---@param green0 number
+---@param blue0 number
+---@param trans0 number
+---@param red1 number
+---@param green1 number
+---@param blue1 number
+---@param trans1 number
 function CinematicFilterGenericBJ(duration, bmode, tex, red0, green0, blue0, trans0, red1, green1, blue1, trans1)
 	AbortCinematicFadeBJ()
 	SetCineFilterTexture(tex)
@@ -8624,7 +8624,7 @@ function GetLastCreatedHashtableBJ()
 end
 -- ===========================================================================
 
----@param value real
+---@param value number
 ---@param key string
 ---@param missionKey string
 ---@param cache gamecache
@@ -8671,7 +8671,7 @@ function StoreUnitBJ(whichUnit, key, missionKey, cache)
 end
 -- ===========================================================================
 
----@param value real
+---@param value number
 ---@param key integer
 ---@param missionKey integer
 ---@param table hashtable
@@ -9101,7 +9101,7 @@ end
 ---@param key string
 ---@param missionKey string
 ---@param cache gamecache
----@return real
+---@return number
 function GetStoredRealBJ(key, missionKey, cache)
 	--- call SyncStoredReal(cache, missionKey, key)
 	return GetStoredReal(cache, missionKey, key)
@@ -9148,7 +9148,7 @@ end
 ---@param key integer
 ---@param missionKey integer
 ---@param table hashtable
----@return real
+---@return number
 function LoadRealBJ(key, missionKey, table)
 	--- call SyncStoredReal(table, missionKey, key)
 	return LoadReal(table, missionKey, key)
@@ -9539,7 +9539,7 @@ end
 ---@param cache gamecache
 ---@param forWhichPlayer player
 ---@param loc location
----@param facing real
+---@param facing number
 ---@return unit
 function RestoreUnitLocFacingAngleBJ(key, missionKey, cache, forWhichPlayer, loc, facing)
 	--- call SyncStoredUnit(cache, missionKey, key)
@@ -9715,14 +9715,14 @@ end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerStartLocationX(whichPlayer)
 	return GetStartLocationX(GetPlayerStartLocation(whichPlayer))
 end
 -- ===========================================================================
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerStartLocationY(whichPlayer)
 	return GetStartLocationY(GetPlayerStartLocation(whichPlayer))
 end
@@ -9750,7 +9750,7 @@ function IsPlayerSlotState(whichPlayer, whichState)
 end
 -- ===========================================================================
 
----@param seconds real
+---@param seconds number
 ---@return integer
 function GetFadeFromSeconds(seconds)
 	if (seconds ~= 0) then
@@ -9760,8 +9760,8 @@ function GetFadeFromSeconds(seconds)
 end
 -- ===========================================================================
 
----@param seconds real
----@return real
+---@param seconds number
+---@return number
 function GetFadeFromSecondsAsReal(seconds)
 	if (seconds ~= 0) then
 		return 128.00 / seconds
@@ -9861,14 +9861,14 @@ end
 -- ===========================================================================
 
 ---@param r rect
----@return real
+---@return number
 function GetRectWidthBJ(r)
 	return GetRectMaxX(r) - GetRectMinX(r)
 end
 -- ===========================================================================
 
 ---@param r rect
----@return real
+---@return number
 function GetRectHeightBJ(r)
 	return GetRectMaxY(r) - GetRectMinY(r)
 end
@@ -10098,7 +10098,7 @@ end
 ---@param addBlight boolean
 ---@param whichPlayer player
 ---@param loc location
----@param radius real
+---@param radius number
 function SetBlightRadiusLocBJ(addBlight, whichPlayer, loc, radius)
 	SetBlightLoc(whichPlayer, loc, radius, addBlight)
 end
@@ -10307,9 +10307,9 @@ function MeleeClearExcessUnit()
 end
 -- ===========================================================================
 
----@param x real
----@param y real
----@param range real
+---@param x number
+---@param y number
+---@param range number
 function MeleeClearNearbyUnits(x, y, range)
 	local nearbyUnits
 	
@@ -10367,7 +10367,7 @@ end
 -- ===========================================================================
 
 ---@param src location
----@param range real
+---@param range number
 ---@return unit
 function MeleeFindNearestMine(src, range)
 	local nearbyMines
@@ -10432,8 +10432,8 @@ end
 --- 
 ---@param src location
 ---@param targ location
----@param distance real
----@param deltaAngle real
+---@param distance number
+---@param deltaAngle number
 ---@return location
 function MeleeGetProjectedLoc(src, targ, distance, deltaAngle)
 	local srcX = GetLocationX(src)
@@ -10443,10 +10443,10 @@ function MeleeGetProjectedLoc(src, targ, distance, deltaAngle)
 end
 -- ===========================================================================
 
----@param val real
----@param minVal real
----@param maxVal real
----@return real
+---@param val number
+---@param minVal number
+---@param maxVal number
+---@return number
 function MeleeGetNearestValueWithin(val, minVal, maxVal)
 	if (val < minVal) then
 		return minVal
@@ -11605,7 +11605,7 @@ function MeleeTriggerTournamentFinishSoon()
 		MeleeExposeAllPlayers()
 	end
 	
-	---  Show the "finish soon" timer dialog and set the real time remaining
+	---  Show the "finish soon" timer dialog and set the number time remaining
 	TimerDialogDisplay(bj_finishSoonTimerDialog, true)
 	TimerDialogSetRealTimeRemaining(bj_finishSoonTimerDialog, timeRemaining)
 end
@@ -11780,7 +11780,7 @@ function MeleeInitVictoryDefeat()
 	local indexPlayer
 	
 	---  Create a timer window for the "finish soon" timeout period, it has no timer
-	---  because it is driven by real time (outside of the game state to avoid desyncs)
+	---  because it is driven by number time (outside of the game state to avoid desyncs)
 	bj_finishSoonTimerDialog = CreateTimerDialog(nil)
 	
 	---  Set a trigger to fire when we receive a "finish soon" game event
@@ -12483,7 +12483,7 @@ end
 
 ---@param whichAbility ability
 ---@param whichField abilityrealfield
----@param value real
+---@param value number
 function BlzSetAbilityRealFieldBJ(whichAbility, whichField, value)
 	bj_lastInstObjFuncSuccessful = BlzSetAbilityRealField(whichAbility, whichField, value)
 end
@@ -12518,7 +12518,7 @@ end
 ---@param whichAbility ability
 ---@param whichField abilityreallevelfield
 ---@param level integer
----@param value real
+---@param value number
 function BlzSetAbilityRealLevelFieldBJ(whichAbility, whichField, level, value)
 	bj_lastInstObjFuncSuccessful = BlzSetAbilityRealLevelField(whichAbility, whichField, level, value)
 end
@@ -12557,7 +12557,7 @@ end
 ---@param whichField abilityreallevelarrayfield
 ---@param level integer
 ---@param index integer
----@param value real
+---@param value number
 function BlzSetAbilityRealLevelArrayFieldBJ(whichAbility, whichField, level, index, value)
 	bj_lastInstObjFuncSuccessful = BlzSetAbilityRealLevelArrayField(whichAbility, whichField, level, index, value)
 end
@@ -12594,7 +12594,7 @@ end
 ---@param whichAbility ability
 ---@param whichField abilityreallevelarrayfield
 ---@param level integer
----@param value real
+---@param value number
 function BlzAddAbilityRealLevelArrayFieldBJ(whichAbility, whichField, level, value)
 	bj_lastInstObjFuncSuccessful = BlzAddAbilityRealLevelArrayField(whichAbility, whichField, level, value)
 end
@@ -12630,7 +12630,7 @@ end
 ---@param whichAbility ability
 ---@param whichField abilityreallevelarrayfield
 ---@param level integer
----@param value real
+---@param value number
 function BlzRemoveAbilityRealLevelArrayFieldBJ(whichAbility, whichField, level, value)
 	bj_lastInstObjFuncSuccessful = BlzRemoveAbilityRealLevelArrayField(whichAbility, whichField, level, value)
 end
@@ -12678,7 +12678,7 @@ end
 
 ---@param whichItem item
 ---@param whichField itemrealfield
----@param value real
+---@param value number
 function BlzSetItemRealFieldBJ(whichItem, whichField, value)
 	bj_lastInstObjFuncSuccessful = BlzSetItemRealField(whichItem, whichField, value)
 end
@@ -12711,7 +12711,7 @@ end
 
 ---@param whichUnit unit
 ---@param whichField unitrealfield
----@param value real
+---@param value number
 function BlzSetUnitRealFieldBJ(whichUnit, whichField, value)
 	bj_lastInstObjFuncSuccessful = BlzSetUnitRealField(whichUnit, whichField, value)
 end
@@ -12747,7 +12747,7 @@ end
 ---@param whichUnit unit
 ---@param whichField unitweaponrealfield
 ---@param index integer
----@param value real
+---@param value number
 function BlzSetUnitWeaponRealFieldBJ(whichUnit, whichField, index, value)
 	bj_lastInstObjFuncSuccessful = BlzSetUnitWeaponRealField(whichUnit, whichField, index, value)
 end

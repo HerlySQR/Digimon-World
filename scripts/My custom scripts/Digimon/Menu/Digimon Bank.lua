@@ -9,7 +9,7 @@ do
     ---@field main Digimon
     ---@field spawnPoint Vec2
     ---@field allDead boolean
-    local Bank = {}
+    local Bank = {} ---@type Bank[]
     local LocalPlayer = nil ---@type player
 
     OnMapInit(function ()
@@ -196,6 +196,80 @@ do
         bank.pressed = i
     end
 
+    local function SummonADigimonFunc()
+        local p = GetTriggerPlayer()
+        if p == LocalPlayer then
+            BlzFrameSetVisible(SummonADigimon, false)
+            BlzFrameSetVisible(StockedDigimonsMenu, true)
+            UpdateMenu()
+        end
+    end
+
+    local function ExitFunc()
+        local bank = Bank[GetPlayerId(GetTriggerPlayer())]
+        if GetTriggerPlayer() == LocalPlayer then
+            BlzFrameSetVisible(SummonADigimon, true)
+            BlzFrameSetVisible(StockedDigimonsMenu, false)
+            BlzFrameSetVisible(DigimonTUsed[bank.pressed], false)
+            BlzFrameSetVisible(DigimonTSelected[bank.pressed], false)
+        end
+        bank.pressed = -1
+    end
+
+    local function SummonFunc()
+        local p = GetTriggerPlayer()
+        if p == LocalPlayer then
+            BlzFrameSetVisible(Summon, false)
+            BlzFrameSetVisible(Store, true)
+        end
+        SummonDigimon(p, Bank[GetPlayerId(p)].pressed)
+    end
+
+    local function StoreFunc()
+        local p = GetTriggerPlayer()
+        local bank = Bank[GetPlayerId(p)]
+        StoreDigimon(bank, bank.pressed, true)
+        if p == LocalPlayer then
+            BlzFrameSetVisible(Summon, true)
+            BlzFrameSetVisible(Store, false)
+            UpdateMenu()
+        end
+    end
+
+    local function FreeFunc()
+        if GetTriggerPlayer() == LocalPlayer then
+            BlzFrameSetFocus(StockedDigimonsMenu, false)
+            BlzFrameSetFocus(Warning, true)
+            BlzFrameSetVisible(Warning, true)
+            BlzFrameCageMouse(Warning, true)
+        end
+    end
+
+    local function YesFunc()
+        local p = GetTriggerPlayer()
+        local bank = Bank[GetPlayerId(p)]
+        if p == LocalPlayer then
+            BlzFrameSetEnable(Free, false)
+            BlzFrameSetEnable(Summon, false)
+            UpdateMenu()
+            BlzFrameCageMouse(Warning, false)
+            BlzFrameSetVisible(Warning, false)
+            BlzFrameSetFocus(StockedDigimonsMenu, true)
+            BlzFrameSetVisible(DigimonTUsed[bank.pressed], false)
+            BlzFrameSetVisible(DigimonTSelected[bank.pressed], false)
+        end
+        RemoveFromBank(p, bank.pressed)
+        bank.pressed = -1
+    end
+
+    local function NoFunc()
+        if GetTriggerPlayer() == LocalPlayer then
+            BlzFrameCageMouse(Warning, false)
+            BlzFrameSetVisible(Warning, false)
+            BlzFrameSetFocus(StockedDigimonsMenu, true)
+        end
+    end
+
     local function InitFrames()
 
         local t = nil ---@type trigger
@@ -242,37 +316,22 @@ do
         BlzFrameSetScale(SummonADigimon, 0.90)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SummonADigimon, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, function ()
-            local p = GetTriggerPlayer()
-            if p == LocalPlayer then
-                BlzFrameSetVisible(SummonADigimon, false)
-                BlzFrameSetVisible(StockedDigimonsMenu, true)
-                UpdateMenu()
-            end
-        end)
+        TriggerAddAction(t, SummonADigimonFunc)
+        BlzFrameSetVisible(SummonADigimon, false)
 
         StockedDigimonsMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
         BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.00000, 0.340000)
         BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, 0.220000, 0.150000)
         BlzFrameSetVisible(StockedDigimonsMenu, false)
 
-        Exit = BlzCreateFrame("BrowserButton", StockedDigimonsMenu,0,0)
+        Exit = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
         BlzFrameSetAbsPoint(Exit, FRAMEPOINT_TOPLEFT, 0.190000, 0.330000)
         BlzFrameSetAbsPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, 0.210000, 0.310000)
         BlzFrameSetText(Exit, "|cffFCD20DX|r")
         BlzFrameSetScale(Exit, 1.00)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, function ()
-            local bank = Bank[GetPlayerId(GetTriggerPlayer())]
-            if GetTriggerPlayer() == LocalPlayer then
-                BlzFrameSetVisible(SummonADigimon, true)
-                BlzFrameSetVisible(StockedDigimonsMenu, false)
-                BlzFrameSetVisible(DigimonTUsed[bank.pressed], false)
-                BlzFrameSetVisible(DigimonTSelected[bank.pressed], false)
-            end
-            bank.pressed = -1
-        end)
+        TriggerAddAction(t, ExitFunc)
 
         for i = 0, 5 do
             DigimonT[i] = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu, 0, 0)
@@ -333,23 +392,16 @@ do
         BlzFrameSetScale(Text, 1.00)
         BlzFrameSetTextAlignment(Text, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
-        Summon = BlzCreateFrame("BrowserButton", StockedDigimonsMenu,0,0)
+        Summon = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
         BlzFrameSetPoint(Summon, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.14500)
         BlzFrameSetPoint(Summon, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.11000, 0.02000)
         BlzFrameSetText(Summon, "|cffFCD20DSummon|r")
         BlzFrameSetScale(Summon, 1.00)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Summon, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, function ()
-            local p = GetTriggerPlayer()
-            if p == LocalPlayer then
-                BlzFrameSetVisible(Summon, false)
-                BlzFrameSetVisible(Store, true)
-            end
-            SummonDigimon(p, Bank[GetPlayerId(p)].pressed)
-        end)
+        TriggerAddAction(t, SummonFunc)
 
-        Store = BlzCreateFrame("BrowserButton", StockedDigimonsMenu,0,0)
+        Store = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
         BlzFrameSetPoint(Store, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.14500)
         BlzFrameSetPoint(Store, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.11000, 0.02000)
         BlzFrameSetText(Store, "|cffFCD20DStore|r")
@@ -357,18 +409,9 @@ do
         BlzFrameSetVisible(Store, false)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Store, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, function ()
-            local p = GetTriggerPlayer()
-            local bank = Bank[GetPlayerId(p)]
-            StoreDigimon(bank, bank.pressed, true)
-            if p == LocalPlayer then
-                BlzFrameSetVisible(Summon, true)
-                BlzFrameSetVisible(Store, false)
-                UpdateMenu()
-            end
-        end)
+        TriggerAddAction(t, StoreFunc)
 
-        Free = BlzCreateFrame("BrowserButton", StockedDigimonsMenu,0,0)
+        Free = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
         BlzFrameSetPoint(Free, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.11000, -0.14500)
         BlzFrameSetPoint(Free, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.02000)
         BlzFrameSetText(Free, "|cffFCD20DFree|r")
@@ -376,14 +419,7 @@ do
         BlzFrameSetEnable(Free, false)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Free, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, function ()
-            if GetTriggerPlayer() == LocalPlayer then
-                BlzFrameSetFocus(StockedDigimonsMenu, false)
-                BlzFrameSetFocus(Warning, true)
-                BlzFrameSetVisible(Warning, true)
-                BlzFrameCageMouse(Warning, true)
-            end
-        end)
+        TriggerAddAction(t, FreeFunc)
 
         Warning = BlzCreateFrame("QuestButtonBaseTemplate", Free,0,0)
         BlzFrameSetPoint(Warning, FRAMEPOINT_TOPLEFT, Free, FRAMEPOINT_TOPLEFT, -0.020000, 0.025000)
@@ -398,43 +434,23 @@ do
         BlzFrameSetScale(AreYouSure, 1.00)
         BlzFrameSetTextAlignment(AreYouSure, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
-        Yes = BlzCreateFrame("BrowserButton", Warning,0,0)
+        Yes = BlzCreateFrame("ScriptDialogButton", Warning,0,0)
         BlzFrameSetPoint(Yes, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.010000, -0.035000)
         BlzFrameSetPoint(Yes, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.070000, 0.0050000)
         BlzFrameSetText(Yes, "|cffFCD20DYes|r")
         BlzFrameSetScale(Yes, 1.00)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Yes, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, function ()
-            local p = GetTriggerPlayer()
-            local bank = Bank[GetPlayerId(p)]
-            if p == LocalPlayer then
-                BlzFrameSetEnable(Free, false)
-                BlzFrameSetEnable(Summon, false)
-                UpdateMenu()
-                BlzFrameCageMouse(Warning, false)
-                BlzFrameSetVisible(Warning, false)
-                BlzFrameSetFocus(StockedDigimonsMenu, true)
-                BlzFrameSetVisible(DigimonTUsed[bank.pressed], false)
-                BlzFrameSetVisible(DigimonTSelected[bank.pressed], false)
-            end
-            RemoveFromBank(p, bank.pressed)
-        end)
+        TriggerAddAction(t, YesFunc)
 
-        No = BlzCreateFrame("BrowserButton", Warning,0,0)
+        No = BlzCreateFrame("ScriptDialogButton", Warning,0,0)
         BlzFrameSetPoint(No, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.070000, -0.035000)
         BlzFrameSetPoint(No, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0050000)
         BlzFrameSetText(No, "|cffFCD20DNo|r")
         BlzFrameSetScale(No, 1.00)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, No, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, function ()
-            if GetTriggerPlayer() == LocalPlayer then
-                BlzFrameCageMouse(Warning, false)
-                BlzFrameSetVisible(Warning, false)
-                BlzFrameSetFocus(StockedDigimonsMenu, true)
-            end
-        end)
+        TriggerAddAction(t, NoFunc)
 
     end
 
@@ -536,6 +552,10 @@ do
             if bank.main == d then
                 SearchMain(bank)
             end
+            Timed.call(5 * math.random(), function ()
+                d:issueOrder(Orders.smart, MapBounds:getRandomX(), MapBounds:getRandomY())
+            end)
+            d:remove(30.)
         end
         if p == LocalPlayer then
             UpdateMenu()
@@ -565,7 +585,7 @@ do
 
     -- When dies
     local respawnTime = 60
-    local cooldowns = __jarray(0) ---@type real[]
+    local cooldowns = __jarray(0) ---@type table<Digimon, number>
 
     OnMapInit(function ()
         Digimon.killEvent(function (_, dead)
@@ -644,8 +664,16 @@ do
     end)
 
     ---@param d Digimon
-    ---@return real
+    ---@return number
     function GetDigimonCooldown(d)
         return cooldowns[d]
+    end
+
+    ---@param p player
+    ---@param flag boolean
+    function ShowBank(p, flag)
+        if p == LocalPlayer then
+            BlzFrameSetVisible(SummonADigimon, flag)
+        end
     end
 end

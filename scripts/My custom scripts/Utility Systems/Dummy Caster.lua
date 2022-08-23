@@ -38,7 +38,7 @@ if OnGlobalInit and WorldBounds and Timed then
         table.insert(Dummies, dummy)
     end
 
-    ---Casts a spell from a dummy caster
+    ---Casts a spell from a dummy caster, returns if the spell was successfully casted
     ---@param owner player
     ---@param x real
     ---@param y real
@@ -48,6 +48,7 @@ if OnGlobalInit and WorldBounds and Timed then
     ---@param castType CastType
     ---@param tx? real | unit
     ---@param ty? real
+    ---@return boolean
     function DummyCast(owner, x, y, abilId, orderId, level, castType, tx, ty)
         local angle = 0
         if castType == CastType.IMMEDIATE then
@@ -65,7 +66,7 @@ if OnGlobalInit and WorldBounds and Timed then
             if Wc3Type(tx) ~= "unit" then
                 error("Invalid target", 2)
             end
-            angle = math.atan(GetWidgetX(tx) - y, GetWidgetY(tx) - x)
+            angle = math.atan(GetUnitX(tx) - y, GetUnitX(tx) - x)
         else
             error("Invalid target-type", 2)
         end
@@ -74,12 +75,13 @@ if OnGlobalInit and WorldBounds and Timed then
         SetUnitAbilityLevel(dummy, abilId, level)
         Abilities[dummy] = abilId
         if castType == CastType.IMMEDIATE then
-            IssueImmediateOrderById(dummy, orderId)
+            return IssueImmediateOrderById(dummy, orderId)
         elseif castType == CastType.POINT then
-            IssuePointOrderById(dummy, orderId, tx, ty)
+            return IssuePointOrderById(dummy, orderId, tx, ty)
         elseif castType == CastType.TARGET then
-            IssueTargetOrderById(dummy, orderId, tx)
+            return IssueTargetOrderById(dummy, orderId, tx)
         end
+        return false
     end
 
     OnMapInit(function ()

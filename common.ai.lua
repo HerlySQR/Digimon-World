@@ -263,8 +263,8 @@ function GetExpansionX() end    -- (native)
 ---@return integer
 function GetExpansionY() end    -- (native)
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 function SetStagePoint(x, y) end    -- (native)
 
 ---@param target unit
@@ -312,31 +312,31 @@ function GetExpansionPeon() end    -- (native)
 function StopGathering() end    -- (native)
 
 ---@param id integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 function AddGuardPost(id, x, y) end    -- (native)
 function FillGuardPosts() end    -- (native)
 function ReturnGuardPosts() end    -- (native)
 function CreateCaptains() end    -- (native)
 
 ---@param which integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 function SetCaptainHome(which, x, y) end    -- (native)
 function ResetCaptainLocs() end    -- (native)
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 function ShiftTownSpot(x, y) end    -- (native)
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 function TeleportCaptain(x, y) end    -- (native)
 
 function ClearCaptainTargets() end    -- (native)
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 function CaptainAttack(x, y) end    -- (native)
 
 ---@param id player
@@ -389,7 +389,7 @@ function SuicideUnitEx(ct, uid, pid) end    -- (native)
 ---@param func function
 function StartThread(func) end    -- (native)
 
----@param seconds real
+---@param seconds number
 function Sleep(seconds) end    -- (native)
 
 ---@param id unit
@@ -1035,19 +1035,19 @@ wave_reach_goal_timeout_seconds                  = 300 ---@type integer
 wave_enter_combat_timeout_seconds                  = 3 ---@type integer
 wave_clear_goal_timeout_seconds                     = 60 ---@type integer
 
-continue_far_away_radius                              = 960.0 ---@type real
-preferred_locations_radius                          = 640.0 ---@type real
+continue_far_away_radius                              = 960.0 ---@type number
+preferred_locations_radius                          = 640.0 ---@type number
 
 wave_reach_goal_sleep_seconds = nil ---@type integer
 wave_enter_combat_sleep_seconds = nil ---@type integer
 wave_clear_goal_sleep_seconds = nil ---@type integer
 
-defense_captain_home_x = nil ---@type real
-defense_captain_home_y = nil ---@type real
+defense_captain_home_x = nil ---@type number
+defense_captain_home_y = nil ---@type number
 defense_captain_home_set                          = false ---@type boolean
 
-attack_wave_gather_return_x = nil ---@type real
-attack_wave_gather_return_y = nil ---@type real
+attack_wave_gather_return_x = nil ---@type number
+attack_wave_gather_return_y = nil ---@type number
 attack_wave_gather_return_set                     = false ---@type boolean
     
 preferred_locations = {} ---@type location[]
@@ -1081,8 +1081,8 @@ targetable_buildings_count                          = 0 ---@type integer
 targetable_units = {} ---@type unit[]
 targetable_units_count                              = 0 ---@type integer
 
-last_target_x = nil ---@type real
-last_target_y = nil ---@type real
+last_target_x = nil ---@type number
+last_target_y = nil ---@type number
 search_target_max_cycles_default                 = 100 ---@type integer
 search_target_max_cycles_last_target             = 10 ---@type integer
     
@@ -1838,8 +1838,8 @@ function OneBuildLoop()
 end
 
 --============================================================================
----@param base real
----@param spread real
+---@param base number
+---@param spread number
 function StaggerSleep(base, spread)
     Sleep(base + spread * I2R(GetAiPlayer()) / I2R(GetPlayers()))
 end
@@ -2697,7 +2697,7 @@ end
 ---@param air_units boolean
 function SingleMeleeAttack(needs_exp, has_siege, major_ok, air_units)
     local can_siege   = nil ---@type boolean
-    local daytime      = nil ---@type real
+    local daytime      = nil ---@type number
     local hall      = nil ---@type unit
     local mega      = nil ---@type unit
     local creep      = nil ---@type unit
@@ -3156,11 +3156,11 @@ end
 --============================================================================
 --  ADVANCED UTILITY
 --============================================================================
----@param x1 real
----@param y1 real
----@param x2 real
----@param y2 real
----@return real
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@return number
 function AdvDistance(x1, y1, x2, y2)
     return SquareRoot(((x2 - x1) *(x2 - x1)) +((y2 - y1) *(y2 - y1)))
 end
@@ -3208,12 +3208,12 @@ end
 
 --============================================================================
 
----@param radius real
+---@param radius number
 function AdvSetContinueFarAwayRadius(radius)
     continue_far_away_radius = radius
 end
 
----@param radius real
+---@param radius number
 function AdvSetPreferredLocationsRadius(radius)
     preferred_locations_radius = radius
 end
@@ -3305,16 +3305,16 @@ end
 
 --============================================================================
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 function AdvSetAttackWaveGatherReturnXY(x, y)
     attack_wave_gather_return_x = x
     attack_wave_gather_return_y = y
     attack_wave_gather_return_set = true
 end
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 function AdvSetDefenseCaptainHomeXY(x, y)
     defense_captain_home_x = x
     defense_captain_home_y = y
@@ -3358,8 +3358,8 @@ end
 
 --============================================================================
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return integer
 function AdvAddPreferredLocation(x, y)
     preferred_locations[preferred_locations_count] = Location(x, y)
@@ -3369,8 +3369,8 @@ function AdvAddPreferredLocation(x, y)
 end
 
 ---@param index integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 function AdvSetPreferredLocationXY(index, x, y)
     if index < preferred_locations_count then
         preferred_locations[index] = Location(x, y)
@@ -3398,13 +3398,13 @@ function AdvGetRandomTargetableTownHall()
     return targetable_town_halls[randomIndex]
 end
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return unit
 function AdvGetNearestTargetableTownHall(x, y)
     local index  = 0 ---@type integer
     local minDistanceIndex  = 0 ---@type integer
-    local minDistance = nil ---@type real
+    local minDistance = nil ---@type number
     
     if targetable_town_halls_count <= 0 then
         return nil
@@ -3441,13 +3441,13 @@ function AdvGetRandomTargetableBuilding()
     return targetable_buildings[randomIndex]
 end
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return unit
 function AdvGetNearestTargetableBuilding(x, y)
     local index  = 0 ---@type integer
     local minDistanceIndex  = 0 ---@type integer
-    local minDistance = nil ---@type real
+    local minDistance = nil ---@type number
     
     if targetable_buildings_count <= 0 then
         return nil
@@ -3484,13 +3484,13 @@ function AdvGetRandomTargetableUnit()
     return targetable_units[randomIndex]
 end
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return unit
 function AdvGetNearestTargetableUnit(x, y)
     local index  = 0 ---@type integer
     local minDistanceIndex  = 0 ---@type integer
-    local minDistance = nil ---@type real
+    local minDistance = nil ---@type number
     
     if targetable_units_count <= 0 then
         return nil
@@ -3697,8 +3697,8 @@ end
 --============================================================================
 
 ---@param targetPlayer player
----@param startX real
----@param startY real
+---@param startX number
+---@param startY number
 ---@param searchPreferredLocations boolean
 ---@param searchEverywhere boolean
 ---@param canSearchUnits boolean
@@ -3709,8 +3709,8 @@ end
 function AdvSuicideWaveLaunch(targetPlayer, startX, startY, searchPreferredLocations, searchEverywhere, canSearchUnits, prioritizeTownHalls, prioritizeNearest, useLastTarget)
     local target  = nil ---@type unit
     local index  = 0 ---@type integer
-    local targetX = nil ---@type real
-    local targetY = nil ---@type real
+    local targetX = nil ---@type number
+    local targetY = nil ---@type number
     local searchTargetCycle  = 0 ---@type integer
     
     -- Set the start coordinates
@@ -4206,16 +4206,16 @@ end
 --============================================================================
 
 ---@param targetPlayer player
----@param startX real
----@param startY real
+---@param startX number
+---@param startY number
 ---@param reachGoalTimeout boolean
 ---@param enterCombatTimeout boolean
 ---@param clearGoalTimeout boolean
 ---@param continuePercentage integer
 function AdvSuicideWaveRoutine(targetPlayer, startX, startY, reachGoalTimeout, enterCombatTimeout, clearGoalTimeout, continuePercentage)
     local continuePercentageNew  = continuePercentage ---@type integer
-    local previousTargetX  = last_target_x ---@type real
-    local previousTargetY  = last_target_y ---@type real
+    local previousTargetX  = last_target_x ---@type number
+    local previousTargetY  = last_target_y ---@type number
     local state  = 0 ---@type integer
     local combatEnteredBeforeGoal  = false ---@type boolean
     local goalReached  = false ---@type boolean
@@ -4425,8 +4425,8 @@ end
 --============================================================================
 ---@param seconds integer
 ---@param targetPlayer player
----@param startX real
----@param startY real
+---@param startX number
+---@param startY number
 function AdvSuicideOnPlayer(seconds, targetPlayer, startX, startY)
     local woodPeons = nil ---@type integer
     local targetFound  = false ---@type boolean
@@ -4509,8 +4509,8 @@ end
 ---@param med integer
 ---@param hard integer
 ---@param targetPlayer player
----@param startX real
----@param startY real
+---@param startX number
+---@param startY number
 function AdvSuicideOnPlayerEx(easy, med, hard, targetPlayer, startX, startY)
 
     if difficulty == EASY then

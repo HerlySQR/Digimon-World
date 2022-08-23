@@ -13,33 +13,34 @@ do
     *   To use this system, just copy this script to your trigger editor, then you
     *   can use it straight away. To see how the evaluation function works, compare
     *   the example IngameCalculator trigger.
+    *   To detect if the library is implemented do "if AdvancedMaths then"
     *
     **********************************************************************************
     *
     *   System API
     *   ¯¯¯¯¯¯¯¯¯¯
     *
-    *       real math.E
+    *       number math.E
     *           - Refer to this field for the number E, the base of the natural
     *             exponential function.
     *
-    *       real math.Phi
+    *       number math.Phi
     *           - Refer to this field for the number Phi, the golden ratio.
     *
-    *       real math.Inf
-    *           - Refer to this field for 2^128, the biggest real number Wc3 can 
-    *             handle. You can use -Math.Inf to get the smallest real number.
+    *       number math.Inf
+    *           - Refer to this field for 2^128, the biggest number Wc3 can 
+    *             handle. You can use -Math.Inf to get the smallest number.
     *
-    *       function math.sig(real r) returns real
-    *           - Extracts the sign of a real number.
+    *       function math.sig(number r) returns number
+    *           - Extracts the sign of a number.
     *
-    *       function math.max(real r1, real r2) returns real
+    *       function math.max(number r1, number r2) returns number
     *           - Returns the bigger of two values r1 and r2.
     *
-    *       function math.min(real r1, real r2) returns real
+    *       function math.min(number r1, number r2) returns number
     *           - Returns the smaller of two values r1 and r2.
     *
-    *       function math.mod(real r1, real r2 ) returns real
+    *       function math.mod(number r1, number r2 ) returns number
     *           - Computes the rest of the division r1/r2.
     *
     *       function math.modInt(integer n1, integer n2) returns integer
@@ -53,51 +54,51 @@ do
     *           - Computes the modulo of x^n/modulo. Use this to compute the
     *             modulo of extremly large numbers.
     *
-    *       function math.digits(real r) returns integer
-    *           - Returns the number of digits before the comma of a given real number.
+    *       function math.digits(number r) returns integer
+    *           - Returns the number of digits before the comma of a given number.
     *
     *       function math.isDigit(string s) returns boolean
     *           - Determines whether a string is a digit or not.
     *
-    *       function math.isInteger(real r) returns boolean
-    *           - Determines whether a real is integer or not.
+    *       function math.isInteger(number r) returns boolean
+    *           - Determines whether a number is integer or not.
     *
-    *       function math.isEven(real r) returns boolean
-    *           - Determines the parity of a real number.
+    *       function math.isEven(number r) returns boolean
+    *           - Determines the parity of a number.
     *
-    *       function math.isPrime(real r) returns boolean
+    *       function math.isPrime(number r) returns boolean
     *           - Determines whether a number is a prime or not by using a deterministic
     *             version of the Miller-Rabin test.
     *
-    *       function math.sinh(real r) returns real
-    *           - Computes the hyperbolic sine of a real number.
+    *       function math.sinh(number r) returns number
+    *           - Computes the hyperbolic sine of a number.
     *
-    *       function math.cosh(real r) returns real
-    *           - Computes the hyperbolic cosine of a real number.
+    *       function math.cosh(number r) returns number
+    *           - Computes the hyperbolic cosine of a number.
     *
-    *       function math.tanh(real r) returns real
-    *           - Computes the hyperbolic tangent of a real number.
+    *       function math.tanh(number r) returns number
+    *           - Computes the hyperbolic tangent of a number.
     *
-    *       function math.asinh(real r) returns real
-    *           - Computes the inverse hyperbolic sine of a real number.
+    *       function math.asinh(number r) returns number
+    *           - Computes the inverse hyperbolic sine of a number.
     *
-    *       function math.acosh(real r) returns real
-    *           - Computes the inverse hyperbolic cosine of a real number.
+    *       function math.acosh(number r) returns number
+    *           - Computes the inverse hyperbolic cosine of a number.
     *
-    *       function math.atanh(real r) returns real
-    *           - Computes the inverse hyperbolic tangent of a real number.
+    *       function math.atanh(number r) returns number
+    *           - Computes the inverse hyperbolic tangent of a number.
     *
-    *       function math.round(real r) returns real
+    *       function math.round(number r) returns number
     *           - Rounds a number to the nearest whole number.
     *
-    *       function math.fractional(real r) returns real
+    *       function math.fractional(number r) returns number
     *           - Computes the fractional part of a number.
     *
-    *       function math.mergeFloat(real r) returns real
+    *       function math.mergeFloat(number r) returns number
     *           - Merges the fracional and the non fractional parts of a number
     *             together to an integer number.
     *
-    *       function math.factorial(real r) returns real
+    *       function math.factorial(number r) returns number
     *           - Computes the factorial of a number r. If r is not a natural
     *             number, the gamma function as an extension to the factorial
     *             function is used.
@@ -118,15 +119,13 @@ do
     ************************************************************************
     ]]
 
-    -- For easy localization
-    local math = math
-    local string = string
+    AdvancedMaths = true
 
     ---Refer to this field for the number E, the base of the natural exponential function.
     math.E = 2.718282
     ---Refer to this field for the number Phi, the golden ratio.
     math.Phi = 1.618034
-    ---Refer to this field for 2^128, the biggest real number Wc3 can handle. You can use -Math.Inf to get the smallest real number.
+    ---Refer to this field for 2^128, the biggest number Wc3 can handle. You can use -Math.Inf to get the smallest number.
     math.Inf = 2^128
 
     ---Extracts the sign of a number.
@@ -137,9 +136,9 @@ do
     end
 
     ---Computes the rest of the division r1/r2.
-    ---@param r1 real
-    ---@param r2 real
-    ---@return real
+    ---@param r1 number
+    ---@param r2 number
+    ---@return number
     function math.mod(r1, r2)
         local modulus = r1 - I2R(R2I(r1/r2))*r2
 
@@ -222,7 +221,7 @@ do
         return result
     end
 
-    ---Returns the number of digits before the comma of a given real number.
+    ---Returns the number of digits before the comma of a given number.
     ---@param r number
     ---@return integer
     function math.digits(r)
@@ -237,50 +236,50 @@ do
         return i
     end
 
-    ---Computes the hyperbolic sine of a real number.
+    ---Computes the hyperbolic sine of a number.
     ---
     ---This function was deprecated in Lua 5.3
-    ---@param r real
-    ---@return real
+    ---@param r number
+    ---@return number
     function math.sinh(r)
         return (math.exp(r) - math.exp(-r)) / 2
     end
 
-    ---Computes the hyperbolic cosine of a real number.
+    ---Computes the hyperbolic cosine of a number.
     ---
     ---This function was deprecated in Lua 5.3
-    ---@param r real
-    ---@return real
+    ---@param r number
+    ---@return number
     function math.cosh(r)
         return (math.exp(r) + math.exp(-r)) / 2
     end
 
-    ---Computes the hyperbolic tangent of a real number.
+    ---Computes the hyperbolic tangent of a number.
     ---
     ---This function was deprecated in Lua 5.3
-    ---@param r real
-    ---@return real
+    ---@param r number
+    ---@return number
     function math.tanh(r)
         return math.sinh(r) / math.cosh(r)
     end
 
-    ---Computes the inverse hyperbolic sine of a real number.
-    ---@param r real
-    ---@return real
+    ---Computes the inverse hyperbolic sine of a number.
+    ---@param r number
+    ---@return number
     function math.asinh(r)
         return math.log(r + math.sqrt(r^2 + 1))
     end
 
-    ---Computes the inverse hyperbolic cosine of a real number.
-    ---@param r real
-    ---@return real
+    ---Computes the inverse hyperbolic cosine of a number.
+    ---@param r number
+    ---@return number
     function math.acosh(r)
         return math.log(r + math.sqrt(r^2 - 1))
     end
 
-    ---Computes the inverse hyperbolic tangent of a real number.
-    ---@param r real
-    ---@return real
+    ---Computes the inverse hyperbolic tangent of a number.
+    ---@param r number
+    ---@return number
     function math.atanh(r)
         return 0.5 * math.log((1 + r)/(1 - r))
     end
@@ -296,14 +295,14 @@ do
     end
 
     ---Computes the fractional part of a number.
-    ---@param r real
-    ---@return real
+    ---@param r number
+    ---@return number
     function math.fractional(r)
         return select(2, math.modf(r))
     end
 
     ---Merges the fracional and the non fractional parts of a number together to an integer number.
-    ---@param r real
+    ---@param r number
     ---@return integer
     function math.mergeFloat(r)
         local beforeC, afterC = math.modf(r)
@@ -325,14 +324,14 @@ do
         return not (StringLength(s) ~= 1 or S2R(s) == 0 and s ~= "0")
     end
 
-    ---Determines whether a real is integer or not.
+    ---Determines whether a number is integer or not.
     ---@param r number
     ---@return boolean
     function math.isInteger(r)
         return math.type(r) == "integer"
     end
 
-    ---Determines the parity of a real number.
+    ---Determines the parity of a number.
     ---@param r number
     ---@return boolean
     function math.isEven(r)
@@ -385,8 +384,8 @@ do
         return test
     end
 
-    local stored = {} ---@type boolean[]
-    local isPrime = {} ---@type boolean[]
+    local stored = __jarray(false) ---@type boolean[]
+    local isPrime = __jarray(false) ---@type boolean[]
 
     ---Determines whether a number is a prime or not by using a deterministic version of the Miller-Rabin test.
     ---@param n integer
@@ -397,9 +396,6 @@ do
         elseif math.isEven(n) or n < 2 then
             return false
         end
-
-        stored[n] = stored[n] or __jarray(false)
-        isPrime[n] = isPrime[n] or __jarray(false)
 
         if STORE_DETECTED_PRIMES then
             if stored[n] then

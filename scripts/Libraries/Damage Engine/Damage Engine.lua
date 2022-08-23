@@ -180,8 +180,8 @@ OnGlobalInit(function() Damage = {}
     ---@class damageInstance
     ---@field source        unit
     ---@field target        unit
-    ---@field damage        real
-    ---@field prevAmt       real
+    ---@field damage        number
+    ---@field prevAmt       number
     ---@field isAttack      boolean
     ---@field isRanged      boolean
     ---@field isMelee       boolean
@@ -192,7 +192,7 @@ OnGlobalInit(function() Damage = {}
     ---@field isSpell       boolean
     ---@field recursiveFunc damageEventRegistry[]
     ---@field userType      integer
-    ---@field armorPierced  real
+    ---@field armorPierced  number
     ---@field prevArmorT    integer
     ---@field armorType     integer
     ---@field prevDefenseT  integer
@@ -230,6 +230,9 @@ OnGlobalInit(function() Damage = {}
     ---@param head damageEventRegistry
     ---@return boolean ran_yn
     local function runEvent(head)
+        if not current then
+            return
+        end
         local check = breakCheck[head] or defaultCheck
         if dreaming or check() then
             return
@@ -374,8 +377,11 @@ OnGlobalInit(function() Damage = {}
     ---Handle any desired armor modification.
     ---@param reset? boolean
     local function setArmor(reset)
+        if not current then
+            return
+        end
         if _USE_ARMOR_MOD then
-            local pierce    ---@type real
+            local pierce    ---@type number
             local at        ---@type integer
             local dt        ---@type integer
             if reset then
@@ -788,7 +794,7 @@ OnGlobalInit(function() Damage = {}
     ---Apply damage directly via Damage Engine
     ---@param src unit
     ---@param tgt unit
-    ---@param amt real
+    ---@param amt number
     ---@param a boolean
     ---@param r boolean
     ---@param at attacktype
@@ -810,7 +816,7 @@ OnGlobalInit(function() Damage = {}
     ---Deal spell damage using the below simple criteria
     ---@param src unit
     ---@param tgt unit
-    ---@param amt real
+    ---@param amt number
     ---@param dt damagetype
     ---@return damageInstance
     function Damage.applySpell(src,  tgt,  amt, dt)
@@ -863,7 +869,7 @@ a breakthrough in coding thanks to the innovation brought forth via Global Varia
         GlobalRemap("udg_DamageEventDamageT", function() return GetHandleId(current.damageType) end, function(var) current.damageType  = ConvertDamageType(var) end)
         GlobalRemap("udg_DamageEventWeaponT", function() return GetHandleId(current.weaponType) end, function(var) current.weaponType  = ConvertWeaponType(var) end)
         
-        --New GUI vars unique to version 2.0: boolean DamageEngineEnabled, boolean DamageFilterConfigured, real DamageEventUserAmt
+        --New GUI vars unique to version 2.0: boolean DamageEngineEnabled, boolean DamageFilterConfigured, number DamageEventUserAmt
         
         GlobalRemap("udg_DamageEngineEnabled", nil, function(val) Damage.enable(val) end)
         GlobalRemap("udg_NextDamageType", nil, function(val) Damage.nextType = val end)

@@ -50,9 +50,9 @@ do
     ---Create an instantiated digimon
     ---@param p player
     ---@param id integer
-    ---@param x real
-    ---@param y real
-    ---@param facing real
+    ---@param x number
+    ---@param y number
+    ---@param facing number
     ---@return Digimon
     function Digimon.create(p, id, x, y, facing)
         return Digimon.add(GetRecycledHero(p, id, x, y, facing))
@@ -116,22 +116,22 @@ do
         return GetUnitTypeId(self.root)
     end
 
-    ---@return real
+    ---@return number
     function Digimon:getX()
         return GetUnitX(self.root)
     end
 
-    ---@param x real
+    ---@param x number
     function Digimon:setX(x)
         return SetUnitX(self.root, x)
     end
 
-    ---@return real
+    ---@return number
     function Digimon:getY()
         return GetUnitY(self.root)
     end
 
-    ---@param y real
+    ---@param y number
     function Digimon:setY(y)
         return SetUnitY(self.root, y)
     end
@@ -146,13 +146,13 @@ do
         SetUnitPositionLoc(self.root, l)
     end
 
-    ---@param x real
-    ---@param y real
+    ---@param x number
+    ---@param y number
     function Digimon:setPos(x, y)
         return SetUnitPosition(self.root, x, y)
     end
 
-    ---@return real x, real y
+    ---@return number x, number y
     function Digimon:getPos()
         return GetUnitX(self.root), GetUnitY(self.root)
     end
@@ -162,16 +162,34 @@ do
         SetUnitPosition(self.root, WorldBounds.maxX, WorldBounds.maxY)
     end
 
-    ---@param x real
-    ---@param y real
+    ---@param x number
+    ---@param y number
     function Digimon:showFromTheCorner(x, y)
         ShowUnitShow(self.root)
         SetUnitPosition(self.root, x, y)
     end
 
+    ---@param order integer
+    ---@param x number | unit
+    ---@param y number
+    ---@return boolean
+    function Digimon:issueOrder(order, x, y)
+        if type(x) == "number" and y then
+            return IssuePointOrderById(self.root, order, x, y)
+        elseif Wc3Type(x) == "unit" then
+            return IssueTargetOrderById(self.root, order, x)
+        elseif not x and not y then
+            return IssueImmediateOrderById(self.root, order)
+        end
+        error("Invalid target order", 2)
+    end
+
     ---@param u unit
     ---@return Digimon
     function Digimon.getInstance(u)
+        if not u then
+            return nil
+        end
         return Digimon._instance[u]
     end
 
@@ -185,9 +203,9 @@ do
         end)
     end
 
-    ---@param x real
-    ---@param y real
-    ---@param range real
+    ---@param x number
+    ---@param y number
+    ---@param range number
     ---@param callback fun(d:Digimon)
     function Digimon.enumInRange(x, y, range, callback)
         ForUnitsInRange(x, y, range, function (u)
@@ -245,7 +263,7 @@ do
         Digimon._instance[self.root] = nil
     end
 
-    ---@param delay real
+    ---@param delay number
     function Digimon:remove(delay)
         Timed.call(delay, function () self:destroy() end)
     end

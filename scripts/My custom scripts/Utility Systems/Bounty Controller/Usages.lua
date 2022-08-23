@@ -1,0 +1,7 @@
+OnMapInit(function ()
+    RegisterBountyDeadEvent(function ()
+        local bounty = Bounty.GetCurrent()
+        local dead = Digimon.getInstance(bounty.DyingUnit)
+        bounty.Amount = dead:getLevel() * 2 + math.random(1, 5)
+    end)
+end)

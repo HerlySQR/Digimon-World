@@ -65,12 +65,16 @@ do
             gold = udg_SaveLoadGold, ---@type integer
             lumber = udg_SaveLoadLumber, ---@type integer
             food = udg_SaveLoadFood, ---@type integer
+            backpackItems = udg_SaveLoadBackpackItems, ---@type integer[]
+            backpackItemCharges = udg_SaveLoadBackpackItemCharges, ---@type integer[]
             digimons = udg_SaveLoadDigimons, ---@type Digimon[]
             inventories = udg_SaveLoadInventories, ---@type Inventory[]
             levels = udg_SaveLoadLevels, ---@type integer[]
             experiences = udg_SaveLoadExps, ---@type integer[]
         }
 
+        udg_SaveLoadBackpackItems = {}
+        udg_SaveLoadBackpackItemCharges = {}
         udg_SaveLoadDigimons = {}
         udg_SaveLoadInventories = {}
         udg_SaveLoadLevels = __jarray(0)
@@ -94,6 +98,7 @@ do
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, data.gold)
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, data.lumber)
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, data.food)
+                SetBackpackItems(p, data.backpackItems, data.backpackItemCharges)
                 for i = 1, #data.digimons do
                     local d = Digimon.create(p, data.digimons[i], 0, 0, bj_UNIT_FACING)
                     data.inventories[i]:useTheItems(d.root)

@@ -68,22 +68,28 @@ do
             BlzFrameSetText(TooltipGold, "|cffFFCC00Gold: |r" .. data.gold)
             BlzFrameSetText(TooltipLumber, "|cff20bc20Lumber: |r" .. data.lumber)
             for i = 1, #data.digimons do
-                local s = ""
-                local inv = data.inventories[i]
-                for j = 0, 5 do
-                    if inv.items[j] then
-                        s = s .. GetObjectName(inv.items[j]) -- Thank you guys
-                        if GetItemClass(inv.classes[j]) == ITEM_TYPE_CHARGED then
-                            s = s .. "(" .. inv.charges[j] .. ")"
-                        end
-                        if j ~= 5 then
-                            s = s .. ", "
+                if data.digimons[i] then
+                    local s = ""
+                    local inv = data.inventories[i]
+                    for j = 0, 5 do
+                        if inv.items[j] then
+                            s = s .. GetObjectName(inv.items[j]) -- Thank you guys
+                            if GetItemClass(inv.classes[j]) == ITEM_TYPE_CHARGED then
+                                s = s .. "(" .. inv.charges[j] .. ")"
+                            end
+                            if j ~= 5 then
+                                s = s .. ", "
+                            end
                         end
                     end
+                    BlzFrameSetText(TooltipDigimonItemsT[i-1], "|cff00ffffItems: |r" .. s)
+                    BlzFrameSetTexture(TooltipDigimonIconT[i-1], BlzGetAbilityIcon(data.digimons[i]), 0, true)
+                    BlzFrameSetText(TextTooltipLevelT[i-1], "|cffFFCC00Level " .. data.levels[i] .. "|r")
+                else
+                    BlzFrameSetText(TooltipDigimonItemsT[i-1], "|cff00ffffItems: |r")
+                    BlzFrameSetTexture(TooltipDigimonIconT[i-1], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                    BlzFrameSetText(TextTooltipLevelT[i-1], "|cffFFCC00Level 0|r")
                 end
-                BlzFrameSetText(TooltipDigimonItemsT[i-1], "|cff00ffffItems: |r" .. s)
-                BlzFrameSetTexture(TooltipDigimonIconT[i-1], BlzGetAbilityIcon(data.digimons[i]), 0, true)
-                BlzFrameSetText(TextTooltipLevelT[i-1], "|cffFFCC00Level " .. data.levels[i] .. "|r")
             end
         else
             BlzFrameSetText(TooltipName, "|cffff6600Empty|r")
@@ -221,7 +227,7 @@ do
 
         -- Save Button
 
-        SaveButton = BlzCreateFrame("BrowserButton", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
+        SaveButton = BlzCreateFrame("ScriptDialogButton", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
         BlzFrameSetAbsPoint(SaveButton, FRAMEPOINT_TOPLEFT, 0.680000, 0.570000)
         BlzFrameSetAbsPoint(SaveButton, FRAMEPOINT_BOTTOMRIGHT, 0.740000, 0.540000)
         BlzFrameSetText(SaveButton, "|cff" .. NormalColor .. "Save|r")
@@ -234,7 +240,7 @@ do
 
         -- Load Button
 
-        LoadButton = BlzCreateFrame("BrowserButton", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
+        LoadButton = BlzCreateFrame("ScriptDialogButton", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
         BlzFrameSetAbsPoint(LoadButton, FRAMEPOINT_TOPLEFT, 0.740000, 0.570000)
         BlzFrameSetAbsPoint(LoadButton, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.540000)
         BlzFrameSetText(LoadButton, "|cff" .. NormalColor .. "Load|r")
@@ -268,7 +274,7 @@ do
         y2[4] = 0.08000
 
         for i = 0, 4 do
-            SaveSlotT[i] = BlzCreateFrame("BrowserButton", SaveLoadMenu,0,0)
+            SaveSlotT[i] = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
             BlzFrameSetPoint(SaveSlotT[i], FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.010000, y1[i])
             BlzFrameSetPoint(SaveSlotT[i], FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, y2[i])
             BlzFrameSetText(SaveSlotT[i], "|cffFCD20DEmpty|r")
@@ -278,7 +284,7 @@ do
             TriggerAddAction(t, function () SaveLoadActions(i) end) -- :D
         end
 
-        AutoSaveSlot = BlzCreateFrame("BrowserButton", SaveLoadMenu, 0, 0)
+        AutoSaveSlot = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu, 0, 0)
         BlzFrameSetPoint(AutoSaveSlot, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.18500)
         BlzFrameSetPoint(AutoSaveSlot, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.045000)
         BlzFrameSetText(AutoSaveSlot, "|cffFCD20DAuto-save|r")

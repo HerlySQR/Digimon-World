@@ -1,6 +1,7 @@
 -- Abstraction of the place a digimon is staying
 do
     local LocalPlayer = nil ---@type player
+    local TopMsg = nil ---@type framehandle
 
     ---@class Environment
     ---@field name string
@@ -13,7 +14,7 @@ do
 
     ---The camera bounds is not the same as the region that appears in the minimap
     ---@param place rect
-    ---@return real x1, real y1, real x2, real y2, real x3, real y3, real x4, real y4
+    ---@return number x1, number y1, number x2, number y2, number x3, number y3, number x4, number y4
     local function FixedCameraBounds(place)
         local minX = GetRectMinX(place) + 512
         local maxX = GetRectMaxX(place) - 512
@@ -65,9 +66,9 @@ do
         if InTranssition[LocalPlayer] then -- Prevents that the player changes enviroment when is transsitioning
             return
         end
-        if env.name ~= "" then
-            print("|cffffff00[" .. env.name .. "]|r")
-        end
+
+        BlzFrameSetVisible(TopMsg, true)
+        BlzFrameSetText(TopMsg, "|cffffff00[" .. env.name .. "]|r")
         -- Prevent bad camera bounds if the player has the camera rotated
         local rotation = GetCameraField(CAMERA_FIELD_ROTATION)*bj_RADTODEG
         SetCameraField(CAMERA_FIELD_ROTATION, 90, 0)
@@ -94,6 +95,11 @@ do
             InTranssition[p] = true
             PolledWait(0.25)
             InTranssition[p] = false
+
+            Timed.call(4., function ()
+                FrameFadeOut(TopMsg, 1., p)
+            end)
+
             if p == LocalPlayer then
                 internalApply(env)
                 FadeIn("ReplaceableTextures\\CameraMasks\\Black_mask.blp", 0.25)
@@ -107,7 +113,7 @@ do
     end
 
     ---@param texture string
-    ---@param duration real
+    ---@param duration number
     function FadeOut(texture, duration)
         SetCineFilterTexture(texture)
         SetCineFilterBlendMode(BLEND_MODE_BLEND)
@@ -121,7 +127,7 @@ do
     end
 
     ---@param texture string
-    ---@param duration real
+    ---@param duration number
     function FadeIn(texture, duration)
         SetCineFilterTexture(texture)
         SetCineFilterBlendMode(BLEND_MODE_BLEND)
@@ -136,6 +142,12 @@ do
 
     OnGlobalInit(function ()
         LocalPlayer = GetLocalPlayer()
+        TopMsg = BlzCreateFrameByType("TEXT", "name", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), "", 0)
+        BlzFrameSetAllPoints(TopMsg, BlzGetOriginFrame(ORIGIN_FRAME_TOP_MSG, 0))
+        BlzFrameSetText(TopMsg, "")
+        BlzFrameSetScale(TopMsg, 2.)
+        BlzFrameSetTextAlignment(TopMsg, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+        BlzFrameSetAlpha(TopMsg, 0)
 
         Environment.allMap = Environment.create("", bj_mapInitialPlayableArea, "entireMap.tga")
         BlzChangeMinimapTerrainTex("entireMap.tga")

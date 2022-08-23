@@ -3,9 +3,7 @@
 --  possible to help prevent passing bad values to native functions
 --  all reference counted objects
 
----@class  real:number
----@class  code:function
----@class  handle
+---@class  handle:userdata
 ---@class  agent:handle
 --  a reference to an event registration
 ---@class  event:agent
@@ -2415,78 +2413,78 @@ PATHING_FLAG_UNITEMPLACABLE = ConvertPathingFlag(256)	---@type pathingflag
 -- ============================================================================
 --  MathAPI
 
----@param degrees real
----@return real
+---@param degrees number
+---@return number
 function Deg2Rad(degrees) end	-- (native)
 
 
----@param radians real
----@return real
+---@param radians number
+---@return number
 function Rad2Deg(radians) end	-- (native)
 
 
----@param radians real
----@return real
+---@param radians number
+---@return number
 function Sin(radians) end	-- (native)
 
 
----@param radians real
----@return real
+---@param radians number
+---@return number
 function Cos(radians) end	-- (native)
 
 
----@param radians real
----@return real
+---@param radians number
+---@return number
 function Tan(radians) end	-- (native)
 --  Expect values between -1 and 1...returns 0 for invalid input
 
----@param y real
----@return real
+---@param y number
+---@return number
 function Asin(y) end	-- (native)
 
 
----@param x real
----@return real
+---@param x number
+---@return number
 function Acos(x) end	-- (native)
 
 
----@param x real
----@return real
+---@param x number
+---@return number
 function Atan(x) end	-- (native)
 --  Returns 0 if x and y are both 0
 
----@param y real
----@param x real
----@return real
+---@param y number
+---@param x number
+---@return number
 function Atan2(y, x) end	-- (native)
 --  Returns 0 if x <= 0
 
----@param x real
----@return real
+---@param x number
+---@return number
 function SquareRoot(x) end	-- (native)
 --  computes x to the y power
 --  y == 0.0             => 1
 --  x ==0.0 and y < 0    => 0
 -- 
 
----@param x real
----@param power real
----@return real
+---@param x number
+---@param power number
+---@return number
 function Pow(x, power) end	-- (native)
 
 
----@param r real
+---@param r number
 ---@return integer
 function MathRound(r) end	-- (native)
 -- ============================================================================
 --  String Utility API
 
 ---@param i integer
----@return real
+---@return number
 function I2R(i) end	-- (native)
 
 
----@param r real
+---@param r number
 ---@return integer
 function R2I(r) end	-- (native)
 
@@ -2496,12 +2494,12 @@ function R2I(r) end	-- (native)
 function I2S(i) end	-- (native)
 
 
----@param r real
+---@param r number
 ---@return string
 function R2S(r) end	-- (native)
 
 
----@param r real
+---@param r number
 ---@param width integer
 ---@param precision integer
 ---@return string
@@ -2514,7 +2512,7 @@ function S2I(s) end	-- (native)
 
 
 ---@param s string
----@return real
+---@return number
 function S2R(s) end	-- (native)
 
 
@@ -2580,8 +2578,8 @@ function SetPlayers(playercount) end	-- (native)
 
 
 ---@param whichStartLoc integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 function DefineStartLocation(whichStartLoc, x, y) end	-- (native)
 
 
@@ -2691,12 +2689,12 @@ function GetCreatureDensity() end	-- (native)
 
 
 ---@param whichStartLocation integer
----@return real
+---@return number
 function GetStartLocationX(whichStartLocation) end	-- (native)
 
 
 ---@param whichStartLocation integer
----@return real
+---@return number
 function GetStartLocationY(whichStartLocation) end	-- (native)
 
 
@@ -2825,24 +2823,24 @@ function DestroyTimer(whichTimer) end	-- (native)
 
 
 ---@param whichTimer timer
----@param timeout real
+---@param timeout number
 ---@param periodic boolean
 ---@param handlerFunc function
 function TimerStart(whichTimer, timeout, periodic, handlerFunc) end	-- (native)
 
 
 ---@param whichTimer timer
----@return real
+---@return number
 function TimerGetElapsed(whichTimer) end	-- (native)
 
 
 ---@param whichTimer timer
----@return real
+---@return number
 function TimerGetRemaining(whichTimer) end	-- (native)
 
 
 ---@param whichTimer timer
----@return real
+---@return number
 function TimerGetTimeout(whichTimer) end	-- (native)
 
 
@@ -2938,24 +2936,24 @@ function GroupEnumUnitsInRectCounted(whichGroup, r, filter, countLimit) end	-- (
 
 
 ---@param whichGroup group
----@param x real
----@param y real
----@param radius real
+---@param x number
+---@param y number
+---@param radius number
 ---@param filter boolexpr
 function GroupEnumUnitsInRange(whichGroup, x, y, radius, filter) end	-- (native)
 
 
 ---@param whichGroup group
 ---@param whichLocation location
----@param radius real
+---@param radius number
 ---@param filter boolexpr
 function GroupEnumUnitsInRangeOfLoc(whichGroup, whichLocation, radius, filter) end	-- (native)
 
 
 ---@param whichGroup group
----@param x real
----@param y real
----@param radius real
+---@param x number
+---@param y number
+---@param radius number
 ---@param filter boolexpr
 ---@param countLimit integer
 function GroupEnumUnitsInRangeCounted(whichGroup, x, y, radius, filter, countLimit) end	-- (native)
@@ -2963,7 +2961,7 @@ function GroupEnumUnitsInRangeCounted(whichGroup, x, y, radius, filter, countLim
 
 ---@param whichGroup group
 ---@param whichLocation location
----@param radius real
+---@param radius number
 ---@param filter boolexpr
 ---@param countLimit integer
 function GroupEnumUnitsInRangeOfLocCounted(whichGroup, whichLocation, radius, filter, countLimit) end	-- (native)
@@ -2989,8 +2987,8 @@ function GroupImmediateOrderById(whichGroup, order) end	-- (native)
 
 ---@param whichGroup group
 ---@param order string
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function GroupPointOrder(whichGroup, order, x, y) end	-- (native)
 
@@ -3004,8 +3002,8 @@ function GroupPointOrderLoc(whichGroup, order, whichLocation) end	-- (native)
 
 ---@param whichGroup group
 ---@param order integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function GroupPointOrderById(whichGroup, order, x, y) end	-- (native)
 
@@ -3103,10 +3101,10 @@ function ForForce(whichForce, callback) end	-- (native)
 --  Region and Location API
 -- 
 
----@param minx real
----@param miny real
----@param maxx real
----@param maxy real
+---@param minx number
+---@param miny number
+---@param maxx number
+---@param maxy number
 ---@return rect
 function Rect(minx, miny, maxx, maxy) end	-- (native)
 
@@ -3122,10 +3120,10 @@ function RemoveRect(whichRect) end	-- (native)
 
 
 ---@param whichRect rect
----@param minx real
----@param miny real
----@param maxx real
----@param maxy real
+---@param minx number
+---@param miny number
+---@param maxx number
+---@param maxy number
 function SetRect(whichRect, minx, miny, maxx, maxy) end	-- (native)
 
 
@@ -3136,8 +3134,8 @@ function SetRectFromLoc(whichRect, min, max) end	-- (native)
 
 
 ---@param whichRect rect
----@param newCenterX real
----@param newCenterY real
+---@param newCenterX number
+---@param newCenterY number
 function MoveRectTo(whichRect, newCenterX, newCenterY) end	-- (native)
 
 
@@ -3147,32 +3145,32 @@ function MoveRectToLoc(whichRect, newCenterLoc) end	-- (native)
 
 
 ---@param whichRect rect
----@return real
+---@return number
 function GetRectCenterX(whichRect) end	-- (native)
 
 
 ---@param whichRect rect
----@return real
+---@return number
 function GetRectCenterY(whichRect) end	-- (native)
 
 
 ---@param whichRect rect
----@return real
+---@return number
 function GetRectMinX(whichRect) end	-- (native)
 
 
 ---@param whichRect rect
----@return real
+---@return number
 function GetRectMinY(whichRect) end	-- (native)
 
 
 ---@param whichRect rect
----@return real
+---@return number
 function GetRectMaxX(whichRect) end	-- (native)
 
 
 ---@param whichRect rect
----@return real
+---@return number
 function GetRectMaxY(whichRect) end	-- (native)
 
 ---@return region
@@ -3194,8 +3192,8 @@ function RegionClearRect(whichRegion, r) end	-- (native)
 
 
 ---@param whichRegion region
----@param x real
----@param y real
+---@param x number
+---@param y number
 function RegionAddCell(whichRegion, x, y) end	-- (native)
 
 
@@ -3205,8 +3203,8 @@ function RegionAddCellAtLoc(whichRegion, whichLocation) end	-- (native)
 
 
 ---@param whichRegion region
----@param x real
----@param y real
+---@param x number
+---@param y number
 function RegionClearCell(whichRegion, x, y) end	-- (native)
 
 
@@ -3215,8 +3213,8 @@ function RegionClearCell(whichRegion, x, y) end	-- (native)
 function RegionClearCellAtLoc(whichRegion, whichLocation) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return location
 function Location(x, y) end	-- (native)
 
@@ -3226,24 +3224,24 @@ function RemoveLocation(whichLocation) end	-- (native)
 
 
 ---@param whichLocation location
----@param newX real
----@param newY real
+---@param newX number
+---@param newY number
 function MoveLocation(whichLocation, newX, newY) end	-- (native)
 
 
 ---@param whichLocation location
----@return real
+---@return number
 function GetLocationX(whichLocation) end	-- (native)
 
 
 ---@param whichLocation location
----@return real
+---@return number
 function GetLocationY(whichLocation) end	-- (native)
 --  This function is asynchronous. The values it returns are not guaranteed synchronous between each player.
 --   If you attempt to use it in a synchronous manner, it may cause a desync.
 
 ---@param whichLocation location
----@return real
+---@return number
 function GetLocationZ(whichLocation) end	-- (native)
 
 
@@ -3254,8 +3252,8 @@ function IsUnitInRegion(whichRegion, whichUnit) end	-- (native)
 
 
 ---@param whichRegion region
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function IsPointInRegion(whichRegion, x, y) end	-- (native)
 
@@ -3400,7 +3398,7 @@ function DestroyBoolExpr(e) end	-- (native)
 ---@param whichTrigger trigger
 ---@param varName string
 ---@param opcode limitop
----@param limitval real
+---@param limitval number
 ---@return event
 function TriggerRegisterVariableEvent(whichTrigger, varName, opcode, limitval) end	-- (native)
 --  EVENT_GAME_VARIABLE_LIMIT
@@ -3408,7 +3406,7 @@ function TriggerRegisterVariableEvent(whichTrigger, varName, opcode, limitval) e
 --  Creates it's own timer and triggers when it expires
 
 ---@param whichTrigger trigger
----@param timeout real
+---@param timeout number
 ---@param periodic boolean
 ---@return event
 function TriggerRegisterTimerEvent(whichTrigger, timeout, periodic) end	-- (native)
@@ -3423,7 +3421,7 @@ function TriggerRegisterTimerExpireEvent(whichTrigger, t) end	-- (native)
 ---@param whichTrigger trigger
 ---@param whichState gamestate
 ---@param opcode limitop
----@param limitval real
+---@param limitval number
 ---@return event
 function TriggerRegisterGameStateEvent(whichTrigger, whichState, opcode, limitval) end	-- (native)
 
@@ -3509,7 +3507,7 @@ function GetClickedButton() end	-- (native)
 ---@return dialog
 function GetClickedDialog() end	-- (native)
 --  EVENT_GAME_TOURNAMENT_FINISH_SOON
----@return real
+---@return number
 function GetTournamentFinishSoonTimeRemaining() end	-- (native)
 
 ---@return integer
@@ -3678,10 +3676,10 @@ function GetOrderedUnit() end	-- (native)
 ---@return integer
 function GetIssuedOrderId() end	-- (native)
 --  EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER
----@return real
+---@return number
 function GetOrderPointX() end	-- (native)
 
----@return real
+---@return number
 function GetOrderPointY() end	-- (native)
 
 ---@return location
@@ -3720,10 +3718,10 @@ function GetSpellAbility() end	-- (native)
 ---@return location
 function GetSpellTargetLoc() end	-- (native)
 
----@return real
+---@return number
 function GetSpellTargetX() end	-- (native)
 
----@return real
+---@return number
 function GetSpellTargetY() end	-- (native)
 
 ---@return destructable
@@ -3747,7 +3745,7 @@ function TriggerRegisterPlayerAllianceChange(whichTrigger, whichPlayer, whichAll
 ---@param whichPlayer player
 ---@param whichState playerstate
 ---@param opcode limitop
----@param limitval real
+---@param limitval number
 ---@return event
 function TriggerRegisterPlayerStateEvent(whichTrigger, whichPlayer, whichState, opcode, limitval) end	-- (native)
 --  EVENT_PLAYER_STATE_LIMIT
@@ -3788,7 +3786,7 @@ function GetTriggerUnit() end	-- (native)
 ---@param whichUnit unit
 ---@param whichState unitstate
 ---@param opcode limitop
----@param limitval real
+---@param limitval number
 ---@return event
 function TriggerRegisterUnitStateEvent(whichTrigger, whichUnit, whichState, opcode, limitval) end	-- (native)
 --  EVENT_UNIT_STATE_LIMIT
@@ -3802,7 +3800,7 @@ function GetEventUnitState() end	-- (native)
 ---@return event
 function TriggerRegisterUnitEvent(whichTrigger, whichUnit, whichEvent) end	-- (native)
 --  EVENT_UNIT_DAMAGED
----@return real
+---@return number
 function GetEventDamage() end	-- (native)
 
 ---@return unit
@@ -3851,7 +3849,7 @@ function GetEventTargetUnit() end	-- (native)
 
 ---@param whichTrigger trigger
 ---@param whichUnit unit
----@param range real
+---@param range number
 ---@param filter boolexpr
 ---@return event
 function TriggerRegisterUnitInRange(whichTrigger, whichUnit, range, filter) end	-- (native)
@@ -3887,12 +3885,12 @@ function TriggerRemoveAction(whichTrigger, whichAction) end	-- (native)
 function TriggerClearActions(whichTrigger) end	-- (native)
 
 
----@param timeout real
+---@param timeout number
 function TriggerSleepAction(timeout) end	-- (native)
 
 
 ---@param s sound
----@param offset real
+---@param offset number
 function TriggerWaitForSound(s, offset) end	-- (native)
 
 
@@ -3915,22 +3913,22 @@ function TriggerSyncReady() end	-- (native)
 --  Widget API
 
 ---@param whichWidget widget
----@return real
+---@return number
 function GetWidgetLife(whichWidget) end	-- (native)
 
 
 ---@param whichWidget widget
----@param newLife real
+---@param newLife number
 function SetWidgetLife(whichWidget, newLife) end	-- (native)
 
 
 ---@param whichWidget widget
----@return real
+---@return number
 function GetWidgetX(whichWidget) end	-- (native)
 
 
 ---@param whichWidget widget
----@return real
+---@return number
 function GetWidgetY(whichWidget) end	-- (native)
 
 ---@return widget
@@ -3940,42 +3938,42 @@ function GetTriggerWidget() end	-- (native)
 --  Facing arguments are specified in degrees
 
 ---@param objectid integer
----@param x real
----@param y real
----@param face real
----@param scale real
+---@param x number
+---@param y number
+---@param face number
+---@param scale number
 ---@param variation integer
 ---@return destructable
 function CreateDestructable(objectid, x, y, face, scale, variation) end	-- (native)
 
 
 ---@param objectid integer
----@param x real
----@param y real
----@param z real
----@param face real
----@param scale real
+---@param x number
+---@param y number
+---@param z number
+---@param face number
+---@param scale number
 ---@param variation integer
 ---@return destructable
 function CreateDestructableZ(objectid, x, y, z, face, scale, variation) end	-- (native)
 
 
 ---@param objectid integer
----@param x real
----@param y real
----@param face real
----@param scale real
+---@param x number
+---@param y number
+---@param face number
+---@param scale number
 ---@param variation integer
 ---@return destructable
 function CreateDeadDestructable(objectid, x, y, face, scale, variation) end	-- (native)
 
 
 ---@param objectid integer
----@param x real
----@param y real
----@param z real
----@param face real
----@param scale real
+---@param x number
+---@param y number
+---@param z number
+---@param face number
+---@param scale number
 ---@param variation integer
 ---@return destructable
 function CreateDeadDestructableZ(objectid, x, y, z, face, scale, variation) end	-- (native)
@@ -4011,37 +4009,37 @@ function GetDestructableTypeId(d) end	-- (native)
 
 
 ---@param d destructable
----@return real
+---@return number
 function GetDestructableX(d) end	-- (native)
 
 
 ---@param d destructable
----@return real
+---@return number
 function GetDestructableY(d) end	-- (native)
 
 
 ---@param d destructable
----@param life real
+---@param life number
 function SetDestructableLife(d, life) end	-- (native)
 
 
 ---@param d destructable
----@return real
+---@return number
 function GetDestructableLife(d) end	-- (native)
 
 
 ---@param d destructable
----@param max real
+---@param max number
 function SetDestructableMaxLife(d, max) end	-- (native)
 
 
 ---@param d destructable
----@return real
+---@return number
 function GetDestructableMaxLife(d) end	-- (native)
 
 
 ---@param d destructable
----@param life real
+---@param life number
 ---@param birth boolean
 function DestructableRestoreLife(d, life, birth) end	-- (native)
 
@@ -4057,7 +4055,7 @@ function SetDestructableAnimation(d, whichAnimation) end	-- (native)
 
 
 ---@param d destructable
----@param speedFactor real
+---@param speedFactor number
 function SetDestructableAnimationSpeed(d, speedFactor) end	-- (native)
 
 
@@ -4067,12 +4065,12 @@ function ShowDestructable(d, flag) end	-- (native)
 
 
 ---@param d destructable
----@return real
+---@return number
 function GetDestructableOccluderHeight(d) end	-- (native)
 
 
 ---@param d destructable
----@param height real
+---@param height number
 function SetDestructableOccluderHeight(d, height) end	-- (native)
 
 
@@ -4086,8 +4084,8 @@ function GetTriggerDestructable() end	-- (native)
 --  Item API
 
 ---@param itemid integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return item
 function CreateItem(itemid, x, y) end	-- (native)
 
@@ -4107,18 +4105,18 @@ function GetItemTypeId(i) end	-- (native)
 
 
 ---@param i item
----@return real
+---@return number
 function GetItemX(i) end	-- (native)
 
 
 ---@param i item
----@return real
+---@return number
 function GetItemY(i) end	-- (native)
 
 
 ---@param i item
----@param x real
----@param y real
+---@param x number
+---@param y number
 function SetItemPosition(i, x, y) end	-- (native)
 
 
@@ -4248,18 +4246,18 @@ function SetItemUserData(whichItem, data) end	-- (native)
 
 ---@param id player
 ---@param unitid integer
----@param x real
----@param y real
----@param face real
+---@param x number
+---@param y number
+---@param face number
 ---@return unit
 function CreateUnit(id, unitid, x, y, face) end	-- (native)
 
 
 ---@param whichPlayer player
 ---@param unitname string
----@param x real
----@param y real
----@param face real
+---@param x number
+---@param y number
+---@param face number
 ---@return unit
 function CreateUnitByName(whichPlayer, unitname, x, y, face) end	-- (native)
 
@@ -4267,7 +4265,7 @@ function CreateUnitByName(whichPlayer, unitname, x, y, face) end	-- (native)
 ---@param id player
 ---@param unitid integer
 ---@param whichLocation location
----@param face real
+---@param face number
 ---@return unit
 function CreateUnitAtLoc(id, unitid, whichLocation, face) end	-- (native)
 
@@ -4275,16 +4273,16 @@ function CreateUnitAtLoc(id, unitid, whichLocation, face) end	-- (native)
 ---@param id player
 ---@param unitname string
 ---@param whichLocation location
----@param face real
+---@param face number
 ---@return unit
 function CreateUnitAtLocByName(id, unitname, whichLocation, face) end	-- (native)
 
 
 ---@param whichPlayer player
 ---@param unitid integer
----@param x real
----@param y real
----@param face real
+---@param x number
+---@param y number
+---@param face number
 ---@return unit
 function CreateCorpse(whichPlayer, unitid, x, y, face) end	-- (native)
 
@@ -4304,23 +4302,23 @@ function ShowUnit(whichUnit, show) end	-- (native)
 
 ---@param whichUnit unit
 ---@param whichUnitState unitstate
----@param newVal real
+---@param newVal number
 function SetUnitState(whichUnit, whichUnitState, newVal) end	-- (native)
 
 
 ---@param whichUnit unit
----@param newX real
+---@param newX number
 function SetUnitX(whichUnit, newX) end	-- (native)
 
 
 ---@param whichUnit unit
----@param newY real
+---@param newY number
 function SetUnitY(whichUnit, newY) end	-- (native)
 
 
 ---@param whichUnit unit
----@param newX real
----@param newY real
+---@param newX number
+---@param newY number
 function SetUnitPosition(whichUnit, newX, newY) end	-- (native)
 
 
@@ -4330,39 +4328,39 @@ function SetUnitPositionLoc(whichUnit, whichLocation) end	-- (native)
 
 
 ---@param whichUnit unit
----@param facingAngle real
+---@param facingAngle number
 function SetUnitFacing(whichUnit, facingAngle) end	-- (native)
 
 
 ---@param whichUnit unit
----@param facingAngle real
----@param duration real
+---@param facingAngle number
+---@param duration number
 function SetUnitFacingTimed(whichUnit, facingAngle, duration) end	-- (native)
 
 
 ---@param whichUnit unit
----@param newSpeed real
+---@param newSpeed number
 function SetUnitMoveSpeed(whichUnit, newSpeed) end	-- (native)
 
 
 ---@param whichUnit unit
----@param newHeight real
----@param rate real
+---@param newHeight number
+---@param rate number
 function SetUnitFlyHeight(whichUnit, newHeight, rate) end	-- (native)
 
 
 ---@param whichUnit unit
----@param newTurnSpeed real
+---@param newTurnSpeed number
 function SetUnitTurnSpeed(whichUnit, newTurnSpeed) end	-- (native)
 
 
 ---@param whichUnit unit
----@param newPropWindowAngle real
+---@param newPropWindowAngle number
 function SetUnitPropWindow(whichUnit, newPropWindowAngle) end	-- (native)
 
 
 ---@param whichUnit unit
----@param newAcquireRange real
+---@param newAcquireRange number
 function SetUnitAcquireRange(whichUnit, newAcquireRange) end	-- (native)
 
 
@@ -4372,42 +4370,42 @@ function SetUnitCreepGuard(whichUnit, creepGuard) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitAcquireRange(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitTurnSpeed(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitPropWindow(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitFlyHeight(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitDefaultAcquireRange(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitDefaultTurnSpeed(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitDefaultPropWindow(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitDefaultFlyHeight(whichUnit) end	-- (native)
 
 
@@ -4423,19 +4421,19 @@ function SetUnitColor(whichUnit, whichColor) end	-- (native)
 
 
 ---@param whichUnit unit
----@param scaleX real
----@param scaleY real
----@param scaleZ real
+---@param scaleX number
+---@param scaleY number
+---@param scaleZ number
 function SetUnitScale(whichUnit, scaleX, scaleY, scaleZ) end	-- (native)
 
 
 ---@param whichUnit unit
----@param timeScale real
+---@param timeScale number
 function SetUnitTimeScale(whichUnit, timeScale) end	-- (native)
 
 
 ---@param whichUnit unit
----@param blendTime real
+---@param blendTime number
 function SetUnitBlendTime(whichUnit, blendTime) end	-- (native)
 
 
@@ -4477,9 +4475,9 @@ function AddUnitAnimationProperties(whichUnit, animProperties, add) end	-- (nati
 ---@param whichUnit unit
 ---@param whichBone string
 ---@param lookAtTarget unit
----@param offsetX real
----@param offsetY real
----@param offsetZ real
+---@param offsetX number
+---@param offsetY number
+---@param offsetZ number
 function SetUnitLookAt(whichUnit, whichBone, lookAtTarget, offsetX, offsetY, offsetZ) end	-- (native)
 
 
@@ -4494,7 +4492,7 @@ function SetUnitRescuable(whichUnit, byWhichPlayer, flag) end	-- (native)
 
 
 ---@param whichUnit unit
----@param range real
+---@param range number
 function SetUnitRescueRange(whichUnit, range) end	-- (native)
 
 
@@ -4630,8 +4628,8 @@ function SetUnitAbilityLevel(whichUnit, abilcode, level) end	-- (native)
 
 
 ---@param whichHero unit
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param doEyecandy boolean
 ---@return boolean
 function ReviveHero(whichHero, x, y, doEyecandy) end	-- (native)
@@ -4735,8 +4733,8 @@ function UnitInventorySize(whichUnit) end	-- (native)
 
 ---@param whichUnit unit
 ---@param whichItem item
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function UnitDropItemPoint(whichUnit, whichItem, x, y) end	-- (native)
 
@@ -4763,8 +4761,8 @@ function UnitUseItem(whichUnit, whichItem) end	-- (native)
 
 ---@param whichUnit unit
 ---@param whichItem item
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function UnitUseItemPoint(whichUnit, whichItem, x, y) end	-- (native)
 
@@ -4777,12 +4775,12 @@ function UnitUseItemTarget(whichUnit, whichItem, target) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitX(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitY(whichUnit) end	-- (native)
 
 
@@ -4792,23 +4790,23 @@ function GetUnitLoc(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitFacing(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitMoveSpeed(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function GetUnitDefaultMoveSpeed(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
 ---@param whichUnitState unitstate
----@return real
+---@return number
 function GetUnitState(whichUnit, whichUnitState) end	-- (native)
 
 
@@ -4958,22 +4956,22 @@ function IsUnit(whichUnit, whichSpecifiedUnit) end	-- (native)
 
 ---@param whichUnit unit
 ---@param otherUnit unit
----@param distance real
+---@param distance number
 ---@return boolean
 function IsUnitInRange(whichUnit, otherUnit, distance) end	-- (native)
 
 
 ---@param whichUnit unit
----@param x real
----@param y real
----@param distance real
+---@param x number
+---@param y number
+---@param distance number
 ---@return boolean
 function IsUnitInRangeXY(whichUnit, x, y, distance) end	-- (native)
 
 
 ---@param whichUnit unit
 ---@param whichLocation location
----@param distance real
+---@param distance number
 ---@return boolean
 function IsUnitInRangeLoc(whichUnit, whichLocation, distance) end	-- (native)
 
@@ -5124,7 +5122,7 @@ function UnitWakeUp(whichUnit) end	-- (native)
 
 ---@param whichUnit unit
 ---@param buffId integer
----@param duration real
+---@param duration number
 function UnitApplyTimedLife(whichUnit, buffId, duration) end	-- (native)
 
 
@@ -5164,11 +5162,11 @@ function UnitSetUsesAltIcon(whichUnit, flag) end	-- (native)
 
 
 ---@param whichUnit unit
----@param delay real
----@param radius real
----@param x real
----@param y real
----@param amount real
+---@param delay number
+---@param radius number
+---@param x number
+---@param y number
+---@param amount number
 ---@param attack boolean
 ---@param ranged boolean
 ---@param attackType attacktype
@@ -5180,7 +5178,7 @@ function UnitDamagePoint(whichUnit, delay, radius, x, y, amount, attack, ranged,
 
 ---@param whichUnit unit
 ---@param target widget
----@param amount real
+---@param amount number
 ---@param attack boolean
 ---@param ranged boolean
 ---@param attackType attacktype
@@ -5204,8 +5202,8 @@ function IssueImmediateOrderById(whichUnit, order) end	-- (native)
 
 ---@param whichUnit unit
 ---@param order string
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function IssuePointOrder(whichUnit, order, x, y) end	-- (native)
 
@@ -5219,8 +5217,8 @@ function IssuePointOrderLoc(whichUnit, order, whichLocation) end	-- (native)
 
 ---@param whichUnit unit
 ---@param order integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function IssuePointOrderById(whichUnit, order, x, y) end	-- (native)
 
@@ -5248,8 +5246,8 @@ function IssueTargetOrderById(whichUnit, order, targetWidget) end	-- (native)
 
 ---@param whichUnit unit
 ---@param order string
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param instantTargetWidget widget
 ---@return boolean
 function IssueInstantPointOrder(whichUnit, order, x, y, instantTargetWidget) end	-- (native)
@@ -5257,8 +5255,8 @@ function IssueInstantPointOrder(whichUnit, order, x, y, instantTargetWidget) end
 
 ---@param whichUnit unit
 ---@param order integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param instantTargetWidget widget
 ---@return boolean
 function IssueInstantPointOrderById(whichUnit, order, x, y, instantTargetWidget) end	-- (native)
@@ -5282,16 +5280,16 @@ function IssueInstantTargetOrderById(whichUnit, order, targetWidget, instantTarg
 
 ---@param whichPeon unit
 ---@param unitToBuild string
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function IssueBuildOrder(whichPeon, unitToBuild, x, y) end	-- (native)
 
 
 ---@param whichPeon unit
 ---@param unitId integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function IssueBuildOrderById(whichPeon, unitId, x, y) end	-- (native)
 
@@ -5313,8 +5311,8 @@ function IssueNeutralImmediateOrderById(forWhichPlayer, neutralStructure, unitId
 ---@param forWhichPlayer player
 ---@param neutralStructure unit
 ---@param unitToBuild string
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function IssueNeutralPointOrder(forWhichPlayer, neutralStructure, unitToBuild, x, y) end	-- (native)
 
@@ -5322,8 +5320,8 @@ function IssueNeutralPointOrder(forWhichPlayer, neutralStructure, unitToBuild, x
 ---@param forWhichPlayer player
 ---@param neutralStructure unit
 ---@param unitId integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function IssueNeutralPointOrderById(forWhichPlayer, neutralStructure, unitId, x, y) end	-- (native)
 
@@ -5365,18 +5363,18 @@ function GetResourceAmount(whichUnit) end	-- (native)
 
 
 ---@param waygate unit
----@return real
+---@return number
 function WaygateGetDestinationX(waygate) end	-- (native)
 
 
 ---@param waygate unit
----@return real
+---@return number
 function WaygateGetDestinationY(waygate) end	-- (native)
 
 
 ---@param waygate unit
----@param x real
----@param y real
+---@param x number
+---@param y number
 function WaygateSetDestination(waygate, x, y) end	-- (native)
 
 
@@ -5494,8 +5492,8 @@ function IsPlayerInForce(whichPlayer, whichForce) end	-- (native)
 function IsPlayerObserver(whichPlayer) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param whichPlayer player
 ---@return boolean
 function IsVisibleToPlayer(x, y, whichPlayer) end	-- (native)
@@ -5507,8 +5505,8 @@ function IsVisibleToPlayer(x, y, whichPlayer) end	-- (native)
 function IsLocationVisibleToPlayer(whichLocation, whichPlayer) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param whichPlayer player
 ---@return boolean
 function IsFoggedToPlayer(x, y, whichPlayer) end	-- (native)
@@ -5520,8 +5518,8 @@ function IsFoggedToPlayer(x, y, whichPlayer) end	-- (native)
 function IsLocationFoggedToPlayer(whichLocation, whichPlayer) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param whichPlayer player
 ---@return boolean
 function IsMaskedToPlayer(x, y, whichPlayer) end	-- (native)
@@ -5583,42 +5581,42 @@ function GetPlayerAlliance(sourcePlayer, otherPlayer, whichAllianceSetting) end	
 
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerHandicap(whichPlayer) end	-- (native)
 
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerHandicapXP(whichPlayer) end	-- (native)
 
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerHandicapReviveTime(whichPlayer) end	-- (native)
 
 
 ---@param whichPlayer player
----@return real
+---@return number
 function GetPlayerHandicapDamage(whichPlayer) end	-- (native)
 
 
 ---@param whichPlayer player
----@param handicap real
+---@param handicap number
 function SetPlayerHandicap(whichPlayer, handicap) end	-- (native)
 
 
 ---@param whichPlayer player
----@param handicap real
+---@param handicap number
 function SetPlayerHandicapXP(whichPlayer, handicap) end	-- (native)
 
 
 ---@param whichPlayer player
----@param handicap real
+---@param handicap number
 function SetPlayerHandicapReviveTime(whichPlayer, handicap) end	-- (native)
 
 
 ---@param whichPlayer player
----@param handicap real
+---@param handicap number
 function SetPlayerHandicapDamage(whichPlayer, handicap) end	-- (native)
 
 
@@ -5704,9 +5702,9 @@ function SetFogStateRect(forWhichPlayer, whichState, where, useSharedVision) end
 
 ---@param forWhichPlayer player
 ---@param whichState fogstate
----@param centerx real
----@param centerY real
----@param radius real
+---@param centerx number
+---@param centerY number
+---@param radius number
 ---@param useSharedVision boolean
 function SetFogStateRadius(forWhichPlayer, whichState, centerx, centerY, radius, useSharedVision) end	-- (native)
 
@@ -5714,7 +5712,7 @@ function SetFogStateRadius(forWhichPlayer, whichState, centerx, centerY, radius,
 ---@param forWhichPlayer player
 ---@param whichState fogstate
 ---@param center location
----@param radius real
+---@param radius number
 ---@param useSharedVision boolean
 function SetFogStateRadiusLoc(forWhichPlayer, whichState, center, radius, useSharedVision) end	-- (native)
 
@@ -5744,9 +5742,9 @@ function CreateFogModifierRect(forWhichPlayer, whichState, where, useSharedVisio
 
 ---@param forWhichPlayer player
 ---@param whichState fogstate
----@param centerx real
----@param centerY real
----@param radius real
+---@param centerx number
+---@param centerY number
+---@param radius number
 ---@param useSharedVision boolean
 ---@param afterUnits boolean
 ---@return fogmodifier
@@ -5756,7 +5754,7 @@ function CreateFogModifierRadius(forWhichPlayer, whichState, centerx, centerY, r
 ---@param forWhichPlayer player
 ---@param whichState fogstate
 ---@param center location
----@param radius real
+---@param radius number
 ---@param useSharedVision boolean
 ---@param afterUnits boolean
 ---@return fogmodifier
@@ -5858,12 +5856,12 @@ function SyncSelections() end	-- (native)
 
 
 ---@param whichFloatGameState fgamestate
----@param value real
+---@param value number
 function SetFloatGameState(whichFloatGameState, value) end	-- (native)
 
 
 ---@param whichFloatGameState fgamestate
----@return real
+---@return number
 function GetFloatGameState(whichFloatGameState) end	-- (native)
 
 
@@ -5985,7 +5983,7 @@ function StoreInteger(cache, missionKey, key, value) end	-- (native)
 ---@param cache gamecache
 ---@param missionKey string
 ---@param key string
----@param value real
+---@param value number
 function StoreReal(cache, missionKey, key, value) end	-- (native)
 
 
@@ -6126,7 +6124,7 @@ function GetStoredInteger(cache, missionKey, key) end	-- (native)
 ---@param cache gamecache
 ---@param missionKey string
 ---@param key string
----@return real
+---@return number
 function GetStoredReal(cache, missionKey, key) end	-- (native)
 
 
@@ -6148,9 +6146,9 @@ function GetStoredString(cache, missionKey, key) end	-- (native)
 ---@param missionKey string
 ---@param key string
 ---@param forWhichPlayer player
----@param x real
----@param y real
----@param facing real
+---@param x number
+---@param y number
+---@param facing number
 ---@return unit
 function RestoreUnit(cache, missionKey, key, forWhichPlayer, x, y, facing) end	-- (native)
 
@@ -6168,7 +6166,7 @@ function SaveInteger(table, parentKey, childKey, value) end	-- (native)
 ---@param table hashtable
 ---@param parentKey integer
 ---@param childKey integer
----@param value real
+---@param value number
 function SaveReal(table, parentKey, childKey, value) end	-- (native)
 
 
@@ -6517,7 +6515,7 @@ function LoadInteger(table, parentKey, childKey) end	-- (native)
 ---@param table hashtable
 ---@param parentKey integer
 ---@param childKey integer
----@return real
+---@return number
 function LoadReal(table, parentKey, childKey) end	-- (native)
 
 
@@ -6889,9 +6887,9 @@ function FlushChildHashtable(table, parentKey) end	-- (native)
 function GetRandomInt(lowBound, highBound) end	-- (native)
 
 
----@param lowBound real
----@param highBound real
----@return real
+---@param lowBound number
+---@param highBound number
+---@return number
 function GetRandomReal(lowBound, highBound) end	-- (native)
 
 ---@return unitpool
@@ -6904,7 +6902,7 @@ function DestroyUnitPool(whichPool) end	-- (native)
 
 ---@param whichPool unitpool
 ---@param unitId integer
----@param weight real
+---@param weight number
 function UnitPoolAddUnitType(whichPool, unitId, weight) end	-- (native)
 
 
@@ -6915,9 +6913,9 @@ function UnitPoolRemoveUnitType(whichPool, unitId) end	-- (native)
 
 ---@param whichPool unitpool
 ---@param forWhichPlayer player
----@param x real
----@param y real
----@param facing real
+---@param x number
+---@param y number
+---@param facing number
 ---@return unit
 function PlaceRandomUnit(whichPool, forWhichPlayer, x, y, facing) end	-- (native)
 
@@ -6931,7 +6929,7 @@ function DestroyItemPool(whichItemPool) end	-- (native)
 
 ---@param whichItemPool itempool
 ---@param itemId integer
----@param weight real
+---@param weight number
 function ItemPoolAddItemType(whichItemPool, itemId, weight) end	-- (native)
 
 
@@ -6941,8 +6939,8 @@ function ItemPoolRemoveItemType(whichItemPool, itemId) end	-- (native)
 
 
 ---@param whichItemPool itempool
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return item
 function PlaceRandomItem(whichItemPool, x, y) end	-- (native)
 --  Choose any random unit/item. (NP means Neutral Passive)
@@ -6971,53 +6969,53 @@ function SetRandomSeed(seed) end	-- (native)
 -- ============================================================================
 --  Visual API
 
----@param a real
----@param b real
----@param c real
----@param d real
----@param e real
+---@param a number
+---@param b number
+---@param c number
+---@param d number
+---@param e number
 function SetTerrainFog(a, b, c, d, e) end	-- (native)
 
 function ResetTerrainFog() end	-- (native)
 
 
----@param a real
----@param b real
----@param c real
----@param d real
----@param e real
+---@param a number
+---@param b number
+---@param c number
+---@param d number
+---@param e number
 function SetUnitFog(a, b, c, d, e) end	-- (native)
 
 
 ---@param style integer
----@param zstart real
----@param zend real
----@param density real
----@param red real
----@param green real
----@param blue real
+---@param zstart number
+---@param zend number
+---@param density number
+---@param red number
+---@param green number
+---@param blue number
 function SetTerrainFogEx(style, zstart, zend, density, red, green, blue) end	-- (native)
 
 
 ---@param toPlayer player
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param message string
 function DisplayTextToPlayer(toPlayer, x, y, message) end	-- (native)
 
 
 ---@param toPlayer player
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 ---@param message string
 function DisplayTimedTextToPlayer(toPlayer, x, y, duration, message) end	-- (native)
 
 
 ---@param toPlayer player
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 ---@param message string
 function DisplayTimedTextFromPlayer(toPlayer, x, y, duration, message) end	-- (native)
 
@@ -7049,15 +7047,15 @@ function EnableUserUI(b) end	-- (native)
 function SuspendTimeOfDay(b) end	-- (native)
 
 
----@param r real
+---@param r number
 function SetTimeOfDayScale(r) end	-- (native)
 
----@return real
+---@return number
 function GetTimeOfDayScale() end	-- (native)
 
 
 ---@param flag boolean
----@param fadeDuration real
+---@param fadeDuration number
 function ShowInterface(flag, fadeDuration) end	-- (native)
 
 
@@ -7081,15 +7079,15 @@ function UnitAddIndicator(whichUnit, red, green, blue, alpha) end	-- (native)
 function AddIndicator(whichWidget, red, green, blue, alpha) end	-- (native)
 
 
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 function PingMinimap(x, y, duration) end	-- (native)
 
 
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 ---@param red integer
 ---@param green integer
 ---@param blue integer
@@ -7117,8 +7115,8 @@ function CreateMinimapIconOnUnit(whichUnit, red, green, blue, pingPath, fogVisib
 function CreateMinimapIconAtLoc(where, red, green, blue, pingPath, fogVisibility) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param red integer
 ---@param green integer
 ---@param blue integer
@@ -7196,20 +7194,20 @@ function DestroyTextTag(t) end	-- (native)
 
 ---@param t texttag
 ---@param s string
----@param height real
+---@param height number
 function SetTextTagText(t, s, height) end	-- (native)
 
 
 ---@param t texttag
----@param x real
----@param y real
----@param heightOffset real
+---@param x number
+---@param y number
+---@param heightOffset number
 function SetTextTagPos(t, x, y, heightOffset) end	-- (native)
 
 
 ---@param t texttag
 ---@param whichUnit unit
----@param heightOffset real
+---@param heightOffset number
 function SetTextTagPosUnit(t, whichUnit, heightOffset) end	-- (native)
 
 
@@ -7222,8 +7220,8 @@ function SetTextTagColor(t, red, green, blue, alpha) end	-- (native)
 
 
 ---@param t texttag
----@param xvel real
----@param yvel real
+---@param xvel number
+---@param yvel number
 function SetTextTagVelocity(t, xvel, yvel) end	-- (native)
 
 
@@ -7243,17 +7241,17 @@ function SetTextTagPermanent(t, flag) end	-- (native)
 
 
 ---@param t texttag
----@param age real
+---@param age number
 function SetTextTagAge(t, age) end	-- (native)
 
 
 ---@param t texttag
----@param lifespan real
+---@param lifespan number
 function SetTextTagLifespan(t, lifespan) end	-- (native)
 
 
 ---@param t texttag
----@param fadepoint real
+---@param fadepoint number
 function SetTextTagFadepoint(t, fadepoint) end	-- (native)
 
 
@@ -7297,9 +7295,9 @@ function EnableSelect(state, ui) end	-- (native)
 --  Trackable API
 
 ---@param trackableModelPath string
----@param x real
----@param y real
----@param facing real
+---@param x number
+---@param y number
+---@param facing number
 ---@return trackable
 function CreateTrackable(trackableModelPath, x, y, facing) end	-- (native)
 -- ============================================================================
@@ -7445,7 +7443,7 @@ function TimerDialogSetTimeColor(whichDialog, red, green, blue, alpha) end	-- (n
 
 
 ---@param whichDialog timerdialog
----@param speedMultFactor real
+---@param speedMultFactor number
 function TimerDialogSetSpeed(whichDialog, speedMultFactor) end	-- (native)
 
 
@@ -7460,7 +7458,7 @@ function IsTimerDialogDisplayed(whichDialog) end	-- (native)
 
 
 ---@param whichDialog timerdialog
----@param timeRemaining real
+---@param timeRemaining number
 function TimerDialogSetRealTimeRemaining(whichDialog, timeRemaining) end	-- (native)
 -- ============================================================================
 --  Leaderboard API
@@ -7715,7 +7713,7 @@ function MultiboardSetItemsValueColor(lb, red, green, blue, alpha) end	-- (nativ
 
 
 ---@param lb multiboard
----@param width real
+---@param width number
 function MultiboardSetItemsWidth(lb, width) end	-- (native)
 
 
@@ -7755,7 +7753,7 @@ function MultiboardSetItemValueColor(mbi, red, green, blue, alpha) end	-- (nativ
 
 
 ---@param mbi multiboarditem
----@param width real
+---@param width number
 function MultiboardSetItemWidth(mbi, width) end	-- (native)
 
 
@@ -7771,54 +7769,54 @@ function MultiboardSuppressDisplay(flag) end	-- (native)
 -- ============================================================================
 --  Camera API
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 function SetCameraPosition(x, y) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 function SetCameraQuickPosition(x, y) end	-- (native)
 
 
----@param x1 real
----@param y1 real
----@param x2 real
----@param y2 real
----@param x3 real
----@param y3 real
----@param x4 real
----@param y4 real
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@param x3 number
+---@param y3 number
+---@param x4 number
+---@param y4 number
 function SetCameraBounds(x1, y1, x2, y2, x3, y3, x4, y4) end	-- (native)
 
 function StopCamera() end	-- (native)
 
 
----@param duration real
+---@param duration number
 function ResetToGameCamera(duration) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 function PanCameraTo(x, y) end	-- (native)
 
 
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 function PanCameraToTimed(x, y, duration) end	-- (native)
 
 
----@param x real
----@param y real
----@param zOffsetDest real
+---@param x number
+---@param y number
+---@param zOffsetDest number
 function PanCameraToWithZ(x, y, zOffsetDest) end	-- (native)
 
 
----@param x real
----@param y real
----@param zOffsetDest real
----@param duration real
+---@param x number
+---@param y number
+---@param zOffsetDest number
+---@param duration number
 function PanCameraToTimedWithZ(x, y, zOffsetDest, duration) end	-- (native)
 
 
@@ -7826,35 +7824,35 @@ function PanCameraToTimedWithZ(x, y, zOffsetDest, duration) end	-- (native)
 function SetCinematicCamera(cameraModelFile) end	-- (native)
 
 
----@param x real
----@param y real
----@param radiansToSweep real
----@param duration real
+---@param x number
+---@param y number
+---@param radiansToSweep number
+---@param duration number
 function SetCameraRotateMode(x, y, radiansToSweep, duration) end	-- (native)
 
 
 ---@param whichField camerafield
----@param value real
----@param duration real
+---@param value number
+---@param duration number
 function SetCameraField(whichField, value, duration) end	-- (native)
 
 
 ---@param whichField camerafield
----@param offset real
----@param duration real
+---@param offset number
+---@param duration number
 function AdjustCameraField(whichField, offset, duration) end	-- (native)
 
 
 ---@param whichUnit unit
----@param xoffset real
----@param yoffset real
+---@param xoffset number
+---@param yoffset number
 ---@param inheritOrientation boolean
 function SetCameraTargetController(whichUnit, xoffset, yoffset, inheritOrientation) end	-- (native)
 
 
 ---@param whichUnit unit
----@param xoffset real
----@param yoffset real
+---@param xoffset number
+---@param yoffset number
 function SetCameraOrientController(whichUnit, xoffset, yoffset) end	-- (native)
 
 ---@return camerasetup
@@ -7863,21 +7861,21 @@ function CreateCameraSetup() end	-- (native)
 
 ---@param whichSetup camerasetup
 ---@param whichField camerafield
----@param value real
----@param duration real
+---@param value number
+---@param duration number
 function CameraSetupSetField(whichSetup, whichField, value, duration) end	-- (native)
 
 
 ---@param whichSetup camerasetup
 ---@param whichField camerafield
----@return real
+---@return number
 function CameraSetupGetField(whichSetup, whichField) end	-- (native)
 
 
 ---@param whichSetup camerasetup
----@param x real
----@param y real
----@param duration real
+---@param x number
+---@param y number
+---@param duration number
 function CameraSetupSetDestPosition(whichSetup, x, y, duration) end	-- (native)
 
 
@@ -7887,12 +7885,12 @@ function CameraSetupGetDestPositionLoc(whichSetup) end	-- (native)
 
 
 ---@param whichSetup camerasetup
----@return real
+---@return number
 function CameraSetupGetDestPositionX(whichSetup) end	-- (native)
 
 
 ---@param whichSetup camerasetup
----@return real
+---@return number
 function CameraSetupGetDestPositionY(whichSetup) end	-- (native)
 
 
@@ -7903,19 +7901,19 @@ function CameraSetupApply(whichSetup, doPan, panTimed) end	-- (native)
 
 
 ---@param whichSetup camerasetup
----@param zDestOffset real
+---@param zDestOffset number
 function CameraSetupApplyWithZ(whichSetup, zDestOffset) end	-- (native)
 
 
 ---@param whichSetup camerasetup
 ---@param doPan boolean
----@param forceDuration real
+---@param forceDuration number
 function CameraSetupApplyForceDuration(whichSetup, doPan, forceDuration) end	-- (native)
 
 
 ---@param whichSetup camerasetup
----@param zDestOffset real
----@param forceDuration real
+---@param zDestOffset number
+---@param forceDuration number
 function CameraSetupApplyForceDurationWithZ(whichSetup, zDestOffset, forceDuration) end	-- (native)
 
 
@@ -7929,37 +7927,37 @@ function BlzCameraSetupSetLabel(whichSetup, label) end	-- (native)
 function BlzCameraSetupGetLabel(whichSetup) end	-- (native)
 
 
----@param mag real
----@param velocity real
+---@param mag number
+---@param velocity number
 function CameraSetTargetNoise(mag, velocity) end	-- (native)
 
 
----@param mag real
----@param velocity real
+---@param mag number
+---@param velocity number
 function CameraSetSourceNoise(mag, velocity) end	-- (native)
 
 
----@param mag real
----@param velocity real
+---@param mag number
+---@param velocity number
 ---@param vertOnly boolean
 function CameraSetTargetNoiseEx(mag, velocity, vertOnly) end	-- (native)
 
 
----@param mag real
----@param velocity real
+---@param mag number
+---@param velocity number
 ---@param vertOnly boolean
 function CameraSetSourceNoiseEx(mag, velocity, vertOnly) end	-- (native)
 
 
----@param factor real
+---@param factor number
 function CameraSetSmoothingFactor(factor) end	-- (native)
 
 
----@param distance real
+---@param distance number
 function CameraSetFocalDistance(distance) end	-- (native)
 
 
----@param scale real
+---@param scale number
 function CameraSetDepthOfFieldScale(scale) end	-- (native)
 
 
@@ -7975,17 +7973,17 @@ function SetCineFilterBlendMode(whichMode) end	-- (native)
 function SetCineFilterTexMapFlags(whichFlags) end	-- (native)
 
 
----@param minu real
----@param minv real
----@param maxu real
----@param maxv real
+---@param minu number
+---@param minv number
+---@param maxu number
+---@param maxv number
 function SetCineFilterStartUV(minu, minv, maxu, maxv) end	-- (native)
 
 
----@param minu real
----@param minv real
----@param maxu real
----@param maxv real
+---@param minu number
+---@param minv number
+---@param maxu number
+---@param maxv number
 function SetCineFilterEndUV(minu, minv, maxu, maxv) end	-- (native)
 
 
@@ -8003,7 +8001,7 @@ function SetCineFilterStartColor(red, green, blue, alpha) end	-- (native)
 function SetCineFilterEndColor(red, green, blue, alpha) end	-- (native)
 
 
----@param duration real
+---@param duration number
 function SetCineFilterDuration(duration) end	-- (native)
 
 
@@ -8018,8 +8016,8 @@ function IsCineFilterDisplayed() end	-- (native)
 ---@param color playercolor
 ---@param speakerTitle string
 ---@param text string
----@param sceneDuration real
----@param voiceoverDuration real
+---@param sceneDuration number
+---@param voiceoverDuration number
 function SetCinematicScene(portraitUnitId, color, speakerTitle, text, sceneDuration, voiceoverDuration) end	-- (native)
 
 function EndCinematicScene() end	-- (native)
@@ -8034,45 +8032,45 @@ function SetCinematicAudio(cinematicAudio) end	-- (native)
 
 
 ---@param whichMargin integer
----@return real
+---@return number
 function GetCameraMargin(whichMargin) end	-- (native)
 --  These return values for the local players camera only...
----@return real
+---@return number
 function GetCameraBoundMinX() end	-- (native)
 
----@return real
+---@return number
 function GetCameraBoundMinY() end	-- (native)
 
----@return real
+---@return number
 function GetCameraBoundMaxX() end	-- (native)
 
----@return real
+---@return number
 function GetCameraBoundMaxY() end	-- (native)
 
 
 ---@param whichField camerafield
----@return real
+---@return number
 function GetCameraField(whichField) end	-- (native)
 
----@return real
+---@return number
 function GetCameraTargetPositionX() end	-- (native)
 
----@return real
+---@return number
 function GetCameraTargetPositionY() end	-- (native)
 
----@return real
+---@return number
 function GetCameraTargetPositionZ() end	-- (native)
 
 ---@return location
 function GetCameraTargetPositionLoc() end	-- (native)
 
----@return real
+---@return number
 function GetCameraEyePositionX() end	-- (native)
 
----@return real
+---@return number
 function GetCameraEyePositionY() end	-- (native)
 
----@return real
+---@return number
 function GetCameraEyePositionZ() end	-- (native)
 
 ---@return location
@@ -8130,7 +8128,7 @@ function SetSoundParamsFromLabel(soundHandle, soundLabel) end	-- (native)
 
 
 ---@param soundHandle sound
----@param cutoff real
+---@param cutoff number
 function SetSoundDistanceCutoff(soundHandle, cutoff) end	-- (native)
 
 
@@ -8145,7 +8143,7 @@ function SetSoundVolume(soundHandle, volume) end	-- (native)
 
 
 ---@param soundHandle sound
----@param pitch real
+---@param pitch number
 function SetSoundPitch(soundHandle, pitch) end	-- (native)
 --  the following method must be called immediately after calling "StartSound"
 
@@ -8155,36 +8153,36 @@ function SetSoundPlayPosition(soundHandle, millisecs) end	-- (native)
 --  these calls are only valid if the sound was created with 3d enabled
 
 ---@param soundHandle sound
----@param minDist real
----@param maxDist real
+---@param minDist number
+---@param maxDist number
 function SetSoundDistances(soundHandle, minDist, maxDist) end	-- (native)
 
 
 ---@param soundHandle sound
----@param inside real
----@param outside real
+---@param inside number
+---@param outside number
 ---@param outsideVolume integer
 function SetSoundConeAngles(soundHandle, inside, outside, outsideVolume) end	-- (native)
 
 
 ---@param soundHandle sound
----@param x real
----@param y real
----@param z real
+---@param x number
+---@param y number
+---@param z number
 function SetSoundConeOrientation(soundHandle, x, y, z) end	-- (native)
 
 
 ---@param soundHandle sound
----@param x real
----@param y real
----@param z real
+---@param x number
+---@param y number
+---@param z number
 function SetSoundPosition(soundHandle, x, y, z) end	-- (native)
 
 
 ---@param soundHandle sound
----@param x real
----@param y real
----@param z real
+---@param x number
+---@param y number
+---@param z number
 function SetSoundVelocity(soundHandle, x, y, z) end	-- (native)
 
 
@@ -8274,7 +8272,7 @@ function GetSoundFileDuration(musicFileName) end	-- (native)
 
 
 ---@param vgroup volumegroup
----@param scale real
+---@param scale number
 function VolumeGroupSetVolume(vgroup, scale) end	-- (native)
 
 function VolumeGroupReset() end	-- (native)
@@ -8292,15 +8290,15 @@ function GetSoundIsLoading(soundHandle) end	-- (native)
 
 ---@param soundHandle sound
 ---@param byPosition boolean
----@param rectwidth real
----@param rectheight real
+---@param rectwidth number
+---@param rectheight number
 function RegisterStackedSound(soundHandle, byPosition, rectwidth, rectheight) end	-- (native)
 
 
 ---@param soundHandle sound
 ---@param byPosition boolean
----@param rectwidth real
----@param rectheight real
+---@param rectwidth number
+---@param rectheight number
 function UnregisterStackedSound(soundHandle, byPosition, rectwidth, rectheight) end	-- (native)
 
 
@@ -8361,49 +8359,49 @@ function RemoveWeatherEffect(whichEffect) end	-- (native)
 function EnableWeatherEffect(whichEffect, enable) end	-- (native)
 
 
----@param x real
----@param y real
----@param radius real
----@param depth real
+---@param x number
+---@param y number
+---@param radius number
+---@param depth number
 ---@param duration integer
 ---@param permanent boolean
 ---@return terraindeformation
 function TerrainDeformCrater(x, y, radius, depth, duration, permanent) end	-- (native)
 
 
----@param x real
----@param y real
----@param radius real
----@param depth real
+---@param x number
+---@param y number
+---@param radius number
+---@param depth number
 ---@param duration integer
 ---@param count integer
----@param spaceWaves real
----@param timeWaves real
----@param radiusStartPct real
+---@param spaceWaves number
+---@param timeWaves number
+---@param radiusStartPct number
 ---@param limitNeg boolean
 ---@return terraindeformation
 function TerrainDeformRipple(x, y, radius, depth, duration, count, spaceWaves, timeWaves, radiusStartPct, limitNeg) end	-- (native)
 
 
----@param x real
----@param y real
----@param dirX real
----@param dirY real
----@param distance real
----@param speed real
----@param radius real
----@param depth real
+---@param x number
+---@param y number
+---@param dirX number
+---@param dirY number
+---@param distance number
+---@param speed number
+---@param radius number
+---@param depth number
 ---@param trailTime integer
 ---@param count integer
 ---@return terraindeformation
 function TerrainDeformWave(x, y, dirX, dirY, distance, speed, radius, depth, trailTime, count) end	-- (native)
 
 
----@param x real
----@param y real
----@param radius real
----@param minDelta real
----@param maxDelta real
+---@param x number
+---@param y number
+---@param radius number
+---@param minDelta number
+---@param maxDelta number
 ---@param duration integer
 ---@param updateInterval integer
 ---@return terraindeformation
@@ -8418,8 +8416,8 @@ function TerrainDeformStopAll() end	-- (native)
 
 
 ---@param modelName string
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return effect
 function AddSpecialEffect(modelName, x, y) end	-- (native)
 
@@ -8443,8 +8441,8 @@ function DestroyEffect(whichEffect) end	-- (native)
 
 ---@param abilityString string
 ---@param t effecttype
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return effect
 function AddSpellEffect(abilityString, t, x, y) end	-- (native)
 
@@ -8458,8 +8456,8 @@ function AddSpellEffectLoc(abilityString, t, where) end	-- (native)
 
 ---@param abilityId integer
 ---@param t effecttype
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return effect
 function AddSpellEffectById(abilityId, t, x, y) end	-- (native)
 
@@ -8489,22 +8487,22 @@ function AddSpellEffectTargetById(abilityId, t, targetWidget, attachPoint) end	-
 
 ---@param codeName string
 ---@param checkVisibility boolean
----@param x1 real
----@param y1 real
----@param x2 real
----@param y2 real
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
 ---@return lightning
 function AddLightning(codeName, checkVisibility, x1, y1, x2, y2) end	-- (native)
 
 
 ---@param codeName string
 ---@param checkVisibility boolean
----@param x1 real
----@param y1 real
----@param z1 real
----@param x2 real
----@param y2 real
----@param z2 real
+---@param x1 number
+---@param y1 number
+---@param z1 number
+---@param x2 number
+---@param y2 number
+---@param z2 number
 ---@return lightning
 function AddLightningEx(codeName, checkVisibility, x1, y1, z1, x2, y2, z2) end	-- (native)
 
@@ -8516,51 +8514,51 @@ function DestroyLightning(whichBolt) end	-- (native)
 
 ---@param whichBolt lightning
 ---@param checkVisibility boolean
----@param x1 real
----@param y1 real
----@param x2 real
----@param y2 real
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
 ---@return boolean
 function MoveLightning(whichBolt, checkVisibility, x1, y1, x2, y2) end	-- (native)
 
 
 ---@param whichBolt lightning
 ---@param checkVisibility boolean
----@param x1 real
----@param y1 real
----@param z1 real
----@param x2 real
----@param y2 real
----@param z2 real
+---@param x1 number
+---@param y1 number
+---@param z1 number
+---@param x2 number
+---@param y2 number
+---@param z2 number
 ---@return boolean
 function MoveLightningEx(whichBolt, checkVisibility, x1, y1, z1, x2, y2, z2) end	-- (native)
 
 
 ---@param whichBolt lightning
----@return real
+---@return number
 function GetLightningColorA(whichBolt) end	-- (native)
 
 
 ---@param whichBolt lightning
----@return real
+---@return number
 function GetLightningColorR(whichBolt) end	-- (native)
 
 
 ---@param whichBolt lightning
----@return real
+---@return number
 function GetLightningColorG(whichBolt) end	-- (native)
 
 
 ---@param whichBolt lightning
----@return real
+---@return number
 function GetLightningColorB(whichBolt) end	-- (native)
 
 
 ---@param whichBolt lightning
----@param r real
----@param g real
----@param b real
----@param a real
+---@param r number
+---@param g number
+---@param b number
+---@param a number
 ---@return boolean
 function SetLightningColor(whichBolt, r, g, b, a) end	-- (native)
 
@@ -8593,8 +8591,8 @@ function GetAbilitySoundById(abilityId, t) end	-- (native)
 --  Terrain API
 -- 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return integer
 function GetTerrainCliffLevel(x, y) end	-- (native)
 
@@ -8610,20 +8608,20 @@ function SetWaterBaseColor(red, green, blue, alpha) end	-- (native)
 function SetWaterDeforms(val) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return integer
 function GetTerrainType(x, y) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return integer
 function GetTerrainVariance(x, y) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param terrainType integer
 ---@param variation integer
 ---@param area integer
@@ -8631,15 +8629,15 @@ function GetTerrainVariance(x, y) end	-- (native)
 function SetTerrainType(x, y, terrainType, variation, area, shape) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param t pathingtype
 ---@return boolean
 function IsTerrainPathable(x, y, t) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param t pathingtype
 ---@param flag boolean
 function SetTerrainPathable(x, y, t, flag) end	-- (native)
@@ -8648,15 +8646,15 @@ function SetTerrainPathable(x, y, t, flag) end	-- (native)
 -- 
 
 ---@param file string
----@param sizeX real
----@param sizeY real
----@param sizeZ real
----@param posX real
----@param posY real
----@param posZ real
----@param originX real
----@param originY real
----@param originZ real
+---@param sizeX number
+---@param sizeY number
+---@param sizeZ number
+---@param posX number
+---@param posY number
+---@param posZ number
+---@param originX number
+---@param originY number
+---@param originZ number
 ---@param imageType integer
 ---@return image
 function CreateImage(file, sizeX, sizeY, sizeZ, posX, posY, posZ, originX, originY, originZ, imageType) end	-- (native)
@@ -8673,14 +8671,14 @@ function ShowImage(whichImage, flag) end	-- (native)
 
 ---@param whichImage image
 ---@param flag boolean
----@param height real
+---@param height number
 function SetImageConstantHeight(whichImage, flag, height) end	-- (native)
 
 
 ---@param whichImage image
----@param x real
----@param y real
----@param z real
+---@param x number
+---@param y number
+---@param z number
 function SetImagePosition(whichImage, x, y, z) end	-- (native)
 
 
@@ -8715,8 +8713,8 @@ function SetImageType(whichImage, imageType) end	-- (native)
 --  Ubersplat API
 -- 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param name string
 ---@param red integer
 ---@param green integer
@@ -8758,9 +8756,9 @@ function SetUbersplatRenderAlways(whichSplat, flag) end	-- (native)
 -- 
 
 ---@param whichPlayer player
----@param x real
----@param y real
----@param radius real
+---@param x number
+---@param y number
+---@param radius number
 ---@param addBlight boolean
 function SetBlight(whichPlayer, x, y, radius, addBlight) end	-- (native)
 
@@ -8772,38 +8770,38 @@ function SetBlightRect(whichPlayer, r, addBlight) end	-- (native)
 
 
 ---@param whichPlayer player
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param addBlight boolean
 function SetBlightPoint(whichPlayer, x, y, addBlight) end	-- (native)
 
 
 ---@param whichPlayer player
 ---@param whichLocation location
----@param radius real
+---@param radius number
 ---@param addBlight boolean
 function SetBlightLoc(whichPlayer, whichLocation, radius, addBlight) end	-- (native)
 
 
 ---@param id player
----@param x real
----@param y real
----@param face real
+---@param x number
+---@param y number
+---@param face number
 ---@return unit
 function CreateBlightedGoldmine(id, x, y, face) end	-- (native)
 
 
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@return boolean
 function IsPointBlighted(x, y) end	-- (native)
 -- ============================================================================
 --  Doodad API
 -- 
 
----@param x real
----@param y real
----@param radius real
+---@param x number
+---@param y number
+---@param radius number
 ---@param doodadID integer
 ---@param nearestOnly boolean
 ---@param animName string
@@ -8872,7 +8870,7 @@ function IsNoDefeatCheat() end	-- (native)
 function Preload(filename) end	-- (native)
 
 
----@param timeout real
+---@param timeout number
 function PreloadEnd(timeout) end	-- (native)
 
 function PreloadStart() end	-- (native)
@@ -8911,10 +8909,10 @@ function AutomationTestEnd() end	-- (native)
 
 function AutomationTestingFinished() end	-- (native)
 --  JAPI Functions
----@return real
+---@return number
 function BlzGetTriggerPlayerMouseX() end	-- (native)
 
----@return real
+---@return number
 function BlzGetTriggerPlayerMouseY() end	-- (native)
 
 ---@return location
@@ -9169,12 +9167,12 @@ function BlzSetUnitDiceSides(whichUnit, diceSides, weaponIndex) end	-- (native)
 
 ---@param whichUnit unit
 ---@param weaponIndex integer
----@return real
+---@return number
 function BlzGetUnitAttackCooldown(whichUnit, weaponIndex) end	-- (native)
 
 
 ---@param whichUnit unit
----@param cooldown real
+---@param cooldown number
 ---@param weaponIndex integer
 function BlzSetUnitAttackCooldown(whichUnit, cooldown, weaponIndex) end	-- (native)
 
@@ -9197,66 +9195,66 @@ function BlzSetSpecialEffectAlpha(whichEffect, alpha) end	-- (native)
 
 
 ---@param whichEffect effect
----@param scale real
+---@param scale number
 function BlzSetSpecialEffectScale(whichEffect, scale) end	-- (native)
 
 
 ---@param whichEffect effect
----@param x real
----@param y real
----@param z real
+---@param x number
+---@param y number
+---@param z number
 function BlzSetSpecialEffectPosition(whichEffect, x, y, z) end	-- (native)
 
 
 ---@param whichEffect effect
----@param height real
+---@param height number
 function BlzSetSpecialEffectHeight(whichEffect, height) end	-- (native)
 
 
 ---@param whichEffect effect
----@param timeScale real
+---@param timeScale number
 function BlzSetSpecialEffectTimeScale(whichEffect, timeScale) end	-- (native)
 
 
 ---@param whichEffect effect
----@param time real
+---@param time number
 function BlzSetSpecialEffectTime(whichEffect, time) end	-- (native)
 
 
 ---@param whichEffect effect
----@param yaw real
----@param pitch real
----@param roll real
+---@param yaw number
+---@param pitch number
+---@param roll number
 function BlzSetSpecialEffectOrientation(whichEffect, yaw, pitch, roll) end	-- (native)
 
 
 ---@param whichEffect effect
----@param yaw real
+---@param yaw number
 function BlzSetSpecialEffectYaw(whichEffect, yaw) end	-- (native)
 
 
 ---@param whichEffect effect
----@param pitch real
+---@param pitch number
 function BlzSetSpecialEffectPitch(whichEffect, pitch) end	-- (native)
 
 
 ---@param whichEffect effect
----@param roll real
+---@param roll number
 function BlzSetSpecialEffectRoll(whichEffect, roll) end	-- (native)
 
 
 ---@param whichEffect effect
----@param x real
+---@param x number
 function BlzSetSpecialEffectX(whichEffect, x) end	-- (native)
 
 
 ---@param whichEffect effect
----@param y real
+---@param y number
 function BlzSetSpecialEffectY(whichEffect, y) end	-- (native)
 
 
 ---@param whichEffect effect
----@param z real
+---@param z number
 function BlzSetSpecialEffectZ(whichEffect, z) end	-- (native)
 
 
@@ -9266,17 +9264,17 @@ function BlzSetSpecialEffectPositionLoc(whichEffect, loc) end	-- (native)
 
 
 ---@param whichEffect effect
----@return real
+---@return number
 function BlzGetLocalSpecialEffectX(whichEffect) end	-- (native)
 
 
 ---@param whichEffect effect
----@return real
+---@return number
 function BlzGetLocalSpecialEffectY(whichEffect) end	-- (native)
 
 
 ---@param whichEffect effect
----@return real
+---@return number
 function BlzGetLocalSpecialEffectZ(whichEffect) end	-- (native)
 
 
@@ -9301,7 +9299,7 @@ function BlzPlaySpecialEffect(whichEffect, whichAnim) end	-- (native)
 
 ---@param whichEffect effect
 ---@param whichAnim animtype
----@param timeScale real
+---@param timeScale number
 function BlzPlaySpecialEffectWithTimeScale(whichEffect, whichAnim, timeScale) end	-- (native)
 
 
@@ -9311,12 +9309,12 @@ function BlzGetAnimName(whichAnim) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function BlzGetUnitArmor(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@param armorAmount real
+---@param armorAmount number
 function BlzSetUnitArmor(whichUnit, armorAmount) end	-- (native)
 
 
@@ -9352,7 +9350,7 @@ function BlzUnitInterruptAttack(whichUnit) end	-- (native)
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function BlzGetUnitCollisionSize(whichUnit) end	-- (native)
 
 
@@ -9364,27 +9362,27 @@ function BlzGetAbilityManaCost(abilId, level) end	-- (native)
 
 ---@param abilId integer
 ---@param level integer
----@return real
+---@return number
 function BlzGetAbilityCooldown(abilId, level) end	-- (native)
 
 
 ---@param whichUnit unit
 ---@param abilId integer
 ---@param level integer
----@param cooldown real
+---@param cooldown number
 function BlzSetUnitAbilityCooldown(whichUnit, abilId, level, cooldown) end	-- (native)
 
 
 ---@param whichUnit unit
 ---@param abilId integer
 ---@param level integer
----@return real
+---@return number
 function BlzGetUnitAbilityCooldown(whichUnit, abilId, level) end	-- (native)
 
 
 ---@param whichUnit unit
 ---@param abilId integer
----@return real
+---@return number
 function BlzGetUnitAbilityCooldownRemaining(whichUnit, abilId) end	-- (native)
 
 
@@ -9395,7 +9393,7 @@ function BlzEndUnitAbilityCooldown(whichUnit, abilCode) end	-- (native)
 
 ---@param whichUnit unit
 ---@param abilCode integer
----@param cooldown real
+---@param cooldown number
 function BlzStartUnitAbilityCooldown(whichUnit, abilCode, cooldown) end	-- (native)
 
 
@@ -9414,7 +9412,7 @@ function BlzSetUnitAbilityManaCost(whichUnit, abilId, level, manaCost) end	-- (n
 
 
 ---@param whichUnit unit
----@return real
+---@return number
 function BlzGetLocalUnitZ(whichUnit) end	-- (native)
 
 
@@ -9424,7 +9422,7 @@ function BlzGetLocalUnitZ(whichUnit) end	-- (native)
 function BlzDecPlayerTechResearched(whichPlayer, techid, levels) end	-- (native)
 
 
----@param damage real
+---@param damage number
 function BlzSetEventDamage(damage) end	-- (native)
 
 ---@return unit
@@ -9502,12 +9500,12 @@ function RequestExtraStringData(dataType, whichPlayer, param1, param2, param3, p
 ---@param param4 integer
 ---@param param5 integer
 ---@param param6 integer
----@return real
+---@return number
 function RequestExtraRealData(dataType, whichPlayer, param1, param2, param3, param4, param5, param6) end	-- (native)
 --  Add this function to follow the style of GetUnitX and GetUnitY, it has the same result as BlzGetLocalUnitZ
 
 ---@param whichUnit unit
----@return real
+---@return number
 function BlzGetUnitZ(whichUnit) end	-- (native)
 
 
@@ -9524,10 +9522,10 @@ function BlzIsSelectionCircleEnabled() end	-- (native)
 
 ---@param whichSetup camerasetup
 ---@param doPan boolean
----@param forcedDuration real
----@param easeInDuration real
----@param easeOutDuration real
----@param smoothFactor real
+---@param forcedDuration number
+---@param easeInDuration number
+---@param easeOutDuration number
+---@param smoothFactor number
 function BlzCameraSetupApplyForceDurationSmooth(whichSetup, doPan, forcedDuration, easeInDuration, easeOutDuration, smoothFactor) end	-- (native)
 
 
@@ -9616,15 +9614,15 @@ function BlzDestroyFrame(frame) end	-- (native)
 ---@param point framepointtype
 ---@param relative framehandle
 ---@param relativePoint framepointtype
----@param x real
----@param y real
+---@param x number
+---@param y number
 function BlzFrameSetPoint(frame, point, relative, relativePoint, x, y) end	-- (native)
 
 
 ---@param frame framehandle
 ---@param point framepointtype
----@param x real
----@param y real
+---@param x number
+---@param y number
 function BlzFrameSetAbsPoint(frame, point, x, y) end	-- (native)
 
 
@@ -9737,7 +9735,7 @@ function BlzFrameSetTexture(frame, texFile, flag, blend) end	-- (native)
 
 
 ---@param frame framehandle
----@param scale real
+---@param scale number
 function BlzFrameSetScale(frame, scale) end	-- (native)
 
 
@@ -9752,29 +9750,29 @@ function BlzFrameCageMouse(frame, enable) end	-- (native)
 
 
 ---@param frame framehandle
----@param value real
+---@param value number
 function BlzFrameSetValue(frame, value) end	-- (native)
 
 
 ---@param frame framehandle
----@return real
+---@return number
 function BlzFrameGetValue(frame) end	-- (native)
 
 
 ---@param frame framehandle
----@param minValue real
----@param maxValue real
+---@param minValue number
+---@param maxValue number
 function BlzFrameSetMinMaxValue(frame, minValue, maxValue) end	-- (native)
 
 
 ---@param frame framehandle
----@param stepSize real
+---@param stepSize number
 function BlzFrameSetStepSize(frame, stepSize) end	-- (native)
 
 
 ---@param frame framehandle
----@param width real
----@param height real
+---@param width number
+---@param height number
 function BlzFrameSetSize(frame, width, height) end	-- (native)
 
 
@@ -9799,18 +9797,18 @@ function BlzFrameGetParent(frame) end	-- (native)
 
 
 ---@param frame framehandle
----@return real
+---@return number
 function BlzFrameGetHeight(frame) end	-- (native)
 
 
 ---@param frame framehandle
----@return real
+---@return number
 function BlzFrameGetWidth(frame) end	-- (native)
 
 
 ---@param frame framehandle
 ---@param fileName string
----@param height real
+---@param height number
 ---@param flags integer
 function BlzFrameSetFont(frame, fileName, height, flags) end	-- (native)
 
@@ -9844,7 +9842,7 @@ function BlzGetTriggerFrame() end	-- (native)
 ---@return frameeventtype
 function BlzGetTriggerFrameEvent() end	-- (native)
 
----@return real
+---@return number
 function BlzGetTriggerFrameValue() end	-- (native)
 
 ---@return string
@@ -9919,14 +9917,14 @@ function BlzGetLocale() end	-- (native)
 
 
 ---@param whichEffect effect
----@return real
+---@return number
 function BlzGetSpecialEffectScale(whichEffect) end	-- (native)
 
 
 ---@param whichEffect effect
----@param x real
----@param y real
----@param z real
+---@param x number
+---@param y number
+---@param z number
 function BlzSetSpecialEffectMatrixScale(whichEffect, x, y, z) end	-- (native)
 
 
@@ -9959,7 +9957,7 @@ function BlzPauseUnitEx(whichUnit, flag) end	-- (native)
 --  native BlzS2FourCC                                 takes string value returns integer
 
 ---@param whichUnit unit
----@param facingAngle real
+---@param facingAngle number
 function BlzSetUnitFacingEx(whichUnit, facingAngle) end	-- (native)
 
 
@@ -10016,7 +10014,7 @@ function BlzGetAbilityIntegerField(whichAbility, whichField) end	-- (native)
 
 ---@param whichAbility ability
 ---@param whichField abilityrealfield
----@return real
+---@return number
 function BlzGetAbilityRealField(whichAbility, whichField) end	-- (native)
 
 
@@ -10043,7 +10041,7 @@ function BlzGetAbilityIntegerLevelField(whichAbility, whichField, level) end	-- 
 ---@param whichAbility ability
 ---@param whichField abilityreallevelfield
 ---@param level integer
----@return real
+---@return number
 function BlzGetAbilityRealLevelField(whichAbility, whichField, level) end	-- (native)
 
 
@@ -10074,7 +10072,7 @@ function BlzGetAbilityIntegerLevelArrayField(whichAbility, whichField, level, in
 ---@param whichField abilityreallevelarrayfield
 ---@param level integer
 ---@param index integer
----@return real
+---@return number
 function BlzGetAbilityRealLevelArrayField(whichAbility, whichField, level, index) end	-- (native)
 
 
@@ -10102,7 +10100,7 @@ function BlzSetAbilityIntegerField(whichAbility, whichField, value) end	-- (nati
 
 ---@param whichAbility ability
 ---@param whichField abilityrealfield
----@param value real
+---@param value number
 ---@return boolean
 function BlzSetAbilityRealField(whichAbility, whichField, value) end	-- (native)
 
@@ -10133,7 +10131,7 @@ function BlzSetAbilityIntegerLevelField(whichAbility, whichField, level, value) 
 ---@param whichAbility ability
 ---@param whichField abilityreallevelfield
 ---@param level integer
----@param value real
+---@param value number
 ---@return boolean
 function BlzSetAbilityRealLevelField(whichAbility, whichField, level, value) end	-- (native)
 
@@ -10168,7 +10166,7 @@ function BlzSetAbilityIntegerLevelArrayField(whichAbility, whichField, level, in
 ---@param whichField abilityreallevelarrayfield
 ---@param level integer
 ---@param index integer
----@param value real
+---@param value number
 ---@return boolean
 function BlzSetAbilityRealLevelArrayField(whichAbility, whichField, level, index, value) end	-- (native)
 
@@ -10201,7 +10199,7 @@ function BlzAddAbilityIntegerLevelArrayField(whichAbility, whichField, level, va
 ---@param whichAbility ability
 ---@param whichField abilityreallevelarrayfield
 ---@param level integer
----@param value real
+---@param value number
 ---@return boolean
 function BlzAddAbilityRealLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
 
@@ -10233,7 +10231,7 @@ function BlzRemoveAbilityIntegerLevelArrayField(whichAbility, whichField, level,
 ---@param whichAbility ability
 ---@param whichField abilityreallevelarrayfield
 ---@param level integer
----@param value real
+---@param value number
 ---@return boolean
 function BlzRemoveAbilityRealLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
 
@@ -10278,7 +10276,7 @@ function BlzGetItemIntegerField(whichItem, whichField) end	-- (native)
 
 ---@param whichItem item
 ---@param whichField itemrealfield
----@return real
+---@return number
 function BlzGetItemRealField(whichItem, whichField) end	-- (native)
 
 
@@ -10304,7 +10302,7 @@ function BlzSetItemIntegerField(whichItem, whichField, value) end	-- (native)
 
 ---@param whichItem item
 ---@param whichField itemrealfield
----@param value real
+---@param value number
 ---@return boolean
 function BlzSetItemRealField(whichItem, whichField, value) end	-- (native)
 
@@ -10336,7 +10334,7 @@ function BlzGetUnitIntegerField(whichUnit, whichField) end	-- (native)
 
 ---@param whichUnit unit
 ---@param whichField unitrealfield
----@return real
+---@return number
 function BlzGetUnitRealField(whichUnit, whichField) end	-- (native)
 
 
@@ -10362,7 +10360,7 @@ function BlzSetUnitIntegerField(whichUnit, whichField, value) end	-- (native)
 
 ---@param whichUnit unit
 ---@param whichField unitrealfield
----@param value real
+---@param value number
 ---@return boolean
 function BlzSetUnitRealField(whichUnit, whichField, value) end	-- (native)
 
@@ -10391,7 +10389,7 @@ function BlzGetUnitWeaponIntegerField(whichUnit, whichField, index) end	-- (nati
 ---@param whichUnit unit
 ---@param whichField unitweaponrealfield
 ---@param index integer
----@return real
+---@return number
 function BlzGetUnitWeaponRealField(whichUnit, whichField, index) end	-- (native)
 
 
@@ -10421,7 +10419,7 @@ function BlzSetUnitWeaponIntegerField(whichUnit, whichField, index, value) end	-
 ---@param whichUnit unit
 ---@param whichField unitweaponrealfield
 ---@param index integer
----@param value real
+---@param value number
 ---@return boolean
 function BlzSetUnitWeaponRealField(whichUnit, whichField, index, value) end	-- (native)
 
@@ -10455,8 +10453,8 @@ function BlzSetItemSkin(whichItem, skinId) end	-- (native)
 --  native BlzSetDestructableSkin                         takes destructable whichDestructable, integer skinId returns nothing
 
 ---@param itemid integer
----@param x real
----@param y real
+---@param x number
+---@param y number
 ---@param skinId integer
 ---@return item
 function BlzCreateItemWithSkin(itemid, x, y, skinId) end	-- (native)
@@ -10464,19 +10462,19 @@ function BlzCreateItemWithSkin(itemid, x, y, skinId) end	-- (native)
 
 ---@param id player
 ---@param unitid integer
----@param x real
----@param y real
----@param face real
+---@param x number
+---@param y number
+---@param face number
 ---@param skinId integer
 ---@return unit
 function BlzCreateUnitWithSkin(id, unitid, x, y, face, skinId) end	-- (native)
 
 
 ---@param objectid integer
----@param x real
----@param y real
----@param face real
----@param scale real
+---@param x number
+---@param y number
+---@param face number
+---@param scale number
 ---@param variation integer
 ---@param skinId integer
 ---@return destructable
@@ -10484,11 +10482,11 @@ function BlzCreateDestructableWithSkin(objectid, x, y, face, scale, variation, s
 
 
 ---@param objectid integer
----@param x real
----@param y real
----@param z real
----@param face real
----@param scale real
+---@param x number
+---@param y number
+---@param z number
+---@param face number
+---@param scale number
 ---@param variation integer
 ---@param skinId integer
 ---@return destructable
@@ -10496,10 +10494,10 @@ function BlzCreateDestructableZWithSkin(objectid, x, y, z, face, scale, variatio
 
 
 ---@param objectid integer
----@param x real
----@param y real
----@param face real
----@param scale real
+---@param x number
+---@param y number
+---@param face number
+---@param scale number
 ---@param variation integer
 ---@param skinId integer
 ---@return destructable
@@ -10507,11 +10505,11 @@ function BlzCreateDeadDestructableWithSkin(objectid, x, y, face, scale, variatio
 
 
 ---@param objectid integer
----@param x real
----@param y real
----@param z real
----@param face real
----@param scale real
+---@param x number
+---@param y number
+---@param z number
+---@param face number
+---@param scale number
 ---@param variation integer
 ---@param skinId integer
 ---@return destructable
