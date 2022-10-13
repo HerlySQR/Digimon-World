@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "SaveFile", "FileIO"}, function ()
 
     SaveFile = {
         ManualPath = "Manual",
@@ -101,4 +101,4 @@ do
     function SaveFile.getData(slot)
         return SaveFile.getLines(slot, 1, false)
     end
-end
+end)

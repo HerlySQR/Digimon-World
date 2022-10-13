@@ -1,7 +1,7 @@
-do
+OnLibraryInit({"Digimon", "Timed"}, function ()
     local NormalColor = "FCD20D"
     local DisabledColor = "FFFFFF"
-    local DEFAULT_AUTO_SAVE_INTERVAL = 3. -- minutes
+    local DEFAULT_AUTO_SAVE_INTERVAL = 3 -- minutes
     local LocalPlayer = nil ---@type player
 
     local Pressed = __jarray(0) ---@type table<player, integer>
@@ -23,6 +23,14 @@ do
     local AbsoluteLoad = nil ---@type framehandle
     local Exit = nil ---@type framehandle
 
+    local WarningMessage = nil ---@type dialog
+    local WarningMessageReceived = __jarray(false) ---@type table<player, boolean>
+
+    OnGameStart(function ()
+        WarningMessage = DialogCreate()
+        DialogSetMessage(WarningMessage, "|cffff0000WARNING|r\nTo properly save, you should\nrestart the Warcraft 3.")
+        DialogAddButton(WarningMessage, "Understood", 0)
+    end)
 
     ---This function always should be in a "if player == GetLocalPlayer() then" block
     local function UpdateMenu()
@@ -114,6 +122,12 @@ do
             BlzFrameSetEnable(AbsoluteSave, BlzFrameIsVisible(AbsoluteSave))
             BlzFrameSetEnable(AbsoluteLoad, BlzFrameIsVisible(AbsoluteLoad))
             UpdateInformation()
+            if not WarningMessageReceived[p] then
+                DialogDisplay(p, WarningMessage, true)
+            end
+        end
+        if not WarningMessageReceived[p] then
+            WarningMessageReceived[p] = true
         end
     end
 
@@ -175,52 +189,23 @@ do
 
     -- AutoSave
 
-    local AutoSaveTimers = {} ---@type table<player, timedNode>
-    local AutoSaveIntervals = {} ---@type table<player, real>
-
-    OnGameStart(function ()
-        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-            local p = User[i]:toPlayer()
-            if IsPlayerInForce(p, FORCE_PLAYING) then
-                AutoSaveIntervals[p] = DEFAULT_AUTO_SAVE_INTERVAL
-                AutoSaveTimers[p] = Timed.echo(function ()
-                    udg_SaveLoadSlot = 6
-                    udg_SaveLoadEvent_Player = p
-                    TriggerExecute(gg_trg_Save_GUI)
-                    if p == LocalPlayer then
-                        UpdateInformation()
-                    end
-                end, DEFAULT_AUTO_SAVE_INTERVAL * 60)
-            end
-        end
-    end)
+    local AutoSaveTimers = {} ---@type table<player, function>
+    local AutoSaveIntervals = __jarray(DEFAULT_AUTO_SAVE_INTERVAL) ---@type table<player, number>
 
     local function AutoSaveSliderFunc()
         local p = GetTriggerPlayer()
         local v = BlzGetTriggerFrameValue()
 
         AutoSaveIntervals[p] = v
-        AutoSaveTimers[p]:remove()
-        AutoSaveTimers[p] = Timed.echo(function ()
-            udg_SaveLoadSlot = 6
-            udg_SaveLoadEvent_Player = p
-            TriggerExecute(gg_trg_Save_GUI)
-            if p == LocalPlayer then
-                UpdateInformation()
-            end
-        end, v * 60)
-
-        if p == LocalPlayer then
-            BlzFrameSetText(AutoSaveText, "Auto-save every |cffFFCC00" .. math.floor(v) .. "|r minutes.")
-        end
+        SetAutoSaveInterval(p, v)
     end
 
     -- --
 
     local function InitFrames()
         local t = nil ---@type trigger
-        local y1 = {} ---@type real[]
-        local y2 = {} ---@type real[]
+        local y1 = {} ---@type number[]
+        local y2 = {} ---@type number[]
 
         BlzLoadTOCFile("ButtonsTOC.toc")
         BlzLoadTOCFile("war3mapImported\\slider.toc")
@@ -248,7 +233,7 @@ do
         BlzFrameSetVisible(LoadButton, false)
 
         t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, LoadButton, FRAMEEVENT_MOUSE_UP)
+        BlzTriggerRegisterFrameEvent(t, LoadButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, LoadFunc)
 
         -- Menu
@@ -305,7 +290,7 @@ do
         BlzFrameSetPoint(AutoSaveSlider, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.20000)
         BlzFrameSetSize(AutoSaveSlider, 0.20000, -0.24500)
         BlzFrameSetPoint(AutoSaveSlider, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.045000)
-        BlzFrameSetMinMaxValue(AutoSaveSlider, 2., 10.)
+        BlzFrameSetMinMaxValue(AutoSaveSlider, 2, 10)
         BlzFrameSetStepSize(AutoSaveSlider, 1.)
         BlzFrameSetValue(AutoSaveSlider, DEFAULT_AUTO_SAVE_INTERVAL)
         t = CreateTrigger()
@@ -438,4 +423,45 @@ do
             BlzFrameSetVisible(LoadButton, flag)
         end
     end
-end
+
+    ---@param p player
+    ---@return integer
+    function GetAutoSaveInterval(p)
+        return AutoSaveIntervals[p]
+    end
+
+    ---@param p player
+    ---@param i integer
+    function SetAutoSaveInterval(p, i)
+        i = i < 2 and DEFAULT_AUTO_SAVE_INTERVAL or i
+        AutoSaveIntervals[p] = i
+        Timed.call(AutoSaveTimers[p] and AutoSaveTimers[p]() or 0, function ()
+            local function callback()
+                udg_SaveLoadSlot = 6
+                udg_SaveLoadEvent_Player = p
+                TriggerExecute(gg_trg_Save_GUI)
+                if p == LocalPlayer then
+                    UpdateInformation()
+                end
+            end
+            callback()
+            AutoSaveTimers[p] = Timed.echo(callback, i * 60)
+        end)
+        if p == LocalPlayer then
+            BlzFrameSetValue(AutoSaveSlider, i)
+            BlzFrameSetText(AutoSaveText, "Auto-save every |cffFFCC00" .. math.floor(i) .. "|r minutes.")
+        end
+    end
+
+    ---@param p player
+    ---@return integer
+    function IsWarningMessageReceived(p)
+        return WarningMessageReceived[p] and 1 or 0
+    end
+
+    ---@param p player
+    ---@param flag integer
+    function SetWarningMessageReceived(p, flag)
+        WarningMessageReceived[p] = flag == 1
+    end
+end)

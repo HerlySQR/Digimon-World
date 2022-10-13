@@ -1,27 +1,33 @@
-do
+OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils", "Vec2"}, function ()
     local CREEPS_PER_PLAYER     ---@type integer
     local CREEPS_PER_REGION     ---@type integer
-    local LIFE_SPAN             ---@type real
-    local LIFE_REDUCED          ---@type real
-    local DELAY_SPAWN           ---@type real
-    local DELAY_NORMAL          ---@type real
-    local DELAY_DEATH           ---@type real
-    local RANGE_LEVEL_1         ---@type real
-    local RANGE_LEVEL_2         ---@type real
-    local NEIGHBOURHOOD         ---@type real
-    local INTERVAL              ---@type real
+    local LIFE_SPAN             ---@type number
+    local LIFE_REDUCED          ---@type number
+    local DELAY_SPAWN           ---@type number
+    local DELAY_NORMAL          ---@type number
+    local DELAY_DEATH           ---@type number
+    local RANGE_LEVEL_1         ---@type number
+    local RANGE_LEVEL_2         ---@type number
+    local RANGE_RETURN          ---@type number
+    local RANGE_IN_HOME         ---@type number
+    local NEIGHBOURHOOD         ---@type number
+    local INTERVAL              ---@type number
 
     ---@class Creep : Digimon
-    ---@field remaining real
+    ---@field remaining number
     ---@field captured boolean
     ---@field reduced boolean
+    ---@field returning boolean
+    ---@field spawnpoint Vec2
 
-    local function CreateCreep(unitid, x, y)
-        local creep = Digimon.create(Digimon.NEUTRAL, unitid, x, y, bj_UNIT_FACING) ---@type Creep
+    local function CreateCreep(unitid, pos)
+        local creep = Digimon.create(Digimon.NEUTRAL, unitid, pos.x, pos.y, bj_UNIT_FACING) ---@type Creep
 
         creep.captured = false
         creep.reduced = false
+        creep.returning = false
         creep.remaining = LIFE_SPAN
+        creep.spawnpoint = pos
 
         return creep
     end
@@ -32,8 +38,7 @@ do
 
     local function Create(x, y, types)
         local this = {
-            x = x,
-            y = y,
+            spawnpoint = Vec2.new(x, y),
 
             types = types,
             inregion = false,
@@ -48,7 +53,7 @@ do
         All:insert(this)
 
         for r in All:loop() do
-            if DistanceBetweenCoords(x, y, r.x, r.y) <= NEIGHBOURHOOD then
+            if DistanceBetweenCoords(x, y, r.spawnpoint.x, r.spawnpoint.y) <= NEIGHBOURHOOD then
                 this.neighbourhood:addSingle(r)
                 r.neighbourhood:addSingle(this)
             end
@@ -78,7 +83,7 @@ do
         for node in All:loop() do
             -- Check if the unit nearby the spawn region belongs to a player
             node.inregion = false
-            ForUnitsInRange(node.x, node.y, RANGE_LEVEL_1, function (u)
+            ForUnitsInRange(node.spawnpoint.x, node.spawnpoint.y, RANGE_LEVEL_1, function (u)
                 if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
                     node.someoneClose = true
                     node.inregion = true
@@ -93,7 +98,7 @@ do
                     -- Spawn per neighbourhood instead per region
                     local r = GetFreeNeighbour(node, math.min(CREEPS_PER_REGION, CREEPS_PER_PLAYER * PlayersInRegion:size())) -- If don't have neighbours, then just use the same region
                     if r then
-                        table.insert(r.creeps, CreateCreep(r.types[math.random(#r.types)], r.x, r.y))
+                        table.insert(r.creeps, CreateCreep(r.types[math.random(#r.types)], r.spawnpoint))
                         -- They share the same delay
                         for n in node.neighbourhood:elements() do
                             n.waitToSpawn = math.max(DELAY_SPAWN, n.waitToSpawn)
@@ -101,17 +106,15 @@ do
                     end
                 end
             else
+                -- Check if a unit is still nearby the spawn region
+                node.someoneClose = false
+                ForUnitsInRange(node.spawnpoint.x, node.spawnpoint.y, RANGE_LEVEL_2, function (u)
+                    if not node.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+                        node.someoneClose = true
+                    end
+                end)
                 for _, creep in ipairs(node.creeps) do
                     creep.remaining = creep.remaining - INTERVAL
-                    -- Check if a unit is still nearby the spawn region
-                    if not creep.reduced then
-                        node.someoneClose = false
-                        ForUnitsInRange(node.x, node.y, RANGE_LEVEL_2, function (u)
-                            if not node.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-                                node.someoneClose = true
-                            end
-                        end)
-                    end
 
                     --If there is no nearby unit in the RANGE_LEVEL_2 then reduce once the duration
                     if not node.someoneClose and not creep.reduced then
@@ -121,10 +124,17 @@ do
                 end
                 node.delay = math.max(node.delay, DELAY_NORMAL)
             end
-            PlayersInRegion:clear()
 
             for i = #node.creeps, 1, -1 do
-                local creep = node.creeps[i]
+                local creep = node.creeps[i] ---@type Creep
+                local distance = creep.spawnpoint:dist(creep:getPos())
+                if distance > RANGE_RETURN then
+                    creep:issueOrder(Orders.move, creep.spawnpoint.x, creep.spawnpoint.y)
+                    creep.returning = true
+                end
+                if distance <= RANGE_IN_HOME then
+                    creep.returning = false
+                end
                 if creep.captured or creep.remaining <= 0. then
                     if creep.remaining <= 0. then
                         node.delay = DELAY_NORMAL
@@ -136,6 +146,7 @@ do
                 end
             end
         end
+        PlayersInRegion:clear()
     end
 
     OnGameStart(function ()
@@ -150,6 +161,8 @@ do
         DELAY_DEATH = udg_DELAY_DEATH
         RANGE_LEVEL_1 = udg_RANGE_LEVEL_1
         RANGE_LEVEL_2 = udg_RANGE_LEVEL_2
+        RANGE_RETURN = udg_RANGE_RETURN
+        RANGE_IN_HOME = udg_RANGE_IN_HOME
         INTERVAL = udg_SPAWN_INTERVAL
         NEIGHBOURHOOD = udg_NEIGHBOURHOOD
 
@@ -165,6 +178,8 @@ do
         udg_DELAY_DEATH = nil
         udg_RANGE_LEVEL_1 = nil
         udg_RANGE_LEVEL_2 = nil
+        udg_RANGE_RETURN = nil
+        udg_RANGE_IN_HOME = nil
         udg_SPAWN_INTERVAL = nil
         udg_NEIGHBOURHOOD = nil
 
@@ -179,6 +194,14 @@ do
         end
         Digimon.capturedEvent(killedOrCapturedfunction)
         Digimon.killEvent(killedOrCapturedfunction)
+
+        Digimon.postDamageEvent(function (info)
+            local creep = info.target ---@type Creep
+            if creep.returning then
+                creep:issueOrder(Orders.attack, creep.spawnpoint.x, creep.spawnpoint.y)
+            end
+        end)
+
         -- For GUI
         udg_CreepSpawnCreate = CreateTrigger()
         TriggerAddAction(udg_CreepSpawnCreate, function ()
@@ -188,4 +211,4 @@ do
         end)
     end)
 
-end
+end)

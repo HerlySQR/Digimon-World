@@ -3,7 +3,7 @@ OnMapInit(function ()
     local HealOnCombat = 1. + 1.
     local HealOffCombat = 1. + 2.5
 
-    local timers = {} ---@type timedNode[]
+    local timers = {} ---@type function[]
 
     Digimon.createEvent(function (new)
         Timed.call(function ()
@@ -18,7 +18,7 @@ OnMapInit(function ()
     Digimon.destroyEvent(function (old)
         Timed.call(function ()
             if old:hasAbility(Spell) then
-                timers[old]:remove()
+                timers[old]()
             end
         end)
     end)

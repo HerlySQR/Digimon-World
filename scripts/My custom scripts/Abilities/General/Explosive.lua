@@ -7,7 +7,7 @@ OnMapInit(function ()
     local Explosion = "Objects\\Spawnmodels\\Other\\NeutralBuildingExplosion\\NeutralBuildingExplosion.mdl"
 
     local Hits = __jarray(0) ---@type table<Digimon, integer>
-    local Timers = {} ---@type table<Digimon, timedNode>
+    local Timers = {} ---@type table<Digimon, function>
 
     local Off = false
 
@@ -21,7 +21,7 @@ OnMapInit(function ()
             Hits[target] = Hits[target] + 1
 
             pcall(function ()
-                Timers[target]:remove()
+                Timers[target]()
             end)
             Timers[target] = Timed.call(MaxTime, function ()
                 Hits[target] = 0

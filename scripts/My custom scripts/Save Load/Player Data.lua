@@ -1,4 +1,4 @@
-do
+OnLibraryInit("Digimon", function ()
 
     do
         ---@class Inventory
@@ -126,4 +126,4 @@ do
         return xp
     end
 
-end
+end)

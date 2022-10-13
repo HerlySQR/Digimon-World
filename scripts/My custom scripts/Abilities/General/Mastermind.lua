@@ -5,8 +5,8 @@ OnMapInit(function ()
     local MaxChargeOffCombat = 0.15
     local ChargePerSecond = 0.01
 
-    local timersEcho = {} ---@type table<Digimon, timedNode>
-    local timersCombat = {} ---@type table<Digimon, timedNode>
+    local timersEcho = {} ---@type table<Digimon, function>
+    local timersCombat = {} ---@type table<Digimon, function>
     local onCombat = __jarray(false) ---@type table<Digimon, boolean>
     local charges = __jarray(0) ---@type table<Digimon, number>
 
@@ -34,7 +34,7 @@ OnMapInit(function ()
 
     Digimon.offCombatEvent(function (d)
         pcall(function ()
-            timersCombat[d]:remove()
+            timersCombat[d]()
         end)
         timersCombat[d] = Timed.call(ResetCombat, function ()
             onCombat[d] = false
@@ -44,7 +44,7 @@ OnMapInit(function ()
     Digimon.destroyEvent(function (old)
         Timed.call(function ()
             if old:hasAbility(Spell) then
-                timersEcho[old]:remove()
+                timersEcho[old]()
             end
         end)
     end)

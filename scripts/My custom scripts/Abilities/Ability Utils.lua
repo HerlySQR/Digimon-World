@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "AbilityUtils"}, function ()
 
     LOCUST_ID = FourCC('Aloc')
 
@@ -41,10 +41,10 @@ do
 
     ---Return a damage based in the hero attributes
     ---@param caster unit
-    ---@param strFactor real
-    ---@param agiFactor real
-    ---@param intFactor real
-    ---@return real
+    ---@param strFactor number
+    ---@param agiFactor number
+    ---@param intFactor number
+    ---@return number
     function GetAttributeDamage(caster, strFactor, agiFactor, intFactor)
         return GetHeroStr(caster, true) * strFactor +
                GetHeroAgi(caster, true) * agiFactor +
@@ -53,7 +53,7 @@ do
 
     ---Returns the avarage attack damage of the unit
     ---@param caster unit
-    ---@return real
+    ---@return number
     function GetAvarageAttack(caster)
         local base = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
         local dice = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_NUMBER_OF_DICE, 0)
@@ -62,21 +62,21 @@ do
     end
 
     ---Returns the distance between the given coords
-    ---@param x1 real
-    ---@param y1 real
-    ---@param x2 real
-    ---@param y2 real
-    ---@return real
+    ---@param x1 number
+    ---@param y1 number
+    ---@param x2 number
+    ---@param y2 number
+    ---@return number
     function DistanceBetweenCoords(x1, y1, x2, y2)
         return math.sqrt((x1 - x2)^2 + (y1 - y2)^2)
     end
 
     ---Returns the squared distance between the given coords
-    ---@param x1 real
-    ---@param y1 real
-    ---@param x2 real
-    ---@param y2 real
-    ---@return real
+    ---@param x1 number
+    ---@param y1 number
+    ---@param x2 number
+    ---@param y2 number
+    ---@return number
     function DistanceBetweenCoordsSq(x1, y1, x2, y2)
         return (x1 - x2)^2 + (y1 - y2)^2
     end
@@ -91,8 +91,8 @@ do
         SEARCH_RECT = Rect(0, 0, 128, 128)
     end)
 
-    ---@param x real
-    ---@param y real
+    ---@param x number
+    ---@param y number
     ---@return boolean
     function IsTerrainWalkable(x, y)
         -- Hide any items in the area to avoid conflicts with our item
@@ -117,4 +117,4 @@ do
         return DistanceBetweenCoordsSq(x, y, tempX, tempY) <= MAX_RANGE and not IsTerrainPathable(x, y, PATHING_TYPE_WALKABILITY)
     end
 
-end
+end)

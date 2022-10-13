@@ -1,5 +1,4 @@
-do
-    UnitEnum = true
+OnLibraryInit({name = "UnitEnum"}, function ()
 
     local ENUM_GROUP = CreateGroup()
     local LOCUST_ID = FourCC('Aloc')
@@ -84,4 +83,4 @@ do
         end, includeLocust)
         return units[math.random(#units)]
     end
-end
+end)

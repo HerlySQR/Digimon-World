@@ -1,4 +1,4 @@
-if LinkedList and Timed and AddHook then
+OnLibraryInit({name = "HeroRecycler", "LinkedList", "Timed", "AddHook", optional = {"WorldBounds"}}, function ()
     -- System based on UnitRecycler https://www.hiveworkshop.com/threads/286701/
     -- but with heros
 
@@ -29,15 +29,14 @@ if LinkedList and Timed and AddHook then
         return IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitIllusion(u) and not IsUnitType(u, UNIT_TYPE_SUMMONED)
     end
 
-    local originalScale = __jarray(1) ---@type real[]
+    local originalScale = __jarray(1) ---@type number[]
 
     -- When recycling a unit back to the stock, these resets will be applied to the
     -- unit. You can add more actions to this or you can delete this module if you
     -- don't need it.
     local function HeroRecyclerResets(u)
         SetHeroXP(u, 0, false)
-        SetHeroLevel(u, 1, false)
-        SetUnitScale(u, originalScale[u], 0., 0.)
+        SetUnitScale(u, BlzGetUnitRealField(u, UNIT_RF_SCALING_VALUE), 0., 0.)
         SetUnitVertexColor(u, 255, 255, 255, 255)
         SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
     end
@@ -62,13 +61,13 @@ if LinkedList and Timed and AddHook then
         end
     end)
 
-    local List = {} ---@type LinkedList[]
+    local List = {} ---@type table<integer, unit[]>
 
     local function RecycleHeroInternal(u)
-        local list = List[GetUnitTypeId(u)] or LinkedList.create()
+        local list = List[GetUnitTypeId(u)] or {}
         List[GetUnitTypeId(u)] = list
 
-        list:insert(u)
+        table.insert(list, u)
         if UnitAlive(u) then
             SetUnitPosition(u, unitCampX, unitCampY)
         else
@@ -87,21 +86,10 @@ if LinkedList and Timed and AddHook then
         HeroRecyclerResets(u)
     end
 
-    -- This is needed to store the original size and don't have conflict with the resets
-    local oldCreateUnit
-
-    oldCreateUnit = AddHook("CreateUnit", function (id, unitid, x, y, face)
-        local u = oldCreateUnit(id, unitid, x, y, face)
-        if UnitTypeFilter(u) then
-            originalScale[u] = BlzGetUnitRealField(u, UNIT_RF_SCALING_VALUE)
-        end
-        return u
-    end)
-
     ---Stores the hero to use it later and return if the process was successful
     ---you can add a delay
     ---@param u unit
-    ---@param delay? real
+    ---@param delay? number
     ---@return boolean
     function RecycleHero(u, delay)
         if u and UnitTypeFilter(u) then
@@ -118,27 +106,25 @@ if LinkedList and Timed and AddHook then
     ---Returns a stored hero, if there is no a stored hero, it creates one
     ---@param owner player
     ---@param id integer
-    ---@param x real
-    ---@param y real
-    ---@param angle real
+    ---@param x number
+    ---@param y number
+    ---@param angle number
     ---@return unit
     function GetRecycledHero(owner, id, x, y, angle)
         if IsHeroUnitId(id) then
-            local list = List[id] or LinkedList.create()
+            local list = List[id] or {}
             List[id] = list
 
-            local node = list.head.next
-            local u = nil ---@type unit
-            if node == list.head then
+            local u = table.remove(list)
+            if not u then
                 u = CreateUnit(owner, id, x, y, angle)
+                originalScale[id] = BlzGetUnitRealField(u, UNIT_RF_SCALING_VALUE)
             else
-                u = node.value
                 SetUnitOwner(u, owner, true)
                 SetUnitPosition(u, x, y)
                 BlzSetUnitFacingEx(u, angle)
                 PauseUnit(u, false)
                 ShowUnitShow(u)
-                list:remove(node)
             end
             return u
         end
@@ -173,4 +159,4 @@ if LinkedList and Timed and AddHook then
             end))
         end)
     end
-end
+end)

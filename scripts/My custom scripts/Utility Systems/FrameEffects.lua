@@ -1,10 +1,10 @@
-if Timed then -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
+OnLibraryInit({name = "FrameEffects", "Timed"}, function () -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
 
     local INTERVAL = 0.03125
 
     local LocalPlayer = nil ---@type player
 
-    local Fades = {} ---@type table<framehandle, timedNode>
+    local Fades = {} ---@type table<framehandle, function>
 
     ---@param frame framehandle -- Not nil
     ---@param duration number
@@ -13,7 +13,7 @@ if Timed then -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222
         whatPlayer = whatPlayer or LocalPlayer
 
         pcall(function ()
-            Fades[frame]:remove()
+            Fades[frame]()
             BlzFrameSetAlpha(frame, 255)
         end)
 
@@ -45,7 +45,7 @@ if Timed then -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222
         whatPlayer = whatPlayer or LocalPlayer
 
         pcall(function ()
-            Fades[frame]:remove()
+            Fades[frame]()
             BlzFrameSetAlpha(frame, 0)
         end)
 
@@ -57,7 +57,7 @@ if Timed then -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222
             BlzFrameSetVisible(frame, true)
         end
 
-        Timed.echo(function ()
+        Fades[frame] = Timed.echo(function ()
             steps = steps - 1
             alpha = alpha + stepSize
             if steps > 0 then
@@ -71,7 +71,7 @@ if Timed then -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222
         end, INTERVAL)
     end
 
-    OnGlobalInit(function ()
+    OnTrigInit(function ()
         LocalPlayer = GetLocalPlayer()
     end)
-end
+end)

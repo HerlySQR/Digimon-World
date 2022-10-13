@@ -1,5 +1,14 @@
-globals = {}
-
+udg_InitialForm = 0
+udg_EvolvedForm = 0
+udg_EvolveLevelCondition = 0
+udg_EvolveRegionCondition = nil
+udg_EvolveItemCondition = 0
+udg_CreateEvolutionCondition = nil
+udg_BackpackItem = 0
+udg_BackpackAbility = 0
+udg_BackpackOrder = ""
+udg_BackpackLevel = 0
+udg_BackpackRun = nil
 udg_ZeroDamageEvent = 0.0
 udg_LethalDamageEvent = 0.0
 udg_OnDamageEvent = 0.0
@@ -187,12 +196,10 @@ udg_Experience = 0
 udg_TotalHeroes = 0
 udg_Setup_Total_Items = 0
 udg_ItemIndex = 0
-udg_Item = nil
+udg_Item = 0
 udg_LoopA = 0
 udg_Setup_Total_Heroes = 0
 udg_HeroIndex = 0
-udg_Hero = nil
-udg_PN_Load = 0
 udg_NativeUnitsArray = __jarray(0)
 udg_NativeForest_Respawn = {}
 udg_NativeForest = {}
@@ -205,6 +212,14 @@ udg_PGroup = nil
 udg_ItemInteger = 0
 udg_TempGroup = nil
 udg_Delayed_Duration = 0.0
+udg_ItemDropCreep = nil
+udg_ItemDropTypes = __jarray(0)
+udg_ItemDropChances = __jarray(0.0)
+udg_ItemDropOnce = false
+udg_ItemDropAdd = nil
+udg_Name = ""
+udg_Place = nil
+udg_Minimap = ""
 udg_TP_EnterRect = nil
 udg_TP_LeaveRect = nil
 udg_TP_EnterPoint = nil
@@ -212,23 +227,20 @@ udg_TP_LeavePoint = nil
 udg_TP_EnterText = ""
 udg_TP_LeaveText = ""
 udg_TP_Create = nil
+udg_Passage = nil
+udg_Passages = {}
+udg_Entrance1 = nil
+udg_Entrances1 = {}
+udg_Entrance2 = nil
+udg_Entrances2 = {}
+udg_EnvName1 = ""
+udg_EnvName2 = ""
+udg_FadeOut = false
+udg_CreatePassage = nil
+udg_CreatePassages = nil
 udg_PathBlockRegion = nil
 udg_PathBlockType = 0
 udg_PathBlockRun = nil
-udg_ItemDropCreep = nil
-udg_ItemDropTypes = __jarray(0)
-udg_ItemDropChances = __jarray(0.0)
-udg_ItemDropOnce = false
-udg_ItemDropAdd = nil
-udg_InitialForm = 0
-udg_EvolvedForm = 0
-udg_EvolveLevelCondition = 0
-udg_EvolveRegionCondition = nil
-udg_EvolveItemCondition = 0
-udg_CreateEvolutionCondition = nil
-udg_Name = ""
-udg_Place = nil
-udg_Minimap = ""
 udg_ItemSpawnTypes = __jarray(0)
 udg_ItemSpawnRegions = {}
 udg_ItemSpawnCreate = nil
@@ -303,15 +315,29 @@ udg_ReactiveSpell = 0
 udg_ReactiveDmgReturnFactor = 0.0
 udg_CalmMindSpell = 0
 udg_CalmMindManaPerLevel = 0
+udg_HungerSpell = 0
+udg_HungerBuff = 0
+udg_FeederSpell = 0
+udg_FeederDmgFactor = 0.0
+udg_EnvySpell = 0
+udg_EnvyManaReduced = 0.0
+udg_EnvyManaGained = 0.0
+udg_HardSpell = 0
+udg_HardDmgBlocked = 0.0
+udg_HardChance = 0
 udg_HotSpell = 0
 udg_HotStrDmgFactor = 0.0
 udg_HotDmgPerSecFactor = 0.0
+udg_ColdBodySpell = 0
+udg_ColdBodyFreezeChance = 0
 udg_FrostSpell = 0
 udg_FrostAgiDmgFactor = 0.0
 udg_FrostChance = 0
 udg_SaveLoadGold = 0
 udg_SaveLoadLumber = 0
 udg_SaveLoadFood = 0
+udg_SaveLoadBackpackItems = __jarray(0)
+udg_SaveLoadBackpackItemCharges = __jarray(0)
 udg_SaveLoadDigimons = __jarray(0)
 udg_SaveLoadMaxDigimons = 0
 udg_SaveLoadInventories = __jarray(0)
@@ -320,6 +346,8 @@ udg_SaveLoadExps = __jarray(0)
 udg_SaveLoadSlot = 0
 udg_Loading = false
 udg_LoadCount = 0
+udg_Hero = nil
+udg_PN_Load = 0
 udg_Digispirits = {}
 udg_SaveNameMax = 0
 udg_SaveLoad_TriggerName = ""
@@ -356,34 +384,8 @@ udg_LocalFiles_WarningMessage = ""
 udg_MapName = ""
 udg_SaveTempInt = 0
 udg_SaveCodeColored = ""
-udg_Passage = nil
-udg_Entrance1 = nil
-udg_Entrance2 = nil
-udg_EnvName1 = ""
-udg_EnvName2 = ""
-udg_CreatePassage = nil
-udg_FadeOut = false
-udg_Passages = {}
-udg_Entrances1 = {}
-udg_Entrances2 = {}
-udg_CreatePassages = nil
-udg_HungerSpell = 0
-udg_HungerBuff = 0
-udg_FeederSpell = 0
-udg_FeederDmgFactor = 0.0
-udg_ColdBodySpell = 0
-udg_ColdBodyFreezeChance = 0
-udg_EnvySpell = 0
-udg_EnvyManaReduced = 0.0
-udg_EnvyManaGained = 0.0
-udg_HardSpell = 0
-udg_HardDmgBlocked = 0.0
-udg_HardChance = 0
-udg_BackpackItem = 0
-udg_BackpackAbility = 0
-udg_BackpackOrder = ""
-udg_BackpackLevel = 0
-udg_BackpackRun = nil
+udg_RANGE_RETURN = 0.0
+udg_RANGE_IN_HOME = 0.0
 gg_rct_Player_1_Spawn = nil
 gg_rct_Hospital = nil
 gg_rct_JijimonsHouse_Inside = nil
@@ -588,6 +590,7 @@ gg_rct_GC_Entrance_1 = nil
 gg_rct_Passage_FL_to_GC_2 = nil
 gg_rct_FL_Entrance_4 = nil
 gg_rct_GC_Entrance_2 = nil
+gg_rct_Beach_of_Dragon = nil
 gg_cam_Camera_001 = nil
 gg_cam_Camera_002 = nil
 gg_snd_H01VillagerM33 = nil
@@ -609,6 +612,7 @@ gg_trg_Enviroment_Debug = nil
 gg_trg_See_all_the_map_at_the_beggining = nil
 gg_trg_See_the_map = nil
 gg_trg_Supress_messages = nil
+gg_trg_Items = nil
 gg_trg_Rookie_to_Champion = nil
 gg_trg_Champion_to_Ultimate = nil
 gg_trg_Init_Enviroment = nil
@@ -703,395 +707,403 @@ gg_trg_Save_Init = nil
 gg_unit_O061_0445 = nil
 gg_unit_O060_0442 = nil
 gg_unit_N005_0111 = nil
-gg_trg_Items = nil
 function InitGlobals()
-    local i = 0
-    globals.udg_PreDamageEvent = 0.0
-    globals.udg_ArmorDamageEvent = 0.0
-    udg_ZeroDamageEvent = 0.0
-    udg_LethalDamageEvent = 0.0
-    udg_OnDamageEvent = 0.0
-    globals.udg_AfterDamageEvent = 0.0
-    udg_SourceDamageEvent = 0.0
-    udg_AOEDamageEvent = 0.0
-    udg_DamageModifierEvent = 0.0
-    udg_DamageEvent = 0.0
-    udg_RemoveDamageEvent = false
-    udg_DamageEventOverride = false
-    udg_DamageEngineEnabled = false
-    udg_DamageEventPrevAmt = 0.0
-    udg_DamageEventUserAmt = 0.0
-    udg_DamageEventLevel = 0
-    udg_DamageEventAOE = 0
-    udg_DamageEventAOEGroup = CreateGroup()
-    udg_DamageScalingWC3 = 0.0
-    udg_DamageScalingUser = 0.0
-    udg_IsDamageAttack = false
-    udg_IsDamageMelee = false
-    udg_IsDamageRanged = false
-    udg_IsDamageSpell = false
-    udg_IsDamageCode = false
-    udg_DamageEventAmount = 0.0
-    udg_DamageEventArmorPierced = 0.0
-    udg_LethalDamageHP = 0.0
-    udg_DamageEventAttackT = 0
-    udg_DamageEventDamageT = 0
-    udg_DamageEventArmorT = 0
-    udg_DamageEventDefenseT = 0
-    udg_DamageEventWeaponT = 0
-    udg_DamageEventType = 0
-    udg_NextDamageIsAttack = false
-    udg_NextDamageIsRanged = false
-    udg_NextDamageIsMelee = false
-    udg_NextDamageType = 0
-    udg_NextDamageWeaponT = 0
-    udg_DamageFilterConfigured = false
-    udg_DamageFilterAttackT = 0
-    udg_DamageFilterDamageT = 0
-    udg_DamageFilterType = 0
-    udg_DamageFilterMinAmount = 0.0
-    udg_DamageFilterRunChance = 0.0
-    udg_DamageFilterFailChance = 0.0
-    udg_DamageFilterSourceC = 0
-    udg_DamageFilterTargetC = 0
-    udg_UNIT_CLASS_MAGIC_IMMUNE = 0
-    udg_UNIT_CLASS_ETHEREAL = 0
-    udg_UNIT_CLASS_RESISTANT = 0
-    udg_UNIT_CLASS_SLEEPING = 0
-    udg_UNIT_CLASS_POLYMORPHED = 0
-    udg_UNIT_CLASS_POISONED = 0
-    udg_UNIT_CLASS_TAUREN = 0
-    udg_UNIT_CLASS_ANCIENT = 0
-    udg_UNIT_CLASS_TOWNHALL = 0
-    udg_UNIT_CLASS_SAPPER = 0
-    udg_UNIT_CLASS_PEON = 0
-    udg_UNIT_CLASS_MECHANICAL = 0
-    udg_UNIT_CLASS_UNDEAD = 0
-    udg_UNIT_CLASS_SNARED = 0
-    udg_UNIT_CLASS_PLAGUED = 0
-    udg_UNIT_CLASS_STUNNED = 0
-    udg_UNIT_CLASS_SUMMONED = 0
-    udg_UNIT_CLASS_GIANT = 0
-    udg_UNIT_CLASS_RANGED = 0
-    udg_UNIT_CLASS_MELEE = 0
-    udg_UNIT_CLASS_ATTACKS_GROUND = 0
-    udg_UNIT_CLASS_ATTACKS_FLYING = 0
-    udg_UNIT_CLASS_GROUND = 0
-    udg_UNIT_CLASS_FLYING = 0
-    udg_UNIT_CLASS_STRUCTURE = 0
-    udg_UNIT_CLASS_DEAD = 0
-    udg_UNIT_CLASS_HERO = 0
-    udg_ARMOR_TYPE_NONE = 0
-    udg_ARMOR_TYPE_FLESH = 0
-    udg_ARMOR_TYPE_METAL = 0
-    udg_ARMOR_TYPE_WOOD = 0
-    udg_ARMOR_TYPE_ETHEREAL = 0
-    udg_ARMOR_TYPE_STONE = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_ArmorTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    udg_ATTACK_TYPE_SPELLS = 0
-    udg_ATTACK_TYPE_NORMAL = 0
-    udg_ATTACK_TYPE_PIERCE = 0
-    udg_ATTACK_TYPE_SIEGE = 0
-    udg_ATTACK_TYPE_MAGIC = 0
-    udg_ATTACK_TYPE_CHAOS = 0
-    udg_ATTACK_TYPE_HERO = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_AttackTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    udg_DamageTypeBlocked = 0
-    udg_DamageTypeCriticalStrike = 0
-    udg_DamageTypeCode = 0
-    udg_DamageTypeExplosive = 0
-    udg_DamageTypeHeal = 0
-    udg_DamageTypePure = 0
-    udg_DamageTypePureExplosive = 0
-    udg_DamageTypeReduced = 0
-    udg_DAMAGE_TYPE_UNKNOWN = 0
-    udg_DAMAGE_TYPE_NORMAL = 0
-    udg_DAMAGE_TYPE_ENHANCED = 0
-    udg_DAMAGE_TYPE_FIRE = 0
-    udg_DAMAGE_TYPE_COLD = 0
-    udg_DAMAGE_TYPE_LIGHTNING = 0
-    udg_DAMAGE_TYPE_POISON = 0
-    udg_DAMAGE_TYPE_DISEASE = 0
-    udg_DAMAGE_TYPE_DIVINE = 0
-    udg_DAMAGE_TYPE_MAGIC = 0
-    udg_DAMAGE_TYPE_SONIC = 0
-    udg_DAMAGE_TYPE_ACID = 0
-    udg_DAMAGE_TYPE_FORCE = 0
-    udg_DAMAGE_TYPE_DEATH = 0
-    udg_DAMAGE_TYPE_MIND = 0
-    udg_DAMAGE_TYPE_PLANT = 0
-    udg_DAMAGE_TYPE_DEFENSIVE = 0
-    udg_DAMAGE_TYPE_DEMOLITION = 0
-    udg_DAMAGE_TYPE_SLOW_POISON = 0
-    udg_DAMAGE_TYPE_SPIRIT_LINK = 0
-    udg_DAMAGE_TYPE_SHADOW_STRIKE = 0
-    udg_DAMAGE_TYPE_UNIVERSAL = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_DamageTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    udg_DEFENSE_TYPE_LIGHT = 0
-    udg_DEFENSE_TYPE_MEDIUM = 0
-    udg_DEFENSE_TYPE_HEAVY = 0
-    udg_DEFENSE_TYPE_FORTIFIED = 0
-    udg_DEFENSE_TYPE_NORMAL = 0
-    udg_DEFENSE_TYPE_HERO = 0
-    udg_DEFENSE_TYPE_DIVINE = 0
-    udg_DEFENSE_TYPE_UNARMORED = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_DefenseTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_WeaponTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    udg_WEAPON_TYPE_NONE = 0
-    udg_WEAPON_TYPE_ML_CHOP = 0
-    udg_WEAPON_TYPE_MM_CHOP = 0
-    udg_WEAPON_TYPE_MH_CHOP = 0
-    udg_WEAPON_TYPE_ML_SLICE = 0
-    udg_WEAPON_TYPE_MM_SLICE = 0
-    udg_WEAPON_TYPE_MH_SLICE = 0
-    udg_WEAPON_TYPE_MM_BASH = 0
-    udg_WEAPON_TYPE_MH_BASH = 0
-    udg_WEAPON_TYPE_MM_STAB = 0
-    udg_WEAPON_TYPE_MH_STAB = 0
-    udg_WEAPON_TYPE_WL_SLICE = 0
-    udg_WEAPON_TYPE_WM_SLICE = 0
-    udg_WEAPON_TYPE_WH_SLICE = 0
-    udg_WEAPON_TYPE_WL_BASH = 0
-    udg_WEAPON_TYPE_WM_BASH = 0
-    udg_WEAPON_TYPE_WH_BASH = 0
-    udg_WEAPON_TYPE_WL_STAB = 0
-    udg_WEAPON_TYPE_WM_STAB = 0
-    udg_WEAPON_TYPE_CL_SLICE = 0
-    udg_WEAPON_TYPE_CM_SLICE = 0
-    udg_WEAPON_TYPE_CH_SLICE = 0
-    udg_WEAPON_TYPE_AM_CHOP = 0
-    udg_WEAPON_TYPE_RH_BASH = 0
-    udg_TempReal = 0.0
-    udg_TempInt3 = 0
-    udg_TempInt2 = 0
-    udg_TempInt = 0
-    udg_LoopC = 0
-    udg_LoopB = 0
-    udg_LoopD = 0
-    udg_MaxLoopA = 0
-    udg_MaxLoopB = 0
-    udg_TotalItems = 0
-    udg_Experience = 0
-    udg_TotalHeroes = 0
-    udg_Setup_Total_Items = 0
-    udg_ItemIndex = 0
-    udg_LoopA = 0
-    udg_Setup_Total_Heroes = 0
-    udg_HeroIndex = 0
-    udg_PN_Load = 0
-    udg_TempPlayerGroup = CreateForce()
-    udg_Camera_Distance = 0.0
-    udg_PGroup = CreateForce()
-    udg_ItemInteger = 0
-    udg_TempGroup = CreateGroup()
-    udg_Delayed_Duration = 0.0
-    udg_TP_EnterText = ""
-    udg_TP_LeaveText = ""
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_ItemDropChances[i] = 0.0
-        i = i + 1
-    end
-    udg_ItemDropOnce = false
-    udg_EvolveLevelCondition = 0
-    udg_Name = ""
-    udg_Minimap = ""
-    udg_ItemSpawnMaxItems = 0
-    udg_CREEPS_PER_PLAYER = 0
-    udg_CREEPS_PER_REGION = 0
-    udg_LIFE_SPAN = 0.0
-    udg_LIFE_REDUCED = 0.0
-    udg_DELAY_SPAWN = 0.0
-    udg_DELAY_NORMAL = 0.0
-    udg_DELAY_DEATH = 0.0
-    udg_RANGE_LEVEL_1 = 0.0
-    udg_RANGE_LEVEL_2 = 0.0
-    udg_NEIGHBOURHOOD = 0.0
-    udg_SPAWN_INTERVAL = 0.0
-    udg_Water = ATTACK_TYPE_CHAOS
-    udg_Beast = ATTACK_TYPE_MAGIC
-    udg_Machine = ATTACK_TYPE_MELEE
-    udg_Air = ATTACK_TYPE_PIERCE
-    udg_Dark = ATTACK_TYPE_SIEGE
-    udg_Fire = ATTACK_TYPE_NORMAL
-    udg_Nature = ATTACK_TYPE_HERO
-    udg_WaterAsInt = 0
-    udg_BeastAsInt = 0
-    udg_MachineAsInt = 0
-    udg_AirAsInt = 0
-    udg_DarkAsInt = 0
-    udg_FireAsInt = 0
-    udg_NatureAsInt = 0
-    udg_HolyAsInt = 0
-    udg_Red = 0.0
-    udg_Green = 0.0
-    udg_Blue = 0.0
-    udg_Text = ""
-    udg_Size = 0.0
-    udg_ZOffset = 0.0
-    udg_DamageVariation = 0.0
-    udg_Root = ""
-    udg_DamageRealtoInteger = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_AbsorbON[i] = 0
-        i = i + 1
-    end
-    udg_BruteRandom = 0
-    udg_EvasionChanceReal = 0.0
-    udg_EvasionChanceRandom = 0.0
-    udg_BullseyeSpell = FourCC("A02P")
-    udg_BullseyeMissChanceLess = 15.00
-    udg_CriticalDamageModifier = 1.00
-    udg_CriticalDamageReal = 0.0
-    udg_CriticalChanceReal = 0.0
-    udg_CriticalChanceRandom = 0.0
-    udg_Attribute = -1
-    udg_EfficiencySpell = FourCC("A02O")
-    udg_EfficiencyCritChancePlus = 7.00
-    udg_EfficiencyCritDmgPlus = 0.07
-    udg_StrongSpell = FourCC("A02Y")
-    udg_StrongCritDmgPlus = 0.15
-    udg_StrongHealthPerLevel = 5
-    udg_DrainHPStealed = 10.00
-    udg_BruteForceSpell = FourCC("A02Q")
-    udg_BruteForceStrDmgFactor = 0.30
-    udg_BruteForceChance = 10
-    udg_BruteForcePushDist = 100.00
-    udg_HardShellSpell = FourCC("A02S")
-    udg_HardShellDmgTakenFactor = 0.90
-    udg_ReactiveSpell = FourCC("A02T")
-    udg_ReactiveDmgReturnFactor = 0.10
-    udg_CalmMindSpell = FourCC("A02U")
-    udg_CalmMindManaPerLevel = 5
-    udg_HotSpell = FourCC("A02N")
-    udg_HotStrDmgFactor = 0.30
-    udg_HotDmgPerSecFactor = 0.10
-    udg_FrostSpell = FourCC("A028")
-    udg_FrostAgiDmgFactor = 0.30
-    udg_FrostChance = 25
-    udg_SaveLoadGold = 0
-    udg_SaveLoadLumber = 0
-    udg_SaveLoadFood = 0
-    udg_SaveLoadMaxDigimons = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadInventories[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadLevels[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadExps[i] = 0
-        i = i + 1
-    end
-    udg_SaveLoadSlot = 0
-    udg_Loading = false
-    udg_LoadCount = 0
-    udg_SaveNameMax = 0
-    udg_SaveLoad_TriggerName = ""
-    udg_SaveLoadMaxLength = 0
-    udg_SaveUseGUI = false
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveNameList[i] = ""
-        i = i + 1
-    end
-    udg_SaveLoad_Slot = 0
-    udg_SaveHeroName = false
-    udg_SaveTempReal = 0.0
-    udg_SaveShowCode = false
-    udg_HeroXPRequired = 0
-    udg_HeroXPPrevLevelFactor = 0
-    udg_HeroXPLevelFactor = 0
-    udg_HeroXPConstant = 0
-    udg_SaveAbilityTypeMax = 0
-    udg_SaveUnitMaxStat = 0
-    udg_SaveItemTypeMax = 0
-    udg_SaveUnitTypeMax = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveCurrentSlot[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SavePlayerLoading[i] = false
-        i = i + 1
-    end
-    udg_SaveLoad_HeroName = false
-    udg_SaveLoadEvent_Code = ""
-    globals.udg_SaveLoadEvent = 0.0
-    udg_SaveTempString = ""
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveMaxValue[i] = 0
-        i = i + 1
-    end
-    udg_SaveCount = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveValue[i] = 0
-        i = i + 1
-    end
-    udg_LocalFiles_WarningMessage = ""
-    udg_MapName = ""
-    udg_SaveTempInt = 0
-    udg_SaveCodeColored = ""
-    udg_EnvName1 = ""
-    udg_EnvName2 = ""
-    udg_FadeOut = false
-    udg_HungerSpell = FourCC("A02K")
-    udg_HungerBuff = FourCC("A02L")
-    udg_FeederSpell = FourCC("A02M")
-    udg_FeederDmgFactor = 0.10
-    udg_ColdBodySpell = FourCC("A030")
-    udg_ColdBodyFreezeChance = 15
-    udg_EnvySpell = FourCC("A031")
-    udg_EnvyManaReduced = 0.10
-    udg_EnvyManaGained = 0.50
-    udg_HardSpell = FourCC("A031")
-    udg_HardDmgBlocked = 0.50
-    udg_HardChance = 15
-    udg_BackpackOrder = ""
-    udg_BackpackLevel = 1
+local i = 0
+
+udg_EvolveLevelCondition = 0
+udg_BackpackOrder = ""
+udg_BackpackLevel = 1
+globals.udg_PreDamageEvent = 0.0
+globals.udg_ArmorDamageEvent = 0.0
+udg_ZeroDamageEvent = 0.0
+udg_LethalDamageEvent = 0.0
+udg_OnDamageEvent = 0.0
+globals.udg_AfterDamageEvent = 0.0
+udg_SourceDamageEvent = 0.0
+udg_AOEDamageEvent = 0.0
+udg_DamageModifierEvent = 0.0
+udg_DamageEvent = 0.0
+udg_RemoveDamageEvent = false
+udg_DamageEventOverride = false
+udg_DamageEngineEnabled = false
+udg_DamageEventPrevAmt = 0.0
+udg_DamageEventUserAmt = 0.0
+udg_DamageEventLevel = 0
+udg_DamageEventAOE = 0
+udg_DamageEventAOEGroup = CreateGroup()
+udg_DamageScalingWC3 = 0.0
+udg_DamageScalingUser = 0.0
+udg_IsDamageAttack = false
+udg_IsDamageMelee = false
+udg_IsDamageRanged = false
+udg_IsDamageSpell = false
+udg_IsDamageCode = false
+udg_DamageEventAmount = 0.0
+udg_DamageEventArmorPierced = 0.0
+udg_LethalDamageHP = 0.0
+udg_DamageEventAttackT = 0
+udg_DamageEventDamageT = 0
+udg_DamageEventArmorT = 0
+udg_DamageEventDefenseT = 0
+udg_DamageEventWeaponT = 0
+udg_DamageEventType = 0
+udg_NextDamageIsAttack = false
+udg_NextDamageIsRanged = false
+udg_NextDamageIsMelee = false
+udg_NextDamageType = 0
+udg_NextDamageWeaponT = 0
+udg_DamageFilterConfigured = false
+udg_DamageFilterAttackT = 0
+udg_DamageFilterDamageT = 0
+udg_DamageFilterType = 0
+udg_DamageFilterMinAmount = 0.0
+udg_DamageFilterRunChance = 0.0
+udg_DamageFilterFailChance = 0.0
+udg_DamageFilterSourceC = 0
+udg_DamageFilterTargetC = 0
+udg_UNIT_CLASS_MAGIC_IMMUNE = 0
+udg_UNIT_CLASS_ETHEREAL = 0
+udg_UNIT_CLASS_RESISTANT = 0
+udg_UNIT_CLASS_SLEEPING = 0
+udg_UNIT_CLASS_POLYMORPHED = 0
+udg_UNIT_CLASS_POISONED = 0
+udg_UNIT_CLASS_TAUREN = 0
+udg_UNIT_CLASS_ANCIENT = 0
+udg_UNIT_CLASS_TOWNHALL = 0
+udg_UNIT_CLASS_SAPPER = 0
+udg_UNIT_CLASS_PEON = 0
+udg_UNIT_CLASS_MECHANICAL = 0
+udg_UNIT_CLASS_UNDEAD = 0
+udg_UNIT_CLASS_SNARED = 0
+udg_UNIT_CLASS_PLAGUED = 0
+udg_UNIT_CLASS_STUNNED = 0
+udg_UNIT_CLASS_SUMMONED = 0
+udg_UNIT_CLASS_GIANT = 0
+udg_UNIT_CLASS_RANGED = 0
+udg_UNIT_CLASS_MELEE = 0
+udg_UNIT_CLASS_ATTACKS_GROUND = 0
+udg_UNIT_CLASS_ATTACKS_FLYING = 0
+udg_UNIT_CLASS_GROUND = 0
+udg_UNIT_CLASS_FLYING = 0
+udg_UNIT_CLASS_STRUCTURE = 0
+udg_UNIT_CLASS_DEAD = 0
+udg_UNIT_CLASS_HERO = 0
+udg_ARMOR_TYPE_NONE = 0
+udg_ARMOR_TYPE_FLESH = 0
+udg_ARMOR_TYPE_METAL = 0
+udg_ARMOR_TYPE_WOOD = 0
+udg_ARMOR_TYPE_ETHEREAL = 0
+udg_ARMOR_TYPE_STONE = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_ArmorTypeDebugStr[i] = ""
+i = i + 1
+end
+udg_ATTACK_TYPE_SPELLS = 0
+udg_ATTACK_TYPE_NORMAL = 0
+udg_ATTACK_TYPE_PIERCE = 0
+udg_ATTACK_TYPE_SIEGE = 0
+udg_ATTACK_TYPE_MAGIC = 0
+udg_ATTACK_TYPE_CHAOS = 0
+udg_ATTACK_TYPE_HERO = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_AttackTypeDebugStr[i] = ""
+i = i + 1
+end
+udg_DamageTypeBlocked = 0
+udg_DamageTypeCriticalStrike = 0
+udg_DamageTypeCode = 0
+udg_DamageTypeExplosive = 0
+udg_DamageTypeHeal = 0
+udg_DamageTypePure = 0
+udg_DamageTypePureExplosive = 0
+udg_DamageTypeReduced = 0
+udg_DAMAGE_TYPE_UNKNOWN = 0
+udg_DAMAGE_TYPE_NORMAL = 0
+udg_DAMAGE_TYPE_ENHANCED = 0
+udg_DAMAGE_TYPE_FIRE = 0
+udg_DAMAGE_TYPE_COLD = 0
+udg_DAMAGE_TYPE_LIGHTNING = 0
+udg_DAMAGE_TYPE_POISON = 0
+udg_DAMAGE_TYPE_DISEASE = 0
+udg_DAMAGE_TYPE_DIVINE = 0
+udg_DAMAGE_TYPE_MAGIC = 0
+udg_DAMAGE_TYPE_SONIC = 0
+udg_DAMAGE_TYPE_ACID = 0
+udg_DAMAGE_TYPE_FORCE = 0
+udg_DAMAGE_TYPE_DEATH = 0
+udg_DAMAGE_TYPE_MIND = 0
+udg_DAMAGE_TYPE_PLANT = 0
+udg_DAMAGE_TYPE_DEFENSIVE = 0
+udg_DAMAGE_TYPE_DEMOLITION = 0
+udg_DAMAGE_TYPE_SLOW_POISON = 0
+udg_DAMAGE_TYPE_SPIRIT_LINK = 0
+udg_DAMAGE_TYPE_SHADOW_STRIKE = 0
+udg_DAMAGE_TYPE_UNIVERSAL = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_DamageTypeDebugStr[i] = ""
+i = i + 1
+end
+udg_DEFENSE_TYPE_LIGHT = 0
+udg_DEFENSE_TYPE_MEDIUM = 0
+udg_DEFENSE_TYPE_HEAVY = 0
+udg_DEFENSE_TYPE_FORTIFIED = 0
+udg_DEFENSE_TYPE_NORMAL = 0
+udg_DEFENSE_TYPE_HERO = 0
+udg_DEFENSE_TYPE_DIVINE = 0
+udg_DEFENSE_TYPE_UNARMORED = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_DefenseTypeDebugStr[i] = ""
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_WeaponTypeDebugStr[i] = ""
+i = i + 1
+end
+udg_WEAPON_TYPE_NONE = 0
+udg_WEAPON_TYPE_ML_CHOP = 0
+udg_WEAPON_TYPE_MM_CHOP = 0
+udg_WEAPON_TYPE_MH_CHOP = 0
+udg_WEAPON_TYPE_ML_SLICE = 0
+udg_WEAPON_TYPE_MM_SLICE = 0
+udg_WEAPON_TYPE_MH_SLICE = 0
+udg_WEAPON_TYPE_MM_BASH = 0
+udg_WEAPON_TYPE_MH_BASH = 0
+udg_WEAPON_TYPE_MM_STAB = 0
+udg_WEAPON_TYPE_MH_STAB = 0
+udg_WEAPON_TYPE_WL_SLICE = 0
+udg_WEAPON_TYPE_WM_SLICE = 0
+udg_WEAPON_TYPE_WH_SLICE = 0
+udg_WEAPON_TYPE_WL_BASH = 0
+udg_WEAPON_TYPE_WM_BASH = 0
+udg_WEAPON_TYPE_WH_BASH = 0
+udg_WEAPON_TYPE_WL_STAB = 0
+udg_WEAPON_TYPE_WM_STAB = 0
+udg_WEAPON_TYPE_CL_SLICE = 0
+udg_WEAPON_TYPE_CM_SLICE = 0
+udg_WEAPON_TYPE_CH_SLICE = 0
+udg_WEAPON_TYPE_AM_CHOP = 0
+udg_WEAPON_TYPE_RH_BASH = 0
+udg_TempReal = 0.0
+udg_TempInt3 = 0
+udg_TempInt2 = 0
+udg_TempInt = 0
+udg_LoopC = 0
+udg_LoopB = 0
+udg_LoopD = 0
+udg_MaxLoopA = 0
+udg_MaxLoopB = 0
+udg_TotalItems = 0
+udg_Experience = 0
+udg_TotalHeroes = 0
+udg_Setup_Total_Items = 0
+udg_ItemIndex = 0
+udg_LoopA = 0
+udg_Setup_Total_Heroes = 0
+udg_HeroIndex = 0
+udg_TempPlayerGroup = CreateForce()
+udg_Camera_Distance = 0.0
+udg_PGroup = CreateForce()
+udg_ItemInteger = 0
+udg_TempGroup = CreateGroup()
+udg_Delayed_Duration = 0.0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_ItemDropChances[i] = 0.0
+i = i + 1
+end
+udg_ItemDropOnce = false
+udg_Name = ""
+udg_Minimap = ""
+udg_TP_EnterText = ""
+udg_TP_LeaveText = ""
+udg_EnvName1 = ""
+udg_EnvName2 = ""
+udg_FadeOut = false
+udg_ItemSpawnMaxItems = 0
+udg_CREEPS_PER_PLAYER = 0
+udg_CREEPS_PER_REGION = 0
+udg_LIFE_SPAN = 0.0
+udg_LIFE_REDUCED = 0.0
+udg_DELAY_SPAWN = 0.0
+udg_DELAY_NORMAL = 0.0
+udg_DELAY_DEATH = 0.0
+udg_RANGE_LEVEL_1 = 0.0
+udg_RANGE_LEVEL_2 = 0.0
+udg_NEIGHBOURHOOD = 0.0
+udg_SPAWN_INTERVAL = 0.0
+udg_Water = ATTACK_TYPE_CHAOS
+udg_Beast = ATTACK_TYPE_MAGIC
+udg_Machine = ATTACK_TYPE_MELEE
+udg_Air = ATTACK_TYPE_PIERCE
+udg_Dark = ATTACK_TYPE_SIEGE
+udg_Fire = ATTACK_TYPE_NORMAL
+udg_Nature = ATTACK_TYPE_HERO
+udg_WaterAsInt = 0
+udg_BeastAsInt = 0
+udg_MachineAsInt = 0
+udg_AirAsInt = 0
+udg_DarkAsInt = 0
+udg_FireAsInt = 0
+udg_NatureAsInt = 0
+udg_HolyAsInt = 0
+udg_Red = 0.0
+udg_Green = 0.0
+udg_Blue = 0.0
+udg_Text = ""
+udg_Size = 0.0
+udg_ZOffset = 0.0
+udg_DamageVariation = 0.0
+udg_Root = ""
+udg_DamageRealtoInteger = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_AbsorbON[i] = 0
+i = i + 1
+end
+udg_BruteRandom = 0
+udg_EvasionChanceReal = 0.0
+udg_EvasionChanceRandom = 0.0
+udg_BullseyeSpell = FourCC("A02P")
+udg_BullseyeMissChanceLess = 15.00
+udg_CriticalDamageModifier = 1.00
+udg_CriticalDamageReal = 0.0
+udg_CriticalChanceReal = 0.0
+udg_CriticalChanceRandom = 0.0
+udg_Attribute = -1
+udg_EfficiencySpell = FourCC("A02O")
+udg_EfficiencyCritChancePlus = 7.00
+udg_EfficiencyCritDmgPlus = 0.07
+udg_StrongSpell = FourCC("A02Y")
+udg_StrongCritDmgPlus = 0.15
+udg_StrongHealthPerLevel = 5
+udg_DrainHPStealed = 10.00
+udg_BruteForceSpell = FourCC("A02Q")
+udg_BruteForceStrDmgFactor = 0.30
+udg_BruteForceChance = 10
+udg_BruteForcePushDist = 100.00
+udg_HardShellSpell = FourCC("A02S")
+udg_HardShellDmgTakenFactor = 0.90
+udg_ReactiveSpell = FourCC("A02T")
+udg_ReactiveDmgReturnFactor = 0.10
+udg_CalmMindSpell = FourCC("A02U")
+udg_CalmMindManaPerLevel = 5
+udg_HungerSpell = FourCC("A02K")
+udg_HungerBuff = FourCC("A02L")
+udg_FeederSpell = FourCC("A02M")
+udg_FeederDmgFactor = 0.10
+udg_EnvySpell = FourCC("A031")
+udg_EnvyManaReduced = 0.10
+udg_EnvyManaGained = 0.50
+udg_HardSpell = FourCC("A031")
+udg_HardDmgBlocked = 0.50
+udg_HardChance = 15
+udg_HotSpell = FourCC("A02N")
+udg_HotStrDmgFactor = 0.30
+udg_HotDmgPerSecFactor = 0.10
+udg_ColdBodySpell = FourCC("A030")
+udg_ColdBodyFreezeChance = 15
+udg_FrostSpell = FourCC("A028")
+udg_FrostAgiDmgFactor = 0.30
+udg_FrostChance = 25
+udg_SaveLoadGold = 0
+udg_SaveLoadLumber = 0
+udg_SaveLoadFood = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadBackpackItemCharges[i] = 0
+i = i + 1
+end
+udg_SaveLoadMaxDigimons = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadInventories[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadLevels[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadExps[i] = 0
+i = i + 1
+end
+udg_SaveLoadSlot = 0
+udg_Loading = false
+udg_LoadCount = 0
+udg_PN_Load = 0
+udg_SaveNameMax = 0
+udg_SaveLoad_TriggerName = ""
+udg_SaveLoadMaxLength = 0
+udg_SaveUseGUI = false
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveNameList[i] = ""
+i = i + 1
+end
+udg_SaveLoad_Slot = 0
+udg_SaveHeroName = false
+udg_SaveTempReal = 0.0
+udg_SaveShowCode = false
+udg_HeroXPRequired = 0
+udg_HeroXPPrevLevelFactor = 0
+udg_HeroXPLevelFactor = 0
+udg_HeroXPConstant = 0
+udg_SaveAbilityTypeMax = 0
+udg_SaveUnitMaxStat = 0
+udg_SaveItemTypeMax = 0
+udg_SaveUnitTypeMax = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveCurrentSlot[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SavePlayerLoading[i] = false
+i = i + 1
+end
+udg_SaveLoad_HeroName = false
+udg_SaveLoadEvent_Code = ""
+globals.udg_SaveLoadEvent = 0.0
+udg_SaveTempString = ""
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveMaxValue[i] = 0
+i = i + 1
+end
+udg_SaveCount = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveValue[i] = 0
+i = i + 1
+end
+udg_LocalFiles_WarningMessage = ""
+udg_MapName = ""
+udg_SaveTempInt = 0
+udg_SaveCodeColored = ""
+udg_RANGE_RETURN = 0.0
+udg_RANGE_IN_HOME = 0.0
 end

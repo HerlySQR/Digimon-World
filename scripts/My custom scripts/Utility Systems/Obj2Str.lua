@@ -1,5 +1,5 @@
-if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.317099/
-    and Wc3Type then -- https://www.hiveworkshop.com/threads/debug-utils-ingame-console-etc.330758/
+OnLibraryInit({name = "Obj2Str",
+    "Wc3Type"}, function () -- https://www.hiveworkshop.com/threads/debug-utils-ingame-console-etc.330758/
 
     local h = nil ---@type hashtable
 
@@ -132,5 +132,5 @@ if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.31
     OnMapInit(function ()
         h = InitHashtable()
     end)
-    
-end
+
+end)

@@ -1,9 +1,9 @@
-if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.317099/
-    and LinkedList -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
-    and Event -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/
-    and Set -- https://www.hiveworkshop.com/threads/set-group-datastructure.331886/
-    and Timed -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
-    and AddHook then -- https://www.hiveworkshop.com/threads/hook-v5-0-1.339153/
+OnLibraryInit({name = "MotionSensor", -- https://www.hiveworkshop.com/threads/global-initialization.317099/
+    "LinkedList", -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
+    "Event", -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/
+    "Set", -- https://www.hiveworkshop.com/threads/set-group-datastructure.331886/
+    "Timed", -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
+    "AddHook"}, function () -- https://www.hiveworkshop.com/threads/hook-v5-0-1.339153/
 
     --[[
         System based on MotionSensor v1.4.0 by AGD -- https://www.hiveworkshop.com/threads/system-motion-sensor.287219/
@@ -43,12 +43,12 @@ if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.31
     ---@class MotionSensor : LinkedList
     ---@field public main unit                     The sensored unit
     ---@field public moving boolean                Checks if it is moving or not
-    ---@field public speed real                    The instantaneous speed
-    ---@field public direction real                The direction of motion
-    ---@field public deltaX real                   X component of the instantaneous speed
-    ---@field public deltaY real                   Y component of the instantaneous speed
-    ---@field public prevX real                    The previous x-coordinate
-    ---@field public prevY real                    The previous y-coordinate
+    ---@field public speed number                  The instantaneous speed
+    ---@field public direction number              The direction of motion
+    ---@field public deltaX number                 X component of the instantaneous speed
+    ---@field public deltaY number                 Y component of the instantaneous speed
+    ---@field public prevX number                  The previous x-coordinate
+    ---@field public prevY number                  The previous y-coordinate
     ---@field public motionState MotionState       The current motion state of the motion changing unit
     MotionSensor = LinkedList.create()
 
@@ -75,7 +75,7 @@ if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.31
     SENSOR_GROUP_STATIONARY    = Set.create()
 
     local enabled ---@type boolean
-    local staticTimer ---@type timedNode
+    local staticTimer ---@type function
 
     local function OnPeriodic()
         for node in MotionSensor:loop() do
@@ -153,7 +153,7 @@ if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.31
         end
         -- If the list is empty, stop iterating
         if enabled and MotionSensor.n == 0 then
-            staticTimer:remove()
+            staticTimer()
         end
     end
 
@@ -172,7 +172,7 @@ if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.31
             if MotionSensor.n > 0 then
                 staticTimer = Timed.echo(OnPeriodic, PERIOD)
             else
-                staticTimer:remove()
+                staticTimer()
             end
         end
     end
@@ -182,7 +182,7 @@ if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.31
         return enabled
     end
 
-    OnGlobalInit(function ()
+    OnTrigInit(function ()
         if AUTO_REGISTER_UNITS then
             local oldFunc
             oldFunc = AddHook("CreateUnit", function (...)
@@ -204,4 +204,4 @@ if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.31
         enabled = true
     end)
 
-end
+end)

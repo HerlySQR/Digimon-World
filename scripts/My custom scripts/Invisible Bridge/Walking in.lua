@@ -2,7 +2,7 @@ OnMapInit(function ()
     local place = gg_rct_Invisible_Bridge
     local feetModel = "war3mapImported\\GeneralHeroGlow.mdx"
     local stepModel = "Abilities\\Spells\\Human\\Brilliance\\Brilliance.mdl"
-    local staticTimer ---@type timedNode
+    local staticTimer ---@type function
     local effs = {}
 
     local t = CreateTrigger()
@@ -26,7 +26,7 @@ OnMapInit(function ()
     TriggerAddAction(t, function ()
         local u = GetLeavingUnit()
         MotionSensor.removeUnit(u)
-        pcall(staticTimer.remove, staticTimer)
+        pcall(staticTimer)
         DestroyEffect(effs[u][1])
         DestroyEffect(effs[u][2])
         effs[u] = {}

@@ -1,6 +1,6 @@
-if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.317099/
-    and LinkedList -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
-    and Obj2Str then
+OnLibraryInit({name = "GetSyncedData",
+    "LinkedList", -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
+    "Obj2Str"}, function ()
 
     local PREFIX = "SYNC"
 
@@ -70,4 +70,4 @@ if OnGlobalInit -- https://www.hiveworkshop.com/threads/global-initialization.31
             coroutine.resume(DequeueThread(), pcall(Str2Obj, BlzGetTriggerSyncData()))
         end)
     end)
-end
+end)

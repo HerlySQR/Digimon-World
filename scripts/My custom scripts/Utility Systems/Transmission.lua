@@ -1,7 +1,4 @@
-if LinkedList and
-    Timed and
-    OnGlobalInit and
-    Wc3Type then
+OnLibraryInit({name = "Transmission", "LinkedList", "Timed", "Wc3Type"}, function ()
 
     -- See the API here https://www.hiveworkshop.com/threads/vjass-lua-unit-transmission.332814/
 
@@ -496,6 +493,9 @@ if LinkedList and
         ForceCinematicSubtitles(true)
     end)
 
+end)
+
+do
     -- Error message
 
     local errorSound
@@ -513,5 +513,4 @@ if LinkedList and
             StartSound(errorSound)
         end
     end
-
 end

@@ -1,4 +1,4 @@
-if OnGlobalInit then
+do
     local instances = {}
 
     ---Makes the creep have a chance of drop an item when it dies.
@@ -9,7 +9,7 @@ if OnGlobalInit then
     ---in case you wanna resurrect it
     ---@param creep unit
     ---@param items integer[]
-    ---@param chances real[]
+    ---@param chances number[]
     ---@param once? boolean
     function AddItemDrop(creep, items, chances, once)
         if #items == 0 then

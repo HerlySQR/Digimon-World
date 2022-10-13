@@ -1,4 +1,9 @@
-if LinkedList then --https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
+OnLibraryInit({     --https://www.hiveworkshop.com/threads/global-initialization.317099/
+    name = "Event",
+    "LinkedList",
+optional={
+    "GlobalRemap"   --https://www.hiveworkshop.com/threads/global-variable-remapper.339308
+}},function()
     --[[
         Event version 1.3.1.0 by Bribe
     
@@ -108,4 +113,4 @@ if LinkedList then --https://www.hiveworkshop.com/threads/definitive-doubly-link
         LinkedList.destroy(self)
     end
         
-    end --End of Event library
+end) --End of Event library

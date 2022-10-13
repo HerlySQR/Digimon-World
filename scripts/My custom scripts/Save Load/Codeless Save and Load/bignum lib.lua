@@ -1,8 +1,8 @@
-do
+OnLibraryInit({name = "BigNum"}, function ()
     ---prefer algebraic approach because of real subtraction issues
-    ---@param y real
-    ---@param base real
-    ---@return real
+    ---@param y number
+    ---@param base number
+    ---@return number
     function log(y, base)
         local factor = 1.0
         local logy = 0.0
@@ -240,4 +240,4 @@ do
         end
         return true
     end
-end
+end)

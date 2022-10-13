@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "Savecode", "BigNum"}, function ()
 
     ---@return string
     local function uppercolor()
@@ -121,7 +121,7 @@ do
     --Conversion by vJass2Lua v0.7.0.2
 
     ---@class Savecode
-    ---@field digits real -- logarithmic approximation
+    ---@field digits number -- logarithmic approximation
     ---@field bignum BigNum
     Savecode = {}
     Savecode.__index = Savecode
@@ -156,7 +156,7 @@ do
         return self.bignum:IsZero()
     end
 
-    ---@return real
+    ---@return number
     function Savecode:Length()
         return self.digits
     end
@@ -427,4 +427,4 @@ do
         return true
     end
     --Conversion by vJass2Lua v0.7.0.2
-end
+end)

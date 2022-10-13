@@ -1,5 +1,4 @@
-if OnGlobalInit then
-    PlayerUtils = true
+OnLibraryInit({name = "PlayerUtils", optional = {"UnitEnum"}}, function ()
 
 --[[*************************************************************
 *
@@ -187,7 +186,7 @@ if OnGlobalInit then
         end
     end
 
-    OnGlobalInit(function ()
+    OnTrigInit(function ()
         local t = CreateTrigger()
 
         for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
@@ -329,4 +328,4 @@ if OnGlobalInit then
         end
     end
 
-end
+end)

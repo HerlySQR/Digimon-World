@@ -1,4 +1,4 @@
-if OnGlobalInit then
+OnLibraryInit({name = "FileIO"}, function ()
     local SCOPE_PREFIX  = "FileIO_"
     --
     --[[**************************************************************
@@ -314,4 +314,4 @@ if OnGlobalInit then
         return File.open(filename):read(true)
     end
 
-end
+end)

@@ -2,15 +2,15 @@ do
 
     ---Vector 2D
     ---@class Vec2
-    ---@field x real
-    ---@field y real
+    ---@field x number
+    ---@field y number
     Vec2 = {}
 
     Vec2.__index = Vec2
 
     ---Creates a new Vec2
-    ---@param x real
-    ---@param y real
+    ---@param x number
+    ---@param y number
     ---@return Vec2
     function Vec2.new(x, y)
         return setmetatable({x = x, y = y}, Vec2)
@@ -69,12 +69,12 @@ do
         return Vec2.new(self.x, self.y)
     end
 
-    ---@return real
+    ---@return number
     function Vec2:getSize()
         return math.sqrt(self.x^2 + self.y^2)
     end
 
-    ---@return real
+    ---@return number
     function Vec2:getSizeSq()
         return self.x^2 + self.y^2
     end
@@ -88,15 +88,20 @@ do
     -- Math
 
     ---@param vec1 Vec2
-    ---@param vec2 Vec2
-    ---@return real
-    function Vec2.dist(vec1, vec2)
-        return math.sqrt((vec1.x - vec2.x)^2 + (vec1.y - vec2.y)^2)
+    ---@param vec2 number | Vec2
+    ---@param y? number
+    ---@return number
+    function Vec2.dist(vec1, vec2, y)
+        if type(vec2) == "number" then
+            return math.sqrt((vec1.x - vec2)^2 + (vec1.y - y)^2)
+        else
+            return math.sqrt((vec1.x - vec2.x)^2 + (vec1.y - vec2.y)^2)
+        end
     end
 
     ---@param vec1 Vec2
     ---@param vec2 Vec2
-    ---@return real
+    ---@return number
     function Vec2.distSq(vec1, vec2)
         return (vec1.x - vec2.x)^2 + (vec1.y - vec2.y)^2
     end
@@ -104,7 +109,7 @@ do
     ---Angle between points
     ---@param vec1 Vec2
     ---@param vec2 Vec2
-    ---@return real
+    ---@return number
     function Vec2.angleTo(vec1, vec2)
         return math.atan(vec2.y - vec1.y, vec2.x - vec1.x)
     end
@@ -112,7 +117,7 @@ do
     ---Angle between vectors
     ---@param vec1 Vec2
     ---@param vec2 Vec2
-    ---@return real
+    ---@return number
     function Vec2.angleBetween(vec1, vec2)
         return math.acos((vec1 .. vec2) / (vec1:getSize() * vec2:getSize()))
     end
@@ -120,7 +125,7 @@ do
     ---Linear interpolation
     ---@param min Vec2
     ---@param max Vec2
-    ---@param ratio real
+    ---@param ratio number
     ---@return Vec2
     function Vec2.lerp(min, max, ratio)
         return min + (max - min) * ratio
@@ -128,8 +133,8 @@ do
 
     ---Polar projection
     ---@param vec Vec2
-    ---@param dist real
-    ---@param angle real
+    ---@param dist number
+    ---@param angle number
     ---@return Vec2
     function Vec2.polar(vec, dist, angle)
         return Vec2.new(vec.x + dist * math.cos(angle), vec.y + dist * math.sin(angle))

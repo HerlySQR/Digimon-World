@@ -1,5 +1,6 @@
 -- Abstraction of the place a digimon is staying
-do
+OnLibraryInit({name = "Environment", "Timed", "FrameEffects"}, function ()
+
     local LocalPlayer = nil ---@type player
     local TopMsg = nil ---@type framehandle
 
@@ -69,6 +70,7 @@ do
 
         BlzFrameSetVisible(TopMsg, true)
         BlzFrameSetText(TopMsg, "|cffffff00[" .. env.name .. "]|r")
+        BlzFrameSetAlpha(TopMsg, 255)
         -- Prevent bad camera bounds if the player has the camera rotated
         local rotation = GetCameraField(CAMERA_FIELD_ROTATION)*bj_RADTODEG
         SetCameraField(CAMERA_FIELD_ROTATION, 90, 0)
@@ -92,13 +94,10 @@ do
             if p == LocalPlayer then
                 FadeOut("ReplaceableTextures\\CameraMasks\\Black_mask.blp", 0.25)
             end
+
             InTranssition[p] = true
             PolledWait(0.25)
             InTranssition[p] = false
-
-            Timed.call(4., function ()
-                FrameFadeOut(TopMsg, 1., p)
-            end)
 
             if p == LocalPlayer then
                 internalApply(env)
@@ -109,6 +108,11 @@ do
                 internalApply(env)
             end
         end
+
+        Timed.call(4.25, function ()
+            FrameFadeOut(TopMsg, 1., p)
+        end)
+
         Environments[p] = env
     end
 
@@ -140,7 +144,7 @@ do
         DisplayCineFilter(true)
     end
 
-    OnGlobalInit(function ()
+    OnTrigInit(function ()
         LocalPlayer = GetLocalPlayer()
         TopMsg = BlzCreateFrameByType("TEXT", "name", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), "", 0)
         BlzFrameSetAllPoints(TopMsg, BlzGetOriginFrame(ORIGIN_FRAME_TOP_MSG, 0))
@@ -158,4 +162,4 @@ do
         Environment.hospital = nil
     end)
 
-end
+end)

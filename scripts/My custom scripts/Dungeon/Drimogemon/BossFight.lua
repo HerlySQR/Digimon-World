@@ -24,7 +24,7 @@ OnMapInit(function ()
 
     local enterTrigger = nil ---@type trigger
     local lowHP = nil ---@type trigger
-    local currentTimer = nil ---@type timedNode
+    local currentTimer = nil ---@type function
 
     local function BossFightActions()
         -- Check if are units in the battlefield
@@ -89,7 +89,7 @@ OnMapInit(function ()
     TriggerAddAction(t, function ()
         if GetDyingUnit() == boss then
             if currentTimer then
-                currentTimer:remove()
+                currentTimer()
                 currentTimer = nil
             end
             unitsInTheField = {} -- Clear
@@ -103,7 +103,7 @@ OnMapInit(function ()
     TriggerRegisterUnitLifeEvent(lowHP, boss, LESS_THAN_OR_EQUAL, halfHP)
     TriggerAddAction(lowHP, function ()
         INTERVAL = 1.
-        currentTimer:remove()
+        currentTimer()
         currentTimer = Timed.echo(BossFightActions, INTERVAL)
         DisableTrigger(lowHP)
     end)

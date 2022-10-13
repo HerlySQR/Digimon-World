@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "SaveHelper", "SyncHelper", "PlayerUtils", "SaveFile"}, function ()
 
     -- Uses GUI variables from the "Save Init" trigger. You can modify these functions to use your own variables.
 
@@ -245,4 +245,4 @@ do
     OnMapInit(function ()
         OnSyncString(LoadSaveSlot_OnLoad)
     end)
-end
+end)

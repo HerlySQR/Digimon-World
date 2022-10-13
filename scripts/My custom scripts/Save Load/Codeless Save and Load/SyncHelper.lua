@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "SyncHelper"}, function ()
     SyncHelper = {
         SYNC_PREFIX = "S"
     }
@@ -28,4 +28,4 @@ do
     function RemoveSyncString(t)
         TriggerRemoveAction(trig, t)
     end
-end
+end)

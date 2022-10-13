@@ -1,4 +1,4 @@
-do
+OnLibraryInit("Digimon", function ()
     local MAX_DIGIMONS = 6
 
     local digimons = {}
@@ -68,4 +68,4 @@ do
     function IsFullOfDigimons(owner)
         return #digimons[owner] == MAX_DIGIMONS
     end
-end
+end)

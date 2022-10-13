@@ -1,4 +1,4 @@
-if OnGlobalInit and WorldBounds and Timed then
+OnLibraryInit({name = "DummyCaster", "WorldBounds", "Timed"}, function ()
     -- System based on MUI DummyCaster
 
     -- Import the dummy from the object editor
@@ -96,4 +96,4 @@ if OnGlobalInit and WorldBounds and Timed then
             end
         end)
     end)
-end
+end)

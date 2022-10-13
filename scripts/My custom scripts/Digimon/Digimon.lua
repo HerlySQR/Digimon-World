@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Timed", "Damage"}, function ()
     local LocalPlayer ---@type player
 
     ---@class Rank
@@ -22,10 +22,10 @@ do
         if not s or s == "" then
             return ""
         else
-            local m = string.len(s)
+            local m = s:len()
             for i = 1, m do
-                if string.sub(s, i, i) == " " then
-                    return string.sub(s, 1, i - 1)
+                if s:sub(i, i) == " " then
+                    return s:sub(1, i - 1)
                 end
             end
         end
@@ -170,8 +170,8 @@ do
     end
 
     ---@param order integer
-    ---@param x number | unit
-    ---@param y number
+    ---@param x? number | unit
+    ---@param y? number
     ---@return boolean
     function Digimon:issueOrder(order, x, y)
         if type(x) == "number" and y then
@@ -498,10 +498,8 @@ do
 
     -- Initialization
 
-    OnGlobalInit(function ()
-        Digimon.NEUTRAL = Player(12)
-        Digimon.PASSIVE = Player(PLAYER_NEUTRAL_PASSIVE)
-    end)
+    Digimon.NEUTRAL = Player(12)
+    Digimon.PASSIVE = Player(PLAYER_NEUTRAL_PASSIVE)
 
     OnMapInit(function ()
         local exclude = Set.create(
@@ -527,4 +525,4 @@ do
         end)
     end)
 
-end
+end)

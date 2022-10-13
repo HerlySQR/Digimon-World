@@ -6,8 +6,8 @@ OnMapInit(function ()
     local LifeRegenOffCombat = 3.5 - 1
     local ManaRegenOffCombat = 3.5 - 1
 
-    local timersEcho = {} ---@type table<Digimon, timedNode>
-    local timersCombat = {} ---@type table<Digimon, timedNode>
+    local timersEcho = {} ---@type table<Digimon, function>
+    local timersCombat = {} ---@type table<Digimon, function>
     local onCombat = __jarray(false) ---@type table<Digimon, boolean>
 
     Digimon.createEvent(function (new)
@@ -27,7 +27,7 @@ OnMapInit(function ()
 
     Digimon.offCombatEvent(function (d)
         pcall(function ()
-            timersCombat[d]:remove()
+            timersCombat[d]()
         end)
         timersCombat[d] = Timed.call(ResetCombat, function ()
             onCombat[d] = false
@@ -37,7 +37,7 @@ OnMapInit(function ()
     Digimon.destroyEvent(function (old)
         Timed.call(function ()
             if old:hasAbility(Spell) then
-                timersEcho[old]:remove()
+                timersEcho[old]()
             end
         end)
     end)

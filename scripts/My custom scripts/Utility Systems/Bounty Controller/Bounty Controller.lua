@@ -1,8 +1,12 @@
 -- The pure Lua version of the Bounty Controller
 -- GUI version: https://www.hiveworkshop.com/threads/gui-bounty-controller.332114/
 
-if OnGlobalInit then -- https://www.hiveworkshop.com/threads/global-initialization.317099/
+globals(function(_ENV)
+    BountyEvent = 0.0
+    BountyDeadEvent = 0.0
+end)
 
+OnLibraryInit({name = "BountyController"}, function ()
     ---@deprecated, use Bounty.Enable() and Bounty.Disable() instead
     Bounty_Controller = nil
     -- [[local]] LocalPlayer = nil
@@ -46,11 +50,6 @@ if OnGlobalInit then -- https://www.hiveworkshop.com/threads/global-initializati
         end
 
     end
-
-    globals(function(_ENV)
-        BountyEvent = 0.0
-        BountyDeadEvent = 0.0
-    end)
 
     ---@class Bounty
     ---@field Amount integer
@@ -471,4 +470,4 @@ if OnGlobalInit then -- https://www.hiveworkshop.com/threads/global-initializati
     function GetNativeBountyTrigger()
         return t2
     end
-end
+end)

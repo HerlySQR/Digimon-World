@@ -313,7 +313,7 @@ do
     OnTrigInit(function ()
         udg_CreateEvolutionCondition = CreateTrigger()
         TriggerAddAction(udg_CreateEvolutionCondition, function ()
-            CreateSpecificCondtions(udg_InitialForm, udg_EvolvedForm, udg_EvolveLevelCondition, udg_EvolveRegionCondition, udg_EvolveItemCondition)
+            CreateSpecificCondtions(udg_InitialForm, udg_EvolvedForm, udg_EvolveLevelCondition, rawget(_G, "udg_EvolveRegionCondition"), rawget(_G, "udg_EvolveItemCondition"))
             udg_InitialForm = 0
             udg_EvolvedForm = 0
             udg_EvolveLevelCondition = 0

@@ -1,8 +1,8 @@
---[[if Damage -- https://www.hiveworkshop.com/threads/damage-engine-5-9-0-0.201016/
-    and Set -- https://www.hiveworkshop.com/threads/set-group-datastructure.331886/
-    and Timed -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
-    and Event then -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/]]
-do
+OnLibraryInit({name = "Shield",
+    "Damage", -- https://www.hiveworkshop.com/threads/damage-engine-5-9-0-0.201016/
+    "Set", -- https://www.hiveworkshop.com/threads/set-group-datastructure.331886/
+    "Timed", -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
+    "Event"}, function () -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/]]
 
     -- Inspired on: GUI Friendly Shield System 1.00b by AutisticTenacity
     -- https://www.hiveworkshop.com/threads/gui-friendly-shield-system-1-00b.316372/
@@ -31,7 +31,7 @@ do
     ---@field _model string
     ---@field _point string
     ---@field _eff effect
-    ---@field _timer timedNode
+    ---@field _timer function
     Shield = {}
     Shield.__index = Shield
 
@@ -55,7 +55,6 @@ do
 
     function Shield:apply()
         local set = Shields[self.target]
-        print("|cff32cd32" .. tostring(self.target) .. "|r")
         if not set then
             set = Set.create()
             Shields[self.target] = set
@@ -108,7 +107,7 @@ do
         self:onDestroy()
 
         if self._timer then
-            self._timer:remove()
+            self._timer()
         end
 
         Shields[self.target]:removeSingle(self)
@@ -155,4 +154,4 @@ do
             end
         end)
     end)
-end
+end)

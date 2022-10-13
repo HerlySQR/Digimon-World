@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "Backpack", "UnitEnum", "GetSyncedData", "GetMainSelectedUnit"}, function ()
     local Backpack = nil ---@type framehandle
     local BackdropBackpack = nil ---@type framehandle
     local BackpackMenu = nil ---@type framehandle
@@ -277,15 +277,17 @@ do
 
     local gotItem = __jarray(false) ---@type table<player, boolean>
 
-    OnMapInit(function ()
+    OnGameStart(function ()
+        ForForce(FORCE_PLAYING, function ()
+            PlayerItems[GetEnumPlayer()] = {}
+        end)
+    end)
+
+    OnTrigInit(function ()
         InitFrames()
         FrameLoaderAdd(InitFrames)
 
         LocalPlayer = GetLocalPlayer()
-
-        ForForce(FORCE_PLAYING, function ()
-            PlayerItems[GetEnumPlayer()] = {}
-        end)
 
         -- Store the charged items
         local t = CreateTrigger()
@@ -319,10 +321,9 @@ do
                 end
             end
         end)
-    end)
 
-    -- For GUI
-    OnTrigInit(function ()
+        -- For GUI
+
         udg_BackpackRun = CreateTrigger()
         TriggerAddAction(udg_BackpackRun, function ()
             AllowedItems[udg_BackpackItem] = {
@@ -370,4 +371,4 @@ do
         end
     end
 
-end
+end)

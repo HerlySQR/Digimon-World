@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit({name = "GetMainSelectedUnit"}, function ()
     ---Returns the local current main selected unit, using it in a sync gamestate relevant manner breaks the game.
     ---@return unit
     function GetMainSelectedUnitEx()
