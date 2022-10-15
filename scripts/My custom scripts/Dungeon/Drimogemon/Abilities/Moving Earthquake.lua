@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit("BossFightUtils", function ()
     local SPELL = FourCC('A02F')
     local AREA = 300.
     local DURATION = 14.

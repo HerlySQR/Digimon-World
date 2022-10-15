@@ -1,4 +1,4 @@
-if LinkedList then --https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
+OnLibraryInit("LinkedList", function () --https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
     --[[--------------------------------------------------------------------------------------
         Hook v4.1.0.0 by Bribe, with very special thanks to:
         Eikonium and Jampion for bug reports, feature improvements, teaching me new things.
@@ -262,4 +262,4 @@ if LinkedList then --https://www.hiveworkshop.com/threads/definitive-doubly-link
             end, weight, parent, default)
         end
         
-    end
+    end)

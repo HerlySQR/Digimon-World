@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit({name = "DigimonCapture", "AbilityUtils"}, function ()
 
     local function Lerp(min, max, percentage)
         return min + (max - min) * percentage * 0.01

@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "Teleport", "Digimon"}, function ()
     local LocalPlayer = nil ---@type player
 
     ---Creates a new teleporter
@@ -79,4 +79,4 @@ do
 
         LocalPlayer = GetLocalPlayer()
     end)
-end
+end)

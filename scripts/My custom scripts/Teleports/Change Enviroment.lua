@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "ChangeEnviroment", "Digimon"}, function ()
     ---@param passage rect
     ---@param entrance1 rect
     ---@param envName1 string
@@ -101,4 +101,4 @@ do
         end)
     end)
 
-end
+end)

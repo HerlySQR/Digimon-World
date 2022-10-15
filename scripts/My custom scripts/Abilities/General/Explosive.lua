@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit("AbilityUtils", function ()
     local Spell = FourCC('A033')
     local MaxHits = 8
     local MaxTime = 35.

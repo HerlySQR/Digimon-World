@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit("AbilityUtils", function ()
     local Spell = FourCC('A032')
     local StrHealthFactor = 8
     local LifeBound = 40.

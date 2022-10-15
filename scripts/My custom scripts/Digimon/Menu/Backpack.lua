@@ -1,4 +1,4 @@
-OnLibraryInit({name = "Backpack", "UnitEnum", "GetSyncedData", "GetMainSelectedUnit"}, function ()
+OnLibraryInit({name = "Backpack", "UnitEnum", "GetSyncedData", "GetMainSelectedUnit", "PlayerUtils"}, function ()
     local Backpack = nil ---@type framehandle
     local BackdropBackpack = nil ---@type framehandle
     local BackpackMenu = nil ---@type framehandle
@@ -277,13 +277,11 @@ OnLibraryInit({name = "Backpack", "UnitEnum", "GetSyncedData", "GetMainSelectedU
 
     local gotItem = __jarray(false) ---@type table<player, boolean>
 
-    OnGameStart(function ()
+    OnTrigInit(function ()
         ForForce(FORCE_PLAYING, function ()
             PlayerItems[GetEnumPlayer()] = {}
         end)
-    end)
 
-    OnTrigInit(function ()
         InitFrames()
         FrameLoaderAdd(InitFrames)
 

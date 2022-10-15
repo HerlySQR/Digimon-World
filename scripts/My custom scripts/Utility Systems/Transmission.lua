@@ -403,14 +403,14 @@ OnLibraryInit({name = "Transmission", "LinkedList", "Timed", "Wc3Type"}, functio
     ---@param fadeOut? boolean
     function Transmission.PauseAll(fadeOut)
         for node in All:loop() do
-            node:Pause(fadeOut)
+            node.value:Pause(fadeOut)
         end
     end
 
     ---Resume all the paused transmissions
     function Transmission.ResumeAll()
         for node in All:loop() do
-            node:Resume()
+            node.value:Resume()
         end
     end
 

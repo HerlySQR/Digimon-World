@@ -1,4 +1,4 @@
-if LinkedList then
+OnLibraryInit({name = "Knockback", "LinkedList"}, function ()
     -- System based in Paladon's GUI Knockback System
 
     local INTERVAL = 0.02
@@ -8,52 +8,53 @@ if LinkedList then
 
     local function Update()
         for node in All:loop() do
-            if node.reachedDistance >= node.maxDistance then
-                Knockbacked[node.target] = Knockbacked[node.target] - 1
-                All:remove(node)
+            local knock = node.value
+            if knock.reachedDistance >= knock.maxDistance then
+                Knockbacked[knock.target] = Knockbacked[knock.target] - 1
+                All:remove(knock)
                 if All.head.next == All.head then
                     return true
                 end
             else
-                local reduce = (node.speed / node.maxDistance) * node.reachedDistance
-                node.reduceSpeed = reduce - node.reduceSpeed * 0.1
+                local reduce = (knock.speed / knock.maxDistance) * knock.reachedDistance
+                knock.reduceSpeed = reduce - knock.reduceSpeed * 0.1
 
-                local dist = (node.speed - node.reduceSpeed) * 2.
-                local x = GetUnitX(node.target)
-                local y = GetUnitY(node.target)
-                local tx = x + dist * math.cos(node.direction)
-                local ty = y + dist * math.sin(node.direction)
+                local dist = (knock.speed - knock.reduceSpeed) * 2.
+                local x = GetUnitX(knock.target)
+                local y = GetUnitY(knock.target)
+                local tx = x + dist * math.cos(knock.direction)
+                local ty = y + dist * math.sin(knock.direction)
 
-                node.effectCounter1 = node.effectCounter1 + 1
-                node.effectCounter2 = node.effectCounter2 + 1
+                knock.effectCounter1 = knock.effectCounter1 + 1
+                knock.effectCounter2 = knock.effectCounter2 + 1
 
-                if node.destroyTrees then
+                if knock.destroyTrees then
                     local l = Location(tx, ty)
                     EnumDestructablesInCircleBJ(200., l, function() KillDestructable(GetEnumDestructable()) end)
                     RemoveLocation(l)
                 end
 
-                if node.effect1 and node.effectCounter1 == 6 then
-                    node.effectCounter1 = 0
-                    DestroyEffect(AddSpecialEffect(node.effect1, x, y))
+                if knock.effect1 and knock.effectCounter1 == 6 then
+                    knock.effectCounter1 = 0
+                    DestroyEffect(AddSpecialEffect(knock.effect1, x, y))
                 end
 
-                if node.effect2 and node.effectCounter2 == 8 then
-                    node.effectCounter2 = 0
-                    DestroyEffect(AddSpecialEffect(node.effect2, x, y))
+                if knock.effect2 and knock.effectCounter2 == 8 then
+                    knock.effectCounter2 = 0
+                    DestroyEffect(AddSpecialEffect(knock.effect2, x, y))
                 end
 
-                SetUnitPosition(node.target, tx, ty)
-                node.reachedDistance = node.reachedDistance + dist
+                SetUnitPosition(knock.target, tx, ty)
+                knock.reachedDistance = knock.reachedDistance + dist
             end
         end
     end
 
     ---Creates a knockback to the target, the effect1 displays more often than the effect2
     ---@param target unit
-    ---@param direction real
-    ---@param distance real
-    ---@param speed real
+    ---@param direction number
+    ---@param distance number
+    ---@param speed number
     ---@param effect1 string
     ---@param effect2 string
     ---@param destroyTrees? boolean
@@ -84,4 +85,4 @@ if LinkedList then
     function IsKnockbacked(u)
         return Knockbacked[u] > 0
     end
-end
+end)

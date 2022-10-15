@@ -217,7 +217,7 @@
 *        - Will trigger twice, if the remove unit also had the original Defend ability (or just another copy), so don't use this, if you also plan to use the Defend ability in your map.
 *        - This functionality is not really Set-specific, but the system does use the event internally, so there is no reason to not offer it to you guys.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------]]
-do
+OnLibraryInit({name = "Set"}, function ()
     -----------------
     -- | OPTIONS | --
     -----------------
@@ -1081,4 +1081,4 @@ do
     end
 
     if OnTrigInit then OnTrigInit(SetUtils.createTriggers) end --use GlobalInit library, if available.
-end
+end)

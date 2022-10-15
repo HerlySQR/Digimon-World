@@ -13,7 +13,7 @@ OnLibraryInit({name = "GetSyncedData",
 
     ---@return thread
     local function DequeueThread()
-        local node = threads:getNext() ---@type LinkedListNode
+        local node = threads:getNext() ---@type LinkedList
         local co = node.value
         node:remove()
         return co
@@ -61,11 +61,11 @@ OnLibraryInit({name = "GetSyncedData",
         return value
     end
 
-    OnMapInit(function ()
+    OnTrigInit(function ()
         local t = CreateTrigger()
-        ForForce(bj_FORCE_ALL_PLAYERS, function ()
-            BlzTriggerRegisterPlayerSyncEvent(t, GetEnumPlayer(), PREFIX, false)
-        end)
+        for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
+            BlzTriggerRegisterPlayerSyncEvent(t, Player(i), PREFIX, false)
+        end
         TriggerAddAction(t, function ()
             coroutine.resume(DequeueThread(), pcall(Str2Obj, BlzGetTriggerSyncData()))
         end)

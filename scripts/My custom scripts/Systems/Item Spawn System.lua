@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "ItemSpawn", "LinkedList"}, function ()
     local INTERVAL = 15.
 
     local All = LinkedList.create()
@@ -19,22 +19,18 @@ do
 
     local function Update()
         for node in All:loop() do
-            for _, where in ipairs(node.rects) do
+            local itemSpawn = node.value
+            for _, where in ipairs(itemSpawn.rects) do
                 -- Only create an item if didn't surpassed their max
-                if node.count < node.maxItems then
+                if itemSpawn.count < itemSpawn.maxItems then
                     -- Create an item in a random position of the rect
-                    local m = CreateItem(node.types[math.random(#node.types)], GetRandomReal(GetRectMinX(where), GetRectMaxX(where)), GetRandomReal(GetRectMinY(where), GetRectMaxY(where)))
-                    Reference[m] = node
-                    node.count = node.count + 1
+                    local m = CreateItem(itemSpawn.types[math.random(#itemSpawn.types)], GetRandomReal(GetRectMinX(where), GetRectMaxX(where)), GetRandomReal(GetRectMinY(where), GetRectMaxY(where)))
+                    Reference[m] = itemSpawn
+                    itemSpawn.count = itemSpawn.count + 1
                 end
             end
         end
     end
-
-    -- Start update
-    OnGameStart(function ()
-        Timed.echo(Update, INTERVAL)
-    end)
 
     -- Discount the item when is picked
     OnMapInit(function ()
@@ -54,6 +50,10 @@ do
                 this.count = this.count - 1
             end
         end)
+        -- Start update
+        Timed.call(function ()
+            Timed.echo(Update, INTERVAL)
+        end)
     end)
 
     -- For GUI
@@ -70,4 +70,4 @@ do
     function DestroyItemSpawn(this)
         All:remove(this)
     end
-end
+end)

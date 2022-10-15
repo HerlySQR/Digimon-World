@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit("AbilityUtils", function ()
     local Spell = FourCC('A03N')
 
     local Effects = {} ---@type table<unit, effect>

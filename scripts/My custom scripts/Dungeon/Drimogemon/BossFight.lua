@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit({name = "Drimogemon", "BossFightUtils"}, function ()
     local boss = gg_unit_O060_0442 ---@type unit
     local battlefield = {} ---@type rect[]
     local INTERVAL = 2. -- seconds

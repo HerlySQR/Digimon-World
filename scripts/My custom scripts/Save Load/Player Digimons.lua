@@ -1,4 +1,4 @@
-OnLibraryInit("Digimon", function ()
+OnLibraryInit({name = "PlayerDigimons", "Digimon"}, function ()
     local MAX_DIGIMONS = 6
 
     local digimons = {}

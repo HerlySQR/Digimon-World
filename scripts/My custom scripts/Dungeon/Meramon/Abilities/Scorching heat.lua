@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit("BossFightUtils", function ()
     local SPELL = FourCC('A02C')
     local DURATION = 10. -- seconds
     local DAMAGE = 25. -- per second

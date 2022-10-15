@@ -1,4 +1,5 @@
-OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Timed", "Damage"}, function ()
+OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", "Environment"}, function ()
+
     local LocalPlayer ---@type player
 
     ---@class Rank
@@ -501,7 +502,7 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Timed", "
     Digimon.NEUTRAL = Player(12)
     Digimon.PASSIVE = Player(PLAYER_NEUTRAL_PASSIVE)
 
-    OnMapInit(function ()
+    OnTrigInit(function ()
         local exclude = Set.create(
             FourCC('n00A') -- Digispirit
         )

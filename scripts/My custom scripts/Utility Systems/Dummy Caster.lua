@@ -2,7 +2,7 @@ OnLibraryInit({name = "DummyCaster", "WorldBounds", "Timed"}, function ()
     -- System based on MUI DummyCaster
 
     -- Import the dummy from the object editor
-    local DummyID = FourCC('n000')
+    local DummyID = FourCC('hpea')
 
     -- WARNING: Do not touch anything below this line!
 
@@ -40,14 +40,14 @@ OnLibraryInit({name = "DummyCaster", "WorldBounds", "Timed"}, function ()
 
     ---Casts a spell from a dummy caster, returns if the spell was successfully casted
     ---@param owner player
-    ---@param x real
-    ---@param y real
+    ---@param x number
+    ---@param y number
     ---@param abilId integer
     ---@param orderId integer
     ---@param level integer
     ---@param castType CastType
-    ---@param tx? real | unit
-    ---@param ty? real
+    ---@param tx? number | unit
+    ---@param ty? number
     ---@return boolean
     function DummyCast(owner, x, y, abilId, orderId, level, castType, tx, ty)
         local angle = 0
@@ -74,14 +74,20 @@ OnLibraryInit({name = "DummyCaster", "WorldBounds", "Timed"}, function ()
         UnitAddAbility(dummy, abilId)
         SetUnitAbilityLevel(dummy, abilId, level)
         Abilities[dummy] = abilId
+        local success = false
         if castType == CastType.IMMEDIATE then
-            return IssueImmediateOrderById(dummy, orderId)
+            success = IssueImmediateOrderById(dummy, orderId)
         elseif castType == CastType.POINT then
-            return IssuePointOrderById(dummy, orderId, tx, ty)
+            success = IssuePointOrderById(dummy, orderId, tx, ty)
         elseif castType == CastType.TARGET then
-            return IssueTargetOrderById(dummy, orderId, tx)
+            success = IssueTargetOrderById(dummy, orderId, tx)
         end
-        return false
+        if not success then
+            Timed.call(1., function ()
+                RefreshDummy(dummy)
+            end)
+        end
+        return success
     end
 
     OnMapInit(function ()

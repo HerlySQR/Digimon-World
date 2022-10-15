@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit("AbilityUtils", function ()
     local Spell = FourCC('A025')
     local StrDmgFactor = 0.15
     local AgiDmgFactor = 0.15

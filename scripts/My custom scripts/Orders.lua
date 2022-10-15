@@ -195,6 +195,7 @@ do
         grabtree				= 852511,
         harvest					= 852018,
         heal					= 852063,
+        healingsalve            = 852609,
         healingspray			= 852664,
         healingward				= 852109,
         healingwave				= 852501,

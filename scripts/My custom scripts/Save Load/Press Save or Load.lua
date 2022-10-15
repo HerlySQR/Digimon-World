@@ -1,4 +1,4 @@
-OnLibraryInit({"Digimon", "Timed"}, function ()
+OnLibraryInit({name = "PressSaveOrLoad", "PlayerData", "Timed"}, function ()
     local NormalColor = "FCD20D"
     local DisabledColor = "FFFFFF"
     local DEFAULT_AUTO_SAVE_INTERVAL = 3 -- minutes
@@ -26,7 +26,7 @@ OnLibraryInit({"Digimon", "Timed"}, function ()
     local WarningMessage = nil ---@type dialog
     local WarningMessageReceived = __jarray(false) ---@type table<player, boolean>
 
-    OnGameStart(function ()
+    OnMapInit(function ()
         WarningMessage = DialogCreate()
         DialogSetMessage(WarningMessage, "|cffff0000WARNING|r\nTo properly save, you should\nrestart the Warcraft 3.")
         DialogAddButton(WarningMessage, "Understood", 0)

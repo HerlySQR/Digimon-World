@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit("AbilityUtils", function ()
     local Spell = FourCC('A039')
     local ResetCombat = 57.
     local LifeRegenOnCombat = 1.75 - 1

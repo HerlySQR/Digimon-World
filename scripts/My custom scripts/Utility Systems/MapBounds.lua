@@ -48,10 +48,11 @@
 
 ]]--
 
-MapBounds = setmetatable({}, {})
-WorldBounds = setmetatable({}, getmetatable(MapBounds))
 
-do
+OnLibraryInit({name = "WorldBounds"}, function ()
+    MapBounds = setmetatable({}, {})
+    WorldBounds = setmetatable({}, getmetatable(MapBounds))
+
     local mt = getmetatable(MapBounds)
     mt.__index = mt
 
@@ -102,11 +103,9 @@ do
         RegionAddRect(bounds.region, bounds.rect)
     end
 
-    OnGlobalInit(function ()
-        MapBounds.rect = bj_mapInitialPlayableArea
-        WorldBounds.rect = GetWorldBounds()
+    MapBounds.rect = bj_mapInitialPlayableArea
+    WorldBounds.rect = GetWorldBounds()
 
-        InitData(MapBounds)
-        InitData(WorldBounds)
-    end)
-end
+    InitData(MapBounds)
+    InitData(WorldBounds)
+end)

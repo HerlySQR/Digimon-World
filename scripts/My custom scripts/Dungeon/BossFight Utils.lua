@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "BossFightUtils", "AbilityUtils"}, function ()
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
 
@@ -18,4 +18,4 @@ do
     function BossStillCasting(caster)
         return isCasting[caster]
     end
-end
+end)

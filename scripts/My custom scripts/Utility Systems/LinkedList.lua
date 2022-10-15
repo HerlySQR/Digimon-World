@@ -137,7 +137,7 @@ end
 ---@return function
 function LinkedList.loop(start, finish, backward)
     local head = start.head
-    if head.n == 0 then return end
+    if head.n == 0 then return DoNothing end
     local direction = backward and "prev" or "next"
     local skip = start ~= head or start == finish
     if not finish or finish == head then

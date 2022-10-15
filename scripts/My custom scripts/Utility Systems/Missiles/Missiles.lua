@@ -9,7 +9,7 @@
         1 - Copy this, MissileEffect and optionaly the MissileUtils libraries into your map
 ]]--
 
-do
+OnLibraryInit({name = "Missiles", "MissileEffect"}, function ()
     -- -------------------------------------------------------------------------- --
     --                                Configuration                               --
     -- -------------------------------------------------------------------------- --
@@ -905,4 +905,4 @@ do
 
         return this
     end
-end
+end)

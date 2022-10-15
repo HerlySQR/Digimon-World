@@ -52,7 +52,8 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
 
         All:insert(this)
 
-        for r in All:loop() do
+        for node in All:loop() do
+            local r = node.value
             if DistanceBetweenCoords(x, y, r.spawnpoint.x, r.spawnpoint.y) <= NEIGHBOURHOOD then
                 this.neighbourhood:addSingle(r)
                 r.neighbourhood:addSingle(this)
@@ -81,52 +82,53 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
 
     local function Update()
         for node in All:loop() do
+            local regionData = node.value
             -- Check if the unit nearby the spawn region belongs to a player
-            node.inregion = false
-            ForUnitsInRange(node.spawnpoint.x, node.spawnpoint.y, RANGE_LEVEL_1, function (u)
+            regionData.inregion = false
+            ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, function (u)
                 if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-                    node.someoneClose = true
-                    node.inregion = true
+                    regionData.someoneClose = true
+                    regionData.inregion = true
                     PlayersInRegion:addSingle(GetOwningPlayer(u))
                 end
             end)
             -- Control the creep or the spawn
-            if node.inregion then
-                node.delay = node.delay - INTERVAL
-                node.waitToSpawn = node.waitToSpawn - INTERVAL
-                if node.delay <= 0. then
+            if regionData.inregion then
+                regionData.delay = regionData.delay - INTERVAL
+                regionData.waitToSpawn = regionData.waitToSpawn - INTERVAL
+                if regionData.delay <= 0. then
                     -- Spawn per neighbourhood instead per region
-                    local r = GetFreeNeighbour(node, math.min(CREEPS_PER_REGION, CREEPS_PER_PLAYER * PlayersInRegion:size())) -- If don't have neighbours, then just use the same region
+                    local r = GetFreeNeighbour(regionData, math.min(CREEPS_PER_REGION, CREEPS_PER_PLAYER * PlayersInRegion:size())) -- If don't have neighbours, then just use the same region
                     if r then
                         table.insert(r.creeps, CreateCreep(r.types[math.random(#r.types)], r.spawnpoint))
                         -- They share the same delay
-                        for n in node.neighbourhood:elements() do
+                        for n in regionData.neighbourhood:elements() do
                             n.waitToSpawn = math.max(DELAY_SPAWN, n.waitToSpawn)
                         end
                     end
                 end
             else
                 -- Check if a unit is still nearby the spawn region
-                node.someoneClose = false
-                ForUnitsInRange(node.spawnpoint.x, node.spawnpoint.y, RANGE_LEVEL_2, function (u)
-                    if not node.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-                        node.someoneClose = true
+                regionData.someoneClose = false
+                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, function (u)
+                    if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+                        regionData.someoneClose = true
                     end
                 end)
-                for _, creep in ipairs(node.creeps) do
+                for _, creep in ipairs(regionData.creeps) do
                     creep.remaining = creep.remaining - INTERVAL
 
                     --If there is no nearby unit in the RANGE_LEVEL_2 then reduce once the duration
-                    if not node.someoneClose and not creep.reduced then
+                    if not regionData.someoneClose and not creep.reduced then
                         creep.remaining = creep.remaining - LIFE_REDUCED
                         creep.reduced = true
                     end
                 end
-                node.delay = math.max(node.delay, DELAY_NORMAL)
+                regionData.delay = math.max(regionData.delay, DELAY_NORMAL)
             end
 
-            for i = #node.creeps, 1, -1 do
-                local creep = node.creeps[i] ---@type Creep
+            for i = #regionData.creeps, 1, -1 do
+                local creep = regionData.creeps[i] ---@type Creep
                 local distance = creep.spawnpoint:dist(creep:getPos())
                 if distance > RANGE_RETURN then
                     creep:issueOrder(Orders.move, creep.spawnpoint.x, creep.spawnpoint.y)
@@ -137,55 +139,57 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
                 end
                 if creep.captured or creep.remaining <= 0. then
                     if creep.remaining <= 0. then
-                        node.delay = DELAY_NORMAL
+                        regionData.delay = DELAY_NORMAL
                         creep:destroy()
                     elseif creep.captured  then
-                        node.delay = DELAY_DEATH
+                        regionData.delay = DELAY_DEATH
                     end
-                    table.remove(node.creeps, i)
+                    table.remove(regionData.creeps, i)
                 end
             end
         end
         PlayersInRegion:clear()
     end
 
-    OnGameStart(function ()
-        TriggerExecute(gg_trg_Creep_Spawn_System_Config)
+    OnMapInit(function ()
+        Timed.call(function ()
+            TriggerExecute(gg_trg_Creep_Spawn_System_Config)
+    
+            CREEPS_PER_PLAYER = udg_CREEPS_PER_PLAYER
+            CREEPS_PER_REGION = udg_CREEPS_PER_REGION
+            LIFE_SPAN = udg_LIFE_SPAN
+            LIFE_REDUCED = udg_LIFE_REDUCED
+            DELAY_SPAWN = udg_DELAY_SPAWN
+            DELAY_NORMAL = udg_DELAY_NORMAL
+            DELAY_DEATH = udg_DELAY_DEATH
+            RANGE_LEVEL_1 = udg_RANGE_LEVEL_1
+            RANGE_LEVEL_2 = udg_RANGE_LEVEL_2
+            RANGE_RETURN = udg_RANGE_RETURN
+            RANGE_IN_HOME = udg_RANGE_IN_HOME
+            INTERVAL = udg_SPAWN_INTERVAL
+            NEIGHBOURHOOD = udg_NEIGHBOURHOOD
 
-        CREEPS_PER_PLAYER = udg_CREEPS_PER_PLAYER
-        CREEPS_PER_REGION = udg_CREEPS_PER_REGION
-        LIFE_SPAN = udg_LIFE_SPAN
-        LIFE_REDUCED = udg_LIFE_REDUCED
-        DELAY_SPAWN = udg_DELAY_SPAWN
-        DELAY_NORMAL = udg_DELAY_NORMAL
-        DELAY_DEATH = udg_DELAY_DEATH
-        RANGE_LEVEL_1 = udg_RANGE_LEVEL_1
-        RANGE_LEVEL_2 = udg_RANGE_LEVEL_2
-        RANGE_RETURN = udg_RANGE_RETURN
-        RANGE_IN_HOME = udg_RANGE_IN_HOME
-        INTERVAL = udg_SPAWN_INTERVAL
-        NEIGHBOURHOOD = udg_NEIGHBOURHOOD
+            Timed.echo(Update, INTERVAL)
 
-        Timed.echo(Update, INTERVAL)
+            -- Clear
+            udg_CREEPS_PER_PLAYER = nil
+            udg_CREEPS_PER_REGION = nil
+            udg_LIFE_SPAN = nil
+            udg_LIFE_REDUCED = nil
+            udg_DELAY_SPAWN = nil
+            udg_DELAY_NORMAL = nil
+            udg_DELAY_DEATH = nil
+            udg_RANGE_LEVEL_1 = nil
+            udg_RANGE_LEVEL_2 = nil
+            udg_RANGE_RETURN = nil
+            udg_RANGE_IN_HOME = nil
+            udg_SPAWN_INTERVAL = nil
+            udg_NEIGHBOURHOOD = nil
 
-        -- Clear
-        udg_CREEPS_PER_PLAYER = nil
-        udg_CREEPS_PER_REGION = nil
-        udg_LIFE_SPAN = nil
-        udg_LIFE_REDUCED = nil
-        udg_DELAY_SPAWN = nil
-        udg_DELAY_NORMAL = nil
-        udg_DELAY_DEATH = nil
-        udg_RANGE_LEVEL_1 = nil
-        udg_RANGE_LEVEL_2 = nil
-        udg_RANGE_RETURN = nil
-        udg_RANGE_IN_HOME = nil
-        udg_SPAWN_INTERVAL = nil
-        udg_NEIGHBOURHOOD = nil
-
-        TriggerClearActions(gg_trg_Creep_Spawn_System_Config)
-        DestroyTrigger(gg_trg_Creep_Spawn_System_Config)
-        gg_trg_Creep_Spawn_System_Config = nil
+            TriggerClearActions(gg_trg_Creep_Spawn_System_Config)
+            DestroyTrigger(gg_trg_Creep_Spawn_System_Config)
+            gg_trg_Creep_Spawn_System_Config = nil
+        end)
     end)
 
     OnTrigInit(function ()

@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit({name = "Zoom", "Timed", "PlayerUtils"}, function ()
     local DEFAULT_CAMERA_DISTANCE = 1240.
     local MAX_CAMERA_DISTANCE = 4000.
     local MIN_CAMERA_DISTANCE = 500.

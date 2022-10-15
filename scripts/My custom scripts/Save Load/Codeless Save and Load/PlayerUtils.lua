@@ -1,4 +1,4 @@
-OnLibraryInit({name = "PlayerUtils", optional = {"UnitEnum"}}, function ()
+OnLibraryInit({name = "PlayerUtils"}, function ()
 
 --[[*************************************************************
 *
@@ -154,25 +154,16 @@ OnLibraryInit({name = "PlayerUtils", optional = {"UnitEnum"}}, function ()
         return self:getHex() .. self:getName() .. "|r"
     end
 
-    local ENUM_GROUP = nil ---@type group
-    if not UnitEnum then
-        ENUM_GROUP = CreateGroup()
-    end
+    local ENUM_GROUP = CreateGroup()
 
     ---@param c playercolor
     function User:setColorUnits(c)
-        if UnitEnum then
-            ForUnitsOfPlayer(self.handle, function (u)
-                SetUnitColor(u, c)
-            end)
-        else
-            GroupEnumUnitsOfPlayer(ENUM_GROUP, self.handle, nil)
-            while true do
-                local u = FirstOfGroup(ENUM_GROUP)
-                if not u then break end
-                SetUnitColor(u, c)
-                GroupRemoveUnit(ENUM_GROUP, u)
-            end
+        GroupEnumUnitsOfPlayer(ENUM_GROUP, self.handle, nil)
+        while true do
+            local u = FirstOfGroup(ENUM_GROUP)
+            if not u then break end
+            SetUnitColor(u, c)
+            GroupRemoveUnit(ENUM_GROUP, u)
         end
     end
 

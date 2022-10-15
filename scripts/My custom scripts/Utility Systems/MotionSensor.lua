@@ -79,29 +79,30 @@ OnLibraryInit({name = "MotionSensor", -- https://www.hiveworkshop.com/threads/gl
 
     local function OnPeriodic()
         for node in MotionSensor:loop() do
-            local u = node.main
-            local prevState = node.moving
+            local sensor = node.value
+            local u = sensor.main
+            local prevState = sensor.moving
             local unitX, unitY = GetUnitX(u), GetUnitY(u)
-            local dx, dy = unitX - node.prevX, unitY - node.prevY
-            node.prevX, node.prevY = unitX, unitY
-            node.deltaX, node.deltaY = dx, dy
-            node.speed = math.sqrt(dx^2 + dy^2) / PERIOD
-            node.direction = math.atan(dy, dx)
-            node.moving = node.speed > 0.
+            local dx, dy = unitX - sensor.prevX, unitY - sensor.prevY
+            sensor.prevX, sensor.prevY = unitX, unitY
+            sensor.deltaX, sensor.deltaY = dx, dy
+            sensor.speed = math.sqrt(dx^2 + dy^2) / PERIOD
+            sensor.direction = math.atan(dy, dx)
+            sensor.moving = sensor.speed > 0.
 
-            if prevState ~= node.moving then
-                if node.moving then
+            if prevState ~= sensor.moving then
+                if sensor.moving then
                     SENSOR_GROUP_STATIONARY:removeSingle(u)
                     SENSOR_GROUP_MOVING:addSingle(u)
-                    node.motionState = MOTION_STATE_MOVING
-                    MotionSensor.registerMotionStartEvent:run(node)
+                    sensor.motionState = MOTION_STATE_MOVING
+                    MotionSensor.registerMotionStartEvent:run(sensor)
                 else
                     SENSOR_GROUP_MOVING:removeSingle(u)
                     SENSOR_GROUP_STATIONARY:addSingle(u)
-                    node.motionState = MOTION_STATE_STATIONARY
-                    MotionSensor.registerMotionStopEvent:run(node)
+                    sensor.motionState = MOTION_STATE_STATIONARY
+                    MotionSensor.registerMotionStopEvent:run(sensor)
                 end
-                MotionSensor.registerMotionChangeEvent:run(node)
+                MotionSensor.registerMotionChangeEvent:run(sensor)
             end
         end
     end

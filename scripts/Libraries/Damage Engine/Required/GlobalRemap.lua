@@ -1,4 +1,4 @@
-if AddHook then --https://www.hiveworkshop.com/threads/hook.339153
+OnLibraryInit({name = "GlobalRemap", "AddHook"}, function () --https://www.hiveworkshop.com/threads/hook.339153
     --[[--------------------------------------------------------------------------------------
         Global Variable Remapper v1.2.0.0 by Bribe
         - Intended to empower the GUI user-base and those who design systems for them.
@@ -74,4 +74,4 @@ if AddHook then --https://www.hiveworkshop.com/threads/hook.339153
             setFunc = setFunc or DoNothing
             setmetatable(tab, {__index = function(_, index) return getFunc(index) end, __newindex = function(_, index, val) setFunc(index, val) end})
         end
-    end
+    end)

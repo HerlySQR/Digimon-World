@@ -1,5 +1,5 @@
-if  Hook        -- https://www.hiveworkshop.com/threads/hook.339153
-and Timed then  -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
+--if  Hook        -- https://www.hiveworkshop.com/threads/hook.339153
+--and Timed then  -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
 
 --[[--------------------------------------------------------------------------------------
     
@@ -16,7 +16,7 @@ and Timed then  -- https://www.hiveworkshop.com/threads/timed-call-and-echo.3392
     
 ----------------------------------------------------------------------------------------]]
 
-OnGlobalInit(function() Damage = {}
+OnLibraryInit({name = "Damage", "AddHook", "Timed", "LinkedList", optional = {"GlobalRemap"}}, function() Damage = {}
 
     ---@class damageEvent:LinkedList
     ---@class damageEventRegistry:listNode
@@ -237,8 +237,9 @@ OnGlobalInit(function() Damage = {}
         if dreaming or check() then
             return
         end
-        userIndex = head.next
-        if userIndex ~= head then
+        local node = head.next
+        if node ~= head then
+            userIndex = node.value
             Damage.enable(false)
             enableT(t3)
             dreaming = true
@@ -248,8 +249,8 @@ OnGlobalInit(function() Damage = {}
                 if not userIndex.trigFrozen and userIndex.filters[userIndex.eFilter] and checkConfig() and not hasSource or (head ~= _SOURCE or (userIndex.minAOE and sourceAOE > userIndex.minAOE)) then
                     userIndex.func()
                 end
-                userIndex = userIndex.next
-            until userIndex == head or check()
+                node = node.next
+            until node == head or check()
             --print("End of event running")
             
             dreaming = nil
@@ -701,7 +702,12 @@ OnGlobalInit(function() Damage = {}
         id.func                         = func
         
         local insertAt = head
-        for node in head:loop() do if node.weight > lbs then insertAt = node; break end end
+        for node in head:loop() do
+            if node.value.weight or 0. > lbs then
+                insertAt = node
+                break
+            end
+        end
         insertAt:insert(id)
         
         --print("Registered new event to " .. var)
@@ -715,7 +721,8 @@ OnGlobalInit(function() Damage = {}
         return index:remove()
     end
     
-    Hook.addSimple("TriggerRegisterVariableEvent",
+    local oldTriggerRegisterVariableEvent
+    oldTriggerRegisterVariableEvent = AddHook("TriggerRegisterVariableEvent",
     function(whichTrig, varName, opCode, limitVal)
         local index = ((varName == "udg_DamageModifierEvent" and limitVal < 4)  or varName == "udg_PreDamageEvent")     and _DAMAGING   or
             (varName == "udg_DamageModifierEvent"                               or varName == "udg_ArmorDamageEvent")   and _ARMOR      or
@@ -729,7 +736,8 @@ OnGlobalInit(function() Damage = {}
             if index == _SOURCE then
                 id.minAOE = (varName == "udg_AOEDamageEvent" and 1)             or (varName == "udg_SourceDamageEvent" and 0)
             end
-            return "skip hook"
+        else
+            oldTriggerRegisterVariableEvent(whichTrig, varName, opCode, limitVal)
         end
     end)
     
@@ -939,4 +947,4 @@ a breakthrough in coding thanks to the innovation brought forth via Global Varia
         })
     end
 end)
-end
+--end

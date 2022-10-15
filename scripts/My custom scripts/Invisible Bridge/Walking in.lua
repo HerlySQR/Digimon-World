@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit({name = "WalkingIn", "Timed", "MotionSensor"}, function ()
     local place = gg_rct_Invisible_Bridge
     local feetModel = "war3mapImported\\GeneralHeroGlow.mdx"
     local stepModel = "Abilities\\Spells\\Human\\Brilliance\\Brilliance.mdl"

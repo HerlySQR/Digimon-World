@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit({name = "BountyControllerUsages", "BountyController"}, function ()
     RegisterBountyDeadEvent(function ()
         local bounty = Bounty.GetCurrent()
         local dead = Digimon.getInstance(bounty.DyingUnit)

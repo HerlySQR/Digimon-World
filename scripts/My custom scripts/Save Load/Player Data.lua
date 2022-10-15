@@ -1,4 +1,4 @@
-OnLibraryInit("Digimon", function ()
+OnLibraryInit({name = "PlayerData", "PlayerDigimons"}, function ()
 
     do
         ---@class Inventory

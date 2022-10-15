@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit("AbilityUtils", function ()
     local Spell = FourCC('A03O')
 
     RegisterSpellEffectEvent(Spell, function ()

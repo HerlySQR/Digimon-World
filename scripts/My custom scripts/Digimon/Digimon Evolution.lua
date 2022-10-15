@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "DigimonEvolution", "Digimon"}, function ()
     local EvolveDialog = {} ---@type table<player, dialog>
     local EvolveClicked = __jarray(-1) ---@type table<player, integer>
     local EvolveOption = {} ---@type table<player, button>[]
@@ -209,7 +209,7 @@ do
 
     end
 
-    OnGameStart(function ()
+    OnMapInit(function ()
         for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
             local p = Player(i)
             EvolveDialog[p] = DialogCreate()
@@ -322,4 +322,4 @@ do
         end)
     end)
 
-end
+end)

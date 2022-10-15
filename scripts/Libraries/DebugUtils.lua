@@ -108,7 +108,7 @@ end
 function Wc3Type(input)
     local typeString = type(input)
     if typeString == 'number' then
-        return (math.type(input) =='float' and 'real') or 'integer'
+        return (math.type(input) =='float' and 'number') or 'integer'
     elseif typeString == 'userdata' then
         typeString = tostring(input) --toString returns the warcraft type plus a colon and some hashstuff.
         return string.sub(typeString, 1, (string.find(typeString, ":", nil, true) or 0) -1) --string.find returns nil, if the argument is not found, which would break string.sub. So we need or as coalesce.
@@ -197,11 +197,11 @@ IngameConsole = {
         numRows = 20                    ---@type integer Number of Rows of the console (multiboard), excluding the title row. So putting 20 here will show 21 rows, first being the title row.
     ,   numCols = 2                     ---@type integer Number of Columns of the console (multiboard)
     ,   autosize = true                 ---@type boolean Defines, whether the width of the main Column automatically adjusts with the longest string in the display.
-    ,   currentWidth = 0.5              ---@type real Current and starting Screen Share of the console main column.
-    ,   mainColMinWidth = 0.3           ---@type real Minimum Screen share of the variable main console column.
-    ,   mainColMaxWidth = 0.8           ---@type real Maximum Scren share of the variable main console column.
-    ,   tsColumnWidth = 0.06            ---@type real Screen Share of the Timestamp Column
-    ,   linebreakBuffer = 0.008         ---@type real Screen Share that is added to the multiboard text column to compensate for the small inaccuracy of the String Width function.
+    ,   currentWidth = 0.5              ---@type number Current and starting Screen Share of the console main column.
+    ,   mainColMinWidth = 0.3           ---@type number Minimum Screen share of the variable main console column.
+    ,   mainColMaxWidth = 0.8           ---@type number Maximum Scren share of the variable main console column.
+    ,   tsColumnWidth = 0.06            ---@type number Screen Share of the Timestamp Column
+    ,   linebreakBuffer = 0.008         ---@type number Screen Share that is added to the multiboard text column to compensate for the small inaccuracy of the String Width function.
     ,   maxLinebreaks = 3               ---@type integer Defines the maximum amount of linebreaks, before the remaining output string will be cut and not further displayed.
     ,   printToConsole = true           ---@type boolean defines, if the print function should print to the console or to the chat
     ,   sharedConsole = false           ---@type boolean defines, if the console is displayed to each player at the same time (accepting all players input) or if all players much start their own console.
@@ -221,7 +221,7 @@ IngameConsole = {
     ,   inputload = ''                  ---@type string Input Holder for multi-line-inputs
     ,   output = {}                     ---@type string[] Array of all output strings
     ,   outputTimestamps = {}           ---@type string[] Array of all output string timestamps
-    ,   outputWidths = {}               ---@type real[] remembers all string widths to allow for multiboard resize
+    ,   outputWidths = {}               ---@type number[] remembers all string widths to allow for multiboard resize
     ,   trigger = nil                   ---@type trigger trigger processing all inputs during console lifetime
     ,   multiboard = nil                ---@type multiboard
     ,   timer = nil                     ---@type timer gets started upon console creation to measure timestamps
@@ -458,9 +458,9 @@ end
 ---Computes the max printable substring for a given string and a given linebreakWidth (regarding a single line of console).
 ---Returns both the substrings last char position and its total width in the multiboard.
 ---@param stringToPrint string the string supposed to be printed in the multiboard console.
----@param linebreakWidth real the maximum allowed width in one line of the console, before a string must linebreak
+---@param linebreakWidth number the maximum allowed width in one line of the console, before a string must linebreak
 ---@param textLanguage string 'ger' or 'eng'
----@return integer maxPrintableCharPosition, real printWidth
+---@return integer maxPrintableCharPosition, number printWidth
 function IngameConsole.getLinebreakData(stringToPrint, linebreakWidth, textLanguage)
     local loopWidth = 0.
     local bytecodes = table.pack(string.byte(stringToPrint, 1, -1))
@@ -630,14 +630,14 @@ do
     ----------------------------
 
     local multiboardCharTable = {}                        ---@type table  -- saves the width in screen percent (on 1920 pixel width resolutions) that each char takes up, when displayed in a multiboard.
-    local DEFAULT_MULTIBOARD_CHAR_WIDTH = 1. / 128.        ---@type real    -- used for unknown chars (where we didn't define a width in the char table)
-    local MULTIBOARD_TO_PRINT_FACTOR = 1. / 36.            ---@type real    -- 36 is actually the lower border (longest width of a non-breaking string only consisting of the letter "i")
+    local DEFAULT_MULTIBOARD_CHAR_WIDTH = 1. / 128.        ---@type number    -- used for unknown chars (where we didn't define a width in the char table)
+    local MULTIBOARD_TO_PRINT_FACTOR = 1. / 36.            ---@type number    -- 36 is actually the lower border (longest width of a non-breaking string only consisting of the letter "i")
 
     ---Returns the width of a char in a multiboard, when inputting a char (string of length 1) and 0 otherwise.
     ---also returns 0 for non-recorded chars (like ` and ´ and ß and § and €)
     ---@param char string | integer integer bytecode representations of chars are also allowed, i.e. the results of string.byte().
     ---@param textlanguage string | nil 'ger' or 'eng' (default is 'eng'), depending on the text language in the Warcraft 3 installation settings.
-    ---@return real
+    ---@return number
     function string.charMultiboardWidth(char, textlanguage)
         return multiboardCharTable[textlanguage or 'eng'][char] or DEFAULT_MULTIBOARD_CHAR_WIDTH
     end
@@ -646,7 +646,7 @@ do
     ---unknown chars will be measured with default width (see constants above)
     ---@param multichar string
     ---@param textlanguage string | nil 'ger' or 'eng' (default is 'eng'), depending on the text language in the Warcraft 3 installation settings.
-    ---@return real
+    ---@return number
     function string.multiboardWidth(multichar, textlanguage)
         local chartable = table.pack(multichar:byte(1,-1)) --packs all bytecode char representations into a table
         local charWidth = 0.
@@ -660,7 +660,7 @@ do
     ---The opposite is not necessarily true (but should be true in the majority of cases): If the function returns bigger than 1.0, the string doesn't necessarily break.
     ---@param char string | integer integer bytecode representations of chars are also allowed, i.e. the results of string.byte().
     ---@param textlanguage string | nil 'ger' or 'eng' (default is 'eng'), depending on the text language in the Warcraft 3 installation settings.
-    ---@return real
+    ---@return number
     function string.charPrintWidth(char, textlanguage)
         return string.charMultiboardWidth(char, textlanguage) * MULTIBOARD_TO_PRINT_FACTOR
     end
@@ -669,7 +669,7 @@ do
     ---The opposite is not necessarily true (but should be true in the majority of cases): If the function returns bigger than 1.0, the string doesn't necessarily break.
     ---@param multichar string
     ---@param textlanguage string | nil 'ger' or 'eng' (default is 'eng'), depending on the text language in the Warcraft 3 installation settings.
-    ---@return real
+    ---@return number
     function string.printWidth(multichar, textlanguage)
         return string.multiboardWidth(multichar, textlanguage) * MULTIBOARD_TO_PRINT_FACTOR
     end
@@ -678,18 +678,18 @@ do
     ----| String Width Internals |----
     ----------------------------------
 
+    ---@param charset string
     ---@param char string
-    ---@param lengthInScreenWidth real
-    ---@return nothing
+    ---@param lengthInScreenWidth number
     local function setMultiboardCharWidth(charset, char, lengthInScreenWidth)
         multiboardCharTable[charset] = multiboardCharTable[charset] or {}
         multiboardCharTable[charset][char] = lengthInScreenWidth
     end
 
     ---numberPlacements says how often the char can be placed in a multiboard column, before reaching into the right bound.
+    ---@param charset string
     ---@param char string
     ---@param numberPlacements integer
-    ---@return nothing
     local function setMultiboardCharWidthBase80(charset, char, numberPlacements)
         setMultiboardCharWidth(charset, char, 0.8 / numberPlacements) --1-based measure. 80./numberPlacements would result in Screen Percent.
         setMultiboardCharWidth(charset, string.byte(char), 0.8 / numberPlacements)

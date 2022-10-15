@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "EXP", "Digimon"}, function ()
     local AREA = 512.
     local COLOR_R = 43.529
     local COLOR_G = 43.529
@@ -42,4 +42,4 @@ do
             end
         end)
     end)
-end
+end)

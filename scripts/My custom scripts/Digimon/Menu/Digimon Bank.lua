@@ -1,4 +1,4 @@
-do
+OnLibraryInit({name = "DigimonBank", "PlayerDigimons"}, function ()
     local MAX_STOCK = 6
 
     ---@class Bank
@@ -676,4 +676,4 @@ do
             BlzFrameSetVisible(SummonADigimon, flag)
         end
     end
-end
+end)

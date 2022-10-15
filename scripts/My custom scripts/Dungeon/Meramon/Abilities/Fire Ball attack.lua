@@ -1,4 +1,4 @@
-OnMapInit(function ()
+OnLibraryInit("BossFightUtils", function ()
     local SPELL = FourCC('A02A')
     local RANGE = 900. -- The same as in the object editor
     local DAMAGE = 5. -- per tick

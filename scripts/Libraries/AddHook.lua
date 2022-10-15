@@ -32,6 +32,7 @@ for the parentTable parameter, and assign the "oldFunc" within the metatable (or
 This is envisioned to be useful for hooking __index and __newindex on the _G table, such as with Global Variable
 Remapper.
 ]]--
+OnLibraryInit({name = "AddHook"}, function ()
 ---@param oldFunc string
 ---@param userFunc function
 ---@param priority? number
@@ -118,3 +119,23 @@ function AddHook(oldFunc, userFunc, priority, parentTable, default, storeIntoMet
         end
     end
 end
+
+--[[
+local oldInitGlobals
+oldInitGlobals = AddHook("InitGlobals", function ()
+    xpcall(oldInitGlobals, function (msg)
+        TimerStart(CreateTimer(), 0, false, function ()
+            print(msg)
+        end)
+    end)
+end)
+]]
+local oldInitCustomTriggers
+oldInitCustomTriggers = AddHook("InitCustomTriggers", function ()
+    xpcall(oldInitCustomTriggers, function (msg)
+        TimerStart(CreateTimer(), 0, false, function ()
+            print(msg)
+        end)
+    end)
+end)
+end)

@@ -1,5 +1,5 @@
 -- Abstraction of the place a digimon is staying
-OnLibraryInit({name = "Environment", "Timed", "FrameEffects"}, function ()
+OnLibraryInit({name = "Environment", "FrameEffects"}, function ()
 
     local LocalPlayer = nil ---@type player
     local TopMsg = nil ---@type framehandle
