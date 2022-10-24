@@ -29,7 +29,7 @@ OnLibraryInit({name = "GlobalRemap", "AddHook"}, function () --https://www.hivew
         ---Remap a non-array global variable
         ---@param var string
         ---@param getFunc? fun() ->value?
-        ---@param setFunc? fun(value)
+        ---@param setFunc? fun(value:any)
         function GlobalRemap(var, getFunc, setFunc)
             if not skip then
                 getters, setters, skip = {}, {}, DoNothing

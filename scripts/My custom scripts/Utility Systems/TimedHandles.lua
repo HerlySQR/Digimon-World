@@ -28,13 +28,6 @@ OnLibraryInit({name = "TimedHandles", "Timed"}, function ()
         Timed.call(delay, function () RemoveItem(m) end)
     end
 
-    ---Destroys an effect after a while
-    ---@param eff effect
-    ---@param delay number
-    function DestroyEffectTimed(eff, delay)
-        Timed.call(delay, function () DestroyEffect(eff) end)
-    end
-
     ---Removes an unit after a while
     ---@param u unit
     ---@param delay number

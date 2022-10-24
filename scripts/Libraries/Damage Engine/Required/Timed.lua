@@ -97,7 +97,7 @@ Timed = {
                     if duration >= exitwhen then
                         return
                     elseif onExpire then
-                        print(duration, exitwhen)
+                        --print(duration, exitwhen)
                         onExpire()
                     end
                 end

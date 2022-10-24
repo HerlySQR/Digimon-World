@@ -1,4 +1,4 @@
-OnLibraryInit({name = "AbilityUtils", "Digimon", "RegisterSpellEffectEvent", "Missiles"}, function ()
+OnLibraryInit({name = "AbilityUtils", "Digimon", "RegisterSpellEvent", "Missiles", "Knockback"}, function ()
 
     LOCUST_ID = FourCC('Aloc')
 

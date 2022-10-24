@@ -32,8 +32,8 @@ OnLibraryInit({name = "GetSyncedData",
     ---than 247 the system returns an error.
     ---@generic T
     ---@param p player
-    ---@param func fun(...?: any): T || table
-    ---@param ...? any
+    ---@param func fun(...): T || table
+    ---@vararg any
     ---@return T | table
     function GetSyncedData(p, func, ...)
         if p == GetLocalPlayer() then

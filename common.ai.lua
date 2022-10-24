@@ -52,9 +52,9 @@ function BlzDeleteHeroAbility(whichHero, heroAbilCode) end
 function BlzSetHeroPrimaryStat(whichHero, amount) end
 
 ---@alias heroattributeId
----| 1 # GetHandleId( HERO_ATTRIBUTE_STR )
----| 2 # GetHandleId( HERO_ATTRIBUTE_INT )
----| 3 # GetHandleId( HERO_ATTRIBUTE_AGI )
+---| '1' # GetHandleId( HERO_ATTRIBUTE_STR )
+---| '2' # GetHandleId( HERO_ATTRIBUTE_INT )
+---| '3' # GetHandleId( HERO_ATTRIBUTE_AGI )
 
 ---Sets the specified attribute (str, int or dex) of the specified hero to the specified amount.
 ---The attribute is represented by an integer (see below).
@@ -77,12 +77,12 @@ function BlzGetHeroPrimaryStat(whichHero) end
 function BlzGetHeroStat(whichHero, statId) end
 
 ---@alias armortypeId
----| 0 # GetHandleId( ARMOR_TYPE_WHOKNOWS )
----| 1 # GetHandleId( ARMOR_TYPE_FLESH )
----| 2 # GetHandleId( ARMOR_TYPE_METAL )
----| 3 # GetHandleId( ARMOR_TYPE_WOOD )
----| 4 # GetHandleId( ARMOR_TYPE_ETHREAL )
----| 5 # GetHandleId( ARMOR_TYPE_STONE )
+---| '0' # GetHandleId( ARMOR_TYPE_WHOKNOWS )
+---| '1' # GetHandleId( ARMOR_TYPE_FLESH )
+---| '2' # GetHandleId( ARMOR_TYPE_METAL )
+---| '3' # GetHandleId( ARMOR_TYPE_WOOD )
+---| '4' # GetHandleId( ARMOR_TYPE_ETHREAL )
+---| '5' # GetHandleId( ARMOR_TYPE_STONE )
 
 ---Returns the integer representation of the armortype of the specified unit.
 ---Use ConvertArmorType(i) on the return value to receive the actual armortype (such as ARMOR_TYPE_METAL for the human paladin) and GetHandleId() to convert back.
@@ -91,14 +91,14 @@ function BlzGetHeroStat(whichHero, statId) end
 function BlzGetUnitArmorType(whichUnit) end
 
 ---@alias movetypeId
----| 0 # GetHandleId( MOVE_TYPE_UNKNOWN )
----| 1 # GetHandleId( MOVE_TYPE_FOOT )
----| 2 # GetHandleId( MOVE_TYPE_FLY )
----| 4 # GetHandleId( MOVE_TYPE_HORSE )
----| 8 # GetHandleId( MOVE_TYPE_HOVER )
----| 16 # GetHandleId( MOVE_TYPE_FLOAT )
----| 32 # GetHandleId( MOVE_TYPE_AMPHIBIOUS )
----| 64 # GetHandleId( MOVE_TYPE_UNBUILDABLE )
+---| '0' # GetHandleId( MOVE_TYPE_UNKNOWN )
+---| '1' # GetHandleId( MOVE_TYPE_FOOT )
+---| '2' # GetHandleId( MOVE_TYPE_FLY )
+---| '4' # GetHandleId( MOVE_TYPE_HORSE )
+---| '8' # GetHandleId( MOVE_TYPE_HOVER )
+---| '16' # GetHandleId( MOVE_TYPE_FLOAT )
+---| '32' # GetHandleId( MOVE_TYPE_AMPHIBIOUS )
+---| '64' # GetHandleId( MOVE_TYPE_UNBUILDABLE )
 
 ---Returns the integer representation of the movetype of the specified unit.
 ---Use ConvertMoveType(i) on the return value to receive the actual movetype (such as MOVE_TYPE_FOOT for the human paladin) and GetHandleId() to convert back.

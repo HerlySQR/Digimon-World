@@ -120,7 +120,7 @@ function AddHook(oldFunc, userFunc, priority, parentTable, default, storeIntoMet
     end
 end
 
---[[
+
 local oldInitGlobals
 oldInitGlobals = AddHook("InitGlobals", function ()
     xpcall(oldInitGlobals, function (msg)
@@ -129,7 +129,7 @@ oldInitGlobals = AddHook("InitGlobals", function ()
         end)
     end)
 end)
-]]
+
 local oldInitCustomTriggers
 oldInitCustomTriggers = AddHook("InitCustomTriggers", function ()
     xpcall(oldInitCustomTriggers, function (msg)

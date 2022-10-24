@@ -1,271 +1,305 @@
-do  --Global Initialization 4.2.0.1
+--[==[
+Global Initialization 4.3.1 by Bribe
 
-    --4.2 adds Require and Require.optional to the API. You can now declare libraries
-    --via a string parameter passed to On...Init and OnGameStart. You can add requirements
-    --during the initialization process via Require "something" or optional requirements
-    --via Require.optional "somethingElse". Requirements must be listed at the top of
-    --the function you registered to On...Init.
-    --OnLibraryInit will still treat a string parameter as a requirement, rather than as
-    --a library name.
+Special thanks:
+Eikonium, Tasyen, HerlySQR, Forsakn and Troll-Brain
 
-    --4.1 adds optional requirements to OnLibraryInit, and gives the option to specify
-    --the name of your library.
-    
-    --4.0 introduces "OnLibraryInit", which will delay the running of the function
-    --until certain variable(s) are present in the global table. This means that
-    --only Global Initialization needs to be placed as the top trigger in your map,
-    --and any resources which use OnLibraryInit to wait for each other can be found
-    --in any order below that.
-    
-    --Special thanks to Tasyen, Forsakn, Troll-Brain and Eikonium
-    
+What this does:
+Allows you to postpone the initialization of your script until a specific point in the loading sequence.
+Additionally, all callback functions in this resource are safely called via xpcall or pcall, giving you highly valuable debugging information.
+Also provides the ability to Require another resource. This functions similarly to Lua's "require" method, which was disabled in the WarCraft 3 environment.
+
+Why not just use do...end blocks in the Lua root?
+Creating WarCraft 3 objects in the Lua root has been reported to cause desyncs. Even still, the Lua root is a weird place to initialize
+(e.g. doesn't allow "print", which makes debugging extremely difficult). do...end blocks force you to organize your triggers from top to bottom based on their requirements.
+
+What is the sequence of events?
+1) On...Init functions that require nothing - or - already have their requirements fulfilled in the Lua root.
+2) On...Init functions that have their requirements fulfilled based on other On...Init declarations.
+3) Repeat step 2 until all executables are loaded and all subsequent initializers have run.
+4) OnGameStart is the final initializer.
+5) Display an error message to reveal any missing requirements.
+
+Basic API for initializer functions:
+OnGlobalInit(function()
+    print "All udg_ variables have been initialized"
+end)
+OnTrigInit(function()
+    print "All InitTrig_ functions have been called"
+end)
+OnMapInit(function()
+    print "All Map Initialization events have run"
+end)
+OnGameStart(function()
+    print "The game has now started"
+end)
+
+Note: You can optionally include a string as an argument to give your initializer a name. This is useful in two scenarios:
+      1) If you don't add anything to the global API but want it to be useful as a requirment.
+      2) If you want it to be accurately defined for initializers that optionally require it.
+
+API for Requirements:
+local someLibrary = Require "SomeLibrary"
+> Imitates Lua's built-in (but disabled in WarCraft 3) "require" method, provided that you use it from an On...Init or OnGameStart callback function.
+
+local optionalRequirement = Require "OptionalRequirement"
+> Similar to the Require method, but will only wait if the optional requirement was declared in an On...Init string parameter.
+
+--------------
+CONFIGURABLES:       ]==]
+do
     --change this assignment to false or nil if you don't want to print any caught errors at the start of the game.
     --You can otherwise change the color code to a different hex code if you want.
-    local _ERROR    = "ff5555"
+    local _ERROR           = "ff5555"
     
-    local prePrint,run,genericDeclarations,initHandlerExists={},{},{},{}
-    local initInitializers
-    local _G        = _G
-    local rawget    = rawget
-    local insert    = table.insert
-    local oldPrint  = print
-    local newPrint  = function(s)
-        if prePrint then
-            initInitializers()
-            prePrint[#prePrint+1]=s
-        else
-            oldPrint(s)
+    local _USE_COROUTINES  = true       --Change this to false if you don't use the "Require" API.
+    local _USE_LIBRARY_API = true       --Change this to false if you don't use the "library" API.
+    
+    --END CONFIGURABLES
+    -------------------
+    
+    local _G     = _G
+    local rawget = rawget
+    local insert = table.insert
+    
+    local function doesVariableExist(name) --added for readability.
+        return rawget(_G, name)~=nil
+    end
+    
+    local printError = DoNothing
+    local errorQueue
+    if _ERROR then
+        errorQueue = {}
+        printError = function(errorMsg)
+            insert(errorQueue, "|cff".._ERROR..errorMsg.."|r")
         end
     end
-    print           = newPrint
-    
-    local displayError=_ERROR and function(errorMsg)
-        print("|cff".._ERROR..errorMsg.."|r")
-    end or DoNothing
-    
-    local libraryInitQueue, missingRequirements
-    
-    initInitializers=function()
-        initInitializers = DoNothing
-        --try to hook anything that could be called before InitBlizzard to see if we can initialize even sooner
-        for _,hookAt in ipairs {
-            "InitSounds",
-            "CreateRegions",
-            "CreateCameras",
-            "InitUpgrades",
-            "InitTechTree",
-            "CreateAllDestructables",
-            "CreateAllItems",
-            "CreateAllUnits",
-            "InitBlizzard"
-        } do
-            local oldMain=rawget(_G, hookAt)
-            if oldMain then
-                rawset(_G, hookAt, function()
-                    run["OnMainInit"]()
-                    oldMain()
-                    local function hook(oldFunc, userFunc, chunk)
-                        local old = rawget(_G, oldFunc)
-                        if old then
-                            rawset(_G, oldFunc, function()
-                                old()
-                                run[userFunc]()
-                                chunk()
-                            end)
-                        else
-                            run[userFunc]()
-                            chunk()
+    local library
+    if _USE_LIBRARY_API then
+        library = {
+            declarations = {},
+            initQueue    = {},
+            loaded       = {},
+            initiallyMissingRequirements = _ERROR and {},
+            initialize = function(forceOptional)
+                if library.initQueue[1] then
+                   
+                    local continue, tempInitQueue
+                    repeat
+                        continue=false
+                       
+                        library.initQueue, tempInitQueue = {}, library.initQueue
+                       
+                        for _,func in ipairs(tempInitQueue) do
+                            if func(forceOptional) then
+                                --Something was initialized; therefore further systems might be able to initialize.
+                                continue=true
+                            else
+                                --If the queued initializer returns false, that means it did not run, so we re-add it.
+                                insert(library.initQueue, func)
+                            end
                         end
-                    end
-                    hook("InitGlobals", "OnGlobalInit", function()
-                        hook("InitCustomTriggers", "OnTrigInit", function()
-                            hook("RunInitializationTriggers", "OnMapInit", function()
-                                TimerStart(CreateTimer(), 0.00, false, function()
-                                    DestroyTimer(GetExpiredTimer())
-                                    run["OnGameStart"]()
-                                    run=nil
-                                    if libraryInitQueue then
-                                        if _ERROR and #libraryInitQueue>0 then
-                                            for _,ini in ipairs(missingRequirements) do
-                                                if not rawget(_G, ini) and not initHandlerExists[ini] then
-                                                    displayError("OnLibraryInit missing requirement: "..ini)
-                                                end
-                                            end
-                                        end
-                                        libraryInitQueue=nil
-                                    end
-                                    missingRequirements=nil
-                                    genericDeclarations=nil
-                                    initHandlerExists=nil
-                                    for i=1, #prePrint do oldPrint(prePrint[i]) end
-                                    prePrint=nil
-                                    if print==newPrint then print=oldPrint end --restore the function only if no other functions have overriden it.
-                                end)
-                            end)
-                        end)
-                    end)
-                end)
-                break
-            end
-        end
-    end
-    
-    local state
-    local function callUserInitFunction(initFunc, name, declareNameReady)
-        state = coroutine.create(function()
-            xpcall(initFunc, function(msg)
-                xpcall(error, displayError, "\nGlobal Initialization Error with "..name..":\n"..msg, 4)
-            end)
-            if declareNameReady then
-                initHandlerExists[declareNameReady]=true
-            end
-        end)
-        coroutine.resume(state)
-    end
-
-    local function initLibraries(name)
-        --I encountered some bugs with allowing libraries to initialize in sync with OnMainInit, so I need to exclude that block.
-        if libraryInitQueue and name ~= "OnMainInit" then
-            ::runAgain::
-            local runRecursively,tempQ
-            tempQ,libraryInitQueue=libraryInitQueue,{}
-            
-            for _,func in ipairs(tempQ) do
-                --If the queued initializer returns true, that means it ran, so we can remove it.
-                if func() then
-                    runRecursively=runRecursively or coroutine.status(state)~="suspended"
-                else
-                    insert(libraryInitQueue, func)
+                    until not continue or not library.initQueue[1]
                 end
             end
-            if runRecursively and #libraryInitQueue > 0 then
-                --Something was initialized, which might mean that further systems can now be initialized.
-                goto runAgain
+        }
+    end
+    
+    local runInitializer = {}
+    local oldInitBlizzard = InitBlizzard
+    InitBlizzard = function()
+        runInitializer["OnMainInit"](true) --now we are safely outside of the Lua root and can start initializing.
+        oldInitBlizzard()
+    
+        --Try to hook, if the variable doesn't exist, run the initializer immediately. Once either have executed, call the continue function.
+        local function tryHook(whichHook, whichInit, continue)
+            local hookedFunction = rawget(_G, whichHook)
+            if hookedFunction then
+                _G[whichHook] = function()
+                    hookedFunction()
+                    runInitializer[whichInit]()
+                    continue()
+                end
+            else
+                runInitializer[whichInit]()
+                continue()
             end
+        end
+        tryHook("InitGlobals", "OnGlobalInit", function()
+            tryHook("InitCustomTriggers", "OnTrigInit", function()
+                tryHook("RunInitializationTriggers", "OnMapInit", function()
+                   
+                    local function runOnGameStart()
+                        runInitializer["OnGameStart"]()
+                        runInitializer=nil
+                        if _ERROR then
+                            if _USE_LIBRARY_API and library.initQueue[1] then
+                                for _,ini in ipairs(library.initiallyMissingRequirements) do
+                                    if not doesVariableExist(ini) and not library.loaded[ini] then
+                                        printError("OnLibraryInit missing requirement: "..ini)
+                                    end
+                                end
+                            end
+                            for _,msg in ipairs(errorQueue) do
+                                print(msg) --now that the game has started, call the queued error messages.
+                            end
+                            errorQueue=nil
+                        end
+                        library=nil
+                    end
+    
+                    --Use a timer to mark when the game has actually started.
+                    TimerStart(CreateTimer(), 0, false, function()
+                        DestroyTimer(GetExpiredTimer())
+    
+                        runOnGameStart()
+                    end)
+                end)
+            end)
+        end)
+    end
+    
+    local function callUserInitFunction(initFunc, name, initDeclaresItsName)
+        local function initFuncWrapper()
+            local function funcWrapper()
+                initFunc()
+                if _USE_LIBRARY_API and initDeclaresItsName then
+                    library.loaded[initDeclaresItsName]=true
+                end
+            end
+            if _ERROR then
+                if try then try(funcWrapper) --https://www.hiveworkshop.com/threads/debug-utils-ingame-console-etc.330758/post-3552846
+                else
+                    xpcall(funcWrapper, function(msg)
+                        xpcall(error, printError, "\nGlobal Initialization Error with "..name..":\n"..msg, 4)
+                    end)
+                end
+            else
+                pcall(funcWrapper)
+            end
+        end
+        if _USE_COROUTINES then
+            coroutine.resume(coroutine.create(initFuncWrapper))
+        else
+            initFuncWrapper()
         end
     end
-
+    
     ---Handle logic for initialization functions that wait for certain initialization points during the map's loading sequence.
     ---@param name string
-    ---@return fun() userFunc --Calls userFunc during the defined initialization stage.
+    ---@return fun(libName?:string|fun(), userFunc:fun()|string) OnInit --Calls userFunc during the defined initialization stage.
     local function createInitAPI(name)
-        local funcs={}
-        --Create a handler function to run all initializers pertaining to this initialization level.
-        run[name]=function()
-            initLibraries(name)
-            for _,f in ipairs(funcs) do
-                callUserInitFunction(f, name, genericDeclarations[f])
+        local userInitFunctionList = {}
+       
+        --Create a handler function to run all initializers pertaining to this particular sequence.
+        runInitializer[name]=function(skipLibrary)
+            local function initialize()
+                for _,f in ipairs(userInitFunctionList) do
+                    callUserInitFunction(f, name, _USE_LIBRARY_API and library.declarations[f])
+                end
+                userInitFunctionList=nil
+                _G[name] = nil
             end
-            funcs=nil
-            rawset(_G, name, nil)
-            initLibraries(name)
+            if _USE_LIBRARY_API and not skipLibrary then
+                library.initialize()
+                initialize()
+                library.initialize()
+                library.initialize(true) --force libraries with optional requirements to run.
+            else
+                initialize()
+            end
         end
+    
         ---Calls userFunc during the map loading process.
-        ---@param libName string
-        ---@param userFunc fun()
+        ---@param libName string|fun()
+        ---@param userFunc fun()|string
         return function(libName, userFunc)
             if not userFunc or type(userFunc)=="string" then
                 libName,userFunc=userFunc,libName
             end
             if type(userFunc) == "function" then
-                funcs[#funcs+1]=userFunc
-                if libName then
-                    genericDeclarations[userFunc] = libName
-                    initHandlerExists[libName]=initHandlerExists[libName] or false
+                insert(userInitFunctionList, userFunc)
+                if _USE_LIBRARY_API and libName then
+                    library.declarations[userFunc] = libName
+                    library.loaded[libName]=library.loaded[libName] or false
                 end
-                initInitializers()
             else
-                displayError(name.." Error: function expected, got "..type(userFunc))
+                printError(name.." Error: function expected, got "..type(userFunc))
             end
         end
     end
-    
-    OnMainInit   = createInitAPI("OnMainInit")    -- Runs "before" InitBlizzard is called. Meant for assigning things like hooks.
+    OnMainInit   = createInitAPI("OnMainInit")    -- Runs "before" InitBlizzard is called. Might not actually have any benefit over OnGlobalInit and might be deprecated at some future point.
     OnGlobalInit = createInitAPI("OnGlobalInit")  -- Runs once all GUI variables are instantiated.
     OnTrigInit   = createInitAPI("OnTrigInit")    -- Runs once all InitTrig_ are called.
     OnMapInit    = createInitAPI("OnMapInit")     -- Runs once all Map Initialization triggers are run.
     OnGameStart  = createInitAPI("OnGameStart")   -- Runs once the game has actually started.
-
-    ---OnLibraryInit is a new function that allows your initialization to wait until others items exist.
-    ---This is comparable to vJass library requirements in that you can specify your "library" to wait for
-    ---those other libraries to be initialized, before initializing your own.
-    ---For example, if you want to ensure your script is processed after "GlobalRemap" has been declared,
-    ---you would use:
-    ---OnLibraryInit("GlobalRemap", function() print "my library is initializing after GlobalRemap was declared" end)
-    ---
-    ---To include multiple requirements, pass a string table:
-    ---OnLibraryInit({"GlobalRemap", "LinkedList", "MDTable"}, function() print "my library has waited for 3 requirements" end)
-    ---To have optional requirements or to have named libraries (names are only useful for requirements):
-    ---OnLibraryInit({name="MyLibrary", "MandatoryRequirement", optional={OptionalRequirement1, OptionalRequirement2}})
-    ---@param whichInit string|table
-    ---@param userFunc fun()
-    function OnLibraryInit(whichInit, userFunc)
-        if not libraryInitQueue then
-            initInitializers()
-            libraryInitQueue={} ---@type function[] fun():boolean
-            missingRequirements=_ERROR and {}
-        end
-        local runInit;runInit=function()
-            runInit=nil --nullify itself to prevent potential recursive calls during initFunc's execution.
-            
-            callUserInitFunction(userFunc, "OnLibraryInit", type(whichInit)=="table" and whichInit.name)
-            return true
-        end
-        local initFuncHandler
-        if type(whichInit)=="string" then
-            if _ERROR and not rawget(_G, whichInit) and not missingRequirements[whichInit] then
-                insert(missingRequirements, whichInit)
+    
+    if _USE_LIBRARY_API then
+    
+        ---Might be deprecated at some future point in favor of Require, Require.optional and On...Init functions which declare a name string.
+        ---@param whichInit string|table
+        ---@param userFunc fun()
+        function OnLibraryInit(whichInit, userFunc)
+            local  nameOfInit
+            local  typeOfInit =         type(whichInit)
+            if     typeOfInit=="string" then whichInit = {whichInit}
+            elseif typeOfInit~="table"  then
+                printError("Invalid requirement type passed to OnLibraryInit: "..typeOfInit)
+                return
+            else
+                nameOfInit = whichInit.name
+                if nameOfInit then
+                    library.loaded[nameOfInit]=false
+                end
             end
-            initFuncHandler=function() return runInit and rawget(_G, whichInit) and runInit() end
-        elseif type(whichInit)=="table" then
-            initFuncHandler=function()
-                if runInit then
+            if _ERROR then
+                for _,initName in ipairs(whichInit) do
+                    if not doesVariableExist(initName) then
+                        insert(library.initiallyMissingRequirements, initName)
+                    end
+                end
+            end
+            insert(library.initQueue, function(forceOptional)
+                if whichInit then
                     for _,initName in ipairs(whichInit) do
                         --check all strings in the table and make sure they exist in _G or were already initialized by OnLibraryInit with a non-global name.
-                        if not rawget(_G, initName) and not initHandlerExists[initName] then return end
+                        if not doesVariableExist(initName) and not library.loaded[initName] then return end
                     end
-                    if whichInit.optional then
+                    if not forceOptional and whichInit.optional then
                         for _,initName in ipairs(whichInit.optional) do
                             --If the item isn't yet initialized, but is queued to initialize, then we postpone the initialization.
                             --Declarations would be made in the Lua root, so if optional dependencies are not found by the time
                             --OnLibraryInit runs its triggers, we can assume that it doesn't exist in the first place.
-                            if not rawget(_G, initName) then
-                                if initHandlerExists[initName]==false then return end
-                                rawset(_G, initName, false)
-                            end
+                            if not doesVariableExist(initName) and library.loaded[initName]==false then return end
                         end
                     end
-                    --run the initializer if all requirements either exist in _G or have been loaded by OnLibraryInit.
-                    return runInit()
+                    whichInit = nil --flag as nil to prevent recursive calls.
+                   
+                    --run the initializer if all requirements either exist in _G or have been fully declared.
+                    callUserInitFunction(userFunc, "OnLibraryInit", nameOfInit)
+                    return true
                 end
-            end
-            if whichInit.name then
-                initHandlerExists[whichInit.name]=false
-            end
-            if _ERROR then
-                for _,initName in ipairs(whichInit) do
-                    if not rawget(_G, initName) then
-                        insert(missingRequirements, initName)
-                    end
-                end
-            end
-        else
-            displayError("Invalid requirement type passed to OnLibraryInit: "..type(whichInit))
-            return
-        end
-        insert(libraryInitQueue, initFuncHandler)
-    end
-
-    local function addReq(name, optional)
-        if not rawget(_G, name) then
-            local co = coroutine.running()
-            OnLibraryInit(optional and {optional={name}} or name, function() coroutine.resume(co) end)
-            coroutine.yield(co)
+            end)
         end
     end
-    Require = {
-        __call   = function(_, name)                                     addReq(name)           end,
-        optional = function(name) if initHandlerExists[name]==false then addReq(name, true) end end
-    }
-    setmetatable(Require, Require)
-end
+    
+    if _USE_LIBRARY_API and _USE_COROUTINES then
+        local function addReq(optional, ...)
+            if not doesVariableExist(...) and not optional or library.loaded[...]==false then
+                local co = coroutine.running()
+                OnLibraryInit(optional and {optional={...}} or {...}, function() coroutine.resume(co) end)
+                coroutine.yield(co)
+            end
+            return rawget(_G, ...) or library.loaded[...]
+        end
+        ---@class Require
+        ---@field __call fun(requirement: string):any       --local requirement = Require "SomeRequirement"     --Patiently waits for the requirement and returns it
+        ---@field optional fun(requirement: string):any     --local optReq = Require.optional "SomethingElse"   --Impatiently waits for the requirement and returns it
+        Require = {
+            __call   = function(_, ...)  return addReq(false, ...) end,
+            optional = function(...)     return addReq(true,  ...) end
+        }
+        setmetatable(Require, Require)
+    end
+    
+    end

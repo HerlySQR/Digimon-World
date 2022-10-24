@@ -6,6 +6,9 @@ OnLibraryInit("AbilityUtils", function ()
     local AttackFactor = 0.5
     local Area = 350.
     local PushDist = 350.
+    local CasterEffect = "Abilities\\Spells\\Other\\Tornado\\TornadoElemental.mdl"
+    local TargetUnitEffect1 = "Abilities\\Spells\\Other\\Tornado\\Tornado_Target.mdl"
+    local TargetUnitEffect2 = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -16,7 +19,7 @@ OnLibraryInit("AbilityUtils", function ()
         local damage = GetAttributeDamage(caster, StrDmgFactor, AgiDmgFactor, IntDmgFactor) +
                        GetAvarageAttack(caster) * AttackFactor
         -- --
-        local eff = AddSpecialEffect("Abilities\\Spells\\Other\\Tornado\\TornadoElemental.mdl", x, y)
+        local eff = AddSpecialEffect(CasterEffect, x, y)
         BlzSetSpecialEffectZ(eff, -150.)
         DestroyEffect(eff)
         -- --
@@ -30,8 +33,8 @@ OnLibraryInit("AbilityUtils", function ()
                         math.atan(GetUnitY(u) - GetUnitY(caster), GetUnitX(u) - GetUnitX(caster)),
                         PushDist,
                         2000.,
-                        "Abilities\\Spells\\Other\\Tornado\\Tornado_Target.mdl",
-                        "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
+                        TargetUnitEffect1,
+                        TargetUnitEffect2
                     )
                 end
             end

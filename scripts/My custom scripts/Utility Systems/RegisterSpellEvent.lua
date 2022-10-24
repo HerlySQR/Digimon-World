@@ -1,5 +1,4 @@
---Lua RegisterSpellEvent
-do
+OnLibraryInit({name = "RegisterSpellEvent"}, function ()
     -- I use the handle id because when these events are type casted to
     -- eventid they become different objects
     local tb = {
@@ -60,7 +59,7 @@ do
     function RegisterSpellEndCastEvent(abil, onCast)
         RegisterSpell(abil, onCast, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
     end
-end
+end)
 
 --syntax is:
 --RegisterSpellEffectEvent(FourCC('Abil'), function() print(GetUnitName(GetTriggerUnit())) end)

@@ -4,6 +4,7 @@ OnLibraryInit("AbilityUtils", function ()
     local AgiDmgFactor = 0.15
     local IntDmgFactor = 0.15
     local AttackFactor = 0.5
+    local MissieModel = "Abilities\\Spells\\Other\\TinkerRocket\\TinkerRocketMissile.mdl"
     -- The same as it is in the object editor
     local Area = 200.
     local Order = Orders.clusterrockets
@@ -31,7 +32,7 @@ OnLibraryInit("AbilityUtils", function ()
             missile.source = caster
             missile.owner = owner
             missile.damage = damage
-            missile:model("Abilities\\Spells\\Other\\TinkerRocket\\TinkerRocketMissile.mdl")
+            missile:model(MissieModel)
             missile:speed(700.)
             missile:arc(60.)
             missile.onFinish = function ()

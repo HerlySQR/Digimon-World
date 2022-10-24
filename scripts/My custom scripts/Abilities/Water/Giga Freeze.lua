@@ -6,6 +6,7 @@ OnLibraryInit("AbilityUtils", function ()
     local AttackFactor = 0.5
     local MaxRange = 700.
     local FreezeChance = 25
+    local MissileModel = "Abilities\\Spells\\Other\\CrushingWave\\CrushingWaveMissile.mdl"
     -- The ice slow is a gameplay constant
 
     RegisterSpellEffectEvent(Spell, function ()
@@ -21,7 +22,7 @@ OnLibraryInit("AbilityUtils", function ()
         missile.source = caster
         missile.owner = GetOwningPlayer(caster)
         missile.damage = damage
-        missile:model("Abilities\\Spells\\Other\\CrushingWave\\CrushingWaveMissile.mdl")
+        missile:model(MissileModel)
         missile:speed(1050.)
         missile:arc(0)
         missile.collision = 150.

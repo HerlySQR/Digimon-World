@@ -7,11 +7,10 @@ OnLibraryInit({name = "Knockback", "LinkedList"}, function ()
     local Knockbacked = __jarray(0)
 
     local function Update()
-        for node in All:loop() do
-            local knock = node.value
+        for knock in All:loop() do
             if knock.reachedDistance >= knock.maxDistance then
                 Knockbacked[knock.target] = Knockbacked[knock.target] - 1
-                All:remove(knock)
+                knock:remove()
                 if All.head.next == All.head then
                     return true
                 end
@@ -59,21 +58,21 @@ OnLibraryInit({name = "Knockback", "LinkedList"}, function ()
     ---@param effect2 string
     ---@param destroyTrees? boolean
     function Knockback(target, direction, distance, speed, effect1, effect2, destroyTrees)
-        local new = {
-            target = target,
-            direction = direction,
-            maxDistance = distance,
-            speed = speed * INTERVAL,
-            effect1 = effect1,
-            effect2 = effect2,
-            destroyTrees = destroyTrees,
-            reachedDistance = 0,
-            reduceSpeed = 0,
-            effectCounter1 = 0,
-            effectCounter2 = 0,
-        }
+        local new = All:insert()
         Knockbacked[target] = Knockbacked[target] + 1
-        All:insert(new)
+
+        new.target = target
+        new.direction = direction
+        new.maxDistance = distance
+        new.speed = speed * INTERVAL
+        new.effect1 = effect1
+        new.effect2 = effect2
+        new.destroyTrees = destroyTrees
+        new.reachedDistance = 0
+        new.reduceSpeed = 0
+        new.effectCounter1 = 0
+        new.effectCounter2 = 0
+
         if new.next == All.head then
             Timed.echo(Update, INTERVAL)
         end

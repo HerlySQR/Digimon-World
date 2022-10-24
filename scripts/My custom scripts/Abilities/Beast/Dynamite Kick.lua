@@ -5,6 +5,8 @@ OnLibraryInit("AbilityUtils", function ()
     local IntDmgFactor = 0.
     local AttackFactor = 0.5
     local PushDist = 325.
+    local CasterEffect = "Objects\\Spawnmodels\\Other\\NeutralBuildingExplosion\\NeutralBuildingExplosion.mdl"
+    local TargetUnitEffect = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -15,7 +17,7 @@ OnLibraryInit("AbilityUtils", function ()
         -- --
         Damage.apply(caster, target, damage, true, false, udg_Beast, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
         -- XD
-        local eff = AddSpecialEffect("Objects\\Spawnmodels\\Other\\NeutralBuildingExplosion\\NeutralBuildingExplosion.mdl", GetUnitX(caster), GetUnitY(caster))
+        local eff = AddSpecialEffect(CasterEffect, GetUnitX(caster), GetUnitY(caster))
         BlzSetSpecialEffectScale(eff, 2.)
         DestroyEffect(eff)
         -- Push the target
@@ -25,7 +27,7 @@ OnLibraryInit("AbilityUtils", function ()
                 math.atan(GetUnitY(target) - GetUnitY(caster), GetUnitX(target) - GetUnitX(caster)),
                 PushDist,
                 2500.,
-                "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl",
+                TargetUnitEffect,
                 nil)
         end
     end)

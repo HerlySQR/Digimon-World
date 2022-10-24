@@ -2,7 +2,7 @@ OnLibraryInit({name = "DummyCaster", "WorldBounds", "Timed"}, function ()
     -- System based on MUI DummyCaster
 
     -- Import the dummy from the object editor
-    local DummyID = FourCC('hpea')
+    local DummyID = FourCC('n000')
 
     -- WARNING: Do not touch anything below this line!
 

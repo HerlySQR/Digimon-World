@@ -26,7 +26,6 @@ optional={
     *The real value at the end dictates the priority that the event will run in. Smaller numbers run first.
     ]]
     ---@class Event : LinkedList
-    ---@field public    run         fun(...)
     ---@field public    args        table       --Retrieve the arguments via a variable event callback
     ---@field private   execute     function
     ---@field private   varStr      string
@@ -78,7 +77,7 @@ optional={
     end
     
     ---Execute all functions registered to this event
-    ---@param ... any optional arguments are optional.
+    ---@vararg any optional arguments are optional.
     function Event:run(...)
         if self.varStr then
             local args = Event.args --need to be able to access args publicly for registered triggers.

@@ -4,11 +4,12 @@ OnLibraryInit("AbilityUtils", function ()
     local AgiDmgFactor = 0.
     local IntDmgFactor = 0.45
     local AttackFactor = 0.5
+    local TargetPointEffect = "Abilities\\Spells\\NightElf\\MoonWell\\MoonWellCasterArt.mdl"
     -- The same as it is in the object editor
     local Area = 250.
 
     RegisterSpellCastEvent(Spell, function ()
-        local eff = AddSpecialEffect("Abilities\\Spells\\NightElf\\MoonWell\\MoonWellCasterArt.mdl", GetSpellTargetX(), GetSpellTargetY())
+        local eff = AddSpecialEffect(TargetPointEffect, GetSpellTargetX(), GetSpellTargetY())
         BlzSetSpecialEffectScale(eff, 2.5)
         BlzSetSpecialEffectColor(eff, 0, 255, 0)
         DestroyEffect(eff)

@@ -20,13 +20,9 @@ OnLibraryInit("AbilityUtils", function ()
                     source)
                 -- Damage over time
                 local dmg = IntDmgFactor * GetHeroInt(target, true)
-                Timed.echo(function (node)
-                    if node.elapsed < Duration then
-                        Damage.apply(target, source, dmg, true, false, udg_Dark, DAMAGE_TYPE_MIND, WEAPON_TYPE_WHOKNOWS)
-                    else
-                        return true
-                    end
-                end, 1.)
+                Timed.echo(1., Duration, function ()
+                    Damage.apply(target, source, dmg, true, false, udg_Dark, DAMAGE_TYPE_MIND, WEAPON_TYPE_WHOKNOWS)
+                end)
             end
         end
     end)

@@ -25,7 +25,7 @@ OnLibraryInit({name = "EXP", "Digimon"}, function ()
         local LocalPlayer = GetLocalPlayer()
         Digimon.killEvent(function (killer, dead)
             local owner = Wc3Type(killer) == "unit" and GetOwningPlayer(killer) or killer:getOwner()
-            if owner ~= Digimon.NEUTRAL then
+            if owner ~= Digimon.NEUTRAL and IsPlayerEnemy(owner, dead:getOwner()) then
                 Digimon.enumInRange(dead:getX(), dead:getY(), AREA, function (picked)
                     local diff = math.abs(picked:getLevel() - dead:getLevel())
                     if IsPlayerAlly(owner, picked:getOwner()) and diff <= 5 then
@@ -36,7 +36,7 @@ OnLibraryInit({name = "EXP", "Digimon"}, function ()
                         SetTextTagPermanent(tt, false)
                         SetTextTagLifespan(tt, 1.00)
                         SetTextTagFadepoint(tt, 0.50)
-                        SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, picked:getOwner()))
+                        SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, owner))
                     end
                 end)
             end

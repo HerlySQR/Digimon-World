@@ -6,6 +6,8 @@ OnLibraryInit("AbilityUtils", function ()
     local AttackFactor = 0.5
     local Area = 200.
     local PushDist = 200.
+    local CasterEffect = "Abilities\\Spells\\NightElf\\Taunt\\TauntCaster.mdl"
+    local TargetUnitEffect = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -16,7 +18,7 @@ OnLibraryInit("AbilityUtils", function ()
         local damage = GetAttributeDamage(caster, StrDmgFactor, AgiDmgFactor, IntDmgFactor) +
                        GetAvarageAttack(caster) * AttackFactor
         -- --
-        DestroyEffect(AddSpecialEffect("Abilities\\Spells\\NightElf\\Taunt\\TauntCaster.mdl", x, y))
+        DestroyEffect(AddSpecialEffect(CasterEffect, x, y))
         -- --
         Timed.call(0.1, function ()
             ForUnitsInRange(x, y, Area, function (u)
@@ -29,7 +31,7 @@ OnLibraryInit("AbilityUtils", function ()
                             math.atan(GetUnitY(u) - GetUnitY(caster), GetUnitX(u) - GetUnitX(caster)),
                             PushDist,
                             1250.,
-                            "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl",
+                            TargetUnitEffect,
                             nil
                         )
                     end

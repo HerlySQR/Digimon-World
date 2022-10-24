@@ -4,6 +4,7 @@ OnLibraryInit("AbilityUtils", function ()
     local AgiDmgFactor = 0.
     local IntDmgFactor = 0.15
     local AttackFactor = 0.5
+    local MissileModel = "Abilities\\Weapons\\DemolisherFireMissile\\DemolisherFireMissile.mdl"
     -- The same as it is in the object editor
     local Area = 400.
 
@@ -17,7 +18,7 @@ OnLibraryInit("AbilityUtils", function ()
         missile.source = caster
         missile.owner = GetOwningPlayer(caster)
         missile.damage = damage
-        missile:model("Abilities\\Weapons\\DemolisherFireMissile\\DemolisherFireMissile.mdl")
+        missile:model(MissileModel)
         missile:speed(1100.)
         missile:arc(20.)
         missile.collision = 32.

@@ -1,4 +1,4 @@
-OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", "Environment"}, function ()
+OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", "Environment", "Vec2"}, function ()
 
     local LocalPlayer ---@type player
 
@@ -493,6 +493,36 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
             if clicks[d] == 2 then
                 clicks[d] = 0
                 Digimon.doubleclickEvent:run(p, d)
+            end
+        end)
+    end)
+
+    -- Order events
+
+    Digimon.issueTargetOrderEvent = Event.create()
+    Digimon.issuePointOrderEvent = Event.create()
+    Digimon.issueOrderEvent = Event.create()
+
+    OnTrigInit(function ()
+        RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER, function ()
+            local d1 = Digimon._instance[GetOrderedUnit()]
+            if d1 then
+                local d2 = Digimon._instance[GetOrderTargetUnit()]
+                if d2 then
+                    Digimon.issueTargetOrderEvent:run(d1, GetIssuedOrderId(), d2)
+                end
+            end
+        end)
+        RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, function ()
+            local d1 = Digimon._instance[GetOrderedUnit()]
+            if d1 then
+                Digimon.issuePointOrderEvent:run(d1, GetIssuedOrderId(), Vec2.new(GetOrderPointX(), GetOrderPointY()))
+            end
+        end)
+        RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_ORDER, function ()
+            local d1 = Digimon._instance[GetOrderedUnit()]
+            if d1 then
+                Digimon.issueOrderEvent:run(d1, GetIssuedOrderId())
             end
         end)
     end)

@@ -5,6 +5,9 @@ OnLibraryInit("AbilityUtils", function ()
     local IntDmgFactor = 0.15
     local AttackFactor = 0.5
     local Area = 300.
+    local MissileModel = "units\\human\\WaterElemental\\WaterElemental.mdl"
+    local TargetPointEffect = "Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl"
+    local TargetEffectUnit = "Abilities\\Spells\\Other\\CrushingWave\\CrushingWaveDamage.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -18,7 +21,7 @@ OnLibraryInit("AbilityUtils", function ()
         missile.source = caster
         missile.owner = GetOwningPlayer(caster)
         missile.damage = damage
-        missile:model("units\\human\\WaterElemental\\WaterElemental.mdl")
+        missile:model(MissileModel)
         missile:color(0, 0, 255)
         missile:speed(1100.)
         missile:arc(20.)
@@ -26,11 +29,11 @@ OnLibraryInit("AbilityUtils", function ()
         missile.collideZ = true
         local function onHitOrFinish(u)
             if not u or (IsUnitEnemy(u, missile.owner) and GetUnitAbilityLevel(u, LOCUST_ID) == 0) then
-                DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", missile.x, missile.y))
+                DestroyEffect(AddSpecialEffect(TargetPointEffect, missile.x, missile.y))
                 ForUnitsInRange(missile.x, missile.y, Area, function (u2)
                     if IsUnitEnemy(u2, missile.owner) then
                         Damage.apply(caster, u, damage, true, false, udg_Water, DAMAGE_TYPE_NORMAL, WEAPON_TYPE_WHOKNOWS)
-                        DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\CrushingWave\\CrushingWaveDamage.mdl", u2, "chest"))
+                        DestroyEffect(AddSpecialEffectTarget(TargetEffectUnit, u2, "chest"))
                     end
                 end)
                 return true

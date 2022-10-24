@@ -4,6 +4,7 @@ OnLibraryInit("AbilityUtils", function ()
     local AgiDmgFactor = 0.15
     local IntDmgFactor = 0.15
     local AttackFactor = 0.5
+    local MissileModel = "Abilities\\Weapons\\PoisonArrow\\PoisonArrowMissile.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -17,7 +18,7 @@ OnLibraryInit("AbilityUtils", function ()
         missile.owner = GetOwningPlayer(caster)
         missile.target = target
         missile.damage = damage
-        missile:model("Abilities\\Weapons\\PoisonArrow\\PoisonArrowMissile.mdl")
+        missile:model(MissileModel)
         missile:speed(1500.)
         missile:arc(15.)
         missile.collision = 32.

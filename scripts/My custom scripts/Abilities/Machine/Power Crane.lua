@@ -5,6 +5,7 @@ OnLibraryInit("AbilityUtils", function ()
     local IntDmgFactor = 0.
     local AttackFactor = 0.5
     local PushDist = 400.
+    local TargetUnitEffect = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -21,7 +22,7 @@ OnLibraryInit("AbilityUtils", function ()
                 math.atan(GetUnitY(target) - GetUnitY(caster), GetUnitX(target) - GetUnitX(caster)),
                 PushDist,
                 2000.,
-                "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl",
+                TargetUnitEffect,
                 nil,
                 true
             )

@@ -5,6 +5,7 @@ OnLibraryInit("AbilityUtils", function ()
     local IntDmgFactor = 0.45
     local AttackFactor = 0.5
     local DmgPerSecFactor = 0.3
+    local TargetUnitEffect = "Abilities\\Spells\\Undead\\Sleep\\SleepSpecialArt.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -12,8 +13,7 @@ OnLibraryInit("AbilityUtils", function ()
         -- Calculating the damage
         local damage = GetAttributeDamage(caster, StrDmgFactor, AgiDmgFactor, IntDmgFactor) +
                        GetAvarageAttack(caster) * AttackFactor
-        -- Create the missile
-        DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\Sleep\\SleepSpecialArt.mdl", target, "origin"))
+        DestroyEffect(AddSpecialEffectTarget(TargetUnitEffect, target, "origin"))
         -- Sleep
         DummyCast(GetOwningPlayer(caster),
             GetUnitX(caster), GetUnitY(caster),
@@ -24,13 +24,9 @@ OnLibraryInit("AbilityUtils", function ()
             target)
         -- Damage over time
         local dmg = damage * DmgPerSecFactor
-        Timed.echo(function (node)
-            if node.elapsed < 5. then
-                Damage.apply(caster, target, dmg, true, false, udg_Dark, DAMAGE_TYPE_MIND, WEAPON_TYPE_WHOKNOWS)
-            else
-                return true
-            end
-        end, 1.)
+        Timed.echo(1., 5., function ()
+            Damage.apply(caster, target, dmg, true, false, udg_Dark, DAMAGE_TYPE_MIND, WEAPON_TYPE_WHOKNOWS)
+        end)
     end)
 
 end)

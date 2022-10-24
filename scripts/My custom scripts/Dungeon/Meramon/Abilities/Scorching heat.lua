@@ -11,20 +11,17 @@ OnLibraryInit("BossFightUtils", function ()
         BossIsCasting(caster, true)
         local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\Doom\\DoomTarget.mdl", caster, "origin")
         BlzSetSpecialEffectScale(eff, 2.)
-        Timed.echo(function (node)
-            if node.elapsed < DURATION then
-                ForUnitsInRange(GetUnitX(caster), GetUnitY(caster), AREA, function (u)
-                    if IsUnitEnemy(caster, GetOwningPlayer(u)) then
-                        UnitDamageTarget(caster, u, DMG_PER_TICK, true, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
-                        DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\LordofFlameMissile\\LordofFlameMissile.mdl", u, "chest"))
-                    end
-                end)
-            else
-                BossIsCasting(caster, false)
-                BlzSetSpecialEffectScale(eff, 0.01)
-                DestroyEffect(eff)
-                return true
-            end
-        end, INTERVAL)
+        Timed.echo(INTERVAL, DURATION, function ()
+            ForUnitsInRange(GetUnitX(caster), GetUnitY(caster), AREA, function (u)
+                if IsUnitEnemy(caster, GetOwningPlayer(u)) then
+                    UnitDamageTarget(caster, u, DMG_PER_TICK, true, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
+                    DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\LordofFlameMissile\\LordofFlameMissile.mdl", u, "chest"))
+                end
+            end)
+        end, function ()
+            BossIsCasting(caster, false)
+            BlzSetSpecialEffectScale(eff, 0.01)
+            DestroyEffect(eff)
+        end)
     end)
 end)

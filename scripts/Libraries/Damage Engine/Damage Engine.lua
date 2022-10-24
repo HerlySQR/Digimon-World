@@ -250,6 +250,7 @@ OnLibraryInit({name = "Damage", "AddHook", "Timed", "LinkedList", optional = {"G
                     userIndex.func()
                 end
                 node = node.next
+                userIndex = node.value
             until node == head or check()
             --print("End of event running")
             
@@ -692,7 +693,7 @@ OnLibraryInit({name = "Damage", "AddHook", "Timed", "LinkedList", optional = {"G
             id.filters[_FILTER_ATTACK]  = true
             id.filters[_FILTER_MELEE]   = true
             id.filters[_FILTER_RANGED]  = true
-        else                            
+        else
             id.filters[filt]            = true
         end
         id.levelsDeep                   = 0

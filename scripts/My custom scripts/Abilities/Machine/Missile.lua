@@ -5,6 +5,7 @@ OnLibraryInit("AbilityUtils", function ()
     local IntDmgFactor = 0.15
     local AttackFactor = 0.5
     local DmgPerSecFactor = 0.15
+    local MissileModel = "Abilities\\Weapons\\Mortar\\MortarMissile.mdl"
     -- The same as it is in the object editor
     local Area = 400.
 
@@ -19,7 +20,7 @@ OnLibraryInit("AbilityUtils", function ()
         missile.source = caster
         missile.owner = owner
         missile.damage = damage
-        missile:model("Abilities\\Weapons\\Mortar\\MortarMissile.mdl")
+        missile:model(MissileModel)
         missile:speed(900.)
         missile:arc(25.)
         missile.collision = 96.

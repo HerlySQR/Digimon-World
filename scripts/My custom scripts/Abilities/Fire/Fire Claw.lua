@@ -4,6 +4,7 @@ OnLibraryInit("AbilityUtils", function ()
     local AgiDmgFactor = 0.15
     local IntDmgFactor = 0.
     local AttackFactor = 0.5
+    local TargetUnitModel = "Abilities\\Weapons\\FireBallMissile\\FireBallMissile.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -13,7 +14,7 @@ OnLibraryInit("AbilityUtils", function ()
                        GetAvarageAttack(caster) * AttackFactor
         -- --
         Damage.apply(caster, target, damage, true, false, udg_Fire, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
-        DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\FireBallMissile\\FireBallMissile.mdl", GetUnitX(target), GetUnitY(target)))
+        DestroyEffect(AddSpecialEffect(TargetUnitModel, GetUnitX(target), GetUnitY(target)))
         -- Reduce armor
         DummyCast(GetOwningPlayer(caster),
                   GetUnitX(caster), GetUnitY(caster),

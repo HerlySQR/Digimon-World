@@ -132,7 +132,7 @@ WM("wGeometry", function(import, export, exportDefault)
     copyFrom = function(self,that) return Vector3:clone(that) end,
     
     -- Copy vector from Unit X/Y/Z
-    --- @param u Unit
+    --- @param u unit
     copyFromUnit = function(self, u)
       local o = {}
       setmetatable(o,self)
@@ -143,7 +143,7 @@ WM("wGeometry", function(import, export, exportDefault)
     end,
     
     -- Copy vector from Location X/Y/Z
-    --- @param loc Location
+    --- @param loc location
     copyFromLocation = function(self, loc)
       local o = {}
       setmetatable(o,self)
@@ -154,7 +154,7 @@ WM("wGeometry", function(import, export, exportDefault)
     end,
     
     -- Copy vector from Item X/Y/Z
-    --- @param i Item
+    --- @param i item
     copyFromItem = function(self, i)
       local o = {}
       setmetatable(o,self)
@@ -165,7 +165,7 @@ WM("wGeometry", function(import, export, exportDefault)
     end,
     
     -- Copy vector from Destructable X/Y/Z
-    --- @param d Destructable
+    --- @param d destructable
     copyFromDestructable = function(self, d)
       local o = {}
       setmetatable(o,self)
@@ -370,8 +370,8 @@ WM("wGeometry", function(import, export, exportDefault)
     -- Applies hermite spline interpolation
     --- @param that Vector3
     --- @param amount current animation state, number between 0 and 1  
-    --- @param tangent1 (optional) 
-    --- @param tangent2 (optional)
+    --- @param tangent1? number
+    --- @param tangent2? number
     --- @return Vector3 result
     hermite = function(self, that, amount, tangent1, tangent2)
       if(tangent1 == nil) then
@@ -410,8 +410,8 @@ WM("wGeometry", function(import, export, exportDefault)
     end,
     
     -- Checks if the point is inside axis-aligned bounding box (AABB)
-    --- @param vMin
-    --- @param vMax
+    --- @param vMin Vector3
+    --- @param vMax Vector3
     --- @return boolean
     --- @deprecated use Box:containsVector()
     isInAABB = function(self, vMin, vMax)
@@ -1545,8 +1545,8 @@ WM("wGeometry", function(import, export, exportDefault)
     end,
     
     -- uses warcraft native functions
-    --- @param thePlayer Player
-    --- @param skipChangedFlag boolean. Set to true to deny .changed flag unsetting
+    --- @param thePlayer player
+    --- @param skipChangedFlag boolean Set to true to deny .changed flag unsetting
     applyCameraToPlayer = function(self, thePlayer, skipChangedFlag)
         if(GetLocalPlayer() == thePlayer) then
             SetCameraField(CAMERA_FIELD_ROTATION, self.yaw*radToDeg, 0)

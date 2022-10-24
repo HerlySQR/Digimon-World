@@ -26,7 +26,7 @@ OnLibraryInit({name = "PressSaveOrLoad", "PlayerData", "Timed"}, function ()
     local WarningMessage = nil ---@type dialog
     local WarningMessageReceived = __jarray(false) ---@type table<player, boolean>
 
-    OnMapInit(function ()
+    OnGameStart(function ()
         WarningMessage = DialogCreate()
         DialogSetMessage(WarningMessage, "|cffff0000WARNING|r\nTo properly save, you should\nrestart the Warcraft 3.")
         DialogAddButton(WarningMessage, "Understood", 0)

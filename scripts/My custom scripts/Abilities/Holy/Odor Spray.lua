@@ -6,11 +6,12 @@ OnLibraryInit("AbilityUtils", function ()
     local AttackFactor = 0.5
     local Chance = 25
     local Area = 350.
+    local TargetPointEffect = "Abilities\\Spells\\Other\\BreathOfFrost\\BreathOfFrostMissile.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
         local owner = GetOwningPlayer(caster)
-        local eff = AddSpecialEffect("Abilities\\Spells\\Other\\BreathOfFrost\\BreathOfFrostMissile.mdl", GetSpellTargetX(), GetSpellTargetY())
+        local eff = AddSpecialEffect(TargetPointEffect, GetSpellTargetX(), GetSpellTargetY())
         BlzSetSpecialEffectOrientation(eff, GetUnitFacing(caster) * bj_DEGTORAD, 0, 0)
         -- Calculating the damage
         local damage = GetAttributeDamage(caster, StrDmgFactor, AgiDmgFactor, IntDmgFactor) +

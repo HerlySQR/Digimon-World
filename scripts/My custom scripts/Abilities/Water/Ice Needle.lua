@@ -4,7 +4,7 @@ OnLibraryInit("AbilityUtils", function ()
     local AgiDmgFactor = 0.15
     local IntDmgFactor = 0.15
     local AttackFactor = 0.5
-    local DmgPerSecFactor = 0.1
+    local MissileModel = "Abilities\\Spells\\Other\\FrostBolt\\FrostBoltMissile.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -18,7 +18,7 @@ OnLibraryInit("AbilityUtils", function ()
         missile.owner = GetOwningPlayer(caster)
         missile.target = target
         missile.damage = damage
-        missile:model("Abilities\\Spells\\Other\\FrostBolt\\FrostBoltMissile.mdl")
+        missile:model(MissileModel)
         missile:speed(1000.)
         missile:arc(0)
         missile.collision = 32.

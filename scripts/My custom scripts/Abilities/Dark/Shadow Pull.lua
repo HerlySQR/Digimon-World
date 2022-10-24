@@ -5,6 +5,9 @@ OnLibraryInit("AbilityUtils", function ()
     local IntDmgFactor = 0.30
     local AttackFactor = 0.5
     local PullArea = 200.
+    local CasterEffect = "Abilities\\Weapons\\AvengerMissile\\AvengerMissile.mdl"
+    local TargetUnitEffect1 = "Abilities\\Spells\\Other\\Tornado\\Tornado_Target.mdl"
+    local TargetUnitEffect2 = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
@@ -15,7 +18,7 @@ OnLibraryInit("AbilityUtils", function ()
         local damage = GetAttributeDamage(caster, StrDmgFactor, AgiDmgFactor, IntDmgFactor) +
                        GetAvarageAttack(caster) * AttackFactor
         -- --
-        local eff = AddSpecialEffect("Abilities\\Weapons\\AvengerMissile\\AvengerMissile.mdl", x, y)
+        local eff = AddSpecialEffect(CasterEffect, x, y)
         BlzSetSpecialEffectScale(eff, 2.)
         DestroyEffect(eff)
         -- --
@@ -29,8 +32,8 @@ OnLibraryInit("AbilityUtils", function ()
                         math.atan(GetUnitY(caster) - GetUnitY(u), GetUnitX(caster) - GetUnitX(u)),
                         DistanceBetweenCoords(GetUnitX(caster), GetUnitY(caster), GetUnitX(u), GetUnitY(u)),
                         1000.,
-                        "Abilities\\Spells\\Other\\Tornado\\Tornado_Target.mdl",
-                        "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
+                        TargetUnitEffect1,
+                        TargetUnitEffect2
                     )
                 end
             end
