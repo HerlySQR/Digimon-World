@@ -1,4 +1,4 @@
-OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils", "Vec2"}, function ()
+OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils", "Vec2", "SyncedTable"}, function ()
     local CREEPS_PER_PLAYER     ---@type integer
     local CREEPS_PER_REGION     ---@type integer
     local LIFE_SPAN             ---@type number
@@ -19,7 +19,26 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
     ---@field reduced boolean
     ---@field returning boolean
     ---@field spawnpoint Vec2
+    ---@field rd RegionData
 
+    ---@class RegionData
+    ---@field rectID integer
+    ---@field spawnpoint Vec2
+    ---@field types integer[]
+    ---@field inDay boolean
+    ---@field inNight boolean
+    ---@field minLevel integer
+    ---@field maxLevel integer
+    ---@field inregion boolean
+    ---@field delay number
+    ---@field waitToSpawn number
+    ---@field creeps Creep[]
+    ---@field neighbourhood Set
+    ---@field sameRegion Set
+
+    ---@param unitid integer
+    ---@param pos Vec2
+    ---@return Creep
     local function CreateCreep(unitid, pos)
         local creep = Digimon.create(Digimon.NEUTRAL, unitid, pos.x, pos.y, bj_UNIT_FACING) ---@type Creep
 
@@ -36,60 +55,115 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
 
     local All = LinkedList.create()
 
-    local function Create(x, y, types)
-        local this = {
+    ---@param re rect
+    ---@param types integer[]
+    ---@return RegionData
+    local function Create(re, types, inDay, inNight, minLevel, maxLevel)
+        local x, y = GetRectCenterX(re), GetRectCenterY(re)
+        local this = { ---@type RegionData
+            rectID = GetHandleId(re),
             spawnpoint = Vec2.new(x, y),
-
             types = types,
-            inregion = false,
+            inDay = inDay,
+            inNight = inNight,
+            minLevel = minLevel,
+            maxLevel = maxLevel,
 
+            inregion = false,
             delay = 0.,
             waitToSpawn = 0.,
-
             creeps = {},
-            neighbourhood = Set.create()
+            neighbourhood = Set.create(),
+            sameRegion = Set.create()
         }
 
         All:insert(this)
 
         for node in All:loop() do
-            local r = node.value
+            local r = node.value ---@type RegionData
             if DistanceBetweenCoords(x, y, r.spawnpoint.x, r.spawnpoint.y) <= NEIGHBOURHOOD then
                 this.neighbourhood:addSingle(r)
                 r.neighbourhood:addSingle(this)
+                if this.rectID == r.rectID then
+                    this.sameRegion:addSingle(r)
+                    r.sameRegion:addSingle(this)
+                end
             end
         end
 
         return this
     end
 
-    local list = nil
+    local list = nil ---@type RegionData[]
 
     ---Returns a random neighbour that didn't reach its limit and is not in cooldown, if there is not, then return nil
+    ---@param r RegionData
+    ---@param quantity integer
+    ---@return RegionData
     local function GetFreeNeighbour(r, quantity)
         list = {}
+
         for n in r.neighbourhood:elements() do
-            if #n.creeps < quantity and n.waitToSpawn <= 0. then
+            if #n.creeps < quantity and n.waitToSpawn <= 0. and n.delay <= 0
+                and ((n.inDay and GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK)
+                or (n.inNight and (GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK))) then
+
                 table.insert(list, n)
             end
         end
+
         if #list > 0 then
             return list[math.random(#list)]
         end
+    end
+
+    ---Returns a random integer between min and max
+    ---but has more chance to get a closer integer to lvl
+    ---@param lvl integer
+    ---@param min integer
+    ---@param max integer
+    ---@return integer
+    local function GetProccessedLevel(lvl, min, max)
+        if min >= max then
+            return min
+        end
+
+        local weights = {}
+        local maxWeight = 0
+
+        for x = min, max do
+            local weight = 1/(1+(x-lvl)^2)
+            maxWeight = maxWeight + weight
+            weights[x] = maxWeight
+        end
+
+        local r = maxWeight * math.random()
+        local l = min
+        for x = min, max-1 do
+            if r > weights[x] then
+                l = l + 1
+            else
+                break
+            end
+        end
+
+        return l
     end
 
     local PlayersInRegion = Set.create()
 
     local function Update()
         for node in All:loop() do
-            local regionData = node.value
+            local regionData = node.value ---@type RegionData
             -- Check if the unit nearby the spawn region belongs to a player
             regionData.inregion = false
+            local lvl = 1
             ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, function (u)
                 if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
                     regionData.someoneClose = true
                     regionData.inregion = true
                     PlayersInRegion:addSingle(GetOwningPlayer(u))
+                    lvl = GetHeroLevel(u)
                 end
             end)
             -- Control the creep or the spawn
@@ -100,7 +174,12 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
                     -- Spawn per neighbourhood instead per region
                     local r = GetFreeNeighbour(regionData, math.min(CREEPS_PER_REGION, CREEPS_PER_PLAYER * PlayersInRegion:size())) -- If don't have neighbours, then just use the same region
                     if r then
-                        table.insert(r.creeps, CreateCreep(r.types[math.random(#r.types)], r.spawnpoint))
+                        local creep = CreateCreep(r.types[math.random(#r.types)], r.spawnpoint)
+                        creep:setLevel(GetProccessedLevel(lvl, r.minLevel, r.maxLevel))
+                        creep.rd = regionData
+                        for r2 in r.sameRegion:elements() do
+                            table.insert(r2.creeps, creep)
+                        end
                         -- They share the same delay
                         for n in regionData.neighbourhood:elements() do
                             n.waitToSpawn = math.max(DELAY_SPAWN, n.waitToSpawn)
@@ -129,22 +208,26 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
 
             for i = #regionData.creeps, 1, -1 do
                 local creep = regionData.creeps[i] ---@type Creep
-                local distance = creep.spawnpoint:dist(creep:getPos())
-                if distance > RANGE_RETURN then
-                    creep:issueOrder(Orders.move, creep.spawnpoint.x, creep.spawnpoint.y)
-                    creep.returning = true
-                end
-                if distance <= RANGE_IN_HOME then
-                    creep.returning = false
-                end
-                if creep.captured or creep.remaining <= 0. then
-                    if creep.remaining <= 0. then
-                        regionData.delay = DELAY_NORMAL
-                        creep:destroy()
-                    elseif creep.captured  then
-                        regionData.delay = DELAY_DEATH
+                if creep.rd == regionData then
+                    local distance = creep.spawnpoint:dist(creep:getPos())
+                    if distance > RANGE_RETURN then
+                        creep:issueOrder(Orders.move, creep.spawnpoint.x, creep.spawnpoint.y)
+                        creep.returning = true
                     end
-                    table.remove(regionData.creeps, i)
+                    if distance <= RANGE_IN_HOME then
+                        creep.returning = false
+                    end
+                    if creep.captured or creep.remaining <= 0. then
+                        if creep.remaining <= 0. then
+                            regionData.delay = DELAY_NORMAL
+                            creep:destroy()
+                        elseif creep.captured  then
+                            regionData.delay = DELAY_DEATH
+                        end
+                        for r2 in regionData.sameRegion:elements() do
+                            table.remove(r2.creeps, i)
+                        end
+                    end
                 end
             end
         end
@@ -154,7 +237,7 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
     OnMapInit(function ()
         Timed.call(function ()
             TriggerExecute(gg_trg_Creep_Spawn_System_Config)
-    
+
             CREEPS_PER_PLAYER = udg_CREEPS_PER_PLAYER
             CREEPS_PER_REGION = udg_CREEPS_PER_REGION
             LIFE_SPAN = udg_LIFE_SPAN
@@ -169,7 +252,7 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
             INTERVAL = udg_SPAWN_INTERVAL
             NEIGHBOURHOOD = udg_NEIGHBOURHOOD
 
-            Timed.echo(Update, INTERVAL)
+            Timed.echo(INTERVAL, Update)
 
             -- Clear
             udg_CREEPS_PER_PLAYER = nil
@@ -209,9 +292,19 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
         -- For GUI
         udg_CreepSpawnCreate = CreateTrigger()
         TriggerAddAction(udg_CreepSpawnCreate, function ()
-            Create(GetRectCenterX(udg_CreepSpawnRegion), GetRectCenterY(udg_CreepSpawnRegion), udg_CreepSpawnTypes)
-            udg_CreepSpawnTypes = __jarray(0)
+            Create(
+                udg_CreepSpawnRegion,
+                udg_CreepSpawnTypes,
+                udg_CreepSpawnInDay,
+                udg_CreepSpawnInNight,
+                udg_CreepSpawnMinLevel,
+                udg_CreepSpawnMaxLevel)
             udg_CreepSpawnRegion = nil
+            udg_CreepSpawnTypes = __jarray(0)
+            udg_CreepSpawnInDay = true
+            udg_CreepSpawnInNight = true
+            udg_CreepSpawnMinLevel = 1
+            udg_CreepSpawnMaxLevel = 1
         end)
     end)
 

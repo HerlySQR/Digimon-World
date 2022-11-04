@@ -1,15 +1,10 @@
 -- The pure Lua version of the Bounty Controller
 -- GUI version: https://www.hiveworkshop.com/threads/gui-bounty-controller.332114/
 
-globals(function(_ENV)
-    BountyEvent = 0.0
-    BountyDeadEvent = 0.0
-end)
-
-OnLibraryInit({name = "BountyController"}, function ()
+OnLibraryInit({name = "BountyController", "Event"}, function ()
     ---@deprecated, use Bounty.Enable() and Bounty.Disable() instead
     Bounty_Controller = nil
-    -- [[local]] LocalPlayer = nil
+    local LocalPlayer = nil ---@type player
 
     -- These can be edited (obviously only valid values)
 
@@ -31,14 +26,17 @@ OnLibraryInit({name = "BountyController"}, function ()
     local DEF_PERMANENT = false
     local LIMIT_RECURSION = 16 --If a loop caused by recursion is doing in porpouse you can edit the tolerance of how many calls can do
 
-    local t1 = nil ---@type trigger
-    local t2 = nil ---@type trigger
-
     local current = nil
     local Bounties0 = {}
     local Bounties1 = {}
     local Bounties2 = {}
     local Recursion = 0
+
+    local onDead = Event.create()
+    local onRun = Event.create()
+
+    local t1
+    local t2
 
     -- This function is runned at the map initialization,  if you wanna use it to your bounties,  you can do it
     local function SetData()
@@ -229,8 +227,7 @@ OnLibraryInit({name = "BountyController"}, function ()
         current = self
         what = self.TextTag
 
-        globals.BountyEvent = 0.00
-        globals.BountyEvent = 1.00
+        onRun(self)
 
         current = self
 
@@ -325,6 +322,7 @@ OnLibraryInit({name = "BountyController"}, function ()
         return Bounty.GetBase(id) + math.random(0, Bounty.GetDice(id) * Bounty.GetSides(id))
     end
 
+    ---@deprecated
     ---Returns the bounty that fired the event
     ---@return Bounty
     function Bounty.GetCurrent()
@@ -406,8 +404,7 @@ OnLibraryInit({name = "BountyController"}, function ()
 
             current = self
 
-            globals.BountyDeadEvent = 0.00
-            globals.BountyDeadEvent = 1.00
+            onDead:run(self)
 
             current = self
 
@@ -421,50 +418,67 @@ OnLibraryInit({name = "BountyController"}, function ()
         -- Last details
         t1 = CreateTrigger()
         t2 = CreateTrigger()
-        TriggerRegisterVariableEvent(t1, "BountyDeadEvent", EQUAL, 1.00)
-        TriggerRegisterVariableEvent(t2, "BountyEvent", EQUAL, 1.00)
+
         LocalPlayer = GetLocalPlayer()
         SetData()
     end)
 
     ---Adds a listener that will run when a unit kills another to the main trigger
-    ---@param func function
-    ---@return triggeraction
-    function RegisterBountyDeadEvent(func)
-        return TriggerAddAction(t1, func)
+    ---@param cb fun(bounty: Bounty)
+    ---@return Event
+    function Bounty.OnDead(cb)
+        return onDead(cb)
     end
 
+    ---Adds a listener that will run when a bounty is runned without problem
+    ---@param cb fun(bounty: Bounty)
+    ---@return Event
+    function Bounty.OnRun(cb)
+        return onRun(cb)
+    end
+
+    ---@deprecated
+    ---Adds a listener that will run when a unit kills another to the main trigger
+    ---@param func function
+    ---@return Event
+    function RegisterBountyDeadEvent(func)
+        return onDead(func)
+    end
+
+    ---@deprecated
     ---Adds a listener that will run when a unit kills another
     ---@param t trigger
     ---@param func function
-    ---@return triggeraction
+    ---@return Event
     function TriggerRegisterBountyDeadEvent(t, func)
-        TriggerRegisterVariableEvent(t, "BountyDeadEvent", EQUAL, 1.00)
-        return TriggerAddAction(t, func)
+        return onDead(func)
     end
 
+    ---@deprecated
     ---Returns the main trigger that will run when a unit kills another
     ---@return trigger
     function GetNativeBountyDeadTrigger()
         return t1
     end
 
+    ---@deprecated
     ---Adds a listener that will run when a bounty is runned without problem
     ---@param func function
-    ---@return triggeraction
+    ---@return Event
     function RegisterBountyEvent(func)
-        return TriggerAddAction(t2, func)
+        return onRun(func)
     end
 
+    ---@deprecated
     ---Adds a listener that will run when a bounty is runned without problem to the main trigger
     ---@param t trigger
     ---@param func function
-    ---@return triggeraction
+    ---@return Event
     function TriggerRegisterBountyEvent(t, func)
-        TriggerRegisterVariableEvent(t, "BountyEvent", EQUAL, 1.00)
-        return TriggerAddAction(t, func)
+        return onRun(t, func)
     end
 
+    ---@deprecated
     ---Returns the main trigger that will run when a bounty is runned without problem
     ---@return trigger
     function GetNativeBountyTrigger()

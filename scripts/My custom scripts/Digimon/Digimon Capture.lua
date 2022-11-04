@@ -17,10 +17,9 @@ OnLibraryInit({name = "DigimonCapture", "AbilityUtils"}, function ()
                     captureChance = R2I(Lerp(25, 50, 100 - GetUnitLifePercent(target)))
                 elseif dTarget.rank == Rank.CHAMPION then
                     captureChance = R2I(Lerp(12, 25, 100 - GetUnitLifePercent(target)))
-                elseif dTarget.rank == Rank.ULTIMATE then
-                    captureChance = R2I(Lerp(4, 8, 100 - GetUnitLifePercent(target)))
-                elseif dTarget.rank == Rank.MEGA then
-                    captureChance = 1
+                elseif dTarget.rank == Rank.ULTIMATE or dTarget.rank == Rank.MEGA then
+                    DisplayTextToPlayer(p, 0, 0, "This digimon is too powerful.")
+                    return
                 end
                 local randomCapture = math.random(0, 100)
                 DisplayTextToPlayer(p, 0, 0, "Your chance is: " .. captureChance)

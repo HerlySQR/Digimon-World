@@ -94,7 +94,12 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
 
     ---@param l integer
     function Digimon:setLevel(l)
-        SetHeroLevel(self.root, l, false)
+        local oldLevel = GetHeroLevel(self.root)
+        if l < oldLevel then
+            UnitStripHeroLevel(self.root, oldLevel - l)
+        elseif l > oldLevel then
+            SetHeroLevel(self.root, l, false)
+        end
     end
 
     ---@return integer

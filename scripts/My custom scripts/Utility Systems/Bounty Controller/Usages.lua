@@ -1,8 +1,9 @@
 OnLibraryInit({name = "BountyControllerUsages", "BountyController"}, function ()
-    RegisterBountyDeadEvent(function ()
-        local bounty = Bounty.GetCurrent()
+    Bounty.OnDead(function (bounty)
         local dead = Digimon.getInstance(bounty.DyingUnit)
-        bounty.Amount = dead:getLevel() * 2 + math.random(1, 5)
+        if dead then
+            bounty.Amount = dead:getLevel() * 2 + math.random(1, 5)
+        end
         print("aaaaa")
     end)
 end)
