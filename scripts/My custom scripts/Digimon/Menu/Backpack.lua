@@ -1,4 +1,9 @@
-OnLibraryInit({name = "Backpack", "UnitEnum", "GetSyncedData", "GetMainSelectedUnit", "PlayerUtils"}, function ()
+OnInit("Backpack", function ()
+    Require "UnitEnum"
+    Require "GetSyncedData"
+    Require "GetMainSelectedUnit"
+    Require "PlayerUtils"
+
     local Backpack = nil ---@type framehandle
     local BackdropBackpack = nil ---@type framehandle
     local BackpackMenu = nil ---@type framehandle
@@ -29,7 +34,7 @@ OnLibraryInit({name = "Backpack", "UnitEnum", "GetSyncedData", "GetMainSelectedU
 
     local AllowedItems = {}
 
-    local LocalPlayer = nil ---@type player
+    local LocalPlayer = GetLocalPlayer() ---@type player
 
     ---@param itemId integer
     ---@return ItemData
@@ -277,64 +282,62 @@ OnLibraryInit({name = "Backpack", "UnitEnum", "GetSyncedData", "GetMainSelectedU
 
     local gotItem = __jarray(false) ---@type table<player, boolean>
 
-    OnTrigInit(function ()
+    OnInit.final(function ()
         ForForce(FORCE_PLAYING, function ()
             PlayerItems[GetEnumPlayer()] = {}
         end)
+    end)
 
-        InitFrames()
-        FrameLoaderAdd(InitFrames)
+    InitFrames()
+    FrameLoaderAdd(InitFrames)
 
-        LocalPlayer = GetLocalPlayer()
+    -- Store the charged items
+    local t = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+    TriggerAddAction(t, function ()
+        local m = GetManipulatedItem()
+        if AllowedItems[GetItemTypeId(m)] then
+            local p = GetOwningPlayer(GetManipulatingUnit())
+            local items = PlayerItems[p]
+            local id = GetItemTypeId(m)
+            local itemData ---@type ItemData
 
-        -- Store the charged items
-        local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-        TriggerAddAction(t, function ()
-            local m = GetManipulatedItem()
-            if AllowedItems[GetItemTypeId(m)] then
-                local p = GetOwningPlayer(GetManipulatingUnit())
-                local items = PlayerItems[p]
-                local id = GetItemTypeId(m)
-                local itemData ---@type ItemData
+            gotItem[p] = true
+            ShowBackpack(p, true)
 
-                gotItem[p] = true
-                ShowBackpack(p, true)
-
-                for _, v in ipairs(items) do
-                    if v.id == id then
-                        itemData = v
-                        break
-                    end
-                end
-
-                if not itemData then
-                    itemData = CreateItemData(id)
-                    table.insert(items, itemData)
-                end
-                itemData.charges = itemData.charges + GetItemCharges(m)
-                RemoveItem(m)
-                if p == LocalPlayer then
-                    UpdateMenu()
+            for _, v in ipairs(items) do
+                if v.id == id then
+                    itemData = v
+                    break
                 end
             end
-        end)
 
-        -- For GUI
+            if not itemData then
+                itemData = CreateItemData(id)
+                table.insert(items, itemData)
+            end
+            itemData.charges = itemData.charges + GetItemCharges(m)
+            RemoveItem(m)
+            if p == LocalPlayer then
+                UpdateMenu()
+            end
+        end
+    end)
 
-        udg_BackpackRun = CreateTrigger()
-        TriggerAddAction(udg_BackpackRun, function ()
-            AllowedItems[udg_BackpackItem] = {
-                ability = udg_BackpackAbility,
-                order = Orders[udg_BackpackOrder],
-                level = udg_BackpackLevel,
-            }
+    -- For GUI
 
-            udg_BackpackItem = 0
-            udg_BackpackAbility = 0
-            udg_BackpackOrder = ""
-            udg_BackpackLevel = 1
-        end)
+    udg_BackpackRun = CreateTrigger()
+    TriggerAddAction(udg_BackpackRun, function ()
+        AllowedItems[udg_BackpackItem] = {
+            ability = udg_BackpackAbility,
+            order = Orders[udg_BackpackOrder],
+            level = udg_BackpackLevel,
+        }
+
+        udg_BackpackItem = 0
+        udg_BackpackAbility = 0
+        udg_BackpackOrder = ""
+        udg_BackpackLevel = 1
     end)
 
     ---@param p any

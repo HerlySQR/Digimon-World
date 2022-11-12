@@ -4,7 +4,7 @@
     Allows automatic timer tracking for the most common use cases (one-shot timers, and
     repeating timers that merge together for optimization).
 ----------------------------------------------------------------------------------------]]
-OnLibraryInit({name = "Timed"}, function ()
+do
     local _DEFAULT_ECHO_TIMEOUT = 0.03125
     local _EXIT_WHEN_FACTOR = 0.5 --Will potentially stop the echo before it has fully run
                                   --its course (via rounding). Set to 0 to disable. Can also override this from the Timed.echo 5th parameter.
@@ -97,7 +97,7 @@ Timed = {
                     if duration >= exitwhen then
                         return
                     elseif onExpire then
-                        --print(duration, exitwhen)
+                        print(duration, exitwhen)
                         onExpire()
                     end
                 end
@@ -153,4 +153,4 @@ Timed = {
         end
     end
 }
-end)
+end

@@ -1,4 +1,6 @@
-OnLibraryInit("BossFightUtils", function ()
+OnInit(function ()
+    Require "BossFightUtils"
+
     local SPELL = FourCC('A02A')
     local RANGE = 900. -- The same as in the object editor
     local DAMAGE = 5. -- per tick

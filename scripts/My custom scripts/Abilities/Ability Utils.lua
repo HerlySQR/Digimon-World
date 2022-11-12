@@ -1,4 +1,8 @@
-OnLibraryInit({name = "AbilityUtils", "Digimon", "RegisterSpellEvent", "Missiles", "Knockback"}, function ()
+OnInit("AbilityUtils", function ()
+    Require "Digimon"
+    Require "RegisterSpellEvent"
+    Require "Missiles"
+    Require "Knockback"
 
     LOCUST_ID = FourCC('Aloc')
 
@@ -31,12 +35,10 @@ OnLibraryInit({name = "AbilityUtils", "Digimon", "RegisterSpellEvent", "Missiles
 
     -- Remove sleep when is attacked
     local SLEEP_BUFF = FourCC('B005')
-    OnMapInit(function ()
-        Digimon.postDamageEvent(function (info)
-            if info.target:hasAbility(SLEEP_BUFF) and not udg_IsDamageCode then
-                info.target:removeAbility(SLEEP_BUFF)
-            end
-        end)
+    Digimon.postDamageEvent(function (info)
+        if info.target:hasAbility(SLEEP_BUFF) and not udg_IsDamageCode then
+            info.target:removeAbility(SLEEP_BUFF)
+        end
     end)
 
     ---Return a damage based in the hero attributes
@@ -82,14 +84,10 @@ OnLibraryInit({name = "AbilityUtils", "Digimon", "RegisterSpellEvent", "Missiles
     end
 
     local MAX_RANGE = 100.
-    local DUMMY_ITEM = nil ---@type item
-    local SEARCH_RECT = nil ---@type rect
+    local DUMMY_ITEM = CreateItem(FourCC('wolg'), 0, 0)
+    SetItemVisible(DUMMY_ITEM, false)
+    local SEARCH_RECT = Rect(0, 0, 128, 128)
     local hiddenItems = {} ---@type item[]
-    OnMapInit(function ()
-        DUMMY_ITEM = CreateItem(FourCC('wolg'), 0, 0)
-        SetItemVisible(DUMMY_ITEM, false)
-        SEARCH_RECT = Rect(0, 0, 128, 128)
-    end)
 
     ---@param x number
     ---@param y number

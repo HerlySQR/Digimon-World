@@ -1,13 +1,13 @@
-OnLibraryInit({name = "PlayerDigimons", "Digimon"}, function ()
+OnInit("PlayerDigimons", function ()
+    Require "Digimon"
+
     local MAX_DIGIMONS = 6
 
     local digimons = {}
 
-    OnMapInit(function ()
-        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-            digimons[Player(i)] = {}
-        end
-    end)
+    for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+        digimons[Player(i)] = {}
+    end
 
     ---@param owner player
     ---@param d Digimon

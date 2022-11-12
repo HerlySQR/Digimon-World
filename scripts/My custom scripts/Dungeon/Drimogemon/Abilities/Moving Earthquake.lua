@@ -1,4 +1,6 @@
-OnLibraryInit("BossFightUtils", function ()
+OnInit(function ()
+    Require "BossFightUtils"
+
     local SPELL = FourCC('A02F')
     local AREA = 300.
     local DURATION = 14.

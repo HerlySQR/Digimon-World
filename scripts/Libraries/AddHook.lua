@@ -1,141 +1,146 @@
 --[[
-    Hook 5.0.1 - better speed, features, code length, intuitive and has no requirements.
-    Core API has been reduced from Hook.add, Hook.addSimple, Hook.remove, Hook.flush to just AddHook
-    Secondary API has been reduced from hook.args, hook.returned, hook.old, hook.skip to just old(...)
-    AddHook returns two functions: 1) old function* and 2) function to call to remove the hook.**
-    
-    *The old function will point to either the originally-hooked function, or it will point to the next-lower priority
-        "AddHook" function a user requested. Not calling "oldFunc" means that any lower-priority callbacks will not
-        execute. It is therefore key to make sure to prioritize correctly: higher numbers are called before lower ones.
-"Classic" way of hooking in Lua is shown below, but doesn't allow other hooks to take a higher priority, nor can it be removed safely.
-    local oldFunc = BJDebugMsg
+--------------------------------------------------------------------
+AddHook version 5.1.1
+ Author: Bribe
+ Special Thanks: Jampion and Eikonium
+--------------------------------------------------------------------
+"AddHook" allows dynamic function overriding and cascading hook callbacks in Lua, empowering systems such as
+Global Variable Remapper and CreateEvent (which, in turn, empower systems such as Damage Engine and Spell Event).
+
+AddHook is a function which returns two functions:
+    1) The next hook callback or original native
+    2) A function to call to remove the hook.
+
+As of version 5.1, the hooked function is turned into a table, which allows syntax like "CreateTimer.old", which
+calls the next hooked function (or the native function, if no other hooked functions exist). The name of this
+extension can be anything you want - "native, oldFunc, original", whatever you find to be the most fitting for you.
+
+"Classic" way of hooking in Lua is shown below:
     BJDebugMsg = print
-The below allows other hooks to coexist with it, based on a certain priority, and can be removed:
-    local oldFunc, removeFunc = AddHook("BJDebugMsg", print)
+
+The below is the most simple translation within the AddHook system:
+    AddHook("BJDebugMsg", print)
+
 A small showcase of what you can do with the API:
     
-    local oldFunc, removeFunc --remember to declare locals before any function that uses them
-   
-    oldFunc, removeFunc = AddHook("BJDebugMsg", function(s)
-        if want_to_display_to_all_players then
-            oldFunc(s) --this either calls the native function, or allows lower-priority hooks to run.
-        elseif want_to_remove_hook then
-            removeFunc() --removes just this hook from BJDebugMsg
-        elseif want_to_remove_all_hooks then
-            removeFunc(true) --removes all hooks on BJDebugMsg
-        else
-            print(s) --not calling the native function means that lower-priority hooks will be skipped.
+    AddHook("CreateTimer", function()
+        if recycleTimer then
+            return recycleStack.pop()
+        elseif newTimer then
+            return CreateTimer.original()
         end
     end)
-Version 5.0 also introduces a "metatable" boolean as the last parameter, which will get or create a new metatable
-for the parentTable parameter, and assign the "oldFunc" within the metatable (or "default" if no oldFunc exists).
-This is envisioned to be useful for hooking __index and __newindex on the _G table, such as with Global Variable
-Remapper.
-]]--
-OnLibraryInit({name = "AddHook"}, function ()
----@param oldFunc string
----@param userFunc function
----@param priority? number
----@param parentTable? table
----@param default? function
----@param storeIntoMetatable? boolean
----@return function old_function
----@return function call_this_to_remove
-function AddHook(oldFunc, userFunc, priority, parentTable, default, storeIntoMetatable)
-    parentTable = parentTable or _G --if no parent table is specified, assume the user just wants a regular global hook.
-    if default and storeIntoMetatable then
-        local mt = getmetatable(parentTable)
-        if not mt then
-            mt = {}
-            setmetatable(parentTable, mt) --create a new metatable in case none existed.
+    AddHook("DestroyTimer", function(whichTimer)
+        if recycleTimer then
+            recycleStack.insert(whichTimer)
+        elseif destroyTimer then
+            DestroyTimer.old(whichTimer)
         end
-        parentTable = mt --index the hook to this metatable instead of to the 
-    end
-    local index     = 2 --the index defaults to 2 (index 1 is reserved for the original function that you're trying to hook)
-    local hookStr   = "_hooked_"..oldFunc --You can change the prefix if you want, in case it conflicts with any other prefixes you use in your table.
-    local hooks     = rawget(parentTable, hookStr)
-    priority        = priority or 0
-    if hooks then
-        local fin   = #hooks
-        repeat
-            if hooks[index][2] > priority then break end -- search manually for an index based on the priority of all other hooks.
-            index = index + 1
-        until index > fin
-        --print("adding to index:",index)
-    else
-        hooks = { --create a table that stores all hooks that can be added to this function.
-            { --this is the root hook table.
-                rawget(parentTable, oldFunc) or default,  --index[1] either points to the native function or to the default function if none existed.
-                ---@param where integer
-                ---@param instance? table
-                function(where, instance)               --index[2] is a function called to update hook indices when a new hook is added or an old is removed.
-                    local n = #hooks
-                    if where > n then --this only occurs when this is the first hook.
-                        hooks[where] = instance
-                    elseif where == n and not instance then --the top hook is being removed.
-                        hooks[where] = nil
-                        rawset(parentTable, oldFunc, hooks[where-1][1]) --assign the next function to the parent table
-                        --print("removing hook index:",where)
-                    else
-                        if instance then
-                            table.insert(hooks, where, instance) --if an instance is provided, we add it
-                            where = where + 1
-                            n = n + 1 --added in 5.0.1
-                            --print("adding hook instance:",where)
-                        else
-                            table.remove(hooks, where) --if no instance is provided, we remove the existing index. 
-                        end
-                        for i = where, n do
-                            --print("bumping up hook index at:",i)
-                            hooks[i][3](i) --when an index is added or removed in the middle of the list, re-map the subsequent indices.
-                        end
-                    end
-                end
-            }
-        } --create a new table with the callback functions defined above
-        rawset(parentTable, hookStr, hooks) --this would store the hook-table holding BJDebugMsg as _G["_hooked_BJDebugMsg"]
-    end
-    --call the stored function at root-hook-table[2] to assign indices.
-    hooks[1][2](index, { --this table belongs specifically to this newly-added Hook instance.
-        userFunc, --index[1] is the function that needs to be called in place of the original function.
-        priority, --index[2] is the priority specified by the user so it can be compared with future added hooks.
-        function(i) index = i end --index[3] is the function that is used to inject an instruction to realign the instance's local index (almost everything is processed in local scope).
-    })
-    if index == #hooks then -- this is the highest-priority hook and should be called first.
-        rawset(parentTable, oldFunc, userFunc) --insert the user's function as the actual function that gets natively called.
-        --print("setting parent-table hook function as userFunc at index:",index)
-    end
-    return function(...)
-        return hooks[index-1][1](...) --this is the "old" function, that will either call the original or call the next lower-priorty hook,
-    end,                              --and allows "..." without packing/unpacking.
-    --this is the "RemoveHook" function:
-    function(removeAll)
-        local fin = #hooks
-        if removeAll or fin == 2 then --remove all hooks.
-            rawset(parentTable, hookStr, nil) --clear memory
-            rawset(parentTable, oldFunc, hooks[1][1]) --restore the original function to the parent table.
+    end)
+
+    *Note that the names "original" and "old" are just fluff. As long as you are using them from within the callback function,
+    you can give them any name to call the original function (or next hook).
+    
+    If you are outside of the callback function, then denoting a property like "native" or "oldFunction" or such will always
+    call the native function (rather than trigger any hooked callbacks). However, this will fail if the native isn't hooked.
+]]------------------------------------------------------------------
+do
+    local max = math.max
+    local funcProxyTable = {}
+    local tableMetatable = {
+        __call = function(self, ...) --the new way of calling hooks, introduced in 5.1
+            self.current = #self
+            local result = self[self.current][1](...)
+            self.current = 0
+            return result
+        end,
+        __index = function(self) --Using the __index method means that non-indexed names will default to accessing the next/orignal function.
+            self.current = max(self.current - 1, 0)
+            return self[self.current][1]
+        end
+    }
+    ---Insert or remove a hook callback
+    ---@param hooks table
+    ---@param index integer
+    ---@param value? table
+    local function editList(hooks, index, value)
+        local top = #hooks
+        if index > top then
+            hooks[index] = value --simply add the index to the top of the stack
         else
-            hooks[1][2](index) --remove just the single hook instance
+            if value then
+                table.insert(hooks, index, value)
+                index = index + 1
+                top = top + 1
+            else
+                table.remove(hooks, index)
+                top = top - 1
+            end
+            for i = index, top do
+                hooks[i].setIndex(i) --Remap subsequent indices
+            end
+        end
+    end
+    local function createHookTable(native, current)
+        return setmetatable({[0]={native}, current=current}, tableMetatable)
+    end
+
+    ---@param nativeKey        any         Usually a string (the name of the old function you wish to hook)
+    ---@param callback         function    The function you want to run when the native is called. The args and return values would normally mimic the function that is hooked.
+    ---@param priority?        number      Defaults to 0. Hooks are called in order of highest priority down to lowest priority.
+    ---@param hostTable?       table       Defaults to _G, which is the table that stores all global variables.
+    ---@param default?         function    If the native does not exist in the host table, use this default instead.
+    ---@param usesMetatable?   boolean     Defaults to true if the "default" parameter is given.
+    ---@return fun(params_of_native?:any):any callNative
+    ---@return fun(remove_all_hooks?:boolean) callRemoveHook
+    function AddHook(nativeKey, callback, priority, hostTable, default, usesMetatable)
+        priority  = priority  or 0
+        hostTable = hostTable or _G
+        
+        local function getNative()
+            return rawget(hostTable, nativeKey) or default or error("Nothing could be hooked at: "..tostring(nativeKey))
+        end
+        
+        local proxy
+        if usesMetatable or (default and usesMetatable == nil) then
+            --Index the hook to the metatable instead of the user's given table. Create a new metatable in case none existed.
+            hostTable                            = getmetatable(hostTable)              or getmetatable(setmetatable(hostTable, {}))
+            funcProxyTable[hostTable]            = funcProxyTable[hostTable]            or {}
+            proxy                                = funcProxyTable[hostTable][nativeKey] or createHookTable(getNative())
+            funcProxyTable[hostTable][nativeKey] = proxy
+        end
+        local index  = 1
+        local hooks  = proxy or getNative()
+        local typeOf = type(hooks)
+        if proxy and #proxy == 0 then
+            rawset(hostTable, nativeKey, function(...) --metatable methods like __index cannot be impersonated by a table that uses metamethods such as __call.
+                return proxy[#proxy][1](...)           --I learned this the hard way when trying to find out why my hooks weren't working on GlobalRemap after Hook 5.1.
+            end)
+        elseif typeOf == "table" then
+            local exitwhen = #hooks
+            repeat
+                if hooks[index].priority > priority then break end --Search manually for an index based on the priority of all other hooks.
+                index = index + 1
+            until index > exitwhen
+        elseif typeOf == "function" then
+            hooks = createHookTable(hooks, 0)
+            rawset(hostTable, nativeKey, hooks)
+        else
+            error("Tried to hook an incorrect type: "..typeOf)
+        end
+        editList(hooks, index, {callback, priority = priority, setIndex = function(val) index = val end})
+        return proxy and function(...)
+            return hooks[index - 1][1](...) --used for metatables (no need to track the current position)
+        end or function(...)
+            hooks.current = index - 1
+            return hooks[index - 1][1](...) --used for native tables (tracks the current position)
+        end,
+        function(removeAll)
+            if removeAll or index == 1 and #hooks == 1 then
+                rawset(hostTable, nativeKey, hooks[0][1]) --Remove all hooks by restoring the original function to the host table. The native is stored at index [0][1]
+            else
+                editList(hooks, index)
+            end
         end
     end
 end
-
-
-local oldInitGlobals
-oldInitGlobals = AddHook("InitGlobals", function ()
-    xpcall(oldInitGlobals, function (msg)
-        TimerStart(CreateTimer(), 0, false, function ()
-            print(msg)
-        end)
-    end)
-end)
-
-local oldInitCustomTriggers
-oldInitCustomTriggers = AddHook("InitCustomTriggers", function ()
-    xpcall(oldInitCustomTriggers, function (msg)
-        TimerStart(CreateTimer(), 0, false, function ()
-            print(msg)
-        end)
-    end)
-end)
-end)

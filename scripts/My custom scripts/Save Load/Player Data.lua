@@ -1,4 +1,5 @@
-OnLibraryInit({name = "PlayerData", "PlayerDigimons"}, function ()
+OnInit("Player Data", function ()
+    Require "PlayerDigimons"
 
     do
         ---@class Inventory

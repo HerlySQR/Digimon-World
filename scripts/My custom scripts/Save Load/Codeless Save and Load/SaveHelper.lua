@@ -1,12 +1,13 @@
-OnLibraryInit({name = "SaveHelper", "SyncHelper", "PlayerUtils", "SaveFile"}, function ()
-
-    -- Uses GUI variables from the "Save Init" trigger. You can modify these functions to use your own variables.
+OnInit("SaveHelper", function ()
+    Require "SyncHelper"
+    Require "PlayerUtils"
+    Require "SaveFile"
 
     SaveHelper = {
         Hashtable = {},
         KEY_ITEMS = 1,
         KEY_UNITS = 2,
-        KEY_NAMES = 3,
+        KEY_NAMES = 3
     }
 
     ---@return integer
@@ -128,7 +129,7 @@ OnLibraryInit({name = "SaveHelper", "SyncHelper", "PlayerUtils", "SaveFile"}, fu
     end
 
     ---@param id integer
-    ---@return integer
+    ---@return string
     function SaveHelper.GetHeroNameFromID(id)
         return udg_SaveNameList[id]
     end
@@ -140,7 +141,7 @@ OnLibraryInit({name = "SaveHelper", "SyncHelper", "PlayerUtils", "SaveFile"}, fu
     end
 
     ---@param name string
-    ---@return integer
+    ---@return string
     function SaveHelper.ConvertHeroName(name)
         return udg_SaveNameList[SaveHelper.GetHeroNameID(name)]
     end
@@ -156,27 +157,30 @@ OnLibraryInit({name = "SaveHelper", "SyncHelper", "PlayerUtils", "SaveFile"}, fu
         for i = 1, level do
             xp = (xp*udg_HeroXPPrevLevelFactor) + (i+1) * udg_HeroXPLevelFactor
         end
-        return xp - udg_HeroXPLevelFactor
+        return xp-udg_HeroXPLevelFactor
     end
 
-    -- Called at the end of "Save Init" trigger
+    ---called at the end of "Save Init" trigger
     function SaveHelper.Init()
         SaveHelper.Hashtable[SaveHelper.KEY_ITEMS] = {}
         for i = 0, SaveHelper.MaxItems() do
+            --if udg_SaveItemType[i] == 0 then break end
             SaveHelper.Hashtable[SaveHelper.KEY_ITEMS][udg_SaveItemType[i]] = i
         end
         SaveHelper.Hashtable[SaveHelper.KEY_UNITS] = {}
         for i = 0, SaveHelper.MaxUnits() do
+            --if udg_SaveUnitType[i] == 0 then break end
             SaveHelper.Hashtable[SaveHelper.KEY_UNITS][udg_SaveUnitType[i]] = i
         end
         SaveHelper.Hashtable[SaveHelper.KEY_NAMES] = {}
         for i = 0, SaveHelper.MaxNames() do
+            if udg_SaveNameList[i] == "" or udg_SaveNameList[i] == nil then break end
             SaveHelper.Hashtable[SaveHelper.KEY_NAMES][udg_SaveNameList[i]] = i
         end
     end
 
     ---@param u unit
-    ---@return unknown
+    ---@return string
     function GetHeroSaveCode(u)
         if udg_SaveUseGUI then
             TriggerExecute(gg_trg_Save_GUI)
@@ -185,35 +189,16 @@ OnLibraryInit({name = "SaveHelper", "SyncHelper", "PlayerUtils", "SaveFile"}, fu
         return ""
     end
 
-    local function LoadSaveSlot_OnLoad()
-        local p = GetTriggerPlayer()
-        local prefix = BlzGetTriggerSyncPrefix()
-        local data = BlzGetTriggerSyncData()
-        local user = User[p]
-
-        SaveHelper.SetUserLoading(user, false)
-
-        if (udg_SaveUseGUI) then
-            udg_SaveLoadEvent_Code = data
-            udg_SaveLoadEvent_Player = p
-            globals.udg_SaveLoadEvent = 1.
-            globals.udg_SaveLoadEvent = -1
-        end
-    end
-
-    ---@param p player
-    ---@param slot integer
     function LoadSaveSlot(p, slot)
-        local s
         local user = User[p]
 
-        if not SaveFile.exists(slot) then
+        if not SaveFile.exists(p, slot) then
             DisplayTextToPlayer(p, 0, 0, "Did not find any save data.")
             return
         elseif (SaveHelper.IsUserLoading(user)) then
             DisplayTextToPlayer(p, 0, 0, "Please wait while your character synchronizes.")
         else
-            s = SaveFile.getData(slot)
+            local s = SaveFile.getData(p, slot)
             if GetLocalPlayer() == p then
                 SyncString(s)
             end
@@ -223,17 +208,12 @@ OnLibraryInit({name = "SaveHelper", "SyncHelper", "PlayerUtils", "SaveFile"}, fu
         end
     end
 
-    ---@param p player
-    ---@param slot integer
     function DeleteCharSlot(p, slot)
         if GetLocalPlayer() == p then
             SaveFile.clear(p, slot)
         end
     end
 
-    ---@param u unit
-    ---@param slot integer
-    ---@param s string
     function SaveCharToSlot(u, slot, s)
         local p = GetOwningPlayer(u)
         if GetLocalPlayer() == p then
@@ -242,7 +222,22 @@ OnLibraryInit({name = "SaveHelper", "SyncHelper", "PlayerUtils", "SaveFile"}, fu
         SaveHelper.SetSaveSlot(User[p], slot)
     end
 
-    OnMapInit(function ()
-        OnSyncString(LoadSaveSlot_OnLoad)
+    OnInit.trig(function ()
+        OnSyncString(function ()
+            local p = GetTriggerPlayer()
+            local prefix = BlzGetTriggerSyncPrefix()
+            local data = BlzGetTriggerSyncData()
+            local user = User[p]
+
+            SaveHelper.SetUserLoading(user, false)
+
+            if udg_SaveUseGUI then
+                udg_SaveLoadEvent_Code = data
+                udg_SaveLoadEvent_Player = p
+                globals.udg_SaveLoadEvent = 1.
+                globals.udg_SaveLoadEvent = -1
+            end
+        end)
     end)
+
 end)

@@ -16,7 +16,11 @@
     
 ----------------------------------------------------------------------------------------]]
 
-OnLibraryInit({name = "Damage", "AddHook", "Timed", "LinkedList", optional = {"GlobalRemap"}}, function() Damage = {}
+OnInit("Damage", function() Damage = {}
+    Require "AddHook"
+    Require "Timed"
+    Require "LinkedList"
+    Require.optional "GlobalRemap"
 
     ---@class damageEvent:LinkedList
     ---@class damageEventRegistry:listNode

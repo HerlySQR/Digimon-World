@@ -1,7 +1,7 @@
-OnLibraryInit({name = "Obj2Str",
-    "Wc3Type"}, function () -- https://www.hiveworkshop.com/threads/debug-utils-ingame-console-etc.330758/
+OnInit("Obj2Str", function ()
+    Require "Wc3Type" -- https://www.hiveworkshop.com/threads/debug-utils-ingame-console-etc.330758/
 
-    local h = nil ---@type hashtable
+    local h = InitHashtable()
 
     ---I do it in this way, because I can't get a general conversion to all this types
     local Names = {
@@ -128,9 +128,5 @@ OnLibraryInit({name = "Obj2Str",
             return func(h, 0, 0)
         end
     end
-
-    OnMapInit(function ()
-        h = InitHashtable()
-    end)
 
 end)

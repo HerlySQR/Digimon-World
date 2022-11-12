@@ -1,4 +1,7 @@
-OnLibraryInit({name = "DummyCaster", "WorldBounds", "Timed"}, function ()
+OnInit("DummyCaster", function ()
+    Require "WorldBounds"
+    Require "Timed"
+
     -- System based on MUI DummyCaster
 
     -- Import the dummy from the object editor
@@ -7,11 +10,11 @@ OnLibraryInit({name = "DummyCaster", "WorldBounds", "Timed"}, function ()
     -- WARNING: Do not touch anything below this line!
 
     -- Default 3 values you may use, pick one as desired
-    ---@class CastType
+    ---@enum CastType
     CastType = {
-        IMMEDIATE = 0,  ---@type CastType
-        POINT = 1,      ---@type CastType
-        TARGET = 2      ---@type CastType
+        IMMEDIATE = 0,
+        POINT = 1,
+        TARGET = 2
     }
 
     local Dummies = {}
@@ -90,16 +93,14 @@ OnLibraryInit({name = "DummyCaster", "WorldBounds", "Timed"}, function ()
         return success
     end
 
-    OnMapInit(function ()
-        local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_FINISH)
-        TriggerAddAction(t, function ()
-            if GetUnitTypeId(GetSpellAbilityUnit()) == DummyID then
-                local u = GetSpellAbilityUnit()
-                Timed.call(1., function ()
-                    RefreshDummy(u)
-                end)
-            end
-        end)
+    local t = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_FINISH)
+    TriggerAddAction(t, function ()
+        if GetUnitTypeId(GetSpellAbilityUnit()) == DummyID then
+            local u = GetSpellAbilityUnit()
+            Timed.call(1., function ()
+                RefreshDummy(u)
+            end)
+        end
     end)
 end)

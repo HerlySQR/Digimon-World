@@ -1,4 +1,7 @@
-OnLibraryInit({name = "Transmission", "LinkedList", "Timed", "Wc3Type"}, function ()
+OnInit("Transmission", function ()
+    Require "LinkedList"
+    Require "Timed"
+    Require "Wc3Type"
 
     -- See the API here https://www.hiveworkshop.com/threads/vjass-lua-unit-transmission.332814/
 
@@ -494,23 +497,3 @@ OnLibraryInit({name = "Transmission", "LinkedList", "Timed", "Wc3Type"}, functio
     end)
 
 end)
-
-do
-    -- Error message
-
-    local errorSound
-
-    ---@param message string
-    ---@param whatPlayer player
-    function ErrorMessage(message, whatPlayer)
-        if not errorSound then
-            errorSound = CreateSoundFromLabel("InterfaceError", false, false, false, 10, 10)
-        end
-
-        if LocalPlayer == whatPlayer then
-            ClearTextMessages()
-            DisplayTimedTextToPlayer(whatPlayer, 0.52, 0.96, 2, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n|cffffcc00" .. message .. "|r")
-            StartSound(errorSound)
-        end
-    end
-end

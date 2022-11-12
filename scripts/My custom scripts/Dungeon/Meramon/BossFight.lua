@@ -1,4 +1,6 @@
-OnLibraryInit({name = "Meramon", "BossFightUtils"}, function ()
+OnInit(function ()
+    Require "BossFightUtils"
+
     local boss = gg_unit_O061_0445 ---@type unit
     local battlefield = {} ---@type rect[]
     local INTERVAL = 2. -- seconds

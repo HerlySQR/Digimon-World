@@ -1,4 +1,6 @@
-OnLibraryInit("BossFightUtils", function ()
+OnInit(function ()
+    Require "BossFightUtils"
+
     local SPELL = FourCC('A02E')
     local MAX_DIST = 1000.
     local KB_DIST = 256.

@@ -1,6 +1,6 @@
-OnLibraryInit({name = "GetSyncedData",
-    "LinkedList", -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
-    "Obj2Str"}, function ()
+OnInit("GetSyncedData", function ()
+    Require "LinkedList" -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
+    Require "Obj2Str" -- https://www.hiveworkshop.com/pastebin/65b5fc46fc82087ba24609b14f2dc4ff.25120
 
     local PREFIX = "SYNC"
 
@@ -61,13 +61,11 @@ OnLibraryInit({name = "GetSyncedData",
         return value
     end
 
-    OnTrigInit(function ()
-        local t = CreateTrigger()
-        for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
-            BlzTriggerRegisterPlayerSyncEvent(t, Player(i), PREFIX, false)
-        end
-        TriggerAddAction(t, function ()
-            coroutine.resume(DequeueThread(), pcall(Str2Obj, BlzGetTriggerSyncData()))
-        end)
+    local t = CreateTrigger()
+    for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
+        BlzTriggerRegisterPlayerSyncEvent(t, Player(i), PREFIX, false)
+    end
+    TriggerAddAction(t, function ()
+        coroutine.resume(DequeueThread(), pcall(Str2Obj, BlzGetTriggerSyncData()))
     end)
 end)

@@ -1,4 +1,5 @@
-OnLibraryInit({name = "Knockback", "LinkedList"}, function ()
+OnInit("Knockback", function ()
+    Require "LinkedList"
     -- System based in Paladon's GUI Knockback System
 
     local INTERVAL = 0.02

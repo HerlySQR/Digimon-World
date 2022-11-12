@@ -1,4 +1,4 @@
-OnLibraryInit({name = "RegisterSpellEvent"}, function ()
+OnInit("RegisterSpellEvent", function ()
     -- I use the handle id because when these events are type casted to
     -- eventid they become different objects
     local tb = {

@@ -1,8 +1,9 @@
-OnLibraryInit({name="PreciseWait", optional={
-    "AddHook",      --https://www.hiveworkshop.com/threads/hook.339153
-    "GlobalRemap"   --https://www.hiveworkshop.com/threads/global-variable-remapper-the-future-of-gui.339308/
-}}, function()
-    --Precise Wait v1.4.1.0
+OnInit("PreciseWait", function(require) --https://www.hiveworkshop.com/threads/total-initialization.317099/
+
+    local hook  = require.optionally "AddHook"     --https://www.hiveworkshop.com/threads/hook.339153
+    local remap = require.optionally "GlobalRemap" --https://www.hiveworkshop.com/threads/global-variable-remapper-the-future-of-gui.339308/
+
+    --Precise Wait v1.5.0.1
     --This changes the default functionality of TriggerAddAction, PolledWait
     --and (because they don't work with manual coroutines) TriggerSleepAction and SyncSelections.
     
@@ -21,17 +22,15 @@ OnLibraryInit({name="PreciseWait", optional={
         end
     end
 
-    if GlobalRemap then
+    if remap then
         --This enables GUI to access WaitIndex as a "local" index for their arrays, which allows
         --the simplest fully-instanciable data attachment in WarCraft 3's GUI history. However,
         --using it as an array index will cause memory leaks over time, unless you also install
         --Lua-Infused GUI: https://www.hiveworkshop.com/threads/lua-infused-gui-automatic-group-location-rect-and-force-leak-prevention.317084/
 
-        GlobalRemap("udg_WaitIndex", coroutine.running)
+        remap("udg_WaitIndex", coroutine.running)
     end
-
-    local hook = AddHook
-    if not AddHook then
+    if not hook then
         hook = function(varName, userFunc)
             local old = rawget(_G, varName)
             rawset(_G, varName, userFunc)

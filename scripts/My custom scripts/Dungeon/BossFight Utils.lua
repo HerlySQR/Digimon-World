@@ -1,4 +1,6 @@
-OnLibraryInit({name = "BossFightUtils", "AbilityUtils"}, function ()
+OnInit("BossFightUtils", function ()
+    Require "AbilityUtils"
+
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
 

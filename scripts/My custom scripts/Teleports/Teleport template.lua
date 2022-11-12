@@ -1,5 +1,7 @@
-OnLibraryInit({name = "Teleport", "Digimon"}, function ()
-    local LocalPlayer = nil ---@type player
+OnInit(function ()
+    Require "Digimon"
+
+    local LocalPlayer = GetLocalPlayer() ---@type player
 
     ---Creates a new teleporter
     ---@param enterRect rect
@@ -8,7 +10,7 @@ OnLibraryInit({name = "Teleport", "Digimon"}, function ()
     ---@param leaveTP location
     ---@param enterText string
     ---@param leaveText string
-    function CreateTeleport(enterRect, leaveRect, enterTP, leaveTP, enterText, leaveText)
+    local function CreateTeleport(enterRect, leaveRect, enterTP, leaveTP, enterText, leaveText)
         local enterX, enterY = GetLocationX(enterTP), GetLocationY(enterTP)
         local leaveX, leaveY = GetLocationX(leaveTP), GetLocationY(leaveTP)
 
@@ -58,25 +60,21 @@ OnLibraryInit({name = "Teleport", "Digimon"}, function ()
     end
 
     -- For GUI
-    OnTrigInit(function ()
-        udg_TP_Create = CreateTrigger()
-        TriggerAddAction(udg_TP_Create, function ()
-            CreateTeleport(
-                udg_TP_EnterRect,
-                udg_TP_LeaveRect,
-                udg_TP_EnterPoint,
-                udg_TP_LeavePoint,
-                udg_TP_EnterText,
-                udg_TP_LeaveText
-            )
-            udg_TP_EnterRect = nil
-            udg_TP_LeaveRect = nil
-            udg_TP_EnterPoint = nil
-            udg_TP_LeavePoint = nil
-            udg_TP_EnterText = nil
-            udg_TP_LeaveText = nil
-        end)
-
-        LocalPlayer = GetLocalPlayer()
+    udg_TP_Create = CreateTrigger()
+    TriggerAddAction(udg_TP_Create, function ()
+        CreateTeleport(
+            udg_TP_EnterRect,
+            udg_TP_LeaveRect,
+            udg_TP_EnterPoint,
+            udg_TP_LeavePoint,
+            udg_TP_EnterText,
+            udg_TP_LeaveText
+        )
+        udg_TP_EnterRect = nil
+        udg_TP_LeaveRect = nil
+        udg_TP_EnterPoint = nil
+        udg_TP_LeavePoint = nil
+        udg_TP_EnterText = nil
+        udg_TP_LeaveText = nil
     end)
 end)

@@ -1,4 +1,5 @@
-OnLibraryInit({name = "SaveFile", "FileIO"}, function ()
+OnInit("SaveFile", function ()
+    Require "FileIO"
 
     SaveFile = {
         ManualPath = "Manual",
@@ -12,56 +13,63 @@ OnLibraryInit({name = "SaveFile", "FileIO"}, function ()
         return udg_MapName
     end
 
+    ---@param p player
     ---@param slot integer
     ---@return string
-    function SaveFile.getPath(slot)
+    function SaveFile.getPath(p, slot)
         if slot == 0 then
-            return SaveFile.getFolder() .. "\\SaveSlot_" .. SaveFile.InvalidPath .. ".pld"
+            return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. SaveFile.InvalidPath .. ".pld"
         elseif slot > 0 and (slot < SaveFile.MIN or slot > SaveFile.MAX) then
-            return SaveFile.getFolder() .. "\\SaveSlot_" .. SaveFile.InvalidPath .. ".pld"
+            return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. SaveFile.InvalidPath .. ".pld"
         elseif slot < 0 then
-            return SaveFile.getFolder() .. "\\SaveSlot_" .. SaveFile.ManualPath .. ".pld"
+            return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. SaveFile.ManualPath .. ".pld"
         end
-        return SaveFile.getFolder() ..  "\\SaveSlot_" .. slot .. ".pld"
+        return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. slot .. ".pld"
     end
 
     ---@param p player
     ---@param title string
     ---@param slot integer
     ---@param data string
+    ---@return integer
     function SaveFile.create(p, title, slot, data)
         if GetLocalPlayer() == p then
-            FileIO.Write(SaveFile.getPath(slot), title .. "\n" .. data)
+            FileIO.Write(SaveFile.getPath(p, slot), title .. "\n" .. data)
         end
+        return slot
     end
 
     ---@param p player
     ---@param slot integer
+    ---@return integer
     function SaveFile.clear(p, slot)
         if GetLocalPlayer() == p then
-            FileIO.Write(SaveFile.getPath(slot), "")
+            FileIO.Write(SaveFile.getPath(p, slot), "")
         end
+        return slot
     end
 
-    ---async
+    -- async
+    ---@param p player
     ---@param slot integer
     ---@return boolean
-    function SaveFile.exists(slot)
-        return FileIO.Read(SaveFile.getPath(slot)) ~= nil
+    function SaveFile.exists(p, slot)
+        return FileIO.Read(SaveFile.getPath(p, slot)):len() > 1
     end
 
-    ---async
+    -- async
+    ---@param p player
     ---@param slot integer
     ---@param line integer
     ---@param includePrevious boolean
     ---@return string
-    function SaveFile.getLines(slot, line, includePrevious)
-        local contents = FileIO.Read(SaveFile.getPath(slot)) or ""
-        local len = StringLength(contents)
-        local buffer = ""
-        local curLine = 0
-        for i = 0, len do
-            local char = SubString(contents, i, i + 1)
+    function SaveFile.getLines(p, slot, line, includePrevious)
+        local contents   = FileIO.Read(SaveFile.getPath(p, slot))
+        local buffer     = ""
+        local curLine   = 0
+
+        for i = 1, contents:len() do
+            local char = contents:sub(i, i)
             if char == "\n" then
                 curLine = curLine + 1
                 if curLine > line then
@@ -77,28 +85,31 @@ OnLibraryInit({name = "SaveFile", "FileIO"}, function ()
         if curLine == line then
             return buffer
         end
-        return nil
+        return ""
     end
 
-    ---async
+    -- async
+    ---@param p player
     ---@param slot integer
     ---@param line integer
     ---@return string
-    function SaveFile.getLine(slot, line)
-        return SaveFile.getLines(slot, line, false)
+    function SaveFile.getLine(p, slot, line)
+        return SaveFile.getLines(p, slot, line, false)
     end
 
-    ---async
+    -- async
+    ---@param p player
     ---@param slot integer
     ---@return string
-    function SaveFile.getTitle(slot)
-        return SaveFile.getLines(slot, 0, false)
+    function SaveFile.getTitle(p, slot)
+        return SaveFile.getLines(p, slot, 0, false)
     end
 
-    ---async
+    -- async
+    ---@param p player
     ---@param slot integer
     ---@return string
-    function SaveFile.getData(slot)
-        return SaveFile.getLines(slot, 1, false)
+    function SaveFile.getData(p, slot)
+        return SaveFile.getLines(p, slot, 1, false)
     end
 end)

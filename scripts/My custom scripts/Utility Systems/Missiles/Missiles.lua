@@ -9,7 +9,8 @@
         1 - Copy this, MissileEffect and optionaly the MissileUtils libraries into your map
 ]]--
 
-OnLibraryInit({name = "Missiles", "MissileEffect"}, function ()
+OnInit("Missiles", function ()
+    Require "MissileEffect"
     -- -------------------------------------------------------------------------- --
     --                                Configuration                               --
     -- -------------------------------------------------------------------------- --

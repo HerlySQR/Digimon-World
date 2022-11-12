@@ -1,4 +1,6 @@
-OnLibraryInit({name = "DigimonBank", "PlayerDigimons"}, function ()
+OnInit("DigimonBank", function ()
+    Require "PlayerDigimons"
+
     local MAX_STOCK = 6
 
     ---@class Bank
@@ -10,25 +12,22 @@ OnLibraryInit({name = "DigimonBank", "PlayerDigimons"}, function ()
     ---@field spawnPoint Vec2
     ---@field allDead boolean
     local Bank = {} ---@type Bank[]
-    local LocalPlayer = nil ---@type player
+    local LocalPlayer = GetLocalPlayer() ---@type player
 
-    OnMapInit(function ()
-        LocalPlayer = GetLocalPlayer()
-        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-            Bank[i] = {
-                stocked = {},
-                inUse = {},
-                pressed = -1,
-                p = Player(i),
-                main = nil,
-                spawnPoint = {
-                    x = GetRectCenterX(gg_rct_Player_1_Spawn),
-                    y = GetRectCenterY(gg_rct_Player_1_Spawn)
-                },
-                allDead = false
-            }
-        end
-    end)
+    for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+        Bank[i] = {
+            stocked = {},
+            inUse = {},
+            pressed = -1,
+            p = Player(i),
+            main = nil,
+            spawnPoint = {
+                x = GetRectCenterX(gg_rct_Player_1_Spawn),
+                y = GetRectCenterY(gg_rct_Player_1_Spawn)
+            },
+            allDead = false
+        }
+    end
 
     -- Conditions
 
@@ -167,12 +166,10 @@ OnLibraryInit({name = "DigimonBank", "PlayerDigimons"}, function ()
     end
 
     -- When the digimon evolves
-    OnTrigInit(function ()
-        Digimon.evolutionEvent(function (evolve)
-            if evolve:getOwner() == LocalPlayer then
-                UpdateMenu()
-            end
-        end)
+    Digimon.evolutionEvent(function (evolve)
+        if evolve:getOwner() == LocalPlayer then
+            UpdateMenu()
+        end
     end)
 
     local function PressedActions(i)
@@ -271,7 +268,6 @@ OnLibraryInit({name = "DigimonBank", "PlayerDigimons"}, function ()
     end
 
     local function InitFrames()
-
         local t = nil ---@type trigger
 
         local x1 = {}
@@ -454,23 +450,21 @@ OnLibraryInit({name = "DigimonBank", "PlayerDigimons"}, function ()
 
     end
 
-    OnMapInit(function ()
-        InitFrames()
-        FrameLoaderAdd(InitFrames)
-        -- Update frames
-        Timed.echo(function ()
-            for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-                local bank = Bank[i]
-                if GetDigimonCount(bank.p) > 0 then
-                    if bank.p == LocalPlayer then
-                        BlzFrameSetEnable(Summon, UseDigimonConditions(bank) and Avaible(bank, bank.pressed))
-                        BlzFrameSetEnable(Store, StoreDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
-                        BlzFrameSetEnable(Free, FreeDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
-                    end
+    InitFrames()
+    FrameLoaderAdd(InitFrames)
+    -- Update frames
+    Timed.echo(function ()
+        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+            local bank = Bank[i]
+            if GetDigimonCount(bank.p) > 0 then
+                if bank.p == LocalPlayer then
+                    BlzFrameSetEnable(Summon, UseDigimonConditions(bank) and Avaible(bank, bank.pressed))
+                    BlzFrameSetEnable(Store, StoreDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
+                    BlzFrameSetEnable(Free, FreeDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
                 end
             end
-        end, 0.03125)
-    end)
+        end
+    end, 0.03125)
 
     -- Functions to use
 
@@ -587,80 +581,78 @@ OnLibraryInit({name = "DigimonBank", "PlayerDigimons"}, function ()
     local respawnTime = 60
     local cooldowns = __jarray(0) ---@type table<Digimon, number>
 
-    OnMapInit(function ()
-        Digimon.killEvent(function (_, dead)
-            local p = dead:getOwner()
-            if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
-                local bank = Bank[GetPlayerId(p)] ---@type Bank
-                local allDead = true
-                local index = -1
-                for i = 0, 5 do
-                    local d = bank.stocked[i]
-                    if d then
-                        if dead == d then
-                            index = i
-                        end
-                        allDead = allDead and not d:isAlive()
+    Digimon.killEvent(function (_, dead)
+        local p = dead:getOwner()
+        if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
+            local bank = Bank[GetPlayerId(p)] ---@type Bank
+            local allDead = true
+            local index = -1
+            for i = 0, 5 do
+                local d = bank.stocked[i]
+                if d then
+                    if dead == d then
+                        index = i
                     end
+                    allDead = allDead and not d:isAlive()
                 end
-                -- If all the digimons died then the spawnpoint will be the clinic
-                if allDead then
-                    DisplayTextToPlayer(p, 0, 0, "All your digimons are death, they will respawn in the clinic")
-                    bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
-                    bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
-                    -- The player can see all the map if all their digimons are dead
-                    Environment.allMap:apply(p, false)
-                else
-                    bank.spawnPoint.x = GetRectCenterX(gg_rct_Player_1_Spawn)
-                    bank.spawnPoint.y = GetRectCenterY(gg_rct_Player_1_Spawn)
-                end
-                bank.allDead = allDead
-
-                StoreDigimon(bank, index, false)
-                Timed.call(function () dead:setOwner(Digimon.PASSIVE) end) -- Just to not be detected by the auto-recycler
-                -- Hide after 2 seconds to not do it automatically
-                Timed.call(2., function ()
-                    dead:hideInTheCorner()
-                end)
-
-                -- Cooldown
-                cooldowns[dead] = respawnTime
-                if p == LocalPlayer then
-                    UpdateMenu()
-                    BlzFrameSetVisible(DigimonTCooldownT[index], true)
-                end
-                Timed.echo(function ()
-                    -- In case the digimon revived by another method
-                    if dead:isAlive() then
-                        cooldowns[dead] = 0
-                        if p == LocalPlayer then
-                            BlzFrameSetVisible(DigimonTCooldownT[index], false)
-                        end
-                        bank.allDead = false
-                        return true
-                    end
-
-                    local cd = cooldowns[dead] - 1
-                    cooldowns[dead] = cd
-                    if p == LocalPlayer then
-                        BlzFrameSetText(DigimonTCooldownT[index], tostring(math.floor(cd)))
-                    end
-                    if cd <= 0 then
-                        ReviveHero(dead.root, dead:getX(), dead:getY(), false)
-                        SetUnitLifePercentBJ(dead.root, 5)
-                        if bank.allDead then
-                            dead.environment = Environment.hospital
-                            SummonDigimon(p, index)
-                        end
-                        if p == LocalPlayer then
-                            BlzFrameSetVisible(DigimonTCooldownT[index], false)
-                        end
-                        bank.allDead = false
-                        return true
-                    end
-                end, 1)
             end
-        end)
+            -- If all the digimons died then the spawnpoint will be the clinic
+            if allDead then
+                DisplayTextToPlayer(p, 0, 0, "All your digimons are death, they will respawn in the clinic")
+                bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
+                bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
+                -- The player can see all the map if all their digimons are dead
+                Environment.allMap:apply(p, false)
+            else
+                bank.spawnPoint.x = GetRectCenterX(gg_rct_Player_1_Spawn)
+                bank.spawnPoint.y = GetRectCenterY(gg_rct_Player_1_Spawn)
+            end
+            bank.allDead = allDead
+
+            StoreDigimon(bank, index, false)
+            Timed.call(function () dead:setOwner(Digimon.PASSIVE) end) -- Just to not be detected by the auto-recycler
+            -- Hide after 2 seconds to not do it automatically
+            Timed.call(2., function ()
+                dead:hideInTheCorner()
+            end)
+
+            -- Cooldown
+            cooldowns[dead] = respawnTime
+            if p == LocalPlayer then
+                UpdateMenu()
+                BlzFrameSetVisible(DigimonTCooldownT[index], true)
+            end
+            Timed.echo(function ()
+                -- In case the digimon revived by another method
+                if dead:isAlive() then
+                    cooldowns[dead] = 0
+                    if p == LocalPlayer then
+                        BlzFrameSetVisible(DigimonTCooldownT[index], false)
+                    end
+                    bank.allDead = false
+                    return true
+                end
+
+                local cd = cooldowns[dead] - 1
+                cooldowns[dead] = cd
+                if p == LocalPlayer then
+                    BlzFrameSetText(DigimonTCooldownT[index], tostring(math.floor(cd)))
+                end
+                if cd <= 0 then
+                    ReviveHero(dead.root, dead:getX(), dead:getY(), false)
+                    SetUnitLifePercentBJ(dead.root, 5)
+                    if bank.allDead then
+                        dead.environment = Environment.hospital
+                        SummonDigimon(p, index)
+                    end
+                    if p == LocalPlayer then
+                        BlzFrameSetVisible(DigimonTCooldownT[index], false)
+                    end
+                    bank.allDead = false
+                    return true
+                end
+            end, 1)
+        end
     end)
 
     ---@param d Digimon

@@ -1,20 +1,29 @@
-OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", "Environment", "Vec2"}, function ()
+OnInit("Digimon", function ()
+    Require "HeroRecycler"
+    Require "UnitEnum"
+    Require "Event"
+    Require "Damage"
+    Require "Environment"
+    Require "Vec2"
+    Require "GlobalRemap"
 
-    local LocalPlayer ---@type player
+    local LocalPlayer = GetLocalPlayer() ---@type player
 
-    ---@class Rank
+    ---@enum Rank
     Rank = {
-        ROOKIE = 0,     ---@type Rank
-        CHAMPION = 1,   ---@type Rank
-        ULTIMATE = 2,   ---@type Rank
-        MEGA = 3        ---@type Rank
+        ROOKIE = 0,
+        CHAMPION = 1,
+        ULTIMATE = 2,
+        MEGA = 3
     }
 
-    ---@class Rarity
+    ---@enum Rarity
     Rarity = {
-        COMMON = 0,     ---@type Rarity
-        RARE = 1,       ---@type Rarity
-        LEGENDARY = 2   ---@type Rarity
+        COMMON = 0,
+        UNCOMMON = 1,
+        RARE = 2,
+        EPIC = 3,
+        LEGENDARY = 4
     }
 
     ---@param s string
@@ -57,6 +66,12 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
     ---@return Digimon
     function Digimon.create(p, id, x, y, facing)
         return Digimon.add(GetRecycledHero(p, id, x, y, facing))
+    end
+
+    local rarities = __jarray(Rarity.COMMON) ---@type table<integer, Rarity>
+
+    function Digimon.getRarity(id)
+        return rarities[id]
     end
 
     ---@param id integer
@@ -223,7 +238,8 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
 
     -- Create
 
-    Digimon.createEvent = Event.create()
+    local runCreate
+    Digimon.createEvent, runCreate = Event.create()
 
     ---Instance digimons that are created with other methods
     ---@param u unit
@@ -247,23 +263,26 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
                 self.rank = Rank.MEGA
             end
 
+            self.rarity = rarities[GetUnitTypeId(u)]
+
             self.environment = Environment.allMap
             self.onCombat = false
 
             Digimon._instance[u] = self
         end
 
-        Digimon.createEvent:run(self)
+        runCreate(self)
 
         return self
     end
 
     -- Destroy
 
-    Digimon.destroyEvent = Event.create()
+    local runDestroy
+    Digimon.destroyEvent, runDestroy = Event.create()
 
     function Digimon:destroy()
-        Digimon.destroyEvent:run(self)
+        runDestroy(self)
 
         RecycleHero(self.root)
         Digimon._instance[self.root] = nil
@@ -276,7 +295,8 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
 
     -- Kill
 
-    Digimon.killEvent = Event.create()
+    local runkill
+    Digimon.killEvent, runkill = Event.create()
 
     OnMapInit(function ()
         local t = CreateTrigger()
@@ -286,7 +306,7 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
             local target = Digimon._instance[GetDyingUnit()]
 
             if target then
-                Digimon.killEvent:run(Digimon._instance[killer] or killer, target)
+                runkill(Digimon._instance[killer] or killer, target)
 
                 if not IsUnitType(target.root, UNIT_TYPE_ANCIENT) and (target:getOwner() == Digimon.NEUTRAL or target:getOwner() == Digimon.PASSIVE) then
                     target:remove(6.)
@@ -295,13 +315,10 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
         end)
     end)
 
-    -- Captured
-
-    Digimon.capturedEvent = Event.create() -- I prefer running it in the Digimon Capture script
-
     -- Level Up
 
-    Digimon.levelUpEvent = Event.create()
+    local runlevelUp
+    Digimon.levelUpEvent, runlevelUp = Event.create()
 
     OnMapInit(function ()
         local t = CreateTrigger()
@@ -309,14 +326,15 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
         TriggerAddAction(t, function ()
             local d = Digimon._instance[GetLevelingUnit()]
             if d then
-                Digimon.levelUpEvent:run(d)
+                runlevelUp(d)
             end
         end)
     end)
 
     -- Evolution
 
-    Digimon.evolutionEvent = Event.create()
+    local runEvolution
+    Digimon.evolutionEvent, runEvolution = Event.create()
 
     ---Evolves the digimon
     ---@param evolveForm integer
@@ -381,12 +399,13 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
 
         self:setExp(oldExp) -- This could run the level up event
 
-        Digimon.evolutionEvent:run(self)
+        runEvolution(self)
     end
 
     -- Pre-damage
 
-    Digimon.preDamageEvent = Event.create()
+    local runPreDamage
+    Digimon.preDamageEvent, runPreDamage = Event.create()
 
     OnTrigInit(function ()
         local t = CreateTrigger()
@@ -399,7 +418,7 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
             }
 
             if info.source and info.target then
-                Digimon.preDamageEvent:run(info)
+                runPreDamage(info)
 
                 udg_DamageEventAmount = info.amount
             end
@@ -408,7 +427,8 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
 
     -- Post-damage
 
-    Digimon.postDamageEvent = Event.create()
+    local runPostDamage
+    Digimon.postDamageEvent, runPostDamage = Event.create()
 
     OnTrigInit(function ()
         local t = CreateTrigger()
@@ -421,15 +441,16 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
             }
 
             if info.source and info.target then
-                Digimon.postDamageEvent:run(info)
+                runPostDamage(info)
             end
         end)
     end)
 
     -- On/Off combat
 
-    Digimon.onCombatEvent = Event.create()
-    Digimon.offCombatEvent = Event.create()
+    local runOnCombat, runOffCombat
+    Digimon.onCombatEvent, runOnCombat = Event.create()
+    Digimon.offCombatEvent, runOffCombat = Event.create()
 
     OnTrigInit(function ()
         local onCombat = __jarray(0) ---@type table<Digimon, integer>
@@ -437,28 +458,28 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
         Digimon.postDamageEvent(function (info)
             local source = info.source ---@type Digimon
             source.onCombat = true
-            Digimon.onCombatEvent:run(source)
+            runOnCombat(source)
             onCombat[source] = 3.
             Timed.echo(function ()
                 local cd = onCombat[source] - 1
                 onCombat[source] = cd
                 if cd <= 0 then
                     source.onCombat = false
-                    Digimon.offCombatEvent:run(source)
+                    runOffCombat(source)
                     return true
                 end
             end)
 
             local target = info.target ---@type Digimon
             target.onCombat = true
-            Digimon.onCombatEvent:run(target)
+            runOnCombat(target)
             onCombat[target] = 3.
             Timed.echo(function ()
                 local cd = onCombat[target] - 1
                 onCombat[target] = cd
                 if cd <= 0 then
                     target.onCombat = false
-                    Digimon.offCombatEvent:run(target)
+                    runOffCombat(target)
                     return true
                 end
             end)
@@ -467,7 +488,8 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
 
     -- Selection
 
-    Digimon.selectionEvent = Event.create()
+    local runSelection
+    Digimon.selectionEvent, runSelection = Event.create()
 
     OnTrigInit(function ()
         local t = CreateTrigger()
@@ -477,14 +499,15 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
         TriggerAddAction(t, function ()
             local d = Digimon._instance[GetTriggerUnit()]
             if d then
-                Digimon.selectionEvent:run(GetTriggerPlayer(), d)
+                runSelection(GetTriggerPlayer(), d)
             end
         end)
     end)
 
     -- Double-click
 
-    Digimon.doubleclickEvent = Event.create()
+    local runDoubleclick
+    Digimon.doubleclickEvent, runDoubleclick = Event.create()
 
     local clicks = __jarray(0)
     local delay = 0.5
@@ -497,16 +520,17 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
             end)
             if clicks[d] == 2 then
                 clicks[d] = 0
-                Digimon.doubleclickEvent:run(p, d)
+                runDoubleclick(p, d)
             end
         end)
     end)
 
     -- Order events
 
-    Digimon.issueTargetOrderEvent = Event.create()
-    Digimon.issuePointOrderEvent = Event.create()
-    Digimon.issueOrderEvent = Event.create()
+    local runIssueTargetOrder, runIssuePointOrder, runIssueOrder
+    Digimon.issueTargetOrderEvent, runIssueTargetOrder = Event.create()
+    Digimon.issuePointOrderEvent, runIssuePointOrder = Event.create()
+    Digimon.issueOrderEvent,runIssueOrder = Event.create()
 
     OnTrigInit(function ()
         RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER, function ()
@@ -514,20 +538,20 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
             if d1 then
                 local d2 = Digimon._instance[GetOrderTargetUnit()]
                 if d2 then
-                    Digimon.issueTargetOrderEvent:run(d1, GetIssuedOrderId(), d2)
+                    runIssueTargetOrder(d1, GetIssuedOrderId(), d2)
                 end
             end
         end)
         RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, function ()
             local d1 = Digimon._instance[GetOrderedUnit()]
             if d1 then
-                Digimon.issuePointOrderEvent:run(d1, GetIssuedOrderId(), Vec2.new(GetOrderPointX(), GetOrderPointY()))
+                runIssuePointOrder(d1, GetIssuedOrderId(), Vec2.new(GetOrderPointX(), GetOrderPointY()))
             end
         end)
         RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_ORDER, function ()
             local d1 = Digimon._instance[GetOrderedUnit()]
             if d1 then
-                Digimon.issueOrderEvent:run(d1, GetIssuedOrderId())
+                runIssueOrder(d1, GetIssuedOrderId())
             end
         end)
     end)
@@ -537,28 +561,35 @@ OnLibraryInit({name = "Digimon", "HeroRecycler", "UnitEnum", "Event", "Damage", 
     Digimon.NEUTRAL = Player(12)
     Digimon.PASSIVE = Player(PLAYER_NEUTRAL_PASSIVE)
 
-    OnTrigInit(function ()
-        local exclude = Set.create(
-            FourCC('n00A') -- Digispirit
-        )
-        -- Add the current digimons in the map
-        ForUnitsInRect(bj_mapInitialPlayableArea, function (u)
-            if not exclude:contains(GetUnitTypeId(u)) then
-                Digimon.add(u)
-            end
-        end)
+    GlobalRemap("udg_SetCommon", nil, function (id) rarities[id] = Rarity.COMMON end)
+    GlobalRemap("udg_SetUncommon", nil, function (id) rarities[id] = Rarity.UNCOMMON end)
+    GlobalRemap("udg_SetRare", nil, function (id) rarities[id] = Rarity.RARE end)
+    GlobalRemap("udg_SetEpic", nil, function (id) rarities[id] = Rarity.EPIC end)
+    GlobalRemap("udg_SetLegendary", nil, function (id) rarities[id] = Rarity.LEGENDARY end)
 
-        LocalPlayer = GetLocalPlayer()
+    -- Init rarities
+    OnInit.trig(function ()
+        TriggerExecute(gg_trg_Set_rarities)
+    end)
+    -- --
+    local exclude = Set.create(
+        FourCC('n00A') -- Digispirit
+    )
+    -- Add the current digimons in the map
+    ForUnitsInRect(bj_mapInitialPlayableArea, function (u)
+        if not exclude:contains(GetUnitTypeId(u)) then
+            Digimon.add(u)
+        end
+    end)
 
-        -- Change the environment when double-click a Digimon
-        Digimon.doubleclickEvent(function (p, d)
-            if d:getOwner() == p and  d.environment ~= GetPlayerEnviroment(p) then
-                d.environment:apply(p)
-                if p == LocalPlayer then
-                    PanCameraToTimed(d:getX(), d:getY(), 0)
-                end
+    -- Change the environment when double-click a Digimon
+    Digimon.doubleclickEvent(function (p, d)
+        if d:getOwner() == p and  d.environment ~= GetPlayerEnviroment(p) then
+            d.environment:apply(p)
+            if p == LocalPlayer then
+                PanCameraToTimed(d:getX(), d:getY(), 0)
             end
-        end)
+        end
     end)
 
 end)

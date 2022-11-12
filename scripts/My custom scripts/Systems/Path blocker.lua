@@ -24,7 +24,7 @@ do
     end
 
     -- For GUI
-    OnTrigInit(function ()
+    OnInit(function ()
         udg_PathBlockRun = CreateTrigger()
         TriggerAddAction(udg_PathBlockRun, function ()
             PathBlock(udg_PathBlockRegion, udg_PathBlockType)

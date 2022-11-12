@@ -1,4 +1,6 @@
-OnLibraryInit({name = "ItemSpawn", "LinkedList"}, function ()
+OnInit(function ()
+    Require "LinkedList"
+
     local INTERVAL = 15.
 
     local All = LinkedList.create()
@@ -33,41 +35,33 @@ OnLibraryInit({name = "ItemSpawn", "LinkedList"}, function ()
     end
 
     -- Discount the item when is picked
-    OnMapInit(function ()
-        local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_STACK_ITEM)
-        TriggerAddAction(t, function ()
-            local m
-            if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
-                m = GetManipulatedItem()
-            else
-                m = BlzGetStackingItemSource()
-            end
-            local this = Reference[m]
-            if this then
-                Reference[m] = nil
-                this.count = this.count - 1
-            end
-        end)
-        -- Start update
-        Timed.call(function ()
-            Timed.echo(Update, INTERVAL)
-        end)
+    local t = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_STACK_ITEM)
+    TriggerAddAction(t, function ()
+        local m
+        if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
+            m = GetManipulatedItem()
+        else
+            m = BlzGetStackingItemSource()
+        end
+        local this = Reference[m]
+        if this then
+            Reference[m] = nil
+            this.count = this.count - 1
+        end
+    end)
+    -- Start update
+    Timed.call(function ()
+        Timed.echo(Update, INTERVAL)
     end)
 
     -- For GUI
-    OnTrigInit(function ()
-        udg_ItemSpawnCreate = CreateTrigger()
-        TriggerAddAction(udg_ItemSpawnCreate, function ()
-            Create(udg_ItemSpawnRegions, udg_ItemSpawnTypes, udg_ItemSpawnMaxItems)
-            udg_ItemSpawnRegions = {}
-            udg_ItemSpawnTypes = {}
-            udg_ItemSpawnMaxItems = 0
-        end)
+    udg_ItemSpawnCreate = CreateTrigger()
+    TriggerAddAction(udg_ItemSpawnCreate, function ()
+        Create(udg_ItemSpawnRegions, udg_ItemSpawnTypes, udg_ItemSpawnMaxItems)
+        udg_ItemSpawnRegions = {}
+        udg_ItemSpawnTypes = {}
+        udg_ItemSpawnMaxItems = 0
     end)
-
-    function DestroyItemSpawn(this)
-        All:remove(this)
-    end
 end)

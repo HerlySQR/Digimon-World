@@ -1,8 +1,11 @@
-OnLibraryInit({name = "PressSaveOrLoad", "PlayerData", "Timed"}, function ()
+OnInit("PressSaveOrLoad", function ()
+    Require "Player Data"
+    Require "Timed"
+
     local NormalColor = "FCD20D"
     local DisabledColor = "FFFFFF"
     local DEFAULT_AUTO_SAVE_INTERVAL = 3 -- minutes
-    local LocalPlayer = nil ---@type player
+    local LocalPlayer = GetLocalPlayer()
 
     local Pressed = __jarray(0) ---@type table<player, integer>
     local SaveButton = nil ---@type framehandle
@@ -26,7 +29,7 @@ OnLibraryInit({name = "PressSaveOrLoad", "PlayerData", "Timed"}, function ()
     local WarningMessage = nil ---@type dialog
     local WarningMessageReceived = __jarray(false) ---@type table<player, boolean>
 
-    OnGameStart(function ()
+    OnInit.final(function ()
         WarningMessage = DialogCreate()
         DialogSetMessage(WarningMessage, "|cffff0000WARNING|r\nTo properly save, you should\nrestart the Warcraft 3.")
         DialogAddButton(WarningMessage, "Understood", 0)
@@ -397,14 +400,10 @@ OnLibraryInit({name = "PressSaveOrLoad", "PlayerData", "Timed"}, function ()
             BlzFrameSetScale(TooltipDigimonItemsT[i], 1.00)
             BlzFrameSetTextAlignment(TooltipDigimonItemsT[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
         end
-
-        LocalPlayer = GetLocalPlayer()
     end
 
-    OnMapInit(function ()
-        InitFrames()
-        FrameLoaderAdd(InitFrames)
-    end)
+    InitFrames()
+    FrameLoaderAdd(InitFrames)
 
     -- Functions to use
 

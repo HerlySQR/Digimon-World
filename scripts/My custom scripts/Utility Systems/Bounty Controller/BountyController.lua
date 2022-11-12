@@ -1,10 +1,8 @@
 -- The pure Lua version of the Bounty Controller
 -- GUI version: https://www.hiveworkshop.com/threads/gui-bounty-controller.332114/
 
-OnLibraryInit({name = "BountyController", "Event"}, function ()
-    ---@deprecated, use Bounty.Enable() and Bounty.Disable() instead
-    Bounty_Controller = nil
-    local LocalPlayer = nil ---@type player
+OnInit("BountyController", function() -- https://www.hiveworkshop.com/threads/global-initialization.317099/
+    Require "Event" -- https://www.hiveworkshop.com/threads/event-harmonization-of-lua-and-gui-events.339451/
 
     -- These can be edited (obviously only valid values)
 
@@ -24,29 +22,14 @@ OnLibraryInit({name = "BountyController", "Event"}, function ()
     local DEF_EFFECT = "UI\\Feedback\\GoldCredit\\GoldCredit.mdl"
     local DEF_SHOW_EFFECT = true
     local DEF_PERMANENT = false
-    local LIMIT_RECURSION = 16 --If a loop caused by recursion is doing in porpouse you can edit the tolerance of how many calls can do
 
-    local current = nil
-    local Bounties0 = {}
-    local Bounties1 = {}
-    local Bounties2 = {}
-    local Recursion = 0
-
-    local onDead = Event.create()
-    local onRun = Event.create()
-
-    local t1
-    local t2
-
-    -- This function is runned at the map initialization,  if you wanna use it to your bounties,  you can do it
-    local function SetData()
-
+    -- This function is run at the start of the game, if you wanna use it to your bounties, you can do it
+    local function Config()
         --[[Peasant]] Bounty.Set(FourCC('hpea'), 15, 5, 3)
 
         for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
             SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 0)
         end
-
     end
 
     ---@class Bounty
@@ -74,7 +57,11 @@ OnLibraryInit({name = "BountyController", "Event"}, function ()
     ---@field PosY number
     ---@field KillingUnit unit
     ---@field DyingUnit unit
-    Bounty = {}
+    Bounty = {
+        base  = __jarray(0),
+        dice  = __jarray(0),
+        sides = __jarray(0)
+    }
 
     Bounty.__index = Bounty
 
@@ -140,6 +127,16 @@ OnLibraryInit({name = "BountyController", "Event"}, function ()
         return "Bounty: |cff" .. t.Color .. Bounty.Sign(t.Bounty) .. t.Bounty .. "|r"
     end
 
+    -- Events
+
+    local runOnDead, runOnRun
+
+    ---The callback runs when a unit kills another
+    Bounty.OnDead, runOnDead = Event.create()
+
+    ---The callback runs when a bounty is runned
+    Bounty.OnRun, runOnRun = Event.create()
+
     -- Functions
 
     function Bounty:destroy()
@@ -147,7 +144,6 @@ OnLibraryInit({name = "BountyController", "Event"}, function ()
             RemoveLocation(self.LocPos)
         end
         self._canSee = nil
-        Recursion = Recursion - 1
     end
 
     ---Sets if the player can see the bounty
@@ -169,19 +165,13 @@ OnLibraryInit({name = "BountyController", "Event"}, function ()
     function Bounty:Run()
         local what
 
-        if Recursion > LIMIT_RECURSION then -- If there is recursion that don't stop soon, the system stops automatically
-            print("There is a recursion with the Bounty system, check if you are not creating a infinite loop.")
-            self:destroy()
-            return nil -- This is my convention
-        end
-
         if self.State == "gold" then
             what = PLAYER_STATE_RESOURCE_GOLD
         elseif self.State == "lumber" then
             what = PLAYER_STATE_RESOURCE_LUMBER
         else
             self:destroy()
-            return nil --If the state is not valid, the process stop
+            error("Invalid state: " .. self.State) --If the state is not valid, the process stops
         end
 
         if self.Amount == 0 and not self.ShowNothing then
@@ -213,7 +203,7 @@ OnLibraryInit({name = "BountyController", "Event"}, function ()
         self.TextTag = CreateTextTag()
         SetTextTagPermanent(self.TextTag, self.Permanent)
         SetTextTagText(self.TextTag, "|cff" .. self.Color .. Bounty.Sign(self.Amount) .. I2S(self.Amount) .. "|r", TextTagSize2Height(self.Size))
-        SetTextTagVisibility(self.TextTag, self:Seeing(LocalPlayer) and self.Show)
+        SetTextTagVisibility(self.TextTag, self:Seeing(GetLocalPlayer()) and self.Show)
         SetTextTagPos(self.TextTag, self.PosX, self.PosY, self.Height)
         SetTextTagFadepoint(self.TextTag, self.FadePoint)
         SetTextTagLifespan(self.TextTag, self.LifeSpan)
@@ -224,12 +214,9 @@ OnLibraryInit({name = "BountyController", "Event"}, function ()
             DestroyEffect(AddSpecialEffect(self.Effect, self.PosX, self.PosY))
         end
 
-        current = self
         what = self.TextTag
 
-        onRun(self)
-
-        current = self
+        runOnRun(self)
 
         self:destroy()
 
@@ -264,69 +251,22 @@ OnLibraryInit({name = "BountyController", "Event"}, function ()
         self:CanSee(newPlayer, addNew)
     end
 
-    -- The functions to the bounty stats
-
-    ---@param id integer
-    ---@param base integer
-    function Bounty.SetBase(id, base)
-        Bounties0[id] = base
-    end
-
-    ---@param id integer
-    ---@param dice integer
-    function Bounty.SetDice(id, dice)
-        Bounties1[id] = dice
-    end
-
-    ---@param id integer
-    ---@param sides integer
-    function Bounty.SetSides(id, sides)
-        Bounties2[id] = sides
-    end
-
     ---Defines the bounty of a unit-type
     ---@param id integer
     ---@param base integer
     ---@param dice integer
-    ---@param side integer
-    function Bounty.Set(id, base, dice, side)
-        Bounty.SetBase(id, base)
-        Bounty.SetDice(id, dice)
-        Bounty.SetSides(id, side)
-    end
-
-    -- The functions to get the bounty stats (that you set before)
-
-    ---@param id integer
-    ---@return integer
-    function Bounty.GetBase(id)
-        return Bounties0[id] or 0
-    end
-
-    ---@param id integer
-    ---@return integer
-    function Bounty.GetDice(id)
-        return Bounties1[id] or 0
-    end
-
-    ---@param id integer
-    ---@return integer
-    function Bounty.GetSides(id)
-        return Bounties2[id] or 0
+    ---@param sides integer
+    function Bounty.Set(id, base, dice, sides)
+        Bounty.base[id] = base
+        Bounty.dice[id] = dice
+        Bounty.sides[id] = sides
     end
 
     ---Returns a random bounty that the unit-type should give
     ---@param id integer
     ---@return integer
     function Bounty.Get(id)
-        return Bounty.GetBase(id) + math.random(0, Bounty.GetDice(id) * Bounty.GetSides(id))
-    end
-
-    ---@deprecated
-    ---Returns the bounty that fired the event
-    ---@return Bounty
-    function Bounty.GetCurrent()
-        return current
+        return Bounty.base[id] + math.random(0, Bounty.dice[id] * Bounty.sides[id])
     end
 
     ---Returns '+' if the value is positive or an empty string if is negative
@@ -352,136 +292,64 @@ OnLibraryInit({name = "BountyController", "Event"}, function ()
 
     ---@return Bounty
     function Bounty.create()
-        Recursion = Recursion + 1
-        local self = setmetatable({}, Bounty)
-        self.Amount = 0
-        self.Size = DEF_SIZE
-        self.LifeSpan = DEF_LIFE_SPAN
-        self.Age = DEF_AGE
-        self.Speed = DEF_SPEED
-        self.Direction = DEF_DIRECTION
-        self.FadePoint = DEF_FADE_POINT
-        self.State = DEF_STATE
-        self.Height = DEF_HEIGHT
-        self.Show = DEF_SHOW
-        self.ShowNothing = DEF_SHOW_NOTHING
-        self.Effect = DEF_EFFECT
-        self.ShowEff = DEF_SHOW_EFFECT
-        self.Permanent = DEF_PERMANENT
-        self.AllowFriendFire = DEF_ALLOW_FRIEND_FIRE
-        self.PosX = 0.00
-        self.PosY = 0.00
-        self._canSee = {}
-        return self
+        return setmetatable({
+            Amount = 0,
+            Size = DEF_SIZE,
+            LifeSpan = DEF_LIFE_SPAN,
+            Age = DEF_AGE,
+            Speed = DEF_SPEED,
+            Direction = DEF_DIRECTION,
+            FadePoint = DEF_FADE_POINT,
+            State = DEF_STATE,
+            Height = DEF_HEIGHT,
+            Show = DEF_SHOW,
+            ShowNothing = DEF_SHOW_NOTHING,
+            Effect = DEF_EFFECT,
+            ShowEff = DEF_SHOW_EFFECT,
+            Permanent = DEF_PERMANENT,
+            AllowFriendFire = DEF_ALLOW_FRIEND_FIRE,
+            PosX = 0.00,
+            PosY = 0.00,
+            _canSee = {}
+        }, Bounty)
     end
 
     ---Enables the bounty controller
-    function Bounty.Enable()
-        EnableTrigger(Bounty_Controller)
+    function Bounty:Enable()
+        EnableTrigger(self.trig)
     end
 
     ---Disables the bounty controller
-    function Bounty.Disable()
-        DisableTrigger(Bounty_Controller)
+    function Bounty:Disable()
+        DisableTrigger(self.trig)
     end
 
-    OnTrigInit(function ()
-        --The trigger that runs when a unit dies
-        Bounty_Controller = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(Bounty_Controller, EVENT_PLAYER_UNIT_DEATH)
-        TriggerAddAction(Bounty_Controller, function()
-            if not GetKillingUnit() then return end -- If there is not killing unit then the process stop
+    --The trigger that runs when a unit dies
+    Bounty.trig = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(Bounty.trig, EVENT_PLAYER_UNIT_DEATH)
+    TriggerAddAction(Bounty.trig, function()
+        local killer = GetKillingUnit()
+        if killer then -- If there is no killing unit then the process stops
 
             local self = Bounty.create()
 
-            self.KillingUnit = GetKillingUnit()
-            self.DyingUnit = GetDyingUnit()
+            self.KillingUnit = killer
+            self.DyingUnit = GetTriggerUnit()
             self.Amount = Bounty.Get(GetUnitTypeId(self.DyingUnit))
 
             self.Receiver = GetOwningPlayer(self.KillingUnit)
             self:CanSee(self.Receiver, true)
             self.UnitPos = self.DyingUnit
 
-            current = self
-
-            onDead:run(self)
-
-            current = self
+            runOnDead(self)
 
             if IsUnitEnemy(self.DyingUnit, self.Receiver) or self.AllowFriendFire then
                 self:Run()
             else
                 self:destroy()
             end
-        end)
-
-        -- Last details
-        t1 = CreateTrigger()
-        t2 = CreateTrigger()
-
-        LocalPlayer = GetLocalPlayer()
-        SetData()
+        end
     end)
 
-    ---Adds a listener that will run when a unit kills another to the main trigger
-    ---@param cb fun(bounty: Bounty)
-    ---@return Event
-    function Bounty.OnDead(cb)
-        return onDead(cb)
-    end
-
-    ---Adds a listener that will run when a bounty is runned without problem
-    ---@param cb fun(bounty: Bounty)
-    ---@return Event
-    function Bounty.OnRun(cb)
-        return onRun(cb)
-    end
-
-    ---@deprecated
-    ---Adds a listener that will run when a unit kills another to the main trigger
-    ---@param func function
-    ---@return Event
-    function RegisterBountyDeadEvent(func)
-        return onDead(func)
-    end
-
-    ---@deprecated
-    ---Adds a listener that will run when a unit kills another
-    ---@param t trigger
-    ---@param func function
-    ---@return Event
-    function TriggerRegisterBountyDeadEvent(t, func)
-        return onDead(func)
-    end
-
-    ---@deprecated
-    ---Returns the main trigger that will run when a unit kills another
-    ---@return trigger
-    function GetNativeBountyDeadTrigger()
-        return t1
-    end
-
-    ---@deprecated
-    ---Adds a listener that will run when a bounty is runned without problem
-    ---@param func function
-    ---@return Event
-    function RegisterBountyEvent(func)
-        return onRun(func)
-    end
-
-    ---@deprecated
-    ---Adds a listener that will run when a bounty is runned without problem to the main trigger
-    ---@param t trigger
-    ---@param func function
-    ---@return Event
-    function TriggerRegisterBountyEvent(t, func)
-        return onRun(t, func)
-    end
-
-    ---@deprecated
-    ---Returns the main trigger that will run when a bounty is runned without problem
-    ---@return trigger
-    function GetNativeBountyTrigger()
-        return t2
-    end
+    OnInit.final(Config)
 end)

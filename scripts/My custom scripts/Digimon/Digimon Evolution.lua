@@ -1,4 +1,7 @@
-OnLibraryInit({name = "DigimonEvolution", "Digimon"}, function ()
+OnInit("DigimonEvolution", function ()
+    Require "Digimon"
+    Require "Digimon Capture"
+
     local EvolveDialog = {} ---@type table<player, dialog>
     local EvolveClicked = __jarray(-1) ---@type table<player, integer>
     local EvolveOption = {} ---@type table<player, button>[]
@@ -140,7 +143,7 @@ OnLibraryInit({name = "DigimonEvolution", "Digimon"}, function ()
     local function CreateSpecificCondtions(initial, toEvolve, level, place, stone)
         ---Unlock evolve
         ---@param evolve Digimon
-        ---@param otherCond? fun(evo: Digimon) is an aditional condition that uses evolve as parameter, if is not set, then is ignored
+        ---@param otherCond? fun(evo: Digimon):boolean is an aditional condition that uses evolve as parameter, if is not set, then is ignored
         local function active(evolve, otherCond)
             local p = evolve:getOwner()
             if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE and evolve:getTypeId() == initial and evolve:getLevel() >= level and (not otherCond or otherCond(evolve)) then
@@ -208,118 +211,113 @@ OnLibraryInit({name = "DigimonEvolution", "Digimon"}, function ()
         end
 
     end
+    for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+        local p = Player(i)
+        EvolveDialog[p] = DialogCreate()
+        EvolveOption[p] = {}
+    end
 
-    OnMapInit(function ()
-        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-            local p = Player(i)
-            EvolveDialog[p] = DialogCreate()
-            EvolveOption[p] = {}
-        end
+    -- Press the evolve button
+    RegisterSpellEffectEvent(EvolveAbil, function ()
+        local u = GetSpellAbilityUnit()
+        local p = GetOwningPlayer(u)
+        EvolveClicked[p] = GetBankIndex(p, Digimon.getInstance(u))
 
-        -- Press the evolve button
-        RegisterSpellEffectEvent(EvolveAbil, function ()
-            local u = GetSpellAbilityUnit()
-            local p = GetOwningPlayer(u)
-            EvolveClicked[p] = GetBankIndex(p, Digimon.getInstance(u))
+        -- Update dialog
+        DialogClear(EvolveDialog[p])
+        DialogSetMessage(EvolveDialog[p], "What digimon you choose for " .. GetHeroProperName(u) .. "?")
+        EvolveOption[p] = {}
 
-            -- Update dialog
-            DialogClear(EvolveDialog[p])
-            DialogSetMessage(EvolveDialog[p], "What digimon you choose for " .. GetHeroProperName(u) .. "?")
-            EvolveOption[p] = {}
-
-            local set = PossibleEvolution[Digimon.getInstance(u)]
-            if set then
-                local j = 0
-                for v in set:elements() do
-                    j = j + 1
-                    local u2 = GetRecycledHero(Digimon.PASSIVE, v, 0, 0, 0)
-                    EvolveOption[p][j] = DialogAddButton(EvolveDialog[p], GetHeroProperName(u2), 0)
-                    RecycleHero(u2)
-                end
-            end
-            DialogAddButton(EvolveDialog[p], "Cancel", 0)
-
-            DialogDisplay(p, EvolveDialog[p], true)
-        end)
-
-        -- Add the evolution ability to the new digimon
-        local function AddAbility(new)
-            local p = new:getOwner()
-            if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
-                new:addAbility(EvolveAbilDis)
+        local set = PossibleEvolution[Digimon.getInstance(u)]
+        if set then
+            local j = 0
+            for v in set:elements() do
+                j = j + 1
+                local u2 = GetRecycledHero(Digimon.PASSIVE, v, 0, 0, 0)
+                EvolveOption[p][j] = DialogAddButton(EvolveDialog[p], GetHeroProperName(u2), 0)
+                RecycleHero(u2)
             end
         end
-        Digimon.createEvent(AddAbility)
-        Digimon.capturedEvent(AddAbility)
+        DialogAddButton(EvolveDialog[p], "Cancel", 0)
 
-        -- Remove the evolution ability to destroyed digimon
-        Digimon.destroyEvent(function (old)
-            old:removeAbility(EvolveAbil)
-            old:removeAbility(EvolveAbilDis)
-        end)
-
-        -- Evolve Run
-
-        -- Press one of the options
-        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-            local p = Player(i)
-            local t = CreateTrigger()
-            TriggerRegisterDialogEvent(t, EvolveDialog[p])
-            TriggerAddAction(t, function ()
-                local evolve = GetBankDigimon(p, EvolveClicked[p])
-
-                -- Get clicked button
-                local index = 0
-                local toEvolve = nil
-                for v in PossibleEvolution[evolve]:elements() do
-                    index = index + 1
-                    if GetClickedButton() == EvolveOption[p][index] then
-                        toEvolve = v
-                        break
-                    end
-                end
-
-                if not toEvolve then
-                    return
-                end
-
-                ClearPossibleEvolutions(evolve)
-                local time = evolve.onCombat and 2. or 4.
-                local u = evolve.root
-
-                local cur = Transmission.create(Force(p))
-                cur.isSkippable = false
-                cur:AddLine(u, nil, GetHeroProperName(u), nil, "is digievolving into...", Transmission.SET, time, true)
-                cur:AddActions(function ()
-                    SetUnitInvulnerable(u, true)
-                    PauseUnit(u, true)
-                    DestroyEffectTimed(AddSpecialEffect("Digievolution1.mdx", GetUnitX(u), GetUnitY(u)), time * 2.)
-
-                    evolve:evolveTo(toEvolve) -- Here I added the more important things
-                    u = evolve.root -- Have to refresh
-                    DestroyEffectTimed(AddSpecialEffectTarget("origin", u, "Digievolution2.mdx"), time * 1.5)
-
-                    cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u), Transmission.SET, time, true)
-                end)
-                cur:AddEnd(function ()
-                    PauseUnit(u, false)
-                end)
-                cur:Start()
-            end)
-        end
+        DialogDisplay(p, EvolveDialog[p], true)
     end)
 
-    -- For GUI
-    OnTrigInit(function ()
-        udg_CreateEvolutionCondition = CreateTrigger()
-        TriggerAddAction(udg_CreateEvolutionCondition, function ()
-            CreateSpecificCondtions(udg_InitialForm, udg_EvolvedForm, udg_EvolveLevelCondition, rawget(_G, "udg_EvolveRegionCondition"), rawget(_G, "udg_EvolveItemCondition"))
-            udg_InitialForm = 0
-            udg_EvolvedForm = 0
-            udg_EvolveLevelCondition = 0
-            udg_EvolveRegionCondition = nil
-            udg_EvolveItemCondition = nil
+    -- Add the evolution ability to the new digimon
+    local function AddAbility(new)
+        local p = new:getOwner()
+        if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
+            new:addAbility(EvolveAbilDis)
+        end
+    end
+    Digimon.createEvent(AddAbility)
+    Digimon.capturedEvent(AddAbility)
+
+    -- Remove the evolution ability to destroyed digimon
+    Digimon.destroyEvent(function (old)
+        old:removeAbility(EvolveAbil)
+        old:removeAbility(EvolveAbilDis)
+    end)
+
+    -- Evolve Run
+
+    -- Press one of the options
+    for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+        local p = Player(i)
+        local t = CreateTrigger()
+        TriggerRegisterDialogEvent(t, EvolveDialog[p])
+        TriggerAddAction(t, function ()
+            local evolve = GetBankDigimon(p, EvolveClicked[p])
+
+            -- Get clicked button
+            local index = 0
+            local toEvolve = nil
+            for v in PossibleEvolution[evolve]:elements() do
+                index = index + 1
+                if GetClickedButton() == EvolveOption[p][index] then
+                    toEvolve = v
+                    break
+                end
+            end
+
+            if not toEvolve then
+                return
+            end
+
+            ClearPossibleEvolutions(evolve)
+            local time = evolve.onCombat and 2. or 4.
+            local u = evolve.root
+
+            local cur = Transmission.create(Force(p))
+            cur.isSkippable = false
+            cur:AddLine(u, nil, GetHeroProperName(u), nil, "is digievolving into...", Transmission.SET, time, true)
+            cur:AddActions(function ()
+                SetUnitInvulnerable(u, true)
+                PauseUnit(u, true)
+                DestroyEffectTimed(AddSpecialEffect("Digievolution1.mdx", GetUnitX(u), GetUnitY(u)), time * 2.)
+
+                evolve:evolveTo(toEvolve) -- Here I added the more important things
+                u = evolve.root -- Have to refresh
+                DestroyEffectTimed(AddSpecialEffectTarget("origin", u, "Digievolution2.mdx"), time * 1.5)
+
+                cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u), Transmission.SET, time, true)
+            end)
+            cur:AddEnd(function ()
+                PauseUnit(u, false)
+            end)
+            cur:Start()
         end)
+    end
+
+    -- For GUI
+    udg_CreateEvolutionCondition = CreateTrigger()
+    TriggerAddAction(udg_CreateEvolutionCondition, function ()
+        CreateSpecificCondtions(udg_InitialForm, udg_EvolvedForm, udg_EvolveLevelCondition, rawget(_G, "udg_EvolveRegionCondition"), rawget(_G, "udg_EvolveItemCondition"))
+        udg_InitialForm = 0
+        udg_EvolvedForm = 0
+        udg_EvolveLevelCondition = 0
+        udg_EvolveRegionCondition = nil
+        udg_EvolveItemCondition = nil
     end)
 
 end)

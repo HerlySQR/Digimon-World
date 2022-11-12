@@ -1,7 +1,9 @@
 -- Abstraction of the place a digimon is staying
-OnLibraryInit({name = "Environment", "FrameEffects"}, function ()
+OnInit("Environment", function ()
+    Require "FrameEffects"
+    Require "FrameLoader"
 
-    local LocalPlayer = nil ---@type player
+    local LocalPlayer = GetLocalPlayer()
     local TopMsg = nil ---@type framehandle
 
     ---@class Environment
@@ -144,22 +146,24 @@ OnLibraryInit({name = "Environment", "FrameEffects"}, function ()
         DisplayCineFilter(true)
     end
 
-    OnTrigInit(function ()
-        LocalPlayer = GetLocalPlayer()
+    local function InitFrames()
         TopMsg = BlzCreateFrameByType("TEXT", "name", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), "", 0)
         BlzFrameSetAllPoints(TopMsg, BlzGetOriginFrame(ORIGIN_FRAME_TOP_MSG, 0))
         BlzFrameSetText(TopMsg, "")
         BlzFrameSetScale(TopMsg, 2.)
         BlzFrameSetTextAlignment(TopMsg, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
         BlzFrameSetAlpha(TopMsg, 0)
+    end
 
-        Environment.allMap = Environment.create("", bj_mapInitialPlayableArea, "entireMap.tga")
-        BlzChangeMinimapTerrainTex("entireMap.tga")
+    InitFrames()
+    FrameLoaderAdd(InitFrames)
 
-        -- Just to be detected by the extension
-        Environment.jijimon = nil
-        Environment.initial = nil
-        Environment.hospital = nil
-    end)
+    Environment.allMap = Environment.create("", bj_mapInitialPlayableArea, "entireMap.tga")
+    BlzChangeMinimapTerrainTex("entireMap.tga")
+
+    -- Just to be detected by the extension
+    Environment.jijimon = nil
+    Environment.initial = nil
+    Environment.hospital = nil
 
 end)

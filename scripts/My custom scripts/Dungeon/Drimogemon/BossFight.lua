@@ -1,4 +1,6 @@
-OnLibraryInit({name = "Drimogemon", "BossFightUtils"}, function ()
+OnInit(function ()
+    Require "BossFightUtils"
+
     local boss = gg_unit_O060_0442 ---@type unit
     local battlefield = {} ---@type rect[]
     local INTERVAL = 2. -- seconds

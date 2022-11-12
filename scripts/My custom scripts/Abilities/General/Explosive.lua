@@ -1,4 +1,6 @@
-OnLibraryInit("AbilityUtils", function ()
+OnInit(function ()
+    Require "AbilityUtils"
+
     local Spell = FourCC('A033')
     local MaxHits = 8
     local MaxTime = 35.

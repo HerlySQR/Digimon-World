@@ -1,4 +1,6 @@
-OnLibraryInit({name = "ChangeEnviroment", "Digimon"}, function ()
+OnInit(function ()
+    Require "Digimon"
+
     ---@param passage rect
     ---@param entrance1 rect
     ---@param envName1 string
@@ -78,27 +80,25 @@ OnLibraryInit({name = "ChangeEnviroment", "Digimon"}, function ()
 
     -- For GUI
 
-    OnTrigInit(function ()
-        udg_CreatePassage = CreateTrigger()
-        TriggerAddAction(udg_CreatePassage, function ()
-            CreatePassage(udg_Passage, udg_Entrance1, udg_EnvName1, udg_Entrance2, udg_EnvName2, udg_FadeOut)
-            udg_Passage = nil
-            udg_Entrance1 = nil
-            udg_EnvName1 = ""
-            udg_Entrance2 = nil
-            udg_EnvName2 = ""
-            udg_FadeOut = false
-        end)
-        udg_CreatePassages = CreateTrigger()
-        TriggerAddAction(udg_CreatePassages, function ()
-            CreatePassages(udg_Passages, udg_Entrances1, udg_EnvName1, udg_Entrances2, udg_EnvName2, udg_FadeOut)
-            udg_Passages = {}
-            udg_Entrances1 = {}
-            udg_EnvName1 = ""
-            udg_Entrances2 = {}
-            udg_EnvName2 = ""
-            udg_FadeOut = false
-        end)
+    udg_CreatePassage = CreateTrigger()
+    TriggerAddAction(udg_CreatePassage, function ()
+        CreatePassage(udg_Passage, udg_Entrance1, udg_EnvName1, udg_Entrance2, udg_EnvName2, udg_FadeOut)
+        udg_Passage = nil
+        udg_Entrance1 = nil
+        udg_EnvName1 = ""
+        udg_Entrance2 = nil
+        udg_EnvName2 = ""
+        udg_FadeOut = false
+    end)
+    udg_CreatePassages = CreateTrigger()
+    TriggerAddAction(udg_CreatePassages, function ()
+        CreatePassages(udg_Passages, udg_Entrances1, udg_EnvName1, udg_Entrances2, udg_EnvName2, udg_FadeOut)
+        udg_Passages = {}
+        udg_Entrances1 = {}
+        udg_EnvName1 = ""
+        udg_Entrances2 = {}
+        udg_EnvName2 = ""
+        udg_FadeOut = false
     end)
 
 end)

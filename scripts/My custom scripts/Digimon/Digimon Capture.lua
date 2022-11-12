@@ -1,4 +1,8 @@
-OnLibraryInit({name = "DigimonCapture", "AbilityUtils"}, function ()
+OnInit("Digimon Capture", function ()
+    Require "AbilityUtils"
+
+    local runCaptured
+    Digimon.capturedEvent, runCaptured = Event.create()
 
     local function Lerp(min, max, percentage)
         return min + (max - min) * percentage * 0.01
@@ -15,9 +19,7 @@ OnLibraryInit({name = "DigimonCapture", "AbilityUtils"}, function ()
                 local captureChance = 0
                 if dTarget.rank == Rank.ROOKIE then
                     captureChance = R2I(Lerp(25, 50, 100 - GetUnitLifePercent(target)))
-                elseif dTarget.rank == Rank.CHAMPION then
-                    captureChance = R2I(Lerp(12, 25, 100 - GetUnitLifePercent(target)))
-                elseif dTarget.rank == Rank.ULTIMATE or dTarget.rank == Rank.MEGA then
+                else
                     DisplayTextToPlayer(p, 0, 0, "This digimon is too powerful.")
                     return
                 end
@@ -28,7 +30,7 @@ OnLibraryInit({name = "DigimonCapture", "AbilityUtils"}, function ()
                     StoreDigimon(p, dTarget)
                     SendToBank(p, dTarget)
                     DestroyEffectTimed(AddSpecialEffect("Abilities\\Spells\\Undead\\DarkRitual\\DarkRitualCaster.mdl", GetUnitX(target), GetUnitY(target)), 2.00)
-                    Digimon.capturedEvent:run(Digimon.getInstance(caster), dTarget)
+                    runCaptured(Digimon.getInstance(caster), dTarget)
                 else
                     DisplayTextToPlayer(p, 0, 0, "Not this time.")
                 end

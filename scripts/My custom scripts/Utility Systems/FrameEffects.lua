@@ -1,8 +1,7 @@
-OnLibraryInit({name = "FrameEffects", "Timed"}, function () -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
+OnInit("FrameEffects", function ()
+    Require "Timed" -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
 
     local INTERVAL = 0.03125
-
-    local LocalPlayer = nil ---@type player
 
     local Fades = {} ---@type table<framehandle, function>
 
@@ -10,7 +9,7 @@ OnLibraryInit({name = "FrameEffects", "Timed"}, function () -- https://www.hivew
     ---@param duration number
     ---@param whatPlayer? player
     function FrameFadeOut(frame, duration, whatPlayer)
-        whatPlayer = whatPlayer or LocalPlayer
+        whatPlayer = whatPlayer or GetLocalPlayer()
 
         pcall(function ()
             Fades[frame]()
@@ -25,11 +24,11 @@ OnLibraryInit({name = "FrameEffects", "Timed"}, function () -- https://www.hivew
             steps = steps - 1
             alpha = alpha - stepSize
             if steps > 0 then
-                if LocalPlayer == whatPlayer then
+                if GetLocalPlayer() == whatPlayer then
                     BlzFrameSetAlpha(frame, alpha)
                 end
             else
-                if LocalPlayer == whatPlayer then
+                if GetLocalPlayer() == whatPlayer then
                     BlzFrameSetVisible(frame, false)
                 end
                 Fades[frame] = nil
@@ -42,7 +41,7 @@ OnLibraryInit({name = "FrameEffects", "Timed"}, function () -- https://www.hivew
     ---@param duration number
     ---@param whatPlayer? player
     function FrameFadeIn(frame, duration, whatPlayer)
-        whatPlayer = whatPlayer or LocalPlayer
+        whatPlayer = whatPlayer or GetLocalPlayer()
 
         pcall(function ()
             Fades[frame]()
@@ -53,7 +52,7 @@ OnLibraryInit({name = "FrameEffects", "Timed"}, function () -- https://www.hivew
         local stepSize = 255 // steps
         local alpha = 0
 
-        if LocalPlayer == whatPlayer then
+        if GetLocalPlayer() == whatPlayer then
             BlzFrameSetVisible(frame, true)
         end
 
@@ -61,7 +60,7 @@ OnLibraryInit({name = "FrameEffects", "Timed"}, function () -- https://www.hivew
             steps = steps - 1
             alpha = alpha + stepSize
             if steps > 0 then
-                if LocalPlayer == whatPlayer then
+                if GetLocalPlayer() == whatPlayer then
                     BlzFrameSetAlpha(frame, alpha)
                 end
                 Fades[frame] = nil
@@ -70,8 +69,4 @@ OnLibraryInit({name = "FrameEffects", "Timed"}, function () -- https://www.hivew
             end
         end, INTERVAL)
     end
-
-    OnTrigInit(function ()
-        LocalPlayer = GetLocalPlayer()
-    end)
 end)

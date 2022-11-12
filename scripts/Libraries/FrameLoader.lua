@@ -1,6 +1,6 @@
 -- in 1.31 and upto 1.32.9 PTR (when I wrote this). Frames are not correctly saved and loaded, breaking the game.
 -- This runs all functions added to it with a 0s delay after the game was loaded.
-OnLibraryInit({name = "FrameLoader"}, function ()
+OnInit("FrameLoader", function ()
     FrameLoader = {
         OnLoadTimer = function ()
             for _,v in ipairs(FrameLoader) do v() end

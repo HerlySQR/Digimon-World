@@ -1,4 +1,12 @@
-OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils", "Vec2", "SyncedTable"}, function ()
+OnInit(function ()
+    Require "Timed"
+    Require "LinkedList"
+    Require "Set"
+    Require "AbilityUtils"
+    Require "Vec2"
+    Require "SyncedTable"
+    Require "Digimon Capture"
+
     local CREEPS_PER_PLAYER     ---@type integer
     local CREEPS_PER_REGION     ---@type integer
     local LIFE_SPAN             ---@type number
@@ -12,6 +20,9 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
     local RANGE_IN_HOME         ---@type number
     local NEIGHBOURHOOD         ---@type number
     local INTERVAL              ---@type number
+    local CHANCE_UNCOMMON       ---@type integer
+    local CHANCE_RARE           ---@type integer
+    local CHANCE_LEGENDARY      ---@type integer
 
     ---@class Creep : Digimon
     ---@field remaining number
@@ -24,7 +35,7 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
     ---@class RegionData
     ---@field rectID integer
     ---@field spawnpoint Vec2
-    ---@field types integer[]
+    ---@field types unitpool
     ---@field inDay boolean
     ---@field inNight boolean
     ---@field minLevel integer
@@ -35,12 +46,13 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
     ---@field creeps Creep[]
     ---@field neighbourhood Set
     ---@field sameRegion Set
+    ---@field checked boolean
 
-    ---@param unitid integer
+    ---@param pool unitpool
     ---@param pos Vec2
     ---@return Creep
-    local function CreateCreep(unitid, pos)
-        local creep = Digimon.create(Digimon.NEUTRAL, unitid, pos.x, pos.y, bj_UNIT_FACING) ---@type Creep
+    local function CreateCreep(pool, pos)
+        local creep = Digimon.add(PlaceRandomUnit(pool, Digimon.NEUTRAL, pos.x, pos.y, bj_UNIT_FACING)) ---@type Creep
 
         creep.captured = false
         creep.reduced = false
@@ -55,6 +67,57 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
 
     local All = LinkedList.create()
 
+    ---@param types Creep[]
+    ---@return unitpool
+    local function GenerateCreepPool(types)
+        local pool = CreateUnitPool()
+
+        local commons = {}
+        local uncommons = {}
+        local rares = {}
+        local legendaries = {}
+
+        for i = 1, #types do
+            local id = types[i]
+            local rarity = Digimon.getRarity(id)
+
+            if rarity == Rarity.COMMON then
+                table.insert(commons, id)
+            elseif rarity == Rarity.UNCOMMON then
+                table.insert(uncommons, id)
+            elseif rarity == Rarity.RARE then
+                table.insert(rares, id)
+            elseif rarity == Rarity.LEGENDARY then
+                table.insert(legendaries, id)
+            end
+        end
+
+        local chanceCommon = 1
+        if #legendaries > 0 then
+            chanceCommon = chanceCommon - CHANCE_LEGENDARY
+            for _, v in ipairs(legendaries) do
+                UnitPoolAddUnitType(pool, v, CHANCE_LEGENDARY/#legendaries)
+            end
+        end
+        if #rares > 0 then
+            chanceCommon = chanceCommon - CHANCE_RARE
+            for _, v in ipairs(rares) do
+                UnitPoolAddUnitType(pool, v, CHANCE_RARE/#rares)
+            end
+        end
+        if #uncommons > 0 then
+            chanceCommon = chanceCommon - CHANCE_UNCOMMON
+            for _, v in ipairs(uncommons) do
+                UnitPoolAddUnitType(pool, v, CHANCE_UNCOMMON/#uncommons)
+            end
+        end
+        for _, v in ipairs(commons) do
+            UnitPoolAddUnitType(pool, v, chanceCommon/#commons)
+        end
+
+        return pool
+    end
+
     ---@param re rect
     ---@param types integer[]
     ---@return RegionData
@@ -63,7 +126,7 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
         local this = { ---@type RegionData
             rectID = GetHandleId(re),
             spawnpoint = Vec2.new(x, y),
-            types = types,
+            types = GenerateCreepPool(types),
             inDay = inDay,
             inNight = inNight,
             minLevel = minLevel,
@@ -163,7 +226,7 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
                     regionData.someoneClose = true
                     regionData.inregion = true
                     PlayersInRegion:addSingle(GetOwningPlayer(u))
-                    lvl = GetHeroLevel(u)
+                    lvl = math.max(lvl, GetHeroLevel(u))
                 end
             end)
             -- Control the creep or the spawn
@@ -174,7 +237,7 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
                     -- Spawn per neighbourhood instead per region
                     local r = GetFreeNeighbour(regionData, math.min(CREEPS_PER_REGION, CREEPS_PER_PLAYER * PlayersInRegion:size())) -- If don't have neighbours, then just use the same region
                     if r then
-                        local creep = CreateCreep(r.types[math.random(#r.types)], r.spawnpoint)
+                        local creep = CreateCreep(r.types, r.spawnpoint)
                         creep:setLevel(GetProccessedLevel(lvl, r.minLevel, r.maxLevel))
                         creep.rd = regionData
                         for r2 in r.sameRegion:elements() do
@@ -195,12 +258,14 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
                     end
                 end)
                 for _, creep in ipairs(regionData.creeps) do
-                    creep.remaining = creep.remaining - INTERVAL
+                    if creep.rd == regionData then
+                        creep.remaining = creep.remaining - INTERVAL
 
-                    --If there is no nearby unit in the RANGE_LEVEL_2 then reduce once the duration
-                    if not regionData.someoneClose and not creep.reduced then
-                        creep.remaining = creep.remaining - LIFE_REDUCED
-                        creep.reduced = true
+                        --If there is no nearby unit in the RANGE_LEVEL_2 then reduce once the duration
+                        if not regionData.someoneClose and not creep.reduced then
+                            creep.remaining = creep.remaining - LIFE_REDUCED
+                            creep.reduced = true
+                        end
                     end
                 end
                 regionData.delay = math.max(regionData.delay, DELAY_NORMAL)
@@ -230,82 +295,86 @@ OnLibraryInit({name = "CreepSpawn", "Timed", "LinkedList", "Set", "AbilityUtils"
                     end
                 end
             end
+            PlayersInRegion:clear()
         end
-        PlayersInRegion:clear()
     end
 
-    OnMapInit(function ()
-        Timed.call(function ()
-            TriggerExecute(gg_trg_Creep_Spawn_System_Config)
+    OnInit.trig(function ()
+        TriggerExecute(gg_trg_Creep_Spawn_System_Config)
 
-            CREEPS_PER_PLAYER = udg_CREEPS_PER_PLAYER
-            CREEPS_PER_REGION = udg_CREEPS_PER_REGION
-            LIFE_SPAN = udg_LIFE_SPAN
-            LIFE_REDUCED = udg_LIFE_REDUCED
-            DELAY_SPAWN = udg_DELAY_SPAWN
-            DELAY_NORMAL = udg_DELAY_NORMAL
-            DELAY_DEATH = udg_DELAY_DEATH
-            RANGE_LEVEL_1 = udg_RANGE_LEVEL_1
-            RANGE_LEVEL_2 = udg_RANGE_LEVEL_2
-            RANGE_RETURN = udg_RANGE_RETURN
-            RANGE_IN_HOME = udg_RANGE_IN_HOME
-            INTERVAL = udg_SPAWN_INTERVAL
-            NEIGHBOURHOOD = udg_NEIGHBOURHOOD
+        CREEPS_PER_PLAYER = udg_CREEPS_PER_PLAYER
+        CREEPS_PER_REGION = udg_CREEPS_PER_REGION
+        LIFE_SPAN = udg_LIFE_SPAN
+        LIFE_REDUCED = udg_LIFE_REDUCED
+        DELAY_SPAWN = udg_DELAY_SPAWN
+        DELAY_NORMAL = udg_DELAY_NORMAL
+        DELAY_DEATH = udg_DELAY_DEATH
+        RANGE_LEVEL_1 = udg_RANGE_LEVEL_1
+        RANGE_LEVEL_2 = udg_RANGE_LEVEL_2
+        RANGE_RETURN = udg_RANGE_RETURN
+        RANGE_IN_HOME = udg_RANGE_IN_HOME
+        INTERVAL = udg_SPAWN_INTERVAL
+        NEIGHBOURHOOD = udg_NEIGHBOURHOOD
+        CHANCE_UNCOMMON = udg_CHANCE_UNCOMMON
+        CHANCE_RARE = udg_CHANCE_RARE
+        CHANCE_LEGENDARY = udg_CHANCE_LEGENDARY
 
-            Timed.echo(INTERVAL, Update)
+        -- Clear
+        udg_CREEPS_PER_PLAYER = nil
+        udg_CREEPS_PER_REGION = nil
+        udg_LIFE_SPAN = nil
+        udg_LIFE_REDUCED = nil
+        udg_DELAY_SPAWN = nil
+        udg_DELAY_NORMAL = nil
+        udg_DELAY_DEATH = nil
+        udg_RANGE_LEVEL_1 = nil
+        udg_RANGE_LEVEL_2 = nil
+        udg_RANGE_RETURN = nil
+        udg_RANGE_IN_HOME = nil
+        udg_SPAWN_INTERVAL = nil
+        udg_NEIGHBOURHOOD = nil
+        udg_CHANCE_UNCOMMON = nil
+        udg_CHANCE_RARE = nil
+        udg_CHANCE_LEGENDARY = nil
 
-            -- Clear
-            udg_CREEPS_PER_PLAYER = nil
-            udg_CREEPS_PER_REGION = nil
-            udg_LIFE_SPAN = nil
-            udg_LIFE_REDUCED = nil
-            udg_DELAY_SPAWN = nil
-            udg_DELAY_NORMAL = nil
-            udg_DELAY_DEATH = nil
-            udg_RANGE_LEVEL_1 = nil
-            udg_RANGE_LEVEL_2 = nil
-            udg_RANGE_RETURN = nil
-            udg_RANGE_IN_HOME = nil
-            udg_SPAWN_INTERVAL = nil
-            udg_NEIGHBOURHOOD = nil
-
-            TriggerClearActions(gg_trg_Creep_Spawn_System_Config)
-            DestroyTrigger(gg_trg_Creep_Spawn_System_Config)
-            gg_trg_Creep_Spawn_System_Config = nil
-        end)
+        TriggerClearActions(gg_trg_Creep_Spawn_System_Config)
+        DestroyTrigger(gg_trg_Creep_Spawn_System_Config)
+        gg_trg_Creep_Spawn_System_Config = nil
     end)
 
-    OnTrigInit(function ()
-        local function killedOrCapturedfunction(_, target)
-            target.captured = true
+    OnInit.final(function ()
+        Timed.echo(INTERVAL, Update)
+    end)
+
+    local function killedOrCapturedfunction(_, target)
+        target.captured = true
+    end
+    Digimon.capturedEvent(killedOrCapturedfunction)
+    Digimon.killEvent(killedOrCapturedfunction)
+
+    Digimon.postDamageEvent(function (info)
+        local creep = info.target ---@type Creep
+        if creep.returning then
+            creep:issueOrder(Orders.attack, creep.spawnpoint.x, creep.spawnpoint.y)
         end
-        Digimon.capturedEvent(killedOrCapturedfunction)
-        Digimon.killEvent(killedOrCapturedfunction)
+    end)
 
-        Digimon.postDamageEvent(function (info)
-            local creep = info.target ---@type Creep
-            if creep.returning then
-                creep:issueOrder(Orders.attack, creep.spawnpoint.x, creep.spawnpoint.y)
-            end
-        end)
-
-        -- For GUI
-        udg_CreepSpawnCreate = CreateTrigger()
-        TriggerAddAction(udg_CreepSpawnCreate, function ()
-            Create(
-                udg_CreepSpawnRegion,
-                udg_CreepSpawnTypes,
-                udg_CreepSpawnInDay,
-                udg_CreepSpawnInNight,
-                udg_CreepSpawnMinLevel,
-                udg_CreepSpawnMaxLevel)
-            udg_CreepSpawnRegion = nil
-            udg_CreepSpawnTypes = __jarray(0)
-            udg_CreepSpawnInDay = true
-            udg_CreepSpawnInNight = true
-            udg_CreepSpawnMinLevel = 1
-            udg_CreepSpawnMaxLevel = 1
-        end)
+    -- For GUI
+    udg_CreepSpawnCreate = CreateTrigger()
+    TriggerAddAction(udg_CreepSpawnCreate, function ()
+        Create(
+            udg_CreepSpawnRegion,
+            udg_CreepSpawnTypes,
+            udg_CreepSpawnInDay,
+            udg_CreepSpawnInNight,
+            udg_CreepSpawnMinLevel,
+            udg_CreepSpawnMaxLevel)
+        udg_CreepSpawnRegion = nil
+        udg_CreepSpawnTypes = __jarray(0)
+        udg_CreepSpawnInDay = true
+        udg_CreepSpawnInNight = true
+        udg_CreepSpawnMinLevel = 1
+        udg_CreepSpawnMaxLevel = 1
     end)
 
 end)

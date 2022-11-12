@@ -1,4 +1,6 @@
-OnLibraryInit("AbilityUtils", function ()
+OnInit(function ()
+    Require "AbilityUtils"
+
     local Spell = FourCC('A02R')
     local HealOnCombat = 1. + 1.
     local HealOffCombat = 1. + 2.5

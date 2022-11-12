@@ -1,4 +1,6 @@
-OnLibraryInit("AbilityUtils", function ()
+OnInit(function ()
+    Require "AbilityUtils"
+
     local Spell = FourCC('A01Q')
     local StrDmgFactor = 0.30
     local AgiDmgFactor = 0.15

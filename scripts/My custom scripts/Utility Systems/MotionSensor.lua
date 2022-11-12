@@ -1,9 +1,9 @@
-OnLibraryInit({name = "MotionSensor", -- https://www.hiveworkshop.com/threads/global-initialization.317099/
-    "LinkedList", -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
-    "Event", -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/
-    "Set", -- https://www.hiveworkshop.com/threads/set-group-datastructure.331886/
-    "Timed", -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
-    "AddHook"}, function () -- https://www.hiveworkshop.com/threads/hook-v5-0-1.339153/
+OnInit("MotionSensor", function ()
+    Require "LinkedList" -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
+    Require "Event" -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/
+    Require "Set" -- https://www.hiveworkshop.com/threads/set-group-datastructure.331886/
+    Require "Timed" -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
+    Require "AddHook"  -- https://www.hiveworkshop.com/threads/hook-v5-0-1.339153/
 
     --[[
         System based on MotionSensor v1.4.0 by AGD -- https://www.hiveworkshop.com/threads/system-motion-sensor.287219/
@@ -52,20 +52,22 @@ OnLibraryInit({name = "MotionSensor", -- https://www.hiveworkshop.com/threads/gl
     ---@field public motionState MotionState       The current motion state of the motion changing unit
     MotionSensor = LinkedList.create()
 
+    local runStart, runStop, runChange
+
     ---Registers a callback to run when a stationary unit moves.
     ---
     ---To unregister call the `remove()` method of the returned value.
-    MotionSensor.registerMotionStartEvent = Event.create()
+    MotionSensor.startEvent, runStart = Event.create()
 
     ---Registers a callback to run when a unit stops moving.
     ---
     ---To unregister call the `remove()` method of the returned value.
-    MotionSensor.registerMotionStopEvent = Event.create()
+    MotionSensor.stopEvent, runStop = Event.create()
 
     ---Registers a callback to run during a motion change event.
     ---
     ---To unregister call the `remove()` method of the returned value.
-    MotionSensor.registerMotionChangeEvent = Event.create()
+    MotionSensor.changeEvent, runChange = Event.create()
 
     ---@class MotionState
     MOTION_STATE_MOVING        = 1 ---@type MotionState
@@ -95,14 +97,14 @@ OnLibraryInit({name = "MotionSensor", -- https://www.hiveworkshop.com/threads/gl
                     SENSOR_GROUP_STATIONARY:removeSingle(u)
                     SENSOR_GROUP_MOVING:addSingle(u)
                     sensor.motionState = MOTION_STATE_MOVING
-                    MotionSensor.registerMotionStartEvent:run(sensor)
+                    runStart(sensor)
                 else
                     SENSOR_GROUP_MOVING:removeSingle(u)
                     SENSOR_GROUP_STATIONARY:addSingle(u)
                     sensor.motionState = MOTION_STATE_STATIONARY
-                    MotionSensor.registerMotionStopEvent:run(sensor)
+                    runStop(sensor)
                 end
-                MotionSensor.registerMotionChangeEvent:run(sensor)
+                runChange(sensor)
             end
         end
     end
@@ -183,26 +185,24 @@ OnLibraryInit({name = "MotionSensor", -- https://www.hiveworkshop.com/threads/gl
         return enabled
     end
 
-    OnTrigInit(function ()
-        if AUTO_REGISTER_UNITS then
-            local oldFunc
-            oldFunc = AddHook("CreateUnit", function (...)
-                local u = oldFunc(...)
-                if u then
-                    MotionSensor.addUnit(u)
-                end
-                return u
-            end)
-        end
+    if AUTO_REGISTER_UNITS then
         local oldFunc
-        oldFunc = AddHook("RemoveUnit", function (u)
+        oldFunc = AddHook("CreateUnit", function (...)
+            local u = oldFunc(...)
             if u then
-                MotionSensor.removeUnit(u)
+                MotionSensor.addUnit(u)
             end
-            oldFunc(u)
+            return u
         end)
-        -- Turn on Sensor
-        enabled = true
+    end
+    local oldFunc
+    oldFunc = AddHook("RemoveUnit", function (u)
+        if u then
+            MotionSensor.removeUnit(u)
+        end
+        oldFunc(u)
     end)
+    -- Turn on Sensor
+    enabled = true
 
 end)

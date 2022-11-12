@@ -1,4 +1,9 @@
-OnLibraryInit({name = "HeroRecycler", "LinkedList", "Timed", "AddHook", optional = {"WorldBounds"}}, function ()
+OnInit("HeroRecycler", function ()
+    Require "LinkedList"
+    Require "Timed"
+    Require "AddHook"
+    Require.optional "WorldBounds"
+
     -- System based on UnitRecycler https://www.hiveworkshop.com/threads/286701/
     -- but with heros
 
@@ -51,15 +56,13 @@ OnLibraryInit({name = "HeroRecycler", "LinkedList", "Timed", "AddHook", optional
     local unitCampX = 0.
     local unitCampY = 0.
 
-    OnMapInit(function ()
-        if WorldBounds then
-            unitCampY = WorldBounds.maxY
-        else
-            local bounds = GetWorldBounds()
-            unitCampY = GetRectMaxY(bounds)
-            RemoveRect(bounds)
-        end
-    end)
+    if WorldBounds then
+        unitCampY = WorldBounds.maxY
+    else
+        local bounds = GetWorldBounds()
+        unitCampY = GetRectMaxY(bounds)
+        RemoveRect(bounds)
+    end
 
     local List = {} ---@type table<integer, unit[]>
 
@@ -146,17 +149,15 @@ OnLibraryInit({name = "HeroRecycler", "LinkedList", "Timed", "AddHook", optional
     end
 
     if AUTO_RECYCLE_DEAD then
-        OnMapInit(function ()
-            local t = CreateTrigger()
-            for i = 0, PLAYER_NEUTRAL_PASSIVE do
-                TriggerRegisterPlayerUnitEvent(t, Player(i), EVENT_PLAYER_UNIT_DEATH, nil)
+        local t = CreateTrigger()
+        for i = 0, PLAYER_NEUTRAL_PASSIVE do
+            TriggerRegisterPlayerUnitEvent(t, Player(i), EVENT_PLAYER_UNIT_DEATH, nil)
+        end
+        TriggerAddAction(t, function ()
+            local u = GetTriggerUnit()
+            if UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
+                RecycleHero(u, DeathTime(u))
             end
-            TriggerAddCondition(t, Condition(function ()
-                local u = GetTriggerUnit()
-                if UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
-                    RecycleHero(u, DeathTime(u))
-                end
-            end))
         end)
     end
 end)

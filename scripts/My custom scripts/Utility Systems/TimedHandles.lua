@@ -1,4 +1,5 @@
-OnLibraryInit({name = "TimedHandles", "Timed"}, function ()
+OnInit("TimedHandles", function ()
+    Require "Timed"
 
     ---Destroys an effect after a while
     ---@param eff effect

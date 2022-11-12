@@ -1,4 +1,6 @@
-OnLibraryInit("AbilityUtils", function ()
+OnInit(function ()
+    Require "AbilityUtils"
+
     local Spell = FourCC('A03A')
     local ResetCombat = 42.
     local MaxChargeOnCombat = 0.05

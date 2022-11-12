@@ -49,7 +49,7 @@
 ]]--
 
 
-OnLibraryInit({name = "WorldBounds"}, function ()
+OnInit("WorldBounds", function ()
     MapBounds = setmetatable({}, {})
     WorldBounds = setmetatable({}, getmetatable(MapBounds))
 

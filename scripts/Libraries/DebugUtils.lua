@@ -287,10 +287,10 @@ function IngameConsole:setupMultiboard()
 end
 
 function IngameConsole:setupTrigger()
-    self.trigger = CreateTrigger()
-    TriggerRegisterPlayerChatEvent(self.trigger, self.player, "", false) --triggers on any input of self.player
-    TriggerAddCondition(self.trigger, Condition(function() return string.sub(GetEventPlayerChatString(),1,1) ~= '-' end)) --console will not react to entered stuff starting with '-'. This still allows to use other chat orders like "-exec".
-    TriggerAddAction(self.trigger, function() self:processInput(GetEventPlayerChatString()) end)
+    self.trig = CreateTrigger()
+    TriggerRegisterPlayerChatEvent(self.trig, self.player, "", false) --triggers on any input of self.player
+    TriggerAddCondition(self.trig, Condition(function() return string.sub(GetEventPlayerChatString(),1,1) ~= '-' end)) --console will not react to entered stuff starting with '-'. This still allows to use other chat orders like "-exec".
+    TriggerAddAction(self.trig, function() self:processInput(GetEventPlayerChatString()) end)
 end
 
 function IngameConsole:makeShared()
@@ -299,7 +299,7 @@ function IngameConsole:makeShared()
         player = Player(i)
         if (GetPlayerSlotState(player) == PLAYER_SLOT_STATE_PLAYING) and (IngameConsole.playerConsoles[player] ~= self) then --second condition ensures that the player chat event is not added twice for the same player.
             IngameConsole.playerConsoles[player] = self
-            TriggerRegisterPlayerChatEvent(self.trigger, player, "", false) --triggers on any input
+            TriggerRegisterPlayerChatEvent(self.trig, player, "", false) --triggers on any input
         end
     end
     self.sharedConsole = true
