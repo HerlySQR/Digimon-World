@@ -35,7 +35,7 @@ OnInit("AbilityUtils", function ()
 
     -- Remove sleep when is attacked
     local SLEEP_BUFF = FourCC('B005')
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         if info.target:hasAbility(SLEEP_BUFF) and not udg_IsDamageCode then
             info.target:removeAbility(SLEEP_BUFF)
         end

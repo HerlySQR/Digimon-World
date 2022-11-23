@@ -346,13 +346,13 @@ OnInit(function ()
         Timed.echo(INTERVAL, Update)
     end)
 
-    local function killedOrCapturedfunction(_, target)
-        target.captured = true
+    local function killedOrCapturedfunction(info)
+        info.target.captured = true
     end
-    Digimon.capturedEvent(killedOrCapturedfunction)
-    Digimon.killEvent(killedOrCapturedfunction)
+    Digimon.capturedEvent:register(killedOrCapturedfunction)
+    Digimon.killEvent:register(killedOrCapturedfunction)
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         local creep = info.target ---@type Creep
         if creep.returning then
             creep:issueOrder(Orders.attack, creep.spawnpoint.x, creep.spawnpoint.y)

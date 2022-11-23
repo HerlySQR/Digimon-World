@@ -18,7 +18,7 @@ OnInit("DummyCaster", function ()
     }
 
     local Dummies = {}
-    local Abilities = {}
+    local Abilities = __jarray(0)
 
     local function GetDummy(player, x, y, angle)
         local dummy = table.remove(Dummies)

@@ -1,5 +1,6 @@
 OnInit(function ()
     Require "Digimon"
+    Require "Wc3Type"
 
     local AREA = 512.
     local COLOR_R = 43.529
@@ -25,7 +26,9 @@ OnInit(function ()
 
     local LocalPlayer = GetLocalPlayer()
 
-    Digimon.killEvent(function (killer, dead)
+    Digimon.killEvent:register(function (info)
+        local killer = info.killer
+        local dead = info.target
         local owner = Wc3Type(killer) == "unit" and GetOwningPlayer(killer) or killer:getOwner()
         if owner ~= Digimon.NEUTRAL and IsPlayerEnemy(owner, dead:getOwner()) then
             Digimon.enumInRange(dead:getX(), dead:getY(), AREA, function (picked)

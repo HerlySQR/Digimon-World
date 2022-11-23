@@ -1,8 +1,7 @@
 OnInit("Digimon Capture", function ()
     Require "AbilityUtils"
 
-    local runCaptured
-    Digimon.capturedEvent, runCaptured = Event.create()
+    Digimon.capturedEvent = EventListener.create()
 
     local function Lerp(min, max, percentage)
         return min + (max - min) * percentage * 0.01
@@ -30,7 +29,7 @@ OnInit("Digimon Capture", function ()
                     StoreDigimon(p, dTarget)
                     SendToBank(p, dTarget)
                     DestroyEffectTimed(AddSpecialEffect("Abilities\\Spells\\Undead\\DarkRitual\\DarkRitualCaster.mdl", GetUnitX(target), GetUnitY(target)), 2.00)
-                    runCaptured(Digimon.getInstance(caster), dTarget)
+                    Digimon.capturedEvent:run({caster = Digimon.getInstance(caster), target = dTarget})
                 else
                     DisplayTextToPlayer(p, 0, 0, "Not this time.")
                 end

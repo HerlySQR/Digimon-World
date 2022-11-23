@@ -8,7 +8,7 @@ OnInit(function ()
     local Effect = "Abilities\\Spells\\Orc\\WarStomp\\WarStompCaster.mdl"
     local Sound = "Abilities\\Spells\\Orc\\Shockwave\\Shockwave.flac"
 
-    Digimon.preDamageEvent(function (info)
+    Digimon.preDamageEvent:register(function (info)
         if udg_IsDamageAttack then
             local source = info.source ---@type Digimon
             if source:hasAbility(Spell) then

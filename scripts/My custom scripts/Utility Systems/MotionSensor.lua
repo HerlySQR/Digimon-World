@@ -1,6 +1,6 @@
 OnInit("MotionSensor", function ()
     Require "LinkedList" -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
-    Require "Event" -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/
+    Require "EventListener" -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/
     Require "Set" -- https://www.hiveworkshop.com/threads/set-group-datastructure.331886/
     Require "Timed" -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
     Require "AddHook"  -- https://www.hiveworkshop.com/threads/hook-v5-0-1.339153/
@@ -32,7 +32,7 @@ OnInit("MotionSensor", function ()
         register units upon entering the map. Set to false if
         you want to manually register units.
     ]]
-    local AUTO_REGISTER_UNITS = true
+    local AUTO_REGISTER_UNITS = false
 
     --======================= End of Configuration ========================
     --   Do not change anything below this line if you're not so sure on   
@@ -52,22 +52,20 @@ OnInit("MotionSensor", function ()
     ---@field public motionState MotionState       The current motion state of the motion changing unit
     MotionSensor = LinkedList.create()
 
-    local runStart, runStop, runChange
-
     ---Registers a callback to run when a stationary unit moves.
     ---
     ---To unregister call the `remove()` method of the returned value.
-    MotionSensor.startEvent, runStart = Event.create()
+    MotionSensor.startEvent = EventListener.create()
 
     ---Registers a callback to run when a unit stops moving.
     ---
     ---To unregister call the `remove()` method of the returned value.
-    MotionSensor.stopEvent, runStop = Event.create()
+    MotionSensor.stopEvent = EventListener.create()
 
     ---Registers a callback to run during a motion change event.
     ---
     ---To unregister call the `remove()` method of the returned value.
-    MotionSensor.changeEvent, runChange = Event.create()
+    MotionSensor.changeEvent = EventListener.create()
 
     ---@class MotionState
     MOTION_STATE_MOVING        = 1 ---@type MotionState
@@ -97,14 +95,14 @@ OnInit("MotionSensor", function ()
                     SENSOR_GROUP_STATIONARY:removeSingle(u)
                     SENSOR_GROUP_MOVING:addSingle(u)
                     sensor.motionState = MOTION_STATE_MOVING
-                    runStart(sensor)
+                    MotionSensor.startEvent:run(sensor)
                 else
                     SENSOR_GROUP_MOVING:removeSingle(u)
                     SENSOR_GROUP_STATIONARY:addSingle(u)
                     sensor.motionState = MOTION_STATE_STATIONARY
-                    runStop(sensor)
+                    MotionSensor.stopEvent:run(sensor)
                 end
-                runChange(sensor)
+                MotionSensor.changeEvent:run(sensor)
             end
         end
     end

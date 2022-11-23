@@ -3,7 +3,7 @@ OnInit(function ()
 
     local SPELL = FourCC('A02B')
     local DURATION = 10. -- seconds
-    local DAMAGE = 100. -- per explosion
+    local DAMAGE = 25. -- per explosion
     local MIN_DIST = 128.
     local AREA = 500.
     local AREA_EXP = 150.
@@ -18,10 +18,10 @@ OnInit(function ()
                 local dist = MIN_DIST + AREA * math.random()
                 local x = GetUnitX(caster) + dist * math.cos(angle)
                 local y = GetUnitY(caster) + dist * math.sin(angle)
-    
+
                 DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Volcano\\VolcanoMissile.mdl", x, y))
                 DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Volcano\\VolcanoDeath.mdl", x, y))
-    
+
                 ForUnitsInRange(x, y, AREA_EXP, function (u)
                     if IsUnitEnemy(caster, GetOwningPlayer(u)) then
                         UnitDamageTarget(caster, u, DAMAGE, true, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)

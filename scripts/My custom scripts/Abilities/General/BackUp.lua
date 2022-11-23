@@ -10,7 +10,7 @@ OnInit(function ()
 
     local Shielded = {} ---@type table<unit, boolean>
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         local target = info.target ---@type Digimon
         if target:hasAbility(Spell) then
             local u = target.root

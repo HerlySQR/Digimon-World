@@ -10,17 +10,17 @@ OnInit(function ()
     local PlayerName = {} ---@type framehandle[]
     local PlayerStatus = {} ---@type framehandle[]
     local PlayerReady = {} ---@type framehandle[]
-    local DefaultHeight = 0
+
+    BlzHideOriginFrames(true)
+    local DefaultHeight = BlzFrameGetHeight(BlzGetFrameByName("ConsoleUIBackdrop",0))
+    BlzFrameSetSize(BlzGetFrameByName("ConsoleUIBackdrop",0), 0, 0.0001)
+    EnableUserControl(false)
 
     local function InitFrames()
-        BlzHideOriginFrames(true)
-        DefaultHeight = BlzFrameGetHeight(BlzGetFrameByName("ConsoleUIBackdrop",0))
-        BlzFrameSetSize(BlzGetFrameByName("ConsoleUIBackdrop",0), 0, 0.0001)
-        EnableUserControl(false)
 
         WaitPlayers = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
         BlzFrameSetAbsPoint(WaitPlayers, FRAMEPOINT_TOPLEFT, 0.250000, 0.530000)
-        BlzFrameSetAbsPoint(WaitPlayers, FRAMEPOINT_BOTTOMRIGHT, 0.540000, 0.430000 + 0.02 * User.AmountPlaying)
+        BlzFrameSetAbsPoint(WaitPlayers, FRAMEPOINT_BOTTOMRIGHT, 0.540000, 0.48000 - 0.03 * User.AmountPlaying)
         BlzFrameSetVisible(WaitPlayers, false)
 
         WaitPlayersText = BlzCreateFrameByType("TEXT", "name", WaitPlayers, "", 0)

@@ -182,12 +182,14 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     local function AbsoluteLoadFunc()
+        xpcall(function ()
         TriggerExecute(gg_trg_Absolute_Load)
         UseData(GetTriggerPlayer(), Pressed[GetTriggerPlayer()])
         ExitFunc()
         if GetTriggerPlayer() == LocalPlayer then
             BlzFrameSetEnable(AbsoluteLoad, false)
         end
+        end, print)
     end
 
     -- AutoSave

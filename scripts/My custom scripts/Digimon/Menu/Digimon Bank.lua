@@ -166,7 +166,7 @@ OnInit("DigimonBank", function ()
     end
 
     -- When the digimon evolves
-    Digimon.evolutionEvent(function (evolve)
+    Digimon.evolutionEvent:register(function (evolve)
         if evolve:getOwner() == LocalPlayer then
             UpdateMenu()
         end
@@ -581,7 +581,8 @@ OnInit("DigimonBank", function ()
     local respawnTime = 60
     local cooldowns = __jarray(0) ---@type table<Digimon, number>
 
-    Digimon.killEvent(function (_, dead)
+    Digimon.killEvent:register(function (info)
+        local dead = info.target ---@type Digimon
         local p = dead:getOwner()
         if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
             local bank = Bank[GetPlayerId(p)] ---@type Bank

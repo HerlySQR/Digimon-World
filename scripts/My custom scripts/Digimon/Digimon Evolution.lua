@@ -162,12 +162,12 @@ OnInit("DigimonEvolution", function ()
 
         -- Case 1: Only level
         if not place and not stone then
-            Digimon.levelUpEvent(active)
+            Digimon.levelUpEvent:register(active)
         end
 
         -- Case 2: Level and place
         if place and not stone then
-            Digimon.levelUpEvent(function (evolve)
+            Digimon.levelUpEvent:register(function (evolve)
                 active(evolve, function (evo)
                     return RectContainsCoords(place, evo:getX(), evo:getY())
                 end)
@@ -178,7 +178,7 @@ OnInit("DigimonEvolution", function ()
 
         -- Case 3: Level and stone
         if not place and stone then
-            Digimon.levelUpEvent(function (evolve)
+            Digimon.levelUpEvent:register(function (evolve)
                 active(evolve, function (evo)
                     return UnitHasItemOfTypeBJ(evo.root, stone)
                 end)
@@ -189,7 +189,7 @@ OnInit("DigimonEvolution", function ()
 
         -- Case 4: Level, place and stone
         if place and stone then
-            Digimon.levelUpEvent(function (evolve)
+            Digimon.levelUpEvent:register(function (evolve)
                 active(evolve, function (evo)
                     return RectContainsCoords(place, evo:getX(), evo:getY()) and UnitHasItemOfTypeBJ(evo.root, stone)
                 end)
@@ -244,17 +244,21 @@ OnInit("DigimonEvolution", function ()
     end)
 
     -- Add the evolution ability to the new digimon
-    local function AddAbility(new)
+    Digimon.createEvent:register(function (new)
         local p = new:getOwner()
         if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
             new:addAbility(EvolveAbilDis)
         end
-    end
-    Digimon.createEvent(AddAbility)
-    Digimon.capturedEvent(AddAbility)
+    end)
+    Digimon.capturedEvent:register(function (info)
+        local p = info.target:getOwner()
+        if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
+            info.target:addAbility(EvolveAbilDis)
+        end
+    end)
 
     -- Remove the evolution ability to destroyed digimon
-    Digimon.destroyEvent(function (old)
+    Digimon.destroyEvent:register(function (old)
         old:removeAbility(EvolveAbil)
         old:removeAbility(EvolveAbilDis)
     end)
@@ -288,12 +292,18 @@ OnInit("DigimonEvolution", function ()
             local time = evolve.onCombat and 2. or 4.
             local u = evolve.root
 
+            SetUnitInvulnerable(u, true)
+            PauseUnit(u, true)
+            SetUnitVertexColor(u,
+                BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_RED),
+                BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_GREEN),
+                BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_BLUE),
+                127)
+
             local cur = Transmission.create(Force(p))
             cur.isSkippable = false
             cur:AddLine(u, nil, GetHeroProperName(u), nil, "is digievolving into...", Transmission.SET, time, true)
             cur:AddActions(function ()
-                SetUnitInvulnerable(u, true)
-                PauseUnit(u, true)
                 DestroyEffectTimed(AddSpecialEffect("Digievolution1.mdx", GetUnitX(u), GetUnitY(u)), time * 2.)
 
                 evolve:evolveTo(toEvolve) -- Here I added the more important things
@@ -303,6 +313,7 @@ OnInit("DigimonEvolution", function ()
                 cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u), Transmission.SET, time, true)
             end)
             cur:AddEnd(function ()
+                SetUnitInvulnerable(u, false)
                 PauseUnit(u, false)
             end)
             cur:Start()

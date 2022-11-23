@@ -2,6 +2,7 @@ OnInit("Transmission", function ()
     Require "LinkedList"
     Require "Timed"
     Require "Wc3Type"
+    local StoreUnitColor = Require.optional "StoreUnitColor"
 
     -- See the API here https://www.hiveworkshop.com/threads/vjass-lua-unit-transmission.332814/
 
@@ -9,7 +10,7 @@ OnInit("Transmission", function ()
     local AllInstances = {} ---@type table<player, Transmission[]>
     local WhatForce = {} ---@type table<player, force>
     local InGame = nil ---@type force
-    local LocalPlayer = nil ---@type player
+    local LocalPlayer = GetLocalPlayer()
 
     ---@param force force
     ---@return boolean
@@ -65,7 +66,7 @@ OnInit("Transmission", function ()
     ---@field DefSound sound
     ---@field DefText string
     ---@field DefTimeType integer
-    ---@field DefDuration real
+    ---@field DefDuration number
     ---@field DefWillWait boolean
     Transmission = {}
     Transmission.__index = Transmission
@@ -103,7 +104,7 @@ OnInit("Transmission", function ()
         self.toForce = nil
         self.OriginalTargetForce = nil
         self._t = nil
-        LinkedList.remove(All, self)
+        self:remove()
     end
 
     function Transmission:_what_call()
@@ -209,7 +210,7 @@ OnInit("Transmission", function ()
     ---Pauses the transmission and maybe resume it after an asigned seconds
     ---the boolean is to stop the sound with a fade out
     ---@param fadeOut boolean
-    ---@param delay? real
+    ---@param delay? number
     function Transmission:Pause(fadeOut, delay)
         self._paused = true
         PauseTimer(self._t)
@@ -239,7 +240,7 @@ OnInit("Transmission", function ()
     end
 
     ---Adds a line, the expected values are:
-    --- - `(unit whichUnit or integer unittype), playercolor whichColor, string unitName, sound soundHandle, string message, integer timeType, real timeVal, boolean wait`
+    --- - `(unit whichUnit or integer unittype), playercolor whichColor, string unitName, sound soundHandle, string message, integer timeType, number timeVal, boolean wait`
     --- - `table line`
     --- - nothing
     ---
@@ -250,7 +251,7 @@ OnInit("Transmission", function ()
     ---   - `string Name` (`nil` value `""`)
     ---   - `string Text` (`nil` value `""`)
     ---   - `integer TimeType` : valid values `Transmission.ADD, Transmission.SET, Transmission.SUB` (`nil` value `-1`)
-    ---   - `real Duration` (`nil` value 0)
+    ---   - `number Duration` (`nil` value 0)
     ---   - `boolean WillWait` (`nil` value false)
     ---
     ---In case you didn't add a parameter, the default values will be asign.
@@ -285,7 +286,7 @@ OnInit("Transmission", function ()
                     line.Unit = unit
                     if not unit then
                         if not line.Color then
-                            if rawget(_G, "LIBRARY_StoreUnitColor") then
+                            if StoreUnitColor then
                                 line.Color = PLAYER_COLOR_BLACK
                             else
                                 line.Color = ConvertPlayerColor(PLAYER_NEUTRAL_AGGRESSIVE)
@@ -293,7 +294,7 @@ OnInit("Transmission", function ()
                         end
                     else
                         if not line.Color then
-                            if rawget(_G, "LIBRARY_StoreUnitColor") then
+                            if StoreUnitColor then
                                 line.Color = GetUnitColor(line.Unit)
                             else
                                 line.Color = GetPlayerColor(GetOwningPlayer(line.Unit))
@@ -304,7 +305,7 @@ OnInit("Transmission", function ()
                     line.Unit = nil
                     line.UnitType = unit
                     if not line.Color then
-                        if rawget(_G, "LIBRARY_StoreUnitColor") then
+                        if StoreUnitColor then
                             line.Color = PLAYER_COLOR_BLACK
                         else
                             line.Color = ConvertPlayerColor(PLAYER_NEUTRAL_AGGRESSIVE)
@@ -334,9 +335,9 @@ OnInit("Transmission", function ()
 
     ---Adds an actions, you can just add a delay or an actions.
     ---The returned value is a table with the fields:
-    ---   - `real` Delay
+    ---   - `number` Delay
     ---   - `fun(t: Transmission)` Actions
-    ---@param delay real|fun(t?: Transmission)
+    ---@param delay number|fun(t?: Transmission)
     ---@param func? fun(t?: Transmission)
     ---@return table
     function Transmission:AddActions(delay, func)
@@ -380,8 +381,7 @@ OnInit("Transmission", function ()
     ---@param data? any
     ---@return Transmission
     function Transmission.create(toForce, data)
-        local self = {}
-        LinkedList.insert(All, self)
+        local self = All:insert()
         setmetatable(self, Transmission) -- Sorry, but I don't wanna have LinkedList as its metatable
 
         self._skipped = false
@@ -406,20 +406,20 @@ OnInit("Transmission", function ()
     ---@param fadeOut? boolean
     function Transmission.PauseAll(fadeOut)
         for node in All:loop() do
-            node.value:Pause(fadeOut)
+            node:Pause(fadeOut)
         end
     end
 
     ---Resume all the paused transmissions
     function Transmission.ResumeAll()
         for node in All:loop() do
-            node.value:Resume()
+            node:Resume()
         end
     end
 
     ---Creates and runs a transmission with just 1 line, the expected values are:
     ---
-    ---`[player toPlayer or force toForce], (unit whichUnit or integer unittype), playercolor whichColor, string unitName, sound soundHandle, string message, integer timeType, real timeVal`
+    ---`[player toPlayer or force toForce], (unit whichUnit or integer unittype), playercolor whichColor, string unitName, sound soundHandle, string message, integer timeType, number timeVal`
     ---@return Transmission?
     function Transmission.Simple(...)
         local new = nil
@@ -446,54 +446,51 @@ OnInit("Transmission", function ()
         return new
     end
 
-    OnMapInit(function ()
-        Timed.call(function ()
-            InGame = CreateForce()
-            for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-                local player = Player(i)
-                if GetPlayerController(player) == MAP_CONTROL_USER and GetPlayerSlotState(player) == PLAYER_SLOT_STATE_PLAYING then
-                    ForceAddPlayer(InGame, player)
-                end
-            end
-        end)
-
-        local t = CreateTrigger()
-
+    Timed.call(function ()
+        InGame = CreateForce()
         for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
             local player = Player(i)
-            WhatForce[player] = GetForceOfPlayer(player)
-            AllInstances[player] = {}
-            TriggerRegisterPlayerEvent(t, player, EVENT_PLAYER_END_CINEMATIC)
-            TriggerRegisterPlayerEvent(t, player, EVENT_PLAYER_LEAVE)
+            if GetPlayerController(player) == MAP_CONTROL_USER and GetPlayerSlotState(player) == PLAYER_SLOT_STATE_PLAYING then
+                ForceAddPlayer(InGame, player)
+            end
         end
-        TriggerAddAction(t, function ()
-            local player = GetTriggerPlayer()
-            for i = #AllInstances[player], 1, -1 do
-                local curr = AllInstances[player][i]
-                if curr.isSkippable and GetTriggerEventId() ~= EVENT_PLAYER_LEAVE then
-                    ForceRemovePlayer(curr.toForce, player)
-                    if player == LocalPlayer then
-                        -- I don't know if this is free of desync (I checked and there is not desync yet)
-                        EndCinematicScene()
-                        if curr._played then
-                            StopSound(curr._played, false, true)
-                        end
-                    end
-                    if IsForceEmpty(curr.toForce) then
-                        PauseTimer(curr._t)
-                        TimerStart(curr._t, RMinBJ(bj_TRANSMISSION_PORT_HANGTIME, TimerGetRemaining(curr._t)), false, function () curr:_what_call() end)
-                    end
-                    table.remove(AllInstances[player], i)
-                end
-            end
-
-            if GetTriggerEventId() == EVENT_PLAYER_LEAVE then
-                ForceRemovePlayer(InGame, player)
-            end
-        end)
-        -- --
-        LocalPlayer = GetLocalPlayer()
-        ForceCinematicSubtitles(true)
     end)
+
+    local t = CreateTrigger()
+
+    for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+        local player = Player(i)
+        WhatForce[player] = GetForceOfPlayer(player)
+        AllInstances[player] = {}
+        TriggerRegisterPlayerEvent(t, player, EVENT_PLAYER_END_CINEMATIC)
+        TriggerRegisterPlayerEvent(t, player, EVENT_PLAYER_LEAVE)
+    end
+    TriggerAddAction(t, function ()
+        local player = GetTriggerPlayer()
+        for i = #AllInstances[player], 1, -1 do
+            local curr = AllInstances[player][i]
+            if curr.isSkippable and GetTriggerEventId() ~= EVENT_PLAYER_LEAVE then
+                ForceRemovePlayer(curr.toForce, player)
+                if player == LocalPlayer then
+                    -- I don't know if this is free of desync (I checked and there is not desync yet)
+                    EndCinematicScene()
+                    if curr._played then
+                        StopSound(curr._played, false, true)
+                    end
+                end
+                if IsForceEmpty(curr.toForce) then
+                    PauseTimer(curr._t)
+                    TimerStart(curr._t, RMinBJ(bj_TRANSMISSION_PORT_HANGTIME, TimerGetRemaining(curr._t)), false, function () curr:_what_call() end)
+                end
+                table.remove(AllInstances[player], i)
+            end
+        end
+
+        if GetTriggerEventId() == EVENT_PLAYER_LEAVE then
+            ForceRemovePlayer(InGame, player)
+        end
+    end)
+    -- --
+    ForceCinematicSubtitles(true)
 
 end)

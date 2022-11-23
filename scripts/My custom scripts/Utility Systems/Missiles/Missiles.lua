@@ -11,6 +11,7 @@
 
 OnInit("Missiles", function ()
     Require "MissileEffect"
+    Require "UnitEnum"
     -- -------------------------------------------------------------------------- --
     --                                Configuration                               --
     -- -------------------------------------------------------------------------- --
@@ -95,19 +96,17 @@ OnInit("Missiles", function ()
             end
         end
         
-        OnMapInit(function()
-            local timer = CreateTimer()
+        local timer = CreateTimer()
         
-            TimerStart(timer, 0, false, function()
-                for i = 0, SWEET_SPOT do
-                    local unit = CreateUnit(player, DUMMY, WorldBounds.maxX, WorldBounds.maxY, 0)
-                    PauseUnit(unit, false)
-                    GroupAddUnit(group, unit)
-                    UnitRemoveAbility(unit, FourCC('Amrf'))
-                end
-                PauseTimer(timer)
-                DestroyTimer(timer)
-            end)
+        TimerStart(timer, 0, false, function()
+            for i = 0, SWEET_SPOT do
+                local unit = CreateUnit(player, DUMMY, WorldBounds.maxX, WorldBounds.maxY, 0)
+                PauseUnit(unit, false)
+                GroupAddUnit(group, unit)
+                UnitRemoveAbility(unit, FourCC('Amrf'))
+            end
+            PauseTimer(timer)
+            DestroyTimer(timer)
         end)
     end
     
@@ -204,9 +203,13 @@ OnInit("Missiles", function ()
     function mt:OnHit()
         if self.onHit then
             if self.allocated and self.collision > 0 then
-                GroupEnumUnitsInRange(group, self.x, self.y, self.collision + COLLISION_SIZE, nil)
+                --[[GroupEnumUnitsInRange(group, self.x, self.y, self.collision + COLLISION_SIZE, nil)
                 local unit = FirstOfGroup(group)
                 while unit do
+                    GroupRemoveUnit(group, unit)
+                    unit = FirstOfGroup(group)
+                end]]
+                ForUnitsInRange(self.x, self.y, self.collision + COLLISION_SIZE, function (unit)
                     if array[self][unit] == nil then
                         if IsUnitInRangeXY(unit, self.x, self.y, self.collision) then
                             if self.collideZ then
@@ -216,21 +219,19 @@ OnInit("Missiles", function ()
                                     array[self][unit] = true
                                     if self.allocated and self.onHit(unit) then
                                         self:terminate()
-                                        break
+                                        --break
                                     end
                                 end
                             else
                                 array[self][unit] = true
                                 if self.allocated and self.onHit(unit) then
                                     self:terminate()
-                                    break
+                                    --break
                                 end
                             end
                         end
                     end
-                    GroupRemoveUnit(group, unit)
-                    unit = FirstOfGroup(group)
-                end
+                end)
             end
         end
     end

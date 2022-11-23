@@ -13,7 +13,7 @@ OnInit(function ()
 
     local Off = false
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         if Off then
             return
         end

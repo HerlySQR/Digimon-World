@@ -12,7 +12,7 @@ OnInit(function ()
     local timersCombat = {} ---@type table<Digimon, function>
     local onCombat = __jarray(false) ---@type table<Digimon, boolean>
 
-    Digimon.createEvent(function (new)
+    Digimon.createEvent:register(function (new)
         Timed.call(function ()
             if new:hasAbility(Spell) then
                 timersEcho[new] = Timed.echo(function ()
@@ -23,11 +23,11 @@ OnInit(function ()
         end)
     end)
 
-    Digimon.onCombatEvent(function (d)
+    Digimon.onCombatEvent:register(function (d)
         onCombat[d] = true
     end)
 
-    Digimon.offCombatEvent(function (d)
+    Digimon.offCombatEvent:register(function (d)
         pcall(function ()
             timersCombat[d]()
         end)
@@ -36,7 +36,7 @@ OnInit(function ()
         end)
     end)
 
-    Digimon.destroyEvent(function (old)
+    Digimon.destroyEvent:register(function (old)
         Timed.call(function ()
             if old:hasAbility(Spell) then
                 timersEcho[old]()

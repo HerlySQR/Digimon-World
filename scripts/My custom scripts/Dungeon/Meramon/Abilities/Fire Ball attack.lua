@@ -21,12 +21,11 @@ OnInit(function ()
         missile.owner = GetOwningPlayer(caster)
         missile.collision = AREA
         missile.onHit = function (u)
-            missile:flush(u)
             if IsUnitEnemy(caster, GetOwningPlayer(u)) then
                 UnitDamageTarget(caster, u, DAMAGE, true, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
+                missile:flush(u)
             end
         end
         missile:launch()
     end)
-
 end)

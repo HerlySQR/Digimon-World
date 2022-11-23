@@ -7,7 +7,7 @@ OnInit(function ()
 
     local timers = {} ---@type function[]
 
-    Digimon.createEvent(function (new)
+    Digimon.createEvent:register(function (new)
         Timed.call(function ()
             if new:hasAbility(Spell) then
                 timers[new] = Timed.echo(function ()
@@ -17,7 +17,7 @@ OnInit(function ()
         end)
     end)
 
-    Digimon.destroyEvent(function (old)
+    Digimon.destroyEvent:register(function (old)
         Timed.call(function ()
             if old:hasAbility(Spell) then
                 timers[old]()

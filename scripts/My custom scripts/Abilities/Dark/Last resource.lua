@@ -11,7 +11,7 @@ OnInit(function ()
 
     local cooldowns = __jarray(0) ---@type table<Digimon, number>
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         local target = info.target ---@type Digimon
         if target:hasAbility(Spell) and GetUnitLifePercent(target.root) <= 5. and cooldowns[target] <= 0. then
             local damage = StrDmgFactor * GetHeroStr(target.root, true) + IntDmgFactor * GetHeroInt(target.root, true)
@@ -35,7 +35,7 @@ OnInit(function ()
         end
     end)
 
-    Digimon.offCombatEvent(function (d)
+    Digimon.offCombatEvent:register(function (d)
         if d:hasAbility(Spell) then
             cooldowns[d] = math.min(cooldowns[d], DelayIfAliveOffCombat)
         end

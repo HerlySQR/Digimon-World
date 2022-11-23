@@ -7,7 +7,7 @@ OnInit(function ()
     local Duration = 3 -- The same as is in the object editor
     local Damage = 10.
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         local source = info.source ---@type Digimon
         local target = info.target ---@type Digimon
         if source:hasAbility(Spell) then

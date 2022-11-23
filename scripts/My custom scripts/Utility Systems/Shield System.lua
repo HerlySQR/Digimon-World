@@ -2,7 +2,7 @@ OnInit("Shield", function ()
     Require "Damage" -- https://www.hiveworkshop.com/threads/damage-engine-5-9-0-0.201016/
     Require "Set" -- https://www.hiveworkshop.com/threads/set-group-datastructure.331886/
     Require "Timed" -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
-    Require "Event" -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/]]
+    Require "EventListener" -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/]]
 
     -- Inspired on: GUI Friendly Shield System 1.00b by AutisticTenacity
     -- https://www.hiveworkshop.com/threads/gui-friendly-shield-system-1-00b.316372/
@@ -37,9 +37,8 @@ OnInit("Shield", function ()
 
     local Shields = {} ---@type table<unit, Set>
 
-    local runApply
     ---Runs everytime the `Shield:apply()` function is called
-    Shield.applyEvent, runApply = Event.create()
+    Shield.applyEvent = EventListener.create()
 
     ---@return Shield
     function Shield.create()
@@ -80,7 +79,7 @@ OnInit("Shield", function ()
             end
         end, INTERVAL)
 
-        runApply(self)
+        Shield.applyEvent:run(self)
     end
 
     ---@param model string
@@ -122,7 +121,7 @@ OnInit("Shield", function ()
         return Shields[u] ~= nil and Shields[u]:copy() or Set.create()
     end
 
-    OnMapInit(function ()
+    OnInit.trig(function ()
         local t = CreateTrigger()
         TriggerRegisterVariableEvent(t, "udg_ArmorDamageEvent", EQUAL, 1.00)
         TriggerAddAction(t, function ()

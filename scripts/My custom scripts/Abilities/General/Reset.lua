@@ -4,7 +4,7 @@ OnInit(function ()
     local Spell = FourCC('A035')
     local Chance = 20
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         local source = info.source ---@type Digimon
         if source:hasAbility(Spell) then
             if math.random(0, 100) <= Chance then

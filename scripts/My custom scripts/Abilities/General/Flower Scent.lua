@@ -6,7 +6,7 @@ OnInit(function ()
     local IntDmgFactor = 0.5
     local Duration = 2. -- The same as is in the object editor
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         local target = info.target ---@type Digimon
         if target:hasAbility(Spell) then
             if math.random(0, 100) <= Chance then

@@ -34,7 +34,7 @@ OnInit(function ()
         end, INTERVAL)
     end)
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         if Effects[info.target] then
             pcall(function ()
                 Timers[info.target]()

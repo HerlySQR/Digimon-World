@@ -6,7 +6,7 @@ OnInit(function ()
     local Duration = 3
     local Chance = 15
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         local source = info.source ---@type Digimon
 
         if udg_IsDamageAttack and source:hasAbility(Spell) then

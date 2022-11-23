@@ -16,25 +16,27 @@ OnInit(function ()
             SetUnitAnimation(rock, "stand")
             local x, y = GetUnitX(rock), GetUnitY(rock)
             ForUnitsInRange(x, y, AREA, function (u)
-                -- Change its target
-                if math.random(100) <= 50 then
-                    ForUnitsInRange(x, y, 4*AREA, function (u2)
-                        if u2 ~= rock then
-                            IssueTargetOrderById(rock, Orders.smart, u2)
-                        end
-                    end)
-                end
-                -- Slow
-                if not UnitHasBuffBJ(u, FourCC('Bchd')) then
-                    DummyCast(
-                        owner,
-                        x, y,
-                        SLOW_SPELL,
-                        SLOW_ORDER,
-                        1,
-                        CastType.TARGET,
-                        u
-                    )
+                if GetUnitTypeId(u) ~= ROCK_ID then
+                    -- Change its target
+                    if math.random(100) <= 50 then
+                        ForUnitsInRange(x, y, 4*AREA, function (u2)
+                            if GetUnitTypeId(u2) ~= ROCK_ID then
+                                IssueTargetOrderById(rock, Orders.smart, u2)
+                            end
+                        end)
+                    end
+                    -- Slow
+                    if not UnitHasBuffBJ(u, FourCC('Bchd')) then
+                        DummyCast(
+                            owner,
+                            x, y,
+                            SLOW_SPELL,
+                            SLOW_ORDER,
+                            1,
+                            CastType.TARGET,
+                            u
+                        )
+                    end
                 end
             end)
             BlzSetSpecialEffectPosition(eff, x, y, BlzGetLocalSpecialEffectZ(eff))

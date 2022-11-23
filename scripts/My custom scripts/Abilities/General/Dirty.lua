@@ -6,7 +6,7 @@ OnInit(function ()
     local Area = 250.
     local Model = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
 
-    Digimon.postDamageEvent(function (info)
+    Digimon.postDamageEvent:register(function (info)
         local caster = info.target ---@type Digimon
         if caster:hasAbility(Spell) then
             if math.random(0, 100) <= Chance then

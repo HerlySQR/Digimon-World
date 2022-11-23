@@ -1,4 +1,4 @@
-do
+OnInit(function ()
     local instances = {}
 
     ---Makes the creep have a chance of drop an item when it dies.
@@ -46,40 +46,38 @@ do
         table.insert(instances[creep], new)
     end
 
-    OnTrigInit(function ()
-        local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
-        TriggerAddAction(t, function ()
-            local list = instances[GetDyingUnit()]
-            if list then
-                for i = #list, 1, -1 do
-                    local ins = list[i]
-                    PlaceRandomItem(ins.itempool, GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+    local t = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
+    TriggerAddAction(t, function ()
+        local list = instances[GetDyingUnit()]
+        if list then
+            for i = #list, 1, -1 do
+                local ins = list[i]
+                PlaceRandomItem(ins.itempool, GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
 
-                    if ins.once then
-                        DestroyItemPool(ins.itempool)
-                        table.remove(list, i)
-                    end
-                end
-
-                if #list == 0 then
-                    instances[GetDyingUnit()] = nil
+                if ins.once then
+                    DestroyItemPool(ins.itempool)
+                    table.remove(list, i)
                 end
             end
-        end)
 
-        -- For GUI
-
-        udg_ItemDropChances = __jarray(0) -- I need it empty
-
-        udg_ItemDropAdd = CreateTrigger()
-        TriggerAddAction(udg_ItemDropAdd, function ()
-            AddItemDrop(udg_ItemDropCreep, udg_ItemDropTypes, udg_ItemDropChances, udg_ItemDropOnce)
-            udg_ItemDropCreep = nil
-            udg_ItemDropTypes = __jarray(0)
-            udg_ItemDropChances = __jarray(0)
-            udg_ItemDropOnce = nil
-        end)
+            if #list == 0 then
+                instances[GetDyingUnit()] = nil
+            end
+        end
     end)
 
-end
+    -- For GUI
+
+    udg_ItemDropChances = __jarray(0) -- I need it empty
+
+    udg_ItemDropAdd = CreateTrigger()
+    TriggerAddAction(udg_ItemDropAdd, function ()
+        AddItemDrop(udg_ItemDropCreep, udg_ItemDropTypes, udg_ItemDropChances, udg_ItemDropOnce)
+        udg_ItemDropCreep = nil
+        udg_ItemDropTypes = __jarray(0)
+        udg_ItemDropChances = __jarray(0)
+        udg_ItemDropOnce = nil
+    end)
+
+end)

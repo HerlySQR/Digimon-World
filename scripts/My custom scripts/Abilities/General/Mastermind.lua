@@ -12,7 +12,7 @@ OnInit(function ()
     local onCombat = __jarray(false) ---@type table<Digimon, boolean>
     local charges = __jarray(0) ---@type table<Digimon, number>
 
-    Digimon.createEvent(function (new)
+    Digimon.createEvent:register(function (new)
         Timed.call(function ()
             if new:hasAbility(Spell) then
                 timersEcho[new] = Timed.echo(function ()
@@ -22,7 +22,7 @@ OnInit(function ()
         end)
     end)
 
-    Digimon.preDamageEvent(function (info)
+    Digimon.preDamageEvent:register(function (info)
         local source = info.source ---@type Digimon
         if source:hasAbility(Spell) then
             info.amount = info.amount * (1 + charges[source])
@@ -30,11 +30,11 @@ OnInit(function ()
         end
     end)
 
-    Digimon.onCombatEvent(function (d)
+    Digimon.onCombatEvent:register(function (d)
         onCombat[d] = true
     end)
 
-    Digimon.offCombatEvent(function (d)
+    Digimon.offCombatEvent:register(function (d)
         pcall(function ()
             timersCombat[d]()
         end)
@@ -43,7 +43,7 @@ OnInit(function ()
         end)
     end)
 
-    Digimon.destroyEvent(function (old)
+    Digimon.destroyEvent:register(function (old)
         Timed.call(function ()
             if old:hasAbility(Spell) then
                 timersEcho[old]()

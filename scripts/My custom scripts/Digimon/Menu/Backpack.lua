@@ -282,11 +282,9 @@ OnInit("Backpack", function ()
 
     local gotItem = __jarray(false) ---@type table<player, boolean>
 
-    OnInit.final(function ()
-        ForForce(FORCE_PLAYING, function ()
-            PlayerItems[GetEnumPlayer()] = {}
-        end)
-    end)
+    for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
+        PlayerItems[Player(i)] = {}
+    end
 
     InitFrames()
     FrameLoaderAdd(InitFrames)
@@ -361,6 +359,15 @@ OnInit("Backpack", function ()
     ---@param items integer[]
     ---@param charges? integer[]
     function SetBackpackItems(p, items, charges)
+        for i = #items, 1, -1 do
+            if items[i] == 0 then
+                DisplayTextToPlayer(p, 0, 0, "You loaded an invalid object in the backpack.")
+                table.remove(items, i)
+                if charges then
+                    table.remove(charges, i)
+                end
+            end
+        end
         for i = 1, #items do
             PlayerItems[p][i] = CreateItemData(items[i])
             if charges then

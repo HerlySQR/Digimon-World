@@ -51,11 +51,9 @@ OnInit("Player Data", function ()
 
     PlayerDatas = {}
 
-    OnTrigInit(function ()
-        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-            PlayerDatas[Player(i)] = {}
-        end
-    end)
+    for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+        PlayerDatas[Player(i)] = {}
+    end
 
     ---After set the GUI variables use this function to store them in a slot
     ---@param p player

@@ -3,13 +3,13 @@ OnInit(function ()
 
     local Spell = FourCC('A037')
 
-    Digimon.onCombatEvent(function (d)
+    Digimon.onCombatEvent:register(function (d)
         if d:hasAbility(Spell) then
             SetUnitAbilityLevel(d.root, Spell, 2)
         end
     end)
 
-    Digimon.offCombatEvent(function (d)
+    Digimon.offCombatEvent:register(function (d)
         if d:hasAbility(Spell) then
             SetUnitAbilityLevel(d.root, Spell, 1)
         end
