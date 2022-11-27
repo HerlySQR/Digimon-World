@@ -60,12 +60,13 @@ do
 end
 
 --Overwrite TriggerAddAction native to let it automatically apply "try" to any actionFunc.
-do
-    local oldTriggerAddAction = TriggerAddAction
-    TriggerAddAction = function(whichTrigger, actionFunc)
+OnInit(function ()
+    Require "AddHook"
+    local oldTriggerAddAction
+    oldTriggerAddAction = AddHook("TriggerAddAction", function(whichTrigger, actionFunc)
         return oldTriggerAddAction(whichTrigger, function() try(actionFunc) end)
-    end
-end
+    end)
+end)
 
 ----------------------------
 ----| deep table.print |----

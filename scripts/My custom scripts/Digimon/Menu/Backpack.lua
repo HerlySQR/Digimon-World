@@ -180,7 +180,7 @@ OnInit("Backpack", function ()
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
         BlzFrameSetAllPoints(BackdropBackpack, Backpack)
-        BlzFrameSetTexture(BackdropBackpack, "ReplaceableTextures\\CommandButtons\\BTNDustOfAppearance.blp", 0, true)
+        BlzFrameSetTexture(BackdropBackpack, "ReplaceableTextures\\CommandButtons\\BTNINV_Misc_Bag_07_Blue.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Backpack, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BackpackFunc)

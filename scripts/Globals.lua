@@ -1,4 +1,5 @@
 Require = require
+Require.optional = require
 
 udg_InitialForm = 0
 udg_EvolvedForm = 0

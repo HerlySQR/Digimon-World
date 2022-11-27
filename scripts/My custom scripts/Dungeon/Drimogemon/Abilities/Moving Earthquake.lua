@@ -1,3 +1,4 @@
+-- Moving Earthquake
 OnInit(function ()
     Require "BossFightUtils"
 
@@ -19,23 +20,11 @@ OnInit(function ()
                 if GetUnitTypeId(u) ~= ROCK_ID then
                     -- Change its target
                     if math.random(100) <= 50 then
-                        ForUnitsInRange(x, y, 4*AREA, function (u2)
-                            if GetUnitTypeId(u2) ~= ROCK_ID then
-                                IssueTargetOrderById(rock, Orders.smart, u2)
-                            end
-                        end)
+                        IssueTargetOrderById(rock, Orders.smart, GetRandomUnitOnRange(x, y, 4*AREA, function (u2) return GetUnitTypeId(u2) ~= ROCK_ID end))
                     end
                     -- Slow
                     if not UnitHasBuffBJ(u, FourCC('Bchd')) then
-                        DummyCast(
-                            owner,
-                            x, y,
-                            SLOW_SPELL,
-                            SLOW_ORDER,
-                            1,
-                            CastType.TARGET,
-                            u
-                        )
+                        DummyCast( owner, x, y, SLOW_SPELL, SLOW_ORDER, 1, CastType.TARGET, u)
                     end
                 end
             end)
@@ -45,5 +34,4 @@ OnInit(function ()
             KillUnit(rock)
         end)
     end)
-
 end)

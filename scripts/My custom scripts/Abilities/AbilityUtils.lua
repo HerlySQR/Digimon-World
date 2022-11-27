@@ -20,6 +20,7 @@ OnInit("AbilityUtils", function ()
 
     POISON_SPELL = FourCC('A01U')
     POISON_ORDER = Orders.shadowstrike
+    POISON_BUFF = FourCC('B002')
 
     CURSE_SPELL = FourCC('A01Y')
     CURSE_ORDER = Orders.curse

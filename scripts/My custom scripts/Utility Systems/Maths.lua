@@ -119,8 +119,6 @@ do
     ************************************************************************
     ]]
 
-    AdvancedMaths = true
-
     ---Refer to this field for the number E, the base of the natural exponential function.
     math.E = 2.718282
     ---Refer to this field for the number Phi, the golden ratio.
@@ -135,31 +133,11 @@ do
         return r < 0 and -1 or (r > 0 and 1 or 0)
     end
 
-    ---Computes the rest of the division r1/r2.
-    ---@param r1 number
-    ---@param r2 number
-    ---@return number
-    function math.mod(r1, r2)
-        local modulus = r1 - I2R(R2I(r1/r2))*r2
-
-        if modulus < 0 then
-            modulus = modulus + r2
-        end
-        return modulus
-    end
-
-    ---Computes the modulo of n1/n2.
-    ---
-    ---The normal mod simbol is cursed
-    ---@param n1 integer
-    ---@param n2 integer
-    ---@return integer
-    function math.modInt(n1, n2)
-        local modulus = n1 - (n1//n2)*n2
-        if modulus < 0 then
-            modulus = modulus + n2
-        end
-        return modulus
+    ---Computes the rest of the division dividend/divisor.
+    ---@param dividend number
+    ---@param divisor number
+    function math.mod(dividend, divisor)
+        return dividend - (dividend // divisor) * divisor
     end
 
     ---Computes the modulo of n1*n2/mod. Use this to compute the modulo of very large numbers.
@@ -202,7 +180,7 @@ do
         local exponent = ""
 
         repeat
-            if math.modInt(n, 2) == 1 then
+            if math.mod(n, 2) == 1 then
                 exponent = "1" .. exponent
             else
                 exponent = "0" .. exponent

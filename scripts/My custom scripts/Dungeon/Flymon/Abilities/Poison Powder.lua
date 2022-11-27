@@ -12,7 +12,7 @@ OnInit(function ()
         local caster = GetSpellAbilityUnit()
         local owner = GetOwningPlayer(caster)
         local x = GetSpellTargetX()
-        local y = GetSpellTargetX()
+        local y = GetSpellTargetY()
 
         local eff = AddSpecialEffect(CLOUD_MODEL, x, y)
         Timed.echo(INTERVAL, DURATION, function ()
@@ -20,13 +20,15 @@ OnInit(function ()
                 if IsUnitEnemy(u, owner) then
                     Damage.apply(caster, u, DAMAGE_PER_SEC, true, false, udg_Nature, DAMAGE_TYPE_NORMAL, WEAPON_TYPE_WHOKNOWS)
                     -- Poison
-                    DummyCast(GetOwningPlayer(caster),
-                        GetUnitX(caster), GetUnitY(caster),
-                        POISON_SPELL,
-                        POISON_ORDER,
-                        1,
-                        CastType.TARGET,
-                        u)
+                    if not UnitHasBuffBJ(u, POISON_BUFF) then
+                        DummyCast(GetOwningPlayer(caster),
+                            GetUnitX(caster), GetUnitY(caster),
+                            POISON_SPELL,
+                            POISON_ORDER,
+                            1,
+                            CastType.TARGET,
+                            u)
+                    end
                 end
             end)
         end, function ()

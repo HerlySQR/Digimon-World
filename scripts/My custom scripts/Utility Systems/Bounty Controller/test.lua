@@ -1,45 +1,23 @@
 OnInit(function ()
-    Require "GetSyncedData"
+    Require "Timed"
+    local ProgressBar = Require "ProgressBar" ---@type ProgressBar
+    local Color = Require "Color" ---@type Color
 
-    local t = CreateTrigger()
-    ForForce(bj_FORCE_ALL_PLAYERS, function ()
-        TriggerRegisterPlayerChatEvent(t, GetEnumPlayer(), "-caminfo ", false)
-    end)
-    TriggerAddAction(t, function ()
-        local id = tonumber(GetEventPlayerChatString():sub(10, 10))
-        local p = Player(id)
-        local empty = {}
-        local data = GetSyncedData(p, {
-            GetCameraBoundMaxX, empty, GetCameraBoundMaxY, empty, GetCameraBoundMinX, empty, GetCameraBoundMinY, empty,
-            GetCameraEyePositionX, empty, GetCameraEyePositionY, empty, GetCameraEyePositionZ, empty,
-            GetCameraTargetPositionX, empty, GetCameraTargetPositionY, empty, GetCameraTargetPositionZ, empty,
-            GetCameraMargin, {CAMERA_MARGIN_TOP}, GetCameraMargin, {CAMERA_MARGIN_RIGHT}, GetCameraMargin, {CAMERA_MARGIN_BOTTOM}, GetCameraMargin, {CAMERA_MARGIN_LEFT},
-            GetCameraField, {CAMERA_FIELD_TARGET_DISTANCE}--[[,
-            GetCameraField, {CAMERA_FIELD_ANGLE_OF_ATTACK},
-            GetCameraField, {CAMERA_FIELD_NEARZ},
-            GetCameraField, {CAMERA_FIELD_FARZ},
-            GetCameraField, {CAMERA_FIELD_FIELD_OF_VIEW},
-            GetCameraField, {CAMERA_FIELD_LOCAL_PITCH},
-            GetCameraField, {CAMERA_FIELD_LOCAL_ROLL},
-            GetCameraField, {CAMERA_FIELD_LOCAL_YAW},
-            GetCameraField, {CAMERA_FIELD_ROTATION},
-            GetCameraField, {CAMERA_FIELD_ZOFFSET}]]
-        })
+    xpcall(function ()
+    local pbar = ProgressBar.create()
+    pbar.xOffset = -15
+    pbar:setZOffset(200)
+    pbar:setSize(1)
+    pbar:RGB(Color.new(math.random(0x000000, 0xFFFFFF)))
+    pbar:setTargetUnit(gg_unit_N005_0111)
 
-        print("\nPlayer " .. GetPlayerName(p) .. "'s camera information:\n"
-            .. "Bounds: " .. table.concat(data, ", ", 1, 4) .. "\n"
-            .. "Eye position: " .. table.concat(data, ", ", 5, 7) .. "\n"
-            .. "Target position: " .. table.concat(data, ", ", 8, 10) .. "\n"
-            .. "Margin: " .. table.concat(data, " ", 11, 14) .. "\n"
-            .. "Target distance: " .. data[15]--[[ .. "\n"
-            .. "Angle of attack: " .. data[16] .. "\n"
-            .. "Near Z: " .. data[17] .. "\n"
-            .. "Far Z: " .. data[18] .. "\n"
-            .. "Field of view: " .. data[19] .. "\n"
-            .. "Pitch: " .. data[20] .. "\n"
-            .. "Roll: " .. data[21] .. "\n"
-            .. "Yaw: " .. data[22] .. "\n"
-            .. "Rotation: " .. data[23] .. "\n"
-            .. "Z offset: " .. data[24] .. "\n"]])
+    Timed.echo(2.5, function ()
+        xpcall(function ()
+        local random = GetRandomInt(20, 100)
+        print(random .. "\x25")
+        pbar:RGB(Color.new(math.random(0x000000, 0xFFFFFF)))
+        pbar:setPercentage(random, 1)
+        end, print)
     end)
+    end, print)
 end)

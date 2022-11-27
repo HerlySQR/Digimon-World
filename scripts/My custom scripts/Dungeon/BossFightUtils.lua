@@ -3,6 +3,7 @@ OnInit("BossFightUtils", function ()
 
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
+    local LocalPlayer = GetLocalPlayer()
 
     ---Don't cast timed duration spells when other timed duration spell is casted
     ---@param caster unit
@@ -25,10 +26,16 @@ OnInit("BossFightUtils", function ()
     ---@param boss unit
     ---@param actions fun(unitsInTheField: unit[])
     function InitBossFight(name, boss, actions)
+        local owner = GetOwningPlayer(boss)
         local battlefield = {} ---@type rect[]
         local INTERVAL = 2. -- seconds
 
         local initialPos = GetUnitLoc(boss)
+
+        local advice = CreateTextTagLocBJ("Revive in: ", initialPos, 50, 10, 100, 100, 100, 0)
+        SetTextTagPermanent(advice, true)
+        SetTextTagVisibility(advice, false)
+        local dead = false
 
         local numRect = 1
         while true do
@@ -108,8 +115,20 @@ OnInit("BossFightUtils", function ()
                 end
                 unitsInTheField = {} -- Clear
                 DisableTrigger(enterTrigger)
+                dead = true
+                SetTextTagVisibility(advice, IsLocationVisibleToPlayer(initialPos, LocalPlayer))
 
-                Timed.call(360., function ()
+                local remaining = 360.
+
+                Timed.echo(0.02, 360., function ()
+                    remaining = remaining - 0.02
+                    SetTextTagText(advice, "Revive in: " .. R2I(remaining), 0.023)
+                    SetTextTagVisibility(advice, dead and IsLocationVisibleToPlayer(initialPos, LocalPlayer))
+                end, function ()
+                    dead = false
+                    SetTextTagVisibility(advice, false)
+                    SetUnitOwner(boss, owner, true)
+                    ShowUnit(boss, true)
                     ReviveHeroLoc(boss, initialPos, true)
                     EnableTrigger(enterTrigger)
                 end)

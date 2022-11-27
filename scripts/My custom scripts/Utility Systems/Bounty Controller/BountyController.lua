@@ -2,7 +2,7 @@
 -- GUI version: https://www.hiveworkshop.com/threads/gui-bounty-controller.332114/
 
 OnInit("BountyController", function() -- https://www.hiveworkshop.com/threads/global-initialization.317099/
-    Require "Event" -- https://www.hiveworkshop.com/threads/event-harmonization-of-lua-and-gui-events.339451/
+    Require "EventListener" -- https://www.hiveworkshop.com/threads/event-listener.323354/
 
     -- These can be edited (obviously only valid values)
 
@@ -128,14 +128,20 @@ OnInit("BountyController", function() -- https://www.hiveworkshop.com/threads/gl
     end
 
     -- Events
-
-    local runOnDead, runOnRun
+    local deadEvent = EventListener.create()
+    local runEvent = EventListener.create()
 
     ---The callback runs when a unit kills another
-    Bounty.OnDead, runOnDead = Event.create()
+    ---@param cb fun(bounty: Bounty)
+    function Bounty.OnDead(cb)
+        deadEvent:register(cb)
+    end
 
     ---The callback runs when a bounty is runned
-    Bounty.OnRun, runOnRun = Event.create()
+    ---@param cb fun(bounty: Bounty)
+    function Bounty.OnRun(cb)
+        runEvent:register(cb)
+    end
 
     -- Functions
 
@@ -216,7 +222,7 @@ OnInit("BountyController", function() -- https://www.hiveworkshop.com/threads/gl
 
         what = self.TextTag
 
-        runOnRun(self)
+        runEvent:run(self)
 
         self:destroy()
 
@@ -341,7 +347,7 @@ OnInit("BountyController", function() -- https://www.hiveworkshop.com/threads/gl
             self:CanSee(self.Receiver, true)
             self.UnitPos = self.DyingUnit
 
-            runOnDead(self)
+            deadEvent:run(self)
 
             if IsUnitEnemy(self.DyingUnit, self.Receiver) or self.AllowFriendFire then
                 self:Run()

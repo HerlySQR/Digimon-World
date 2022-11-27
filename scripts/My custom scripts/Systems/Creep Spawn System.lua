@@ -33,7 +33,7 @@ OnInit(function ()
     ---@field rd RegionData
 
     ---@class RegionData
-    ---@field rectID integer
+    ---@field rectID table
     ---@field spawnpoint Vec2
     ---@field types unitpool
     ---@field inDay boolean
@@ -120,11 +120,15 @@ OnInit(function ()
 
     ---@param re rect
     ---@param types integer[]
+    ---@param inDay boolean
+    ---@param inNight boolean
+    ---@param minLevel integer
+    ---@param maxLevel integer
     ---@return RegionData
     local function Create(re, types, inDay, inNight, minLevel, maxLevel)
         local x, y = GetRectCenterX(re), GetRectCenterY(re)
         local this = { ---@type RegionData
-            rectID = GetHandleId(re),
+            rectID = re,
             spawnpoint = Vec2.new(x, y),
             types = GenerateCreepPool(types),
             inDay = inDay,
@@ -376,5 +380,4 @@ OnInit(function ()
         udg_CreepSpawnMinLevel = 1
         udg_CreepSpawnMaxLevel = 1
     end)
-
 end)
