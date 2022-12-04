@@ -827,7 +827,6 @@ ClearMapMusicBJ                         = ClearMapMusic
 DestroyEffectBJ                         = DestroyEffect
 GetItemLifeBJ                           = GetWidgetLife -- This was just to type casting
 SetItemLifeBJ                           = SetWidgetLife -- This was just to type casting
-UnitRemoveBuffBJ                        = UnitRemoveAbility -- The buffs are abilities
 GetLearnedSkillBJ                       = GetLearnedSkill
 UnitDropItemPointBJ                     = UnitDropItemPoint
 UnitDropItemTargetBJ                    = UnitDropItemTarget
