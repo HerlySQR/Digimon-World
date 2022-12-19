@@ -106,7 +106,7 @@ OnInit(function ()
                     BlzFrameSetText(PlayerStatus[i], "Data loaded")
                     ShowLoad(p, true)
                 end
-                BlzFrameClick(PlayerReady[i])
+                BlzFrameSetVisible(BlzFrameGetChild(PlayerReady[i], 3), true)
             end
 
             PolledWait(2.)
