@@ -1,9401 +1,4229 @@
-
--- ============================================================================
---  possible to help prevent passing bad values to native functions
-
----@class  handle:userdata
----@class  agent:handle --  all reference counted objects
----@class  event:agent --  a reference to an event registration
----@class  player:agent --  a single player reference
----@class  widget:agent --  an interactive game object with life
----@class  unit:widget --  a single unit reference
----@class  destructable:widget
----@class  item:widget
----@class  ability:agent
----@class  buff:ability
----@class  force:agent
----@class  group:agent
----@class  trigger:agent
----@class  triggercondition:agent
----@class  triggeraction:handle
----@class  timer:agent
----@class  location:agent
----@class  region:agent
----@class  rect:agent
----@class  boolexpr:agent
----@class  sound:agent
----@class  conditionfunc:boolexpr
----@class  filterfunc:boolexpr
----@class  unitpool:handle
----@class  itempool:handle
----@class  race:handle
----@class  alliancetype:handle
----@class  racepreference:handle
----@class  gamestate:handle
----@class  igamestate:gamestate
----@class  fgamestate:gamestate
----@class  playerstate:handle
----@class  playerscore:handle
----@class  playergameresult:handle
----@class  unitstate:handle
----@class  aidifficulty:handle
----@class  eventid:handle
----@class  gameevent:eventid
----@class  playerevent:eventid
----@class  playerunitevent:eventid
----@class  unitevent:eventid
----@class  limitop:eventid
----@class  widgetevent:eventid
----@class  dialogevent:eventid
----@class  unittype:handle
----@class  gamespeed:handle
----@class  gamedifficulty:handle
----@class  gametype:handle
----@class  mapflag:handle
----@class  mapvisibility:handle
----@class  mapsetting:handle
----@class  mapdensity:handle
----@class  mapcontrol:handle
----@class  minimapicon:handle
----@class  playerslotstate:handle
----@class  volumegroup:handle
----@class  camerafield:handle
----@class  camerasetup:handle
----@class  playercolor:handle
----@class  placement:handle
----@class  startlocprio:handle
----@class  raritycontrol:handle
----@class  blendmode:handle
----@class  texmapflags:handle
----@class  effect:agent
----@class  effecttype:handle
----@class  weathereffect:handle
----@class  terraindeformation:handle
----@class  fogstate:handle
----@class  fogmodifier:agent
----@class  dialog:agent
----@class  button:agent
----@class  quest:agent
----@class  questitem:agent
----@class  defeatcondition:agent
----@class  timerdialog:agent
----@class  leaderboard:agent
----@class  multiboard:agent
----@class  multiboarditem:agent
----@class  trackable:agent
----@class  gamecache:agent
----@class  version:handle
----@class  itemtype:handle
----@class  texttag:handle
----@class  attacktype:handle
----@class  damagetype:handle
----@class  weapontype:handle
----@class  soundtype:handle
----@class  lightning:handle
----@class  pathingtype:handle
----@class  mousebuttontype:handle
----@class  animtype:handle
----@class  subanimtype:handle
----@class  image:handle
----@class  ubersplat:handle
----@class  hashtable:agent
----@class  framehandle:handle
----@class  originframetype:handle
----@class  framepointtype:handle
----@class  textaligntype:handle
----@class  frameeventtype:handle
----@class  oskeytype:handle
----@class  abilityintegerfield:handle
----@class  abilityrealfield:handle
----@class  abilitybooleanfield:handle
----@class  abilitystringfield:handle
----@class  abilityintegerlevelfield:handle
----@class  abilityreallevelfield:handle
----@class  abilitybooleanlevelfield:handle
----@class  abilitystringlevelfield:handle
----@class  abilityintegerlevelarrayfield:handle
----@class  abilityreallevelarrayfield:handle
----@class  abilitybooleanlevelarrayfield:handle
----@class  abilitystringlevelarrayfield:handle
----@class  unitintegerfield:handle
----@class  unitrealfield:handle
----@class  unitbooleanfield:handle
----@class  unitstringfield:handle
----@class  unitweaponintegerfield:handle
----@class  unitweaponrealfield:handle
----@class  unitweaponbooleanfield:handle
----@class  unitweaponstringfield:handle
----@class  itemintegerfield:handle
----@class  itemrealfield:handle
----@class  itembooleanfield:handle
----@class  itemstringfield:handle
----@class  movetype:handle
----@class  targetflag:handle
----@class  armortype:handle
----@class  heroattribute:handle
----@class  defensetype:handle
----@class  regentype:handle
----@class  unitcategory:handle
----@class  pathingflag:handle
----@class  commandbuttoneffect:handle
-
----@param i integer
----@return race
-function ConvertRace(i) end	-- (native)
-
----@param i integer
----@return alliancetype
-function ConvertAllianceType(i) end	-- (native)
-
----@param i integer
----@return racepreference
-function ConvertRacePref(i) end	-- (native)
-
----@param i integer
----@return igamestate
-function ConvertIGameState(i) end	-- (native)
-
----@param i integer
----@return fgamestate
-function ConvertFGameState(i) end	-- (native)
-
----@param i integer
----@return playerstate
-function ConvertPlayerState(i) end	-- (native)
-
----@param i integer
----@return playerscore
-function ConvertPlayerScore(i) end	-- (native)
-
----@param i integer
----@return playergameresult
-function ConvertPlayerGameResult(i) end	-- (native)
-
----@param i integer
----@return unitstate
-function ConvertUnitState(i) end	-- (native)
-
----@param i integer
----@return aidifficulty
-function ConvertAIDifficulty(i) end	-- (native)
-
----@param i integer
----@return gameevent
-function ConvertGameEvent(i) end	-- (native)
-
----@param i integer
----@return playerevent
-function ConvertPlayerEvent(i) end	-- (native)
-
----@param i integer
----@return playerunitevent
-function ConvertPlayerUnitEvent(i) end	-- (native)
-
----@param i integer
----@return widgetevent
-function ConvertWidgetEvent(i) end	-- (native)
-
----@param i integer
----@return dialogevent
-function ConvertDialogEvent(i) end	-- (native)
-
----@param i integer
----@return unitevent
-function ConvertUnitEvent(i) end	-- (native)
-
----@param i integer
----@return limitop
-function ConvertLimitOp(i) end	-- (native)
-
----@param i integer
----@return unittype
-function ConvertUnitType(i) end	-- (native)
-
----@param i integer
----@return gamespeed
-function ConvertGameSpeed(i) end	-- (native)
-
----@param i integer
----@return placement
-function ConvertPlacement(i) end	-- (native)
-
----@param i integer
----@return startlocprio
-function ConvertStartLocPrio(i) end	-- (native)
-
----@param i integer
----@return gamedifficulty
-function ConvertGameDifficulty(i) end	-- (native)
-
----@param i integer
----@return gametype
-function ConvertGameType(i) end	-- (native)
-
----@param i integer
----@return mapflag
-function ConvertMapFlag(i) end	-- (native)
-
----@param i integer
----@return mapvisibility
-function ConvertMapVisibility(i) end	-- (native)
-
----@param i integer
----@return mapsetting
-function ConvertMapSetting(i) end	-- (native)
-
----@param i integer
----@return mapdensity
-function ConvertMapDensity(i) end	-- (native)
-
----@param i integer
----@return mapcontrol
-function ConvertMapControl(i) end	-- (native)
-
----@param i integer
----@return playercolor
-function ConvertPlayerColor(i) end	-- (native)
-
----@param i integer
----@return playerslotstate
-function ConvertPlayerSlotState(i) end	-- (native)
-
----@param i integer
----@return volumegroup
-function ConvertVolumeGroup(i) end	-- (native)
-
----@param i integer
----@return camerafield
-function ConvertCameraField(i) end	-- (native)
-
----@param i integer
----@return blendmode
-function ConvertBlendMode(i) end	-- (native)
-
----@param i integer
----@return raritycontrol
-function ConvertRarityControl(i) end	-- (native)
-
----@param i integer
----@return texmapflags
-function ConvertTexMapFlags(i) end	-- (native)
-
----@param i integer
----@return fogstate
-function ConvertFogState(i) end	-- (native)
-
----@param i integer
----@return effecttype
-function ConvertEffectType(i) end	-- (native)
-
----@param i integer
----@return version
-function ConvertVersion(i) end	-- (native)
-
----@param i integer
----@return itemtype
-function ConvertItemType(i) end	-- (native)
-
----@param i integer
----@return attacktype
-function ConvertAttackType(i) end	-- (native)
-
----@param i integer
----@return damagetype
-function ConvertDamageType(i) end	-- (native)
-
----@param i integer
----@return weapontype
-function ConvertWeaponType(i) end	-- (native)
-
----@param i integer
----@return soundtype
-function ConvertSoundType(i) end	-- (native)
-
----@param i integer
----@return pathingtype
-function ConvertPathingType(i) end	-- (native)
-
----@param i integer
----@return mousebuttontype
-function ConvertMouseButtonType(i) end	-- (native)
-
----@param i integer
----@return animtype
-function ConvertAnimType(i) end	-- (native)
-
----@param i integer
----@return subanimtype
-function ConvertSubAnimType(i) end	-- (native)
-
----@param i integer
----@return originframetype
-function ConvertOriginFrameType(i) end	-- (native)
-
----@param i integer
----@return framepointtype
-function ConvertFramePointType(i) end	-- (native)
-
----@param i integer
----@return textaligntype
-function ConvertTextAlignType(i) end	-- (native)
-
----@param i integer
----@return frameeventtype
-function ConvertFrameEventType(i) end	-- (native)
-
----@param i integer
----@return oskeytype
-function ConvertOsKeyType(i) end	-- (native)
-
----@param i integer
----@return abilityintegerfield
-function ConvertAbilityIntegerField(i) end	-- (native)
-
----@param i integer
----@return abilityrealfield
-function ConvertAbilityRealField(i) end	-- (native)
-
----@param i integer
----@return abilitybooleanfield
-function ConvertAbilityBooleanField(i) end	-- (native)
-
----@param i integer
----@return abilitystringfield
-function ConvertAbilityStringField(i) end	-- (native)
-
----@param i integer
----@return abilityintegerlevelfield
-function ConvertAbilityIntegerLevelField(i) end	-- (native)
-
----@param i integer
----@return abilityreallevelfield
-function ConvertAbilityRealLevelField(i) end	-- (native)
-
----@param i integer
----@return abilitybooleanlevelfield
-function ConvertAbilityBooleanLevelField(i) end	-- (native)
-
----@param i integer
----@return abilitystringlevelfield
-function ConvertAbilityStringLevelField(i) end	-- (native)
-
----@param i integer
----@return abilityintegerlevelarrayfield
-function ConvertAbilityIntegerLevelArrayField(i) end	-- (native)
-
----@param i integer
----@return abilityreallevelarrayfield
-function ConvertAbilityRealLevelArrayField(i) end	-- (native)
-
----@param i integer
----@return abilitybooleanlevelarrayfield
-function ConvertAbilityBooleanLevelArrayField(i) end	-- (native)
-
----@param i integer
----@return abilitystringlevelarrayfield
-function ConvertAbilityStringLevelArrayField(i) end	-- (native)
-
----@param i integer
----@return unitintegerfield
-function ConvertUnitIntegerField(i) end	-- (native)
-
----@param i integer
----@return unitrealfield
-function ConvertUnitRealField(i) end	-- (native)
-
----@param i integer
----@return unitbooleanfield
-function ConvertUnitBooleanField(i) end	-- (native)
-
----@param i integer
----@return unitstringfield
-function ConvertUnitStringField(i) end	-- (native)
-
----@param i integer
----@return unitweaponintegerfield
-function ConvertUnitWeaponIntegerField(i) end	-- (native)
-
----@param i integer
----@return unitweaponrealfield
-function ConvertUnitWeaponRealField(i) end	-- (native)
-
----@param i integer
----@return unitweaponbooleanfield
-function ConvertUnitWeaponBooleanField(i) end	-- (native)
-
----@param i integer
----@return unitweaponstringfield
-function ConvertUnitWeaponStringField(i) end	-- (native)
-
----@param i integer
----@return itemintegerfield
-function ConvertItemIntegerField(i) end	-- (native)
-
----@param i integer
----@return itemrealfield
-function ConvertItemRealField(i) end	-- (native)
-
----@param i integer
----@return itembooleanfield
-function ConvertItemBooleanField(i) end	-- (native)
-
----@param i integer
----@return itemstringfield
-function ConvertItemStringField(i) end	-- (native)
-
----@param i integer
----@return movetype
-function ConvertMoveType(i) end	-- (native)
-
----@param i integer
----@return targetflag
-function ConvertTargetFlag(i) end	-- (native)
-
----@param i integer
----@return armortype
-function ConvertArmorType(i) end	-- (native)
-
----@param i integer
----@return heroattribute
-function ConvertHeroAttribute(i) end	-- (native)
-
----@param i integer
----@return defensetype
-function ConvertDefenseType(i) end	-- (native)
-
----@param i integer
----@return regentype
-function ConvertRegenType(i) end	-- (native)
-
----@param i integer
----@return unitcategory
-function ConvertUnitCategory(i) end	-- (native)
-
----@param i integer
----@return pathingflag
-function ConvertPathingFlag(i) end	-- (native)
-
----@param orderIdString string
----@return integer
-function OrderId(orderIdString) end	-- (native)
-
----@param orderId integer
----@return string
-function OrderId2String(orderId) end	-- (native)
-
----@param unitIdString string
----@return integer
-function UnitId(unitIdString) end	-- (native)
-
----@param unitId integer
----@return string
-function UnitId2String(unitId) end	-- (native)
-
---  Not currently working correctly...
----@param abilityIdString string
----@return integer
-function AbilityId(abilityIdString) end	-- (native)
-
----@param abilityId integer
----@return string
-function AbilityId2String(abilityId) end	-- (native)
-
---  Looks up the "name" field for any object (unit, item, ability)
----@param objectId integer
----@return string
-function GetObjectName(objectId) end	-- (native)
-
----@return integer
-function GetBJMaxPlayers() end	-- (native)
-
----@return integer
-function GetBJPlayerNeutralVictim() end	-- (native)
-
----@return integer
-function GetBJPlayerNeutralExtra() end	-- (native)
-
----@return integer
-function GetBJMaxPlayerSlots() end	-- (native)
-
----@return integer
-function GetPlayerNeutralPassive() end	-- (native)
-
----@return integer
-function GetPlayerNeutralAggressive() end	-- (native)
-
--- ===================================================
---  pfff
-
-FALSE = false	---@type boolean
-TRUE = true	---@type boolean
-JASS_MAX_ARRAY_SIZE = 32768	---@type integer
-PLAYER_NEUTRAL_PASSIVE = GetPlayerNeutralPassive()	---@type integer
-PLAYER_NEUTRAL_AGGRESSIVE = GetPlayerNeutralAggressive()	---@type integer
-PLAYER_COLOR_RED = ConvertPlayerColor(0)	---@type playercolor
-PLAYER_COLOR_BLUE = ConvertPlayerColor(1)	---@type playercolor
-PLAYER_COLOR_CYAN = ConvertPlayerColor(2)	---@type playercolor
-PLAYER_COLOR_PURPLE = ConvertPlayerColor(3)	---@type playercolor
-PLAYER_COLOR_YELLOW = ConvertPlayerColor(4)	---@type playercolor
-PLAYER_COLOR_ORANGE = ConvertPlayerColor(5)	---@type playercolor
-PLAYER_COLOR_GREEN = ConvertPlayerColor(6)	---@type playercolor
-PLAYER_COLOR_PINK = ConvertPlayerColor(7)	---@type playercolor
-PLAYER_COLOR_LIGHT_GRAY = ConvertPlayerColor(8)	---@type playercolor
-PLAYER_COLOR_LIGHT_BLUE = ConvertPlayerColor(9)	---@type playercolor
-PLAYER_COLOR_AQUA = ConvertPlayerColor(10)	---@type playercolor
-PLAYER_COLOR_BROWN = ConvertPlayerColor(11)	---@type playercolor
-PLAYER_COLOR_MAROON = ConvertPlayerColor(12)	---@type playercolor
-PLAYER_COLOR_NAVY = ConvertPlayerColor(13)	---@type playercolor
-PLAYER_COLOR_TURQUOISE = ConvertPlayerColor(14)	---@type playercolor
-PLAYER_COLOR_VIOLET = ConvertPlayerColor(15)	---@type playercolor
-PLAYER_COLOR_WHEAT = ConvertPlayerColor(16)	---@type playercolor
-PLAYER_COLOR_PEACH = ConvertPlayerColor(17)	---@type playercolor
-PLAYER_COLOR_MINT = ConvertPlayerColor(18)	---@type playercolor
-PLAYER_COLOR_LAVENDER = ConvertPlayerColor(19)	---@type playercolor
-PLAYER_COLOR_COAL = ConvertPlayerColor(20)	---@type playercolor
-PLAYER_COLOR_SNOW = ConvertPlayerColor(21)	---@type playercolor
-PLAYER_COLOR_EMERALD = ConvertPlayerColor(22)	---@type playercolor
-PLAYER_COLOR_PEANUT = ConvertPlayerColor(23)	---@type playercolor
-RACE_HUMAN = ConvertRace(1)	---@type race
-RACE_ORC = ConvertRace(2)	---@type race
-RACE_UNDEAD = ConvertRace(3)	---@type race
-RACE_NIGHTELF = ConvertRace(4)	---@type race
-RACE_DEMON = ConvertRace(5)	---@type race
-RACE_OTHER = ConvertRace(7)	---@type race
-PLAYER_GAME_RESULT_VICTORY = ConvertPlayerGameResult(0)	---@type playergameresult
-PLAYER_GAME_RESULT_DEFEAT = ConvertPlayerGameResult(1)	---@type playergameresult
-PLAYER_GAME_RESULT_TIE = ConvertPlayerGameResult(2)	---@type playergameresult
-PLAYER_GAME_RESULT_NEUTRAL = ConvertPlayerGameResult(3)	---@type playergameresult
-ALLIANCE_PASSIVE = ConvertAllianceType(0)	---@type alliancetype
-ALLIANCE_HELP_REQUEST = ConvertAllianceType(1)	---@type alliancetype
-ALLIANCE_HELP_RESPONSE = ConvertAllianceType(2)	---@type alliancetype
-ALLIANCE_SHARED_XP = ConvertAllianceType(3)	---@type alliancetype
-ALLIANCE_SHARED_SPELLS = ConvertAllianceType(4)	---@type alliancetype
-ALLIANCE_SHARED_VISION = ConvertAllianceType(5)	---@type alliancetype
-ALLIANCE_SHARED_CONTROL = ConvertAllianceType(6)	---@type alliancetype
-ALLIANCE_SHARED_ADVANCED_CONTROL = ConvertAllianceType(7)	---@type alliancetype
-ALLIANCE_RESCUABLE = ConvertAllianceType(8)	---@type alliancetype
-ALLIANCE_SHARED_VISION_FORCED = ConvertAllianceType(9)	---@type alliancetype
-VERSION_REIGN_OF_CHAOS = ConvertVersion(0)	---@type version
-VERSION_FROZEN_THRONE = ConvertVersion(1)	---@type version
-ATTACK_TYPE_NORMAL = ConvertAttackType(0)	---@type attacktype
-ATTACK_TYPE_MELEE = ConvertAttackType(1)	---@type attacktype
-ATTACK_TYPE_PIERCE = ConvertAttackType(2)	---@type attacktype
-ATTACK_TYPE_SIEGE = ConvertAttackType(3)	---@type attacktype
-ATTACK_TYPE_MAGIC = ConvertAttackType(4)	---@type attacktype
-ATTACK_TYPE_CHAOS = ConvertAttackType(5)	---@type attacktype
-ATTACK_TYPE_HERO = ConvertAttackType(6)	---@type attacktype
-DAMAGE_TYPE_UNKNOWN = ConvertDamageType(0)	---@type damagetype
-DAMAGE_TYPE_NORMAL = ConvertDamageType(4)	---@type damagetype
-DAMAGE_TYPE_ENHANCED = ConvertDamageType(5)	---@type damagetype
-DAMAGE_TYPE_FIRE = ConvertDamageType(8)	---@type damagetype
-DAMAGE_TYPE_COLD = ConvertDamageType(9)	---@type damagetype
-DAMAGE_TYPE_LIGHTNING = ConvertDamageType(10)	---@type damagetype
-DAMAGE_TYPE_POISON = ConvertDamageType(11)	---@type damagetype
-DAMAGE_TYPE_DISEASE = ConvertDamageType(12)	---@type damagetype
-DAMAGE_TYPE_DIVINE = ConvertDamageType(13)	---@type damagetype
-DAMAGE_TYPE_MAGIC = ConvertDamageType(14)	---@type damagetype
-DAMAGE_TYPE_SONIC = ConvertDamageType(15)	---@type damagetype
-DAMAGE_TYPE_ACID = ConvertDamageType(16)	---@type damagetype
-DAMAGE_TYPE_FORCE = ConvertDamageType(17)	---@type damagetype
-DAMAGE_TYPE_DEATH = ConvertDamageType(18)	---@type damagetype
-DAMAGE_TYPE_MIND = ConvertDamageType(19)	---@type damagetype
-DAMAGE_TYPE_PLANT = ConvertDamageType(20)	---@type damagetype
-DAMAGE_TYPE_DEFENSIVE = ConvertDamageType(21)	---@type damagetype
-DAMAGE_TYPE_DEMOLITION = ConvertDamageType(22)	---@type damagetype
-DAMAGE_TYPE_SLOW_POISON = ConvertDamageType(23)	---@type damagetype
-DAMAGE_TYPE_SPIRIT_LINK = ConvertDamageType(24)	---@type damagetype
-DAMAGE_TYPE_SHADOW_STRIKE = ConvertDamageType(25)	---@type damagetype
-DAMAGE_TYPE_UNIVERSAL = ConvertDamageType(26)	---@type damagetype
-WEAPON_TYPE_WHOKNOWS = ConvertWeaponType(0)	---@type weapontype
-WEAPON_TYPE_METAL_LIGHT_CHOP = ConvertWeaponType(1)	---@type weapontype
-WEAPON_TYPE_METAL_MEDIUM_CHOP = ConvertWeaponType(2)	---@type weapontype
-WEAPON_TYPE_METAL_HEAVY_CHOP = ConvertWeaponType(3)	---@type weapontype
-WEAPON_TYPE_METAL_LIGHT_SLICE = ConvertWeaponType(4)	---@type weapontype
-WEAPON_TYPE_METAL_MEDIUM_SLICE = ConvertWeaponType(5)	---@type weapontype
-WEAPON_TYPE_METAL_HEAVY_SLICE = ConvertWeaponType(6)	---@type weapontype
-WEAPON_TYPE_METAL_MEDIUM_BASH = ConvertWeaponType(7)	---@type weapontype
-WEAPON_TYPE_METAL_HEAVY_BASH = ConvertWeaponType(8)	---@type weapontype
-WEAPON_TYPE_METAL_MEDIUM_STAB = ConvertWeaponType(9)	---@type weapontype
-WEAPON_TYPE_METAL_HEAVY_STAB = ConvertWeaponType(10)	---@type weapontype
-WEAPON_TYPE_WOOD_LIGHT_SLICE = ConvertWeaponType(11)	---@type weapontype
-WEAPON_TYPE_WOOD_MEDIUM_SLICE = ConvertWeaponType(12)	---@type weapontype
-WEAPON_TYPE_WOOD_HEAVY_SLICE = ConvertWeaponType(13)	---@type weapontype
-WEAPON_TYPE_WOOD_LIGHT_BASH = ConvertWeaponType(14)	---@type weapontype
-WEAPON_TYPE_WOOD_MEDIUM_BASH = ConvertWeaponType(15)	---@type weapontype
-WEAPON_TYPE_WOOD_HEAVY_BASH = ConvertWeaponType(16)	---@type weapontype
-WEAPON_TYPE_WOOD_LIGHT_STAB = ConvertWeaponType(17)	---@type weapontype
-WEAPON_TYPE_WOOD_MEDIUM_STAB = ConvertWeaponType(18)	---@type weapontype
-WEAPON_TYPE_CLAW_LIGHT_SLICE = ConvertWeaponType(19)	---@type weapontype
-WEAPON_TYPE_CLAW_MEDIUM_SLICE = ConvertWeaponType(20)	---@type weapontype
-WEAPON_TYPE_CLAW_HEAVY_SLICE = ConvertWeaponType(21)	---@type weapontype
-WEAPON_TYPE_AXE_MEDIUM_CHOP = ConvertWeaponType(22)	---@type weapontype
-WEAPON_TYPE_ROCK_HEAVY_BASH = ConvertWeaponType(23)	---@type weapontype
-PATHING_TYPE_ANY = ConvertPathingType(0)	---@type pathingtype
-PATHING_TYPE_WALKABILITY = ConvertPathingType(1)	---@type pathingtype
-PATHING_TYPE_FLYABILITY = ConvertPathingType(2)	---@type pathingtype
-PATHING_TYPE_BUILDABILITY = ConvertPathingType(3)	---@type pathingtype
-PATHING_TYPE_PEONHARVESTPATHING = ConvertPathingType(4)	---@type pathingtype
-PATHING_TYPE_BLIGHTPATHING = ConvertPathingType(5)	---@type pathingtype
-PATHING_TYPE_FLOATABILITY = ConvertPathingType(6)	---@type pathingtype
-PATHING_TYPE_AMPHIBIOUSPATHING = ConvertPathingType(7)	---@type pathingtype
-MOUSE_BUTTON_TYPE_LEFT = ConvertMouseButtonType(1)	---@type mousebuttontype
-MOUSE_BUTTON_TYPE_MIDDLE = ConvertMouseButtonType(2)	---@type mousebuttontype
-MOUSE_BUTTON_TYPE_RIGHT = ConvertMouseButtonType(3)	---@type mousebuttontype
-ANIM_TYPE_BIRTH = ConvertAnimType(0)	---@type animtype
-ANIM_TYPE_DEATH = ConvertAnimType(1)	---@type animtype
-ANIM_TYPE_DECAY = ConvertAnimType(2)	---@type animtype
-ANIM_TYPE_DISSIPATE = ConvertAnimType(3)	---@type animtype
-ANIM_TYPE_STAND = ConvertAnimType(4)	---@type animtype
-ANIM_TYPE_WALK = ConvertAnimType(5)	---@type animtype
-ANIM_TYPE_ATTACK = ConvertAnimType(6)	---@type animtype
-ANIM_TYPE_MORPH = ConvertAnimType(7)	---@type animtype
-ANIM_TYPE_SLEEP = ConvertAnimType(8)	---@type animtype
-ANIM_TYPE_SPELL = ConvertAnimType(9)	---@type animtype
-ANIM_TYPE_PORTRAIT = ConvertAnimType(10)	---@type animtype
-SUBANIM_TYPE_ROOTED = ConvertSubAnimType(11)	---@type subanimtype
-SUBANIM_TYPE_ALTERNATE_EX = ConvertSubAnimType(12)	---@type subanimtype
-SUBANIM_TYPE_LOOPING = ConvertSubAnimType(13)	---@type subanimtype
-SUBANIM_TYPE_SLAM = ConvertSubAnimType(14)	---@type subanimtype
-SUBANIM_TYPE_THROW = ConvertSubAnimType(15)	---@type subanimtype
-SUBANIM_TYPE_SPIKED = ConvertSubAnimType(16)	---@type subanimtype
-SUBANIM_TYPE_FAST = ConvertSubAnimType(17)	---@type subanimtype
-SUBANIM_TYPE_SPIN = ConvertSubAnimType(18)	---@type subanimtype
-SUBANIM_TYPE_READY = ConvertSubAnimType(19)	---@type subanimtype
-SUBANIM_TYPE_CHANNEL = ConvertSubAnimType(20)	---@type subanimtype
-SUBANIM_TYPE_DEFEND = ConvertSubAnimType(21)	---@type subanimtype
-SUBANIM_TYPE_VICTORY = ConvertSubAnimType(22)	---@type subanimtype
-SUBANIM_TYPE_TURN = ConvertSubAnimType(23)	---@type subanimtype
-SUBANIM_TYPE_LEFT = ConvertSubAnimType(24)	---@type subanimtype
-SUBANIM_TYPE_RIGHT = ConvertSubAnimType(25)	---@type subanimtype
-SUBANIM_TYPE_FIRE = ConvertSubAnimType(26)	---@type subanimtype
-SUBANIM_TYPE_FLESH = ConvertSubAnimType(27)	---@type subanimtype
-SUBANIM_TYPE_HIT = ConvertSubAnimType(28)	---@type subanimtype
-SUBANIM_TYPE_WOUNDED = ConvertSubAnimType(29)	---@type subanimtype
-SUBANIM_TYPE_LIGHT = ConvertSubAnimType(30)	---@type subanimtype
-SUBANIM_TYPE_MODERATE = ConvertSubAnimType(31)	---@type subanimtype
-SUBANIM_TYPE_SEVERE = ConvertSubAnimType(32)	---@type subanimtype
-SUBANIM_TYPE_CRITICAL = ConvertSubAnimType(33)	---@type subanimtype
-SUBANIM_TYPE_COMPLETE = ConvertSubAnimType(34)	---@type subanimtype
-SUBANIM_TYPE_GOLD = ConvertSubAnimType(35)	---@type subanimtype
-SUBANIM_TYPE_LUMBER = ConvertSubAnimType(36)	---@type subanimtype
-SUBANIM_TYPE_WORK = ConvertSubAnimType(37)	---@type subanimtype
-SUBANIM_TYPE_TALK = ConvertSubAnimType(38)	---@type subanimtype
-SUBANIM_TYPE_FIRST = ConvertSubAnimType(39)	---@type subanimtype
-SUBANIM_TYPE_SECOND = ConvertSubAnimType(40)	---@type subanimtype
-SUBANIM_TYPE_THIRD = ConvertSubAnimType(41)	---@type subanimtype
-SUBANIM_TYPE_FOURTH = ConvertSubAnimType(42)	---@type subanimtype
-SUBANIM_TYPE_FIFTH = ConvertSubAnimType(43)	---@type subanimtype
-SUBANIM_TYPE_ONE = ConvertSubAnimType(44)	---@type subanimtype
-SUBANIM_TYPE_TWO = ConvertSubAnimType(45)	---@type subanimtype
-SUBANIM_TYPE_THREE = ConvertSubAnimType(46)	---@type subanimtype
-SUBANIM_TYPE_FOUR = ConvertSubAnimType(47)	---@type subanimtype
-SUBANIM_TYPE_FIVE = ConvertSubAnimType(48)	---@type subanimtype
-SUBANIM_TYPE_SMALL = ConvertSubAnimType(49)	---@type subanimtype
-SUBANIM_TYPE_MEDIUM = ConvertSubAnimType(50)	---@type subanimtype
-SUBANIM_TYPE_LARGE = ConvertSubAnimType(51)	---@type subanimtype
-SUBANIM_TYPE_UPGRADE = ConvertSubAnimType(52)	---@type subanimtype
-SUBANIM_TYPE_DRAIN = ConvertSubAnimType(53)	---@type subanimtype
-SUBANIM_TYPE_FILL = ConvertSubAnimType(54)	---@type subanimtype
-SUBANIM_TYPE_CHAINLIGHTNING = ConvertSubAnimType(55)	---@type subanimtype
-SUBANIM_TYPE_EATTREE = ConvertSubAnimType(56)	---@type subanimtype
-SUBANIM_TYPE_PUKE = ConvertSubAnimType(57)	---@type subanimtype
-SUBANIM_TYPE_FLAIL = ConvertSubAnimType(58)	---@type subanimtype
-SUBANIM_TYPE_OFF = ConvertSubAnimType(59)	---@type subanimtype
-SUBANIM_TYPE_SWIM = ConvertSubAnimType(60)	---@type subanimtype
-SUBANIM_TYPE_ENTANGLE = ConvertSubAnimType(61)	---@type subanimtype
-SUBANIM_TYPE_BERSERK = ConvertSubAnimType(62)	---@type subanimtype
-
--- ===================================================
--- ===================================================
-
-RACE_PREF_HUMAN = ConvertRacePref(1)	---@type racepreference
-RACE_PREF_ORC = ConvertRacePref(2)	---@type racepreference
-RACE_PREF_NIGHTELF = ConvertRacePref(4)	---@type racepreference
-RACE_PREF_UNDEAD = ConvertRacePref(8)	---@type racepreference
-RACE_PREF_DEMON = ConvertRacePref(16)	---@type racepreference
-RACE_PREF_RANDOM = ConvertRacePref(32)	---@type racepreference
-RACE_PREF_USER_SELECTABLE = ConvertRacePref(64)	---@type racepreference
-MAP_CONTROL_USER = ConvertMapControl(0)	---@type mapcontrol
-MAP_CONTROL_COMPUTER = ConvertMapControl(1)	---@type mapcontrol
-MAP_CONTROL_RESCUABLE = ConvertMapControl(2)	---@type mapcontrol
-MAP_CONTROL_NEUTRAL = ConvertMapControl(3)	---@type mapcontrol
-MAP_CONTROL_CREEP = ConvertMapControl(4)	---@type mapcontrol
-MAP_CONTROL_NONE = ConvertMapControl(5)	---@type mapcontrol
-GAME_TYPE_MELEE = ConvertGameType(1)	---@type gametype
-GAME_TYPE_FFA = ConvertGameType(2)	---@type gametype
-GAME_TYPE_USE_MAP_SETTINGS = ConvertGameType(4)	---@type gametype
-GAME_TYPE_BLIZ = ConvertGameType(8)	---@type gametype
-GAME_TYPE_ONE_ON_ONE = ConvertGameType(16)	---@type gametype
-GAME_TYPE_TWO_TEAM_PLAY = ConvertGameType(32)	---@type gametype
-GAME_TYPE_THREE_TEAM_PLAY = ConvertGameType(64)	---@type gametype
-GAME_TYPE_FOUR_TEAM_PLAY = ConvertGameType(128)	---@type gametype
-MAP_FOG_HIDE_TERRAIN = ConvertMapFlag(1)	---@type mapflag
-MAP_FOG_MAP_EXPLORED = ConvertMapFlag(2)	---@type mapflag
-MAP_FOG_ALWAYS_VISIBLE = ConvertMapFlag(4)	---@type mapflag
-MAP_USE_HANDICAPS = ConvertMapFlag(8)	---@type mapflag
-MAP_OBSERVERS = ConvertMapFlag(16)	---@type mapflag
-MAP_OBSERVERS_ON_DEATH = ConvertMapFlag(32)	---@type mapflag
-MAP_FIXED_COLORS = ConvertMapFlag(128)	---@type mapflag
-MAP_LOCK_RESOURCE_TRADING = ConvertMapFlag(256)	---@type mapflag
-MAP_RESOURCE_TRADING_ALLIES_ONLY = ConvertMapFlag(512)	---@type mapflag
-MAP_LOCK_ALLIANCE_CHANGES = ConvertMapFlag(1024)	---@type mapflag
-MAP_ALLIANCE_CHANGES_HIDDEN = ConvertMapFlag(2048)	---@type mapflag
-MAP_CHEATS = ConvertMapFlag(4096)	---@type mapflag
-MAP_CHEATS_HIDDEN = ConvertMapFlag(8192)	---@type mapflag
-MAP_LOCK_SPEED = ConvertMapFlag(8192 * 2)	---@type mapflag
-MAP_LOCK_RANDOM_SEED = ConvertMapFlag(8192 * 4)	---@type mapflag
-MAP_SHARED_ADVANCED_CONTROL = ConvertMapFlag(8192 * 8)	---@type mapflag
-MAP_RANDOM_HERO = ConvertMapFlag(8192 * 16)	---@type mapflag
-MAP_RANDOM_RACES = ConvertMapFlag(8192 * 32)	---@type mapflag
-MAP_RELOADED = ConvertMapFlag(8192 * 64)	---@type mapflag
-MAP_PLACEMENT_RANDOM = ConvertPlacement(0)	---@type placement	--  random among all slots
-MAP_PLACEMENT_FIXED = ConvertPlacement(1)	---@type placement	--  player 0 in start loc 0...
-MAP_PLACEMENT_USE_MAP_SETTINGS = ConvertPlacement(2)	---@type placement	--  whatever was specified by the script
-MAP_PLACEMENT_TEAMS_TOGETHER = ConvertPlacement(3)	---@type placement	--  random with allies next to each other
-MAP_LOC_PRIO_LOW = ConvertStartLocPrio(0)	---@type startlocprio
-MAP_LOC_PRIO_HIGH = ConvertStartLocPrio(1)	---@type startlocprio
-MAP_LOC_PRIO_NOT = ConvertStartLocPrio(2)	---@type startlocprio
-MAP_DENSITY_NONE = ConvertMapDensity(0)	---@type mapdensity
-MAP_DENSITY_LIGHT = ConvertMapDensity(1)	---@type mapdensity
-MAP_DENSITY_MEDIUM = ConvertMapDensity(2)	---@type mapdensity
-MAP_DENSITY_HEAVY = ConvertMapDensity(3)	---@type mapdensity
-MAP_DIFFICULTY_EASY = ConvertGameDifficulty(0)	---@type gamedifficulty
-MAP_DIFFICULTY_NORMAL = ConvertGameDifficulty(1)	---@type gamedifficulty
-MAP_DIFFICULTY_HARD = ConvertGameDifficulty(2)	---@type gamedifficulty
-MAP_DIFFICULTY_INSANE = ConvertGameDifficulty(3)	---@type gamedifficulty
-MAP_SPEED_SLOWEST = ConvertGameSpeed(0)	---@type gamespeed
-MAP_SPEED_SLOW = ConvertGameSpeed(1)	---@type gamespeed
-MAP_SPEED_NORMAL = ConvertGameSpeed(2)	---@type gamespeed
-MAP_SPEED_FAST = ConvertGameSpeed(3)	---@type gamespeed
-MAP_SPEED_FASTEST = ConvertGameSpeed(4)	---@type gamespeed
-PLAYER_SLOT_STATE_EMPTY = ConvertPlayerSlotState(0)	---@type playerslotstate
-PLAYER_SLOT_STATE_PLAYING = ConvertPlayerSlotState(1)	---@type playerslotstate
-PLAYER_SLOT_STATE_LEFT = ConvertPlayerSlotState(2)	---@type playerslotstate
-
--- ===================================================
--- ===================================================
-
-SOUND_VOLUMEGROUP_UNITMOVEMENT = ConvertVolumeGroup(0)	---@type volumegroup
-SOUND_VOLUMEGROUP_UNITSOUNDS = ConvertVolumeGroup(1)	---@type volumegroup
-SOUND_VOLUMEGROUP_COMBAT = ConvertVolumeGroup(2)	---@type volumegroup
-SOUND_VOLUMEGROUP_SPELLS = ConvertVolumeGroup(3)	---@type volumegroup
-SOUND_VOLUMEGROUP_UI = ConvertVolumeGroup(4)	---@type volumegroup
-SOUND_VOLUMEGROUP_MUSIC = ConvertVolumeGroup(5)	---@type volumegroup
-SOUND_VOLUMEGROUP_AMBIENTSOUNDS = ConvertVolumeGroup(6)	---@type volumegroup
-SOUND_VOLUMEGROUP_FIRE = ConvertVolumeGroup(7)	---@type volumegroup
--- Cinematic Sound Constants
-SOUND_VOLUMEGROUP_CINEMATIC_GENERAL = ConvertVolumeGroup(8)	---@type volumegroup
-SOUND_VOLUMEGROUP_CINEMATIC_AMBIENT = ConvertVolumeGroup(9)	---@type volumegroup
-SOUND_VOLUMEGROUP_CINEMATIC_MUSIC = ConvertVolumeGroup(10)	---@type volumegroup
-SOUND_VOLUMEGROUP_CINEMATIC_DIALOGUE = ConvertVolumeGroup(11)	---@type volumegroup
-SOUND_VOLUMEGROUP_CINEMATIC_SOUND_EFFECTS_1 = ConvertVolumeGroup(12)	---@type volumegroup
-SOUND_VOLUMEGROUP_CINEMATIC_SOUND_EFFECTS_2 = ConvertVolumeGroup(13)	---@type volumegroup
-SOUND_VOLUMEGROUP_CINEMATIC_SOUND_EFFECTS_3 = ConvertVolumeGroup(14)	---@type volumegroup
-
--- ===================================================
--- ===================================================
-
-GAME_STATE_DIVINE_INTERVENTION = ConvertIGameState(0)	---@type igamestate
-GAME_STATE_DISCONNECTED = ConvertIGameState(1)	---@type igamestate
-GAME_STATE_TIME_OF_DAY = ConvertFGameState(2)	---@type fgamestate
-PLAYER_STATE_GAME_RESULT = ConvertPlayerState(0)	---@type playerstate
---  current resource levels
-PLAYER_STATE_RESOURCE_GOLD = ConvertPlayerState(1)	---@type playerstate
-PLAYER_STATE_RESOURCE_LUMBER = ConvertPlayerState(2)	---@type playerstate
-PLAYER_STATE_RESOURCE_HERO_TOKENS = ConvertPlayerState(3)	---@type playerstate
-PLAYER_STATE_RESOURCE_FOOD_CAP = ConvertPlayerState(4)	---@type playerstate
-PLAYER_STATE_RESOURCE_FOOD_USED = ConvertPlayerState(5)	---@type playerstate
-PLAYER_STATE_FOOD_CAP_CEILING = ConvertPlayerState(6)	---@type playerstate
-PLAYER_STATE_GIVES_BOUNTY = ConvertPlayerState(7)	---@type playerstate
-PLAYER_STATE_ALLIED_VICTORY = ConvertPlayerState(8)	---@type playerstate
-PLAYER_STATE_PLACED = ConvertPlayerState(9)	---@type playerstate
-PLAYER_STATE_OBSERVER_ON_DEATH = ConvertPlayerState(10)	---@type playerstate
-PLAYER_STATE_OBSERVER = ConvertPlayerState(11)	---@type playerstate
-PLAYER_STATE_UNFOLLOWABLE = ConvertPlayerState(12)	---@type playerstate
---  taxation rate for each resource
-PLAYER_STATE_GOLD_UPKEEP_RATE = ConvertPlayerState(13)	---@type playerstate
-PLAYER_STATE_LUMBER_UPKEEP_RATE = ConvertPlayerState(14)	---@type playerstate
---  cumulative resources collected by the player during the mission
-PLAYER_STATE_GOLD_GATHERED = ConvertPlayerState(15)	---@type playerstate
-PLAYER_STATE_LUMBER_GATHERED = ConvertPlayerState(16)	---@type playerstate
-PLAYER_STATE_NO_CREEP_SLEEP = ConvertPlayerState(25)	---@type playerstate
-UNIT_STATE_LIFE = ConvertUnitState(0)	---@type unitstate
-UNIT_STATE_MAX_LIFE = ConvertUnitState(1)	---@type unitstate
-UNIT_STATE_MANA = ConvertUnitState(2)	---@type unitstate
-UNIT_STATE_MAX_MANA = ConvertUnitState(3)	---@type unitstate
-AI_DIFFICULTY_NEWBIE = ConvertAIDifficulty(0)	---@type aidifficulty
-AI_DIFFICULTY_NORMAL = ConvertAIDifficulty(1)	---@type aidifficulty
-AI_DIFFICULTY_INSANE = ConvertAIDifficulty(2)	---@type aidifficulty
---  player score values
-PLAYER_SCORE_UNITS_TRAINED = ConvertPlayerScore(0)	---@type playerscore
-PLAYER_SCORE_UNITS_KILLED = ConvertPlayerScore(1)	---@type playerscore
-PLAYER_SCORE_STRUCT_BUILT = ConvertPlayerScore(2)	---@type playerscore
-PLAYER_SCORE_STRUCT_RAZED = ConvertPlayerScore(3)	---@type playerscore
-PLAYER_SCORE_TECH_PERCENT = ConvertPlayerScore(4)	---@type playerscore
-PLAYER_SCORE_FOOD_MAXPROD = ConvertPlayerScore(5)	---@type playerscore
-PLAYER_SCORE_FOOD_MAXUSED = ConvertPlayerScore(6)	---@type playerscore
-PLAYER_SCORE_HEROES_KILLED = ConvertPlayerScore(7)	---@type playerscore
-PLAYER_SCORE_ITEMS_GAINED = ConvertPlayerScore(8)	---@type playerscore
-PLAYER_SCORE_MERCS_HIRED = ConvertPlayerScore(9)	---@type playerscore
-PLAYER_SCORE_GOLD_MINED_TOTAL = ConvertPlayerScore(10)	---@type playerscore
-PLAYER_SCORE_GOLD_MINED_UPKEEP = ConvertPlayerScore(11)	---@type playerscore
-PLAYER_SCORE_GOLD_LOST_UPKEEP = ConvertPlayerScore(12)	---@type playerscore
-PLAYER_SCORE_GOLD_LOST_TAX = ConvertPlayerScore(13)	---@type playerscore
-PLAYER_SCORE_GOLD_GIVEN = ConvertPlayerScore(14)	---@type playerscore
-PLAYER_SCORE_GOLD_RECEIVED = ConvertPlayerScore(15)	---@type playerscore
-PLAYER_SCORE_LUMBER_TOTAL = ConvertPlayerScore(16)	---@type playerscore
-PLAYER_SCORE_LUMBER_LOST_UPKEEP = ConvertPlayerScore(17)	---@type playerscore
-PLAYER_SCORE_LUMBER_LOST_TAX = ConvertPlayerScore(18)	---@type playerscore
-PLAYER_SCORE_LUMBER_GIVEN = ConvertPlayerScore(19)	---@type playerscore
-PLAYER_SCORE_LUMBER_RECEIVED = ConvertPlayerScore(20)	---@type playerscore
-PLAYER_SCORE_UNIT_TOTAL = ConvertPlayerScore(21)	---@type playerscore
-PLAYER_SCORE_HERO_TOTAL = ConvertPlayerScore(22)	---@type playerscore
-PLAYER_SCORE_RESOURCE_TOTAL = ConvertPlayerScore(23)	---@type playerscore
-PLAYER_SCORE_TOTAL = ConvertPlayerScore(24)	---@type playerscore
-
--- ===================================================
--- ===================================================
-
-EVENT_GAME_VICTORY = ConvertGameEvent(0)	---@type gameevent
-EVENT_GAME_END_LEVEL = ConvertGameEvent(1)	---@type gameevent
-EVENT_GAME_VARIABLE_LIMIT = ConvertGameEvent(2)	---@type gameevent
-EVENT_GAME_STATE_LIMIT = ConvertGameEvent(3)	---@type gameevent
-EVENT_GAME_TIMER_EXPIRED = ConvertGameEvent(4)	---@type gameevent
-EVENT_GAME_ENTER_REGION = ConvertGameEvent(5)	---@type gameevent
-EVENT_GAME_LEAVE_REGION = ConvertGameEvent(6)	---@type gameevent
-EVENT_GAME_TRACKABLE_HIT = ConvertGameEvent(7)	---@type gameevent
-EVENT_GAME_TRACKABLE_TRACK = ConvertGameEvent(8)	---@type gameevent
-EVENT_GAME_SHOW_SKILL = ConvertGameEvent(9)	---@type gameevent
-EVENT_GAME_BUILD_SUBMENU = ConvertGameEvent(10)	---@type gameevent
-
--- ===================================================
--- ===================================================
-
-EVENT_PLAYER_STATE_LIMIT = ConvertPlayerEvent(11)	---@type playerevent
-EVENT_PLAYER_ALLIANCE_CHANGED = ConvertPlayerEvent(12)	---@type playerevent
-EVENT_PLAYER_DEFEAT = ConvertPlayerEvent(13)	---@type playerevent
-EVENT_PLAYER_VICTORY = ConvertPlayerEvent(14)	---@type playerevent
-EVENT_PLAYER_LEAVE = ConvertPlayerEvent(15)	---@type playerevent
-EVENT_PLAYER_CHAT = ConvertPlayerEvent(16)	---@type playerevent
-EVENT_PLAYER_END_CINEMATIC = ConvertPlayerEvent(17)	---@type playerevent
-
--- ===================================================
--- ===================================================
-
-EVENT_PLAYER_UNIT_ATTACKED = ConvertPlayerUnitEvent(18)	---@type playerunitevent
-EVENT_PLAYER_UNIT_RESCUED = ConvertPlayerUnitEvent(19)	---@type playerunitevent
-EVENT_PLAYER_UNIT_DEATH = ConvertPlayerUnitEvent(20)	---@type playerunitevent
-EVENT_PLAYER_UNIT_DECAY = ConvertPlayerUnitEvent(21)	---@type playerunitevent
-EVENT_PLAYER_UNIT_DETECTED = ConvertPlayerUnitEvent(22)	---@type playerunitevent
-EVENT_PLAYER_UNIT_HIDDEN = ConvertPlayerUnitEvent(23)	---@type playerunitevent
-EVENT_PLAYER_UNIT_SELECTED = ConvertPlayerUnitEvent(24)	---@type playerunitevent
-EVENT_PLAYER_UNIT_DESELECTED = ConvertPlayerUnitEvent(25)	---@type playerunitevent
-EVENT_PLAYER_UNIT_CONSTRUCT_START = ConvertPlayerUnitEvent(26)	---@type playerunitevent
-EVENT_PLAYER_UNIT_CONSTRUCT_CANCEL = ConvertPlayerUnitEvent(27)	---@type playerunitevent
-EVENT_PLAYER_UNIT_CONSTRUCT_FINISH = ConvertPlayerUnitEvent(28)	---@type playerunitevent
-EVENT_PLAYER_UNIT_UPGRADE_START = ConvertPlayerUnitEvent(29)	---@type playerunitevent
-EVENT_PLAYER_UNIT_UPGRADE_CANCEL = ConvertPlayerUnitEvent(30)	---@type playerunitevent
-EVENT_PLAYER_UNIT_UPGRADE_FINISH = ConvertPlayerUnitEvent(31)	---@type playerunitevent
-EVENT_PLAYER_UNIT_TRAIN_START = ConvertPlayerUnitEvent(32)	---@type playerunitevent
-EVENT_PLAYER_UNIT_TRAIN_CANCEL = ConvertPlayerUnitEvent(33)	---@type playerunitevent
-EVENT_PLAYER_UNIT_TRAIN_FINISH = ConvertPlayerUnitEvent(34)	---@type playerunitevent
-EVENT_PLAYER_UNIT_RESEARCH_START = ConvertPlayerUnitEvent(35)	---@type playerunitevent
-EVENT_PLAYER_UNIT_RESEARCH_CANCEL = ConvertPlayerUnitEvent(36)	---@type playerunitevent
-EVENT_PLAYER_UNIT_RESEARCH_FINISH = ConvertPlayerUnitEvent(37)	---@type playerunitevent
-EVENT_PLAYER_UNIT_ISSUED_ORDER = ConvertPlayerUnitEvent(38)	---@type playerunitevent
-EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER = ConvertPlayerUnitEvent(39)	---@type playerunitevent
-EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER = ConvertPlayerUnitEvent(40)	---@type playerunitevent
-EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER = ConvertPlayerUnitEvent(40)	---@type playerunitevent	--  for compat
-EVENT_PLAYER_HERO_LEVEL = ConvertPlayerUnitEvent(41)	---@type playerunitevent
-EVENT_PLAYER_HERO_SKILL = ConvertPlayerUnitEvent(42)	---@type playerunitevent
-EVENT_PLAYER_HERO_REVIVABLE = ConvertPlayerUnitEvent(43)	---@type playerunitevent
-EVENT_PLAYER_HERO_REVIVE_START = ConvertPlayerUnitEvent(44)	---@type playerunitevent
-EVENT_PLAYER_HERO_REVIVE_CANCEL = ConvertPlayerUnitEvent(45)	---@type playerunitevent
-EVENT_PLAYER_HERO_REVIVE_FINISH = ConvertPlayerUnitEvent(46)	---@type playerunitevent
-EVENT_PLAYER_UNIT_SUMMON = ConvertPlayerUnitEvent(47)	---@type playerunitevent
-EVENT_PLAYER_UNIT_DROP_ITEM = ConvertPlayerUnitEvent(48)	---@type playerunitevent
-EVENT_PLAYER_UNIT_PICKUP_ITEM = ConvertPlayerUnitEvent(49)	---@type playerunitevent
-EVENT_PLAYER_UNIT_USE_ITEM = ConvertPlayerUnitEvent(50)	---@type playerunitevent
-EVENT_PLAYER_UNIT_LOADED = ConvertPlayerUnitEvent(51)	---@type playerunitevent
-EVENT_PLAYER_UNIT_DAMAGED = ConvertPlayerUnitEvent(308)	---@type playerunitevent
-EVENT_PLAYER_UNIT_DAMAGING = ConvertPlayerUnitEvent(315)	---@type playerunitevent
-
--- ===================================================
--- ===================================================
-
-EVENT_UNIT_DAMAGED = ConvertUnitEvent(52)	---@type unitevent
-EVENT_UNIT_DAMAGING = ConvertUnitEvent(314)	---@type unitevent
-EVENT_UNIT_DEATH = ConvertUnitEvent(53)	---@type unitevent
-EVENT_UNIT_DECAY = ConvertUnitEvent(54)	---@type unitevent
-EVENT_UNIT_DETECTED = ConvertUnitEvent(55)	---@type unitevent
-EVENT_UNIT_HIDDEN = ConvertUnitEvent(56)	---@type unitevent
-EVENT_UNIT_SELECTED = ConvertUnitEvent(57)	---@type unitevent
-EVENT_UNIT_DESELECTED = ConvertUnitEvent(58)	---@type unitevent
-EVENT_UNIT_STATE_LIMIT = ConvertUnitEvent(59)	---@type unitevent
---  Events which may have a filter for the "other unit"
-EVENT_UNIT_ACQUIRED_TARGET = ConvertUnitEvent(60)	---@type unitevent
-EVENT_UNIT_TARGET_IN_RANGE = ConvertUnitEvent(61)	---@type unitevent
-EVENT_UNIT_ATTACKED = ConvertUnitEvent(62)	---@type unitevent
-EVENT_UNIT_RESCUED = ConvertUnitEvent(63)	---@type unitevent
-EVENT_UNIT_CONSTRUCT_CANCEL = ConvertUnitEvent(64)	---@type unitevent
-EVENT_UNIT_CONSTRUCT_FINISH = ConvertUnitEvent(65)	---@type unitevent
-EVENT_UNIT_UPGRADE_START = ConvertUnitEvent(66)	---@type unitevent
-EVENT_UNIT_UPGRADE_CANCEL = ConvertUnitEvent(67)	---@type unitevent
-EVENT_UNIT_UPGRADE_FINISH = ConvertUnitEvent(68)	---@type unitevent
---  Events which involve the specified unit performing
---  training of other units
-EVENT_UNIT_TRAIN_START = ConvertUnitEvent(69)	---@type unitevent
-EVENT_UNIT_TRAIN_CANCEL = ConvertUnitEvent(70)	---@type unitevent
-EVENT_UNIT_TRAIN_FINISH = ConvertUnitEvent(71)	---@type unitevent
-EVENT_UNIT_RESEARCH_START = ConvertUnitEvent(72)	---@type unitevent
-EVENT_UNIT_RESEARCH_CANCEL = ConvertUnitEvent(73)	---@type unitevent
-EVENT_UNIT_RESEARCH_FINISH = ConvertUnitEvent(74)	---@type unitevent
-EVENT_UNIT_ISSUED_ORDER = ConvertUnitEvent(75)	---@type unitevent
-EVENT_UNIT_ISSUED_POINT_ORDER = ConvertUnitEvent(76)	---@type unitevent
-EVENT_UNIT_ISSUED_TARGET_ORDER = ConvertUnitEvent(77)	---@type unitevent
-EVENT_UNIT_HERO_LEVEL = ConvertUnitEvent(78)	---@type unitevent
-EVENT_UNIT_HERO_SKILL = ConvertUnitEvent(79)	---@type unitevent
-EVENT_UNIT_HERO_REVIVABLE = ConvertUnitEvent(80)	---@type unitevent
-EVENT_UNIT_HERO_REVIVE_START = ConvertUnitEvent(81)	---@type unitevent
-EVENT_UNIT_HERO_REVIVE_CANCEL = ConvertUnitEvent(82)	---@type unitevent
-EVENT_UNIT_HERO_REVIVE_FINISH = ConvertUnitEvent(83)	---@type unitevent
-EVENT_UNIT_SUMMON = ConvertUnitEvent(84)	---@type unitevent
-EVENT_UNIT_DROP_ITEM = ConvertUnitEvent(85)	---@type unitevent
-EVENT_UNIT_PICKUP_ITEM = ConvertUnitEvent(86)	---@type unitevent
-EVENT_UNIT_USE_ITEM = ConvertUnitEvent(87)	---@type unitevent
-EVENT_UNIT_LOADED = ConvertUnitEvent(88)	---@type unitevent
-EVENT_WIDGET_DEATH = ConvertWidgetEvent(89)	---@type widgetevent
-EVENT_DIALOG_BUTTON_CLICK = ConvertDialogEvent(90)	---@type dialogevent
-EVENT_DIALOG_CLICK = ConvertDialogEvent(91)	---@type dialogevent
-
--- ===================================================
--- ===================================================
-
-EVENT_GAME_LOADED = ConvertGameEvent(256)	---@type gameevent
-EVENT_GAME_TOURNAMENT_FINISH_SOON = ConvertGameEvent(257)	---@type gameevent
-EVENT_GAME_TOURNAMENT_FINISH_NOW = ConvertGameEvent(258)	---@type gameevent
-EVENT_GAME_SAVE = ConvertGameEvent(259)	---@type gameevent
-EVENT_GAME_CUSTOM_UI_FRAME = ConvertGameEvent(310)	---@type gameevent
-
--- ===================================================
--- ===================================================
-
-EVENT_PLAYER_ARROW_LEFT_DOWN = ConvertPlayerEvent(261)	---@type playerevent
-EVENT_PLAYER_ARROW_LEFT_UP = ConvertPlayerEvent(262)	---@type playerevent
-EVENT_PLAYER_ARROW_RIGHT_DOWN = ConvertPlayerEvent(263)	---@type playerevent
-EVENT_PLAYER_ARROW_RIGHT_UP = ConvertPlayerEvent(264)	---@type playerevent
-EVENT_PLAYER_ARROW_DOWN_DOWN = ConvertPlayerEvent(265)	---@type playerevent
-EVENT_PLAYER_ARROW_DOWN_UP = ConvertPlayerEvent(266)	---@type playerevent
-EVENT_PLAYER_ARROW_UP_DOWN = ConvertPlayerEvent(267)	---@type playerevent
-EVENT_PLAYER_ARROW_UP_UP = ConvertPlayerEvent(268)	---@type playerevent
-EVENT_PLAYER_MOUSE_DOWN = ConvertPlayerEvent(305)	---@type playerevent
-EVENT_PLAYER_MOUSE_UP = ConvertPlayerEvent(306)	---@type playerevent
-EVENT_PLAYER_MOUSE_MOVE = ConvertPlayerEvent(307)	---@type playerevent
-EVENT_PLAYER_SYNC_DATA = ConvertPlayerEvent(309)	---@type playerevent
-EVENT_PLAYER_KEY = ConvertPlayerEvent(311)	---@type playerevent
-EVENT_PLAYER_KEY_DOWN = ConvertPlayerEvent(312)	---@type playerevent
-EVENT_PLAYER_KEY_UP = ConvertPlayerEvent(313)	---@type playerevent
-
--- ===================================================
--- ===================================================
-
-EVENT_PLAYER_UNIT_SELL = ConvertPlayerUnitEvent(269)	---@type playerunitevent
-EVENT_PLAYER_UNIT_CHANGE_OWNER = ConvertPlayerUnitEvent(270)	---@type playerunitevent
-EVENT_PLAYER_UNIT_SELL_ITEM = ConvertPlayerUnitEvent(271)	---@type playerunitevent
-EVENT_PLAYER_UNIT_SPELL_CHANNEL = ConvertPlayerUnitEvent(272)	---@type playerunitevent
-EVENT_PLAYER_UNIT_SPELL_CAST = ConvertPlayerUnitEvent(273)	---@type playerunitevent
-EVENT_PLAYER_UNIT_SPELL_EFFECT = ConvertPlayerUnitEvent(274)	---@type playerunitevent
-EVENT_PLAYER_UNIT_SPELL_FINISH = ConvertPlayerUnitEvent(275)	---@type playerunitevent
-EVENT_PLAYER_UNIT_SPELL_ENDCAST = ConvertPlayerUnitEvent(276)	---@type playerunitevent
-EVENT_PLAYER_UNIT_PAWN_ITEM = ConvertPlayerUnitEvent(277)	---@type playerunitevent
-EVENT_PLAYER_UNIT_STACK_ITEM = ConvertPlayerUnitEvent(319)	---@type playerunitevent
-
--- ===================================================
--- ===================================================
-
-EVENT_UNIT_SELL = ConvertUnitEvent(286)	---@type unitevent
-EVENT_UNIT_CHANGE_OWNER = ConvertUnitEvent(287)	---@type unitevent
-EVENT_UNIT_SELL_ITEM = ConvertUnitEvent(288)	---@type unitevent
-EVENT_UNIT_SPELL_CHANNEL = ConvertUnitEvent(289)	---@type unitevent
-EVENT_UNIT_SPELL_CAST = ConvertUnitEvent(290)	---@type unitevent
-EVENT_UNIT_SPELL_EFFECT = ConvertUnitEvent(291)	---@type unitevent
-EVENT_UNIT_SPELL_FINISH = ConvertUnitEvent(292)	---@type unitevent
-EVENT_UNIT_SPELL_ENDCAST = ConvertUnitEvent(293)	---@type unitevent
-EVENT_UNIT_PAWN_ITEM = ConvertUnitEvent(294)	---@type unitevent
-EVENT_UNIT_STACK_ITEM = ConvertUnitEvent(318)	---@type unitevent
-
--- ===================================================
--- ===================================================
-
-LESS_THAN = ConvertLimitOp(0)	---@type limitop
-LESS_THAN_OR_EQUAL = ConvertLimitOp(1)	---@type limitop
-EQUAL = ConvertLimitOp(2)	---@type limitop
-GREATER_THAN_OR_EQUAL = ConvertLimitOp(3)	---@type limitop
-GREATER_THAN = ConvertLimitOp(4)	---@type limitop
-NOT_EQUAL = ConvertLimitOp(5)	---@type limitop
-
--- ===================================================
--- ===================================================
-
-UNIT_TYPE_HERO = ConvertUnitType(0)	---@type unittype
-UNIT_TYPE_DEAD = ConvertUnitType(1)	---@type unittype
-UNIT_TYPE_STRUCTURE = ConvertUnitType(2)	---@type unittype
-UNIT_TYPE_FLYING = ConvertUnitType(3)	---@type unittype
-UNIT_TYPE_GROUND = ConvertUnitType(4)	---@type unittype
-UNIT_TYPE_ATTACKS_FLYING = ConvertUnitType(5)	---@type unittype
-UNIT_TYPE_ATTACKS_GROUND = ConvertUnitType(6)	---@type unittype
-UNIT_TYPE_MELEE_ATTACKER = ConvertUnitType(7)	---@type unittype
-UNIT_TYPE_RANGED_ATTACKER = ConvertUnitType(8)	---@type unittype
-UNIT_TYPE_GIANT = ConvertUnitType(9)	---@type unittype
-UNIT_TYPE_SUMMONED = ConvertUnitType(10)	---@type unittype
-UNIT_TYPE_STUNNED = ConvertUnitType(11)	---@type unittype
-UNIT_TYPE_PLAGUED = ConvertUnitType(12)	---@type unittype
-UNIT_TYPE_SNARED = ConvertUnitType(13)	---@type unittype
-UNIT_TYPE_UNDEAD = ConvertUnitType(14)	---@type unittype
-UNIT_TYPE_MECHANICAL = ConvertUnitType(15)	---@type unittype
-UNIT_TYPE_PEON = ConvertUnitType(16)	---@type unittype
-UNIT_TYPE_SAPPER = ConvertUnitType(17)	---@type unittype
-UNIT_TYPE_TOWNHALL = ConvertUnitType(18)	---@type unittype
-UNIT_TYPE_ANCIENT = ConvertUnitType(19)	---@type unittype
-UNIT_TYPE_TAUREN = ConvertUnitType(20)	---@type unittype
-UNIT_TYPE_POISONED = ConvertUnitType(21)	---@type unittype
-UNIT_TYPE_POLYMORPHED = ConvertUnitType(22)	---@type unittype
-UNIT_TYPE_SLEEPING = ConvertUnitType(23)	---@type unittype
-UNIT_TYPE_RESISTANT = ConvertUnitType(24)	---@type unittype
-UNIT_TYPE_ETHEREAL = ConvertUnitType(25)	---@type unittype
-UNIT_TYPE_MAGIC_IMMUNE = ConvertUnitType(26)	---@type unittype
-
--- ===================================================
--- ===================================================
-
-ITEM_TYPE_PERMANENT = ConvertItemType(0)	---@type itemtype
-ITEM_TYPE_CHARGED = ConvertItemType(1)	---@type itemtype
-ITEM_TYPE_POWERUP = ConvertItemType(2)	---@type itemtype
-ITEM_TYPE_ARTIFACT = ConvertItemType(3)	---@type itemtype
-ITEM_TYPE_PURCHASABLE = ConvertItemType(4)	---@type itemtype
-ITEM_TYPE_CAMPAIGN = ConvertItemType(5)	---@type itemtype
-ITEM_TYPE_MISCELLANEOUS = ConvertItemType(6)	---@type itemtype
-ITEM_TYPE_UNKNOWN = ConvertItemType(7)	---@type itemtype
-ITEM_TYPE_ANY = ConvertItemType(8)	---@type itemtype
---  Deprecated, should use ITEM_TYPE_POWERUP
-ITEM_TYPE_TOME = ConvertItemType(2)	---@type itemtype
-
--- ===================================================
--- ===================================================
-
-CAMERA_FIELD_TARGET_DISTANCE = ConvertCameraField(0)	---@type camerafield
-CAMERA_FIELD_FARZ = ConvertCameraField(1)	---@type camerafield
-CAMERA_FIELD_ANGLE_OF_ATTACK = ConvertCameraField(2)	---@type camerafield
-CAMERA_FIELD_FIELD_OF_VIEW = ConvertCameraField(3)	---@type camerafield
-CAMERA_FIELD_ROLL = ConvertCameraField(4)	---@type camerafield
-CAMERA_FIELD_ROTATION = ConvertCameraField(5)	---@type camerafield
-CAMERA_FIELD_ZOFFSET = ConvertCameraField(6)	---@type camerafield
-CAMERA_FIELD_NEARZ = ConvertCameraField(7)	---@type camerafield
-CAMERA_FIELD_LOCAL_PITCH = ConvertCameraField(8)	---@type camerafield
-CAMERA_FIELD_LOCAL_YAW = ConvertCameraField(9)	---@type camerafield
-CAMERA_FIELD_LOCAL_ROLL = ConvertCameraField(10)	---@type camerafield
-BLEND_MODE_NONE = ConvertBlendMode(0)	---@type blendmode
-BLEND_MODE_DONT_CARE = ConvertBlendMode(0)	---@type blendmode
-BLEND_MODE_KEYALPHA = ConvertBlendMode(1)	---@type blendmode
-BLEND_MODE_BLEND = ConvertBlendMode(2)	---@type blendmode
-BLEND_MODE_ADDITIVE = ConvertBlendMode(3)	---@type blendmode
-BLEND_MODE_MODULATE = ConvertBlendMode(4)	---@type blendmode
-BLEND_MODE_MODULATE_2X = ConvertBlendMode(5)	---@type blendmode
-RARITY_FREQUENT = ConvertRarityControl(0)	---@type raritycontrol
-RARITY_RARE = ConvertRarityControl(1)	---@type raritycontrol
-TEXMAP_FLAG_NONE = ConvertTexMapFlags(0)	---@type texmapflags
-TEXMAP_FLAG_WRAP_U = ConvertTexMapFlags(1)	---@type texmapflags
-TEXMAP_FLAG_WRAP_V = ConvertTexMapFlags(2)	---@type texmapflags
-TEXMAP_FLAG_WRAP_UV = ConvertTexMapFlags(3)	---@type texmapflags
-FOG_OF_WAR_MASKED = ConvertFogState(1)	---@type fogstate
-FOG_OF_WAR_FOGGED = ConvertFogState(2)	---@type fogstate
-FOG_OF_WAR_VISIBLE = ConvertFogState(4)	---@type fogstate
-
--- ===================================================
--- ===================================================
-
-CAMERA_MARGIN_LEFT = 0	---@type integer
-CAMERA_MARGIN_RIGHT = 1	---@type integer
-CAMERA_MARGIN_TOP = 2	---@type integer
-CAMERA_MARGIN_BOTTOM = 3	---@type integer
-
--- ===================================================
--- ===================================================
-
-EFFECT_TYPE_EFFECT = ConvertEffectType(0)	---@type effecttype
-EFFECT_TYPE_TARGET = ConvertEffectType(1)	---@type effecttype
-EFFECT_TYPE_CASTER = ConvertEffectType(2)	---@type effecttype
-EFFECT_TYPE_SPECIAL = ConvertEffectType(3)	---@type effecttype
-EFFECT_TYPE_AREA_EFFECT = ConvertEffectType(4)	---@type effecttype
-EFFECT_TYPE_MISSILE = ConvertEffectType(5)	---@type effecttype
-EFFECT_TYPE_LIGHTNING = ConvertEffectType(6)	---@type effecttype
-SOUND_TYPE_EFFECT = ConvertSoundType(0)	---@type soundtype
-SOUND_TYPE_EFFECT_LOOPED = ConvertSoundType(1)	---@type soundtype
-
--- ===================================================
--- ===================================================
-
-ORIGIN_FRAME_GAME_UI = ConvertOriginFrameType(0)	---@type originframetype
-ORIGIN_FRAME_COMMAND_BUTTON = ConvertOriginFrameType(1)	---@type originframetype
-ORIGIN_FRAME_HERO_BAR = ConvertOriginFrameType(2)	---@type originframetype
-ORIGIN_FRAME_HERO_BUTTON = ConvertOriginFrameType(3)	---@type originframetype
-ORIGIN_FRAME_HERO_HP_BAR = ConvertOriginFrameType(4)	---@type originframetype
-ORIGIN_FRAME_HERO_MANA_BAR = ConvertOriginFrameType(5)	---@type originframetype
-ORIGIN_FRAME_HERO_BUTTON_INDICATOR = ConvertOriginFrameType(6)	---@type originframetype
-ORIGIN_FRAME_ITEM_BUTTON = ConvertOriginFrameType(7)	---@type originframetype
-ORIGIN_FRAME_MINIMAP = ConvertOriginFrameType(8)	---@type originframetype
-ORIGIN_FRAME_MINIMAP_BUTTON = ConvertOriginFrameType(9)	---@type originframetype
-ORIGIN_FRAME_SYSTEM_BUTTON = ConvertOriginFrameType(10)	---@type originframetype
-ORIGIN_FRAME_TOOLTIP = ConvertOriginFrameType(11)	---@type originframetype
-ORIGIN_FRAME_UBERTOOLTIP = ConvertOriginFrameType(12)	---@type originframetype
-ORIGIN_FRAME_CHAT_MSG = ConvertOriginFrameType(13)	---@type originframetype
-ORIGIN_FRAME_UNIT_MSG = ConvertOriginFrameType(14)	---@type originframetype
-ORIGIN_FRAME_TOP_MSG = ConvertOriginFrameType(15)	---@type originframetype
-ORIGIN_FRAME_PORTRAIT = ConvertOriginFrameType(16)	---@type originframetype
-ORIGIN_FRAME_WORLD_FRAME = ConvertOriginFrameType(17)	---@type originframetype
-ORIGIN_FRAME_SIMPLE_UI_PARENT = ConvertOriginFrameType(18)	---@type originframetype
-ORIGIN_FRAME_PORTRAIT_HP_TEXT = ConvertOriginFrameType(19)	---@type originframetype
-ORIGIN_FRAME_PORTRAIT_MANA_TEXT = ConvertOriginFrameType(20)	---@type originframetype
-ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR = ConvertOriginFrameType(21)	---@type originframetype
-ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR_LABEL = ConvertOriginFrameType(22)	---@type originframetype
-FRAMEPOINT_TOPLEFT = ConvertFramePointType(0)	---@type framepointtype
-FRAMEPOINT_TOP = ConvertFramePointType(1)	---@type framepointtype
-FRAMEPOINT_TOPRIGHT = ConvertFramePointType(2)	---@type framepointtype
-FRAMEPOINT_LEFT = ConvertFramePointType(3)	---@type framepointtype
-FRAMEPOINT_CENTER = ConvertFramePointType(4)	---@type framepointtype
-FRAMEPOINT_RIGHT = ConvertFramePointType(5)	---@type framepointtype
-FRAMEPOINT_BOTTOMLEFT = ConvertFramePointType(6)	---@type framepointtype
-FRAMEPOINT_BOTTOM = ConvertFramePointType(7)	---@type framepointtype
-FRAMEPOINT_BOTTOMRIGHT = ConvertFramePointType(8)	---@type framepointtype
-TEXT_JUSTIFY_TOP = ConvertTextAlignType(0)	---@type textaligntype
-TEXT_JUSTIFY_MIDDLE = ConvertTextAlignType(1)	---@type textaligntype
-TEXT_JUSTIFY_BOTTOM = ConvertTextAlignType(2)	---@type textaligntype
-TEXT_JUSTIFY_LEFT = ConvertTextAlignType(3)	---@type textaligntype
-TEXT_JUSTIFY_CENTER = ConvertTextAlignType(4)	---@type textaligntype
-TEXT_JUSTIFY_RIGHT = ConvertTextAlignType(5)	---@type textaligntype
-FRAMEEVENT_CONTROL_CLICK = ConvertFrameEventType(1)	---@type frameeventtype
-FRAMEEVENT_MOUSE_ENTER = ConvertFrameEventType(2)	---@type frameeventtype
-FRAMEEVENT_MOUSE_LEAVE = ConvertFrameEventType(3)	---@type frameeventtype
-FRAMEEVENT_MOUSE_UP = ConvertFrameEventType(4)	---@type frameeventtype
-FRAMEEVENT_MOUSE_DOWN = ConvertFrameEventType(5)	---@type frameeventtype
-FRAMEEVENT_MOUSE_WHEEL = ConvertFrameEventType(6)	---@type frameeventtype
-FRAMEEVENT_CHECKBOX_CHECKED = ConvertFrameEventType(7)	---@type frameeventtype
-FRAMEEVENT_CHECKBOX_UNCHECKED = ConvertFrameEventType(8)	---@type frameeventtype
-FRAMEEVENT_EDITBOX_TEXT_CHANGED = ConvertFrameEventType(9)	---@type frameeventtype
-FRAMEEVENT_POPUPMENU_ITEM_CHANGED = ConvertFrameEventType(10)	---@type frameeventtype
-FRAMEEVENT_MOUSE_DOUBLECLICK = ConvertFrameEventType(11)	---@type frameeventtype
-FRAMEEVENT_SPRITE_ANIM_UPDATE = ConvertFrameEventType(12)	---@type frameeventtype
-FRAMEEVENT_SLIDER_VALUE_CHANGED = ConvertFrameEventType(13)	---@type frameeventtype
-FRAMEEVENT_DIALOG_CANCEL = ConvertFrameEventType(14)	---@type frameeventtype
-FRAMEEVENT_DIALOG_ACCEPT = ConvertFrameEventType(15)	---@type frameeventtype
-FRAMEEVENT_EDITBOX_ENTER = ConvertFrameEventType(16)	---@type frameeventtype
-
--- ===================================================
--- ===================================================
-
-OSKEY_BACKSPACE = ConvertOsKeyType(0x08)	---@type oskeytype
-OSKEY_TAB = ConvertOsKeyType(0x09)	---@type oskeytype
-OSKEY_CLEAR = ConvertOsKeyType(0x0C)	---@type oskeytype
-OSKEY_RETURN = ConvertOsKeyType(0x0D)	---@type oskeytype
-OSKEY_SHIFT = ConvertOsKeyType(0x10)	---@type oskeytype
-OSKEY_CONTROL = ConvertOsKeyType(0x11)	---@type oskeytype
-OSKEY_ALT = ConvertOsKeyType(0x12)	---@type oskeytype
-OSKEY_PAUSE = ConvertOsKeyType(0x13)	---@type oskeytype
-OSKEY_CAPSLOCK = ConvertOsKeyType(0x14)	---@type oskeytype
-OSKEY_KANA = ConvertOsKeyType(0x15)	---@type oskeytype
-OSKEY_HANGUL = ConvertOsKeyType(0x15)	---@type oskeytype
-OSKEY_JUNJA = ConvertOsKeyType(0x17)	---@type oskeytype
-OSKEY_FINAL = ConvertOsKeyType(0x18)	---@type oskeytype
-OSKEY_HANJA = ConvertOsKeyType(0x19)	---@type oskeytype
-OSKEY_KANJI = ConvertOsKeyType(0x19)	---@type oskeytype
-OSKEY_ESCAPE = ConvertOsKeyType(0x1B)	---@type oskeytype
-OSKEY_CONVERT = ConvertOsKeyType(0x1C)	---@type oskeytype
-OSKEY_NONCONVERT = ConvertOsKeyType(0x1D)	---@type oskeytype
-OSKEY_ACCEPT = ConvertOsKeyType(0x1E)	---@type oskeytype
-OSKEY_MODECHANGE = ConvertOsKeyType(0x1F)	---@type oskeytype
-OSKEY_SPACE = ConvertOsKeyType(0x20)	---@type oskeytype
-OSKEY_PAGEUP = ConvertOsKeyType(0x21)	---@type oskeytype
-OSKEY_PAGEDOWN = ConvertOsKeyType(0x22)	---@type oskeytype
-OSKEY_END = ConvertOsKeyType(0x23)	---@type oskeytype
-OSKEY_HOME = ConvertOsKeyType(0x24)	---@type oskeytype
-OSKEY_LEFT = ConvertOsKeyType(0x25)	---@type oskeytype
-OSKEY_UP = ConvertOsKeyType(0x26)	---@type oskeytype
-OSKEY_RIGHT = ConvertOsKeyType(0x27)	---@type oskeytype
-OSKEY_DOWN = ConvertOsKeyType(0x28)	---@type oskeytype
-OSKEY_SELECT = ConvertOsKeyType(0x29)	---@type oskeytype
-OSKEY_PRINT = ConvertOsKeyType(0x2A)	---@type oskeytype
-OSKEY_EXECUTE = ConvertOsKeyType(0x2B)	---@type oskeytype
-OSKEY_PRINTSCREEN = ConvertOsKeyType(0x2C)	---@type oskeytype
-OSKEY_INSERT = ConvertOsKeyType(0x2D)	---@type oskeytype
-OSKEY_DELETE = ConvertOsKeyType(0x2E)	---@type oskeytype
-OSKEY_HELP = ConvertOsKeyType(0x2F)	---@type oskeytype
-OSKEY_0 = ConvertOsKeyType(0x30)	---@type oskeytype
-OSKEY_1 = ConvertOsKeyType(0x31)	---@type oskeytype
-OSKEY_2 = ConvertOsKeyType(0x32)	---@type oskeytype
-OSKEY_3 = ConvertOsKeyType(0x33)	---@type oskeytype
-OSKEY_4 = ConvertOsKeyType(0x34)	---@type oskeytype
-OSKEY_5 = ConvertOsKeyType(0x35)	---@type oskeytype
-OSKEY_6 = ConvertOsKeyType(0x36)	---@type oskeytype
-OSKEY_7 = ConvertOsKeyType(0x37)	---@type oskeytype
-OSKEY_8 = ConvertOsKeyType(0x38)	---@type oskeytype
-OSKEY_9 = ConvertOsKeyType(0x39)	---@type oskeytype
-OSKEY_A = ConvertOsKeyType(0x41)	---@type oskeytype
-OSKEY_B = ConvertOsKeyType(0x42)	---@type oskeytype
-OSKEY_C = ConvertOsKeyType(0x43)	---@type oskeytype
-OSKEY_D = ConvertOsKeyType(0x44)	---@type oskeytype
-OSKEY_E = ConvertOsKeyType(0x45)	---@type oskeytype
-OSKEY_F = ConvertOsKeyType(0x46)	---@type oskeytype
-OSKEY_G = ConvertOsKeyType(0x47)	---@type oskeytype
-OSKEY_H = ConvertOsKeyType(0x48)	---@type oskeytype
-OSKEY_I = ConvertOsKeyType(0x49)	---@type oskeytype
-OSKEY_J = ConvertOsKeyType(0x4A)	---@type oskeytype
-OSKEY_K = ConvertOsKeyType(0x4B)	---@type oskeytype
-OSKEY_L = ConvertOsKeyType(0x4C)	---@type oskeytype
-OSKEY_M = ConvertOsKeyType(0x4D)	---@type oskeytype
-OSKEY_N = ConvertOsKeyType(0x4E)	---@type oskeytype
-OSKEY_O = ConvertOsKeyType(0x4F)	---@type oskeytype
-OSKEY_P = ConvertOsKeyType(0x50)	---@type oskeytype
-OSKEY_Q = ConvertOsKeyType(0x51)	---@type oskeytype
-OSKEY_R = ConvertOsKeyType(0x52)	---@type oskeytype
-OSKEY_S = ConvertOsKeyType(0x53)	---@type oskeytype
-OSKEY_T = ConvertOsKeyType(0x54)	---@type oskeytype
-OSKEY_U = ConvertOsKeyType(0x55)	---@type oskeytype
-OSKEY_V = ConvertOsKeyType(0x56)	---@type oskeytype
-OSKEY_W = ConvertOsKeyType(0x57)	---@type oskeytype
-OSKEY_X = ConvertOsKeyType(0x58)	---@type oskeytype
-OSKEY_Y = ConvertOsKeyType(0x59)	---@type oskeytype
-OSKEY_Z = ConvertOsKeyType(0x5A)	---@type oskeytype
-OSKEY_LMETA = ConvertOsKeyType(0x5B)	---@type oskeytype
-OSKEY_RMETA = ConvertOsKeyType(0x5C)	---@type oskeytype
-OSKEY_APPS = ConvertOsKeyType(0x5D)	---@type oskeytype
-OSKEY_SLEEP = ConvertOsKeyType(0x5F)	---@type oskeytype
-OSKEY_NUMPAD0 = ConvertOsKeyType(0x60)	---@type oskeytype
-OSKEY_NUMPAD1 = ConvertOsKeyType(0x61)	---@type oskeytype
-OSKEY_NUMPAD2 = ConvertOsKeyType(0x62)	---@type oskeytype
-OSKEY_NUMPAD3 = ConvertOsKeyType(0x63)	---@type oskeytype
-OSKEY_NUMPAD4 = ConvertOsKeyType(0x64)	---@type oskeytype
-OSKEY_NUMPAD5 = ConvertOsKeyType(0x65)	---@type oskeytype
-OSKEY_NUMPAD6 = ConvertOsKeyType(0x66)	---@type oskeytype
-OSKEY_NUMPAD7 = ConvertOsKeyType(0x67)	---@type oskeytype
-OSKEY_NUMPAD8 = ConvertOsKeyType(0x68)	---@type oskeytype
-OSKEY_NUMPAD9 = ConvertOsKeyType(0x69)	---@type oskeytype
-OSKEY_MULTIPLY = ConvertOsKeyType(0x6A)	---@type oskeytype
-OSKEY_ADD = ConvertOsKeyType(0x6B)	---@type oskeytype
-OSKEY_SEPARATOR = ConvertOsKeyType(0x6C)	---@type oskeytype
-OSKEY_SUBTRACT = ConvertOsKeyType(0x6D)	---@type oskeytype
-OSKEY_DECIMAL = ConvertOsKeyType(0x6E)	---@type oskeytype
-OSKEY_DIVIDE = ConvertOsKeyType(0x6F)	---@type oskeytype
-OSKEY_F1 = ConvertOsKeyType(0x70)	---@type oskeytype
-OSKEY_F2 = ConvertOsKeyType(0x71)	---@type oskeytype
-OSKEY_F3 = ConvertOsKeyType(0x72)	---@type oskeytype
-OSKEY_F4 = ConvertOsKeyType(0x73)	---@type oskeytype
-OSKEY_F5 = ConvertOsKeyType(0x74)	---@type oskeytype
-OSKEY_F6 = ConvertOsKeyType(0x75)	---@type oskeytype
-OSKEY_F7 = ConvertOsKeyType(0x76)	---@type oskeytype
-OSKEY_F8 = ConvertOsKeyType(0x77)	---@type oskeytype
-OSKEY_F9 = ConvertOsKeyType(0x78)	---@type oskeytype
-OSKEY_F10 = ConvertOsKeyType(0x79)	---@type oskeytype
-OSKEY_F11 = ConvertOsKeyType(0x7A)	---@type oskeytype
-OSKEY_F12 = ConvertOsKeyType(0x7B)	---@type oskeytype
-OSKEY_F13 = ConvertOsKeyType(0x7C)	---@type oskeytype
-OSKEY_F14 = ConvertOsKeyType(0x7D)	---@type oskeytype
-OSKEY_F15 = ConvertOsKeyType(0x7E)	---@type oskeytype
-OSKEY_F16 = ConvertOsKeyType(0x7F)	---@type oskeytype
-OSKEY_F17 = ConvertOsKeyType(0x80)	---@type oskeytype
-OSKEY_F18 = ConvertOsKeyType(0x81)	---@type oskeytype
-OSKEY_F19 = ConvertOsKeyType(0x82)	---@type oskeytype
-OSKEY_F20 = ConvertOsKeyType(0x83)	---@type oskeytype
-OSKEY_F21 = ConvertOsKeyType(0x84)	---@type oskeytype
-OSKEY_F22 = ConvertOsKeyType(0x85)	---@type oskeytype
-OSKEY_F23 = ConvertOsKeyType(0x86)	---@type oskeytype
-OSKEY_F24 = ConvertOsKeyType(0x87)	---@type oskeytype
-OSKEY_NUMLOCK = ConvertOsKeyType(0x90)	---@type oskeytype
-OSKEY_SCROLLLOCK = ConvertOsKeyType(0x91)	---@type oskeytype
-OSKEY_OEM_NEC_EQUAL = ConvertOsKeyType(0x92)	---@type oskeytype
-OSKEY_OEM_FJ_JISHO = ConvertOsKeyType(0x92)	---@type oskeytype
-OSKEY_OEM_FJ_MASSHOU = ConvertOsKeyType(0x93)	---@type oskeytype
-OSKEY_OEM_FJ_TOUROKU = ConvertOsKeyType(0x94)	---@type oskeytype
-OSKEY_OEM_FJ_LOYA = ConvertOsKeyType(0x95)	---@type oskeytype
-OSKEY_OEM_FJ_ROYA = ConvertOsKeyType(0x96)	---@type oskeytype
-OSKEY_LSHIFT = ConvertOsKeyType(0xA0)	---@type oskeytype
-OSKEY_RSHIFT = ConvertOsKeyType(0xA1)	---@type oskeytype
-OSKEY_LCONTROL = ConvertOsKeyType(0xA2)	---@type oskeytype
-OSKEY_RCONTROL = ConvertOsKeyType(0xA3)	---@type oskeytype
-OSKEY_LALT = ConvertOsKeyType(0xA4)	---@type oskeytype
-OSKEY_RALT = ConvertOsKeyType(0xA5)	---@type oskeytype
-OSKEY_BROWSER_BACK = ConvertOsKeyType(0xA6)	---@type oskeytype
-OSKEY_BROWSER_FORWARD = ConvertOsKeyType(0xA7)	---@type oskeytype
-OSKEY_BROWSER_REFRESH = ConvertOsKeyType(0xA8)	---@type oskeytype
-OSKEY_BROWSER_STOP = ConvertOsKeyType(0xA9)	---@type oskeytype
-OSKEY_BROWSER_SEARCH = ConvertOsKeyType(0xAA)	---@type oskeytype
-OSKEY_BROWSER_FAVORITES = ConvertOsKeyType(0xAB)	---@type oskeytype
-OSKEY_BROWSER_HOME = ConvertOsKeyType(0xAC)	---@type oskeytype
-OSKEY_VOLUME_MUTE = ConvertOsKeyType(0xAD)	---@type oskeytype
-OSKEY_VOLUME_DOWN = ConvertOsKeyType(0xAE)	---@type oskeytype
-OSKEY_VOLUME_UP = ConvertOsKeyType(0xAF)	---@type oskeytype
-OSKEY_MEDIA_NEXT_TRACK = ConvertOsKeyType(0xB0)	---@type oskeytype
-OSKEY_MEDIA_PREV_TRACK = ConvertOsKeyType(0xB1)	---@type oskeytype
-OSKEY_MEDIA_STOP = ConvertOsKeyType(0xB2)	---@type oskeytype
-OSKEY_MEDIA_PLAY_PAUSE = ConvertOsKeyType(0xB3)	---@type oskeytype
-OSKEY_LAUNCH_MAIL = ConvertOsKeyType(0xB4)	---@type oskeytype
-OSKEY_LAUNCH_MEDIA_SELECT = ConvertOsKeyType(0xB5)	---@type oskeytype
-OSKEY_LAUNCH_APP1 = ConvertOsKeyType(0xB6)	---@type oskeytype
-OSKEY_LAUNCH_APP2 = ConvertOsKeyType(0xB7)	---@type oskeytype
-OSKEY_OEM_1 = ConvertOsKeyType(0xBA)	---@type oskeytype
-OSKEY_OEM_PLUS = ConvertOsKeyType(0xBB)	---@type oskeytype
-OSKEY_OEM_COMMA = ConvertOsKeyType(0xBC)	---@type oskeytype
-OSKEY_OEM_MINUS = ConvertOsKeyType(0xBD)	---@type oskeytype
-OSKEY_OEM_PERIOD = ConvertOsKeyType(0xBE)	---@type oskeytype
-OSKEY_OEM_2 = ConvertOsKeyType(0xBF)	---@type oskeytype
-OSKEY_OEM_3 = ConvertOsKeyType(0xC0)	---@type oskeytype
-OSKEY_OEM_4 = ConvertOsKeyType(0xDB)	---@type oskeytype
-OSKEY_OEM_5 = ConvertOsKeyType(0xDC)	---@type oskeytype
-OSKEY_OEM_6 = ConvertOsKeyType(0xDD)	---@type oskeytype
-OSKEY_OEM_7 = ConvertOsKeyType(0xDE)	---@type oskeytype
-OSKEY_OEM_8 = ConvertOsKeyType(0xDF)	---@type oskeytype
-OSKEY_OEM_AX = ConvertOsKeyType(0xE1)	---@type oskeytype
-OSKEY_OEM_102 = ConvertOsKeyType(0xE2)	---@type oskeytype
-OSKEY_ICO_HELP = ConvertOsKeyType(0xE3)	---@type oskeytype
-OSKEY_ICO_00 = ConvertOsKeyType(0xE4)	---@type oskeytype
-OSKEY_PROCESSKEY = ConvertOsKeyType(0xE5)	---@type oskeytype
-OSKEY_ICO_CLEAR = ConvertOsKeyType(0xE6)	---@type oskeytype
-OSKEY_PACKET = ConvertOsKeyType(0xE7)	---@type oskeytype
-OSKEY_OEM_RESET = ConvertOsKeyType(0xE9)	---@type oskeytype
-OSKEY_OEM_JUMP = ConvertOsKeyType(0xEA)	---@type oskeytype
-OSKEY_OEM_PA1 = ConvertOsKeyType(0xEB)	---@type oskeytype
-OSKEY_OEM_PA2 = ConvertOsKeyType(0xEC)	---@type oskeytype
-OSKEY_OEM_PA3 = ConvertOsKeyType(0xED)	---@type oskeytype
-OSKEY_OEM_WSCTRL = ConvertOsKeyType(0xEE)	---@type oskeytype
-OSKEY_OEM_CUSEL = ConvertOsKeyType(0xEF)	---@type oskeytype
-OSKEY_OEM_ATTN = ConvertOsKeyType(0xF0)	---@type oskeytype
-OSKEY_OEM_FINISH = ConvertOsKeyType(0xF1)	---@type oskeytype
-OSKEY_OEM_COPY = ConvertOsKeyType(0xF2)	---@type oskeytype
-OSKEY_OEM_AUTO = ConvertOsKeyType(0xF3)	---@type oskeytype
-OSKEY_OEM_ENLW = ConvertOsKeyType(0xF4)	---@type oskeytype
-OSKEY_OEM_BACKTAB = ConvertOsKeyType(0xF5)	---@type oskeytype
-OSKEY_ATTN = ConvertOsKeyType(0xF6)	---@type oskeytype
-OSKEY_CRSEL = ConvertOsKeyType(0xF7)	---@type oskeytype
-OSKEY_EXSEL = ConvertOsKeyType(0xF8)	---@type oskeytype
-OSKEY_EREOF = ConvertOsKeyType(0xF9)	---@type oskeytype
-OSKEY_PLAY = ConvertOsKeyType(0xFA)	---@type oskeytype
-OSKEY_ZOOM = ConvertOsKeyType(0xFB)	---@type oskeytype
-OSKEY_NONAME = ConvertOsKeyType(0xFC)	---@type oskeytype
-OSKEY_PA1 = ConvertOsKeyType(0xFD)	---@type oskeytype
-OSKEY_OEM_CLEAR = ConvertOsKeyType(0xFE)	---@type oskeytype
-
--- ===================================================
---  Ability
-
-ABILITY_IF_BUTTON_POSITION_NORMAL_X = ConvertAbilityIntegerField(FourCC('abpx'))	---@type abilityintegerfield
-ABILITY_IF_BUTTON_POSITION_NORMAL_Y = ConvertAbilityIntegerField(FourCC('abpy'))	---@type abilityintegerfield
-ABILITY_IF_BUTTON_POSITION_ACTIVATED_X = ConvertAbilityIntegerField(FourCC('aubx'))	---@type abilityintegerfield
-ABILITY_IF_BUTTON_POSITION_ACTIVATED_Y = ConvertAbilityIntegerField(FourCC('auby'))	---@type abilityintegerfield
-ABILITY_IF_BUTTON_POSITION_RESEARCH_X = ConvertAbilityIntegerField(FourCC('arpx'))	---@type abilityintegerfield
-ABILITY_IF_BUTTON_POSITION_RESEARCH_Y = ConvertAbilityIntegerField(FourCC('arpy'))	---@type abilityintegerfield
-ABILITY_IF_MISSILE_SPEED = ConvertAbilityIntegerField(FourCC('amsp'))	---@type abilityintegerfield
-ABILITY_IF_TARGET_ATTACHMENTS = ConvertAbilityIntegerField(FourCC('atac'))	---@type abilityintegerfield
-ABILITY_IF_CASTER_ATTACHMENTS = ConvertAbilityIntegerField(FourCC('acac'))	---@type abilityintegerfield
-ABILITY_IF_PRIORITY = ConvertAbilityIntegerField(FourCC('apri'))	---@type abilityintegerfield
-ABILITY_IF_LEVELS = ConvertAbilityIntegerField(FourCC('alev'))	---@type abilityintegerfield
-ABILITY_IF_REQUIRED_LEVEL = ConvertAbilityIntegerField(FourCC('arlv'))	---@type abilityintegerfield
-ABILITY_IF_LEVEL_SKIP_REQUIREMENT = ConvertAbilityIntegerField(FourCC('alsk'))	---@type abilityintegerfield
-ABILITY_BF_HERO_ABILITY = ConvertAbilityBooleanField(FourCC('aher'))	---@type abilitybooleanfield	--  Get only
-ABILITY_BF_ITEM_ABILITY = ConvertAbilityBooleanField(FourCC('aite'))	---@type abilitybooleanfield
-ABILITY_BF_CHECK_DEPENDENCIES = ConvertAbilityBooleanField(FourCC('achd'))	---@type abilitybooleanfield
-ABILITY_RF_ARF_MISSILE_ARC = ConvertAbilityRealField(FourCC('amac'))	---@type abilityrealfield
-ABILITY_SF_NAME = ConvertAbilityStringField(FourCC('anam'))	---@type abilitystringfield	--  Get Only
-ABILITY_SF_ICON_ACTIVATED = ConvertAbilityStringField(FourCC('auar'))	---@type abilitystringfield
-ABILITY_SF_ICON_RESEARCH = ConvertAbilityStringField(FourCC('arar'))	---@type abilitystringfield
-ABILITY_SF_EFFECT_SOUND = ConvertAbilityStringField(FourCC('aefs'))	---@type abilitystringfield
-ABILITY_SF_EFFECT_SOUND_LOOPING = ConvertAbilityStringField(FourCC('aefl'))	---@type abilitystringfield
-ABILITY_ILF_MANA_COST = ConvertAbilityIntegerLevelField(FourCC('amcs'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_WAVES = ConvertAbilityIntegerLevelField(FourCC('Hbz1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_SHARDS = ConvertAbilityIntegerLevelField(FourCC('Hbz3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_UNITS_TELEPORTED = ConvertAbilityIntegerLevelField(FourCC('Hmt1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_COUNT_HWE2 = ConvertAbilityIntegerLevelField(FourCC('Hwe2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_IMAGES = ConvertAbilityIntegerLevelField(FourCC('Omi1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_CORPSES_RAISED_UAN1 = ConvertAbilityIntegerLevelField(FourCC('Uan1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MORPHING_FLAGS = ConvertAbilityIntegerLevelField(FourCC('Eme2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_STRENGTH_BONUS_NRG5 = ConvertAbilityIntegerLevelField(FourCC('Nrg5'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DEFENSE_BONUS_NRG6 = ConvertAbilityIntegerLevelField(FourCC('Nrg6'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_TARGETS_HIT = ConvertAbilityIntegerLevelField(FourCC('Ocl2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DETECTION_TYPE_OFS1 = ConvertAbilityIntegerLevelField(FourCC('Ofs1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_OSF2 = ConvertAbilityIntegerLevelField(FourCC('Osf2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_EFN1 = ConvertAbilityIntegerLevelField(FourCC('Efn1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_CORPSES_RAISED_HRE1 = ConvertAbilityIntegerLevelField(FourCC('Hre1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_STACK_FLAGS = ConvertAbilityIntegerLevelField(FourCC('Hca4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MINIMUM_NUMBER_OF_UNITS = ConvertAbilityIntegerLevelField(FourCC('Ndp2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_NUMBER_OF_UNITS_NDP3 = ConvertAbilityIntegerLevelField(FourCC('Ndp3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_UNITS_CREATED_NRC2 = ConvertAbilityIntegerLevelField(FourCC('Nrc2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SHIELD_LIFE = ConvertAbilityIntegerLevelField(FourCC('Ams3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MANA_LOSS_AMS4 = ConvertAbilityIntegerLevelField(FourCC('Ams4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_GOLD_PER_INTERVAL_BGM1 = ConvertAbilityIntegerLevelField(FourCC('Bgm1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_NUMBER_OF_MINERS = ConvertAbilityIntegerLevelField(FourCC('Bgm3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_CARGO_CAPACITY = ConvertAbilityIntegerLevelField(FourCC('Car1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_CREEP_LEVEL_DEV3 = ConvertAbilityIntegerLevelField(FourCC('Dev3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_CREEP_LEVEL_DEV1 = ConvertAbilityIntegerLevelField(FourCC('Dev1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_GOLD_PER_INTERVAL_EGM1 = ConvertAbilityIntegerLevelField(FourCC('Egm1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DEFENSE_REDUCTION = ConvertAbilityIntegerLevelField(FourCC('Fae1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DETECTION_TYPE_FLA1 = ConvertAbilityIntegerLevelField(FourCC('Fla1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_FLARE_COUNT = ConvertAbilityIntegerLevelField(FourCC('Fla3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_GOLD = ConvertAbilityIntegerLevelField(FourCC('Gld1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MINING_CAPACITY = ConvertAbilityIntegerLevelField(FourCC('Gld3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_NUMBER_OF_CORPSES_GYD1 = ConvertAbilityIntegerLevelField(FourCC('Gyd1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DAMAGE_TO_TREE = ConvertAbilityIntegerLevelField(FourCC('Har1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_LUMBER_CAPACITY = ConvertAbilityIntegerLevelField(FourCC('Har2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_GOLD_CAPACITY = ConvertAbilityIntegerLevelField(FourCC('Har3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DEFENSE_INCREASE_INF2 = ConvertAbilityIntegerLevelField(FourCC('Inf2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_INTERACTION_TYPE = ConvertAbilityIntegerLevelField(FourCC('Neu2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_GOLD_COST_NDT1 = ConvertAbilityIntegerLevelField(FourCC('Ndt1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_LUMBER_COST_NDT2 = ConvertAbilityIntegerLevelField(FourCC('Ndt2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DETECTION_TYPE_NDT3 = ConvertAbilityIntegerLevelField(FourCC('Ndt3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_STACKING_TYPE_POI4 = ConvertAbilityIntegerLevelField(FourCC('Poi4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_STACKING_TYPE_POA5 = ConvertAbilityIntegerLevelField(FourCC('Poa5'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_CREEP_LEVEL_PLY1 = ConvertAbilityIntegerLevelField(FourCC('Ply1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_CREEP_LEVEL_POS1 = ConvertAbilityIntegerLevelField(FourCC('Pos1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MOVEMENT_UPDATE_FREQUENCY_PRG1 = ConvertAbilityIntegerLevelField(FourCC('Prg1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ATTACK_UPDATE_FREQUENCY_PRG2 = ConvertAbilityIntegerLevelField(FourCC('Prg2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MANA_LOSS_PRG6 = ConvertAbilityIntegerLevelField(FourCC('Prg6'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UNITS_SUMMONED_TYPE_ONE = ConvertAbilityIntegerLevelField(FourCC('Rai1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UNITS_SUMMONED_TYPE_TWO = ConvertAbilityIntegerLevelField(FourCC('Rai2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_UNITS_SUMMONED = ConvertAbilityIntegerLevelField(FourCC('Ucb5'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ALLOW_WHEN_FULL_REJ3 = ConvertAbilityIntegerLevelField(FourCC('Rej3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_UNITS_CHARGED_TO_CASTER = ConvertAbilityIntegerLevelField(FourCC('Rpb5'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_UNITS_AFFECTED = ConvertAbilityIntegerLevelField(FourCC('Rpb6'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DEFENSE_INCREASE_ROA2 = ConvertAbilityIntegerLevelField(FourCC('Roa2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_UNITS_ROA7 = ConvertAbilityIntegerLevelField(FourCC('Roa7'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ROOTED_WEAPONS = ConvertAbilityIntegerLevelField(FourCC('Roo1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UPROOTED_WEAPONS = ConvertAbilityIntegerLevelField(FourCC('Roo2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UPROOTED_DEFENSE_TYPE = ConvertAbilityIntegerLevelField(FourCC('Roo4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ACCUMULATION_STEP = ConvertAbilityIntegerLevelField(FourCC('Sal2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_OWLS = ConvertAbilityIntegerLevelField(FourCC('Esn4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_STACKING_TYPE_SPO4 = ConvertAbilityIntegerLevelField(FourCC('Spo4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_UNITS = ConvertAbilityIntegerLevelField(FourCC('Sod1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SPIDER_CAPACITY = ConvertAbilityIntegerLevelField(FourCC('Spa1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_INTERVALS_BEFORE_CHANGING_TREES = ConvertAbilityIntegerLevelField(FourCC('Wha2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_AGILITY_BONUS = ConvertAbilityIntegerLevelField(FourCC('Iagi'))	---@type abilityintegerlevelfield
-ABILITY_ILF_INTELLIGENCE_BONUS = ConvertAbilityIntegerLevelField(FourCC('Iint'))	---@type abilityintegerlevelfield
-ABILITY_ILF_STRENGTH_BONUS_ISTR = ConvertAbilityIntegerLevelField(FourCC('Istr'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ATTACK_BONUS = ConvertAbilityIntegerLevelField(FourCC('Iatt'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DEFENSE_BONUS_IDEF = ConvertAbilityIntegerLevelField(FourCC('Idef'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMON_1_AMOUNT = ConvertAbilityIntegerLevelField(FourCC('Isn1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMON_2_AMOUNT = ConvertAbilityIntegerLevelField(FourCC('Isn2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_EXPERIENCE_GAINED = ConvertAbilityIntegerLevelField(FourCC('Ixpg'))	---@type abilityintegerlevelfield
-ABILITY_ILF_HIT_POINTS_GAINED_IHPG = ConvertAbilityIntegerLevelField(FourCC('Ihpg'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MANA_POINTS_GAINED_IMPG = ConvertAbilityIntegerLevelField(FourCC('Impg'))	---@type abilityintegerlevelfield
-ABILITY_ILF_HIT_POINTS_GAINED_IHP2 = ConvertAbilityIntegerLevelField(FourCC('Ihp2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MANA_POINTS_GAINED_IMP2 = ConvertAbilityIntegerLevelField(FourCC('Imp2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DAMAGE_BONUS_DICE = ConvertAbilityIntegerLevelField(FourCC('Idic'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ARMOR_PENALTY_IARP = ConvertAbilityIntegerLevelField(FourCC('Iarp'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ENABLED_ATTACK_INDEX_IOB5 = ConvertAbilityIntegerLevelField(FourCC('Iob5'))	---@type abilityintegerlevelfield
-ABILITY_ILF_LEVELS_GAINED = ConvertAbilityIntegerLevelField(FourCC('Ilev'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_LIFE_GAINED = ConvertAbilityIntegerLevelField(FourCC('Ilif'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_MANA_GAINED = ConvertAbilityIntegerLevelField(FourCC('Iman'))	---@type abilityintegerlevelfield
-ABILITY_ILF_GOLD_GIVEN = ConvertAbilityIntegerLevelField(FourCC('Igol'))	---@type abilityintegerlevelfield
-ABILITY_ILF_LUMBER_GIVEN = ConvertAbilityIntegerLevelField(FourCC('Ilum'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DETECTION_TYPE_IFA1 = ConvertAbilityIntegerLevelField(FourCC('Ifa1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_CREEP_LEVEL_ICRE = ConvertAbilityIntegerLevelField(FourCC('Icre'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MOVEMENT_SPEED_BONUS = ConvertAbilityIntegerLevelField(FourCC('Imvb'))	---@type abilityintegerlevelfield
-ABILITY_ILF_HIT_POINTS_REGENERATED_PER_SECOND = ConvertAbilityIntegerLevelField(FourCC('Ihpr'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SIGHT_RANGE_BONUS = ConvertAbilityIntegerLevelField(FourCC('Isib'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DAMAGE_PER_DURATION = ConvertAbilityIntegerLevelField(FourCC('Icfd'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MANA_USED_PER_SECOND = ConvertAbilityIntegerLevelField(FourCC('Icfm'))	---@type abilityintegerlevelfield
-ABILITY_ILF_EXTRA_MANA_REQUIRED = ConvertAbilityIntegerLevelField(FourCC('Icfx'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DETECTION_RADIUS_IDET = ConvertAbilityIntegerLevelField(FourCC('Idet'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MANA_LOSS_PER_UNIT_IDIM = ConvertAbilityIntegerLevelField(FourCC('Idim'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DAMAGE_TO_SUMMONED_UNITS_IDID = ConvertAbilityIntegerLevelField(FourCC('Idid'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_NUMBER_OF_UNITS_IREC = ConvertAbilityIntegerLevelField(FourCC('Irec'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DELAY_AFTER_DEATH_SECONDS = ConvertAbilityIntegerLevelField(FourCC('Ircd'))	---@type abilityintegerlevelfield
-ABILITY_ILF_RESTORED_LIFE = ConvertAbilityIntegerLevelField(FourCC('irc2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_RESTORED_MANA__1_FOR_CURRENT = ConvertAbilityIntegerLevelField(FourCC('irc3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_HIT_POINTS_RESTORED = ConvertAbilityIntegerLevelField(FourCC('Ihps'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MANA_POINTS_RESTORED = ConvertAbilityIntegerLevelField(FourCC('Imps'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_NUMBER_OF_UNITS_ITPM = ConvertAbilityIntegerLevelField(FourCC('Itpm'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_CORPSES_RAISED_CAD1 = ConvertAbilityIntegerLevelField(FourCC('Cad1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_TERRAIN_DEFORMATION_DURATION_MS = ConvertAbilityIntegerLevelField(FourCC('Wrs3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_UNITS = ConvertAbilityIntegerLevelField(FourCC('Uds1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DETECTION_TYPE_DET1 = ConvertAbilityIntegerLevelField(FourCC('Det1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_GOLD_COST_PER_STRUCTURE = ConvertAbilityIntegerLevelField(FourCC('Nsp1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_LUMBER_COST_PER_USE = ConvertAbilityIntegerLevelField(FourCC('Nsp2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DETECTION_TYPE_NSP3 = ConvertAbilityIntegerLevelField(FourCC('Nsp3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_SWARM_UNITS = ConvertAbilityIntegerLevelField(FourCC('Uls1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_SWARM_UNITS_PER_TARGET = ConvertAbilityIntegerLevelField(FourCC('Uls3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_NBA2 = ConvertAbilityIntegerLevelField(FourCC('Nba2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_CREEP_LEVEL_NCH1 = ConvertAbilityIntegerLevelField(FourCC('Nch1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ATTACKS_PREVENTED = ConvertAbilityIntegerLevelField(FourCC('Nsi1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_NUMBER_OF_TARGETS_EFK3 = ConvertAbilityIntegerLevelField(FourCC('Efk3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_ESV1 = ConvertAbilityIntegerLevelField(FourCC('Esv1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_NUMBER_OF_CORPSES_EXH1 = ConvertAbilityIntegerLevelField(FourCC('exh1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ITEM_CAPACITY = ConvertAbilityIntegerLevelField(FourCC('inv1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_NUMBER_OF_TARGETS_SPL2 = ConvertAbilityIntegerLevelField(FourCC('spl2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ALLOW_WHEN_FULL_IRL3 = ConvertAbilityIntegerLevelField(FourCC('irl3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_DISPELLED_UNITS = ConvertAbilityIntegerLevelField(FourCC('idc3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_LURES = ConvertAbilityIntegerLevelField(FourCC('imo1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NEW_TIME_OF_DAY_HOUR = ConvertAbilityIntegerLevelField(FourCC('ict1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NEW_TIME_OF_DAY_MINUTE = ConvertAbilityIntegerLevelField(FourCC('ict2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_UNITS_CREATED_MEC1 = ConvertAbilityIntegerLevelField(FourCC('mec1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MINIMUM_SPELLS = ConvertAbilityIntegerLevelField(FourCC('spb3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_SPELLS = ConvertAbilityIntegerLevelField(FourCC('spb4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DISABLED_ATTACK_INDEX = ConvertAbilityIntegerLevelField(FourCC('gra3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ENABLED_ATTACK_INDEX_GRA4 = ConvertAbilityIntegerLevelField(FourCC('gra4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAXIMUM_ATTACKS = ConvertAbilityIntegerLevelField(FourCC('gra5'))	---@type abilityintegerlevelfield
-ABILITY_ILF_BUILDING_TYPES_ALLOWED_NPR1 = ConvertAbilityIntegerLevelField(FourCC('Npr1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_BUILDING_TYPES_ALLOWED_NSA1 = ConvertAbilityIntegerLevelField(FourCC('Nsa1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ATTACK_MODIFICATION = ConvertAbilityIntegerLevelField(FourCC('Iaa1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_COUNT_NPA5 = ConvertAbilityIntegerLevelField(FourCC('Npa5'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UPGRADE_LEVELS = ConvertAbilityIntegerLevelField(FourCC('Igl1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_NDO2 = ConvertAbilityIntegerLevelField(FourCC('Ndo2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_BEASTS_PER_SECOND = ConvertAbilityIntegerLevelField(FourCC('Nst1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_TARGET_TYPE = ConvertAbilityIntegerLevelField(FourCC('Ncl2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_OPTIONS = ConvertAbilityIntegerLevelField(FourCC('Ncl3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ARMOR_PENALTY_NAB3 = ConvertAbilityIntegerLevelField(FourCC('Nab3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_WAVE_COUNT_NHS6 = ConvertAbilityIntegerLevelField(FourCC('Nhs6'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_CREEP_LEVEL_NTM3 = ConvertAbilityIntegerLevelField(FourCC('Ntm3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MISSILE_COUNT = ConvertAbilityIntegerLevelField(FourCC('Ncs3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SPLIT_ATTACK_COUNT = ConvertAbilityIntegerLevelField(FourCC('Nlm3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_GENERATION_COUNT = ConvertAbilityIntegerLevelField(FourCC('Nlm6'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ROCK_RING_COUNT = ConvertAbilityIntegerLevelField(FourCC('Nvc1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_WAVE_COUNT_NVC2 = ConvertAbilityIntegerLevelField(FourCC('Nvc2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_PREFER_HOSTILES_TAU1 = ConvertAbilityIntegerLevelField(FourCC('Tau1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_PREFER_FRIENDLIES_TAU2 = ConvertAbilityIntegerLevelField(FourCC('Tau2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_MAX_UNITS_TAU3 = ConvertAbilityIntegerLevelField(FourCC('Tau3'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NUMBER_OF_PULSES = ConvertAbilityIntegerLevelField(FourCC('Tau4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_TYPE_HWE1 = ConvertAbilityIntegerLevelField(FourCC('Hwe1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_UIN4 = ConvertAbilityIntegerLevelField(FourCC('Uin4'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_OSF1 = ConvertAbilityIntegerLevelField(FourCC('Osf1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_TYPE_EFNU = ConvertAbilityIntegerLevelField(FourCC('Efnu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_TYPE_NBAU = ConvertAbilityIntegerLevelField(FourCC('Nbau'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_TYPE_NTOU = ConvertAbilityIntegerLevelField(FourCC('Ntou'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_TYPE_ESVU = ConvertAbilityIntegerLevelField(FourCC('Esvu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_TYPES = ConvertAbilityIntegerLevelField(FourCC('Nef1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SUMMONED_UNIT_TYPE_NDOU = ConvertAbilityIntegerLevelField(FourCC('Ndou'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ALTERNATE_FORM_UNIT_EMEU = ConvertAbilityIntegerLevelField(FourCC('Emeu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_PLAGUE_WARD_UNIT_TYPE = ConvertAbilityIntegerLevelField(FourCC('Aplu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ALLOWED_UNIT_TYPE_BTL1 = ConvertAbilityIntegerLevelField(FourCC('Btl1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_NEW_UNIT_TYPE = ConvertAbilityIntegerLevelField(FourCC('Cha1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_RESULTING_UNIT_TYPE_ENT1 = ConvertAbilityIntegerLevelField(FourCC('ent1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_CORPSE_UNIT_TYPE = ConvertAbilityIntegerLevelField(FourCC('Gydu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_ALLOWED_UNIT_TYPE_LOA1 = ConvertAbilityIntegerLevelField(FourCC('Loa1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UNIT_TYPE_FOR_LIMIT_CHECK = ConvertAbilityIntegerLevelField(FourCC('Raiu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_WARD_UNIT_TYPE_STAU = ConvertAbilityIntegerLevelField(FourCC('Stau'))	---@type abilityintegerlevelfield
-ABILITY_ILF_EFFECT_ABILITY = ConvertAbilityIntegerLevelField(FourCC('Iobu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_CONVERSION_UNIT = ConvertAbilityIntegerLevelField(FourCC('Ndc2'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UNIT_TO_PRESERVE = ConvertAbilityIntegerLevelField(FourCC('Nsl1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UNIT_TYPE_ALLOWED = ConvertAbilityIntegerLevelField(FourCC('Chl1'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SWARM_UNIT_TYPE = ConvertAbilityIntegerLevelField(FourCC('Ulsu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_RESULTING_UNIT_TYPE_COAU = ConvertAbilityIntegerLevelField(FourCC('coau'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UNIT_TYPE_EXHU = ConvertAbilityIntegerLevelField(FourCC('exhu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_WARD_UNIT_TYPE_HWDU = ConvertAbilityIntegerLevelField(FourCC('hwdu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_LURE_UNIT_TYPE = ConvertAbilityIntegerLevelField(FourCC('imou'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UNIT_TYPE_IPMU = ConvertAbilityIntegerLevelField(FourCC('ipmu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_FACTORY_UNIT_ID = ConvertAbilityIntegerLevelField(FourCC('Nsyu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_SPAWN_UNIT_ID_NFYU = ConvertAbilityIntegerLevelField(FourCC('Nfyu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_DESTRUCTIBLE_ID = ConvertAbilityIntegerLevelField(FourCC('Nvcu'))	---@type abilityintegerlevelfield
-ABILITY_ILF_UPGRADE_TYPE = ConvertAbilityIntegerLevelField(FourCC('Iglu'))	---@type abilityintegerlevelfield
-ABILITY_RLF_CASTING_TIME = ConvertAbilityRealLevelField(FourCC('acas'))	---@type abilityreallevelfield
-ABILITY_RLF_DURATION_NORMAL = ConvertAbilityRealLevelField(FourCC('adur'))	---@type abilityreallevelfield
-ABILITY_RLF_DURATION_HERO = ConvertAbilityRealLevelField(FourCC('ahdu'))	---@type abilityreallevelfield
-ABILITY_RLF_COOLDOWN = ConvertAbilityRealLevelField(FourCC('acdn'))	---@type abilityreallevelfield
-ABILITY_RLF_AREA_OF_EFFECT = ConvertAbilityRealLevelField(FourCC('aare'))	---@type abilityreallevelfield
-ABILITY_RLF_CAST_RANGE = ConvertAbilityRealLevelField(FourCC('aran'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_HBZ2 = ConvertAbilityRealLevelField(FourCC('Hbz2'))	---@type abilityreallevelfield
-ABILITY_RLF_BUILDING_REDUCTION_HBZ4 = ConvertAbilityRealLevelField(FourCC('Hbz4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_HBZ5 = ConvertAbilityRealLevelField(FourCC('Hbz5'))	---@type abilityreallevelfield
-ABILITY_RLF_MAXIMUM_DAMAGE_PER_WAVE = ConvertAbilityRealLevelField(FourCC('Hbz6'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_REGENERATION_INCREASE = ConvertAbilityRealLevelField(FourCC('Hab1'))	---@type abilityreallevelfield
-ABILITY_RLF_CASTING_DELAY = ConvertAbilityRealLevelField(FourCC('Hmt2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_OWW1 = ConvertAbilityRealLevelField(FourCC('Oww1'))	---@type abilityreallevelfield
-ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_OWW2 = ConvertAbilityRealLevelField(FourCC('Oww2'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_CRITICAL_STRIKE = ConvertAbilityRealLevelField(FourCC('Ocr1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_MULTIPLIER_OCR2 = ConvertAbilityRealLevelField(FourCC('Ocr2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_OCR3 = ConvertAbilityRealLevelField(FourCC('Ocr3'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_EVADE_OCR4 = ConvertAbilityRealLevelField(FourCC('Ocr4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_DEALT_PERCENT_OMI2 = ConvertAbilityRealLevelField(FourCC('Omi2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_TAKEN_PERCENT_OMI3 = ConvertAbilityRealLevelField(FourCC('Omi3'))	---@type abilityreallevelfield
-ABILITY_RLF_ANIMATION_DELAY = ConvertAbilityRealLevelField(FourCC('Omi4'))	---@type abilityreallevelfield
-ABILITY_RLF_TRANSITION_TIME = ConvertAbilityRealLevelField(FourCC('Owk1'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_INCREASE_PERCENT_OWK2 = ConvertAbilityRealLevelField(FourCC('Owk2'))	---@type abilityreallevelfield
-ABILITY_RLF_BACKSTAB_DAMAGE = ConvertAbilityRealLevelField(FourCC('Owk3'))	---@type abilityreallevelfield
-ABILITY_RLF_AMOUNT_HEALED_DAMAGED_UDC1 = ConvertAbilityRealLevelField(FourCC('Udc1'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_CONVERTED_TO_MANA = ConvertAbilityRealLevelField(FourCC('Udp1'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_CONVERTED_TO_LIFE = ConvertAbilityRealLevelField(FourCC('Udp2'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_INCREASE_PERCENT_UAU1 = ConvertAbilityRealLevelField(FourCC('Uau1'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_REGENERATION_INCREASE_PERCENT = ConvertAbilityRealLevelField(FourCC('Uau2'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_EVADE_EEV1 = ConvertAbilityRealLevelField(FourCC('Eev1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_INTERVAL = ConvertAbilityRealLevelField(FourCC('Eim1'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_DRAINED_PER_SECOND_EIM2 = ConvertAbilityRealLevelField(FourCC('Eim2'))	---@type abilityreallevelfield
-ABILITY_RLF_BUFFER_MANA_REQUIRED = ConvertAbilityRealLevelField(FourCC('Eim3'))	---@type abilityreallevelfield
-ABILITY_RLF_MAX_MANA_DRAINED = ConvertAbilityRealLevelField(FourCC('Emb1'))	---@type abilityreallevelfield
-ABILITY_RLF_BOLT_DELAY = ConvertAbilityRealLevelField(FourCC('Emb2'))	---@type abilityreallevelfield
-ABILITY_RLF_BOLT_LIFETIME = ConvertAbilityRealLevelField(FourCC('Emb3'))	---@type abilityreallevelfield
-ABILITY_RLF_ALTITUDE_ADJUSTMENT_DURATION = ConvertAbilityRealLevelField(FourCC('Eme3'))	---@type abilityreallevelfield
-ABILITY_RLF_LANDING_DELAY_TIME = ConvertAbilityRealLevelField(FourCC('Eme4'))	---@type abilityreallevelfield
-ABILITY_RLF_ALTERNATE_FORM_HIT_POINT_BONUS = ConvertAbilityRealLevelField(FourCC('Eme5'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVE_SPEED_BONUS_INFO_PANEL_ONLY = ConvertAbilityRealLevelField(FourCC('Ncr5'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_BONUS_INFO_PANEL_ONLY = ConvertAbilityRealLevelField(FourCC('Ncr6'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_REGENERATION_RATE_PER_SECOND = ConvertAbilityRealLevelField(FourCC('ave5'))	---@type abilityreallevelfield
-ABILITY_RLF_STUN_DURATION_USL1 = ConvertAbilityRealLevelField(FourCC('Usl1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_DAMAGE_STOLEN_PERCENT = ConvertAbilityRealLevelField(FourCC('Uav1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_UCS1 = ConvertAbilityRealLevelField(FourCC('Ucs1'))	---@type abilityreallevelfield
-ABILITY_RLF_MAX_DAMAGE_UCS2 = ConvertAbilityRealLevelField(FourCC('Ucs2'))	---@type abilityreallevelfield
-ABILITY_RLF_DISTANCE_UCS3 = ConvertAbilityRealLevelField(FourCC('Ucs3'))	---@type abilityreallevelfield
-ABILITY_RLF_FINAL_AREA_UCS4 = ConvertAbilityRealLevelField(FourCC('Ucs4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_UIN1 = ConvertAbilityRealLevelField(FourCC('Uin1'))	---@type abilityreallevelfield
-ABILITY_RLF_DURATION = ConvertAbilityRealLevelField(FourCC('Uin2'))	---@type abilityreallevelfield
-ABILITY_RLF_IMPACT_DELAY = ConvertAbilityRealLevelField(FourCC('Uin3'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_TARGET_OCL1 = ConvertAbilityRealLevelField(FourCC('Ocl1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_REDUCTION_PER_TARGET = ConvertAbilityRealLevelField(FourCC('Ocl3'))	---@type abilityreallevelfield
-ABILITY_RLF_EFFECT_DELAY_OEQ1 = ConvertAbilityRealLevelField(FourCC('Oeq1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_TO_BUILDINGS = ConvertAbilityRealLevelField(FourCC('Oeq2'))	---@type abilityreallevelfield
-ABILITY_RLF_UNITS_SLOWED_PERCENT = ConvertAbilityRealLevelField(FourCC('Oeq3'))	---@type abilityreallevelfield
-ABILITY_RLF_FINAL_AREA_OEQ4 = ConvertAbilityRealLevelField(FourCC('Oeq4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_EER1 = ConvertAbilityRealLevelField(FourCC('Eer1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_DEALT_TO_ATTACKERS = ConvertAbilityRealLevelField(FourCC('Eah1'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_HEALED = ConvertAbilityRealLevelField(FourCC('Etq1'))	---@type abilityreallevelfield
-ABILITY_RLF_HEAL_INTERVAL = ConvertAbilityRealLevelField(FourCC('Etq2'))	---@type abilityreallevelfield
-ABILITY_RLF_BUILDING_REDUCTION_ETQ3 = ConvertAbilityRealLevelField(FourCC('Etq3'))	---@type abilityreallevelfield
-ABILITY_RLF_INITIAL_IMMUNITY_DURATION = ConvertAbilityRealLevelField(FourCC('Etq4'))	---@type abilityreallevelfield
-ABILITY_RLF_MAX_LIFE_DRAINED_PER_SECOND_PERCENT = ConvertAbilityRealLevelField(FourCC('Udd1'))	---@type abilityreallevelfield
-ABILITY_RLF_BUILDING_REDUCTION_UDD2 = ConvertAbilityRealLevelField(FourCC('Udd2'))	---@type abilityreallevelfield
-ABILITY_RLF_ARMOR_DURATION = ConvertAbilityRealLevelField(FourCC('Ufa1'))	---@type abilityreallevelfield
-ABILITY_RLF_ARMOR_BONUS_UFA2 = ConvertAbilityRealLevelField(FourCC('Ufa2'))	---@type abilityreallevelfield
-ABILITY_RLF_AREA_OF_EFFECT_DAMAGE = ConvertAbilityRealLevelField(FourCC('Ufn1'))	---@type abilityreallevelfield
-ABILITY_RLF_SPECIFIC_TARGET_DAMAGE_UFN2 = ConvertAbilityRealLevelField(FourCC('Ufn2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_HFA1 = ConvertAbilityRealLevelField(FourCC('Hfa1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_DEALT_ESF1 = ConvertAbilityRealLevelField(FourCC('Esf1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_INTERVAL_ESF2 = ConvertAbilityRealLevelField(FourCC('Esf2'))	---@type abilityreallevelfield
-ABILITY_RLF_BUILDING_REDUCTION_ESF3 = ConvertAbilityRealLevelField(FourCC('Esf3'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_PERCENT = ConvertAbilityRealLevelField(FourCC('Ear1'))	---@type abilityreallevelfield
-ABILITY_RLF_DEFENSE_BONUS_HAV1 = ConvertAbilityRealLevelField(FourCC('Hav1'))	---@type abilityreallevelfield
-ABILITY_RLF_HIT_POINT_BONUS = ConvertAbilityRealLevelField(FourCC('Hav2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_HAV3 = ConvertAbilityRealLevelField(FourCC('Hav3'))	---@type abilityreallevelfield
-ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_HAV4 = ConvertAbilityRealLevelField(FourCC('Hav4'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_BASH = ConvertAbilityRealLevelField(FourCC('Hbh1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_MULTIPLIER_HBH2 = ConvertAbilityRealLevelField(FourCC('Hbh2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_HBH3 = ConvertAbilityRealLevelField(FourCC('Hbh3'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_MISS_HBH4 = ConvertAbilityRealLevelField(FourCC('Hbh4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_HTB1 = ConvertAbilityRealLevelField(FourCC('Htb1'))	---@type abilityreallevelfield
-ABILITY_RLF_AOE_DAMAGE = ConvertAbilityRealLevelField(FourCC('Htc1'))	---@type abilityreallevelfield
-ABILITY_RLF_SPECIFIC_TARGET_DAMAGE_HTC2 = ConvertAbilityRealLevelField(FourCC('Htc2'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_HTC3 = ConvertAbilityRealLevelField(FourCC('Htc3'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_HTC4 = ConvertAbilityRealLevelField(FourCC('Htc4'))	---@type abilityreallevelfield
-ABILITY_RLF_ARMOR_BONUS_HAD1 = ConvertAbilityRealLevelField(FourCC('Had1'))	---@type abilityreallevelfield
-ABILITY_RLF_AMOUNT_HEALED_DAMAGED_HHB1 = ConvertAbilityRealLevelField(FourCC('Hhb1'))	---@type abilityreallevelfield
-ABILITY_RLF_EXTRA_DAMAGE_HCA1 = ConvertAbilityRealLevelField(FourCC('Hca1'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_FACTOR_HCA2 = ConvertAbilityRealLevelField(FourCC('Hca2'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_FACTOR_HCA3 = ConvertAbilityRealLevelField(FourCC('Hca3'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_INCREASE_PERCENT_OAE1 = ConvertAbilityRealLevelField(FourCC('Oae1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_INCREASE_PERCENT_OAE2 = ConvertAbilityRealLevelField(FourCC('Oae2'))	---@type abilityreallevelfield
-ABILITY_RLF_REINCARNATION_DELAY = ConvertAbilityRealLevelField(FourCC('Ore1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_OSH1 = ConvertAbilityRealLevelField(FourCC('Osh1'))	---@type abilityreallevelfield
-ABILITY_RLF_MAXIMUM_DAMAGE_OSH2 = ConvertAbilityRealLevelField(FourCC('Osh2'))	---@type abilityreallevelfield
-ABILITY_RLF_DISTANCE_OSH3 = ConvertAbilityRealLevelField(FourCC('Osh3'))	---@type abilityreallevelfield
-ABILITY_RLF_FINAL_AREA_OSH4 = ConvertAbilityRealLevelField(FourCC('Osh4'))	---@type abilityreallevelfield
-ABILITY_RLF_GRAPHIC_DELAY_NFD1 = ConvertAbilityRealLevelField(FourCC('Nfd1'))	---@type abilityreallevelfield
-ABILITY_RLF_GRAPHIC_DURATION_NFD2 = ConvertAbilityRealLevelField(FourCC('Nfd2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_NFD3 = ConvertAbilityRealLevelField(FourCC('Nfd3'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_UNIT_DAMAGE_AMS1 = ConvertAbilityRealLevelField(FourCC('Ams1'))	---@type abilityreallevelfield
-ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_AMS2 = ConvertAbilityRealLevelField(FourCC('Ams2'))	---@type abilityreallevelfield
-ABILITY_RLF_AURA_DURATION = ConvertAbilityRealLevelField(FourCC('Apl1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_APL2 = ConvertAbilityRealLevelField(FourCC('Apl2'))	---@type abilityreallevelfield
-ABILITY_RLF_DURATION_OF_PLAGUE_WARD = ConvertAbilityRealLevelField(FourCC('Apl3'))	---@type abilityreallevelfield
-ABILITY_RLF_AMOUNT_OF_HIT_POINTS_REGENERATED = ConvertAbilityRealLevelField(FourCC('Oar1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_DAMAGE_INCREASE_AKB1 = ConvertAbilityRealLevelField(FourCC('Akb1'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_LOSS_ADM1 = ConvertAbilityRealLevelField(FourCC('Adm1'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_UNIT_DAMAGE_ADM2 = ConvertAbilityRealLevelField(FourCC('Adm2'))	---@type abilityreallevelfield
-ABILITY_RLF_EXPANSION_AMOUNT = ConvertAbilityRealLevelField(FourCC('Bli1'))	---@type abilityreallevelfield
-ABILITY_RLF_INTERVAL_DURATION_BGM2 = ConvertAbilityRealLevelField(FourCC('Bgm2'))	---@type abilityreallevelfield
-ABILITY_RLF_RADIUS_OF_MINING_RING = ConvertAbilityRealLevelField(FourCC('Bgm4'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_INCREASE_PERCENT_BLO1 = ConvertAbilityRealLevelField(FourCC('Blo1'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_INCREASE_PERCENT_BLO2 = ConvertAbilityRealLevelField(FourCC('Blo2'))	---@type abilityreallevelfield
-ABILITY_RLF_SCALING_FACTOR = ConvertAbilityRealLevelField(FourCC('Blo3'))	---@type abilityreallevelfield
-ABILITY_RLF_HIT_POINTS_PER_SECOND_CAN1 = ConvertAbilityRealLevelField(FourCC('Can1'))	---@type abilityreallevelfield
-ABILITY_RLF_MAX_HIT_POINTS = ConvertAbilityRealLevelField(FourCC('Can2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_DEV2 = ConvertAbilityRealLevelField(FourCC('Dev2'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_UPDATE_FREQUENCY_CHD1 = ConvertAbilityRealLevelField(FourCC('Chd1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_UPDATE_FREQUENCY_CHD2 = ConvertAbilityRealLevelField(FourCC('Chd2'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_UNIT_DAMAGE_CHD3 = ConvertAbilityRealLevelField(FourCC('Chd3'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_CRI1 = ConvertAbilityRealLevelField(FourCC('Cri1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_CRI2 = ConvertAbilityRealLevelField(FourCC('Cri2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_REDUCTION_CRI3 = ConvertAbilityRealLevelField(FourCC('Cri3'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_MISS_CRS = ConvertAbilityRealLevelField(FourCC('Crs1'))	---@type abilityreallevelfield
-ABILITY_RLF_FULL_DAMAGE_RADIUS_DDA1 = ConvertAbilityRealLevelField(FourCC('Dda1'))	---@type abilityreallevelfield
-ABILITY_RLF_FULL_DAMAGE_AMOUNT_DDA2 = ConvertAbilityRealLevelField(FourCC('Dda2'))	---@type abilityreallevelfield
-ABILITY_RLF_PARTIAL_DAMAGE_RADIUS = ConvertAbilityRealLevelField(FourCC('Dda3'))	---@type abilityreallevelfield
-ABILITY_RLF_PARTIAL_DAMAGE_AMOUNT = ConvertAbilityRealLevelField(FourCC('Dda4'))	---@type abilityreallevelfield
-ABILITY_RLF_BUILDING_DAMAGE_FACTOR_SDS1 = ConvertAbilityRealLevelField(FourCC('Sds1'))	---@type abilityreallevelfield
-ABILITY_RLF_MAX_DAMAGE_UCO5 = ConvertAbilityRealLevelField(FourCC('Uco5'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVE_SPEED_BONUS_UCO6 = ConvertAbilityRealLevelField(FourCC('Uco6'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_TAKEN_PERCENT_DEF1 = ConvertAbilityRealLevelField(FourCC('Def1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_DEALT_PERCENT_DEF2 = ConvertAbilityRealLevelField(FourCC('Def2'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_FACTOR_DEF3 = ConvertAbilityRealLevelField(FourCC('Def3'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_FACTOR_DEF4 = ConvertAbilityRealLevelField(FourCC('Def4'))	---@type abilityreallevelfield
-ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_DEF5 = ConvertAbilityRealLevelField(FourCC('Def5'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_DEFLECT = ConvertAbilityRealLevelField(FourCC('Def6'))	---@type abilityreallevelfield
-ABILITY_RLF_DEFLECT_DAMAGE_TAKEN_PIERCING = ConvertAbilityRealLevelField(FourCC('Def7'))	---@type abilityreallevelfield
-ABILITY_RLF_DEFLECT_DAMAGE_TAKEN_SPELLS = ConvertAbilityRealLevelField(FourCC('Def8'))	---@type abilityreallevelfield
-ABILITY_RLF_RIP_DELAY = ConvertAbilityRealLevelField(FourCC('Eat1'))	---@type abilityreallevelfield
-ABILITY_RLF_EAT_DELAY = ConvertAbilityRealLevelField(FourCC('Eat2'))	---@type abilityreallevelfield
-ABILITY_RLF_HIT_POINTS_GAINED_EAT3 = ConvertAbilityRealLevelField(FourCC('Eat3'))	---@type abilityreallevelfield
-ABILITY_RLF_AIR_UNIT_LOWER_DURATION = ConvertAbilityRealLevelField(FourCC('Ens1'))	---@type abilityreallevelfield
-ABILITY_RLF_AIR_UNIT_HEIGHT = ConvertAbilityRealLevelField(FourCC('Ens2'))	---@type abilityreallevelfield
-ABILITY_RLF_MELEE_ATTACK_RANGE = ConvertAbilityRealLevelField(FourCC('Ens3'))	---@type abilityreallevelfield
-ABILITY_RLF_INTERVAL_DURATION_EGM2 = ConvertAbilityRealLevelField(FourCC('Egm2'))	---@type abilityreallevelfield
-ABILITY_RLF_EFFECT_DELAY_FLA2 = ConvertAbilityRealLevelField(FourCC('Fla2'))	---@type abilityreallevelfield
-ABILITY_RLF_MINING_DURATION = ConvertAbilityRealLevelField(FourCC('Gld2'))	---@type abilityreallevelfield
-ABILITY_RLF_RADIUS_OF_GRAVESTONES = ConvertAbilityRealLevelField(FourCC('Gyd2'))	---@type abilityreallevelfield
-ABILITY_RLF_RADIUS_OF_CORPSES = ConvertAbilityRealLevelField(FourCC('Gyd3'))	---@type abilityreallevelfield
-ABILITY_RLF_HIT_POINTS_GAINED_HEA1 = ConvertAbilityRealLevelField(FourCC('Hea1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_INCREASE_PERCENT_INF1 = ConvertAbilityRealLevelField(FourCC('Inf1'))	---@type abilityreallevelfield
-ABILITY_RLF_AUTOCAST_RANGE = ConvertAbilityRealLevelField(FourCC('Inf3'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_REGEN_RATE = ConvertAbilityRealLevelField(FourCC('Inf4'))	---@type abilityreallevelfield
-ABILITY_RLF_GRAPHIC_DELAY_LIT1 = ConvertAbilityRealLevelField(FourCC('Lit1'))	---@type abilityreallevelfield
-ABILITY_RLF_GRAPHIC_DURATION_LIT2 = ConvertAbilityRealLevelField(FourCC('Lit2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_LSH1 = ConvertAbilityRealLevelField(FourCC('Lsh1'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_GAINED = ConvertAbilityRealLevelField(FourCC('Mbt1'))	---@type abilityreallevelfield
-ABILITY_RLF_HIT_POINTS_GAINED_MBT2 = ConvertAbilityRealLevelField(FourCC('Mbt2'))	---@type abilityreallevelfield
-ABILITY_RLF_AUTOCAST_REQUIREMENT = ConvertAbilityRealLevelField(FourCC('Mbt3'))	---@type abilityreallevelfield
-ABILITY_RLF_WATER_HEIGHT = ConvertAbilityRealLevelField(FourCC('Mbt4'))	---@type abilityreallevelfield
-ABILITY_RLF_ACTIVATION_DELAY_MIN1 = ConvertAbilityRealLevelField(FourCC('Min1'))	---@type abilityreallevelfield
-ABILITY_RLF_INVISIBILITY_TRANSITION_TIME = ConvertAbilityRealLevelField(FourCC('Min2'))	---@type abilityreallevelfield
-ABILITY_RLF_ACTIVATION_RADIUS = ConvertAbilityRealLevelField(FourCC('Neu1'))	---@type abilityreallevelfield
-ABILITY_RLF_AMOUNT_REGENERATED = ConvertAbilityRealLevelField(FourCC('Arm1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_POI1 = ConvertAbilityRealLevelField(FourCC('Poi1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_FACTOR_POI2 = ConvertAbilityRealLevelField(FourCC('Poi2'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_FACTOR_POI3 = ConvertAbilityRealLevelField(FourCC('Poi3'))	---@type abilityreallevelfield
-ABILITY_RLF_EXTRA_DAMAGE_POA1 = ConvertAbilityRealLevelField(FourCC('Poa1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_POA2 = ConvertAbilityRealLevelField(FourCC('Poa2'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_FACTOR_POA3 = ConvertAbilityRealLevelField(FourCC('Poa3'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_FACTOR_POA4 = ConvertAbilityRealLevelField(FourCC('Poa4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_AMPLIFICATION = ConvertAbilityRealLevelField(FourCC('Pos2'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_STOMP_PERCENT = ConvertAbilityRealLevelField(FourCC('War1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_DEALT_WAR2 = ConvertAbilityRealLevelField(FourCC('War2'))	---@type abilityreallevelfield
-ABILITY_RLF_FULL_DAMAGE_RADIUS_WAR3 = ConvertAbilityRealLevelField(FourCC('War3'))	---@type abilityreallevelfield
-ABILITY_RLF_HALF_DAMAGE_RADIUS_WAR4 = ConvertAbilityRealLevelField(FourCC('War4'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_UNIT_DAMAGE_PRG3 = ConvertAbilityRealLevelField(FourCC('Prg3'))	---@type abilityreallevelfield
-ABILITY_RLF_UNIT_PAUSE_DURATION = ConvertAbilityRealLevelField(FourCC('Prg4'))	---@type abilityreallevelfield
-ABILITY_RLF_HERO_PAUSE_DURATION = ConvertAbilityRealLevelField(FourCC('Prg5'))	---@type abilityreallevelfield
-ABILITY_RLF_HIT_POINTS_GAINED_REJ1 = ConvertAbilityRealLevelField(FourCC('Rej1'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_POINTS_GAINED_REJ2 = ConvertAbilityRealLevelField(FourCC('Rej2'))	---@type abilityreallevelfield
-ABILITY_RLF_MINIMUM_LIFE_REQUIRED = ConvertAbilityRealLevelField(FourCC('Rpb3'))	---@type abilityreallevelfield
-ABILITY_RLF_MINIMUM_MANA_REQUIRED = ConvertAbilityRealLevelField(FourCC('Rpb4'))	---@type abilityreallevelfield
-ABILITY_RLF_REPAIR_COST_RATIO = ConvertAbilityRealLevelField(FourCC('Rep1'))	---@type abilityreallevelfield
-ABILITY_RLF_REPAIR_TIME_RATIO = ConvertAbilityRealLevelField(FourCC('Rep2'))	---@type abilityreallevelfield
-ABILITY_RLF_POWERBUILD_COST = ConvertAbilityRealLevelField(FourCC('Rep3'))	---@type abilityreallevelfield
-ABILITY_RLF_POWERBUILD_RATE = ConvertAbilityRealLevelField(FourCC('Rep4'))	---@type abilityreallevelfield
-ABILITY_RLF_NAVAL_RANGE_BONUS = ConvertAbilityRealLevelField(FourCC('Rep5'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_INCREASE_PERCENT_ROA1 = ConvertAbilityRealLevelField(FourCC('Roa1'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_REGENERATION_RATE = ConvertAbilityRealLevelField(FourCC('Roa3'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_REGEN = ConvertAbilityRealLevelField(FourCC('Roa4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_INCREASE = ConvertAbilityRealLevelField(FourCC('Nbr1'))	---@type abilityreallevelfield
-ABILITY_RLF_SALVAGE_COST_RATIO = ConvertAbilityRealLevelField(FourCC('Sal1'))	---@type abilityreallevelfield
-ABILITY_RLF_IN_FLIGHT_SIGHT_RADIUS = ConvertAbilityRealLevelField(FourCC('Esn1'))	---@type abilityreallevelfield
-ABILITY_RLF_HOVERING_SIGHT_RADIUS = ConvertAbilityRealLevelField(FourCC('Esn2'))	---@type abilityreallevelfield
-ABILITY_RLF_HOVERING_HEIGHT = ConvertAbilityRealLevelField(FourCC('Esn3'))	---@type abilityreallevelfield
-ABILITY_RLF_DURATION_OF_OWLS = ConvertAbilityRealLevelField(FourCC('Esn5'))	---@type abilityreallevelfield
-ABILITY_RLF_FADE_DURATION = ConvertAbilityRealLevelField(FourCC('Shm1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAY_NIGHT_DURATION = ConvertAbilityRealLevelField(FourCC('Shm2'))	---@type abilityreallevelfield
-ABILITY_RLF_ACTION_DURATION = ConvertAbilityRealLevelField(FourCC('Shm3'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_FACTOR_SLO1 = ConvertAbilityRealLevelField(FourCC('Slo1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_FACTOR_SLO2 = ConvertAbilityRealLevelField(FourCC('Slo2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_SPO1 = ConvertAbilityRealLevelField(FourCC('Spo1'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_FACTOR_SPO2 = ConvertAbilityRealLevelField(FourCC('Spo2'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_FACTOR_SPO3 = ConvertAbilityRealLevelField(FourCC('Spo3'))	---@type abilityreallevelfield
-ABILITY_RLF_ACTIVATION_DELAY_STA1 = ConvertAbilityRealLevelField(FourCC('Sta1'))	---@type abilityreallevelfield
-ABILITY_RLF_DETECTION_RADIUS_STA2 = ConvertAbilityRealLevelField(FourCC('Sta2'))	---@type abilityreallevelfield
-ABILITY_RLF_DETONATION_RADIUS = ConvertAbilityRealLevelField(FourCC('Sta3'))	---@type abilityreallevelfield
-ABILITY_RLF_STUN_DURATION_STA4 = ConvertAbilityRealLevelField(FourCC('Sta4'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_BONUS_PERCENT = ConvertAbilityRealLevelField(FourCC('Uhf1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_UHF2 = ConvertAbilityRealLevelField(FourCC('Uhf2'))	---@type abilityreallevelfield
-ABILITY_RLF_LUMBER_PER_INTERVAL = ConvertAbilityRealLevelField(FourCC('Wha1'))	---@type abilityreallevelfield
-ABILITY_RLF_ART_ATTACHMENT_HEIGHT = ConvertAbilityRealLevelField(FourCC('Wha3'))	---@type abilityreallevelfield
-ABILITY_RLF_TELEPORT_AREA_WIDTH = ConvertAbilityRealLevelField(FourCC('Wrp1'))	---@type abilityreallevelfield
-ABILITY_RLF_TELEPORT_AREA_HEIGHT = ConvertAbilityRealLevelField(FourCC('Wrp2'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_STOLEN_PER_ATTACK = ConvertAbilityRealLevelField(FourCC('Ivam'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_IDAM = ConvertAbilityRealLevelField(FourCC('Idam'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_HIT_UNITS_PERCENT = ConvertAbilityRealLevelField(FourCC('Iob2'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_HIT_HEROS_PERCENT = ConvertAbilityRealLevelField(FourCC('Iob3'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_HIT_SUMMONS_PERCENT = ConvertAbilityRealLevelField(FourCC('Iob4'))	---@type abilityreallevelfield
-ABILITY_RLF_DELAY_FOR_TARGET_EFFECT = ConvertAbilityRealLevelField(FourCC('Idel'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_DEALT_PERCENT_OF_NORMAL = ConvertAbilityRealLevelField(FourCC('Iild'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_RECEIVED_MULTIPLIER = ConvertAbilityRealLevelField(FourCC('Iilw'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_REGENERATION_BONUS_AS_FRACTION_OF_NORMAL = ConvertAbilityRealLevelField(FourCC('Imrp'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_INCREASE_ISPI = ConvertAbilityRealLevelField(FourCC('Ispi'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_IDPS = ConvertAbilityRealLevelField(FourCC('Idps'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_DAMAGE_INCREASE_CAC1 = ConvertAbilityRealLevelField(FourCC('Cac1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_COR1 = ConvertAbilityRealLevelField(FourCC('Cor1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_INCREASE_ISX1 = ConvertAbilityRealLevelField(FourCC('Isx1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_WRS1 = ConvertAbilityRealLevelField(FourCC('Wrs1'))	---@type abilityreallevelfield
-ABILITY_RLF_TERRAIN_DEFORMATION_AMPLITUDE = ConvertAbilityRealLevelField(FourCC('Wrs2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_CTC1 = ConvertAbilityRealLevelField(FourCC('Ctc1'))	---@type abilityreallevelfield
-ABILITY_RLF_EXTRA_DAMAGE_TO_TARGET = ConvertAbilityRealLevelField(FourCC('Ctc2'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_CTC3 = ConvertAbilityRealLevelField(FourCC('Ctc3'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_REDUCTION_CTC4 = ConvertAbilityRealLevelField(FourCC('Ctc4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_CTB1 = ConvertAbilityRealLevelField(FourCC('Ctb1'))	---@type abilityreallevelfield
-ABILITY_RLF_CASTING_DELAY_SECONDS = ConvertAbilityRealLevelField(FourCC('Uds2'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_LOSS_PER_UNIT_DTN1 = ConvertAbilityRealLevelField(FourCC('Dtn1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_TO_SUMMONED_UNITS_DTN2 = ConvertAbilityRealLevelField(FourCC('Dtn2'))	---@type abilityreallevelfield
-ABILITY_RLF_TRANSITION_TIME_SECONDS = ConvertAbilityRealLevelField(FourCC('Ivs1'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_DRAINED_PER_SECOND_NMR1 = ConvertAbilityRealLevelField(FourCC('Nmr1'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_REDUCE_DAMAGE_PERCENT = ConvertAbilityRealLevelField(FourCC('Ssk1'))	---@type abilityreallevelfield
-ABILITY_RLF_MINIMUM_DAMAGE = ConvertAbilityRealLevelField(FourCC('Ssk2'))	---@type abilityreallevelfield
-ABILITY_RLF_IGNORED_DAMAGE = ConvertAbilityRealLevelField(FourCC('Ssk3'))	---@type abilityreallevelfield
-ABILITY_RLF_FULL_DAMAGE_DEALT = ConvertAbilityRealLevelField(FourCC('Hfs1'))	---@type abilityreallevelfield
-ABILITY_RLF_FULL_DAMAGE_INTERVAL = ConvertAbilityRealLevelField(FourCC('Hfs2'))	---@type abilityreallevelfield
-ABILITY_RLF_HALF_DAMAGE_DEALT = ConvertAbilityRealLevelField(FourCC('Hfs3'))	---@type abilityreallevelfield
-ABILITY_RLF_HALF_DAMAGE_INTERVAL = ConvertAbilityRealLevelField(FourCC('Hfs4'))	---@type abilityreallevelfield
-ABILITY_RLF_BUILDING_REDUCTION_HFS5 = ConvertAbilityRealLevelField(FourCC('Hfs5'))	---@type abilityreallevelfield
-ABILITY_RLF_MAXIMUM_DAMAGE_HFS6 = ConvertAbilityRealLevelField(FourCC('Hfs6'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_PER_HIT_POINT = ConvertAbilityRealLevelField(FourCC('Nms1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_ABSORBED_PERCENT = ConvertAbilityRealLevelField(FourCC('Nms2'))	---@type abilityreallevelfield
-ABILITY_RLF_WAVE_DISTANCE = ConvertAbilityRealLevelField(FourCC('Uim1'))	---@type abilityreallevelfield
-ABILITY_RLF_WAVE_TIME_SECONDS = ConvertAbilityRealLevelField(FourCC('Uim2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_DEALT_UIM3 = ConvertAbilityRealLevelField(FourCC('Uim3'))	---@type abilityreallevelfield
-ABILITY_RLF_AIR_TIME_SECONDS_UIM4 = ConvertAbilityRealLevelField(FourCC('Uim4'))	---@type abilityreallevelfield
-ABILITY_RLF_UNIT_RELEASE_INTERVAL_SECONDS = ConvertAbilityRealLevelField(FourCC('Uls2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_RETURN_FACTOR = ConvertAbilityRealLevelField(FourCC('Uls4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_RETURN_THRESHOLD = ConvertAbilityRealLevelField(FourCC('Uls5'))	---@type abilityreallevelfield
-ABILITY_RLF_RETURNED_DAMAGE_FACTOR = ConvertAbilityRealLevelField(FourCC('Uts1'))	---@type abilityreallevelfield
-ABILITY_RLF_RECEIVED_DAMAGE_FACTOR = ConvertAbilityRealLevelField(FourCC('Uts2'))	---@type abilityreallevelfield
-ABILITY_RLF_DEFENSE_BONUS_UTS3 = ConvertAbilityRealLevelField(FourCC('Uts3'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_NBA1 = ConvertAbilityRealLevelField(FourCC('Nba1'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_UNIT_DURATION_SECONDS_NBA3 = ConvertAbilityRealLevelField(FourCC('Nba3'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_PER_SUMMONED_HITPOINT = ConvertAbilityRealLevelField(FourCC('Cmg2'))	---@type abilityreallevelfield
-ABILITY_RLF_CHARGE_FOR_CURRENT_LIFE = ConvertAbilityRealLevelField(FourCC('Cmg3'))	---@type abilityreallevelfield
-ABILITY_RLF_HIT_POINTS_DRAINED = ConvertAbilityRealLevelField(FourCC('Ndr1'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_POINTS_DRAINED = ConvertAbilityRealLevelField(FourCC('Ndr2'))	---@type abilityreallevelfield
-ABILITY_RLF_DRAIN_INTERVAL_SECONDS = ConvertAbilityRealLevelField(FourCC('Ndr3'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_TRANSFERRED_PER_SECOND = ConvertAbilityRealLevelField(FourCC('Ndr4'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_TRANSFERRED_PER_SECOND = ConvertAbilityRealLevelField(FourCC('Ndr5'))	---@type abilityreallevelfield
-ABILITY_RLF_BONUS_LIFE_FACTOR = ConvertAbilityRealLevelField(FourCC('Ndr6'))	---@type abilityreallevelfield
-ABILITY_RLF_BONUS_LIFE_DECAY = ConvertAbilityRealLevelField(FourCC('Ndr7'))	---@type abilityreallevelfield
-ABILITY_RLF_BONUS_MANA_FACTOR = ConvertAbilityRealLevelField(FourCC('Ndr8'))	---@type abilityreallevelfield
-ABILITY_RLF_BONUS_MANA_DECAY = ConvertAbilityRealLevelField(FourCC('Ndr9'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_MISS_PERCENT = ConvertAbilityRealLevelField(FourCC('Nsi2'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_MODIFIER = ConvertAbilityRealLevelField(FourCC('Nsi3'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_MODIFIER = ConvertAbilityRealLevelField(FourCC('Nsi4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_TDG1 = ConvertAbilityRealLevelField(FourCC('Tdg1'))	---@type abilityreallevelfield
-ABILITY_RLF_MEDIUM_DAMAGE_RADIUS_TDG2 = ConvertAbilityRealLevelField(FourCC('Tdg2'))	---@type abilityreallevelfield
-ABILITY_RLF_MEDIUM_DAMAGE_PER_SECOND = ConvertAbilityRealLevelField(FourCC('Tdg3'))	---@type abilityreallevelfield
-ABILITY_RLF_SMALL_DAMAGE_RADIUS_TDG4 = ConvertAbilityRealLevelField(FourCC('Tdg4'))	---@type abilityreallevelfield
-ABILITY_RLF_SMALL_DAMAGE_PER_SECOND = ConvertAbilityRealLevelField(FourCC('Tdg5'))	---@type abilityreallevelfield
-ABILITY_RLF_AIR_TIME_SECONDS_TSP1 = ConvertAbilityRealLevelField(FourCC('Tsp1'))	---@type abilityreallevelfield
-ABILITY_RLF_MINIMUM_HIT_INTERVAL_SECONDS = ConvertAbilityRealLevelField(FourCC('Tsp2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_NBF5 = ConvertAbilityRealLevelField(FourCC('Nbf5'))	---@type abilityreallevelfield
-ABILITY_RLF_MAXIMUM_RANGE = ConvertAbilityRealLevelField(FourCC('Ebl1'))	---@type abilityreallevelfield
-ABILITY_RLF_MINIMUM_RANGE = ConvertAbilityRealLevelField(FourCC('Ebl2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_TARGET_EFK1 = ConvertAbilityRealLevelField(FourCC('Efk1'))	---@type abilityreallevelfield
-ABILITY_RLF_MAXIMUM_TOTAL_DAMAGE = ConvertAbilityRealLevelField(FourCC('Efk2'))	---@type abilityreallevelfield
-ABILITY_RLF_MAXIMUM_SPEED_ADJUSTMENT = ConvertAbilityRealLevelField(FourCC('Efk4'))	---@type abilityreallevelfield
-ABILITY_RLF_DECAYING_DAMAGE = ConvertAbilityRealLevelField(FourCC('Esh1'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_FACTOR_ESH2 = ConvertAbilityRealLevelField(FourCC('Esh2'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_FACTOR_ESH3 = ConvertAbilityRealLevelField(FourCC('Esh3'))	---@type abilityreallevelfield
-ABILITY_RLF_DECAY_POWER = ConvertAbilityRealLevelField(FourCC('Esh4'))	---@type abilityreallevelfield
-ABILITY_RLF_INITIAL_DAMAGE_ESH5 = ConvertAbilityRealLevelField(FourCC('Esh5'))	---@type abilityreallevelfield
-ABILITY_RLF_MAXIMUM_LIFE_ABSORBED = ConvertAbilityRealLevelField(FourCC('abs1'))	---@type abilityreallevelfield
-ABILITY_RLF_MAXIMUM_MANA_ABSORBED = ConvertAbilityRealLevelField(FourCC('abs2'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_INCREASE_BSK1 = ConvertAbilityRealLevelField(FourCC('bsk1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_INCREASE_BSK2 = ConvertAbilityRealLevelField(FourCC('bsk2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_TAKEN_INCREASE = ConvertAbilityRealLevelField(FourCC('bsk3'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_PER_UNIT = ConvertAbilityRealLevelField(FourCC('dvm1'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_PER_UNIT = ConvertAbilityRealLevelField(FourCC('dvm2'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_PER_BUFF = ConvertAbilityRealLevelField(FourCC('dvm3'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_PER_BUFF = ConvertAbilityRealLevelField(FourCC('dvm4'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_UNIT_DAMAGE_DVM5 = ConvertAbilityRealLevelField(FourCC('dvm5'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_FAK1 = ConvertAbilityRealLevelField(FourCC('fak1'))	---@type abilityreallevelfield
-ABILITY_RLF_MEDIUM_DAMAGE_FACTOR_FAK2 = ConvertAbilityRealLevelField(FourCC('fak2'))	---@type abilityreallevelfield
-ABILITY_RLF_SMALL_DAMAGE_FACTOR_FAK3 = ConvertAbilityRealLevelField(FourCC('fak3'))	---@type abilityreallevelfield
-ABILITY_RLF_FULL_DAMAGE_RADIUS_FAK4 = ConvertAbilityRealLevelField(FourCC('fak4'))	---@type abilityreallevelfield
-ABILITY_RLF_HALF_DAMAGE_RADIUS_FAK5 = ConvertAbilityRealLevelField(FourCC('fak5'))	---@type abilityreallevelfield
-ABILITY_RLF_EXTRA_DAMAGE_PER_SECOND = ConvertAbilityRealLevelField(FourCC('liq1'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_LIQ2 = ConvertAbilityRealLevelField(FourCC('liq2'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_REDUCTION_LIQ3 = ConvertAbilityRealLevelField(FourCC('liq3'))	---@type abilityreallevelfield
-ABILITY_RLF_MAGIC_DAMAGE_FACTOR = ConvertAbilityRealLevelField(FourCC('mim1'))	---@type abilityreallevelfield
-ABILITY_RLF_UNIT_DAMAGE_PER_MANA_POINT = ConvertAbilityRealLevelField(FourCC('mfl1'))	---@type abilityreallevelfield
-ABILITY_RLF_HERO_DAMAGE_PER_MANA_POINT = ConvertAbilityRealLevelField(FourCC('mfl2'))	---@type abilityreallevelfield
-ABILITY_RLF_UNIT_MAXIMUM_DAMAGE = ConvertAbilityRealLevelField(FourCC('mfl3'))	---@type abilityreallevelfield
-ABILITY_RLF_HERO_MAXIMUM_DAMAGE = ConvertAbilityRealLevelField(FourCC('mfl4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_COOLDOWN = ConvertAbilityRealLevelField(FourCC('mfl5'))	---@type abilityreallevelfield
-ABILITY_RLF_DISTRIBUTED_DAMAGE_FACTOR_SPL1 = ConvertAbilityRealLevelField(FourCC('spl1'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_REGENERATED = ConvertAbilityRealLevelField(FourCC('irl1'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_REGENERATED = ConvertAbilityRealLevelField(FourCC('irl2'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_LOSS_PER_UNIT_IDC1 = ConvertAbilityRealLevelField(FourCC('idc1'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_UNIT_DAMAGE_IDC2 = ConvertAbilityRealLevelField(FourCC('idc2'))	---@type abilityreallevelfield
-ABILITY_RLF_ACTIVATION_DELAY_IMO2 = ConvertAbilityRealLevelField(FourCC('imo2'))	---@type abilityreallevelfield
-ABILITY_RLF_LURE_INTERVAL_SECONDS = ConvertAbilityRealLevelField(FourCC('imo3'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_ISR1 = ConvertAbilityRealLevelField(FourCC('isr1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_REDUCTION_ISR2 = ConvertAbilityRealLevelField(FourCC('isr2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_IPV1 = ConvertAbilityRealLevelField(FourCC('ipv1'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_STEAL_AMOUNT = ConvertAbilityRealLevelField(FourCC('ipv2'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_RESTORED_FACTOR = ConvertAbilityRealLevelField(FourCC('ast1'))	---@type abilityreallevelfield
-ABILITY_RLF_MANA_RESTORED_FACTOR = ConvertAbilityRealLevelField(FourCC('ast2'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACH_DELAY = ConvertAbilityRealLevelField(FourCC('gra1'))	---@type abilityreallevelfield
-ABILITY_RLF_REMOVE_DELAY = ConvertAbilityRealLevelField(FourCC('gra2'))	---@type abilityreallevelfield
-ABILITY_RLF_HERO_REGENERATION_DELAY = ConvertAbilityRealLevelField(FourCC('Nsa2'))	---@type abilityreallevelfield
-ABILITY_RLF_UNIT_REGENERATION_DELAY = ConvertAbilityRealLevelField(FourCC('Nsa3'))	---@type abilityreallevelfield
-ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_NSA4 = ConvertAbilityRealLevelField(FourCC('Nsa4'))	---@type abilityreallevelfield
-ABILITY_RLF_HIT_POINTS_PER_SECOND_NSA5 = ConvertAbilityRealLevelField(FourCC('Nsa5'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_TO_SUMMONED_UNITS_IXS1 = ConvertAbilityRealLevelField(FourCC('Ixs1'))	---@type abilityreallevelfield
-ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_IXS2 = ConvertAbilityRealLevelField(FourCC('Ixs2'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_UNIT_DURATION = ConvertAbilityRealLevelField(FourCC('Npa6'))	---@type abilityreallevelfield
-ABILITY_RLF_SHIELD_COOLDOWN_TIME = ConvertAbilityRealLevelField(FourCC('Nse1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_NDO1 = ConvertAbilityRealLevelField(FourCC('Ndo1'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_UNIT_DURATION_SECONDS_NDO3 = ConvertAbilityRealLevelField(FourCC('Ndo3'))	---@type abilityreallevelfield
-ABILITY_RLF_MEDIUM_DAMAGE_RADIUS_FLK1 = ConvertAbilityRealLevelField(FourCC('flk1'))	---@type abilityreallevelfield
-ABILITY_RLF_SMALL_DAMAGE_RADIUS_FLK2 = ConvertAbilityRealLevelField(FourCC('flk2'))	---@type abilityreallevelfield
-ABILITY_RLF_FULL_DAMAGE_AMOUNT_FLK3 = ConvertAbilityRealLevelField(FourCC('flk3'))	---@type abilityreallevelfield
-ABILITY_RLF_MEDIUM_DAMAGE_AMOUNT = ConvertAbilityRealLevelField(FourCC('flk4'))	---@type abilityreallevelfield
-ABILITY_RLF_SMALL_DAMAGE_AMOUNT = ConvertAbilityRealLevelField(FourCC('flk5'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_HBN1 = ConvertAbilityRealLevelField(FourCC('Hbn1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_HBN2 = ConvertAbilityRealLevelField(FourCC('Hbn2'))	---@type abilityreallevelfield
-ABILITY_RLF_MAX_MANA_DRAINED_UNITS = ConvertAbilityRealLevelField(FourCC('fbk1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_RATIO_UNITS_PERCENT = ConvertAbilityRealLevelField(FourCC('fbk2'))	---@type abilityreallevelfield
-ABILITY_RLF_MAX_MANA_DRAINED_HEROS = ConvertAbilityRealLevelField(FourCC('fbk3'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_RATIO_HEROS_PERCENT = ConvertAbilityRealLevelField(FourCC('fbk4'))	---@type abilityreallevelfield
-ABILITY_RLF_SUMMONED_DAMAGE = ConvertAbilityRealLevelField(FourCC('fbk5'))	---@type abilityreallevelfield
-ABILITY_RLF_DISTRIBUTED_DAMAGE_FACTOR_NCA1 = ConvertAbilityRealLevelField(FourCC('nca1'))	---@type abilityreallevelfield
-ABILITY_RLF_INITIAL_DAMAGE_PXF1 = ConvertAbilityRealLevelField(FourCC('pxf1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_PXF2 = ConvertAbilityRealLevelField(FourCC('pxf2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PER_SECOND_MLS1 = ConvertAbilityRealLevelField(FourCC('mls1'))	---@type abilityreallevelfield
-ABILITY_RLF_BEAST_COLLISION_RADIUS = ConvertAbilityRealLevelField(FourCC('Nst2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_AMOUNT_NST3 = ConvertAbilityRealLevelField(FourCC('Nst3'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_RADIUS = ConvertAbilityRealLevelField(FourCC('Nst4'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_DELAY = ConvertAbilityRealLevelField(FourCC('Nst5'))	---@type abilityreallevelfield
-ABILITY_RLF_FOLLOW_THROUGH_TIME = ConvertAbilityRealLevelField(FourCC('Ncl1'))	---@type abilityreallevelfield
-ABILITY_RLF_ART_DURATION = ConvertAbilityRealLevelField(FourCC('Ncl4'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_NAB1 = ConvertAbilityRealLevelField(FourCC('Nab1'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_NAB2 = ConvertAbilityRealLevelField(FourCC('Nab2'))	---@type abilityreallevelfield
-ABILITY_RLF_PRIMARY_DAMAGE = ConvertAbilityRealLevelField(FourCC('Nab4'))	---@type abilityreallevelfield
-ABILITY_RLF_SECONDARY_DAMAGE = ConvertAbilityRealLevelField(FourCC('Nab5'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_INTERVAL_NAB6 = ConvertAbilityRealLevelField(FourCC('Nab6'))	---@type abilityreallevelfield
-ABILITY_RLF_GOLD_COST_FACTOR = ConvertAbilityRealLevelField(FourCC('Ntm1'))	---@type abilityreallevelfield
-ABILITY_RLF_LUMBER_COST_FACTOR = ConvertAbilityRealLevelField(FourCC('Ntm2'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVE_SPEED_BONUS_NEG1 = ConvertAbilityRealLevelField(FourCC('Neg1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_BONUS_NEG2 = ConvertAbilityRealLevelField(FourCC('Neg2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_AMOUNT_NCS1 = ConvertAbilityRealLevelField(FourCC('Ncs1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_INTERVAL_NCS2 = ConvertAbilityRealLevelField(FourCC('Ncs2'))	---@type abilityreallevelfield
-ABILITY_RLF_MAX_DAMAGE_NCS4 = ConvertAbilityRealLevelField(FourCC('Ncs4'))	---@type abilityreallevelfield
-ABILITY_RLF_BUILDING_DAMAGE_FACTOR_NCS5 = ConvertAbilityRealLevelField(FourCC('Ncs5'))	---@type abilityreallevelfield
-ABILITY_RLF_EFFECT_DURATION = ConvertAbilityRealLevelField(FourCC('Ncs6'))	---@type abilityreallevelfield
-ABILITY_RLF_SPAWN_INTERVAL_NSY1 = ConvertAbilityRealLevelField(FourCC('Nsy1'))	---@type abilityreallevelfield
-ABILITY_RLF_SPAWN_UNIT_DURATION = ConvertAbilityRealLevelField(FourCC('Nsy3'))	---@type abilityreallevelfield
-ABILITY_RLF_SPAWN_UNIT_OFFSET = ConvertAbilityRealLevelField(FourCC('Nsy4'))	---@type abilityreallevelfield
-ABILITY_RLF_LEASH_RANGE_NSY5 = ConvertAbilityRealLevelField(FourCC('Nsy5'))	---@type abilityreallevelfield
-ABILITY_RLF_SPAWN_INTERVAL_NFY1 = ConvertAbilityRealLevelField(FourCC('Nfy1'))	---@type abilityreallevelfield
-ABILITY_RLF_LEASH_RANGE_NFY2 = ConvertAbilityRealLevelField(FourCC('Nfy2'))	---@type abilityreallevelfield
-ABILITY_RLF_CHANCE_TO_DEMOLISH = ConvertAbilityRealLevelField(FourCC('Nde1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_MULTIPLIER_BUILDINGS = ConvertAbilityRealLevelField(FourCC('Nde2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_MULTIPLIER_UNITS = ConvertAbilityRealLevelField(FourCC('Nde3'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_MULTIPLIER_HEROES = ConvertAbilityRealLevelField(FourCC('Nde4'))	---@type abilityreallevelfield
-ABILITY_RLF_BONUS_DAMAGE_MULTIPLIER = ConvertAbilityRealLevelField(FourCC('Nic1'))	---@type abilityreallevelfield
-ABILITY_RLF_DEATH_DAMAGE_FULL_AMOUNT = ConvertAbilityRealLevelField(FourCC('Nic2'))	---@type abilityreallevelfield
-ABILITY_RLF_DEATH_DAMAGE_FULL_AREA = ConvertAbilityRealLevelField(FourCC('Nic3'))	---@type abilityreallevelfield
-ABILITY_RLF_DEATH_DAMAGE_HALF_AMOUNT = ConvertAbilityRealLevelField(FourCC('Nic4'))	---@type abilityreallevelfield
-ABILITY_RLF_DEATH_DAMAGE_HALF_AREA = ConvertAbilityRealLevelField(FourCC('Nic5'))	---@type abilityreallevelfield
-ABILITY_RLF_DEATH_DAMAGE_DELAY = ConvertAbilityRealLevelField(FourCC('Nic6'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_AMOUNT_NSO1 = ConvertAbilityRealLevelField(FourCC('Nso1'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PERIOD = ConvertAbilityRealLevelField(FourCC('Nso2'))	---@type abilityreallevelfield
-ABILITY_RLF_DAMAGE_PENALTY = ConvertAbilityRealLevelField(FourCC('Nso3'))	---@type abilityreallevelfield
-ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_NSO4 = ConvertAbilityRealLevelField(FourCC('Nso4'))	---@type abilityreallevelfield
-ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_NSO5 = ConvertAbilityRealLevelField(FourCC('Nso5'))	---@type abilityreallevelfield
-ABILITY_RLF_SPLIT_DELAY = ConvertAbilityRealLevelField(FourCC('Nlm2'))	---@type abilityreallevelfield
-ABILITY_RLF_MAX_HITPOINT_FACTOR = ConvertAbilityRealLevelField(FourCC('Nlm4'))	---@type abilityreallevelfield
-ABILITY_RLF_LIFE_DURATION_SPLIT_BONUS = ConvertAbilityRealLevelField(FourCC('Nlm5'))	---@type abilityreallevelfield
-ABILITY_RLF_WAVE_INTERVAL = ConvertAbilityRealLevelField(FourCC('Nvc3'))	---@type abilityreallevelfield
-ABILITY_RLF_BUILDING_DAMAGE_FACTOR_NVC4 = ConvertAbilityRealLevelField(FourCC('Nvc4'))	---@type abilityreallevelfield
-ABILITY_RLF_FULL_DAMAGE_AMOUNT_NVC5 = ConvertAbilityRealLevelField(FourCC('Nvc5'))	---@type abilityreallevelfield
-ABILITY_RLF_HALF_DAMAGE_FACTOR = ConvertAbilityRealLevelField(FourCC('Nvc6'))	---@type abilityreallevelfield
-ABILITY_RLF_INTERVAL_BETWEEN_PULSES = ConvertAbilityRealLevelField(FourCC('Tau5'))	---@type abilityreallevelfield
-ABILITY_BLF_PERCENT_BONUS_HAB2 = ConvertAbilityBooleanLevelField(FourCC('Hab2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_USE_TELEPORT_CLUSTERING_HMT3 = ConvertAbilityBooleanLevelField(FourCC('Hmt3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_NEVER_MISS_OCR5 = ConvertAbilityBooleanLevelField(FourCC('Ocr5'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_EXCLUDE_ITEM_DAMAGE = ConvertAbilityBooleanLevelField(FourCC('Ocr6'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_BACKSTAB_DAMAGE = ConvertAbilityBooleanLevelField(FourCC('Owk4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_INHERIT_UPGRADES_UAN3 = ConvertAbilityBooleanLevelField(FourCC('Uan3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_MANA_CONVERSION_AS_PERCENT = ConvertAbilityBooleanLevelField(FourCC('Udp3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_LIFE_CONVERSION_AS_PERCENT = ConvertAbilityBooleanLevelField(FourCC('Udp4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_LEAVE_TARGET_ALIVE = ConvertAbilityBooleanLevelField(FourCC('Udp5'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_PERCENT_BONUS_UAU3 = ConvertAbilityBooleanLevelField(FourCC('Uau3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_DAMAGE_IS_PERCENT_RECEIVED = ConvertAbilityBooleanLevelField(FourCC('Eah2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_MELEE_BONUS = ConvertAbilityBooleanLevelField(FourCC('Ear2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_RANGED_BONUS = ConvertAbilityBooleanLevelField(FourCC('Ear3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_FLAT_BONUS = ConvertAbilityBooleanLevelField(FourCC('Ear4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_NEVER_MISS_HBH5 = ConvertAbilityBooleanLevelField(FourCC('Hbh5'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_PERCENT_BONUS_HAD2 = ConvertAbilityBooleanLevelField(FourCC('Had2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_CAN_DEACTIVATE = ConvertAbilityBooleanLevelField(FourCC('Hds1'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_RAISED_UNITS_ARE_INVULNERABLE = ConvertAbilityBooleanLevelField(FourCC('Hre2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_PERCENTAGE_OAR2 = ConvertAbilityBooleanLevelField(FourCC('Oar2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_SUMMON_BUSY_UNITS = ConvertAbilityBooleanLevelField(FourCC('Btl2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_CREATES_BLIGHT = ConvertAbilityBooleanLevelField(FourCC('Bli2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_EXPLODES_ON_DEATH = ConvertAbilityBooleanLevelField(FourCC('Sds6'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_ALWAYS_AUTOCAST_FAE2 = ConvertAbilityBooleanLevelField(FourCC('Fae2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_REGENERATE_ONLY_AT_NIGHT = ConvertAbilityBooleanLevelField(FourCC('Mbt5'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_SHOW_SELECT_UNIT_BUTTON = ConvertAbilityBooleanLevelField(FourCC('Neu3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_SHOW_UNIT_INDICATOR = ConvertAbilityBooleanLevelField(FourCC('Neu4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_CHARGE_OWNING_PLAYER = ConvertAbilityBooleanLevelField(FourCC('Ans6'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_PERCENTAGE_ARM2 = ConvertAbilityBooleanLevelField(FourCC('Arm2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_TARGET_IS_INVULNERABLE = ConvertAbilityBooleanLevelField(FourCC('Pos3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_TARGET_IS_MAGIC_IMMUNE = ConvertAbilityBooleanLevelField(FourCC('Pos4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_KILL_ON_CASTER_DEATH = ConvertAbilityBooleanLevelField(FourCC('Ucb6'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_NO_TARGET_REQUIRED_REJ4 = ConvertAbilityBooleanLevelField(FourCC('Rej4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_ACCEPTS_GOLD = ConvertAbilityBooleanLevelField(FourCC('Rtn1'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_ACCEPTS_LUMBER = ConvertAbilityBooleanLevelField(FourCC('Rtn2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_PREFER_HOSTILES_ROA5 = ConvertAbilityBooleanLevelField(FourCC('Roa5'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_PREFER_FRIENDLIES_ROA6 = ConvertAbilityBooleanLevelField(FourCC('Roa6'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_ROOTED_TURNING = ConvertAbilityBooleanLevelField(FourCC('Roo3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_ALWAYS_AUTOCAST_SLO3 = ConvertAbilityBooleanLevelField(FourCC('Slo3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_HIDE_BUTTON = ConvertAbilityBooleanLevelField(FourCC('Ihid'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_USE_TELEPORT_CLUSTERING_ITP2 = ConvertAbilityBooleanLevelField(FourCC('Itp2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_IMMUNE_TO_MORPH_EFFECTS = ConvertAbilityBooleanLevelField(FourCC('Eth1'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_DOES_NOT_BLOCK_BUILDINGS = ConvertAbilityBooleanLevelField(FourCC('Eth2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_AUTO_ACQUIRE_ATTACK_TARGETS = ConvertAbilityBooleanLevelField(FourCC('Gho1'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_IMMUNE_TO_MORPH_EFFECTS_GHO2 = ConvertAbilityBooleanLevelField(FourCC('Gho2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_DO_NOT_BLOCK_BUILDINGS = ConvertAbilityBooleanLevelField(FourCC('Gho3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_INCLUDE_RANGED_DAMAGE = ConvertAbilityBooleanLevelField(FourCC('Ssk4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_INCLUDE_MELEE_DAMAGE = ConvertAbilityBooleanLevelField(FourCC('Ssk5'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_MOVE_TO_PARTNER = ConvertAbilityBooleanLevelField(FourCC('coa2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_CAN_BE_DISPELLED = ConvertAbilityBooleanLevelField(FourCC('cyc1'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_IGNORE_FRIENDLY_BUFFS = ConvertAbilityBooleanLevelField(FourCC('dvm6'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_DROP_ITEMS_ON_DEATH = ConvertAbilityBooleanLevelField(FourCC('inv2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_CAN_USE_ITEMS = ConvertAbilityBooleanLevelField(FourCC('inv3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_CAN_GET_ITEMS = ConvertAbilityBooleanLevelField(FourCC('inv4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_CAN_DROP_ITEMS = ConvertAbilityBooleanLevelField(FourCC('inv5'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_REPAIRS_ALLOWED = ConvertAbilityBooleanLevelField(FourCC('liq4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_CASTER_ONLY_SPLASH = ConvertAbilityBooleanLevelField(FourCC('mfl6'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_NO_TARGET_REQUIRED_IRL4 = ConvertAbilityBooleanLevelField(FourCC('irl4'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_DISPEL_ON_ATTACK = ConvertAbilityBooleanLevelField(FourCC('irl5'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_AMOUNT_IS_RAW_VALUE = ConvertAbilityBooleanLevelField(FourCC('ipv3'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_SHARED_SPELL_COOLDOWN = ConvertAbilityBooleanLevelField(FourCC('spb2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_SLEEP_ONCE = ConvertAbilityBooleanLevelField(FourCC('sla1'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_ALLOW_ON_ANY_PLAYER_SLOT = ConvertAbilityBooleanLevelField(FourCC('sla2'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_DISABLE_OTHER_ABILITIES = ConvertAbilityBooleanLevelField(FourCC('Ncl5'))	---@type abilitybooleanlevelfield
-ABILITY_BLF_ALLOW_BOUNTY = ConvertAbilityBooleanLevelField(FourCC('Ntm4'))	---@type abilitybooleanlevelfield
-ABILITY_SLF_ICON_NORMAL = ConvertAbilityStringLevelField(FourCC('aart'))	---@type abilitystringlevelfield
-ABILITY_SLF_CASTER = ConvertAbilityStringLevelField(FourCC('acat'))	---@type abilitystringlevelfield
-ABILITY_SLF_TARGET = ConvertAbilityStringLevelField(FourCC('atat'))	---@type abilitystringlevelfield
-ABILITY_SLF_SPECIAL = ConvertAbilityStringLevelField(FourCC('asat'))	---@type abilitystringlevelfield
-ABILITY_SLF_EFFECT = ConvertAbilityStringLevelField(FourCC('aeat'))	---@type abilitystringlevelfield
-ABILITY_SLF_AREA_EFFECT = ConvertAbilityStringLevelField(FourCC('aaea'))	---@type abilitystringlevelfield
-ABILITY_SLF_LIGHTNING_EFFECTS = ConvertAbilityStringLevelField(FourCC('alig'))	---@type abilitystringlevelfield
-ABILITY_SLF_MISSILE_ART = ConvertAbilityStringLevelField(FourCC('amat'))	---@type abilitystringlevelfield
-ABILITY_SLF_TOOLTIP_LEARN = ConvertAbilityStringLevelField(FourCC('aret'))	---@type abilitystringlevelfield
-ABILITY_SLF_TOOLTIP_LEARN_EXTENDED = ConvertAbilityStringLevelField(FourCC('arut'))	---@type abilitystringlevelfield
-ABILITY_SLF_TOOLTIP_NORMAL = ConvertAbilityStringLevelField(FourCC('atp1'))	---@type abilitystringlevelfield
-ABILITY_SLF_TOOLTIP_TURN_OFF = ConvertAbilityStringLevelField(FourCC('aut1'))	---@type abilitystringlevelfield
-ABILITY_SLF_TOOLTIP_NORMAL_EXTENDED = ConvertAbilityStringLevelField(FourCC('aub1'))	---@type abilitystringlevelfield
-ABILITY_SLF_TOOLTIP_TURN_OFF_EXTENDED = ConvertAbilityStringLevelField(FourCC('auu1'))	---@type abilitystringlevelfield
-ABILITY_SLF_NORMAL_FORM_UNIT_EME1 = ConvertAbilityStringLevelField(FourCC('Eme1'))	---@type abilitystringlevelfield
-ABILITY_SLF_SPAWNED_UNITS = ConvertAbilityStringLevelField(FourCC('Ndp1'))	---@type abilitystringlevelfield
-ABILITY_SLF_ABILITY_FOR_UNIT_CREATION = ConvertAbilityStringLevelField(FourCC('Nrc1'))	---@type abilitystringlevelfield
-ABILITY_SLF_NORMAL_FORM_UNIT_MIL1 = ConvertAbilityStringLevelField(FourCC('Mil1'))	---@type abilitystringlevelfield
-ABILITY_SLF_ALTERNATE_FORM_UNIT_MIL2 = ConvertAbilityStringLevelField(FourCC('Mil2'))	---@type abilitystringlevelfield
-ABILITY_SLF_BASE_ORDER_ID_ANS5 = ConvertAbilityStringLevelField(FourCC('Ans5'))	---@type abilitystringlevelfield
-ABILITY_SLF_MORPH_UNITS_GROUND = ConvertAbilityStringLevelField(FourCC('Ply2'))	---@type abilitystringlevelfield
-ABILITY_SLF_MORPH_UNITS_AIR = ConvertAbilityStringLevelField(FourCC('Ply3'))	---@type abilitystringlevelfield
-ABILITY_SLF_MORPH_UNITS_AMPHIBIOUS = ConvertAbilityStringLevelField(FourCC('Ply4'))	---@type abilitystringlevelfield
-ABILITY_SLF_MORPH_UNITS_WATER = ConvertAbilityStringLevelField(FourCC('Ply5'))	---@type abilitystringlevelfield
-ABILITY_SLF_UNIT_TYPE_ONE = ConvertAbilityStringLevelField(FourCC('Rai3'))	---@type abilitystringlevelfield
-ABILITY_SLF_UNIT_TYPE_TWO = ConvertAbilityStringLevelField(FourCC('Rai4'))	---@type abilitystringlevelfield
-ABILITY_SLF_UNIT_TYPE_SOD2 = ConvertAbilityStringLevelField(FourCC('Sod2'))	---@type abilitystringlevelfield
-ABILITY_SLF_SUMMON_1_UNIT_TYPE = ConvertAbilityStringLevelField(FourCC('Ist1'))	---@type abilitystringlevelfield
-ABILITY_SLF_SUMMON_2_UNIT_TYPE = ConvertAbilityStringLevelField(FourCC('Ist2'))	---@type abilitystringlevelfield
-ABILITY_SLF_RACE_TO_CONVERT = ConvertAbilityStringLevelField(FourCC('Ndc1'))	---@type abilitystringlevelfield
-ABILITY_SLF_PARTNER_UNIT_TYPE = ConvertAbilityStringLevelField(FourCC('coa1'))	---@type abilitystringlevelfield
-ABILITY_SLF_PARTNER_UNIT_TYPE_ONE = ConvertAbilityStringLevelField(FourCC('dcp1'))	---@type abilitystringlevelfield
-ABILITY_SLF_PARTNER_UNIT_TYPE_TWO = ConvertAbilityStringLevelField(FourCC('dcp2'))	---@type abilitystringlevelfield
-ABILITY_SLF_REQUIRED_UNIT_TYPE = ConvertAbilityStringLevelField(FourCC('tpi1'))	---@type abilitystringlevelfield
-ABILITY_SLF_CONVERTED_UNIT_TYPE = ConvertAbilityStringLevelField(FourCC('tpi2'))	---@type abilitystringlevelfield
-ABILITY_SLF_SPELL_LIST = ConvertAbilityStringLevelField(FourCC('spb1'))	---@type abilitystringlevelfield
-ABILITY_SLF_BASE_ORDER_ID_SPB5 = ConvertAbilityStringLevelField(FourCC('spb5'))	---@type abilitystringlevelfield
-ABILITY_SLF_BASE_ORDER_ID_NCL6 = ConvertAbilityStringLevelField(FourCC('Ncl6'))	---@type abilitystringlevelfield
-ABILITY_SLF_ABILITY_UPGRADE_1 = ConvertAbilityStringLevelField(FourCC('Neg3'))	---@type abilitystringlevelfield
-ABILITY_SLF_ABILITY_UPGRADE_2 = ConvertAbilityStringLevelField(FourCC('Neg4'))	---@type abilitystringlevelfield
-ABILITY_SLF_ABILITY_UPGRADE_3 = ConvertAbilityStringLevelField(FourCC('Neg5'))	---@type abilitystringlevelfield
-ABILITY_SLF_ABILITY_UPGRADE_4 = ConvertAbilityStringLevelField(FourCC('Neg6'))	---@type abilitystringlevelfield
-ABILITY_SLF_SPAWN_UNIT_ID_NSY2 = ConvertAbilityStringLevelField(FourCC('Nsy2'))	---@type abilitystringlevelfield
---  Item
-ITEM_IF_LEVEL = ConvertItemIntegerField(FourCC('ilev'))	---@type itemintegerfield
-ITEM_IF_NUMBER_OF_CHARGES = ConvertItemIntegerField(FourCC('iuse'))	---@type itemintegerfield
-ITEM_IF_COOLDOWN_GROUP = ConvertItemIntegerField(FourCC('icid'))	---@type itemintegerfield
-ITEM_IF_MAX_HIT_POINTS = ConvertItemIntegerField(FourCC('ihtp'))	---@type itemintegerfield
-ITEM_IF_HIT_POINTS = ConvertItemIntegerField(FourCC('ihpc'))	---@type itemintegerfield
-ITEM_IF_PRIORITY = ConvertItemIntegerField(FourCC('ipri'))	---@type itemintegerfield
-ITEM_IF_ARMOR_TYPE = ConvertItemIntegerField(FourCC('iarm'))	---@type itemintegerfield
-ITEM_IF_TINTING_COLOR_RED = ConvertItemIntegerField(FourCC('iclr'))	---@type itemintegerfield
-ITEM_IF_TINTING_COLOR_GREEN = ConvertItemIntegerField(FourCC('iclg'))	---@type itemintegerfield
-ITEM_IF_TINTING_COLOR_BLUE = ConvertItemIntegerField(FourCC('iclb'))	---@type itemintegerfield
-ITEM_IF_TINTING_COLOR_ALPHA = ConvertItemIntegerField(FourCC('ical'))	---@type itemintegerfield
-ITEM_RF_SCALING_VALUE = ConvertItemRealField(FourCC('isca'))	---@type itemrealfield
-ITEM_BF_DROPPED_WHEN_CARRIER_DIES = ConvertItemBooleanField(FourCC('idrp'))	---@type itembooleanfield
-ITEM_BF_CAN_BE_DROPPED = ConvertItemBooleanField(FourCC('idro'))	---@type itembooleanfield
-ITEM_BF_PERISHABLE = ConvertItemBooleanField(FourCC('iper'))	---@type itembooleanfield
-ITEM_BF_INCLUDE_AS_RANDOM_CHOICE = ConvertItemBooleanField(FourCC('iprn'))	---@type itembooleanfield
-ITEM_BF_USE_AUTOMATICALLY_WHEN_ACQUIRED = ConvertItemBooleanField(FourCC('ipow'))	---@type itembooleanfield
-ITEM_BF_CAN_BE_SOLD_TO_MERCHANTS = ConvertItemBooleanField(FourCC('ipaw'))	---@type itembooleanfield
-ITEM_BF_ACTIVELY_USED = ConvertItemBooleanField(FourCC('iusa'))	---@type itembooleanfield
-ITEM_SF_MODEL_USED = ConvertItemStringField(FourCC('ifil'))	---@type itemstringfield
---  Unit
-UNIT_IF_DEFENSE_TYPE = ConvertUnitIntegerField(FourCC('udty'))	---@type unitintegerfield
-UNIT_IF_ARMOR_TYPE = ConvertUnitIntegerField(FourCC('uarm'))	---@type unitintegerfield
-UNIT_IF_LOOPING_FADE_IN_RATE = ConvertUnitIntegerField(FourCC('ulfi'))	---@type unitintegerfield
-UNIT_IF_LOOPING_FADE_OUT_RATE = ConvertUnitIntegerField(FourCC('ulfo'))	---@type unitintegerfield
-UNIT_IF_AGILITY = ConvertUnitIntegerField(FourCC('uagc'))	---@type unitintegerfield
-UNIT_IF_INTELLIGENCE = ConvertUnitIntegerField(FourCC('uinc'))	---@type unitintegerfield
-UNIT_IF_STRENGTH = ConvertUnitIntegerField(FourCC('ustc'))	---@type unitintegerfield
-UNIT_IF_AGILITY_PERMANENT = ConvertUnitIntegerField(FourCC('uagm'))	---@type unitintegerfield
-UNIT_IF_INTELLIGENCE_PERMANENT = ConvertUnitIntegerField(FourCC('uinm'))	---@type unitintegerfield
-UNIT_IF_STRENGTH_PERMANENT = ConvertUnitIntegerField(FourCC('ustm'))	---@type unitintegerfield
-UNIT_IF_AGILITY_WITH_BONUS = ConvertUnitIntegerField(FourCC('uagb'))	---@type unitintegerfield
-UNIT_IF_INTELLIGENCE_WITH_BONUS = ConvertUnitIntegerField(FourCC('uinb'))	---@type unitintegerfield
-UNIT_IF_STRENGTH_WITH_BONUS = ConvertUnitIntegerField(FourCC('ustb'))	---@type unitintegerfield
-UNIT_IF_GOLD_BOUNTY_AWARDED_NUMBER_OF_DICE = ConvertUnitIntegerField(FourCC('ubdi'))	---@type unitintegerfield
-UNIT_IF_GOLD_BOUNTY_AWARDED_BASE = ConvertUnitIntegerField(FourCC('ubba'))	---@type unitintegerfield
-UNIT_IF_GOLD_BOUNTY_AWARDED_SIDES_PER_DIE = ConvertUnitIntegerField(FourCC('ubsi'))	---@type unitintegerfield
-UNIT_IF_LUMBER_BOUNTY_AWARDED_NUMBER_OF_DICE = ConvertUnitIntegerField(FourCC('ulbd'))	---@type unitintegerfield
-UNIT_IF_LUMBER_BOUNTY_AWARDED_BASE = ConvertUnitIntegerField(FourCC('ulba'))	---@type unitintegerfield
-UNIT_IF_LUMBER_BOUNTY_AWARDED_SIDES_PER_DIE = ConvertUnitIntegerField(FourCC('ulbs'))	---@type unitintegerfield
-UNIT_IF_LEVEL = ConvertUnitIntegerField(FourCC('ulev'))	---@type unitintegerfield
-UNIT_IF_FORMATION_RANK = ConvertUnitIntegerField(FourCC('ufor'))	---@type unitintegerfield
-UNIT_IF_ORIENTATION_INTERPOLATION = ConvertUnitIntegerField(FourCC('uori'))	---@type unitintegerfield
-UNIT_IF_ELEVATION_SAMPLE_POINTS = ConvertUnitIntegerField(FourCC('uept'))	---@type unitintegerfield
-UNIT_IF_TINTING_COLOR_RED = ConvertUnitIntegerField(FourCC('uclr'))	---@type unitintegerfield
-UNIT_IF_TINTING_COLOR_GREEN = ConvertUnitIntegerField(FourCC('uclg'))	---@type unitintegerfield
-UNIT_IF_TINTING_COLOR_BLUE = ConvertUnitIntegerField(FourCC('uclb'))	---@type unitintegerfield
-UNIT_IF_TINTING_COLOR_ALPHA = ConvertUnitIntegerField(FourCC('ucal'))	---@type unitintegerfield
-UNIT_IF_MOVE_TYPE = ConvertUnitIntegerField(FourCC('umvt'))	---@type unitintegerfield
-UNIT_IF_TARGETED_AS = ConvertUnitIntegerField(FourCC('utar'))	---@type unitintegerfield
-UNIT_IF_UNIT_CLASSIFICATION = ConvertUnitIntegerField(FourCC('utyp'))	---@type unitintegerfield
-UNIT_IF_HIT_POINTS_REGENERATION_TYPE = ConvertUnitIntegerField(FourCC('uhrt'))	---@type unitintegerfield
-UNIT_IF_PLACEMENT_PREVENTED_BY = ConvertUnitIntegerField(FourCC('upar'))	---@type unitintegerfield
-UNIT_IF_PRIMARY_ATTRIBUTE = ConvertUnitIntegerField(FourCC('upra'))	---@type unitintegerfield
-UNIT_RF_STRENGTH_PER_LEVEL = ConvertUnitRealField(FourCC('ustp'))	---@type unitrealfield
-UNIT_RF_AGILITY_PER_LEVEL = ConvertUnitRealField(FourCC('uagp'))	---@type unitrealfield
-UNIT_RF_INTELLIGENCE_PER_LEVEL = ConvertUnitRealField(FourCC('uinp'))	---@type unitrealfield
-UNIT_RF_HIT_POINTS_REGENERATION_RATE = ConvertUnitRealField(FourCC('uhpr'))	---@type unitrealfield
-UNIT_RF_MANA_REGENERATION = ConvertUnitRealField(FourCC('umpr'))	---@type unitrealfield
-UNIT_RF_DEATH_TIME = ConvertUnitRealField(FourCC('udtm'))	---@type unitrealfield
-UNIT_RF_FLY_HEIGHT = ConvertUnitRealField(FourCC('ufyh'))	---@type unitrealfield
-UNIT_RF_TURN_RATE = ConvertUnitRealField(FourCC('umvr'))	---@type unitrealfield
-UNIT_RF_ELEVATION_SAMPLE_RADIUS = ConvertUnitRealField(FourCC('uerd'))	---@type unitrealfield
-UNIT_RF_FOG_OF_WAR_SAMPLE_RADIUS = ConvertUnitRealField(FourCC('ufrd'))	---@type unitrealfield
-UNIT_RF_MAXIMUM_PITCH_ANGLE_DEGREES = ConvertUnitRealField(FourCC('umxp'))	---@type unitrealfield
-UNIT_RF_MAXIMUM_ROLL_ANGLE_DEGREES = ConvertUnitRealField(FourCC('umxr'))	---@type unitrealfield
-UNIT_RF_SCALING_VALUE = ConvertUnitRealField(FourCC('usca'))	---@type unitrealfield
-UNIT_RF_ANIMATION_RUN_SPEED = ConvertUnitRealField(FourCC('urun'))	---@type unitrealfield
-UNIT_RF_SELECTION_SCALE = ConvertUnitRealField(FourCC('ussc'))	---@type unitrealfield
-UNIT_RF_SELECTION_CIRCLE_HEIGHT = ConvertUnitRealField(FourCC('uslz'))	---@type unitrealfield
-UNIT_RF_SHADOW_IMAGE_HEIGHT = ConvertUnitRealField(FourCC('ushh'))	---@type unitrealfield
-UNIT_RF_SHADOW_IMAGE_WIDTH = ConvertUnitRealField(FourCC('ushw'))	---@type unitrealfield
-UNIT_RF_SHADOW_IMAGE_CENTER_X = ConvertUnitRealField(FourCC('ushx'))	---@type unitrealfield
-UNIT_RF_SHADOW_IMAGE_CENTER_Y = ConvertUnitRealField(FourCC('ushy'))	---@type unitrealfield
-UNIT_RF_ANIMATION_WALK_SPEED = ConvertUnitRealField(FourCC('uwal'))	---@type unitrealfield
-UNIT_RF_DEFENSE = ConvertUnitRealField(FourCC('udfc'))	---@type unitrealfield
-UNIT_RF_SIGHT_RADIUS = ConvertUnitRealField(FourCC('usir'))	---@type unitrealfield
-UNIT_RF_PRIORITY = ConvertUnitRealField(FourCC('upri'))	---@type unitrealfield
-UNIT_RF_SPEED = ConvertUnitRealField(FourCC('umvc'))	---@type unitrealfield
-UNIT_RF_OCCLUDER_HEIGHT = ConvertUnitRealField(FourCC('uocc'))	---@type unitrealfield
-UNIT_RF_HP = ConvertUnitRealField(FourCC('uhpc'))	---@type unitrealfield
-UNIT_RF_MANA = ConvertUnitRealField(FourCC('umpc'))	---@type unitrealfield
-UNIT_RF_ACQUISITION_RANGE = ConvertUnitRealField(FourCC('uacq'))	---@type unitrealfield
-UNIT_RF_CAST_BACK_SWING = ConvertUnitRealField(FourCC('ucbs'))	---@type unitrealfield
-UNIT_RF_CAST_POINT = ConvertUnitRealField(FourCC('ucpt'))	---@type unitrealfield
-UNIT_RF_MINIMUM_ATTACK_RANGE = ConvertUnitRealField(FourCC('uamn'))	---@type unitrealfield
-UNIT_BF_RAISABLE = ConvertUnitBooleanField(FourCC('urai'))	---@type unitbooleanfield
-UNIT_BF_DECAYABLE = ConvertUnitBooleanField(FourCC('udec'))	---@type unitbooleanfield
-UNIT_BF_IS_A_BUILDING = ConvertUnitBooleanField(FourCC('ubdg'))	---@type unitbooleanfield
-UNIT_BF_USE_EXTENDED_LINE_OF_SIGHT = ConvertUnitBooleanField(FourCC('ulos'))	---@type unitbooleanfield
-UNIT_BF_NEUTRAL_BUILDING_SHOWS_MINIMAP_ICON = ConvertUnitBooleanField(FourCC('unbm'))	---@type unitbooleanfield
-UNIT_BF_HERO_HIDE_HERO_INTERFACE_ICON = ConvertUnitBooleanField(FourCC('uhhb'))	---@type unitbooleanfield
-UNIT_BF_HERO_HIDE_HERO_MINIMAP_DISPLAY = ConvertUnitBooleanField(FourCC('uhhm'))	---@type unitbooleanfield
-UNIT_BF_HERO_HIDE_HERO_DEATH_MESSAGE = ConvertUnitBooleanField(FourCC('uhhd'))	---@type unitbooleanfield
-UNIT_BF_HIDE_MINIMAP_DISPLAY = ConvertUnitBooleanField(FourCC('uhom'))	---@type unitbooleanfield
-UNIT_BF_SCALE_PROJECTILES = ConvertUnitBooleanField(FourCC('uscb'))	---@type unitbooleanfield
-UNIT_BF_SELECTION_CIRCLE_ON_WATER = ConvertUnitBooleanField(FourCC('usew'))	---@type unitbooleanfield
-UNIT_BF_HAS_WATER_SHADOW = ConvertUnitBooleanField(FourCC('ushr'))	---@type unitbooleanfield
-UNIT_SF_NAME = ConvertUnitStringField(FourCC('unam'))	---@type unitstringfield
-UNIT_SF_PROPER_NAMES = ConvertUnitStringField(FourCC('upro'))	---@type unitstringfield
-UNIT_SF_GROUND_TEXTURE = ConvertUnitStringField(FourCC('uubs'))	---@type unitstringfield
-UNIT_SF_SHADOW_IMAGE_UNIT = ConvertUnitStringField(FourCC('ushu'))	---@type unitstringfield
---  Unit Weapon
-UNIT_WEAPON_IF_ATTACK_DAMAGE_NUMBER_OF_DICE = ConvertUnitWeaponIntegerField(FourCC('ua1d'))	---@type unitweaponintegerfield
-UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE = ConvertUnitWeaponIntegerField(FourCC('ua1b'))	---@type unitweaponintegerfield
-UNIT_WEAPON_IF_ATTACK_DAMAGE_SIDES_PER_DIE = ConvertUnitWeaponIntegerField(FourCC('ua1s'))	---@type unitweaponintegerfield
-UNIT_WEAPON_IF_ATTACK_MAXIMUM_NUMBER_OF_TARGETS = ConvertUnitWeaponIntegerField(FourCC('utc1'))	---@type unitweaponintegerfield
-UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE = ConvertUnitWeaponIntegerField(FourCC('ua1t'))	---@type unitweaponintegerfield
-UNIT_WEAPON_IF_ATTACK_WEAPON_SOUND = ConvertUnitWeaponIntegerField(FourCC('ucs1'))	---@type unitweaponintegerfield
-UNIT_WEAPON_IF_ATTACK_AREA_OF_EFFECT_TARGETS = ConvertUnitWeaponIntegerField(FourCC('ua1p'))	---@type unitweaponintegerfield
-UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED = ConvertUnitWeaponIntegerField(FourCC('ua1g'))	---@type unitweaponintegerfield
-UNIT_WEAPON_RF_ATTACK_BACKSWING_POINT = ConvertUnitWeaponRealField(FourCC('ubs1'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_DAMAGE_POINT = ConvertUnitWeaponRealField(FourCC('udp1'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_BASE_COOLDOWN = ConvertUnitWeaponRealField(FourCC('ua1c'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_DAMAGE_LOSS_FACTOR = ConvertUnitWeaponRealField(FourCC('udl1'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_DAMAGE_FACTOR_MEDIUM = ConvertUnitWeaponRealField(FourCC('uhd1'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_DAMAGE_FACTOR_SMALL = ConvertUnitWeaponRealField(FourCC('uqd1'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_DAMAGE_SPILL_DISTANCE = ConvertUnitWeaponRealField(FourCC('usd1'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_DAMAGE_SPILL_RADIUS = ConvertUnitWeaponRealField(FourCC('usr1'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_PROJECTILE_SPEED = ConvertUnitWeaponRealField(FourCC('ua1z'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_PROJECTILE_ARC = ConvertUnitWeaponRealField(FourCC('uma1'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_AREA_OF_EFFECT_FULL_DAMAGE = ConvertUnitWeaponRealField(FourCC('ua1f'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_AREA_OF_EFFECT_MEDIUM_DAMAGE = ConvertUnitWeaponRealField(FourCC('ua1h'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_AREA_OF_EFFECT_SMALL_DAMAGE = ConvertUnitWeaponRealField(FourCC('ua1q'))	---@type unitweaponrealfield
-UNIT_WEAPON_RF_ATTACK_RANGE = ConvertUnitWeaponRealField(FourCC('ua1r'))	---@type unitweaponrealfield
-UNIT_WEAPON_BF_ATTACK_SHOW_UI = ConvertUnitWeaponBooleanField(FourCC('uwu1'))	---@type unitweaponbooleanfield
-UNIT_WEAPON_BF_ATTACKS_ENABLED = ConvertUnitWeaponBooleanField(FourCC('uaen'))	---@type unitweaponbooleanfield
-UNIT_WEAPON_BF_ATTACK_PROJECTILE_HOMING_ENABLED = ConvertUnitWeaponBooleanField(FourCC('umh1'))	---@type unitweaponbooleanfield
-UNIT_WEAPON_SF_ATTACK_PROJECTILE_ART = ConvertUnitWeaponStringField(FourCC('ua1m'))	---@type unitweaponstringfield
---  Move Type
-MOVE_TYPE_UNKNOWN = ConvertMoveType(0)	---@type movetype
-MOVE_TYPE_FOOT = ConvertMoveType(1)	---@type movetype
-MOVE_TYPE_FLY = ConvertMoveType(2)	---@type movetype
-MOVE_TYPE_HORSE = ConvertMoveType(4)	---@type movetype
-MOVE_TYPE_HOVER = ConvertMoveType(8)	---@type movetype
-MOVE_TYPE_FLOAT = ConvertMoveType(16)	---@type movetype
-MOVE_TYPE_AMPHIBIOUS = ConvertMoveType(32)	---@type movetype
-MOVE_TYPE_UNBUILDABLE = ConvertMoveType(64)	---@type movetype
---  Target Flag
-TARGET_FLAG_NONE = ConvertTargetFlag(1)	---@type targetflag
-TARGET_FLAG_GROUND = ConvertTargetFlag(2)	---@type targetflag
-TARGET_FLAG_AIR = ConvertTargetFlag(4)	---@type targetflag
-TARGET_FLAG_STRUCTURE = ConvertTargetFlag(8)	---@type targetflag
-TARGET_FLAG_WARD = ConvertTargetFlag(16)	---@type targetflag
-TARGET_FLAG_ITEM = ConvertTargetFlag(32)	---@type targetflag
-TARGET_FLAG_TREE = ConvertTargetFlag(64)	---@type targetflag
-TARGET_FLAG_WALL = ConvertTargetFlag(128)	---@type targetflag
-TARGET_FLAG_DEBRIS = ConvertTargetFlag(256)	---@type targetflag
-TARGET_FLAG_DECORATION = ConvertTargetFlag(512)	---@type targetflag
-TARGET_FLAG_BRIDGE = ConvertTargetFlag(1024)	---@type targetflag
---  defense type
-DEFENSE_TYPE_LIGHT = ConvertDefenseType(0)	---@type defensetype
-DEFENSE_TYPE_MEDIUM = ConvertDefenseType(1)	---@type defensetype
-DEFENSE_TYPE_LARGE = ConvertDefenseType(2)	---@type defensetype
-DEFENSE_TYPE_FORT = ConvertDefenseType(3)	---@type defensetype
-DEFENSE_TYPE_NORMAL = ConvertDefenseType(4)	---@type defensetype
-DEFENSE_TYPE_HERO = ConvertDefenseType(5)	---@type defensetype
-DEFENSE_TYPE_DIVINE = ConvertDefenseType(6)	---@type defensetype
-DEFENSE_TYPE_NONE = ConvertDefenseType(7)	---@type defensetype
---  Hero Attribute
-HERO_ATTRIBUTE_STR = ConvertHeroAttribute(1)	---@type heroattribute
-HERO_ATTRIBUTE_INT = ConvertHeroAttribute(2)	---@type heroattribute
-HERO_ATTRIBUTE_AGI = ConvertHeroAttribute(3)	---@type heroattribute
---  Armor Type
-ARMOR_TYPE_WHOKNOWS = ConvertArmorType(0)	---@type armortype
-ARMOR_TYPE_FLESH = ConvertArmorType(1)	---@type armortype
-ARMOR_TYPE_METAL = ConvertArmorType(2)	---@type armortype
-ARMOR_TYPE_WOOD = ConvertArmorType(3)	---@type armortype
-ARMOR_TYPE_ETHREAL = ConvertArmorType(4)	---@type armortype
-ARMOR_TYPE_STONE = ConvertArmorType(5)	---@type armortype
---  Regeneration Type
-REGENERATION_TYPE_NONE = ConvertRegenType(0)	---@type regentype
-REGENERATION_TYPE_ALWAYS = ConvertRegenType(1)	---@type regentype
-REGENERATION_TYPE_BLIGHT = ConvertRegenType(2)	---@type regentype
-REGENERATION_TYPE_DAY = ConvertRegenType(3)	---@type regentype
-REGENERATION_TYPE_NIGHT = ConvertRegenType(4)	---@type regentype
---  Unit Category
-UNIT_CATEGORY_GIANT = ConvertUnitCategory(1)	---@type unitcategory
-UNIT_CATEGORY_UNDEAD = ConvertUnitCategory(2)	---@type unitcategory
-UNIT_CATEGORY_SUMMONED = ConvertUnitCategory(4)	---@type unitcategory
-UNIT_CATEGORY_MECHANICAL = ConvertUnitCategory(8)	---@type unitcategory
-UNIT_CATEGORY_PEON = ConvertUnitCategory(16)	---@type unitcategory
-UNIT_CATEGORY_SAPPER = ConvertUnitCategory(32)	---@type unitcategory
-UNIT_CATEGORY_TOWNHALL = ConvertUnitCategory(64)	---@type unitcategory
-UNIT_CATEGORY_ANCIENT = ConvertUnitCategory(128)	---@type unitcategory
-UNIT_CATEGORY_NEUTRAL = ConvertUnitCategory(256)	---@type unitcategory
-UNIT_CATEGORY_WARD = ConvertUnitCategory(512)	---@type unitcategory
-UNIT_CATEGORY_STANDON = ConvertUnitCategory(1024)	---@type unitcategory
-UNIT_CATEGORY_TAUREN = ConvertUnitCategory(2048)	---@type unitcategory
---  Pathing Flag
-PATHING_FLAG_UNWALKABLE = ConvertPathingFlag(2)	---@type pathingflag
-PATHING_FLAG_UNFLYABLE = ConvertPathingFlag(4)	---@type pathingflag
-PATHING_FLAG_UNBUILDABLE = ConvertPathingFlag(8)	---@type pathingflag
-PATHING_FLAG_UNPEONHARVEST = ConvertPathingFlag(16)	---@type pathingflag
-PATHING_FLAG_BLIGHTED = ConvertPathingFlag(32)	---@type pathingflag
-PATHING_FLAG_UNFLOATABLE = ConvertPathingFlag(64)	---@type pathingflag
-PATHING_FLAG_UNAMPHIBIOUS = ConvertPathingFlag(128)	---@type pathingflag
-PATHING_FLAG_UNITEMPLACABLE = ConvertPathingFlag(256)	---@type pathingflag
-
--- ============================================================================
---  MathAPI
-
----@param degrees number
----@return number
-function Deg2Rad(degrees) end	-- (native)
-
----@param radians number
----@return number
-function Rad2Deg(radians) end	-- (native)
-
----@param radians number
----@return number
-function Sin(radians) end	-- (native)
-
----@param radians number
----@return number
-function Cos(radians) end	-- (native)
-
----@param radians number
----@return number
-function Tan(radians) end	-- (native)
-
---  Expect values between -1 and 1...returns 0 for invalid input
----@param y number
----@return number
-function Asin(y) end	-- (native)
-
----@param x number
----@return number
-function Acos(x) end	-- (native)
-
----@param x number
----@return number
-function Atan(x) end	-- (native)
-
---  Returns 0 if x and y are both 0
----@param y number
----@param x number
----@return number
-function Atan2(y, x) end	-- (native)
-
---  Returns 0 if x <= 0
----@param x number
----@return number
-function SquareRoot(x) end	-- (native)
-
---  computes x to the y power
---  y == 0.0             => 1
---  x ==0.0 and y < 0    => 0
-
----@param x number
----@param power number
----@return number
-function Pow(x, power) end	-- (native)
-
----@param r number
----@return integer
-function MathRound(r) end	-- (native)
-
--- ============================================================================
---  String Utility API
-
----@param i integer
----@return number
-function I2R(i) end	-- (native)
-
----@param r number
----@return integer
-function R2I(r) end	-- (native)
-
----@param i integer
----@return string
-function I2S(i) end	-- (native)
-
----@param r number
----@return string
-function R2S(r) end	-- (native)
-
----@param r number
----@param width integer
----@param precision integer
----@return string
-function R2SW(r, width, precision) end	-- (native)
-
----@param s string
----@return integer
-function S2I(s) end	-- (native)
-
----@param s string
----@return number
-function S2R(s) end	-- (native)
-
----@param h handle
----@return integer
-function GetHandleId(h) end	-- (native)
-
----@param source string
----@param start integer
----@param end_ integer
----@return string
-function SubString(source, start, end_) end	-- (native)
-
----@param s string
----@return integer
-function StringLength(s) end	-- (native)
-
----@param source string
----@param upper boolean
----@return string
-function StringCase(source, upper) end	-- (native)
-
----@param s string
----@return integer
-function StringHash(s) end	-- (native)
-
----@param source string
----@return string
-function GetLocalizedString(source) end	-- (native)
-
----@param source string
----@return integer
-function GetLocalizedHotkey(source) end	-- (native)
-
--- ============================================================================
---   ( i.e. call SetPlayers before SetPlayerColor...
-
-
----@param name string
-function SetMapName(name) end	-- (native)
-
----@param description string
-function SetMapDescription(description) end	-- (native)
-
----@param teamcount integer
-function SetTeams(teamcount) end	-- (native)
-
----@param playercount integer
-function SetPlayers(playercount) end	-- (native)
-
----@param whichStartLoc integer
----@param x number
----@param y number
-function DefineStartLocation(whichStartLoc, x, y) end	-- (native)
-
----@param whichStartLoc integer
----@param whichLocation location
-function DefineStartLocationLoc(whichStartLoc, whichLocation) end	-- (native)
-
----@param whichStartLoc integer
----@param prioSlotCount integer
-function SetStartLocPrioCount(whichStartLoc, prioSlotCount) end	-- (native)
-
----@param whichStartLoc integer
----@param prioSlotIndex integer
----@param otherStartLocIndex integer
----@param priority startlocprio
-function SetStartLocPrio(whichStartLoc, prioSlotIndex, otherStartLocIndex, priority) end	-- (native)
-
----@param whichStartLoc integer
----@param prioSlotIndex integer
----@return integer
-function GetStartLocPrioSlot(whichStartLoc, prioSlotIndex) end	-- (native)
-
----@param whichStartLoc integer
----@param prioSlotIndex integer
----@return startlocprio
-function GetStartLocPrio(whichStartLoc, prioSlotIndex) end	-- (native)
-
----@param whichStartLoc integer
----@param prioSlotCount integer
-function SetEnemyStartLocPrioCount(whichStartLoc, prioSlotCount) end	-- (native)
-
----@param whichStartLoc integer
----@param prioSlotIndex integer
----@param otherStartLocIndex integer
----@param priority startlocprio
-function SetEnemyStartLocPrio(whichStartLoc, prioSlotIndex, otherStartLocIndex, priority) end	-- (native)
-
----@param whichGameType gametype
----@param value boolean
-function SetGameTypeSupported(whichGameType, value) end	-- (native)
-
----@param whichMapFlag mapflag
----@param value boolean
-function SetMapFlag(whichMapFlag, value) end	-- (native)
-
----@param whichPlacementType placement
-function SetGamePlacement(whichPlacementType) end	-- (native)
-
----@param whichspeed gamespeed
-function SetGameSpeed(whichspeed) end	-- (native)
-
----@param whichdifficulty gamedifficulty
-function SetGameDifficulty(whichdifficulty) end	-- (native)
-
----@param whichdensity mapdensity
-function SetResourceDensity(whichdensity) end	-- (native)
-
----@param whichdensity mapdensity
-function SetCreatureDensity(whichdensity) end	-- (native)
-
----@return integer
-function GetTeams() end	-- (native)
-
----@return integer
-function GetPlayers() end	-- (native)
-
----@param whichGameType gametype
----@return boolean
-function IsGameTypeSupported(whichGameType) end	-- (native)
-
----@return gametype
-function GetGameTypeSelected() end	-- (native)
-
----@param whichMapFlag mapflag
----@return boolean
-function IsMapFlagSet(whichMapFlag) end	-- (native)
-
----@return placement
-function GetGamePlacement() end	-- (native)
-
----@return gamespeed
-function GetGameSpeed() end	-- (native)
-
----@return gamedifficulty
-function GetGameDifficulty() end	-- (native)
-
----@return mapdensity
-function GetResourceDensity() end	-- (native)
-
----@return mapdensity
-function GetCreatureDensity() end	-- (native)
-
----@param whichStartLocation integer
----@return number
-function GetStartLocationX(whichStartLocation) end	-- (native)
-
----@param whichStartLocation integer
----@return number
-function GetStartLocationY(whichStartLocation) end	-- (native)
-
----@param whichStartLocation integer
----@return location
-function GetStartLocationLoc(whichStartLocation) end	-- (native)
-
----@param whichPlayer player
----@param whichTeam integer
-function SetPlayerTeam(whichPlayer, whichTeam) end	-- (native)
-
----@param whichPlayer player
----@param startLocIndex integer
-function SetPlayerStartLocation(whichPlayer, startLocIndex) end	-- (native)
-
---  forces player to have the specified start loc and marks the start loc as occupied
---  which removes it from consideration for subsequently placed players
---  ( i.e. you can use this to put people in a fixed loc and then
---    use random placement for any unplaced players etc )
----@param whichPlayer player
----@param startLocIndex integer
-function ForcePlayerStartLocation(whichPlayer, startLocIndex) end	-- (native)
-
----@param whichPlayer player
----@param color playercolor
-function SetPlayerColor(whichPlayer, color) end	-- (native)
-
----@param sourcePlayer player
----@param otherPlayer player
----@param whichAllianceSetting alliancetype
----@param value boolean
-function SetPlayerAlliance(sourcePlayer, otherPlayer, whichAllianceSetting, value) end	-- (native)
-
----@param sourcePlayer player
----@param otherPlayer player
----@param whichResource playerstate
----@param rate integer
-function SetPlayerTaxRate(sourcePlayer, otherPlayer, whichResource, rate) end	-- (native)
-
----@param whichPlayer player
----@param whichRacePreference racepreference
-function SetPlayerRacePreference(whichPlayer, whichRacePreference) end	-- (native)
-
----@param whichPlayer player
----@param value boolean
-function SetPlayerRaceSelectable(whichPlayer, value) end	-- (native)
-
----@param whichPlayer player
----@param controlType mapcontrol
-function SetPlayerController(whichPlayer, controlType) end	-- (native)
-
----@param whichPlayer player
----@param name string
-function SetPlayerName(whichPlayer, name) end	-- (native)
-
----@param whichPlayer player
----@param flag boolean
-function SetPlayerOnScoreScreen(whichPlayer, flag) end	-- (native)
-
----@param whichPlayer player
----@return integer
-function GetPlayerTeam(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return integer
-function GetPlayerStartLocation(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return playercolor
-function GetPlayerColor(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return boolean
-function GetPlayerSelectable(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return mapcontrol
-function GetPlayerController(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return playerslotstate
-function GetPlayerSlotState(whichPlayer) end	-- (native)
-
----@param sourcePlayer player
----@param otherPlayer player
----@param whichResource playerstate
----@return integer
-function GetPlayerTaxRate(sourcePlayer, otherPlayer, whichResource) end	-- (native)
-
----@param whichPlayer player
----@param pref racepreference
----@return boolean
-function IsPlayerRacePrefSet(whichPlayer, pref) end	-- (native)
-
----@param whichPlayer player
----@return string
-function GetPlayerName(whichPlayer) end	-- (native)
-
--- ============================================================================
---  Timer API
-
----@return timer
-function CreateTimer() end	-- (native)
-
----@param whichTimer timer
-function DestroyTimer(whichTimer) end	-- (native)
-
----@param whichTimer timer
----@param timeout number
----@param periodic boolean
----@param handlerFunc? function
-function TimerStart(whichTimer, timeout, periodic, handlerFunc) end	-- (native)
-
----@param whichTimer timer
----@return number
-function TimerGetElapsed(whichTimer) end	-- (native)
-
----@param whichTimer timer
----@return number
-function TimerGetRemaining(whichTimer) end	-- (native)
-
----@param whichTimer timer
----@return number
-function TimerGetTimeout(whichTimer) end	-- (native)
-
----@param whichTimer timer
-function PauseTimer(whichTimer) end	-- (native)
-
----@param whichTimer timer
-function ResumeTimer(whichTimer) end	-- (native)
-
----@return timer
-function GetExpiredTimer() end	-- (native)
-
--- ============================================================================
---  Group API
-
----@return group
-function CreateGroup() end	-- (native)
-
----@param whichGroup group
-function DestroyGroup(whichGroup) end	-- (native)
-
----@param whichGroup group
----@param whichUnit unit
----@return boolean
-function GroupAddUnit(whichGroup, whichUnit) end	-- (native)
-
----@param whichGroup group
----@param whichUnit unit
----@return boolean
-function GroupRemoveUnit(whichGroup, whichUnit) end	-- (native)
-
----@param whichGroup group
----@param addGroup group
----@return integer
-function BlzGroupAddGroupFast(whichGroup, addGroup) end	-- (native)
-
----@param whichGroup group
----@param removeGroup group
----@return integer
-function BlzGroupRemoveGroupFast(whichGroup, removeGroup) end	-- (native)
-
----@param whichGroup group
-function GroupClear(whichGroup) end	-- (native)
-
----@param whichGroup group
----@return integer
-function BlzGroupGetSize(whichGroup) end	-- (native)
-
----@param whichGroup group
----@param index integer
----@return unit
-function BlzGroupUnitAt(whichGroup, index) end	-- (native)
-
----@param whichGroup group
----@param unitname string
----@param filter? boolexpr
-function GroupEnumUnitsOfType(whichGroup, unitname, filter) end	-- (native)
-
----@param whichGroup group
----@param whichPlayer player
----@param filter? boolexpr
-function GroupEnumUnitsOfPlayer(whichGroup, whichPlayer, filter) end	-- (native)
-
----@param whichGroup group
----@param unitname string
----@param filter? boolexpr
----@param countLimit integer
-function GroupEnumUnitsOfTypeCounted(whichGroup, unitname, filter, countLimit) end	-- (native)
-
----@param whichGroup group
----@param r rect
----@param filter? boolexpr
-function GroupEnumUnitsInRect(whichGroup, r, filter) end	-- (native)
-
----@param whichGroup group
----@param r rect
----@param filter? boolexpr
----@param countLimit integer
-function GroupEnumUnitsInRectCounted(whichGroup, r, filter, countLimit) end	-- (native)
-
----@param whichGroup group
----@param x number
----@param y number
----@param radius number
----@param filter? boolexpr
-function GroupEnumUnitsInRange(whichGroup, x, y, radius, filter) end	-- (native)
-
----@param whichGroup group
----@param whichLocation location
----@param radius number
----@param filter? boolexpr
-function GroupEnumUnitsInRangeOfLoc(whichGroup, whichLocation, radius, filter) end	-- (native)
-
----@param whichGroup group
----@param x number
----@param y number
----@param radius number
----@param filter? boolexpr
----@param countLimit integer
-function GroupEnumUnitsInRangeCounted(whichGroup, x, y, radius, filter, countLimit) end	-- (native)
-
----@param whichGroup group
----@param whichLocation location
----@param radius number
----@param filter? boolexpr
----@param countLimit integer
-function GroupEnumUnitsInRangeOfLocCounted(whichGroup, whichLocation, radius, filter, countLimit) end	-- (native)
-
----@param whichGroup group
----@param whichPlayer player
----@param filter? boolexpr
-function GroupEnumUnitsSelected(whichGroup, whichPlayer, filter) end	-- (native)
-
----@param whichGroup group
----@param order string
----@return boolean
-function GroupImmediateOrder(whichGroup, order) end	-- (native)
-
----@param whichGroup group
----@param order integer
----@return boolean
-function GroupImmediateOrderById(whichGroup, order) end	-- (native)
-
----@param whichGroup group
----@param order string
----@param x number
----@param y number
----@return boolean
-function GroupPointOrder(whichGroup, order, x, y) end	-- (native)
-
----@param whichGroup group
----@param order string
----@param whichLocation location
----@return boolean
-function GroupPointOrderLoc(whichGroup, order, whichLocation) end	-- (native)
-
----@param whichGroup group
----@param order integer
----@param x number
----@param y number
----@return boolean
-function GroupPointOrderById(whichGroup, order, x, y) end	-- (native)
-
----@param whichGroup group
----@param order integer
----@param whichLocation location
----@return boolean
-function GroupPointOrderByIdLoc(whichGroup, order, whichLocation) end	-- (native)
-
----@param whichGroup group
----@param order string
----@param targetWidget widget
----@return boolean
-function GroupTargetOrder(whichGroup, order, targetWidget) end	-- (native)
-
----@param whichGroup group
----@param order integer
----@param targetWidget widget
----@return boolean
-function GroupTargetOrderById(whichGroup, order, targetWidget) end	-- (native)
-
---  This will be difficult to support with potentially disjoint, cell-based regions
---  as it would involve enumerating all the cells that are covered by a particularregion
---  a better implementation would be a trigger that adds relevant units as they enter
---  and removes them if they leave...
----@param whichGroup group
----@param callback function
-function ForGroup(whichGroup, callback) end	-- (native)
-
----@param whichGroup group
----@return unit
-function FirstOfGroup(whichGroup) end	-- (native)
-
--- ============================================================================
---  Force API
-
----@return force
-function CreateForce() end	-- (native)
-
----@param whichForce force
-function DestroyForce(whichForce) end	-- (native)
-
----@param whichForce force
----@param whichPlayer player
-function ForceAddPlayer(whichForce, whichPlayer) end	-- (native)
-
----@param whichForce force
----@param whichPlayer player
-function ForceRemovePlayer(whichForce, whichPlayer) end	-- (native)
-
----@param whichForce force
----@param whichPlayer player
----@return boolean
-function BlzForceHasPlayer(whichForce, whichPlayer) end	-- (native)
-
----@param whichForce force
-function ForceClear(whichForce) end	-- (native)
-
----@param whichForce force
----@param filter? boolexpr
-function ForceEnumPlayers(whichForce, filter) end	-- (native)
-
----@param whichForce force
----@param filter? boolexpr
----@param countLimit integer
-function ForceEnumPlayersCounted(whichForce, filter, countLimit) end	-- (native)
-
----@param whichForce force
----@param whichPlayer player
----@param filter? boolexpr
-function ForceEnumAllies(whichForce, whichPlayer, filter) end	-- (native)
-
----@param whichForce force
----@param whichPlayer player
----@param filter? boolexpr
-function ForceEnumEnemies(whichForce, whichPlayer, filter) end	-- (native)
-
----@param whichForce force
----@param callback function
-function ForForce(whichForce, callback) end	-- (native)
-
--- ============================================================================
---  Region and Location API
-
-
----@param minx number
----@param miny number
----@param maxx number
----@param maxy number
----@return rect
-function Rect(minx, miny, maxx, maxy) end	-- (native)
-
----@param min location
----@param max location
----@return rect
-function RectFromLoc(min, max) end	-- (native)
-
----@param whichRect rect
-function RemoveRect(whichRect) end	-- (native)
-
----@param whichRect rect
----@param minx number
----@param miny number
----@param maxx number
----@param maxy number
-function SetRect(whichRect, minx, miny, maxx, maxy) end	-- (native)
-
----@param whichRect rect
----@param min location
----@param max location
-function SetRectFromLoc(whichRect, min, max) end	-- (native)
-
----@param whichRect rect
----@param newCenterX number
----@param newCenterY number
-function MoveRectTo(whichRect, newCenterX, newCenterY) end	-- (native)
-
----@param whichRect rect
----@param newCenterLoc location
-function MoveRectToLoc(whichRect, newCenterLoc) end	-- (native)
-
----@param whichRect rect
----@return number
-function GetRectCenterX(whichRect) end	-- (native)
-
----@param whichRect rect
----@return number
-function GetRectCenterY(whichRect) end	-- (native)
-
----@param whichRect rect
----@return number
-function GetRectMinX(whichRect) end	-- (native)
-
----@param whichRect rect
----@return number
-function GetRectMinY(whichRect) end	-- (native)
-
----@param whichRect rect
----@return number
-function GetRectMaxX(whichRect) end	-- (native)
-
----@param whichRect rect
----@return number
-function GetRectMaxY(whichRect) end	-- (native)
-
----@return region
-function CreateRegion() end	-- (native)
-
----@param whichRegion region
-function RemoveRegion(whichRegion) end	-- (native)
-
----@param whichRegion region
----@param r rect
-function RegionAddRect(whichRegion, r) end	-- (native)
-
----@param whichRegion region
----@param r rect
-function RegionClearRect(whichRegion, r) end	-- (native)
-
----@param whichRegion region
----@param x number
----@param y number
-function RegionAddCell(whichRegion, x, y) end	-- (native)
-
----@param whichRegion region
----@param whichLocation location
-function RegionAddCellAtLoc(whichRegion, whichLocation) end	-- (native)
-
----@param whichRegion region
----@param x number
----@param y number
-function RegionClearCell(whichRegion, x, y) end	-- (native)
-
----@param whichRegion region
----@param whichLocation location
-function RegionClearCellAtLoc(whichRegion, whichLocation) end	-- (native)
-
----@param x number
----@param y number
----@return location
-function Location(x, y) end	-- (native)
-
----@param whichLocation location
-function RemoveLocation(whichLocation) end	-- (native)
-
----@param whichLocation location
----@param newX number
----@param newY number
-function MoveLocation(whichLocation, newX, newY) end	-- (native)
-
----@param whichLocation location
----@return number
-function GetLocationX(whichLocation) end	-- (native)
-
----@param whichLocation location
----@return number
-function GetLocationY(whichLocation) end	-- (native)
-
---  This function is asynchronous. The values it returns are not guaranteed synchronous between each player.
---   If you attempt to use it in a synchronous manner, it may cause a desync.
----@param whichLocation location
----@return number
-function GetLocationZ(whichLocation) end	-- (native)
-
----@param whichRegion region
----@param whichUnit unit
----@return boolean
-function IsUnitInRegion(whichRegion, whichUnit) end	-- (native)
-
----@param whichRegion region
----@param x number
----@param y number
----@return boolean
-function IsPointInRegion(whichRegion, x, y) end	-- (native)
-
----@param whichRegion region
----@param whichLocation location
----@return boolean
-function IsLocationInRegion(whichRegion, whichLocation) end	-- (native)
-
---  Returns full map bounds, including unplayable borders, in world coordinates
----@return rect
-function GetWorldBounds() end	-- (native)
-
--- ============================================================================
---  Native trigger interface
-
----@return trigger
-function CreateTrigger() end	-- (native)
-
----@param whichTrigger trigger
-function DestroyTrigger(whichTrigger) end	-- (native)
-
----@param whichTrigger trigger
-function ResetTrigger(whichTrigger) end	-- (native)
-
----@param whichTrigger trigger
-function EnableTrigger(whichTrigger) end	-- (native)
-
----@param whichTrigger trigger
-function DisableTrigger(whichTrigger) end	-- (native)
-
----@param whichTrigger trigger
----@return boolean
-function IsTriggerEnabled(whichTrigger) end	-- (native)
-
----@param whichTrigger trigger
----@param flag boolean
-function TriggerWaitOnSleeps(whichTrigger, flag) end	-- (native)
-
----@param whichTrigger trigger
----@return boolean
-function IsTriggerWaitOnSleeps(whichTrigger) end	-- (native)
-
----@return unit
-function GetFilterUnit() end	-- (native)
-
----@return unit
-function GetEnumUnit() end	-- (native)
-
----@return destructable
-function GetFilterDestructable() end	-- (native)
-
----@return destructable
-function GetEnumDestructable() end	-- (native)
-
----@return item
-function GetFilterItem() end	-- (native)
-
----@return item
-function GetEnumItem() end	-- (native)
-
----@param taggedString string
----@return string
-function ParseTags(taggedString) end	-- (native)
-
----@return player
-function GetFilterPlayer() end	-- (native)
-
----@return player
-function GetEnumPlayer() end	-- (native)
-
----@return trigger
-function GetTriggeringTrigger() end	-- (native)
-
----@return eventid
-function GetTriggerEventId() end	-- (native)
-
----@param whichTrigger trigger
----@return integer
-function GetTriggerEvalCount(whichTrigger) end	-- (native)
-
----@param whichTrigger trigger
----@return integer
-function GetTriggerExecCount(whichTrigger) end	-- (native)
-
----@param funcName string
-function ExecuteFunc(funcName) end	-- (native)
-
--- ============================================================================
--- ============================================================================
-
----@param operandA? boolexpr
----@param operandB? boolexpr
----@return boolexpr
-function And(operandA, operandB) end	-- (native)
-
----@param operandA? boolexpr
----@param operandB? boolexpr
----@return boolexpr
-function Or(operandA, operandB) end	-- (native)
-
----@param operand? boolexpr
----@return boolexpr
-function Not(operand) end	-- (native)
-
----@param func function
----@return conditionfunc
-function Condition(func) end	-- (native)
-
----@param c conditionfunc
-function DestroyCondition(c) end	-- (native)
-
----@param func function
----@return filterfunc
-function Filter(func) end	-- (native)
-
----@param f filterfunc
-function DestroyFilter(f) end	-- (native)
-
----@param e? boolexpr
-function DestroyBoolExpr(e) end	-- (native)
-
--- ============================================================================
--- ============================================================================
-
----@param whichTrigger trigger
----@param varName string
----@param opcode limitop
----@param limitval number
----@return event
-function TriggerRegisterVariableEvent(whichTrigger, varName, opcode, limitval) end	-- (native)
-
---  EVENT_GAME_VARIABLE_LIMIT
--- constant native string GetTriggeringVariableName takes nothing returns string
---  Creates it's own timer and triggers when it expires
----@param whichTrigger trigger
----@param timeout number
----@param periodic boolean
----@return event
-function TriggerRegisterTimerEvent(whichTrigger, timeout, periodic) end	-- (native)
-
---  Triggers when the timer you tell it about expires
----@param whichTrigger trigger
----@param t timer
----@return event
-function TriggerRegisterTimerExpireEvent(whichTrigger, t) end	-- (native)
-
----@param whichTrigger trigger
----@param whichState gamestate
----@param opcode limitop
----@param limitval number
----@return event
-function TriggerRegisterGameStateEvent(whichTrigger, whichState, opcode, limitval) end	-- (native)
-
----@param whichTrigger trigger
----@param whichDialog dialog
----@return event
-function TriggerRegisterDialogEvent(whichTrigger, whichDialog) end	-- (native)
-
----@param whichTrigger trigger
----@param whichButton button
----@return event
-function TriggerRegisterDialogButtonEvent(whichTrigger, whichButton) end	-- (native)
-
---   EVENT_GAME_STATE_LIMIT
----@return gamestate
-function GetEventGameState() end	-- (native)
-
----@param whichTrigger trigger
----@param whichGameEvent gameevent
----@return event
-function TriggerRegisterGameEvent(whichTrigger, whichGameEvent) end	-- (native)
-
---  EVENT_GAME_VICTORY
----@return player
-function GetWinningPlayer() end	-- (native)
-
----@param whichTrigger trigger
----@param whichRegion region
----@param filter? boolexpr
----@return event
-function TriggerRegisterEnterRegion(whichTrigger, whichRegion, filter) end	-- (native)
-
---  EVENT_GAME_ENTER_REGION
----@return region
-function GetTriggeringRegion() end	-- (native)
-
----@return unit
-function GetEnteringUnit() end	-- (native)
-
---  EVENT_GAME_LEAVE_REGION
----@param whichTrigger trigger
----@param whichRegion region
----@param filter? boolexpr
----@return event
-function TriggerRegisterLeaveRegion(whichTrigger, whichRegion, filter) end	-- (native)
-
----@return unit
-function GetLeavingUnit() end	-- (native)
-
----@param whichTrigger trigger
----@param t trackable
----@return event
-function TriggerRegisterTrackableHitEvent(whichTrigger, t) end	-- (native)
-
----@param whichTrigger trigger
----@param t trackable
----@return event
-function TriggerRegisterTrackableTrackEvent(whichTrigger, t) end	-- (native)
-
---  EVENT_COMMAND_BUTTON_CLICK
----@param whichTrigger trigger
----@param whichAbility integer
----@param order string
----@return event
-function TriggerRegisterCommandEvent(whichTrigger, whichAbility, order) end	-- (native)
-
----@param whichTrigger trigger
----@param whichUpgrade integer
----@return event
-function TriggerRegisterUpgradeCommandEvent(whichTrigger, whichUpgrade) end	-- (native)
-
---  EVENT_GAME_TRACKABLE_HIT
---  EVENT_GAME_TRACKABLE_TRACK
----@return trackable
-function GetTriggeringTrackable() end	-- (native)
-
---  EVENT_DIALOG_BUTTON_CLICK
----@return button
-function GetClickedButton() end	-- (native)
-
----@return dialog
-function GetClickedDialog() end	-- (native)
-
---  EVENT_GAME_TOURNAMENT_FINISH_SOON
----@return number
-function GetTournamentFinishSoonTimeRemaining() end	-- (native)
-
----@return integer
-function GetTournamentFinishNowRule() end	-- (native)
-
----@return player
-function GetTournamentFinishNowPlayer() end	-- (native)
-
----@param whichPlayer player
----@return integer
-function GetTournamentScore(whichPlayer) end	-- (native)
-
---  EVENT_GAME_SAVE
----@return string
-function GetSaveBasicFilename() end	-- (native)
-
--- ============================================================================
--- ============================================================================
-
----@param whichTrigger trigger
----@param whichPlayer player
----@param whichPlayerEvent playerevent
----@return event
-function TriggerRegisterPlayerEvent(whichTrigger, whichPlayer, whichPlayerEvent) end	-- (native)
-
---  EVENT_PLAYER_DEFEAT
---  EVENT_PLAYER_VICTORY
----@return player
-function GetTriggerPlayer() end	-- (native)
-
----@param whichTrigger trigger
----@param whichPlayer player
----@param whichPlayerUnitEvent playerunitevent
----@param filter? boolexpr
----@return event
-function TriggerRegisterPlayerUnitEvent(whichTrigger, whichPlayer, whichPlayerUnitEvent, filter) end	-- (native)
-
---  EVENT_PLAYER_HERO_LEVEL
---  EVENT_UNIT_HERO_LEVEL
----@return unit
-function GetLevelingUnit() end	-- (native)
-
---  EVENT_PLAYER_HERO_SKILL
---  EVENT_UNIT_HERO_SKILL
----@return unit
-function GetLearningUnit() end	-- (native)
-
----@return integer
-function GetLearnedSkill() end	-- (native)
-
----@return integer
-function GetLearnedSkillLevel() end	-- (native)
-
---  EVENT_PLAYER_HERO_REVIVABLE
----@return unit
-function GetRevivableUnit() end	-- (native)
-
---  EVENT_PLAYER_HERO_REVIVE_START
---  EVENT_PLAYER_HERO_REVIVE_CANCEL
---  EVENT_PLAYER_HERO_REVIVE_FINISH
---  EVENT_UNIT_HERO_REVIVE_START
---  EVENT_UNIT_HERO_REVIVE_CANCEL
---  EVENT_UNIT_HERO_REVIVE_FINISH
----@return unit
-function GetRevivingUnit() end	-- (native)
-
---  EVENT_PLAYER_UNIT_ATTACKED
----@return unit
-function GetAttacker() end	-- (native)
-
---  EVENT_PLAYER_UNIT_RESCUED
----@return unit
-function GetRescuer() end	-- (native)
-
---  EVENT_PLAYER_UNIT_DEATH
----@return unit
-function GetDyingUnit() end	-- (native)
-
----@return unit
-function GetKillingUnit() end	-- (native)
-
---  EVENT_PLAYER_UNIT_DECAY
----@return unit
-function GetDecayingUnit() end	-- (native)
-
---  EVENT_PLAYER_UNIT_SELECTED
--- constant native GetSelectedUnit takes nothing returns unit
---  EVENT_PLAYER_UNIT_CONSTRUCT_START
----@return unit
-function GetConstructingStructure() end	-- (native)
-
---  EVENT_PLAYER_UNIT_CONSTRUCT_FINISH
---  EVENT_PLAYER_UNIT_CONSTRUCT_CANCEL
----@return unit
-function GetCancelledStructure() end	-- (native)
-
----@return unit
-function GetConstructedStructure() end	-- (native)
-
---  EVENT_PLAYER_UNIT_RESEARCH_START
---  EVENT_PLAYER_UNIT_RESEARCH_CANCEL
---  EVENT_PLAYER_UNIT_RESEARCH_FINISH
----@return unit
-function GetResearchingUnit() end	-- (native)
-
----@return integer
-function GetResearched() end	-- (native)
-
---  EVENT_PLAYER_UNIT_TRAIN_START
---  EVENT_PLAYER_UNIT_TRAIN_CANCEL
----@return integer
-function GetTrainedUnitType() end	-- (native)
-
---  EVENT_PLAYER_UNIT_TRAIN_FINISH
----@return unit
-function GetTrainedUnit() end	-- (native)
-
---  EVENT_PLAYER_UNIT_DETECTED
----@return unit
-function GetDetectedUnit() end	-- (native)
-
---  EVENT_PLAYER_UNIT_SUMMONED
----@return unit
-function GetSummoningUnit() end	-- (native)
-
----@return unit
-function GetSummonedUnit() end	-- (native)
-
---  EVENT_PLAYER_UNIT_LOADED
----@return unit
-function GetTransportUnit() end	-- (native)
-
----@return unit
-function GetLoadedUnit() end	-- (native)
-
---  EVENT_PLAYER_UNIT_SELL
----@return unit
-function GetSellingUnit() end	-- (native)
-
----@return unit
-function GetSoldUnit() end	-- (native)
-
----@return unit
-function GetBuyingUnit() end	-- (native)
-
---  EVENT_PLAYER_UNIT_SELL_ITEM
----@return item
-function GetSoldItem() end	-- (native)
-
---  EVENT_PLAYER_UNIT_CHANGE_OWNER
----@return unit
-function GetChangingUnit() end	-- (native)
-
----@return player
-function GetChangingUnitPrevOwner() end	-- (native)
-
---  EVENT_PLAYER_UNIT_DROP_ITEM
---  EVENT_PLAYER_UNIT_PICKUP_ITEM
---  EVENT_PLAYER_UNIT_USE_ITEM
----@return unit
-function GetManipulatingUnit() end	-- (native)
-
----@return item
-function GetManipulatedItem() end	-- (native)
-
---  For EVENT_PLAYER_UNIT_PICKUP_ITEM, returns the item absorbing the picked up item in case it is stacking.
---  Returns null if the item was a powerup and not a stacking item.
----@return item
-function BlzGetAbsorbingItem() end	-- (native)
-
----@return boolean
-function BlzGetManipulatedItemWasAbsorbed() end	-- (native)
-
---  EVENT_PLAYER_UNIT_STACK_ITEM
---  Source is the item that is losing charges, Target is the item getting charges.
----@return item
-function BlzGetStackingItemSource() end	-- (native)
-
----@return item
-function BlzGetStackingItemTarget() end	-- (native)
-
----@return integer
-function BlzGetStackingItemTargetPreviousCharges() end	-- (native)
-
---  EVENT_PLAYER_UNIT_ISSUED_ORDER
----@return unit
-function GetOrderedUnit() end	-- (native)
-
----@return integer
-function GetIssuedOrderId() end	-- (native)
-
---  EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER
----@return number
-function GetOrderPointX() end	-- (native)
-
----@return number
-function GetOrderPointY() end	-- (native)
-
----@return location
-function GetOrderPointLoc() end	-- (native)
-
---  EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER
----@return widget
-function GetOrderTarget() end	-- (native)
-
----@return destructable
-function GetOrderTargetDestructable() end	-- (native)
-
----@return item
-function GetOrderTargetItem() end	-- (native)
-
----@return unit
-function GetOrderTargetUnit() end	-- (native)
-
---  EVENT_UNIT_SPELL_CHANNEL
---  EVENT_UNIT_SPELL_CAST
---  EVENT_UNIT_SPELL_EFFECT
---  EVENT_UNIT_SPELL_FINISH
---  EVENT_UNIT_SPELL_ENDCAST
---  EVENT_PLAYER_UNIT_SPELL_CHANNEL
---  EVENT_PLAYER_UNIT_SPELL_CAST
---  EVENT_PLAYER_UNIT_SPELL_EFFECT
---  EVENT_PLAYER_UNIT_SPELL_FINISH
---  EVENT_PLAYER_UNIT_SPELL_ENDCAST
----@return unit
-function GetSpellAbilityUnit() end	-- (native)
-
----@return integer
-function GetSpellAbilityId() end	-- (native)
-
----@return ability
-function GetSpellAbility() end	-- (native)
-
----@return location
-function GetSpellTargetLoc() end	-- (native)
-
----@return number
-function GetSpellTargetX() end	-- (native)
-
----@return number
-function GetSpellTargetY() end	-- (native)
-
----@return destructable
-function GetSpellTargetDestructable() end	-- (native)
-
----@return item
-function GetSpellTargetItem() end	-- (native)
-
----@return unit
-function GetSpellTargetUnit() end	-- (native)
-
----@param whichTrigger trigger
----@param whichPlayer player
----@param whichAlliance alliancetype
----@return event
-function TriggerRegisterPlayerAllianceChange(whichTrigger, whichPlayer, whichAlliance) end	-- (native)
-
----@param whichTrigger trigger
----@param whichPlayer player
----@param whichState playerstate
----@param opcode limitop
----@param limitval number
----@return event
-function TriggerRegisterPlayerStateEvent(whichTrigger, whichPlayer, whichState, opcode, limitval) end	-- (native)
-
---  EVENT_PLAYER_STATE_LIMIT
----@return playerstate
-function GetEventPlayerState() end	-- (native)
-
----@param whichTrigger trigger
----@param whichPlayer player
----@param chatMessageToDetect string
----@param exactMatchOnly boolean
----@return event
-function TriggerRegisterPlayerChatEvent(whichTrigger, whichPlayer, chatMessageToDetect, exactMatchOnly) end	-- (native)
-
---  EVENT_PLAYER_CHAT
---  returns the actual string they typed in ( same as what you registered for
---  if you required exact match )
----@return string
-function GetEventPlayerChatString() end	-- (native)
-
---  returns the string that you registered for
----@return string
-function GetEventPlayerChatStringMatched() end	-- (native)
-
----@param whichTrigger trigger
----@param whichWidget widget
----@return event
-function TriggerRegisterDeathEvent(whichTrigger, whichWidget) end	-- (native)
-
--- ============================================================================
---  within a trigger action function...returns null handle when used incorrectly
-
----@return unit
-function GetTriggerUnit() end	-- (native)
-
----@param whichTrigger trigger
----@param whichUnit unit
----@param whichState unitstate
----@param opcode limitop
----@param limitval number
----@return event
-function TriggerRegisterUnitStateEvent(whichTrigger, whichUnit, whichState, opcode, limitval) end	-- (native)
-
---  EVENT_UNIT_STATE_LIMIT
----@return unitstate
-function GetEventUnitState() end	-- (native)
-
----@param whichTrigger trigger
----@param whichUnit unit
----@param whichEvent unitevent
----@return event
-function TriggerRegisterUnitEvent(whichTrigger, whichUnit, whichEvent) end	-- (native)
-
---  EVENT_UNIT_DAMAGED
----@return number
-function GetEventDamage() end	-- (native)
-
----@return unit
-function GetEventDamageSource() end	-- (native)
-
---  EVENT_UNIT_DEATH
---  EVENT_UNIT_DECAY
---  Use the GetDyingUnit and GetDecayingUnit funcs above
---  EVENT_UNIT_DETECTED
----@return player
-function GetEventDetectingPlayer() end	-- (native)
-
----@param whichTrigger trigger
----@param whichUnit unit
----@param whichEvent unitevent
----@param filter? boolexpr
----@return event
-function TriggerRegisterFilterUnitEvent(whichTrigger, whichUnit, whichEvent, filter) end	-- (native)
-
---  EVENT_UNIT_ACQUIRED_TARGET
---  EVENT_UNIT_TARGET_IN_RANGE
----@return unit
-function GetEventTargetUnit() end	-- (native)
-
---  EVENT_UNIT_ATTACKED
---  Use GetAttacker from the Player Unit Event API Below...
---  EVENT_UNIT_RESCUEDED
---  Use GetRescuer from the Player Unit Event API Below...
---  EVENT_UNIT_CONSTRUCT_CANCEL
---  EVENT_UNIT_CONSTRUCT_FINISH
---  See the Player Unit Construction Event API above for event info funcs
---  EVENT_UNIT_TRAIN_START
---  EVENT_UNIT_TRAIN_CANCELLED
---  EVENT_UNIT_TRAIN_FINISH
---  See the Player Unit Training Event API above for event info funcs
---  EVENT_UNIT_SELL
---  See the Player Unit Sell Event API above for event info funcs
---  EVENT_UNIT_DROP_ITEM
---  EVENT_UNIT_PICKUP_ITEM
---  EVENT_UNIT_USE_ITEM
---  See the Player Unit/Item manipulation Event API above for event info funcs
---  EVENT_UNIT_STACK_ITEM
---  See the Player Unit/Item stack Event API above for event info funcs
---  EVENT_UNIT_ISSUED_ORDER
---  EVENT_UNIT_ISSUED_POINT_ORDER
---  EVENT_UNIT_ISSUED_TARGET_ORDER
---  See the Player Unit Order Event API above for event info funcs
----@param whichTrigger trigger
----@param whichUnit unit
----@param range number
----@param filter? boolexpr
----@return event
-function TriggerRegisterUnitInRange(whichTrigger, whichUnit, range, filter) end	-- (native)
-
----@param whichTrigger trigger
----@param condition? boolexpr
----@return triggercondition
-function TriggerAddCondition(whichTrigger, condition) end	-- (native)
-
----@param whichTrigger trigger
----@param whichCondition triggercondition
-function TriggerRemoveCondition(whichTrigger, whichCondition) end	-- (native)
-
----@param whichTrigger trigger
-function TriggerClearConditions(whichTrigger) end	-- (native)
-
----@param whichTrigger trigger
----@param actionFunc function
----@return triggeraction
-function TriggerAddAction(whichTrigger, actionFunc) end	-- (native)
-
----@param whichTrigger trigger
----@param whichAction triggeraction
-function TriggerRemoveAction(whichTrigger, whichAction) end	-- (native)
-
----@param whichTrigger trigger
-function TriggerClearActions(whichTrigger) end	-- (native)
-
----@param timeout number
-function TriggerSleepAction(timeout) end	-- (native)
-
----@param s sound
----@param offset number
-function TriggerWaitForSound(s, offset) end	-- (native)
-
----@param whichTrigger trigger
----@return boolean
-function TriggerEvaluate(whichTrigger) end	-- (native)
-
----@param whichTrigger trigger
-function TriggerExecute(whichTrigger) end	-- (native)
-
----@param whichTrigger trigger
-function TriggerExecuteWait(whichTrigger) end	-- (native)
-
-function TriggerSyncStart() end	-- (native)
-
-function TriggerSyncReady() end	-- (native)
-
--- ============================================================================
---  Widget API
-
----@param whichWidget widget
----@return number
-function GetWidgetLife(whichWidget) end	-- (native)
-
----@param whichWidget widget
----@param newLife number
-function SetWidgetLife(whichWidget, newLife) end	-- (native)
-
----@param whichWidget widget
----@return number
-function GetWidgetX(whichWidget) end	-- (native)
-
----@param whichWidget widget
----@return number
-function GetWidgetY(whichWidget) end	-- (native)
-
----@return widget
-function GetTriggerWidget() end	-- (native)
-
--- ============================================================================
---  Facing arguments are specified in degrees
-
----@param objectid integer
----@param x number
----@param y number
----@param face number
----@param scale number
----@param variation integer
----@return destructable
-function CreateDestructable(objectid, x, y, face, scale, variation) end	-- (native)
-
----@param objectid integer
----@param x number
----@param y number
----@param z number
----@param face number
----@param scale number
----@param variation integer
----@return destructable
-function CreateDestructableZ(objectid, x, y, z, face, scale, variation) end	-- (native)
-
----@param objectid integer
----@param x number
----@param y number
----@param face number
----@param scale number
----@param variation integer
----@return destructable
-function CreateDeadDestructable(objectid, x, y, face, scale, variation) end	-- (native)
-
----@param objectid integer
----@param x number
----@param y number
----@param z number
----@param face number
----@param scale number
----@param variation integer
----@return destructable
-function CreateDeadDestructableZ(objectid, x, y, z, face, scale, variation) end	-- (native)
-
----@param d destructable
-function RemoveDestructable(d) end	-- (native)
-
----@param d destructable
-function KillDestructable(d) end	-- (native)
-
----@param d destructable
----@param flag boolean
-function SetDestructableInvulnerable(d, flag) end	-- (native)
-
----@param d destructable
----@return boolean
-function IsDestructableInvulnerable(d) end	-- (native)
-
----@param r rect
----@param filter? boolexpr
----@param actionFunc function
-function EnumDestructablesInRect(r, filter, actionFunc) end	-- (native)
-
----@param d destructable
----@return integer
-function GetDestructableTypeId(d) end	-- (native)
-
----@param d destructable
----@return number
-function GetDestructableX(d) end	-- (native)
-
----@param d destructable
----@return number
-function GetDestructableY(d) end	-- (native)
-
----@param d destructable
----@param life number
-function SetDestructableLife(d, life) end	-- (native)
-
----@param d destructable
----@return number
-function GetDestructableLife(d) end	-- (native)
-
----@param d destructable
----@param max number
-function SetDestructableMaxLife(d, max) end	-- (native)
-
----@param d destructable
----@return number
-function GetDestructableMaxLife(d) end	-- (native)
-
----@param d destructable
----@param life number
----@param birth boolean
-function DestructableRestoreLife(d, life, birth) end	-- (native)
-
----@param d destructable
----@param whichAnimation string
-function QueueDestructableAnimation(d, whichAnimation) end	-- (native)
-
----@param d destructable
----@param whichAnimation string
-function SetDestructableAnimation(d, whichAnimation) end	-- (native)
-
----@param d destructable
----@param speedFactor number
-function SetDestructableAnimationSpeed(d, speedFactor) end	-- (native)
-
----@param d destructable
----@param flag boolean
-function ShowDestructable(d, flag) end	-- (native)
-
----@param d destructable
----@return number
-function GetDestructableOccluderHeight(d) end	-- (native)
-
----@param d destructable
----@param height number
-function SetDestructableOccluderHeight(d, height) end	-- (native)
-
----@param d destructable
----@return string
-function GetDestructableName(d) end	-- (native)
-
----@return destructable
-function GetTriggerDestructable() end	-- (native)
-
--- ============================================================================
---  Item API
-
----@param itemid integer
----@param x number
----@param y number
----@return item
-function CreateItem(itemid, x, y) end	-- (native)
-
----@param whichItem item
-function RemoveItem(whichItem) end	-- (native)
-
----@param whichItem item
----@return player
-function GetItemPlayer(whichItem) end	-- (native)
-
----@param i item
----@return integer
-function GetItemTypeId(i) end	-- (native)
-
----@param i item
----@return number
-function GetItemX(i) end	-- (native)
-
----@param i item
----@return number
-function GetItemY(i) end	-- (native)
-
----@param i item
----@param x number
----@param y number
-function SetItemPosition(i, x, y) end	-- (native)
-
----@param whichItem item
----@param flag boolean
-function SetItemDropOnDeath(whichItem, flag) end	-- (native)
-
----@param i item
----@param flag boolean
-function SetItemDroppable(i, flag) end	-- (native)
-
----@param i item
----@param flag boolean
-function SetItemPawnable(i, flag) end	-- (native)
-
----@param whichItem item
----@param whichPlayer player
----@param changeColor boolean
-function SetItemPlayer(whichItem, whichPlayer, changeColor) end	-- (native)
-
----@param whichItem item
----@param flag boolean
-function SetItemInvulnerable(whichItem, flag) end	-- (native)
-
----@param whichItem item
----@return boolean
-function IsItemInvulnerable(whichItem) end	-- (native)
-
----@param whichItem item
----@param show boolean
-function SetItemVisible(whichItem, show) end	-- (native)
-
----@param whichItem item
----@return boolean
-function IsItemVisible(whichItem) end	-- (native)
-
----@param whichItem item
----@return boolean
-function IsItemOwned(whichItem) end	-- (native)
-
----@param whichItem item
----@return boolean
-function IsItemPowerup(whichItem) end	-- (native)
-
----@param whichItem item
----@return boolean
-function IsItemSellable(whichItem) end	-- (native)
-
----@param whichItem item
----@return boolean
-function IsItemPawnable(whichItem) end	-- (native)
-
----@param itemId integer
----@return boolean
-function IsItemIdPowerup(itemId) end	-- (native)
-
----@param itemId integer
----@return boolean
-function IsItemIdSellable(itemId) end	-- (native)
-
----@param itemId integer
----@return boolean
-function IsItemIdPawnable(itemId) end	-- (native)
-
----@param r rect
----@param filter? boolexpr
----@param actionFunc function
-function EnumItemsInRect(r, filter, actionFunc) end	-- (native)
-
----@param whichItem item
----@return integer
-function GetItemLevel(whichItem) end	-- (native)
-
----@param whichItem item
----@return itemtype
-function GetItemType(whichItem) end	-- (native)
-
----@param whichItem item
----@param unitId integer
-function SetItemDropID(whichItem, unitId) end	-- (native)
-
----@param whichItem item
----@return string
-function GetItemName(whichItem) end	-- (native)
-
----@param whichItem item
----@return integer
-function GetItemCharges(whichItem) end	-- (native)
-
----@param whichItem item
----@param charges integer
-function SetItemCharges(whichItem, charges) end	-- (native)
-
----@param whichItem item
----@return integer
-function GetItemUserData(whichItem) end	-- (native)
-
----@param whichItem item
----@param data integer
-function SetItemUserData(whichItem, data) end	-- (native)
-
--- ============================================================================
---  Facing arguments are specified in degrees
-
----@param id player
----@param unitid integer
----@param x number
----@param y number
----@param face number
----@return unit
-function CreateUnit(id, unitid, x, y, face) end	-- (native)
-
----@param whichPlayer player
----@param unitname string
----@param x number
----@param y number
----@param face number
----@return unit
-function CreateUnitByName(whichPlayer, unitname, x, y, face) end	-- (native)
-
----@param id player
----@param unitid integer
----@param whichLocation location
----@param face number
----@return unit
-function CreateUnitAtLoc(id, unitid, whichLocation, face) end	-- (native)
-
----@param id player
----@param unitname string
----@param whichLocation location
----@param face number
----@return unit
-function CreateUnitAtLocByName(id, unitname, whichLocation, face) end	-- (native)
-
----@param whichPlayer player
----@param unitid integer
----@param x number
----@param y number
----@param face number
----@return unit
-function CreateCorpse(whichPlayer, unitid, x, y, face) end	-- (native)
-
----@param whichUnit unit
-function KillUnit(whichUnit) end	-- (native)
-
----@param whichUnit unit
-function RemoveUnit(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param show boolean
-function ShowUnit(whichUnit, show) end	-- (native)
-
----@param whichUnit unit
----@param whichUnitState unitstate
----@param newVal number
-function SetUnitState(whichUnit, whichUnitState, newVal) end	-- (native)
-
----@param whichUnit unit
----@param newX number
-function SetUnitX(whichUnit, newX) end	-- (native)
-
----@param whichUnit unit
----@param newY number
-function SetUnitY(whichUnit, newY) end	-- (native)
-
----@param whichUnit unit
----@param newX number
----@param newY number
-function SetUnitPosition(whichUnit, newX, newY) end	-- (native)
-
----@param whichUnit unit
----@param whichLocation location
-function SetUnitPositionLoc(whichUnit, whichLocation) end	-- (native)
-
----@param whichUnit unit
----@param facingAngle number
-function SetUnitFacing(whichUnit, facingAngle) end	-- (native)
-
----@param whichUnit unit
----@param facingAngle number
----@param duration number
-function SetUnitFacingTimed(whichUnit, facingAngle, duration) end	-- (native)
-
----@param whichUnit unit
----@param newSpeed number
-function SetUnitMoveSpeed(whichUnit, newSpeed) end	-- (native)
-
----@param whichUnit unit
----@param newHeight number
----@param rate number
-function SetUnitFlyHeight(whichUnit, newHeight, rate) end	-- (native)
-
----@param whichUnit unit
----@param newTurnSpeed number
-function SetUnitTurnSpeed(whichUnit, newTurnSpeed) end	-- (native)
-
----@param whichUnit unit
----@param newPropWindowAngle number
-function SetUnitPropWindow(whichUnit, newPropWindowAngle) end	-- (native)
-
----@param whichUnit unit
----@param newAcquireRange number
-function SetUnitAcquireRange(whichUnit, newAcquireRange) end	-- (native)
-
----@param whichUnit unit
----@param creepGuard boolean
-function SetUnitCreepGuard(whichUnit, creepGuard) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitAcquireRange(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitTurnSpeed(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitPropWindow(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitFlyHeight(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitDefaultAcquireRange(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitDefaultTurnSpeed(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitDefaultPropWindow(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitDefaultFlyHeight(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@param changeColor boolean
-function SetUnitOwner(whichUnit, whichPlayer, changeColor) end	-- (native)
-
----@param whichUnit unit
----@param whichColor playercolor
-function SetUnitColor(whichUnit, whichColor) end	-- (native)
-
----@param whichUnit unit
----@param scaleX number
----@param scaleY number
----@param scaleZ number
-function SetUnitScale(whichUnit, scaleX, scaleY, scaleZ) end	-- (native)
-
----@param whichUnit unit
----@param timeScale number
-function SetUnitTimeScale(whichUnit, timeScale) end	-- (native)
-
----@param whichUnit unit
----@param blendTime number
-function SetUnitBlendTime(whichUnit, blendTime) end	-- (native)
-
----@param whichUnit unit
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function SetUnitVertexColor(whichUnit, red, green, blue, alpha) end	-- (native)
-
----@param whichUnit unit
----@param whichAnimation string
-function QueueUnitAnimation(whichUnit, whichAnimation) end	-- (native)
-
----@param whichUnit unit
----@param whichAnimation string
-function SetUnitAnimation(whichUnit, whichAnimation) end	-- (native)
-
----@param whichUnit unit
----@param whichAnimation integer
-function SetUnitAnimationByIndex(whichUnit, whichAnimation) end	-- (native)
-
----@param whichUnit unit
----@param whichAnimation string
----@param rarity raritycontrol
-function SetUnitAnimationWithRarity(whichUnit, whichAnimation, rarity) end	-- (native)
-
----@param whichUnit unit
----@param animProperties string
----@param add boolean
-function AddUnitAnimationProperties(whichUnit, animProperties, add) end	-- (native)
-
----@param whichUnit unit
----@param whichBone string
----@param lookAtTarget unit
----@param offsetX number
----@param offsetY number
----@param offsetZ number
-function SetUnitLookAt(whichUnit, whichBone, lookAtTarget, offsetX, offsetY, offsetZ) end	-- (native)
-
----@param whichUnit unit
-function ResetUnitLookAt(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param byWhichPlayer player
----@param flag boolean
-function SetUnitRescuable(whichUnit, byWhichPlayer, flag) end	-- (native)
-
----@param whichUnit unit
----@param range number
-function SetUnitRescueRange(whichUnit, range) end	-- (native)
-
----@param whichHero unit
----@param newStr integer
----@param permanent boolean
-function SetHeroStr(whichHero, newStr, permanent) end	-- (native)
-
----@param whichHero unit
----@param newAgi integer
----@param permanent boolean
-function SetHeroAgi(whichHero, newAgi, permanent) end	-- (native)
-
----@param whichHero unit
----@param newInt integer
----@param permanent boolean
-function SetHeroInt(whichHero, newInt, permanent) end	-- (native)
-
----@param whichHero unit
----@param includeBonuses boolean
----@return integer
-function GetHeroStr(whichHero, includeBonuses) end	-- (native)
-
----@param whichHero unit
----@param includeBonuses boolean
----@return integer
-function GetHeroAgi(whichHero, includeBonuses) end	-- (native)
-
----@param whichHero unit
----@param includeBonuses boolean
----@return integer
-function GetHeroInt(whichHero, includeBonuses) end	-- (native)
-
----@param whichHero unit
----@param howManyLevels integer
----@return boolean
-function UnitStripHeroLevel(whichHero, howManyLevels) end	-- (native)
-
----@param whichHero unit
----@return integer
-function GetHeroXP(whichHero) end	-- (native)
-
----@param whichHero unit
----@param newXpVal integer
----@param showEyeCandy boolean
-function SetHeroXP(whichHero, newXpVal, showEyeCandy) end	-- (native)
-
----@param whichHero unit
----@return integer
-function GetHeroSkillPoints(whichHero) end	-- (native)
-
----@param whichHero unit
----@param skillPointDelta integer
----@return boolean
-function UnitModifySkillPoints(whichHero, skillPointDelta) end	-- (native)
-
----@param whichHero unit
----@param xpToAdd integer
----@param showEyeCandy boolean
-function AddHeroXP(whichHero, xpToAdd, showEyeCandy) end	-- (native)
-
----@param whichHero unit
----@param level integer
----@param showEyeCandy boolean
-function SetHeroLevel(whichHero, level, showEyeCandy) end	-- (native)
-
----@param whichHero unit
----@return integer
-function GetHeroLevel(whichHero) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function GetUnitLevel(whichUnit) end	-- (native)
-
----@param whichHero unit
----@return string
-function GetHeroProperName(whichHero) end	-- (native)
-
----@param whichHero unit
----@param flag boolean
-function SuspendHeroXP(whichHero, flag) end	-- (native)
-
----@param whichHero unit
----@return boolean
-function IsSuspendedXP(whichHero) end	-- (native)
-
----@param whichHero unit
----@param abilcode integer
-function SelectHeroSkill(whichHero, abilcode) end	-- (native)
-
----@param whichUnit unit
----@param abilcode integer
----@return integer
-function GetUnitAbilityLevel(whichUnit, abilcode) end	-- (native)
-
----@param whichUnit unit
----@param abilcode integer
----@return integer
-function DecUnitAbilityLevel(whichUnit, abilcode) end	-- (native)
-
----@param whichUnit unit
----@param abilcode integer
----@return integer
-function IncUnitAbilityLevel(whichUnit, abilcode) end	-- (native)
-
----@param whichUnit unit
----@param abilcode integer
----@param level integer
----@return integer
-function SetUnitAbilityLevel(whichUnit, abilcode, level) end	-- (native)
-
----@param whichHero unit
----@param x number
----@param y number
----@param doEyecandy boolean
----@return boolean
-function ReviveHero(whichHero, x, y, doEyecandy) end	-- (native)
-
----@param whichHero unit
----@param loc location
----@param doEyecandy boolean
----@return boolean
-function ReviveHeroLoc(whichHero, loc, doEyecandy) end	-- (native)
-
----@param whichUnit unit
----@param exploded boolean
-function SetUnitExploded(whichUnit, exploded) end	-- (native)
-
----@param whichUnit unit
----@param flag boolean
-function SetUnitInvulnerable(whichUnit, flag) end	-- (native)
-
----@param whichUnit unit
----@param flag boolean
-function PauseUnit(whichUnit, flag) end	-- (native)
-
----@param whichHero unit
----@return boolean
-function IsUnitPaused(whichHero) end	-- (native)
-
----@param whichUnit unit
----@param flag boolean
-function SetUnitPathing(whichUnit, flag) end	-- (native)
-
-function ClearSelection() end	-- (native)
-
----@param whichUnit unit
----@param flag boolean
-function SelectUnit(whichUnit, flag) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function GetUnitPointValue(whichUnit) end	-- (native)
-
----@param unitType integer
----@return integer
-function GetUnitPointValueByType(unitType) end	-- (native)
-
--- native        SetUnitPointValueByType takes integer unitType, integer newPointValue returns nothing
----@param whichUnit unit
----@param whichItem item
----@return boolean
-function UnitAddItem(whichUnit, whichItem) end	-- (native)
-
----@param whichUnit unit
----@param itemId integer
----@return item
-function UnitAddItemById(whichUnit, itemId) end	-- (native)
-
----@param whichUnit unit
----@param itemId integer
----@param itemSlot integer
----@return boolean
-function UnitAddItemToSlotById(whichUnit, itemId, itemSlot) end	-- (native)
-
----@param whichUnit unit
----@param whichItem item
-function UnitRemoveItem(whichUnit, whichItem) end	-- (native)
-
----@param whichUnit unit
----@param itemSlot integer
----@return item
-function UnitRemoveItemFromSlot(whichUnit, itemSlot) end	-- (native)
-
----@param whichUnit unit
----@param whichItem item
----@return boolean
-function UnitHasItem(whichUnit, whichItem) end	-- (native)
-
----@param whichUnit unit
----@param itemSlot integer
----@return item
-function UnitItemInSlot(whichUnit, itemSlot) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function UnitInventorySize(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param whichItem item
----@param x number
----@param y number
----@return boolean
-function UnitDropItemPoint(whichUnit, whichItem, x, y) end	-- (native)
-
----@param whichUnit unit
----@param whichItem item
----@param slot integer
----@return boolean
-function UnitDropItemSlot(whichUnit, whichItem, slot) end	-- (native)
-
----@param whichUnit unit
----@param whichItem item
----@param target widget
----@return boolean
-function UnitDropItemTarget(whichUnit, whichItem, target) end	-- (native)
-
----@param whichUnit unit
----@param whichItem item
----@return boolean
-function UnitUseItem(whichUnit, whichItem) end	-- (native)
-
----@param whichUnit unit
----@param whichItem item
----@param x number
----@param y number
----@return boolean
-function UnitUseItemPoint(whichUnit, whichItem, x, y) end	-- (native)
-
----@param whichUnit unit
----@param whichItem item
----@param target widget
----@return boolean
-function UnitUseItemTarget(whichUnit, whichItem, target) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitX(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitY(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return location
-function GetUnitLoc(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitFacing(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitMoveSpeed(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function GetUnitDefaultMoveSpeed(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param whichUnitState unitstate
----@return number
-function GetUnitState(whichUnit, whichUnitState) end	-- (native)
-
----@param whichUnit unit
----@return player
-function GetOwningPlayer(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function GetUnitTypeId(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return race
-function GetUnitRace(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return string
-function GetUnitName(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function GetUnitFoodUsed(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function GetUnitFoodMade(whichUnit) end	-- (native)
-
----@param unitId integer
----@return integer
-function GetFoodMade(unitId) end	-- (native)
-
----@param unitId integer
----@return integer
-function GetFoodUsed(unitId) end	-- (native)
-
----@param whichUnit unit
----@param useFood boolean
-function SetUnitUseFood(whichUnit, useFood) end	-- (native)
-
----@param whichUnit unit
----@return location
-function GetUnitRallyPoint(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return unit
-function GetUnitRallyUnit(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return destructable
-function GetUnitRallyDestructable(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param whichGroup group
----@return boolean
-function IsUnitInGroup(whichUnit, whichGroup) end	-- (native)
-
----@param whichUnit unit
----@param whichForce force
----@return boolean
-function IsUnitInForce(whichUnit, whichForce) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@return boolean
-function IsUnitOwnedByPlayer(whichUnit, whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@return boolean
-function IsUnitAlly(whichUnit, whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@return boolean
-function IsUnitEnemy(whichUnit, whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@return boolean
-function IsUnitVisible(whichUnit, whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@return boolean
-function IsUnitDetected(whichUnit, whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@return boolean
-function IsUnitInvisible(whichUnit, whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@return boolean
-function IsUnitFogged(whichUnit, whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@return boolean
-function IsUnitMasked(whichUnit, whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@return boolean
-function IsUnitSelected(whichUnit, whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param whichRace race
----@return boolean
-function IsUnitRace(whichUnit, whichRace) end	-- (native)
-
----@param whichUnit unit
----@param whichUnitType unittype
----@return boolean
-function IsUnitType(whichUnit, whichUnitType) end	-- (native)
-
----@param whichUnit unit
----@param whichSpecifiedUnit unit
----@return boolean
-function IsUnit(whichUnit, whichSpecifiedUnit) end	-- (native)
-
----@param whichUnit unit
----@param otherUnit unit
----@param distance number
----@return boolean
-function IsUnitInRange(whichUnit, otherUnit, distance) end	-- (native)
-
----@param whichUnit unit
----@param x number
----@param y number
----@param distance number
----@return boolean
-function IsUnitInRangeXY(whichUnit, x, y, distance) end	-- (native)
-
----@param whichUnit unit
----@param whichLocation location
----@param distance number
----@return boolean
-function IsUnitInRangeLoc(whichUnit, whichLocation, distance) end	-- (native)
-
----@param whichUnit unit
----@return boolean
-function IsUnitHidden(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return boolean
-function IsUnitIllusion(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param whichTransport unit
----@return boolean
-function IsUnitInTransport(whichUnit, whichTransport) end	-- (native)
-
----@param whichUnit unit
----@return boolean
-function IsUnitLoaded(whichUnit) end	-- (native)
-
----@param unitId integer
----@return boolean
-function IsHeroUnitId(unitId) end	-- (native)
-
----@param unitId integer
----@param whichUnitType unittype
----@return boolean
-function IsUnitIdType(unitId, whichUnitType) end	-- (native)
-
----@param whichUnit unit
----@param whichPlayer player
----@param share boolean
-function UnitShareVision(whichUnit, whichPlayer, share) end	-- (native)
-
----@param whichUnit unit
----@param suspend boolean
-function UnitSuspendDecay(whichUnit, suspend) end	-- (native)
-
----@param whichUnit unit
----@param whichUnitType unittype
----@return boolean
-function UnitAddType(whichUnit, whichUnitType) end	-- (native)
-
----@param whichUnit unit
----@param whichUnitType unittype
----@return boolean
-function UnitRemoveType(whichUnit, whichUnitType) end	-- (native)
-
----@param whichUnit unit
----@param abilityId integer
----@return boolean
-function UnitAddAbility(whichUnit, abilityId) end	-- (native)
-
----@param whichUnit unit
----@param abilityId integer
----@return boolean
-function UnitRemoveAbility(whichUnit, abilityId) end	-- (native)
-
----@param whichUnit unit
----@param permanent boolean
----@param abilityId integer
----@return boolean
-function UnitMakeAbilityPermanent(whichUnit, permanent, abilityId) end	-- (native)
-
----@param whichUnit unit
----@param removePositive boolean
----@param removeNegative boolean
-function UnitRemoveBuffs(whichUnit, removePositive, removeNegative) end	-- (native)
-
----@param whichUnit unit
----@param removePositive boolean
----@param removeNegative boolean
----@param magic boolean
----@param physical boolean
----@param timedLife boolean
----@param aura boolean
----@param autoDispel boolean
-function UnitRemoveBuffsEx(whichUnit, removePositive, removeNegative, magic, physical, timedLife, aura, autoDispel) end	-- (native)
-
----@param whichUnit unit
----@param removePositive boolean
----@param removeNegative boolean
----@param magic boolean
----@param physical boolean
----@param timedLife boolean
----@param aura boolean
----@param autoDispel boolean
----@return boolean
-function UnitHasBuffsEx(whichUnit, removePositive, removeNegative, magic, physical, timedLife, aura, autoDispel) end	-- (native)
-
----@param whichUnit unit
----@param removePositive boolean
----@param removeNegative boolean
----@param magic boolean
----@param physical boolean
----@param timedLife boolean
----@param aura boolean
----@param autoDispel boolean
----@return integer
-function UnitCountBuffsEx(whichUnit, removePositive, removeNegative, magic, physical, timedLife, aura, autoDispel) end	-- (native)
-
----@param whichUnit unit
----@param add boolean
-function UnitAddSleep(whichUnit, add) end	-- (native)
-
----@param whichUnit unit
----@return boolean
-function UnitCanSleep(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param add boolean
-function UnitAddSleepPerm(whichUnit, add) end	-- (native)
-
----@param whichUnit unit
----@return boolean
-function UnitCanSleepPerm(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return boolean
-function UnitIsSleeping(whichUnit) end	-- (native)
-
----@param whichUnit unit
-function UnitWakeUp(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param buffId integer
----@param duration number
-function UnitApplyTimedLife(whichUnit, buffId, duration) end	-- (native)
-
----@param whichUnit unit
----@param flag boolean
----@return boolean
-function UnitIgnoreAlarm(whichUnit, flag) end	-- (native)
-
----@param whichUnit unit
----@return boolean
-function UnitIgnoreAlarmToggled(whichUnit) end	-- (native)
-
----@param whichUnit unit
-function UnitResetCooldown(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param constructionPercentage integer
-function UnitSetConstructionProgress(whichUnit, constructionPercentage) end	-- (native)
-
----@param whichUnit unit
----@param upgradePercentage integer
-function UnitSetUpgradeProgress(whichUnit, upgradePercentage) end	-- (native)
-
----@param whichUnit unit
----@param flag boolean
-function UnitPauseTimedLife(whichUnit, flag) end	-- (native)
-
----@param whichUnit unit
----@param flag boolean
-function UnitSetUsesAltIcon(whichUnit, flag) end	-- (native)
-
----@param whichUnit unit
----@param delay number
----@param radius number
----@param x number
----@param y number
----@param amount number
----@param attack boolean
----@param ranged boolean
----@param attackType attacktype
----@param damageType damagetype
----@param weaponType weapontype
----@return boolean
-function UnitDamagePoint(whichUnit, delay, radius, x, y, amount, attack, ranged, attackType, damageType, weaponType) end	-- (native)
-
----@param whichUnit unit
----@param target widget
----@param amount number
----@param attack boolean
----@param ranged boolean
----@param attackType attacktype
----@param damageType damagetype
----@param weaponType weapontype
----@return boolean
-function UnitDamageTarget(whichUnit, target, amount, attack, ranged, attackType, damageType, weaponType) end	-- (native)
-
----@param whichUnit unit
----@param order string
----@return boolean
-function IssueImmediateOrder(whichUnit, order) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@return boolean
-function IssueImmediateOrderById(whichUnit, order) end	-- (native)
-
----@param whichUnit unit
----@param order string
----@param x number
----@param y number
----@return boolean
-function IssuePointOrder(whichUnit, order, x, y) end	-- (native)
-
----@param whichUnit unit
----@param order string
----@param whichLocation location
----@return boolean
-function IssuePointOrderLoc(whichUnit, order, whichLocation) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@param x number
----@param y number
----@return boolean
-function IssuePointOrderById(whichUnit, order, x, y) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@param whichLocation location
----@return boolean
-function IssuePointOrderByIdLoc(whichUnit, order, whichLocation) end	-- (native)
-
----@param whichUnit unit
----@param order string
----@param targetWidget widget
----@return boolean
-function IssueTargetOrder(whichUnit, order, targetWidget) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@param targetWidget widget
----@return boolean
-function IssueTargetOrderById(whichUnit, order, targetWidget) end	-- (native)
-
----@param whichUnit unit
----@param order string
----@param x number
----@param y number
----@param instantTargetWidget widget
----@return boolean
-function IssueInstantPointOrder(whichUnit, order, x, y, instantTargetWidget) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@param x number
----@param y number
----@param instantTargetWidget widget
----@return boolean
-function IssueInstantPointOrderById(whichUnit, order, x, y, instantTargetWidget) end	-- (native)
-
----@param whichUnit unit
----@param order string
----@param targetWidget widget
----@param instantTargetWidget widget
----@return boolean
-function IssueInstantTargetOrder(whichUnit, order, targetWidget, instantTargetWidget) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@param targetWidget widget
----@param instantTargetWidget widget
----@return boolean
-function IssueInstantTargetOrderById(whichUnit, order, targetWidget, instantTargetWidget) end	-- (native)
-
----@param whichPeon unit
----@param unitToBuild string
----@param x number
----@param y number
----@return boolean
-function IssueBuildOrder(whichPeon, unitToBuild, x, y) end	-- (native)
-
----@param whichPeon unit
----@param unitId integer
----@param x number
----@param y number
----@return boolean
-function IssueBuildOrderById(whichPeon, unitId, x, y) end	-- (native)
-
----@param forWhichPlayer player
----@param neutralStructure unit
----@param unitToBuild string
----@return boolean
-function IssueNeutralImmediateOrder(forWhichPlayer, neutralStructure, unitToBuild) end	-- (native)
-
----@param forWhichPlayer player
----@param neutralStructure unit
----@param unitId integer
----@return boolean
-function IssueNeutralImmediateOrderById(forWhichPlayer, neutralStructure, unitId) end	-- (native)
-
----@param forWhichPlayer player
----@param neutralStructure unit
----@param unitToBuild string
----@param x number
----@param y number
----@return boolean
-function IssueNeutralPointOrder(forWhichPlayer, neutralStructure, unitToBuild, x, y) end	-- (native)
-
----@param forWhichPlayer player
----@param neutralStructure unit
----@param unitId integer
----@param x number
----@param y number
----@return boolean
-function IssueNeutralPointOrderById(forWhichPlayer, neutralStructure, unitId, x, y) end	-- (native)
-
----@param forWhichPlayer player
----@param neutralStructure unit
----@param unitToBuild string
----@param target widget
----@return boolean
-function IssueNeutralTargetOrder(forWhichPlayer, neutralStructure, unitToBuild, target) end	-- (native)
-
----@param forWhichPlayer player
----@param neutralStructure unit
----@param unitId integer
----@param target widget
----@return boolean
-function IssueNeutralTargetOrderById(forWhichPlayer, neutralStructure, unitId, target) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function GetUnitCurrentOrder(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param amount integer
-function SetResourceAmount(whichUnit, amount) end	-- (native)
-
----@param whichUnit unit
----@param amount integer
-function AddResourceAmount(whichUnit, amount) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function GetResourceAmount(whichUnit) end	-- (native)
-
----@param waygate unit
----@return number
-function WaygateGetDestinationX(waygate) end	-- (native)
-
----@param waygate unit
----@return number
-function WaygateGetDestinationY(waygate) end	-- (native)
-
----@param waygate unit
----@param x number
----@param y number
-function WaygateSetDestination(waygate, x, y) end	-- (native)
-
----@param waygate unit
----@param activate boolean
-function WaygateActivate(waygate, activate) end	-- (native)
-
----@param waygate unit
----@return boolean
-function WaygateIsActive(waygate) end	-- (native)
-
----@param itemId integer
----@param currentStock integer
----@param stockMax integer
-function AddItemToAllStock(itemId, currentStock, stockMax) end	-- (native)
-
----@param whichUnit unit
----@param itemId integer
----@param currentStock integer
----@param stockMax integer
-function AddItemToStock(whichUnit, itemId, currentStock, stockMax) end	-- (native)
-
----@param unitId integer
----@param currentStock integer
----@param stockMax integer
-function AddUnitToAllStock(unitId, currentStock, stockMax) end	-- (native)
-
----@param whichUnit unit
----@param unitId integer
----@param currentStock integer
----@param stockMax integer
-function AddUnitToStock(whichUnit, unitId, currentStock, stockMax) end	-- (native)
-
----@param itemId integer
-function RemoveItemFromAllStock(itemId) end	-- (native)
-
----@param whichUnit unit
----@param itemId integer
-function RemoveItemFromStock(whichUnit, itemId) end	-- (native)
-
----@param unitId integer
-function RemoveUnitFromAllStock(unitId) end	-- (native)
-
----@param whichUnit unit
----@param unitId integer
-function RemoveUnitFromStock(whichUnit, unitId) end	-- (native)
-
----@param slots integer
-function SetAllItemTypeSlots(slots) end	-- (native)
-
----@param slots integer
-function SetAllUnitTypeSlots(slots) end	-- (native)
-
----@param whichUnit unit
----@param slots integer
-function SetItemTypeSlots(whichUnit, slots) end	-- (native)
-
----@param whichUnit unit
----@param slots integer
-function SetUnitTypeSlots(whichUnit, slots) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function GetUnitUserData(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param data integer
-function SetUnitUserData(whichUnit, data) end	-- (native)
-
--- ============================================================================
---  Player API
-
----@param number integer
----@return player
-function Player(number) end	-- (native)
-
----@return player
-function GetLocalPlayer() end	-- (native)
-
----@param whichPlayer player
----@param otherPlayer player
----@return boolean
-function IsPlayerAlly(whichPlayer, otherPlayer) end	-- (native)
-
----@param whichPlayer player
----@param otherPlayer player
----@return boolean
-function IsPlayerEnemy(whichPlayer, otherPlayer) end	-- (native)
-
----@param whichPlayer player
----@param whichForce force
----@return boolean
-function IsPlayerInForce(whichPlayer, whichForce) end	-- (native)
-
----@param whichPlayer player
----@return boolean
-function IsPlayerObserver(whichPlayer) end	-- (native)
-
----@param x number
----@param y number
----@param whichPlayer player
----@return boolean
-function IsVisibleToPlayer(x, y, whichPlayer) end	-- (native)
-
----@param whichLocation location
----@param whichPlayer player
----@return boolean
-function IsLocationVisibleToPlayer(whichLocation, whichPlayer) end	-- (native)
-
----@param x number
----@param y number
----@param whichPlayer player
----@return boolean
-function IsFoggedToPlayer(x, y, whichPlayer) end	-- (native)
-
----@param whichLocation location
----@param whichPlayer player
----@return boolean
-function IsLocationFoggedToPlayer(whichLocation, whichPlayer) end	-- (native)
-
----@param x number
----@param y number
----@param whichPlayer player
----@return boolean
-function IsMaskedToPlayer(x, y, whichPlayer) end	-- (native)
-
----@param whichLocation location
----@param whichPlayer player
----@return boolean
-function IsLocationMaskedToPlayer(whichLocation, whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return race
-function GetPlayerRace(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return integer
-function GetPlayerId(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@param includeIncomplete boolean
----@return integer
-function GetPlayerUnitCount(whichPlayer, includeIncomplete) end	-- (native)
-
----@param whichPlayer player
----@param unitName string
----@param includeIncomplete boolean
----@param includeUpgrades boolean
----@return integer
-function GetPlayerTypedUnitCount(whichPlayer, unitName, includeIncomplete, includeUpgrades) end	-- (native)
-
----@param whichPlayer player
----@param includeIncomplete boolean
----@return integer
-function GetPlayerStructureCount(whichPlayer, includeIncomplete) end	-- (native)
-
----@param whichPlayer player
----@param whichPlayerState playerstate
----@return integer
-function GetPlayerState(whichPlayer, whichPlayerState) end	-- (native)
-
----@param whichPlayer player
----@param whichPlayerScore playerscore
----@return integer
-function GetPlayerScore(whichPlayer, whichPlayerScore) end	-- (native)
-
----@param sourcePlayer player
----@param otherPlayer player
----@param whichAllianceSetting alliancetype
----@return boolean
-function GetPlayerAlliance(sourcePlayer, otherPlayer, whichAllianceSetting) end	-- (native)
-
----@param whichPlayer player
----@return number
-function GetPlayerHandicap(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return number
-function GetPlayerHandicapXP(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return number
-function GetPlayerHandicapReviveTime(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@return number
-function GetPlayerHandicapDamage(whichPlayer) end	-- (native)
-
----@param whichPlayer player
----@param handicap number
-function SetPlayerHandicap(whichPlayer, handicap) end	-- (native)
-
----@param whichPlayer player
----@param handicap number
-function SetPlayerHandicapXP(whichPlayer, handicap) end	-- (native)
-
----@param whichPlayer player
----@param handicap number
-function SetPlayerHandicapReviveTime(whichPlayer, handicap) end	-- (native)
-
----@param whichPlayer player
----@param handicap number
-function SetPlayerHandicapDamage(whichPlayer, handicap) end	-- (native)
-
----@param whichPlayer player
----@param techid integer
----@param maximum integer
-function SetPlayerTechMaxAllowed(whichPlayer, techid, maximum) end	-- (native)
-
----@param whichPlayer player
----@param techid integer
----@return integer
-function GetPlayerTechMaxAllowed(whichPlayer, techid) end	-- (native)
-
----@param whichPlayer player
----@param techid integer
----@param levels integer
-function AddPlayerTechResearched(whichPlayer, techid, levels) end	-- (native)
-
----@param whichPlayer player
----@param techid integer
----@param setToLevel integer
-function SetPlayerTechResearched(whichPlayer, techid, setToLevel) end	-- (native)
-
----@param whichPlayer player
----@param techid integer
----@param specificonly boolean
----@return boolean
-function GetPlayerTechResearched(whichPlayer, techid, specificonly) end	-- (native)
-
----@param whichPlayer player
----@param techid integer
----@param specificonly boolean
----@return integer
-function GetPlayerTechCount(whichPlayer, techid, specificonly) end	-- (native)
-
----@param whichPlayer player
----@param newOwner integer
-function SetPlayerUnitsOwner(whichPlayer, newOwner) end	-- (native)
-
----@param whichPlayer player
----@param toWhichPlayers force
----@param flag boolean
-function CripplePlayer(whichPlayer, toWhichPlayers, flag) end	-- (native)
-
----@param whichPlayer player
----@param abilid integer
----@param avail boolean
-function SetPlayerAbilityAvailable(whichPlayer, abilid, avail) end	-- (native)
-
----@param whichPlayer player
----@param whichPlayerState playerstate
----@param value integer
-function SetPlayerState(whichPlayer, whichPlayerState, value) end	-- (native)
-
----@param whichPlayer player
----@param gameResult playergameresult
-function RemovePlayer(whichPlayer, gameResult) end	-- (native)
-
---  Used to store hero level data for the scorescreen
---  before units are moved to neutral passive in melee games
-
----@param whichPlayer player
-function CachePlayerHeroData(whichPlayer) end	-- (native)
-
--- ============================================================================
---  Fog of War API
-
----@param forWhichPlayer player
----@param whichState fogstate
----@param where rect
----@param useSharedVision boolean
-function SetFogStateRect(forWhichPlayer, whichState, where, useSharedVision) end	-- (native)
-
----@param forWhichPlayer player
----@param whichState fogstate
----@param centerx number
----@param centerY number
----@param radius number
----@param useSharedVision boolean
-function SetFogStateRadius(forWhichPlayer, whichState, centerx, centerY, radius, useSharedVision) end	-- (native)
-
----@param forWhichPlayer player
----@param whichState fogstate
----@param center location
----@param radius number
----@param useSharedVision boolean
-function SetFogStateRadiusLoc(forWhichPlayer, whichState, center, radius, useSharedVision) end	-- (native)
-
----@param enable boolean
-function FogMaskEnable(enable) end	-- (native)
-
----@return boolean
-function IsFogMaskEnabled() end	-- (native)
-
----@param enable boolean
-function FogEnable(enable) end	-- (native)
-
----@return boolean
-function IsFogEnabled() end	-- (native)
-
----@param forWhichPlayer player
----@param whichState fogstate
----@param where rect
----@param useSharedVision boolean
----@param afterUnits boolean
----@return fogmodifier
-function CreateFogModifierRect(forWhichPlayer, whichState, where, useSharedVision, afterUnits) end	-- (native)
-
----@param forWhichPlayer player
----@param whichState fogstate
----@param centerx number
----@param centerY number
----@param radius number
----@param useSharedVision boolean
----@param afterUnits boolean
----@return fogmodifier
-function CreateFogModifierRadius(forWhichPlayer, whichState, centerx, centerY, radius, useSharedVision, afterUnits) end	-- (native)
-
----@param forWhichPlayer player
----@param whichState fogstate
----@param center location
----@param radius number
----@param useSharedVision boolean
----@param afterUnits boolean
----@return fogmodifier
-function CreateFogModifierRadiusLoc(forWhichPlayer, whichState, center, radius, useSharedVision, afterUnits) end	-- (native)
-
----@param whichFogModifier fogmodifier
-function DestroyFogModifier(whichFogModifier) end	-- (native)
-
----@param whichFogModifier fogmodifier
-function FogModifierStart(whichFogModifier) end	-- (native)
-
----@param whichFogModifier fogmodifier
-function FogModifierStop(whichFogModifier) end	-- (native)
-
--- ============================================================================
---  Game API
-
----@return version
-function VersionGet() end	-- (native)
-
----@param whichVersion version
----@return boolean
-function VersionCompatible(whichVersion) end	-- (native)
-
----@param whichVersion version
----@return boolean
-function VersionSupported(whichVersion) end	-- (native)
-
----@param doScoreScreen boolean
-function EndGame(doScoreScreen) end	-- (native)
-
---  Async only!
----@param newLevel string
----@param doScoreScreen boolean
-function ChangeLevel(newLevel, doScoreScreen) end	-- (native)
-
----@param doScoreScreen boolean
-function RestartGame(doScoreScreen) end	-- (native)
-
-function ReloadGame() end	-- (native)
-
---  %%% SetCampaignMenuRace is deprecated.  It must remain to support
---  old maps which use it, but all new maps should use SetCampaignMenuRaceEx
----@param r race
-function SetCampaignMenuRace(r) end	-- (native)
-
----@param campaignIndex integer
-function SetCampaignMenuRaceEx(campaignIndex) end	-- (native)
-
-function ForceCampaignSelectScreen() end	-- (native)
-
----@param saveFileName string
----@param doScoreScreen boolean
-function LoadGame(saveFileName, doScoreScreen) end	-- (native)
-
----@param saveFileName string
-function SaveGame(saveFileName) end	-- (native)
-
----@param sourceDirName string
----@param destDirName string
----@return boolean
-function RenameSaveDirectory(sourceDirName, destDirName) end	-- (native)
-
----@param sourceDirName string
----@return boolean
-function RemoveSaveDirectory(sourceDirName) end	-- (native)
-
----@param sourceSaveName string
----@param destSaveName string
----@return boolean
-function CopySaveGame(sourceSaveName, destSaveName) end	-- (native)
-
----@param saveName string
----@return boolean
-function SaveGameExists(saveName) end	-- (native)
-
----@param maxCheckpointSaves integer
-function SetMaxCheckpointSaves(maxCheckpointSaves) end	-- (native)
-
----@param saveFileName string
----@param showWindow boolean
-function SaveGameCheckpoint(saveFileName, showWindow) end	-- (native)
-
-function SyncSelections() end	-- (native)
-
----@param whichFloatGameState fgamestate
----@param value number
-function SetFloatGameState(whichFloatGameState, value) end	-- (native)
-
----@param whichFloatGameState fgamestate
----@return number
-function GetFloatGameState(whichFloatGameState) end	-- (native)
-
----@param whichIntegerGameState igamestate
----@param value integer
-function SetIntegerGameState(whichIntegerGameState, value) end	-- (native)
-
----@param whichIntegerGameState igamestate
----@return integer
-function GetIntegerGameState(whichIntegerGameState) end	-- (native)
-
--- ============================================================================
---  Campaign API
-
----@param cleared boolean
-function SetTutorialCleared(cleared) end	-- (native)
-
----@param campaignNumber integer
----@param missionNumber integer
----@param available boolean
-function SetMissionAvailable(campaignNumber, missionNumber, available) end	-- (native)
-
----@param campaignNumber integer
----@param available boolean
-function SetCampaignAvailable(campaignNumber, available) end	-- (native)
-
----@param campaignNumber integer
----@param available boolean
-function SetOpCinematicAvailable(campaignNumber, available) end	-- (native)
-
----@param campaignNumber integer
----@param available boolean
-function SetEdCinematicAvailable(campaignNumber, available) end	-- (native)
-
----@return gamedifficulty
-function GetDefaultDifficulty() end	-- (native)
-
----@param g gamedifficulty
-function SetDefaultDifficulty(g) end	-- (native)
-
----@param whichButton integer
----@param visible boolean
-function SetCustomCampaignButtonVisible(whichButton, visible) end	-- (native)
-
----@param whichButton integer
----@return boolean
-function GetCustomCampaignButtonVisible(whichButton) end	-- (native)
-
-function DoNotSaveReplay() end	-- (native)
-
--- ============================================================================
---  Dialog API
-
----@return dialog
-function DialogCreate() end	-- (native)
-
----@param whichDialog dialog
-function DialogDestroy(whichDialog) end	-- (native)
-
----@param whichDialog dialog
-function DialogClear(whichDialog) end	-- (native)
-
----@param whichDialog dialog
----@param messageText string
-function DialogSetMessage(whichDialog, messageText) end	-- (native)
-
----@param whichDialog dialog
----@param buttonText string
----@param hotkey integer
----@return button
-function DialogAddButton(whichDialog, buttonText, hotkey) end	-- (native)
-
----@param whichDialog dialog
----@param doScoreScreen boolean
----@param buttonText string
----@param hotkey integer
----@return button
-function DialogAddQuitButton(whichDialog, doScoreScreen, buttonText, hotkey) end	-- (native)
-
----@param whichPlayer player
----@param whichDialog dialog
----@param flag boolean
-function DialogDisplay(whichPlayer, whichDialog, flag) end	-- (native)
-
---  Creates a new or reads in an existing game cache file stored
---  in the current campaign profile dir
----@return boolean
-function ReloadGameCachesFromDisk() end	-- (native)
-
----@param campaignFile string
----@return gamecache
-function InitGameCache(campaignFile) end	-- (native)
-
----@param whichCache gamecache
----@return boolean
-function SaveGameCache(whichCache) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@param value integer
-function StoreInteger(cache, missionKey, key, value) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@param value number
-function StoreReal(cache, missionKey, key, value) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@param value boolean
-function StoreBoolean(cache, missionKey, key, value) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@param whichUnit unit
----@return boolean
-function StoreUnit(cache, missionKey, key, whichUnit) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@param value string
----@return boolean
-function StoreString(cache, missionKey, key, value) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function SyncStoredInteger(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function SyncStoredReal(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function SyncStoredBoolean(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function SyncStoredUnit(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function SyncStoredString(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@return boolean
-function HaveStoredInteger(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@return boolean
-function HaveStoredReal(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@return boolean
-function HaveStoredBoolean(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@return boolean
-function HaveStoredUnit(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@return boolean
-function HaveStoredString(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
-function FlushGameCache(cache) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
-function FlushStoredMission(cache, missionKey) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function FlushStoredInteger(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function FlushStoredReal(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function FlushStoredBoolean(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function FlushStoredUnit(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
-function FlushStoredString(cache, missionKey, key) end	-- (native)
-
---  Will return 0 if the specified value's data is not found in the cache
----@param cache gamecache
----@param missionKey string
----@param key string
----@return integer
-function GetStoredInteger(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@return number
-function GetStoredReal(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@return boolean
-function GetStoredBoolean(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@return string
-function GetStoredString(cache, missionKey, key) end	-- (native)
-
----@param cache gamecache
----@param missionKey string
----@param key string
----@param forWhichPlayer player
----@param x number
----@param y number
----@param facing number
----@return unit
-function RestoreUnit(cache, missionKey, key, forWhichPlayer, x, y, facing) end	-- (native)
-
----@return hashtable
-function InitHashtable() end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param value integer
-function SaveInteger(table, parentKey, childKey, value) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param value number
-function SaveReal(table, parentKey, childKey, value) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param value boolean
-function SaveBoolean(table, parentKey, childKey, value) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param value string
----@return boolean
-function SaveStr(table, parentKey, childKey, value) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichPlayer player
----@return boolean
-function SavePlayerHandle(table, parentKey, childKey, whichPlayer) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichWidget widget
----@return boolean
-function SaveWidgetHandle(table, parentKey, childKey, whichWidget) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichDestructable destructable
----@return boolean
-function SaveDestructableHandle(table, parentKey, childKey, whichDestructable) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichItem item
----@return boolean
-function SaveItemHandle(table, parentKey, childKey, whichItem) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichUnit unit
----@return boolean
-function SaveUnitHandle(table, parentKey, childKey, whichUnit) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichAbility ability
----@return boolean
-function SaveAbilityHandle(table, parentKey, childKey, whichAbility) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichTimer timer
----@return boolean
-function SaveTimerHandle(table, parentKey, childKey, whichTimer) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichTrigger trigger
----@return boolean
-function SaveTriggerHandle(table, parentKey, childKey, whichTrigger) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichTriggercondition triggercondition
----@return boolean
-function SaveTriggerConditionHandle(table, parentKey, childKey, whichTriggercondition) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichTriggeraction triggeraction
----@return boolean
-function SaveTriggerActionHandle(table, parentKey, childKey, whichTriggeraction) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichEvent event
----@return boolean
-function SaveTriggerEventHandle(table, parentKey, childKey, whichEvent) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichForce force
----@return boolean
-function SaveForceHandle(table, parentKey, childKey, whichForce) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichGroup group
----@return boolean
-function SaveGroupHandle(table, parentKey, childKey, whichGroup) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichLocation location
----@return boolean
-function SaveLocationHandle(table, parentKey, childKey, whichLocation) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichRect rect
----@return boolean
-function SaveRectHandle(table, parentKey, childKey, whichRect) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichBoolexpr? boolexpr
----@return boolean
-function SaveBooleanExprHandle(table, parentKey, childKey, whichBoolexpr) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichSound sound
----@return boolean
-function SaveSoundHandle(table, parentKey, childKey, whichSound) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichEffect effect
----@return boolean
-function SaveEffectHandle(table, parentKey, childKey, whichEffect) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichUnitpool unitpool
----@return boolean
-function SaveUnitPoolHandle(table, parentKey, childKey, whichUnitpool) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichItempool itempool
----@return boolean
-function SaveItemPoolHandle(table, parentKey, childKey, whichItempool) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichQuest quest
----@return boolean
-function SaveQuestHandle(table, parentKey, childKey, whichQuest) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichQuestitem questitem
----@return boolean
-function SaveQuestItemHandle(table, parentKey, childKey, whichQuestitem) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichDefeatcondition defeatcondition
----@return boolean
-function SaveDefeatConditionHandle(table, parentKey, childKey, whichDefeatcondition) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichTimerdialog timerdialog
----@return boolean
-function SaveTimerDialogHandle(table, parentKey, childKey, whichTimerdialog) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichLeaderboard leaderboard
----@return boolean
-function SaveLeaderboardHandle(table, parentKey, childKey, whichLeaderboard) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichMultiboard multiboard
----@return boolean
-function SaveMultiboardHandle(table, parentKey, childKey, whichMultiboard) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichMultiboarditem multiboarditem
----@return boolean
-function SaveMultiboardItemHandle(table, parentKey, childKey, whichMultiboarditem) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichTrackable trackable
----@return boolean
-function SaveTrackableHandle(table, parentKey, childKey, whichTrackable) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichDialog dialog
----@return boolean
-function SaveDialogHandle(table, parentKey, childKey, whichDialog) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichButton button
----@return boolean
-function SaveButtonHandle(table, parentKey, childKey, whichButton) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichTexttag texttag
----@return boolean
-function SaveTextTagHandle(table, parentKey, childKey, whichTexttag) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichLightning lightning
----@return boolean
-function SaveLightningHandle(table, parentKey, childKey, whichLightning) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichImage image
----@return boolean
-function SaveImageHandle(table, parentKey, childKey, whichImage) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichUbersplat ubersplat
----@return boolean
-function SaveUbersplatHandle(table, parentKey, childKey, whichUbersplat) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichRegion region
----@return boolean
-function SaveRegionHandle(table, parentKey, childKey, whichRegion) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichFogState fogstate
----@return boolean
-function SaveFogStateHandle(table, parentKey, childKey, whichFogState) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichFogModifier fogmodifier
----@return boolean
-function SaveFogModifierHandle(table, parentKey, childKey, whichFogModifier) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichAgent agent
----@return boolean
-function SaveAgentHandle(table, parentKey, childKey, whichAgent) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichHashtable hashtable
----@return boolean
-function SaveHashtableHandle(table, parentKey, childKey, whichHashtable) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@param whichFrameHandle framehandle
----@return boolean
-function SaveFrameHandle(table, parentKey, childKey, whichFrameHandle) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return integer
-function LoadInteger(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return number
-function LoadReal(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return boolean
-function LoadBoolean(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return string
-function LoadStr(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return player
-function LoadPlayerHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return widget
-function LoadWidgetHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return destructable
-function LoadDestructableHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return item
-function LoadItemHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return unit
-function LoadUnitHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return ability
-function LoadAbilityHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return timer
-function LoadTimerHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return trigger
-function LoadTriggerHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return triggercondition
-function LoadTriggerConditionHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return triggeraction
-function LoadTriggerActionHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return event
-function LoadTriggerEventHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return force
-function LoadForceHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return group
-function LoadGroupHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return location
-function LoadLocationHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return rect
-function LoadRectHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return boolexpr
-function LoadBooleanExprHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return sound
-function LoadSoundHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return effect
-function LoadEffectHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return unitpool
-function LoadUnitPoolHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return itempool
-function LoadItemPoolHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return quest
-function LoadQuestHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return questitem
-function LoadQuestItemHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return defeatcondition
-function LoadDefeatConditionHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return timerdialog
-function LoadTimerDialogHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return leaderboard
-function LoadLeaderboardHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return multiboard
-function LoadMultiboardHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return multiboarditem
-function LoadMultiboardItemHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return trackable
-function LoadTrackableHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return dialog
-function LoadDialogHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return button
-function LoadButtonHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return texttag
-function LoadTextTagHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return lightning
-function LoadLightningHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return image
-function LoadImageHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return ubersplat
-function LoadUbersplatHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return region
-function LoadRegionHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return fogstate
-function LoadFogStateHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return fogmodifier
-function LoadFogModifierHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return hashtable
-function LoadHashtableHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return framehandle
-function LoadFrameHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return boolean
-function HaveSavedInteger(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return boolean
-function HaveSavedReal(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return boolean
-function HaveSavedBoolean(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return boolean
-function HaveSavedString(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
----@return boolean
-function HaveSavedHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
-function RemoveSavedInteger(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
-function RemoveSavedReal(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
-function RemoveSavedBoolean(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
-function RemoveSavedString(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
----@param childKey integer
-function RemoveSavedHandle(table, parentKey, childKey) end	-- (native)
-
----@param table hashtable
-function FlushParentHashtable(table) end	-- (native)
-
----@param table hashtable
----@param parentKey integer
-function FlushChildHashtable(table, parentKey) end	-- (native)
-
--- ============================================================================
---  Randomization API
-
----@param lowBound integer
----@param highBound integer
----@return integer
-function GetRandomInt(lowBound, highBound) end	-- (native)
-
----@param lowBound number
----@param highBound number
----@return number
-function GetRandomReal(lowBound, highBound) end	-- (native)
-
----@return unitpool
-function CreateUnitPool() end	-- (native)
-
----@param whichPool unitpool
-function DestroyUnitPool(whichPool) end	-- (native)
-
----@param whichPool unitpool
----@param unitId integer
----@param weight number
-function UnitPoolAddUnitType(whichPool, unitId, weight) end	-- (native)
-
----@param whichPool unitpool
----@param unitId integer
-function UnitPoolRemoveUnitType(whichPool, unitId) end	-- (native)
-
----@param whichPool unitpool
----@param forWhichPlayer player
----@param x number
----@param y number
----@param facing number
----@return unit
-function PlaceRandomUnit(whichPool, forWhichPlayer, x, y, facing) end	-- (native)
-
----@return itempool
-function CreateItemPool() end	-- (native)
-
----@param whichItemPool itempool
-function DestroyItemPool(whichItemPool) end	-- (native)
-
----@param whichItemPool itempool
----@param itemId integer
----@param weight number
-function ItemPoolAddItemType(whichItemPool, itemId, weight) end	-- (native)
-
----@param whichItemPool itempool
----@param itemId integer
-function ItemPoolRemoveItemType(whichItemPool, itemId) end	-- (native)
-
----@param whichItemPool itempool
----@param x number
----@param y number
----@return item
-function PlaceRandomItem(whichItemPool, x, y) end	-- (native)
-
---  Choose any random unit/item. (NP means Neutral Passive)
----@param level integer
----@return integer
-function ChooseRandomCreep(level) end	-- (native)
-
----@return integer
-function ChooseRandomNPBuilding() end	-- (native)
-
----@param level integer
----@return integer
-function ChooseRandomItem(level) end	-- (native)
-
----@param whichType itemtype
----@param level integer
----@return integer
-function ChooseRandomItemEx(whichType, level) end	-- (native)
-
----@param seed integer
-function SetRandomSeed(seed) end	-- (native)
-
--- ============================================================================
---  Visual API
-
----@param a number
----@param b number
----@param c number
----@param d number
----@param e number
-function SetTerrainFog(a, b, c, d, e) end	-- (native)
-
-function ResetTerrainFog() end	-- (native)
-
----@param a number
----@param b number
----@param c number
----@param d number
----@param e number
-function SetUnitFog(a, b, c, d, e) end	-- (native)
-
----@param style integer
----@param zstart number
----@param zend number
----@param density number
----@param red number
----@param green number
----@param blue number
-function SetTerrainFogEx(style, zstart, zend, density, red, green, blue) end	-- (native)
-
----@param toPlayer player
----@param x number
----@param y number
----@param message string
-function DisplayTextToPlayer(toPlayer, x, y, message) end	-- (native)
-
----@param toPlayer player
----@param x number
----@param y number
----@param duration number
----@param message string
-function DisplayTimedTextToPlayer(toPlayer, x, y, duration, message) end	-- (native)
-
----@param toPlayer player
----@param x number
----@param y number
----@param duration number
----@param message string
-function DisplayTimedTextFromPlayer(toPlayer, x, y, duration, message) end	-- (native)
-
-function ClearTextMessages() end	-- (native)
-
----@param terrainDNCFile string
----@param unitDNCFile string
-function SetDayNightModels(terrainDNCFile, unitDNCFile) end	-- (native)
-
----@param portraitDNCFile string
-function SetPortraitLight(portraitDNCFile) end	-- (native)
-
----@param skyModelFile string
-function SetSkyModel(skyModelFile) end	-- (native)
-
----@param b boolean
-function EnableUserControl(b) end	-- (native)
-
----@param b boolean
-function EnableUserUI(b) end	-- (native)
-
----@param b boolean
-function SuspendTimeOfDay(b) end	-- (native)
-
----@param r number
-function SetTimeOfDayScale(r) end	-- (native)
-
----@return number
-function GetTimeOfDayScale() end	-- (native)
-
----@param flag boolean
----@param fadeDuration number
-function ShowInterface(flag, fadeDuration) end	-- (native)
-
----@param flag boolean
-function PauseGame(flag) end	-- (native)
-
----@param whichUnit unit
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function UnitAddIndicator(whichUnit, red, green, blue, alpha) end	-- (native)
-
----@param whichWidget widget
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function AddIndicator(whichWidget, red, green, blue, alpha) end	-- (native)
-
----@param x number
----@param y number
----@param duration number
-function PingMinimap(x, y, duration) end	-- (native)
-
----@param x number
----@param y number
----@param duration number
----@param red integer
----@param green integer
----@param blue integer
----@param extraEffects boolean
-function PingMinimapEx(x, y, duration, red, green, blue, extraEffects) end	-- (native)
-
----@param whichUnit unit
----@param red integer
----@param green integer
----@param blue integer
----@param pingPath string
----@param fogVisibility fogstate
----@return minimapicon
-function CreateMinimapIconOnUnit(whichUnit, red, green, blue, pingPath, fogVisibility) end	-- (native)
-
----@param where location
----@param red integer
----@param green integer
----@param blue integer
----@param pingPath string
----@param fogVisibility fogstate
----@return minimapicon
-function CreateMinimapIconAtLoc(where, red, green, blue, pingPath, fogVisibility) end	-- (native)
-
----@param x number
----@param y number
----@param red integer
----@param green integer
----@param blue integer
----@param pingPath string
----@param fogVisibility fogstate
----@return minimapicon
-function CreateMinimapIcon(x, y, red, green, blue, pingPath, fogVisibility) end	-- (native)
-
----@param key string
----@return string
-function SkinManagerGetLocalPath(key) end	-- (native)
-
----@param pingId minimapicon
-function DestroyMinimapIcon(pingId) end	-- (native)
-
----@param whichMinimapIcon minimapicon
----@param visible boolean
-function SetMinimapIconVisible(whichMinimapIcon, visible) end	-- (native)
-
----@param whichMinimapIcon minimapicon
----@param doDestroy boolean
-function SetMinimapIconOrphanDestroy(whichMinimapIcon, doDestroy) end	-- (native)
-
----@param flag boolean
-function EnableOcclusion(flag) end	-- (native)
-
----@param introText string
-function SetIntroShotText(introText) end	-- (native)
-
----@param introModelPath string
-function SetIntroShotModel(introModelPath) end	-- (native)
-
----@param b boolean
-function EnableWorldFogBoundary(b) end	-- (native)
-
----@param modelName string
-function PlayModelCinematic(modelName) end	-- (native)
-
----@param movieName string
-function PlayCinematic(movieName) end	-- (native)
-
----@param key string
-function ForceUIKey(key) end	-- (native)
-
-function ForceUICancel() end	-- (native)
-
-function DisplayLoadDialog() end	-- (native)
-
----@param iconPath string
-function SetAltMinimapIcon(iconPath) end	-- (native)
-
----@param flag boolean
-function DisableRestartMission(flag) end	-- (native)
-
----@return texttag
-function CreateTextTag() end	-- (native)
-
----@param t texttag
-function DestroyTextTag(t) end	-- (native)
-
----@param t texttag
----@param s string
----@param height number
-function SetTextTagText(t, s, height) end	-- (native)
-
----@param t texttag
----@param x number
----@param y number
----@param heightOffset number
-function SetTextTagPos(t, x, y, heightOffset) end	-- (native)
-
----@param t texttag
----@param whichUnit unit
----@param heightOffset number
-function SetTextTagPosUnit(t, whichUnit, heightOffset) end	-- (native)
-
----@param t texttag
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function SetTextTagColor(t, red, green, blue, alpha) end	-- (native)
-
----@param t texttag
----@param xvel number
----@param yvel number
-function SetTextTagVelocity(t, xvel, yvel) end	-- (native)
-
----@param t texttag
----@param flag boolean
-function SetTextTagVisibility(t, flag) end	-- (native)
-
----@param t texttag
----@param flag boolean
-function SetTextTagSuspended(t, flag) end	-- (native)
-
----@param t texttag
----@param flag boolean
-function SetTextTagPermanent(t, flag) end	-- (native)
-
----@param t texttag
----@param age number
-function SetTextTagAge(t, age) end	-- (native)
-
----@param t texttag
----@param lifespan number
-function SetTextTagLifespan(t, lifespan) end	-- (native)
-
----@param t texttag
----@param fadepoint number
-function SetTextTagFadepoint(t, fadepoint) end	-- (native)
-
----@param reserved integer
-function SetReservedLocalHeroButtons(reserved) end	-- (native)
-
----@return integer
-function GetAllyColorFilterState() end	-- (native)
-
----@param state integer
-function SetAllyColorFilterState(state) end	-- (native)
-
----@return boolean
-function GetCreepCampFilterState() end	-- (native)
-
----@param state boolean
-function SetCreepCampFilterState(state) end	-- (native)
-
----@param enableAlly boolean
----@param enableCreep boolean
-function EnableMinimapFilterButtons(enableAlly, enableCreep) end	-- (native)
-
----@param state boolean
----@param ui boolean
-function EnableDragSelect(state, ui) end	-- (native)
-
----@param state boolean
----@param ui boolean
-function EnablePreSelect(state, ui) end	-- (native)
-
----@param state boolean
----@param ui boolean
-function EnableSelect(state, ui) end	-- (native)
-
--- ============================================================================
---  Trackable API
-
----@param trackableModelPath string
----@param x number
----@param y number
----@param facing number
----@return trackable
-function CreateTrackable(trackableModelPath, x, y, facing) end	-- (native)
-
--- ============================================================================
---  Quest API
-
----@return quest
-function CreateQuest() end	-- (native)
-
----@param whichQuest quest
-function DestroyQuest(whichQuest) end	-- (native)
-
----@param whichQuest quest
----@param title string
-function QuestSetTitle(whichQuest, title) end	-- (native)
-
----@param whichQuest quest
----@param description string
-function QuestSetDescription(whichQuest, description) end	-- (native)
-
----@param whichQuest quest
----@param iconPath string
-function QuestSetIconPath(whichQuest, iconPath) end	-- (native)
-
----@param whichQuest quest
----@param required boolean
-function QuestSetRequired(whichQuest, required) end	-- (native)
-
----@param whichQuest quest
----@param completed boolean
-function QuestSetCompleted(whichQuest, completed) end	-- (native)
-
----@param whichQuest quest
----@param discovered boolean
-function QuestSetDiscovered(whichQuest, discovered) end	-- (native)
-
----@param whichQuest quest
----@param failed boolean
-function QuestSetFailed(whichQuest, failed) end	-- (native)
-
----@param whichQuest quest
----@param enabled boolean
-function QuestSetEnabled(whichQuest, enabled) end	-- (native)
-
----@param whichQuest quest
----@return boolean
-function IsQuestRequired(whichQuest) end	-- (native)
-
----@param whichQuest quest
----@return boolean
-function IsQuestCompleted(whichQuest) end	-- (native)
-
----@param whichQuest quest
----@return boolean
-function IsQuestDiscovered(whichQuest) end	-- (native)
-
----@param whichQuest quest
----@return boolean
-function IsQuestFailed(whichQuest) end	-- (native)
-
----@param whichQuest quest
----@return boolean
-function IsQuestEnabled(whichQuest) end	-- (native)
-
----@param whichQuest quest
----@return questitem
-function QuestCreateItem(whichQuest) end	-- (native)
-
----@param whichQuestItem questitem
----@param description string
-function QuestItemSetDescription(whichQuestItem, description) end	-- (native)
-
----@param whichQuestItem questitem
----@param completed boolean
-function QuestItemSetCompleted(whichQuestItem, completed) end	-- (native)
-
----@param whichQuestItem questitem
----@return boolean
-function IsQuestItemCompleted(whichQuestItem) end	-- (native)
-
----@return defeatcondition
-function CreateDefeatCondition() end	-- (native)
-
----@param whichCondition defeatcondition
-function DestroyDefeatCondition(whichCondition) end	-- (native)
-
----@param whichCondition defeatcondition
----@param description string
-function DefeatConditionSetDescription(whichCondition, description) end	-- (native)
-
-function FlashQuestDialogButton() end	-- (native)
-
-function ForceQuestDialogUpdate() end	-- (native)
-
--- ============================================================================
---  Timer Dialog API
-
----@param t? timer
----@return timerdialog
-function CreateTimerDialog(t) end	-- (native)
-
----@param whichDialog timerdialog
-function DestroyTimerDialog(whichDialog) end	-- (native)
-
----@param whichDialog timerdialog
----@param title string
-function TimerDialogSetTitle(whichDialog, title) end	-- (native)
-
----@param whichDialog timerdialog
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function TimerDialogSetTitleColor(whichDialog, red, green, blue, alpha) end	-- (native)
-
----@param whichDialog timerdialog
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function TimerDialogSetTimeColor(whichDialog, red, green, blue, alpha) end	-- (native)
-
----@param whichDialog timerdialog
----@param speedMultFactor number
-function TimerDialogSetSpeed(whichDialog, speedMultFactor) end	-- (native)
-
----@param whichDialog timerdialog
----@param display boolean
-function TimerDialogDisplay(whichDialog, display) end	-- (native)
-
----@param whichDialog timerdialog
----@return boolean
-function IsTimerDialogDisplayed(whichDialog) end	-- (native)
-
----@param whichDialog timerdialog
----@param timeRemaining number
-function TimerDialogSetRealTimeRemaining(whichDialog, timeRemaining) end	-- (native)
-
--- ============================================================================
---  Create a leaderboard object
-
----@return leaderboard
-function CreateLeaderboard() end	-- (native)
-
----@param lb leaderboard
-function DestroyLeaderboard(lb) end	-- (native)
-
----@param lb leaderboard
----@param show boolean
-function LeaderboardDisplay(lb, show) end	-- (native)
-
----@param lb leaderboard
----@return boolean
-function IsLeaderboardDisplayed(lb) end	-- (native)
-
----@param lb leaderboard
----@return integer
-function LeaderboardGetItemCount(lb) end	-- (native)
-
----@param lb leaderboard
----@param count integer
-function LeaderboardSetSizeByItemCount(lb, count) end	-- (native)
-
----@param lb leaderboard
----@param label string
----@param value integer
----@param p player
-function LeaderboardAddItem(lb, label, value, p) end	-- (native)
-
----@param lb leaderboard
----@param index integer
-function LeaderboardRemoveItem(lb, index) end	-- (native)
-
----@param lb leaderboard
----@param p player
-function LeaderboardRemovePlayerItem(lb, p) end	-- (native)
-
----@param lb leaderboard
-function LeaderboardClear(lb) end	-- (native)
-
----@param lb leaderboard
----@param ascending boolean
-function LeaderboardSortItemsByValue(lb, ascending) end	-- (native)
-
----@param lb leaderboard
----@param ascending boolean
-function LeaderboardSortItemsByPlayer(lb, ascending) end	-- (native)
-
----@param lb leaderboard
----@param ascending boolean
-function LeaderboardSortItemsByLabel(lb, ascending) end	-- (native)
-
----@param lb leaderboard
----@param p player
----@return boolean
-function LeaderboardHasPlayerItem(lb, p) end	-- (native)
-
----@param lb leaderboard
----@param p player
----@return integer
-function LeaderboardGetPlayerIndex(lb, p) end	-- (native)
-
----@param lb leaderboard
----@param label string
-function LeaderboardSetLabel(lb, label) end	-- (native)
-
----@param lb leaderboard
----@return string
-function LeaderboardGetLabelText(lb) end	-- (native)
-
----@param toPlayer player
----@param lb leaderboard
-function PlayerSetLeaderboard(toPlayer, lb) end	-- (native)
-
----@param toPlayer player
----@return leaderboard
-function PlayerGetLeaderboard(toPlayer) end	-- (native)
-
----@param lb leaderboard
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function LeaderboardSetLabelColor(lb, red, green, blue, alpha) end	-- (native)
-
----@param lb leaderboard
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function LeaderboardSetValueColor(lb, red, green, blue, alpha) end	-- (native)
-
----@param lb leaderboard
----@param showLabel boolean
----@param showNames boolean
----@param showValues boolean
----@param showIcons boolean
-function LeaderboardSetStyle(lb, showLabel, showNames, showValues, showIcons) end	-- (native)
-
----@param lb leaderboard
----@param whichItem integer
----@param val integer
-function LeaderboardSetItemValue(lb, whichItem, val) end	-- (native)
-
----@param lb leaderboard
----@param whichItem integer
----@param val string
-function LeaderboardSetItemLabel(lb, whichItem, val) end	-- (native)
-
----@param lb leaderboard
----@param whichItem integer
----@param showLabel boolean
----@param showValue boolean
----@param showIcon boolean
-function LeaderboardSetItemStyle(lb, whichItem, showLabel, showValue, showIcon) end	-- (native)
-
----@param lb leaderboard
----@param whichItem integer
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function LeaderboardSetItemLabelColor(lb, whichItem, red, green, blue, alpha) end	-- (native)
-
----@param lb leaderboard
----@param whichItem integer
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function LeaderboardSetItemValueColor(lb, whichItem, red, green, blue, alpha) end	-- (native)
-
--- ============================================================================
---  Create a multiboard object
-
----@return multiboard
-function CreateMultiboard() end	-- (native)
-
----@param lb multiboard
-function DestroyMultiboard(lb) end	-- (native)
-
----@param lb multiboard
----@param show boolean
-function MultiboardDisplay(lb, show) end	-- (native)
-
----@param lb multiboard
----@return boolean
-function IsMultiboardDisplayed(lb) end	-- (native)
-
----@param lb multiboard
----@param minimize boolean
-function MultiboardMinimize(lb, minimize) end	-- (native)
-
----@param lb multiboard
----@return boolean
-function IsMultiboardMinimized(lb) end	-- (native)
-
----@param lb multiboard
-function MultiboardClear(lb) end	-- (native)
-
----@param lb multiboard
----@param label string
-function MultiboardSetTitleText(lb, label) end	-- (native)
-
----@param lb multiboard
----@return string
-function MultiboardGetTitleText(lb) end	-- (native)
-
----@param lb multiboard
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function MultiboardSetTitleTextColor(lb, red, green, blue, alpha) end	-- (native)
-
----@param lb multiboard
----@return integer
-function MultiboardGetRowCount(lb) end	-- (native)
-
----@param lb multiboard
----@return integer
-function MultiboardGetColumnCount(lb) end	-- (native)
-
----@param lb multiboard
----@param count integer
-function MultiboardSetColumnCount(lb, count) end	-- (native)
-
----@param lb multiboard
----@param count integer
-function MultiboardSetRowCount(lb, count) end	-- (native)
-
---  broadcast settings to all items
----@param lb multiboard
----@param showValues boolean
----@param showIcons boolean
-function MultiboardSetItemsStyle(lb, showValues, showIcons) end	-- (native)
-
----@param lb multiboard
----@param value string
-function MultiboardSetItemsValue(lb, value) end	-- (native)
-
----@param lb multiboard
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function MultiboardSetItemsValueColor(lb, red, green, blue, alpha) end	-- (native)
-
----@param lb multiboard
----@param width number
-function MultiboardSetItemsWidth(lb, width) end	-- (native)
-
----@param lb multiboard
----@param iconPath string
-function MultiboardSetItemsIcon(lb, iconPath) end	-- (native)
-
---  funcs for modifying individual items
----@param lb multiboard
----@param row integer
----@param column integer
----@return multiboarditem
-function MultiboardGetItem(lb, row, column) end	-- (native)
-
----@param mbi multiboarditem
-function MultiboardReleaseItem(mbi) end	-- (native)
-
----@param mbi multiboarditem
----@param showValue boolean
----@param showIcon boolean
-function MultiboardSetItemStyle(mbi, showValue, showIcon) end	-- (native)
-
----@param mbi multiboarditem
----@param val string
-function MultiboardSetItemValue(mbi, val) end	-- (native)
-
----@param mbi multiboarditem
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function MultiboardSetItemValueColor(mbi, red, green, blue, alpha) end	-- (native)
-
----@param mbi multiboarditem
----@param width number
-function MultiboardSetItemWidth(mbi, width) end	-- (native)
-
----@param mbi multiboarditem
----@param iconFileName string
-function MultiboardSetItemIcon(mbi, iconFileName) end	-- (native)
-
---  meant to unequivocally suspend display of existing and
---  subsequently displayed multiboards
-
----@param flag boolean
-function MultiboardSuppressDisplay(flag) end	-- (native)
-
--- ============================================================================
---  Camera API
-
----@param x number
----@param y number
-function SetCameraPosition(x, y) end	-- (native)
-
----@param x number
----@param y number
-function SetCameraQuickPosition(x, y) end	-- (native)
-
----@param x1 number
----@param y1 number
----@param x2 number
----@param y2 number
----@param x3 number
----@param y3 number
----@param x4 number
----@param y4 number
-function SetCameraBounds(x1, y1, x2, y2, x3, y3, x4, y4) end	-- (native)
-
-function StopCamera() end	-- (native)
-
----@param duration number
-function ResetToGameCamera(duration) end	-- (native)
-
----@param x number
----@param y number
-function PanCameraTo(x, y) end	-- (native)
-
----@param x number
----@param y number
----@param duration number
-function PanCameraToTimed(x, y, duration) end	-- (native)
-
----@param x number
----@param y number
----@param zOffsetDest number
-function PanCameraToWithZ(x, y, zOffsetDest) end	-- (native)
-
----@param x number
----@param y number
----@param zOffsetDest number
----@param duration number
-function PanCameraToTimedWithZ(x, y, zOffsetDest, duration) end	-- (native)
-
----@param cameraModelFile string
-function SetCinematicCamera(cameraModelFile) end	-- (native)
-
----@param x number
----@param y number
----@param radiansToSweep number
----@param duration number
-function SetCameraRotateMode(x, y, radiansToSweep, duration) end	-- (native)
-
----@param whichField camerafield
----@param value number
----@param duration number
-function SetCameraField(whichField, value, duration) end	-- (native)
-
----@param whichField camerafield
----@param offset number
----@param duration number
-function AdjustCameraField(whichField, offset, duration) end	-- (native)
-
----@param whichUnit unit
----@param xoffset number
----@param yoffset number
----@param inheritOrientation boolean
-function SetCameraTargetController(whichUnit, xoffset, yoffset, inheritOrientation) end	-- (native)
-
----@param whichUnit unit
----@param xoffset number
----@param yoffset number
-function SetCameraOrientController(whichUnit, xoffset, yoffset) end	-- (native)
-
----@return camerasetup
-function CreateCameraSetup() end	-- (native)
-
----@param whichSetup camerasetup
----@param whichField camerafield
----@param value number
----@param duration number
-function CameraSetupSetField(whichSetup, whichField, value, duration) end	-- (native)
-
----@param whichSetup camerasetup
----@param whichField camerafield
----@return number
-function CameraSetupGetField(whichSetup, whichField) end	-- (native)
-
----@param whichSetup camerasetup
----@param x number
----@param y number
----@param duration number
-function CameraSetupSetDestPosition(whichSetup, x, y, duration) end	-- (native)
-
----@param whichSetup camerasetup
----@return location
-function CameraSetupGetDestPositionLoc(whichSetup) end	-- (native)
-
----@param whichSetup camerasetup
----@return number
-function CameraSetupGetDestPositionX(whichSetup) end	-- (native)
-
----@param whichSetup camerasetup
----@return number
-function CameraSetupGetDestPositionY(whichSetup) end	-- (native)
-
----@param whichSetup camerasetup
----@param doPan boolean
----@param panTimed boolean
-function CameraSetupApply(whichSetup, doPan, panTimed) end	-- (native)
-
----@param whichSetup camerasetup
----@param zDestOffset number
-function CameraSetupApplyWithZ(whichSetup, zDestOffset) end	-- (native)
-
----@param whichSetup camerasetup
----@param doPan boolean
----@param forceDuration number
-function CameraSetupApplyForceDuration(whichSetup, doPan, forceDuration) end	-- (native)
-
----@param whichSetup camerasetup
----@param zDestOffset number
----@param forceDuration number
-function CameraSetupApplyForceDurationWithZ(whichSetup, zDestOffset, forceDuration) end	-- (native)
-
----@param whichSetup camerasetup
----@param label string
-function BlzCameraSetupSetLabel(whichSetup, label) end	-- (native)
-
----@param whichSetup camerasetup
----@return string
-function BlzCameraSetupGetLabel(whichSetup) end	-- (native)
-
----@param mag number
----@param velocity number
-function CameraSetTargetNoise(mag, velocity) end	-- (native)
-
----@param mag number
----@param velocity number
-function CameraSetSourceNoise(mag, velocity) end	-- (native)
-
----@param mag number
----@param velocity number
----@param vertOnly boolean
-function CameraSetTargetNoiseEx(mag, velocity, vertOnly) end	-- (native)
-
----@param mag number
----@param velocity number
----@param vertOnly boolean
-function CameraSetSourceNoiseEx(mag, velocity, vertOnly) end	-- (native)
-
----@param factor number
-function CameraSetSmoothingFactor(factor) end	-- (native)
-
----@param distance number
-function CameraSetFocalDistance(distance) end	-- (native)
-
----@param scale number
-function CameraSetDepthOfFieldScale(scale) end	-- (native)
-
----@param filename string
-function SetCineFilterTexture(filename) end	-- (native)
-
----@param whichMode blendmode
-function SetCineFilterBlendMode(whichMode) end	-- (native)
-
----@param whichFlags texmapflags
-function SetCineFilterTexMapFlags(whichFlags) end	-- (native)
-
----@param minu number
----@param minv number
----@param maxu number
----@param maxv number
-function SetCineFilterStartUV(minu, minv, maxu, maxv) end	-- (native)
-
----@param minu number
----@param minv number
----@param maxu number
----@param maxv number
-function SetCineFilterEndUV(minu, minv, maxu, maxv) end	-- (native)
-
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function SetCineFilterStartColor(red, green, blue, alpha) end	-- (native)
-
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function SetCineFilterEndColor(red, green, blue, alpha) end	-- (native)
-
----@param duration number
-function SetCineFilterDuration(duration) end	-- (native)
-
----@param flag boolean
-function DisplayCineFilter(flag) end	-- (native)
-
----@return boolean
-function IsCineFilterDisplayed() end	-- (native)
-
----@param portraitUnitId integer
----@param color playercolor
----@param speakerTitle string
----@param text string
----@param sceneDuration number
----@param voiceoverDuration number
-function SetCinematicScene(portraitUnitId, color, speakerTitle, text, sceneDuration, voiceoverDuration) end	-- (native)
-
-function EndCinematicScene() end	-- (native)
-
----@param flag boolean
-function ForceCinematicSubtitles(flag) end	-- (native)
-
----@param cinematicAudio boolean
-function SetCinematicAudio(cinematicAudio) end	-- (native)
-
----@param whichMargin integer
----@return number
-function GetCameraMargin(whichMargin) end	-- (native)
-
---  These return values for the local players camera only...
----@return number
-function GetCameraBoundMinX() end	-- (native)
-
----@return number
-function GetCameraBoundMinY() end	-- (native)
-
----@return number
-function GetCameraBoundMaxX() end	-- (native)
-
----@return number
-function GetCameraBoundMaxY() end	-- (native)
-
----@param whichField camerafield
----@return number
-function GetCameraField(whichField) end	-- (native)
-
----@return number
-function GetCameraTargetPositionX() end	-- (native)
-
----@return number
-function GetCameraTargetPositionY() end	-- (native)
-
----@return number
-function GetCameraTargetPositionZ() end	-- (native)
-
----@return location
-function GetCameraTargetPositionLoc() end	-- (native)
-
----@return number
-function GetCameraEyePositionX() end	-- (native)
-
----@return number
-function GetCameraEyePositionY() end	-- (native)
-
----@return number
-function GetCameraEyePositionZ() end	-- (native)
-
----@return location
-function GetCameraEyePositionLoc() end	-- (native)
-
--- ============================================================================
---  Sound API
-
-
----@param environmentName string
-function NewSoundEnvironment(environmentName) end	-- (native)
-
----@param fileName string
----@param looping boolean
----@param is3D boolean
----@param stopwhenoutofrange boolean
----@param fadeInRate integer
----@param fadeOutRate integer
----@param eaxSetting string
----@return sound
-function CreateSound(fileName, looping, is3D, stopwhenoutofrange, fadeInRate, fadeOutRate, eaxSetting) end	-- (native)
-
----@param fileName string
----@param looping boolean
----@param is3D boolean
----@param stopwhenoutofrange boolean
----@param fadeInRate integer
----@param fadeOutRate integer
----@param SLKEntryName string
----@return sound
-function CreateSoundFilenameWithLabel(fileName, looping, is3D, stopwhenoutofrange, fadeInRate, fadeOutRate, SLKEntryName) end	-- (native)
-
----@param soundLabel string
----@param looping boolean
----@param is3D boolean
----@param stopwhenoutofrange boolean
----@param fadeInRate integer
----@param fadeOutRate integer
----@return sound
-function CreateSoundFromLabel(soundLabel, looping, is3D, stopwhenoutofrange, fadeInRate, fadeOutRate) end	-- (native)
-
----@param soundLabel string
----@param fadeInRate integer
----@param fadeOutRate integer
----@return sound
-function CreateMIDISound(soundLabel, fadeInRate, fadeOutRate) end	-- (native)
-
----@param soundHandle sound
----@param soundLabel string
-function SetSoundParamsFromLabel(soundHandle, soundLabel) end	-- (native)
-
----@param soundHandle sound
----@param cutoff number
-function SetSoundDistanceCutoff(soundHandle, cutoff) end	-- (native)
-
----@param soundHandle sound
----@param channel integer
-function SetSoundChannel(soundHandle, channel) end	-- (native)
-
----@param soundHandle sound
----@param volume integer
-function SetSoundVolume(soundHandle, volume) end	-- (native)
-
----@param soundHandle sound
----@param pitch number
-function SetSoundPitch(soundHandle, pitch) end	-- (native)
-
---  the following method must be called immediately after calling "StartSound"
----@param soundHandle sound
----@param millisecs integer
-function SetSoundPlayPosition(soundHandle, millisecs) end	-- (native)
-
---  these calls are only valid if the sound was created with 3d enabled
----@param soundHandle sound
----@param minDist number
----@param maxDist number
-function SetSoundDistances(soundHandle, minDist, maxDist) end	-- (native)
-
----@param soundHandle sound
----@param inside number
----@param outside number
----@param outsideVolume integer
-function SetSoundConeAngles(soundHandle, inside, outside, outsideVolume) end	-- (native)
-
----@param soundHandle sound
----@param x number
----@param y number
----@param z number
-function SetSoundConeOrientation(soundHandle, x, y, z) end	-- (native)
-
----@param soundHandle sound
----@param x number
----@param y number
----@param z number
-function SetSoundPosition(soundHandle, x, y, z) end	-- (native)
-
----@param soundHandle sound
----@param x number
----@param y number
----@param z number
-function SetSoundVelocity(soundHandle, x, y, z) end	-- (native)
-
----@param soundHandle sound
----@param whichUnit unit
-function AttachSoundToUnit(soundHandle, whichUnit) end	-- (native)
-
----@param soundHandle sound
-function StartSound(soundHandle) end	-- (native)
-
----@param soundHandle sound
----@param fadeIn boolean
-function StartSoundEx(soundHandle, fadeIn) end	-- (native)
-
----@param soundHandle sound
----@param killWhenDone boolean
----@param fadeOut boolean
-function StopSound(soundHandle, killWhenDone, fadeOut) end	-- (native)
-
----@param soundHandle sound
-function KillSoundWhenDone(soundHandle) end	-- (native)
-
---  Music Interface. Note that if music is disabled, these calls do nothing
----@param musicName string
----@param random boolean
----@param index integer
-function SetMapMusic(musicName, random, index) end	-- (native)
-
-function ClearMapMusic() end	-- (native)
-
----@param musicName string
-function PlayMusic(musicName) end	-- (native)
-
----@param musicName string
----@param frommsecs integer
----@param fadeinmsecs integer
-function PlayMusicEx(musicName, frommsecs, fadeinmsecs) end	-- (native)
-
----@param fadeOut boolean
-function StopMusic(fadeOut) end	-- (native)
-
-function ResumeMusic() end	-- (native)
-
----@param musicFileName string
-function PlayThematicMusic(musicFileName) end	-- (native)
-
----@param musicFileName string
----@param frommsecs integer
-function PlayThematicMusicEx(musicFileName, frommsecs) end	-- (native)
-
-function EndThematicMusic() end	-- (native)
-
----@param volume integer
-function SetMusicVolume(volume) end	-- (native)
-
----@param millisecs integer
-function SetMusicPlayPosition(millisecs) end	-- (native)
-
----@param volume integer
-function SetThematicMusicVolume(volume) end	-- (native)
-
----@param millisecs integer
-function SetThematicMusicPlayPosition(millisecs) end	-- (native)
-
---  other music and sound calls
----@param soundHandle sound
----@param duration integer
-function SetSoundDuration(soundHandle, duration) end	-- (native)
-
----@param soundHandle sound
----@return integer
-function GetSoundDuration(soundHandle) end	-- (native)
-
----@param musicFileName string
----@return integer
-function GetSoundFileDuration(musicFileName) end	-- (native)
-
----@param vgroup volumegroup
----@param scale number
-function VolumeGroupSetVolume(vgroup, scale) end	-- (native)
-
-function VolumeGroupReset() end	-- (native)
-
----@param soundHandle sound
----@return boolean
-function GetSoundIsPlaying(soundHandle) end	-- (native)
-
----@param soundHandle sound
----@return boolean
-function GetSoundIsLoading(soundHandle) end	-- (native)
-
----@param soundHandle sound
----@param byPosition boolean
----@param rectwidth number
----@param rectheight number
-function RegisterStackedSound(soundHandle, byPosition, rectwidth, rectheight) end	-- (native)
-
----@param soundHandle sound
----@param byPosition boolean
----@param rectwidth number
----@param rectheight number
-function UnregisterStackedSound(soundHandle, byPosition, rectwidth, rectheight) end	-- (native)
-
----@param soundHandle sound
----@param animationLabel string
----@return boolean
-function SetSoundFacialAnimationLabel(soundHandle, animationLabel) end	-- (native)
-
----@param soundHandle sound
----@param groupLabel string
----@return boolean
-function SetSoundFacialAnimationGroupLabel(soundHandle, groupLabel) end	-- (native)
-
----@param soundHandle sound
----@param animationSetFilepath string
----@return boolean
-function SetSoundFacialAnimationSetFilepath(soundHandle, animationSetFilepath) end	-- (native)
-
--- Subtitle support that is attached to the soundHandle rather than as disperate data with the legacy UI
----@param soundHandle sound
----@param speakerName string
----@return boolean
-function SetDialogueSpeakerNameKey(soundHandle, speakerName) end	-- (native)
-
----@param soundHandle sound
----@return string
-function GetDialogueSpeakerNameKey(soundHandle) end	-- (native)
-
----@param soundHandle sound
----@param dialogueText string
----@return boolean
-function SetDialogueTextKey(soundHandle, dialogueText) end	-- (native)
-
----@param soundHandle sound
----@return string
-function GetDialogueTextKey(soundHandle) end	-- (native)
-
--- ============================================================================
---  Effects API
-
-
----@param where rect
----@param effectID integer
----@return weathereffect
-function AddWeatherEffect(where, effectID) end	-- (native)
-
----@param whichEffect weathereffect
-function RemoveWeatherEffect(whichEffect) end	-- (native)
-
----@param whichEffect weathereffect
----@param enable boolean
-function EnableWeatherEffect(whichEffect, enable) end	-- (native)
-
----@param x number
----@param y number
----@param radius number
----@param depth number
----@param duration integer
----@param permanent boolean
----@return terraindeformation
-function TerrainDeformCrater(x, y, radius, depth, duration, permanent) end	-- (native)
-
----@param x number
----@param y number
----@param radius number
----@param depth number
----@param duration integer
----@param count integer
----@param spaceWaves number
----@param timeWaves number
----@param radiusStartPct number
----@param limitNeg boolean
----@return terraindeformation
-function TerrainDeformRipple(x, y, radius, depth, duration, count, spaceWaves, timeWaves, radiusStartPct, limitNeg) end	-- (native)
-
----@param x number
----@param y number
----@param dirX number
----@param dirY number
----@param distance number
----@param speed number
----@param radius number
----@param depth number
----@param trailTime integer
----@param count integer
----@return terraindeformation
-function TerrainDeformWave(x, y, dirX, dirY, distance, speed, radius, depth, trailTime, count) end	-- (native)
-
----@param x number
----@param y number
----@param radius number
----@param minDelta number
----@param maxDelta number
----@param duration integer
----@param updateInterval integer
----@return terraindeformation
-function TerrainDeformRandom(x, y, radius, minDelta, maxDelta, duration, updateInterval) end	-- (native)
-
----@param deformation terraindeformation
----@param duration integer
-function TerrainDeformStop(deformation, duration) end	-- (native)
-
-function TerrainDeformStopAll() end	-- (native)
-
----@param modelName string
----@param x number
----@param y number
----@return effect
-function AddSpecialEffect(modelName, x, y) end	-- (native)
-
----@param modelName string
----@param where location
----@return effect
-function AddSpecialEffectLoc(modelName, where) end	-- (native)
-
----@param modelName string
----@param targetWidget widget
----@param attachPointName string
----@return effect
-function AddSpecialEffectTarget(modelName, targetWidget, attachPointName) end	-- (native)
-
----@param whichEffect effect
-function DestroyEffect(whichEffect) end	-- (native)
-
----@param abilityString string
----@param t effecttype
----@param x number
----@param y number
----@return effect
-function AddSpellEffect(abilityString, t, x, y) end	-- (native)
-
----@param abilityString string
----@param t effecttype
----@param where location
----@return effect
-function AddSpellEffectLoc(abilityString, t, where) end	-- (native)
-
----@param abilityId integer
----@param t effecttype
----@param x number
----@param y number
----@return effect
-function AddSpellEffectById(abilityId, t, x, y) end	-- (native)
-
----@param abilityId integer
----@param t effecttype
----@param where location
----@return effect
-function AddSpellEffectByIdLoc(abilityId, t, where) end	-- (native)
-
----@param modelName string
----@param t effecttype
----@param targetWidget widget
----@param attachPoint string
----@return effect
-function AddSpellEffectTarget(modelName, t, targetWidget, attachPoint) end	-- (native)
-
----@param abilityId integer
----@param t effecttype
----@param targetWidget widget
----@param attachPoint string
----@return effect
-function AddSpellEffectTargetById(abilityId, t, targetWidget, attachPoint) end	-- (native)
-
----@param codeName string
----@param checkVisibility boolean
----@param x1 number
----@param y1 number
----@param x2 number
----@param y2 number
----@return lightning
-function AddLightning(codeName, checkVisibility, x1, y1, x2, y2) end	-- (native)
-
----@param codeName string
----@param checkVisibility boolean
----@param x1 number
----@param y1 number
----@param z1 number
----@param x2 number
----@param y2 number
----@param z2 number
----@return lightning
-function AddLightningEx(codeName, checkVisibility, x1, y1, z1, x2, y2, z2) end	-- (native)
-
----@param whichBolt lightning
----@return boolean
-function DestroyLightning(whichBolt) end	-- (native)
-
----@param whichBolt lightning
----@param checkVisibility boolean
----@param x1 number
----@param y1 number
----@param x2 number
----@param y2 number
----@return boolean
-function MoveLightning(whichBolt, checkVisibility, x1, y1, x2, y2) end	-- (native)
-
----@param whichBolt lightning
----@param checkVisibility boolean
----@param x1 number
----@param y1 number
----@param z1 number
----@param x2 number
----@param y2 number
----@param z2 number
----@return boolean
-function MoveLightningEx(whichBolt, checkVisibility, x1, y1, z1, x2, y2, z2) end	-- (native)
-
----@param whichBolt lightning
----@return number
-function GetLightningColorA(whichBolt) end	-- (native)
-
----@param whichBolt lightning
----@return number
-function GetLightningColorR(whichBolt) end	-- (native)
-
----@param whichBolt lightning
----@return number
-function GetLightningColorG(whichBolt) end	-- (native)
-
----@param whichBolt lightning
----@return number
-function GetLightningColorB(whichBolt) end	-- (native)
-
----@param whichBolt lightning
----@param r number
----@param g number
----@param b number
----@param a number
----@return boolean
-function SetLightningColor(whichBolt, r, g, b, a) end	-- (native)
-
----@param abilityString string
----@param t effecttype
----@param index integer
----@return string
-function GetAbilityEffect(abilityString, t, index) end	-- (native)
-
----@param abilityId integer
----@param t effecttype
----@param index integer
----@return string
-function GetAbilityEffectById(abilityId, t, index) end	-- (native)
-
----@param abilityString string
----@param t soundtype
----@return string
-function GetAbilitySound(abilityString, t) end	-- (native)
-
----@param abilityId integer
----@param t soundtype
----@return string
-function GetAbilitySoundById(abilityId, t) end	-- (native)
-
--- ============================================================================
---  Terrain API
-
-
----@param x number
----@param y number
----@return integer
-function GetTerrainCliffLevel(x, y) end	-- (native)
-
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function SetWaterBaseColor(red, green, blue, alpha) end	-- (native)
-
----@param val boolean
-function SetWaterDeforms(val) end	-- (native)
-
----@param x number
----@param y number
----@return integer
-function GetTerrainType(x, y) end	-- (native)
-
----@param x number
----@param y number
----@return integer
-function GetTerrainVariance(x, y) end	-- (native)
-
----@param x number
----@param y number
----@param terrainType integer
----@param variation integer
----@param area integer
----@param shape integer
-function SetTerrainType(x, y, terrainType, variation, area, shape) end	-- (native)
-
----@param x number
----@param y number
----@param t pathingtype
----@return boolean
-function IsTerrainPathable(x, y, t) end	-- (native)
-
----@param x number
----@param y number
----@param t pathingtype
----@param flag boolean
-function SetTerrainPathable(x, y, t, flag) end	-- (native)
-
--- ============================================================================
---  Image API
-
-
----@param file string
----@param sizeX number
----@param sizeY number
----@param sizeZ number
----@param posX number
----@param posY number
----@param posZ number
----@param originX number
----@param originY number
----@param originZ number
----@param imageType integer
----@return image
-function CreateImage(file, sizeX, sizeY, sizeZ, posX, posY, posZ, originX, originY, originZ, imageType) end	-- (native)
-
----@param whichImage image
-function DestroyImage(whichImage) end	-- (native)
-
----@param whichImage image
----@param flag boolean
-function ShowImage(whichImage, flag) end	-- (native)
-
----@param whichImage image
----@param flag boolean
----@param height number
-function SetImageConstantHeight(whichImage, flag, height) end	-- (native)
-
----@param whichImage image
----@param x number
----@param y number
----@param z number
-function SetImagePosition(whichImage, x, y, z) end	-- (native)
-
----@param whichImage image
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
-function SetImageColor(whichImage, red, green, blue, alpha) end	-- (native)
-
----@param whichImage image
----@param flag boolean
-function SetImageRender(whichImage, flag) end	-- (native)
-
----@param whichImage image
----@param flag boolean
-function SetImageRenderAlways(whichImage, flag) end	-- (native)
-
----@param whichImage image
----@param flag boolean
----@param useWaterAlpha boolean
-function SetImageAboveWater(whichImage, flag, useWaterAlpha) end	-- (native)
-
----@param whichImage image
----@param imageType integer
-function SetImageType(whichImage, imageType) end	-- (native)
-
--- ============================================================================
---  Ubersplat API
-
-
----@param x number
----@param y number
----@param name string
----@param red integer
----@param green integer
----@param blue integer
----@param alpha integer
----@param forcePaused boolean
----@param noBirthTime boolean
----@return ubersplat
-function CreateUbersplat(x, y, name, red, green, blue, alpha, forcePaused, noBirthTime) end	-- (native)
-
----@param whichSplat ubersplat
-function DestroyUbersplat(whichSplat) end	-- (native)
-
----@param whichSplat ubersplat
-function ResetUbersplat(whichSplat) end	-- (native)
-
----@param whichSplat ubersplat
-function FinishUbersplat(whichSplat) end	-- (native)
-
----@param whichSplat ubersplat
----@param flag boolean
-function ShowUbersplat(whichSplat, flag) end	-- (native)
-
----@param whichSplat ubersplat
----@param flag boolean
-function SetUbersplatRender(whichSplat, flag) end	-- (native)
-
----@param whichSplat ubersplat
----@param flag boolean
-function SetUbersplatRenderAlways(whichSplat, flag) end	-- (native)
-
--- ============================================================================
---  Blight API
-
-
----@param whichPlayer player
----@param x number
----@param y number
----@param radius number
----@param addBlight boolean
-function SetBlight(whichPlayer, x, y, radius, addBlight) end	-- (native)
-
----@param whichPlayer player
----@param r rect
----@param addBlight boolean
-function SetBlightRect(whichPlayer, r, addBlight) end	-- (native)
-
----@param whichPlayer player
----@param x number
----@param y number
----@param addBlight boolean
-function SetBlightPoint(whichPlayer, x, y, addBlight) end	-- (native)
-
----@param whichPlayer player
----@param whichLocation location
----@param radius number
----@param addBlight boolean
-function SetBlightLoc(whichPlayer, whichLocation, radius, addBlight) end	-- (native)
-
----@param id player
----@param x number
----@param y number
----@param face number
----@return unit
-function CreateBlightedGoldmine(id, x, y, face) end	-- (native)
-
----@param x number
----@param y number
----@return boolean
-function IsPointBlighted(x, y) end	-- (native)
-
--- ============================================================================
---  Doodad API
-
-
----@param x number
----@param y number
----@param radius number
----@param doodadID integer
----@param nearestOnly boolean
----@param animName string
----@param animRandom boolean
-function SetDoodadAnimation(x, y, radius, doodadID, nearestOnly, animName, animRandom) end	-- (native)
-
----@param r rect
----@param doodadID integer
----@param animName string
----@param animRandom boolean
-function SetDoodadAnimationRect(r, doodadID, animName, animRandom) end	-- (native)
-
--- ============================================================================
---  Computer AI interface
-
-
----@param num player
----@param script? string
-function StartMeleeAI(num, script) end	-- (native)
-
----@param num player
----@param script string
-function StartCampaignAI(num, script) end	-- (native)
-
----@param num player
----@param command integer
----@param data integer
-function CommandAI(num, command, data) end	-- (native)
-
----@param p player
----@param pause boolean
-function PauseCompAI(p, pause) end	-- (native)
-
----@param num player
----@return aidifficulty
-function GetAIDifficulty(num) end	-- (native)
-
----@param hUnit unit
-function RemoveGuardPosition(hUnit) end	-- (native)
-
----@param hUnit unit
-function RecycleGuardPosition(hUnit) end	-- (native)
-
----@param num player
-function RemoveAllGuardPositions(num) end	-- (native)
-
--- ============================================================================
----@param cheatStr string
-function Cheat(cheatStr) end	-- (native)
-
----@return boolean
-function IsNoVictoryCheat() end	-- (native)
-
----@return boolean
-function IsNoDefeatCheat() end	-- (native)
-
----@param filename string
-function Preload(filename) end	-- (native)
-
----@param timeout number
-function PreloadEnd(timeout) end	-- (native)
-
-function PreloadStart() end	-- (native)
-
-function PreloadRefresh() end	-- (native)
-
-function PreloadEndEx() end	-- (native)
-
-function PreloadGenClear() end	-- (native)
-
-function PreloadGenStart() end	-- (native)
-
----@param filename string
-function PreloadGenEnd(filename) end	-- (native)
-
----@param filename string
-function Preloader(filename) end	-- (native)
-
--- ============================================================================
--- ============================================================================
-
----@param enable boolean
-function BlzHideCinematicPanels(enable) end	-- (native)
-
---  Automation Test
----@param testType string
-function AutomationSetTestType(testType) end	-- (native)
-
----@param testName string
-function AutomationTestStart(testName) end	-- (native)
-
-function AutomationTestEnd() end	-- (native)
-
-function AutomationTestingFinished() end	-- (native)
-
---  JAPI Functions
----@return number
-function BlzGetTriggerPlayerMouseX() end	-- (native)
-
----@return number
-function BlzGetTriggerPlayerMouseY() end	-- (native)
-
----@return location
-function BlzGetTriggerPlayerMousePosition() end	-- (native)
-
----@return mousebuttontype
-function BlzGetTriggerPlayerMouseButton() end	-- (native)
-
----@param abilCode integer
----@param tooltip string
----@param level integer
-function BlzSetAbilityTooltip(abilCode, tooltip, level) end	-- (native)
-
----@param abilCode integer
----@param tooltip string
----@param level integer
-function BlzSetAbilityActivatedTooltip(abilCode, tooltip, level) end	-- (native)
-
----@param abilCode integer
----@param extendedTooltip string
----@param level integer
-function BlzSetAbilityExtendedTooltip(abilCode, extendedTooltip, level) end	-- (native)
-
----@param abilCode integer
----@param extendedTooltip string
----@param level integer
-function BlzSetAbilityActivatedExtendedTooltip(abilCode, extendedTooltip, level) end	-- (native)
-
----@param abilCode integer
----@param researchTooltip string
----@param level integer
-function BlzSetAbilityResearchTooltip(abilCode, researchTooltip, level) end	-- (native)
-
----@param abilCode integer
----@param researchExtendedTooltip string
----@param level integer
-function BlzSetAbilityResearchExtendedTooltip(abilCode, researchExtendedTooltip, level) end	-- (native)
-
----@param abilCode integer
----@param level integer
----@return string
-function BlzGetAbilityTooltip(abilCode, level) end	-- (native)
-
----@param abilCode integer
----@param level integer
----@return string
-function BlzGetAbilityActivatedTooltip(abilCode, level) end	-- (native)
-
----@param abilCode integer
----@param level integer
----@return string
-function BlzGetAbilityExtendedTooltip(abilCode, level) end	-- (native)
-
----@param abilCode integer
----@param level integer
----@return string
-function BlzGetAbilityActivatedExtendedTooltip(abilCode, level) end	-- (native)
-
----@param abilCode integer
----@param level integer
----@return string
-function BlzGetAbilityResearchTooltip(abilCode, level) end	-- (native)
-
----@param abilCode integer
----@param level integer
----@return string
-function BlzGetAbilityResearchExtendedTooltip(abilCode, level) end	-- (native)
-
----@param abilCode integer
----@param iconPath string
-function BlzSetAbilityIcon(abilCode, iconPath) end	-- (native)
-
----@param abilCode integer
----@return string
-function BlzGetAbilityIcon(abilCode) end	-- (native)
-
----@param abilCode integer
----@param iconPath string
-function BlzSetAbilityActivatedIcon(abilCode, iconPath) end	-- (native)
-
----@param abilCode integer
----@return string
-function BlzGetAbilityActivatedIcon(abilCode) end	-- (native)
-
----@param abilCode integer
----@return integer
-function BlzGetAbilityPosX(abilCode) end	-- (native)
-
----@param abilCode integer
----@return integer
-function BlzGetAbilityPosY(abilCode) end	-- (native)
-
----@param abilCode integer
----@param x integer
-function BlzSetAbilityPosX(abilCode, x) end	-- (native)
-
----@param abilCode integer
----@param y integer
-function BlzSetAbilityPosY(abilCode, y) end	-- (native)
-
----@param abilCode integer
----@return integer
-function BlzGetAbilityActivatedPosX(abilCode) end	-- (native)
-
----@param abilCode integer
----@return integer
-function BlzGetAbilityActivatedPosY(abilCode) end	-- (native)
-
----@param abilCode integer
----@param x integer
-function BlzSetAbilityActivatedPosX(abilCode, x) end	-- (native)
-
----@param abilCode integer
----@param y integer
-function BlzSetAbilityActivatedPosY(abilCode, y) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function BlzGetUnitMaxHP(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param hp integer
-function BlzSetUnitMaxHP(whichUnit, hp) end	-- (native)
-
----@param whichUnit unit
----@return integer
-function BlzGetUnitMaxMana(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param mana integer
-function BlzSetUnitMaxMana(whichUnit, mana) end	-- (native)
-
----@param whichItem item
----@param name string
-function BlzSetItemName(whichItem, name) end	-- (native)
-
----@param whichItem item
----@param description string
-function BlzSetItemDescription(whichItem, description) end	-- (native)
-
----@param whichItem item
----@return string
-function BlzGetItemDescription(whichItem) end	-- (native)
-
----@param whichItem item
----@param tooltip string
-function BlzSetItemTooltip(whichItem, tooltip) end	-- (native)
-
----@param whichItem item
----@return string
-function BlzGetItemTooltip(whichItem) end	-- (native)
-
----@param whichItem item
----@param extendedTooltip string
-function BlzSetItemExtendedTooltip(whichItem, extendedTooltip) end	-- (native)
-
----@param whichItem item
----@return string
-function BlzGetItemExtendedTooltip(whichItem) end	-- (native)
-
----@param whichItem item
----@param iconPath string
-function BlzSetItemIconPath(whichItem, iconPath) end	-- (native)
-
----@param whichItem item
----@return string
-function BlzGetItemIconPath(whichItem) end	-- (native)
-
----@param whichUnit unit
----@param name string
-function BlzSetUnitName(whichUnit, name) end	-- (native)
-
----@param whichUnit unit
----@param heroProperName string
-function BlzSetHeroProperName(whichUnit, heroProperName) end	-- (native)
-
----@param whichUnit unit
----@param weaponIndex integer
----@return integer
-function BlzGetUnitBaseDamage(whichUnit, weaponIndex) end	-- (native)
-
----@param whichUnit unit
----@param baseDamage integer
----@param weaponIndex integer
-function BlzSetUnitBaseDamage(whichUnit, baseDamage, weaponIndex) end	-- (native)
-
----@param whichUnit unit
----@param weaponIndex integer
----@return integer
-function BlzGetUnitDiceNumber(whichUnit, weaponIndex) end	-- (native)
-
----@param whichUnit unit
----@param diceNumber integer
----@param weaponIndex integer
-function BlzSetUnitDiceNumber(whichUnit, diceNumber, weaponIndex) end	-- (native)
-
----@param whichUnit unit
----@param weaponIndex integer
----@return integer
-function BlzGetUnitDiceSides(whichUnit, weaponIndex) end	-- (native)
-
----@param whichUnit unit
----@param diceSides integer
----@param weaponIndex integer
-function BlzSetUnitDiceSides(whichUnit, diceSides, weaponIndex) end	-- (native)
-
----@param whichUnit unit
----@param weaponIndex integer
----@return number
-function BlzGetUnitAttackCooldown(whichUnit, weaponIndex) end	-- (native)
-
----@param whichUnit unit
----@param cooldown number
----@param weaponIndex integer
-function BlzSetUnitAttackCooldown(whichUnit, cooldown, weaponIndex) end	-- (native)
-
----@param whichEffect effect
----@param whichPlayer player
-function BlzSetSpecialEffectColorByPlayer(whichEffect, whichPlayer) end	-- (native)
-
----@param whichEffect effect
----@param r integer
----@param g integer
----@param b integer
-function BlzSetSpecialEffectColor(whichEffect, r, g, b) end	-- (native)
-
----@param whichEffect effect
----@param alpha integer
-function BlzSetSpecialEffectAlpha(whichEffect, alpha) end	-- (native)
-
----@param whichEffect effect
----@param scale number
-function BlzSetSpecialEffectScale(whichEffect, scale) end	-- (native)
-
----@param whichEffect effect
----@param x number
----@param y number
----@param z number
-function BlzSetSpecialEffectPosition(whichEffect, x, y, z) end	-- (native)
-
----@param whichEffect effect
----@param height number
-function BlzSetSpecialEffectHeight(whichEffect, height) end	-- (native)
-
----@param whichEffect effect
----@param timeScale number
-function BlzSetSpecialEffectTimeScale(whichEffect, timeScale) end	-- (native)
-
----@param whichEffect effect
----@param time number
-function BlzSetSpecialEffectTime(whichEffect, time) end	-- (native)
-
----@param whichEffect effect
----@param yaw number
----@param pitch number
----@param roll number
-function BlzSetSpecialEffectOrientation(whichEffect, yaw, pitch, roll) end	-- (native)
-
----@param whichEffect effect
----@param yaw number
-function BlzSetSpecialEffectYaw(whichEffect, yaw) end	-- (native)
-
----@param whichEffect effect
----@param pitch number
-function BlzSetSpecialEffectPitch(whichEffect, pitch) end	-- (native)
-
----@param whichEffect effect
----@param roll number
-function BlzSetSpecialEffectRoll(whichEffect, roll) end	-- (native)
-
----@param whichEffect effect
----@param x number
-function BlzSetSpecialEffectX(whichEffect, x) end	-- (native)
-
----@param whichEffect effect
----@param y number
-function BlzSetSpecialEffectY(whichEffect, y) end	-- (native)
-
----@param whichEffect effect
----@param z number
-function BlzSetSpecialEffectZ(whichEffect, z) end	-- (native)
-
----@param whichEffect effect
----@param loc location
-function BlzSetSpecialEffectPositionLoc(whichEffect, loc) end	-- (native)
-
----@param whichEffect effect
----@return number
-function BlzGetLocalSpecialEffectX(whichEffect) end	-- (native)
-
----@param whichEffect effect
----@return number
-function BlzGetLocalSpecialEffectY(whichEffect) end	-- (native)
-
----@param whichEffect effect
----@return number
-function BlzGetLocalSpecialEffectZ(whichEffect) end	-- (native)
-
----@param whichEffect effect
-function BlzSpecialEffectClearSubAnimations(whichEffect) end	-- (native)
-
----@param whichEffect effect
----@param whichSubAnim subanimtype
-function BlzSpecialEffectRemoveSubAnimation(whichEffect, whichSubAnim) end	-- (native)
-
----@param whichEffect effect
----@param whichSubAnim subanimtype
-function BlzSpecialEffectAddSubAnimation(whichEffect, whichSubAnim) end	-- (native)
-
----@param whichEffect effect
----@param whichAnim animtype
-function BlzPlaySpecialEffect(whichEffect, whichAnim) end	-- (native)
-
----@param whichEffect effect
----@param whichAnim animtype
----@param timeScale number
-function BlzPlaySpecialEffectWithTimeScale(whichEffect, whichAnim, timeScale) end	-- (native)
-
----@param whichAnim animtype
----@return string
-function BlzGetAnimName(whichAnim) end	-- (native)
-
----@param whichUnit unit
----@return number
-function BlzGetUnitArmor(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@param armorAmount number
-function BlzSetUnitArmor(whichUnit, armorAmount) end	-- (native)
-
----@param whichUnit unit
----@param abilId integer
----@param flag boolean
-function BlzUnitHideAbility(whichUnit, abilId, flag) end	-- (native)
-
----@param whichUnit unit
----@param abilId integer
----@param flag boolean
----@param hideUI boolean
-function BlzUnitDisableAbility(whichUnit, abilId, flag, hideUI) end	-- (native)
-
----@param whichUnit unit
-function BlzUnitCancelTimedLife(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return boolean
-function BlzIsUnitSelectable(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return boolean
-function BlzIsUnitInvulnerable(whichUnit) end	-- (native)
-
----@param whichUnit unit
-function BlzUnitInterruptAttack(whichUnit) end	-- (native)
-
----@param whichUnit unit
----@return number
-function BlzGetUnitCollisionSize(whichUnit) end	-- (native)
-
----@param abilId integer
----@param level integer
----@return integer
-function BlzGetAbilityManaCost(abilId, level) end	-- (native)
-
----@param abilId integer
----@param level integer
----@return number
-function BlzGetAbilityCooldown(abilId, level) end	-- (native)
-
----@param whichUnit unit
----@param abilId integer
----@param level integer
----@param cooldown number
-function BlzSetUnitAbilityCooldown(whichUnit, abilId, level, cooldown) end	-- (native)
-
----@param whichUnit unit
----@param abilId integer
----@param level integer
----@return number
-function BlzGetUnitAbilityCooldown(whichUnit, abilId, level) end	-- (native)
-
----@param whichUnit unit
----@param abilId integer
----@return number
-function BlzGetUnitAbilityCooldownRemaining(whichUnit, abilId) end	-- (native)
-
----@param whichUnit unit
----@param abilCode integer
-function BlzEndUnitAbilityCooldown(whichUnit, abilCode) end	-- (native)
-
----@param whichUnit unit
----@param abilCode integer
----@param cooldown number
-function BlzStartUnitAbilityCooldown(whichUnit, abilCode, cooldown) end	-- (native)
-
----@param whichUnit unit
----@param abilId integer
----@param level integer
----@return integer
-function BlzGetUnitAbilityManaCost(whichUnit, abilId, level) end	-- (native)
-
----@param whichUnit unit
----@param abilId integer
----@param level integer
----@param manaCost integer
-function BlzSetUnitAbilityManaCost(whichUnit, abilId, level, manaCost) end	-- (native)
-
----@param whichUnit unit
----@return number
-function BlzGetLocalUnitZ(whichUnit) end	-- (native)
-
----@param whichPlayer player
----@param techid integer
----@param levels integer
-function BlzDecPlayerTechResearched(whichPlayer, techid, levels) end	-- (native)
-
----@param damage number
-function BlzSetEventDamage(damage) end	-- (native)
-
----@return unit
-function BlzGetEventDamageTarget() end	-- (native)
-
----@return attacktype
-function BlzGetEventAttackType() end	-- (native)
-
----@return damagetype
-function BlzGetEventDamageType() end	-- (native)
-
----@return weapontype
-function BlzGetEventWeaponType() end	-- (native)
-
----@param attackType attacktype
----@return boolean
-function BlzSetEventAttackType(attackType) end	-- (native)
-
----@param damageType damagetype
----@return boolean
-function BlzSetEventDamageType(damageType) end	-- (native)
-
----@param weaponType weapontype
----@return boolean
-function BlzSetEventWeaponType(weaponType) end	-- (native)
-
----@return boolean
-function BlzGetEventIsAttack() end	-- (native)
-
----@param dataType integer
----@param whichPlayer player
----@param param1 string
----@param param2 string
----@param param3 boolean
----@param param4 integer
----@param param5 integer
----@param param6 integer
----@return integer
-function RequestExtraIntegerData(dataType, whichPlayer, param1, param2, param3, param4, param5, param6) end	-- (native)
-
----@param dataType integer
----@param whichPlayer player
----@param param1 string
----@param param2 string
----@param param3 boolean
----@param param4 integer
----@param param5 integer
----@param param6 integer
----@return boolean
-function RequestExtraBooleanData(dataType, whichPlayer, param1, param2, param3, param4, param5, param6) end	-- (native)
-
----@param dataType integer
----@param whichPlayer player
----@param param1 string
----@param param2 string
----@param param3 boolean
----@param param4 integer
----@param param5 integer
----@param param6 integer
----@return string
-function RequestExtraStringData(dataType, whichPlayer, param1, param2, param3, param4, param5, param6) end	-- (native)
-
----@param dataType integer
----@param whichPlayer player
----@param param1 string
----@param param2 string
----@param param3 boolean
----@param param4 integer
----@param param5 integer
----@param param6 integer
----@return number
-function RequestExtraRealData(dataType, whichPlayer, param1, param2, param3, param4, param5, param6) end	-- (native)
-
---  Add this function to follow the style of GetUnitX and GetUnitY, it has the same result as BlzGetLocalUnitZ
----@param whichUnit unit
----@return number
-function BlzGetUnitZ(whichUnit) end	-- (native)
-
----@param enableSelection boolean
----@param enableSelectionCircle boolean
-function BlzEnableSelections(enableSelection, enableSelectionCircle) end	-- (native)
-
----@return boolean
-function BlzIsSelectionEnabled() end	-- (native)
-
----@return boolean
-function BlzIsSelectionCircleEnabled() end	-- (native)
-
----@param whichSetup camerasetup
----@param doPan boolean
----@param forcedDuration number
----@param easeInDuration number
----@param easeOutDuration number
----@param smoothFactor number
-function BlzCameraSetupApplyForceDurationSmooth(whichSetup, doPan, forcedDuration, easeInDuration, easeOutDuration, smoothFactor) end	-- (native)
-
----@param enable boolean
-function BlzEnableTargetIndicator(enable) end	-- (native)
-
----@return boolean
-function BlzIsTargetIndicatorEnabled() end	-- (native)
-
----@param show boolean
-function BlzShowTerrain(show) end	-- (native)
-
----@param show boolean
-function BlzShowSkyBox(show) end	-- (native)
-
----@param fps integer
-function BlzStartRecording(fps) end	-- (native)
-
-function BlzEndRecording() end	-- (native)
-
----@param whichUnit unit
----@param show boolean
-function BlzShowUnitTeamGlow(whichUnit, show) end	-- (native)
-
----@param frameType originframetype
----@param index integer
----@return framehandle
-function BlzGetOriginFrame(frameType, index) end	-- (native)
-
----@param enable boolean
-function BlzEnableUIAutoPosition(enable) end	-- (native)
-
----@param enable boolean
-function BlzHideOriginFrames(enable) end	-- (native)
-
----@param a integer
----@param r integer
----@param g integer
----@param b integer
----@return integer
-function BlzConvertColor(a, r, g, b) end	-- (native)
-
----@param TOCFile string
----@return boolean
-function BlzLoadTOCFile(TOCFile) end	-- (native)
-
----@param name string
----@param owner framehandle
----@param priority integer
----@param createContext integer
----@return framehandle
-function BlzCreateFrame(name, owner, priority, createContext) end	-- (native)
-
----@param name string
----@param owner framehandle
----@param createContext integer
----@return framehandle
-function BlzCreateSimpleFrame(name, owner, createContext) end	-- (native)
-
----@param typeName string
----@param name string
----@param owner framehandle
----@param inherits string
----@param createContext integer
----@return framehandle
-function BlzCreateFrameByType(typeName, name, owner, inherits, createContext) end	-- (native)
-
----@param frame framehandle
-function BlzDestroyFrame(frame) end	-- (native)
-
----@param frame framehandle
----@param point framepointtype
----@param relative framehandle
----@param relativePoint framepointtype
----@param x number
----@param y number
-function BlzFrameSetPoint(frame, point, relative, relativePoint, x, y) end	-- (native)
-
----@param frame framehandle
----@param point framepointtype
----@param x number
----@param y number
-function BlzFrameSetAbsPoint(frame, point, x, y) end	-- (native)
-
----@param frame framehandle
-function BlzFrameClearAllPoints(frame) end	-- (native)
-
----@param frame framehandle
----@param relative framehandle
-function BlzFrameSetAllPoints(frame, relative) end	-- (native)
-
----@param frame framehandle
----@param visible boolean
-function BlzFrameSetVisible(frame, visible) end	-- (native)
-
----@param frame framehandle
----@return boolean
-function BlzFrameIsVisible(frame) end	-- (native)
-
----@param name string
----@param createContext integer
----@return framehandle
-function BlzGetFrameByName(name, createContext) end	-- (native)
-
----@param frame framehandle
----@return string
-function BlzFrameGetName(frame) end	-- (native)
-
----@param frame framehandle
-function BlzFrameClick(frame) end	-- (native)
-
----@param frame framehandle
----@param text string
-function BlzFrameSetText(frame, text) end	-- (native)
-
----@param frame framehandle
----@return string
-function BlzFrameGetText(frame) end	-- (native)
-
----@param frame framehandle
----@param text string
-function BlzFrameAddText(frame, text) end	-- (native)
-
----@param frame framehandle
----@param size integer
-function BlzFrameSetTextSizeLimit(frame, size) end	-- (native)
-
----@param frame framehandle
----@return integer
-function BlzFrameGetTextSizeLimit(frame) end	-- (native)
-
----@param frame framehandle
----@param color integer
-function BlzFrameSetTextColor(frame, color) end	-- (native)
-
----@param frame framehandle
----@param flag boolean
-function BlzFrameSetFocus(frame, flag) end	-- (native)
-
----@param frame framehandle
----@param modelFile string
----@param cameraIndex integer
-function BlzFrameSetModel(frame, modelFile, cameraIndex) end	-- (native)
-
----@param frame framehandle
----@param enabled boolean
-function BlzFrameSetEnable(frame, enabled) end	-- (native)
-
----@param frame framehandle
----@return boolean
-function BlzFrameGetEnable(frame) end	-- (native)
-
----@param frame framehandle
----@param alpha integer
-function BlzFrameSetAlpha(frame, alpha) end	-- (native)
-
----@param frame framehandle
----@return integer
-function BlzFrameGetAlpha(frame) end	-- (native)
-
----@param frame framehandle
----@param primaryProp integer
----@param flags integer
-function BlzFrameSetSpriteAnimate(frame, primaryProp, flags) end	-- (native)
-
----@param frame framehandle
----@param texFile string
----@param flag integer
----@param blend boolean
-function BlzFrameSetTexture(frame, texFile, flag, blend) end	-- (native)
-
----@param frame framehandle
----@param scale number
-function BlzFrameSetScale(frame, scale) end	-- (native)
-
----@param frame framehandle
----@param tooltip framehandle
-function BlzFrameSetTooltip(frame, tooltip) end	-- (native)
-
----@param frame framehandle
----@param enable boolean
-function BlzFrameCageMouse(frame, enable) end	-- (native)
-
----@param frame framehandle
----@param value number
-function BlzFrameSetValue(frame, value) end	-- (native)
-
----@param frame framehandle
----@return number
-function BlzFrameGetValue(frame) end	-- (native)
-
----@param frame framehandle
----@param minValue number
----@param maxValue number
-function BlzFrameSetMinMaxValue(frame, minValue, maxValue) end	-- (native)
-
----@param frame framehandle
----@param stepSize number
-function BlzFrameSetStepSize(frame, stepSize) end	-- (native)
-
----@param frame framehandle
----@param width number
----@param height number
-function BlzFrameSetSize(frame, width, height) end	-- (native)
-
----@param frame framehandle
----@param color integer
-function BlzFrameSetVertexColor(frame, color) end	-- (native)
-
----@param frame framehandle
----@param level integer
-function BlzFrameSetLevel(frame, level) end	-- (native)
-
----@param frame framehandle
----@param parent framehandle
-function BlzFrameSetParent(frame, parent) end	-- (native)
-
----@param frame framehandle
----@return framehandle
-function BlzFrameGetParent(frame) end	-- (native)
-
----@param frame framehandle
----@return number
-function BlzFrameGetHeight(frame) end	-- (native)
-
----@param frame framehandle
----@return number
-function BlzFrameGetWidth(frame) end	-- (native)
-
----@param frame framehandle
----@param fileName string
----@param height number
----@param flags integer
-function BlzFrameSetFont(frame, fileName, height, flags) end	-- (native)
-
----@param frame framehandle
----@param vert textaligntype
----@param horz textaligntype
-function BlzFrameSetTextAlignment(frame, vert, horz) end	-- (native)
-
----@param frame framehandle
----@return integer
-function BlzFrameGetChildrenCount(frame) end	-- (native)
-
----@param frame framehandle
----@param index integer
----@return framehandle
-function BlzFrameGetChild(frame, index) end	-- (native)
-
----@param whichTrigger trigger
----@param frame framehandle
----@param eventId frameeventtype
----@return event
-function BlzTriggerRegisterFrameEvent(whichTrigger, frame, eventId) end	-- (native)
-
----@return framehandle
-function BlzGetTriggerFrame() end	-- (native)
-
----@return frameeventtype
-function BlzGetTriggerFrameEvent() end	-- (native)
-
----@return number
-function BlzGetTriggerFrameValue() end	-- (native)
-
----@return string
-function BlzGetTriggerFrameText() end	-- (native)
-
----@param whichTrigger trigger
----@param whichPlayer player
----@param prefix string
----@param fromServer boolean
----@return event
-function BlzTriggerRegisterPlayerSyncEvent(whichTrigger, whichPlayer, prefix, fromServer) end	-- (native)
-
----@param prefix string
----@param data string
----@return boolean
-function BlzSendSyncData(prefix, data) end	-- (native)
-
----@return string
-function BlzGetTriggerSyncPrefix() end	-- (native)
-
----@return string
-function BlzGetTriggerSyncData() end	-- (native)
-
----@param whichTrigger trigger
----@param whichPlayer player
----@param key oskeytype
----@param metaKey integer
----@param keyDown boolean
----@return event
-function BlzTriggerRegisterPlayerKeyEvent(whichTrigger, whichPlayer, key, metaKey, keyDown) end	-- (native)
-
----@return oskeytype
-function BlzGetTriggerPlayerKey() end	-- (native)
-
----@return integer
-function BlzGetTriggerPlayerMetaKey() end	-- (native)
-
----@return boolean
-function BlzGetTriggerPlayerIsKeyDown() end	-- (native)
-
----@param enable boolean
-function BlzEnableCursor(enable) end	-- (native)
-
----@param x integer
----@param y integer
-function BlzSetMousePos(x, y) end	-- (native)
-
----@return integer
-function BlzGetLocalClientWidth() end	-- (native)
-
----@return integer
-function BlzGetLocalClientHeight() end	-- (native)
-
----@return boolean
-function BlzIsLocalClientActive() end	-- (native)
-
----@return unit
-function BlzGetMouseFocusUnit() end	-- (native)
-
----@param texFile string
----@return boolean
-function BlzChangeMinimapTerrainTex(texFile) end	-- (native)
-
----@return string
-function BlzGetLocale() end	-- (native)
-
----@param whichEffect effect
----@return number
-function BlzGetSpecialEffectScale(whichEffect) end	-- (native)
-
----@param whichEffect effect
----@param x number
----@param y number
----@param z number
-function BlzSetSpecialEffectMatrixScale(whichEffect, x, y, z) end	-- (native)
-
----@param whichEffect effect
-function BlzResetSpecialEffectMatrix(whichEffect) end	-- (native)
-
----@param whichUnit unit
----@param abilId integer
----@return ability
-function BlzGetUnitAbility(whichUnit, abilId) end	-- (native)
-
----@param whichUnit unit
----@param index integer
----@return ability
-function BlzGetUnitAbilityByIndex(whichUnit, index) end	-- (native)
-
----@param whichAbility ability
----@return integer
-function BlzGetAbilityId(whichAbility) end	-- (native)
-
----@param whichPlayer player
----@param recipient integer
----@param message string
-function BlzDisplayChatMessage(whichPlayer, recipient, message) end	-- (native)
-
----@param whichUnit unit
----@param flag boolean
-function BlzPauseUnitEx(whichUnit, flag) end	-- (native)
-
---  native BlzFourCC2S                                 takes integer value returns string
---  native BlzS2FourCC                                 takes string value returns integer
----@param whichUnit unit
----@param facingAngle number
-function BlzSetUnitFacingEx(whichUnit, facingAngle) end	-- (native)
-
----@param abilityId integer
----@param order string
----@return commandbuttoneffect
-function CreateCommandButtonEffect(abilityId, order) end	-- (native)
-
----@param whichUprgade integer
----@return commandbuttoneffect
-function CreateUpgradeCommandButtonEffect(whichUprgade) end	-- (native)
-
----@param abilityId integer
----@return commandbuttoneffect
-function CreateLearnCommandButtonEffect(abilityId) end	-- (native)
-
----@param whichEffect commandbuttoneffect
-function DestroyCommandButtonEffect(whichEffect) end	-- (native)
-
---  Bit Operations
----@param x integer
----@param y integer
----@return integer
-function BlzBitOr(x, y) end	-- (native)
-
----@param x integer
----@param y integer
----@return integer
-function BlzBitAnd(x, y) end	-- (native)
-
----@param x integer
----@param y integer
----@return integer
-function BlzBitXor(x, y) end	-- (native)
-
---  Intanced Object Operations
---  Ability
----@param whichAbility ability
----@param whichField abilitybooleanfield
----@return boolean
-function BlzGetAbilityBooleanField(whichAbility, whichField) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityintegerfield
----@return integer
-function BlzGetAbilityIntegerField(whichAbility, whichField) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityrealfield
----@return number
-function BlzGetAbilityRealField(whichAbility, whichField) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitystringfield
----@return string
-function BlzGetAbilityStringField(whichAbility, whichField) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitybooleanlevelfield
----@param level integer
----@return boolean
-function BlzGetAbilityBooleanLevelField(whichAbility, whichField, level) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityintegerlevelfield
----@param level integer
----@return integer
-function BlzGetAbilityIntegerLevelField(whichAbility, whichField, level) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityreallevelfield
----@param level integer
----@return number
-function BlzGetAbilityRealLevelField(whichAbility, whichField, level) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitystringlevelfield
----@param level integer
----@return string
-function BlzGetAbilityStringLevelField(whichAbility, whichField, level) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitybooleanlevelarrayfield
----@param level integer
----@param index integer
----@return boolean
-function BlzGetAbilityBooleanLevelArrayField(whichAbility, whichField, level, index) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityintegerlevelarrayfield
----@param level integer
----@param index integer
----@return integer
-function BlzGetAbilityIntegerLevelArrayField(whichAbility, whichField, level, index) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityreallevelarrayfield
----@param level integer
----@param index integer
----@return number
-function BlzGetAbilityRealLevelArrayField(whichAbility, whichField, level, index) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitystringlevelarrayfield
----@param level integer
----@param index integer
----@return string
-function BlzGetAbilityStringLevelArrayField(whichAbility, whichField, level, index) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitybooleanfield
----@param value boolean
----@return boolean
-function BlzSetAbilityBooleanField(whichAbility, whichField, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityintegerfield
----@param value integer
----@return boolean
-function BlzSetAbilityIntegerField(whichAbility, whichField, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityrealfield
----@param value number
----@return boolean
-function BlzSetAbilityRealField(whichAbility, whichField, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitystringfield
----@param value string
----@return boolean
-function BlzSetAbilityStringField(whichAbility, whichField, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitybooleanlevelfield
----@param level integer
----@param value boolean
----@return boolean
-function BlzSetAbilityBooleanLevelField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityintegerlevelfield
----@param level integer
----@param value integer
----@return boolean
-function BlzSetAbilityIntegerLevelField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityreallevelfield
----@param level integer
----@param value number
----@return boolean
-function BlzSetAbilityRealLevelField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitystringlevelfield
----@param level integer
----@param value string
----@return boolean
-function BlzSetAbilityStringLevelField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitybooleanlevelarrayfield
----@param level integer
----@param index integer
----@param value boolean
----@return boolean
-function BlzSetAbilityBooleanLevelArrayField(whichAbility, whichField, level, index, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityintegerlevelarrayfield
----@param level integer
----@param index integer
----@param value integer
----@return boolean
-function BlzSetAbilityIntegerLevelArrayField(whichAbility, whichField, level, index, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityreallevelarrayfield
----@param level integer
----@param index integer
----@param value number
----@return boolean
-function BlzSetAbilityRealLevelArrayField(whichAbility, whichField, level, index, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitystringlevelarrayfield
----@param level integer
----@param index integer
----@param value string
----@return boolean
-function BlzSetAbilityStringLevelArrayField(whichAbility, whichField, level, index, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitybooleanlevelarrayfield
----@param level integer
----@param value boolean
----@return boolean
-function BlzAddAbilityBooleanLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityintegerlevelarrayfield
----@param level integer
----@param value integer
----@return boolean
-function BlzAddAbilityIntegerLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityreallevelarrayfield
----@param level integer
----@param value number
----@return boolean
-function BlzAddAbilityRealLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitystringlevelarrayfield
----@param level integer
----@param value string
----@return boolean
-function BlzAddAbilityStringLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitybooleanlevelarrayfield
----@param level integer
----@param value boolean
----@return boolean
-function BlzRemoveAbilityBooleanLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityintegerlevelarrayfield
----@param level integer
----@param value integer
----@return boolean
-function BlzRemoveAbilityIntegerLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilityreallevelarrayfield
----@param level integer
----@param value number
----@return boolean
-function BlzRemoveAbilityRealLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
-
----@param whichAbility ability
----@param whichField abilitystringlevelarrayfield
----@param level integer
----@param value string
----@return boolean
-function BlzRemoveAbilityStringLevelArrayField(whichAbility, whichField, level, value) end	-- (native)
-
---  Item
-
----@param whichItem item
----@param index integer
----@return ability
-function BlzGetItemAbilityByIndex(whichItem, index) end	-- (native)
-
----@param whichItem item
----@param abilCode integer
----@return ability
-function BlzGetItemAbility(whichItem, abilCode) end	-- (native)
-
----@param whichItem item
----@param abilCode integer
----@return boolean
-function BlzItemAddAbility(whichItem, abilCode) end	-- (native)
-
----@param whichItem item
----@param whichField itembooleanfield
----@return boolean
-function BlzGetItemBooleanField(whichItem, whichField) end	-- (native)
-
----@param whichItem item
----@param whichField itemintegerfield
----@return integer
-function BlzGetItemIntegerField(whichItem, whichField) end	-- (native)
-
----@param whichItem item
----@param whichField itemrealfield
----@return number
-function BlzGetItemRealField(whichItem, whichField) end	-- (native)
-
----@param whichItem item
----@param whichField itemstringfield
----@return string
-function BlzGetItemStringField(whichItem, whichField) end	-- (native)
-
----@param whichItem item
----@param whichField itembooleanfield
----@param value boolean
----@return boolean
-function BlzSetItemBooleanField(whichItem, whichField, value) end	-- (native)
-
----@param whichItem item
----@param whichField itemintegerfield
----@param value integer
----@return boolean
-function BlzSetItemIntegerField(whichItem, whichField, value) end	-- (native)
-
----@param whichItem item
----@param whichField itemrealfield
----@param value number
----@return boolean
-function BlzSetItemRealField(whichItem, whichField, value) end	-- (native)
-
----@param whichItem item
----@param whichField itemstringfield
----@param value string
----@return boolean
-function BlzSetItemStringField(whichItem, whichField, value) end	-- (native)
-
----@param whichItem item
----@param abilCode integer
----@return boolean
-function BlzItemRemoveAbility(whichItem, abilCode) end	-- (native)
-
---  Unit
-
----@param whichUnit unit
----@param whichField unitbooleanfield
----@return boolean
-function BlzGetUnitBooleanField(whichUnit, whichField) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitintegerfield
----@return integer
-function BlzGetUnitIntegerField(whichUnit, whichField) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitrealfield
----@return number
-function BlzGetUnitRealField(whichUnit, whichField) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitstringfield
----@return string
-function BlzGetUnitStringField(whichUnit, whichField) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitbooleanfield
----@param value boolean
----@return boolean
-function BlzSetUnitBooleanField(whichUnit, whichField, value) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitintegerfield
----@param value integer
----@return boolean
-function BlzSetUnitIntegerField(whichUnit, whichField, value) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitrealfield
----@param value number
----@return boolean
-function BlzSetUnitRealField(whichUnit, whichField, value) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitstringfield
----@param value string
----@return boolean
-function BlzSetUnitStringField(whichUnit, whichField, value) end	-- (native)
-
---  Unit Weapon
----@param whichUnit unit
----@param whichField unitweaponbooleanfield
----@param index integer
----@return boolean
-function BlzGetUnitWeaponBooleanField(whichUnit, whichField, index) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitweaponintegerfield
----@param index integer
----@return integer
-function BlzGetUnitWeaponIntegerField(whichUnit, whichField, index) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitweaponrealfield
----@param index integer
----@return number
-function BlzGetUnitWeaponRealField(whichUnit, whichField, index) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitweaponstringfield
----@param index integer
----@return string
-function BlzGetUnitWeaponStringField(whichUnit, whichField, index) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitweaponbooleanfield
----@param index integer
----@param value boolean
----@return boolean
-function BlzSetUnitWeaponBooleanField(whichUnit, whichField, index, value) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitweaponintegerfield
----@param index integer
----@param value integer
----@return boolean
-function BlzSetUnitWeaponIntegerField(whichUnit, whichField, index, value) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitweaponrealfield
----@param index integer
----@param value number
----@return boolean
-function BlzSetUnitWeaponRealField(whichUnit, whichField, index, value) end	-- (native)
-
----@param whichUnit unit
----@param whichField unitweaponstringfield
----@param index integer
----@param value string
----@return boolean
-function BlzSetUnitWeaponStringField(whichUnit, whichField, index, value) end	-- (native)
-
---  Skin
----@param whichUnit unit
----@return integer
-function BlzGetUnitSkin(whichUnit) end	-- (native)
-
----@param whichItem item
----@return integer
-function BlzGetItemSkin(whichItem) end	-- (native)
-
---  native BlzGetDestructableSkin                         takes destructable whichDestructable returns integer
----@param whichUnit unit
----@param skinId integer
-function BlzSetUnitSkin(whichUnit, skinId) end	-- (native)
-
----@param whichItem item
----@param skinId integer
-function BlzSetItemSkin(whichItem, skinId) end	-- (native)
-
---  native BlzSetDestructableSkin                         takes destructable whichDestructable, integer skinId returns nothing
----@param itemid integer
----@param x number
----@param y number
----@param skinId integer
----@return item
-function BlzCreateItemWithSkin(itemid, x, y, skinId) end	-- (native)
-
----@param id player
----@param unitid integer
----@param x number
----@param y number
----@param face number
----@param skinId integer
----@return unit
-function BlzCreateUnitWithSkin(id, unitid, x, y, face, skinId) end	-- (native)
-
----@param objectid integer
----@param x number
----@param y number
----@param face number
----@param scale number
----@param variation integer
----@param skinId integer
----@return destructable
-function BlzCreateDestructableWithSkin(objectid, x, y, face, scale, variation, skinId) end	-- (native)
-
----@param objectid integer
----@param x number
----@param y number
----@param z number
----@param face number
----@param scale number
----@param variation integer
----@param skinId integer
----@return destructable
-function BlzCreateDestructableZWithSkin(objectid, x, y, z, face, scale, variation, skinId) end	-- (native)
-
----@param objectid integer
----@param x number
----@param y number
----@param face number
----@param scale number
----@param variation integer
----@param skinId integer
----@return destructable
-function BlzCreateDeadDestructableWithSkin(objectid, x, y, face, scale, variation, skinId) end	-- (native)
-
----@param objectid integer
----@param x number
----@param y number
----@param z number
----@param face number
----@param scale number
----@param variation integer
----@param skinId integer
----@return destructable
-function BlzCreateDeadDestructableZWithSkin(objectid, x, y, z, face, scale, variation, skinId) end	-- (native)
-
----@param whichPlayer player
----@return integer
-function BlzGetPlayerTownHallCount(whichPlayer) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@return boolean
-function BlzQueueImmediateOrderById(whichUnit, order) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@param x number
----@param y number
----@return boolean
-function BlzQueuePointOrderById(whichUnit, order, x, y) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@param targetWidget widget
----@return boolean
-function BlzQueueTargetOrderById(whichUnit, order, targetWidget) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@param x number
----@param y number
----@param instantTargetWidget widget
----@return boolean
-function BlzQueueInstantPointOrderById(whichUnit, order, x, y, instantTargetWidget) end	-- (native)
-
----@param whichUnit unit
----@param order integer
----@param targetWidget widget
----@param instantTargetWidget widget
----@return boolean
-function BlzQueueInstantTargetOrderById(whichUnit, order, targetWidget, instantTargetWidget) end	-- (native)
-
----@param whichPeon unit
----@param unitId integer
----@param x number
----@param y number
----@return boolean
-function BlzQueueBuildOrderById(whichPeon, unitId, x, y) end	-- (native)
-
----@param forWhichPlayer player
----@param neutralStructure unit
----@param unitId integer
----@return boolean
-function BlzQueueNeutralImmediateOrderById(forWhichPlayer, neutralStructure, unitId) end	-- (native)
-
----@param forWhichPlayer player
----@param neutralStructure unit
----@param unitId integer
----@param x number
----@param y number
----@return boolean
-function BlzQueueNeutralPointOrderById(forWhichPlayer, neutralStructure, unitId, x, y) end	-- (native)
-
----@param forWhichPlayer player
----@param neutralStructure unit
----@param unitId integer
----@param target widget
----@return boolean
-function BlzQueueNeutralTargetOrderById(forWhichPlayer, neutralStructure, unitId, target) end	-- (native)
-
---  returns the number of orders the unit currently has queued up
----@param whichUnit unit
----@return integer
-function BlzGetUnitOrderCount(whichUnit) end	-- (native)
-
---  clears either all orders or only queued up orders
----@param whichUnit unit
----@param onlyQueued boolean
-function BlzUnitClearOrders(whichUnit, onlyQueued) end	-- (native)
-
---  stops the current order and optionally clears the queue
----@param whichUnit unit
----@param clearQueue boolean
-function BlzUnitForceStopOrder(whichUnit, clearQueue) end	-- (native)
-
+---@meta
+
+---@class handle: userdata
+
+--============================================================================
+-- Native types. All native functions take extended handle types when
+-- possible to help prevent passing bad values to native functions
+--
+---@class agent:                    handle  -- all reference counted objects
+---@class event:                    agent  -- a reference to an event registration
+---@class player:                   agent  -- a single player reference
+---@class widget:                   agent  -- an interactive game object with life
+---@class unit:                     widget  -- a single unit reference
+---@class destructable:             widget
+---@class item:                     widget
+---@class ability:                  agent
+---@class buff:                     ability
+---@class force:                    agent
+---@class group:                    agent
+---@class trigger:                  agent
+---@class triggercondition:         agent
+---@class triggeraction:            handle
+---@class timer:                    agent
+---@class location:                 agent
+---@class region:                   agent
+---@class rect:                     agent
+---@class boolexpr:                 agent
+---@class sound:                    agent
+---@class conditionfunc:            boolexpr
+---@class filterfunc:               boolexpr
+---@class unitpool:                 handle
+---@class itempool:                 handle
+---@class race:                     handle
+---@class alliancetype:             handle
+---@class racepreference:           handle
+---@class gamestate:                handle
+---@class igamestate:               gamestate
+---@class fgamestate:               gamestate
+---@class playerstate:              handle
+---@class playerscore:              handle
+---@class playergameresult:         handle
+---@class unitstate:                handle
+---@class aidifficulty:             handle
+
+---@class eventid:                  handle
+---@class gameevent:                eventid
+---@class playerevent:              eventid
+---@class playerunitevent:          eventid
+---@class unitevent:                eventid
+---@class limitop:                  eventid
+---@class widgetevent:              eventid
+---@class dialogevent:              eventid
+---@class unittype:                 handle
+
+---@class gamespeed:                handle
+---@class gamedifficulty:           handle
+---@class gametype:                 handle
+---@class mapflag:                  handle
+---@class mapvisibility:            handle
+---@class mapsetting:               handle
+---@class mapdensity:               handle
+---@class mapcontrol:               handle
+---@class minimapicon:              handle
+---@class playerslotstate:          handle
+---@class volumegroup:              handle
+---@class camerafield:              handle
+---@class camerasetup:              handle
+---@class playercolor:              handle
+---@class placement:                handle
+---@class startlocprio:             handle
+---@class raritycontrol:            handle
+---@class blendmode:                handle
+---@class texmapflags:              handle
+---@class effect:                   agent
+---@class effecttype:               handle
+---@class weathereffect:            handle
+---@class terraindeformation:       handle
+---@class fogstate:                 handle
+---@class fogmodifier:              agent
+---@class dialog:                   agent
+---@class button:                   agent
+---@class quest:                    agent
+---@class questitem:                agent
+---@class defeatcondition:          agent
+---@class timerdialog:              agent
+---@class leaderboard:              agent
+---@class multiboard:               agent
+---@class multiboarditem:           agent
+---@class trackable:                agent
+---@class gamecache:                agent
+---@class version:                  handle
+---@class itemtype:                 handle
+---@class texttag:                  handle
+---@class attacktype:               handle
+---@class damagetype:               handle
+---@class weapontype:               handle
+---@class soundtype:                handle
+---@class lightning:                handle
+---@class pathingtype:              handle
+---@class mousebuttontype:          handle
+---@class animtype:                 handle
+---@class subanimtype:              handle
+---@class image:                    handle
+---@class ubersplat:                handle
+---@class hashtable:                agent
+---@class framehandle:              handle
+---@class originframetype:          handle
+---@class framepointtype:           handle
+---@class textaligntype:            handle
+---@class frameeventtype:           handle
+---@class oskeytype:                handle
+---@class abilityintegerfield:              handle
+---@class abilityrealfield:                 handle
+---@class abilitybooleanfield:              handle
+---@class abilitystringfield:               handle
+---@class abilityintegerlevelfield:         handle
+---@class abilityreallevelfield:            handle
+---@class abilitybooleanlevelfield:         handle
+---@class abilitystringlevelfield:          handle
+---@class abilityintegerlevelarrayfield:    handle
+---@class abilityreallevelarrayfield:       handle
+---@class abilitybooleanlevelarrayfield:    handle
+---@class abilitystringlevelarrayfield:     handle
+---@class unitintegerfield:                 handle
+---@class unitrealfield:                    handle
+---@class unitbooleanfield:                 handle
+---@class unitstringfield:                  handle
+---@class unitweaponintegerfield:           handle
+---@class unitweaponrealfield:              handle
+---@class unitweaponbooleanfield:           handle
+---@class unitweaponstringfield:            handle
+---@class itemintegerfield:                 handle
+---@class itemrealfield:                    handle
+---@class itembooleanfield:                 handle
+---@class itemstringfield:                  handle
+---@class movetype:                         handle
+---@class targetflag:                       handle
+---@class armortype:                        handle
+---@class heroattribute:                    handle
+---@class defensetype:                      handle
+---@class regentype:                        handle
+---@class unitcategory:                     handle
+---@class pathingflag:                      handle
+---@class commandbuttoneffect:              handle
+
+
+ConvertRace=nil                 ---@type fun(i: integer): race (native)
+ConvertAllianceType=nil         ---@type fun(i: integer): alliancetype (native)
+ConvertRacePref=nil             ---@type fun(i: integer): racepreference (native)
+ConvertIGameState=nil           ---@type fun(i: integer): igamestate (native)
+ConvertFGameState=nil           ---@type fun(i: integer): fgamestate (native)
+ConvertPlayerState=nil          ---@type fun(i: integer): playerstate (native)
+ConvertPlayerScore=nil          ---@type fun(i: integer): playerscore (native)
+ConvertPlayerGameResult=nil     ---@type fun(i: integer): playergameresult (native)
+ConvertUnitState=nil            ---@type fun(i: integer): unitstate (native)
+ConvertAIDifficulty=nil         ---@type fun(i: integer): aidifficulty (native)
+ConvertGameEvent=nil            ---@type fun(i: integer): gameevent (native)
+ConvertPlayerEvent=nil          ---@type fun(i: integer): playerevent (native)
+ConvertPlayerUnitEvent=nil      ---@type fun(i: integer): playerunitevent (native)
+ConvertWidgetEvent=nil          ---@type fun(i: integer): widgetevent (native)
+ConvertDialogEvent=nil          ---@type fun(i: integer): dialogevent (native)
+ConvertUnitEvent=nil            ---@type fun(i: integer): unitevent (native)
+ConvertLimitOp=nil              ---@type fun(i: integer): limitop (native)
+ConvertUnitType=nil             ---@type fun(i: integer): unittype (native)
+ConvertGameSpeed=nil            ---@type fun(i: integer): gamespeed (native)
+ConvertPlacement=nil            ---@type fun(i: integer): placement (native)
+ConvertStartLocPrio=nil         ---@type fun(i: integer): startlocprio (native)
+ConvertGameDifficulty=nil       ---@type fun(i: integer): gamedifficulty (native)
+ConvertGameType=nil             ---@type fun(i: integer): gametype (native)
+ConvertMapFlag=nil              ---@type fun(i: integer): mapflag (native)
+ConvertMapVisibility=nil        ---@type fun(i: integer): mapvisibility (native)
+ConvertMapSetting=nil           ---@type fun(i: integer): mapsetting (native)
+ConvertMapDensity=nil           ---@type fun(i: integer): mapdensity (native)
+ConvertMapControl=nil           ---@type fun(i: integer): mapcontrol (native)
+ConvertPlayerColor=nil          ---@type fun(i: integer): playercolor (native)
+ConvertPlayerSlotState=nil      ---@type fun(i: integer): playerslotstate (native)
+ConvertVolumeGroup=nil          ---@type fun(i: integer): volumegroup (native)
+ConvertCameraField=nil          ---@type fun(i: integer): camerafield (native)
+ConvertBlendMode=nil            ---@type fun(i: integer): blendmode (native)
+ConvertRarityControl=nil        ---@type fun(i: integer): raritycontrol (native)
+ConvertTexMapFlags=nil          ---@type fun(i: integer): texmapflags (native)
+ConvertFogState=nil             ---@type fun(i: integer): fogstate (native)
+ConvertEffectType=nil           ---@type fun(i: integer): effecttype (native)
+ConvertVersion=nil              ---@type fun(i: integer): version (native)
+ConvertItemType=nil             ---@type fun(i: integer): itemtype (native)
+ConvertAttackType=nil           ---@type fun(i: integer): attacktype (native)
+ConvertDamageType=nil           ---@type fun(i: integer): damagetype (native)
+ConvertWeaponType=nil           ---@type fun(i: integer): weapontype (native)
+ConvertSoundType=nil            ---@type fun(i: integer): soundtype (native)
+ConvertPathingType=nil          ---@type fun(i: integer): pathingtype (native)
+ConvertMouseButtonType=nil      ---@type fun(i: integer): mousebuttontype (native)
+ConvertAnimType=nil             ---@type fun(i: integer): animtype (native)
+ConvertSubAnimType=nil          ---@type fun(i: integer): subanimtype (native)
+ConvertOriginFrameType=nil      ---@type fun(i: integer): originframetype (native)
+ConvertFramePointType=nil       ---@type fun(i: integer): framepointtype (native)
+ConvertTextAlignType=nil        ---@type fun(i: integer): textaligntype (native)
+ConvertFrameEventType=nil       ---@type fun(i: integer): frameeventtype (native)
+ConvertOsKeyType=nil            ---@type fun(i: integer): oskeytype (native)
+ConvertAbilityIntegerField=nil              ---@type fun(i: integer): abilityintegerfield (native)
+ConvertAbilityRealField=nil                 ---@type fun(i: integer): abilityrealfield (native)
+ConvertAbilityBooleanField=nil              ---@type fun(i: integer): abilitybooleanfield (native)
+ConvertAbilityStringField=nil               ---@type fun(i: integer): abilitystringfield (native)
+ConvertAbilityIntegerLevelField=nil         ---@type fun(i: integer): abilityintegerlevelfield (native)
+ConvertAbilityRealLevelField=nil            ---@type fun(i: integer): abilityreallevelfield (native)
+ConvertAbilityBooleanLevelField=nil         ---@type fun(i: integer): abilitybooleanlevelfield (native)
+ConvertAbilityStringLevelField=nil          ---@type fun(i: integer): abilitystringlevelfield (native)
+ConvertAbilityIntegerLevelArrayField=nil    ---@type fun(i: integer): abilityintegerlevelarrayfield (native)
+ConvertAbilityRealLevelArrayField=nil       ---@type fun(i: integer): abilityreallevelarrayfield (native)
+ConvertAbilityBooleanLevelArrayField=nil    ---@type fun(i: integer): abilitybooleanlevelarrayfield (native)
+ConvertAbilityStringLevelArrayField=nil     ---@type fun(i: integer): abilitystringlevelarrayfield (native)
+ConvertUnitIntegerField=nil                 ---@type fun(i: integer): unitintegerfield (native)
+ConvertUnitRealField=nil                    ---@type fun(i: integer): unitrealfield (native)
+ConvertUnitBooleanField=nil                 ---@type fun(i: integer): unitbooleanfield (native)
+ConvertUnitStringField=nil                  ---@type fun(i: integer): unitstringfield (native)
+ConvertUnitWeaponIntegerField=nil           ---@type fun(i: integer): unitweaponintegerfield (native)
+ConvertUnitWeaponRealField=nil              ---@type fun(i: integer): unitweaponrealfield (native)
+ConvertUnitWeaponBooleanField=nil           ---@type fun(i: integer): unitweaponbooleanfield (native)
+ConvertUnitWeaponStringField=nil            ---@type fun(i: integer): unitweaponstringfield (native)
+ConvertItemIntegerField=nil                 ---@type fun(i: integer): itemintegerfield (native)
+ConvertItemRealField=nil                    ---@type fun(i: integer): itemrealfield (native)
+ConvertItemBooleanField=nil                 ---@type fun(i: integer): itembooleanfield (native)
+ConvertItemStringField=nil                  ---@type fun(i: integer): itemstringfield (native)
+ConvertMoveType=nil                         ---@type fun(i: integer): movetype (native)
+ConvertTargetFlag=nil                       ---@type fun(i: integer): targetflag (native)
+ConvertArmorType=nil                        ---@type fun(i: integer): armortype (native)
+ConvertHeroAttribute=nil                    ---@type fun(i: integer): heroattribute (native)
+ConvertDefenseType=nil                      ---@type fun(i: integer): defensetype (native)
+ConvertRegenType=nil                        ---@type fun(i: integer): regentype (native)
+ConvertUnitCategory=nil                     ---@type fun(i: integer): unitcategory (native)
+ConvertPathingFlag=nil                      ---@type fun(i: integer): pathingflag (native)
+
+OrderId=nil                     ---@type fun(orderIdString: string): integer (native)
+OrderId2String=nil              ---@type fun(orderId: integer): string (native)
+UnitId=nil                      ---@type fun(unitIdString: string): integer (native)
+UnitId2String=nil               ---@type fun(unitId: integer): string (native)
+
+-- Not currently working correctly...
+AbilityId=nil                   ---@type fun(abilityIdString: string): integer (native)
+AbilityId2String=nil            ---@type fun(abilityId: integer): string (native)
+
+-- Looks up the "name" field for any object (unit, item, ability)
+GetObjectName=nil               ---@type fun(objectId: integer): string (native)
+
+GetBJMaxPlayers=nil             ---@type fun(): integer (native)
+GetBJPlayerNeutralVictim=nil    ---@type fun(): integer (native)
+GetBJPlayerNeutralExtra=nil     ---@type fun(): integer (native)
+GetBJMaxPlayerSlots=nil         ---@type fun(): integer (native)
+GetPlayerNeutralPassive=nil     ---@type fun(): integer (native)
+GetPlayerNeutralAggressive=nil  ---@type fun(): integer (native)
+
+
+
+--===================================================
+-- Game Constants
+--===================================================
+
+    -- pfff
+    FALSE                                              = false ---@type boolean 
+    TRUE                                               = true ---@type boolean 
+    JASS_MAX_ARRAY_SIZE                                = 32768 ---@type integer 
+
+    PLAYER_NEUTRAL_PASSIVE                             = GetPlayerNeutralPassive() ---@type integer 
+    PLAYER_NEUTRAL_AGGRESSIVE                          = GetPlayerNeutralAggressive() ---@type integer 
+
+    PLAYER_COLOR_RED                                   = ConvertPlayerColor(0) ---@type playercolor 
+    PLAYER_COLOR_BLUE                                  = ConvertPlayerColor(1) ---@type playercolor 
+    PLAYER_COLOR_CYAN                                  = ConvertPlayerColor(2) ---@type playercolor 
+    PLAYER_COLOR_PURPLE                                = ConvertPlayerColor(3) ---@type playercolor 
+    PLAYER_COLOR_YELLOW                                = ConvertPlayerColor(4) ---@type playercolor 
+    PLAYER_COLOR_ORANGE                                = ConvertPlayerColor(5) ---@type playercolor 
+    PLAYER_COLOR_GREEN                                 = ConvertPlayerColor(6) ---@type playercolor 
+    PLAYER_COLOR_PINK                                  = ConvertPlayerColor(7) ---@type playercolor 
+    PLAYER_COLOR_LIGHT_GRAY                            = ConvertPlayerColor(8) ---@type playercolor 
+    PLAYER_COLOR_LIGHT_BLUE                            = ConvertPlayerColor(9) ---@type playercolor 
+    PLAYER_COLOR_AQUA                                  = ConvertPlayerColor(10) ---@type playercolor 
+    PLAYER_COLOR_BROWN                                 = ConvertPlayerColor(11) ---@type playercolor 
+    PLAYER_COLOR_MAROON                                = ConvertPlayerColor(12) ---@type playercolor 
+    PLAYER_COLOR_NAVY                                  = ConvertPlayerColor(13) ---@type playercolor 
+    PLAYER_COLOR_TURQUOISE                             = ConvertPlayerColor(14) ---@type playercolor 
+    PLAYER_COLOR_VIOLET                                = ConvertPlayerColor(15) ---@type playercolor 
+    PLAYER_COLOR_WHEAT                                 = ConvertPlayerColor(16) ---@type playercolor 
+    PLAYER_COLOR_PEACH                                 = ConvertPlayerColor(17) ---@type playercolor 
+    PLAYER_COLOR_MINT                                  = ConvertPlayerColor(18) ---@type playercolor 
+    PLAYER_COLOR_LAVENDER                              = ConvertPlayerColor(19) ---@type playercolor 
+    PLAYER_COLOR_COAL                                  = ConvertPlayerColor(20) ---@type playercolor 
+    PLAYER_COLOR_SNOW                                  = ConvertPlayerColor(21) ---@type playercolor 
+    PLAYER_COLOR_EMERALD                               = ConvertPlayerColor(22) ---@type playercolor 
+    PLAYER_COLOR_PEANUT                                = ConvertPlayerColor(23) ---@type playercolor 
+
+    RACE_HUMAN                                         = ConvertRace(1) ---@type race 
+    RACE_ORC                                           = ConvertRace(2) ---@type race 
+    RACE_UNDEAD                                        = ConvertRace(3) ---@type race 
+    RACE_NIGHTELF                                      = ConvertRace(4) ---@type race 
+    RACE_DEMON                                         = ConvertRace(5) ---@type race 
+    RACE_OTHER                                         = ConvertRace(7) ---@type race 
+
+    PLAYER_GAME_RESULT_VICTORY                         = ConvertPlayerGameResult(0) ---@type playergameresult 
+    PLAYER_GAME_RESULT_DEFEAT                          = ConvertPlayerGameResult(1) ---@type playergameresult 
+    PLAYER_GAME_RESULT_TIE                             = ConvertPlayerGameResult(2) ---@type playergameresult 
+    PLAYER_GAME_RESULT_NEUTRAL                         = ConvertPlayerGameResult(3) ---@type playergameresult 
+
+    ALLIANCE_PASSIVE                                   = ConvertAllianceType(0) ---@type alliancetype 
+    ALLIANCE_HELP_REQUEST                              = ConvertAllianceType(1) ---@type alliancetype 
+    ALLIANCE_HELP_RESPONSE                             = ConvertAllianceType(2) ---@type alliancetype 
+    ALLIANCE_SHARED_XP                                 = ConvertAllianceType(3) ---@type alliancetype 
+    ALLIANCE_SHARED_SPELLS                             = ConvertAllianceType(4) ---@type alliancetype 
+    ALLIANCE_SHARED_VISION                             = ConvertAllianceType(5) ---@type alliancetype 
+    ALLIANCE_SHARED_CONTROL                            = ConvertAllianceType(6) ---@type alliancetype 
+    ALLIANCE_SHARED_ADVANCED_CONTROL                   = ConvertAllianceType(7) ---@type alliancetype 
+    ALLIANCE_RESCUABLE                                 = ConvertAllianceType(8) ---@type alliancetype 
+    ALLIANCE_SHARED_VISION_FORCED                      = ConvertAllianceType(9) ---@type alliancetype 
+
+    VERSION_REIGN_OF_CHAOS                             = ConvertVersion(0) ---@type version 
+    VERSION_FROZEN_THRONE                              = ConvertVersion(1) ---@type version 
+
+    ATTACK_TYPE_NORMAL                                 = ConvertAttackType(0) ---@type attacktype 
+    ATTACK_TYPE_MELEE                                  = ConvertAttackType(1) ---@type attacktype 
+    ATTACK_TYPE_PIERCE                                 = ConvertAttackType(2) ---@type attacktype 
+    ATTACK_TYPE_SIEGE                                  = ConvertAttackType(3) ---@type attacktype 
+    ATTACK_TYPE_MAGIC                                  = ConvertAttackType(4) ---@type attacktype 
+    ATTACK_TYPE_CHAOS                                  = ConvertAttackType(5) ---@type attacktype 
+    ATTACK_TYPE_HERO                                   = ConvertAttackType(6) ---@type attacktype 
+
+    DAMAGE_TYPE_UNKNOWN                                = ConvertDamageType(0) ---@type damagetype 
+    DAMAGE_TYPE_NORMAL                                 = ConvertDamageType(4) ---@type damagetype 
+    DAMAGE_TYPE_ENHANCED                               = ConvertDamageType(5) ---@type damagetype 
+    DAMAGE_TYPE_FIRE                                   = ConvertDamageType(8) ---@type damagetype 
+    DAMAGE_TYPE_COLD                                   = ConvertDamageType(9) ---@type damagetype 
+    DAMAGE_TYPE_LIGHTNING                              = ConvertDamageType(10) ---@type damagetype 
+    DAMAGE_TYPE_POISON                                 = ConvertDamageType(11) ---@type damagetype 
+    DAMAGE_TYPE_DISEASE                                = ConvertDamageType(12) ---@type damagetype 
+    DAMAGE_TYPE_DIVINE                                 = ConvertDamageType(13) ---@type damagetype 
+    DAMAGE_TYPE_MAGIC                                  = ConvertDamageType(14) ---@type damagetype 
+    DAMAGE_TYPE_SONIC                                  = ConvertDamageType(15) ---@type damagetype 
+    DAMAGE_TYPE_ACID                                   = ConvertDamageType(16) ---@type damagetype 
+    DAMAGE_TYPE_FORCE                                  = ConvertDamageType(17) ---@type damagetype 
+    DAMAGE_TYPE_DEATH                                  = ConvertDamageType(18) ---@type damagetype 
+    DAMAGE_TYPE_MIND                                   = ConvertDamageType(19) ---@type damagetype 
+    DAMAGE_TYPE_PLANT                                  = ConvertDamageType(20) ---@type damagetype 
+    DAMAGE_TYPE_DEFENSIVE                              = ConvertDamageType(21) ---@type damagetype 
+    DAMAGE_TYPE_DEMOLITION                             = ConvertDamageType(22) ---@type damagetype 
+    DAMAGE_TYPE_SLOW_POISON                            = ConvertDamageType(23) ---@type damagetype 
+    DAMAGE_TYPE_SPIRIT_LINK                            = ConvertDamageType(24) ---@type damagetype 
+    DAMAGE_TYPE_SHADOW_STRIKE                          = ConvertDamageType(25) ---@type damagetype 
+    DAMAGE_TYPE_UNIVERSAL                              = ConvertDamageType(26) ---@type damagetype 
+
+    WEAPON_TYPE_WHOKNOWS                               = ConvertWeaponType(0) ---@type weapontype 
+    WEAPON_TYPE_METAL_LIGHT_CHOP                       = ConvertWeaponType(1) ---@type weapontype 
+    WEAPON_TYPE_METAL_MEDIUM_CHOP                      = ConvertWeaponType(2) ---@type weapontype 
+    WEAPON_TYPE_METAL_HEAVY_CHOP                       = ConvertWeaponType(3) ---@type weapontype 
+    WEAPON_TYPE_METAL_LIGHT_SLICE                      = ConvertWeaponType(4) ---@type weapontype 
+    WEAPON_TYPE_METAL_MEDIUM_SLICE                     = ConvertWeaponType(5) ---@type weapontype 
+    WEAPON_TYPE_METAL_HEAVY_SLICE                      = ConvertWeaponType(6) ---@type weapontype 
+    WEAPON_TYPE_METAL_MEDIUM_BASH                      = ConvertWeaponType(7) ---@type weapontype 
+    WEAPON_TYPE_METAL_HEAVY_BASH                       = ConvertWeaponType(8) ---@type weapontype 
+    WEAPON_TYPE_METAL_MEDIUM_STAB                      = ConvertWeaponType(9) ---@type weapontype 
+    WEAPON_TYPE_METAL_HEAVY_STAB                       = ConvertWeaponType(10) ---@type weapontype 
+    WEAPON_TYPE_WOOD_LIGHT_SLICE                       = ConvertWeaponType(11) ---@type weapontype 
+    WEAPON_TYPE_WOOD_MEDIUM_SLICE                      = ConvertWeaponType(12) ---@type weapontype 
+    WEAPON_TYPE_WOOD_HEAVY_SLICE                       = ConvertWeaponType(13) ---@type weapontype 
+    WEAPON_TYPE_WOOD_LIGHT_BASH                        = ConvertWeaponType(14) ---@type weapontype 
+    WEAPON_TYPE_WOOD_MEDIUM_BASH                       = ConvertWeaponType(15) ---@type weapontype 
+    WEAPON_TYPE_WOOD_HEAVY_BASH                        = ConvertWeaponType(16) ---@type weapontype 
+    WEAPON_TYPE_WOOD_LIGHT_STAB                        = ConvertWeaponType(17) ---@type weapontype 
+    WEAPON_TYPE_WOOD_MEDIUM_STAB                       = ConvertWeaponType(18) ---@type weapontype 
+    WEAPON_TYPE_CLAW_LIGHT_SLICE                       = ConvertWeaponType(19) ---@type weapontype 
+    WEAPON_TYPE_CLAW_MEDIUM_SLICE                      = ConvertWeaponType(20) ---@type weapontype 
+    WEAPON_TYPE_CLAW_HEAVY_SLICE                       = ConvertWeaponType(21) ---@type weapontype 
+    WEAPON_TYPE_AXE_MEDIUM_CHOP                        = ConvertWeaponType(22) ---@type weapontype 
+    WEAPON_TYPE_ROCK_HEAVY_BASH                        = ConvertWeaponType(23) ---@type weapontype 
+
+    PATHING_TYPE_ANY                                   = ConvertPathingType(0) ---@type pathingtype 
+    PATHING_TYPE_WALKABILITY                           = ConvertPathingType(1) ---@type pathingtype 
+    PATHING_TYPE_FLYABILITY                            = ConvertPathingType(2) ---@type pathingtype 
+    PATHING_TYPE_BUILDABILITY                          = ConvertPathingType(3) ---@type pathingtype 
+    PATHING_TYPE_PEONHARVESTPATHING                    = ConvertPathingType(4) ---@type pathingtype 
+    PATHING_TYPE_BLIGHTPATHING                         = ConvertPathingType(5) ---@type pathingtype 
+    PATHING_TYPE_FLOATABILITY                          = ConvertPathingType(6) ---@type pathingtype 
+    PATHING_TYPE_AMPHIBIOUSPATHING                     = ConvertPathingType(7) ---@type pathingtype 
+
+    MOUSE_BUTTON_TYPE_LEFT                             = ConvertMouseButtonType(1) ---@type mousebuttontype 
+    MOUSE_BUTTON_TYPE_MIDDLE                           = ConvertMouseButtonType(2) ---@type mousebuttontype 
+    MOUSE_BUTTON_TYPE_RIGHT                            = ConvertMouseButtonType(3) ---@type mousebuttontype 
+
+    ANIM_TYPE_BIRTH                                    = ConvertAnimType(0) ---@type animtype 
+    ANIM_TYPE_DEATH                                    = ConvertAnimType(1) ---@type animtype 
+    ANIM_TYPE_DECAY                                    = ConvertAnimType(2) ---@type animtype 
+    ANIM_TYPE_DISSIPATE                                = ConvertAnimType(3) ---@type animtype 
+    ANIM_TYPE_STAND                                    = ConvertAnimType(4) ---@type animtype 
+    ANIM_TYPE_WALK                                     = ConvertAnimType(5) ---@type animtype 
+    ANIM_TYPE_ATTACK                                   = ConvertAnimType(6) ---@type animtype 
+    ANIM_TYPE_MORPH                                    = ConvertAnimType(7) ---@type animtype 
+    ANIM_TYPE_SLEEP                                    = ConvertAnimType(8) ---@type animtype 
+    ANIM_TYPE_SPELL                                    = ConvertAnimType(9) ---@type animtype 
+    ANIM_TYPE_PORTRAIT                                 = ConvertAnimType(10) ---@type animtype 
+
+    SUBANIM_TYPE_ROOTED                                = ConvertSubAnimType(11) ---@type subanimtype 
+    SUBANIM_TYPE_ALTERNATE_EX                          = ConvertSubAnimType(12) ---@type subanimtype 
+    SUBANIM_TYPE_LOOPING                               = ConvertSubAnimType(13) ---@type subanimtype 
+    SUBANIM_TYPE_SLAM                                  = ConvertSubAnimType(14) ---@type subanimtype 
+    SUBANIM_TYPE_THROW                                 = ConvertSubAnimType(15) ---@type subanimtype 
+    SUBANIM_TYPE_SPIKED                                = ConvertSubAnimType(16) ---@type subanimtype 
+    SUBANIM_TYPE_FAST                                  = ConvertSubAnimType(17) ---@type subanimtype 
+    SUBANIM_TYPE_SPIN                                  = ConvertSubAnimType(18) ---@type subanimtype 
+    SUBANIM_TYPE_READY                                 = ConvertSubAnimType(19) ---@type subanimtype 
+    SUBANIM_TYPE_CHANNEL                               = ConvertSubAnimType(20) ---@type subanimtype 
+    SUBANIM_TYPE_DEFEND                                = ConvertSubAnimType(21) ---@type subanimtype 
+    SUBANIM_TYPE_VICTORY                               = ConvertSubAnimType(22) ---@type subanimtype 
+    SUBANIM_TYPE_TURN                                  = ConvertSubAnimType(23) ---@type subanimtype 
+    SUBANIM_TYPE_LEFT                                  = ConvertSubAnimType(24) ---@type subanimtype 
+    SUBANIM_TYPE_RIGHT                                 = ConvertSubAnimType(25) ---@type subanimtype 
+    SUBANIM_TYPE_FIRE                                  = ConvertSubAnimType(26) ---@type subanimtype 
+    SUBANIM_TYPE_FLESH                                 = ConvertSubAnimType(27) ---@type subanimtype 
+    SUBANIM_TYPE_HIT                                   = ConvertSubAnimType(28) ---@type subanimtype 
+    SUBANIM_TYPE_WOUNDED                               = ConvertSubAnimType(29) ---@type subanimtype 
+    SUBANIM_TYPE_LIGHT                                 = ConvertSubAnimType(30) ---@type subanimtype 
+    SUBANIM_TYPE_MODERATE                              = ConvertSubAnimType(31) ---@type subanimtype 
+    SUBANIM_TYPE_SEVERE                                = ConvertSubAnimType(32) ---@type subanimtype 
+    SUBANIM_TYPE_CRITICAL                              = ConvertSubAnimType(33) ---@type subanimtype 
+    SUBANIM_TYPE_COMPLETE                              = ConvertSubAnimType(34) ---@type subanimtype 
+    SUBANIM_TYPE_GOLD                                  = ConvertSubAnimType(35) ---@type subanimtype 
+    SUBANIM_TYPE_LUMBER                                = ConvertSubAnimType(36) ---@type subanimtype 
+    SUBANIM_TYPE_WORK                                  = ConvertSubAnimType(37) ---@type subanimtype 
+    SUBANIM_TYPE_TALK                                  = ConvertSubAnimType(38) ---@type subanimtype 
+    SUBANIM_TYPE_FIRST                                 = ConvertSubAnimType(39) ---@type subanimtype 
+    SUBANIM_TYPE_SECOND                                = ConvertSubAnimType(40) ---@type subanimtype 
+    SUBANIM_TYPE_THIRD                                 = ConvertSubAnimType(41) ---@type subanimtype 
+    SUBANIM_TYPE_FOURTH                                = ConvertSubAnimType(42) ---@type subanimtype 
+    SUBANIM_TYPE_FIFTH                                 = ConvertSubAnimType(43) ---@type subanimtype 
+    SUBANIM_TYPE_ONE                                   = ConvertSubAnimType(44) ---@type subanimtype 
+    SUBANIM_TYPE_TWO                                   = ConvertSubAnimType(45) ---@type subanimtype 
+    SUBANIM_TYPE_THREE                                 = ConvertSubAnimType(46) ---@type subanimtype 
+    SUBANIM_TYPE_FOUR                                  = ConvertSubAnimType(47) ---@type subanimtype 
+    SUBANIM_TYPE_FIVE                                  = ConvertSubAnimType(48) ---@type subanimtype 
+    SUBANIM_TYPE_SMALL                                 = ConvertSubAnimType(49) ---@type subanimtype 
+    SUBANIM_TYPE_MEDIUM                                = ConvertSubAnimType(50) ---@type subanimtype 
+    SUBANIM_TYPE_LARGE                                 = ConvertSubAnimType(51) ---@type subanimtype 
+    SUBANIM_TYPE_UPGRADE                               = ConvertSubAnimType(52) ---@type subanimtype 
+    SUBANIM_TYPE_DRAIN                                 = ConvertSubAnimType(53) ---@type subanimtype 
+    SUBANIM_TYPE_FILL                                  = ConvertSubAnimType(54) ---@type subanimtype 
+    SUBANIM_TYPE_CHAINLIGHTNING                        = ConvertSubAnimType(55) ---@type subanimtype 
+    SUBANIM_TYPE_EATTREE                               = ConvertSubAnimType(56) ---@type subanimtype 
+    SUBANIM_TYPE_PUKE                                  = ConvertSubAnimType(57) ---@type subanimtype 
+    SUBANIM_TYPE_FLAIL                                 = ConvertSubAnimType(58) ---@type subanimtype 
+    SUBANIM_TYPE_OFF                                   = ConvertSubAnimType(59) ---@type subanimtype 
+    SUBANIM_TYPE_SWIM                                  = ConvertSubAnimType(60) ---@type subanimtype 
+    SUBANIM_TYPE_ENTANGLE                              = ConvertSubAnimType(61) ---@type subanimtype 
+    SUBANIM_TYPE_BERSERK                               = ConvertSubAnimType(62) ---@type subanimtype 
+
+--===================================================
+-- Map Setup Constants
+--===================================================
+
+    RACE_PREF_HUMAN                                        = ConvertRacePref(1) ---@type racepreference 
+    RACE_PREF_ORC                                          = ConvertRacePref(2) ---@type racepreference 
+    RACE_PREF_NIGHTELF                                     = ConvertRacePref(4) ---@type racepreference 
+    RACE_PREF_UNDEAD                                       = ConvertRacePref(8) ---@type racepreference 
+    RACE_PREF_DEMON                                        = ConvertRacePref(16) ---@type racepreference 
+    RACE_PREF_RANDOM                                       = ConvertRacePref(32) ---@type racepreference 
+    RACE_PREF_USER_SELECTABLE                              = ConvertRacePref(64) ---@type racepreference 
+
+    MAP_CONTROL_USER                                       = ConvertMapControl(0) ---@type mapcontrol 
+    MAP_CONTROL_COMPUTER                                   = ConvertMapControl(1) ---@type mapcontrol 
+    MAP_CONTROL_RESCUABLE                                  = ConvertMapControl(2) ---@type mapcontrol 
+    MAP_CONTROL_NEUTRAL                                    = ConvertMapControl(3) ---@type mapcontrol 
+    MAP_CONTROL_CREEP                                      = ConvertMapControl(4) ---@type mapcontrol 
+    MAP_CONTROL_NONE                                       = ConvertMapControl(5) ---@type mapcontrol 
+
+    GAME_TYPE_MELEE                                        = ConvertGameType(1) ---@type gametype 
+    GAME_TYPE_FFA                                          = ConvertGameType(2) ---@type gametype 
+    GAME_TYPE_USE_MAP_SETTINGS                             = ConvertGameType(4) ---@type gametype 
+    GAME_TYPE_BLIZ                                         = ConvertGameType(8) ---@type gametype 
+    GAME_TYPE_ONE_ON_ONE                                   = ConvertGameType(16) ---@type gametype 
+    GAME_TYPE_TWO_TEAM_PLAY                                = ConvertGameType(32) ---@type gametype 
+    GAME_TYPE_THREE_TEAM_PLAY                              = ConvertGameType(64) ---@type gametype 
+    GAME_TYPE_FOUR_TEAM_PLAY                               = ConvertGameType(128) ---@type gametype 
+
+    MAP_FOG_HIDE_TERRAIN                                   = ConvertMapFlag(1) ---@type mapflag 
+    MAP_FOG_MAP_EXPLORED                                   = ConvertMapFlag(2) ---@type mapflag 
+    MAP_FOG_ALWAYS_VISIBLE                                 = ConvertMapFlag(4) ---@type mapflag 
+
+    MAP_USE_HANDICAPS                                      = ConvertMapFlag(8) ---@type mapflag 
+    MAP_OBSERVERS                                          = ConvertMapFlag(16) ---@type mapflag 
+    MAP_OBSERVERS_ON_DEATH                                 = ConvertMapFlag(32) ---@type mapflag 
+
+    MAP_FIXED_COLORS                                       = ConvertMapFlag(128) ---@type mapflag 
+
+    MAP_LOCK_RESOURCE_TRADING                              = ConvertMapFlag(256) ---@type mapflag 
+    MAP_RESOURCE_TRADING_ALLIES_ONLY                       = ConvertMapFlag(512) ---@type mapflag 
+
+    MAP_LOCK_ALLIANCE_CHANGES                              = ConvertMapFlag(1024) ---@type mapflag 
+    MAP_ALLIANCE_CHANGES_HIDDEN                            = ConvertMapFlag(2048) ---@type mapflag 
+
+    MAP_CHEATS                                             = ConvertMapFlag(4096) ---@type mapflag 
+    MAP_CHEATS_HIDDEN                                      = ConvertMapFlag(8192) ---@type mapflag 
+
+    MAP_LOCK_SPEED                                         = ConvertMapFlag(8192*2) ---@type mapflag 
+    MAP_LOCK_RANDOM_SEED                                   = ConvertMapFlag(8192*4) ---@type mapflag 
+    MAP_SHARED_ADVANCED_CONTROL                            = ConvertMapFlag(8192*8) ---@type mapflag 
+    MAP_RANDOM_HERO                                        = ConvertMapFlag(8192*16) ---@type mapflag 
+    MAP_RANDOM_RACES                                       = ConvertMapFlag(8192*32) ---@type mapflag 
+    MAP_RELOADED                                           = ConvertMapFlag(8192*64) ---@type mapflag 
+
+    MAP_PLACEMENT_RANDOM                                   = ConvertPlacement(0)    ---@type placement -- random among all slots
+    MAP_PLACEMENT_FIXED                                    = ConvertPlacement(1)    ---@type placement -- player 0 in start loc 0...
+    MAP_PLACEMENT_USE_MAP_SETTINGS                         = ConvertPlacement(2)    ---@type placement -- whatever was specified by the script
+    MAP_PLACEMENT_TEAMS_TOGETHER                           = ConvertPlacement(3)    ---@type placement -- random with allies next to each other
+
+    MAP_LOC_PRIO_LOW                                       = ConvertStartLocPrio(0) ---@type startlocprio 
+    MAP_LOC_PRIO_HIGH                                      = ConvertStartLocPrio(1) ---@type startlocprio 
+    MAP_LOC_PRIO_NOT                                       = ConvertStartLocPrio(2) ---@type startlocprio 
+
+    MAP_DENSITY_NONE                                       = ConvertMapDensity(0) ---@type mapdensity 
+    MAP_DENSITY_LIGHT                                      = ConvertMapDensity(1) ---@type mapdensity 
+    MAP_DENSITY_MEDIUM                                     = ConvertMapDensity(2) ---@type mapdensity 
+    MAP_DENSITY_HEAVY                                      = ConvertMapDensity(3) ---@type mapdensity 
+
+    MAP_DIFFICULTY_EASY                                    = ConvertGameDifficulty(0) ---@type gamedifficulty 
+    MAP_DIFFICULTY_NORMAL                                  = ConvertGameDifficulty(1) ---@type gamedifficulty 
+    MAP_DIFFICULTY_HARD                                    = ConvertGameDifficulty(2) ---@type gamedifficulty 
+    MAP_DIFFICULTY_INSANE                                  = ConvertGameDifficulty(3) ---@type gamedifficulty 
+
+    MAP_SPEED_SLOWEST                                      = ConvertGameSpeed(0) ---@type gamespeed 
+    MAP_SPEED_SLOW                                         = ConvertGameSpeed(1) ---@type gamespeed 
+    MAP_SPEED_NORMAL                                       = ConvertGameSpeed(2) ---@type gamespeed 
+    MAP_SPEED_FAST                                         = ConvertGameSpeed(3) ---@type gamespeed 
+    MAP_SPEED_FASTEST                                      = ConvertGameSpeed(4) ---@type gamespeed 
+
+    PLAYER_SLOT_STATE_EMPTY                                = ConvertPlayerSlotState(0) ---@type playerslotstate 
+    PLAYER_SLOT_STATE_PLAYING                              = ConvertPlayerSlotState(1) ---@type playerslotstate 
+    PLAYER_SLOT_STATE_LEFT                                 = ConvertPlayerSlotState(2) ---@type playerslotstate 
+
+--===================================================
+-- Sound Constants
+--===================================================
+    SOUND_VOLUMEGROUP_UNITMOVEMENT                         = ConvertVolumeGroup(0) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_UNITSOUNDS                           = ConvertVolumeGroup(1) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_COMBAT                               = ConvertVolumeGroup(2) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_SPELLS                               = ConvertVolumeGroup(3) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_UI                                   = ConvertVolumeGroup(4) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_MUSIC                                = ConvertVolumeGroup(5) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_AMBIENTSOUNDS                        = ConvertVolumeGroup(6) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_FIRE                                 = ConvertVolumeGroup(7) ---@type volumegroup 
+--Cinematic Sound Constants
+    SOUND_VOLUMEGROUP_CINEMATIC_GENERAL                            = ConvertVolumeGroup(8) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_CINEMATIC_AMBIENT                            = ConvertVolumeGroup(9) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_CINEMATIC_MUSIC                              = ConvertVolumeGroup(10) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_CINEMATIC_DIALOGUE                           = ConvertVolumeGroup(11) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_CINEMATIC_SOUND_EFFECTS_1                    = ConvertVolumeGroup(12) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_CINEMATIC_SOUND_EFFECTS_2                    = ConvertVolumeGroup(13) ---@type volumegroup 
+    SOUND_VOLUMEGROUP_CINEMATIC_SOUND_EFFECTS_3                    = ConvertVolumeGroup(14) ---@type volumegroup 
+
+
+--===================================================
+-- Game, Player, and Unit States
+--
+-- For use with TriggerRegister<X>StateEvent
+--
+--===================================================
+
+    GAME_STATE_DIVINE_INTERVENTION                     = ConvertIGameState(0) ---@type igamestate 
+    GAME_STATE_DISCONNECTED                            = ConvertIGameState(1) ---@type igamestate 
+    GAME_STATE_TIME_OF_DAY                             = ConvertFGameState(2) ---@type fgamestate 
+
+    PLAYER_STATE_GAME_RESULT                           = ConvertPlayerState(0) ---@type playerstate 
+
+    -- current resource levels
+    --
+    PLAYER_STATE_RESOURCE_GOLD                         = ConvertPlayerState(1) ---@type playerstate 
+    PLAYER_STATE_RESOURCE_LUMBER                       = ConvertPlayerState(2) ---@type playerstate 
+    PLAYER_STATE_RESOURCE_HERO_TOKENS                  = ConvertPlayerState(3) ---@type playerstate 
+    PLAYER_STATE_RESOURCE_FOOD_CAP                     = ConvertPlayerState(4) ---@type playerstate 
+    PLAYER_STATE_RESOURCE_FOOD_USED                    = ConvertPlayerState(5) ---@type playerstate 
+    PLAYER_STATE_FOOD_CAP_CEILING                      = ConvertPlayerState(6) ---@type playerstate 
+
+    PLAYER_STATE_GIVES_BOUNTY                          = ConvertPlayerState(7) ---@type playerstate 
+    PLAYER_STATE_ALLIED_VICTORY                        = ConvertPlayerState(8) ---@type playerstate 
+    PLAYER_STATE_PLACED                                = ConvertPlayerState(9) ---@type playerstate 
+    PLAYER_STATE_OBSERVER_ON_DEATH                     = ConvertPlayerState(10) ---@type playerstate 
+    PLAYER_STATE_OBSERVER                              = ConvertPlayerState(11) ---@type playerstate 
+    PLAYER_STATE_UNFOLLOWABLE                          = ConvertPlayerState(12) ---@type playerstate 
+
+    -- taxation rate for each resource
+    --
+    PLAYER_STATE_GOLD_UPKEEP_RATE                      = ConvertPlayerState(13) ---@type playerstate 
+    PLAYER_STATE_LUMBER_UPKEEP_RATE                    = ConvertPlayerState(14) ---@type playerstate 
+
+    -- cumulative resources collected by the player during the mission
+    --
+    PLAYER_STATE_GOLD_GATHERED                         = ConvertPlayerState(15) ---@type playerstate 
+    PLAYER_STATE_LUMBER_GATHERED                       = ConvertPlayerState(16) ---@type playerstate 
+
+    PLAYER_STATE_NO_CREEP_SLEEP                        = ConvertPlayerState(25) ---@type playerstate 
+
+    UNIT_STATE_LIFE                                    = ConvertUnitState(0) ---@type unitstate 
+    UNIT_STATE_MAX_LIFE                                = ConvertUnitState(1) ---@type unitstate 
+    UNIT_STATE_MANA                                    = ConvertUnitState(2) ---@type unitstate 
+    UNIT_STATE_MAX_MANA                                = ConvertUnitState(3) ---@type unitstate 
+
+    AI_DIFFICULTY_NEWBIE                               = ConvertAIDifficulty(0) ---@type aidifficulty 
+    AI_DIFFICULTY_NORMAL                               = ConvertAIDifficulty(1) ---@type aidifficulty 
+    AI_DIFFICULTY_INSANE                               = ConvertAIDifficulty(2) ---@type aidifficulty 
+
+    -- player score values
+    PLAYER_SCORE_UNITS_TRAINED                         = ConvertPlayerScore(0) ---@type playerscore 
+    PLAYER_SCORE_UNITS_KILLED                          = ConvertPlayerScore(1) ---@type playerscore 
+    PLAYER_SCORE_STRUCT_BUILT                          = ConvertPlayerScore(2) ---@type playerscore 
+    PLAYER_SCORE_STRUCT_RAZED                          = ConvertPlayerScore(3) ---@type playerscore 
+    PLAYER_SCORE_TECH_PERCENT                          = ConvertPlayerScore(4) ---@type playerscore 
+    PLAYER_SCORE_FOOD_MAXPROD                          = ConvertPlayerScore(5) ---@type playerscore 
+    PLAYER_SCORE_FOOD_MAXUSED                          = ConvertPlayerScore(6) ---@type playerscore 
+    PLAYER_SCORE_HEROES_KILLED                         = ConvertPlayerScore(7) ---@type playerscore 
+    PLAYER_SCORE_ITEMS_GAINED                          = ConvertPlayerScore(8) ---@type playerscore 
+    PLAYER_SCORE_MERCS_HIRED                           = ConvertPlayerScore(9) ---@type playerscore 
+    PLAYER_SCORE_GOLD_MINED_TOTAL                      = ConvertPlayerScore(10) ---@type playerscore 
+    PLAYER_SCORE_GOLD_MINED_UPKEEP                     = ConvertPlayerScore(11) ---@type playerscore 
+    PLAYER_SCORE_GOLD_LOST_UPKEEP                      = ConvertPlayerScore(12) ---@type playerscore 
+    PLAYER_SCORE_GOLD_LOST_TAX                         = ConvertPlayerScore(13) ---@type playerscore 
+    PLAYER_SCORE_GOLD_GIVEN                            = ConvertPlayerScore(14) ---@type playerscore 
+    PLAYER_SCORE_GOLD_RECEIVED                         = ConvertPlayerScore(15) ---@type playerscore 
+    PLAYER_SCORE_LUMBER_TOTAL                          = ConvertPlayerScore(16) ---@type playerscore 
+    PLAYER_SCORE_LUMBER_LOST_UPKEEP                    = ConvertPlayerScore(17) ---@type playerscore 
+    PLAYER_SCORE_LUMBER_LOST_TAX                       = ConvertPlayerScore(18) ---@type playerscore 
+    PLAYER_SCORE_LUMBER_GIVEN                          = ConvertPlayerScore(19) ---@type playerscore 
+    PLAYER_SCORE_LUMBER_RECEIVED                       = ConvertPlayerScore(20) ---@type playerscore 
+    PLAYER_SCORE_UNIT_TOTAL                            = ConvertPlayerScore(21) ---@type playerscore 
+    PLAYER_SCORE_HERO_TOTAL                            = ConvertPlayerScore(22) ---@type playerscore 
+    PLAYER_SCORE_RESOURCE_TOTAL                        = ConvertPlayerScore(23) ---@type playerscore 
+    PLAYER_SCORE_TOTAL                                 = ConvertPlayerScore(24) ---@type playerscore 
+
+--===================================================
+-- Game, Player and Unit Events
+--
+--  When an event causes a trigger to fire these
+--  values allow the action code to determine which
+--  event was dispatched and therefore which set of
+--  native functions should be used to get information
+--  about the event.
+--
+-- Do NOT change the order or value of these constants
+-- without insuring that the JASS_GAME_EVENTS_WAR3 enum
+-- is changed to match.
+--
+--===================================================
+
+    --===================================================
+    -- For use with TriggerRegisterGameEvent
+    --===================================================
+
+    EVENT_GAME_VICTORY                                 = ConvertGameEvent(0) ---@type gameevent 
+    EVENT_GAME_END_LEVEL                               = ConvertGameEvent(1) ---@type gameevent 
+
+    EVENT_GAME_VARIABLE_LIMIT                          = ConvertGameEvent(2) ---@type gameevent 
+    EVENT_GAME_STATE_LIMIT                             = ConvertGameEvent(3) ---@type gameevent 
+
+    EVENT_GAME_TIMER_EXPIRED                           = ConvertGameEvent(4) ---@type gameevent 
+
+    EVENT_GAME_ENTER_REGION                            = ConvertGameEvent(5) ---@type gameevent 
+    EVENT_GAME_LEAVE_REGION                            = ConvertGameEvent(6) ---@type gameevent 
+
+    EVENT_GAME_TRACKABLE_HIT                           = ConvertGameEvent(7) ---@type gameevent 
+    EVENT_GAME_TRACKABLE_TRACK                         = ConvertGameEvent(8) ---@type gameevent 
+
+    EVENT_GAME_SHOW_SKILL                              = ConvertGameEvent(9) ---@type gameevent 
+    EVENT_GAME_BUILD_SUBMENU                           = ConvertGameEvent(10) ---@type gameevent 
+
+    --===================================================
+    -- For use with TriggerRegisterPlayerEvent
+    --===================================================
+    EVENT_PLAYER_STATE_LIMIT                           = ConvertPlayerEvent(11) ---@type playerevent 
+    EVENT_PLAYER_ALLIANCE_CHANGED                      = ConvertPlayerEvent(12) ---@type playerevent 
+
+    EVENT_PLAYER_DEFEAT                                = ConvertPlayerEvent(13) ---@type playerevent 
+    EVENT_PLAYER_VICTORY                               = ConvertPlayerEvent(14) ---@type playerevent 
+    EVENT_PLAYER_LEAVE                                 = ConvertPlayerEvent(15) ---@type playerevent 
+    EVENT_PLAYER_CHAT                                  = ConvertPlayerEvent(16) ---@type playerevent 
+    EVENT_PLAYER_END_CINEMATIC                         = ConvertPlayerEvent(17) ---@type playerevent 
+
+    --===================================================
+    -- For use with TriggerRegisterPlayerUnitEvent
+    --===================================================
+
+    EVENT_PLAYER_UNIT_ATTACKED                                 = ConvertPlayerUnitEvent(18) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_RESCUED                                  = ConvertPlayerUnitEvent(19) ---@type playerunitevent 
+
+    EVENT_PLAYER_UNIT_DEATH                                    = ConvertPlayerUnitEvent(20) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_DECAY                                    = ConvertPlayerUnitEvent(21) ---@type playerunitevent 
+
+    EVENT_PLAYER_UNIT_DETECTED                                 = ConvertPlayerUnitEvent(22) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_HIDDEN                                   = ConvertPlayerUnitEvent(23) ---@type playerunitevent 
+
+    EVENT_PLAYER_UNIT_SELECTED                                 = ConvertPlayerUnitEvent(24) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_DESELECTED                               = ConvertPlayerUnitEvent(25) ---@type playerunitevent 
+
+    EVENT_PLAYER_UNIT_CONSTRUCT_START                          = ConvertPlayerUnitEvent(26) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_CONSTRUCT_CANCEL                         = ConvertPlayerUnitEvent(27) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_CONSTRUCT_FINISH                         = ConvertPlayerUnitEvent(28) ---@type playerunitevent 
+
+    EVENT_PLAYER_UNIT_UPGRADE_START                            = ConvertPlayerUnitEvent(29) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_UPGRADE_CANCEL                           = ConvertPlayerUnitEvent(30) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_UPGRADE_FINISH                           = ConvertPlayerUnitEvent(31) ---@type playerunitevent 
+
+    EVENT_PLAYER_UNIT_TRAIN_START                              = ConvertPlayerUnitEvent(32) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_TRAIN_CANCEL                             = ConvertPlayerUnitEvent(33) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_TRAIN_FINISH                             = ConvertPlayerUnitEvent(34) ---@type playerunitevent 
+
+    EVENT_PLAYER_UNIT_RESEARCH_START                           = ConvertPlayerUnitEvent(35) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_RESEARCH_CANCEL                          = ConvertPlayerUnitEvent(36) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_RESEARCH_FINISH                          = ConvertPlayerUnitEvent(37) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_ISSUED_ORDER                             = ConvertPlayerUnitEvent(38) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER                       = ConvertPlayerUnitEvent(39) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER                      = ConvertPlayerUnitEvent(40) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER                        = ConvertPlayerUnitEvent(40)     ---@type playerunitevent -- for compat
+
+    EVENT_PLAYER_HERO_LEVEL                                    = ConvertPlayerUnitEvent(41) ---@type playerunitevent 
+    EVENT_PLAYER_HERO_SKILL                                    = ConvertPlayerUnitEvent(42) ---@type playerunitevent 
+
+    EVENT_PLAYER_HERO_REVIVABLE                                = ConvertPlayerUnitEvent(43) ---@type playerunitevent 
+
+    EVENT_PLAYER_HERO_REVIVE_START                             = ConvertPlayerUnitEvent(44) ---@type playerunitevent 
+    EVENT_PLAYER_HERO_REVIVE_CANCEL                            = ConvertPlayerUnitEvent(45) ---@type playerunitevent 
+    EVENT_PLAYER_HERO_REVIVE_FINISH                            = ConvertPlayerUnitEvent(46) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_SUMMON                                   = ConvertPlayerUnitEvent(47) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_DROP_ITEM                                = ConvertPlayerUnitEvent(48) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_PICKUP_ITEM                              = ConvertPlayerUnitEvent(49) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_USE_ITEM                                 = ConvertPlayerUnitEvent(50) ---@type playerunitevent 
+
+    EVENT_PLAYER_UNIT_LOADED                                   = ConvertPlayerUnitEvent(51) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_DAMAGED                                  = ConvertPlayerUnitEvent(308) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_DAMAGING                                 = ConvertPlayerUnitEvent(315) ---@type playerunitevent 
+
+    --===================================================
+    -- For use with TriggerRegisterUnitEvent
+    --===================================================
+
+    EVENT_UNIT_DAMAGED                                         = ConvertUnitEvent(52) ---@type unitevent 
+    EVENT_UNIT_DAMAGING                                        = ConvertUnitEvent(314) ---@type unitevent 
+    EVENT_UNIT_DEATH                                           = ConvertUnitEvent(53) ---@type unitevent 
+    EVENT_UNIT_DECAY                                           = ConvertUnitEvent(54) ---@type unitevent 
+    EVENT_UNIT_DETECTED                                        = ConvertUnitEvent(55) ---@type unitevent 
+    EVENT_UNIT_HIDDEN                                          = ConvertUnitEvent(56) ---@type unitevent 
+    EVENT_UNIT_SELECTED                                        = ConvertUnitEvent(57) ---@type unitevent 
+    EVENT_UNIT_DESELECTED                                      = ConvertUnitEvent(58) ---@type unitevent 
+                                                                        
+    EVENT_UNIT_STATE_LIMIT                                     = ConvertUnitEvent(59)                                                                         ---@type unitevent 
+
+    -- Events which may have a filter for the "other unit"              
+    --                                                                  
+    EVENT_UNIT_ACQUIRED_TARGET                                 = ConvertUnitEvent(60) ---@type unitevent 
+    EVENT_UNIT_TARGET_IN_RANGE                                 = ConvertUnitEvent(61) ---@type unitevent 
+    EVENT_UNIT_ATTACKED                                        = ConvertUnitEvent(62) ---@type unitevent 
+    EVENT_UNIT_RESCUED                                         = ConvertUnitEvent(63) ---@type unitevent 
+                                                                        
+    EVENT_UNIT_CONSTRUCT_CANCEL                                = ConvertUnitEvent(64) ---@type unitevent 
+    EVENT_UNIT_CONSTRUCT_FINISH                                = ConvertUnitEvent(65) ---@type unitevent 
+                                                                        
+    EVENT_UNIT_UPGRADE_START                                   = ConvertUnitEvent(66) ---@type unitevent 
+    EVENT_UNIT_UPGRADE_CANCEL                                  = ConvertUnitEvent(67) ---@type unitevent 
+    EVENT_UNIT_UPGRADE_FINISH                                  = ConvertUnitEvent(68) ---@type unitevent 
+                                                                        
+    -- Events which involve the specified unit performing               
+    -- training of other units                                          
+    --                                                                  
+    EVENT_UNIT_TRAIN_START                                     = ConvertUnitEvent(69) ---@type unitevent 
+    EVENT_UNIT_TRAIN_CANCEL                                    = ConvertUnitEvent(70) ---@type unitevent 
+    EVENT_UNIT_TRAIN_FINISH                                    = ConvertUnitEvent(71) ---@type unitevent 
+                                                                        
+    EVENT_UNIT_RESEARCH_START                                  = ConvertUnitEvent(72) ---@type unitevent 
+    EVENT_UNIT_RESEARCH_CANCEL                                 = ConvertUnitEvent(73) ---@type unitevent 
+    EVENT_UNIT_RESEARCH_FINISH                                 = ConvertUnitEvent(74) ---@type unitevent 
+                                                                        
+    EVENT_UNIT_ISSUED_ORDER                                    = ConvertUnitEvent(75) ---@type unitevent 
+    EVENT_UNIT_ISSUED_POINT_ORDER                              = ConvertUnitEvent(76) ---@type unitevent 
+    EVENT_UNIT_ISSUED_TARGET_ORDER                             = ConvertUnitEvent(77) ---@type unitevent 
+                                                                       
+    EVENT_UNIT_HERO_LEVEL                                      = ConvertUnitEvent(78) ---@type unitevent 
+    EVENT_UNIT_HERO_SKILL                                      = ConvertUnitEvent(79) ---@type unitevent 
+                                                                        
+    EVENT_UNIT_HERO_REVIVABLE                                  = ConvertUnitEvent(80) ---@type unitevent 
+    EVENT_UNIT_HERO_REVIVE_START                               = ConvertUnitEvent(81) ---@type unitevent 
+    EVENT_UNIT_HERO_REVIVE_CANCEL                              = ConvertUnitEvent(82) ---@type unitevent 
+    EVENT_UNIT_HERO_REVIVE_FINISH                              = ConvertUnitEvent(83) ---@type unitevent 
+                                                                        
+    EVENT_UNIT_SUMMON                                          = ConvertUnitEvent(84) ---@type unitevent 
+                                                                        
+    EVENT_UNIT_DROP_ITEM                                       = ConvertUnitEvent(85) ---@type unitevent 
+    EVENT_UNIT_PICKUP_ITEM                                     = ConvertUnitEvent(86) ---@type unitevent 
+    EVENT_UNIT_USE_ITEM                                        = ConvertUnitEvent(87) ---@type unitevent 
+
+    EVENT_UNIT_LOADED                                          = ConvertUnitEvent(88) ---@type unitevent 
+
+    EVENT_WIDGET_DEATH                                         = ConvertWidgetEvent(89) ---@type widgetevent 
+
+    EVENT_DIALOG_BUTTON_CLICK                                  = ConvertDialogEvent(90) ---@type dialogevent 
+    EVENT_DIALOG_CLICK                                         = ConvertDialogEvent(91) ---@type dialogevent 
+
+    --===================================================
+    -- Frozen Throne Expansion Events
+    -- Need to be added here to preserve compat
+    --===================================================
+   
+    --===================================================    
+    -- For use with TriggerRegisterGameEvent
+    --===================================================
+
+    EVENT_GAME_LOADED                                          = ConvertGameEvent(256) ---@type gameevent 
+    EVENT_GAME_TOURNAMENT_FINISH_SOON                          = ConvertGameEvent(257) ---@type gameevent 
+    EVENT_GAME_TOURNAMENT_FINISH_NOW                           = ConvertGameEvent(258) ---@type gameevent 
+    EVENT_GAME_SAVE                                            = ConvertGameEvent(259) ---@type gameevent 
+    EVENT_GAME_CUSTOM_UI_FRAME                                 = ConvertGameEvent(310) ---@type gameevent 
+
+    --===================================================
+    -- For use with TriggerRegisterPlayerEvent
+    --===================================================
+
+    EVENT_PLAYER_ARROW_LEFT_DOWN                               = ConvertPlayerEvent(261) ---@type playerevent 
+    EVENT_PLAYER_ARROW_LEFT_UP                                 = ConvertPlayerEvent(262) ---@type playerevent 
+    EVENT_PLAYER_ARROW_RIGHT_DOWN                              = ConvertPlayerEvent(263) ---@type playerevent 
+    EVENT_PLAYER_ARROW_RIGHT_UP                                = ConvertPlayerEvent(264) ---@type playerevent 
+    EVENT_PLAYER_ARROW_DOWN_DOWN                               = ConvertPlayerEvent(265) ---@type playerevent 
+    EVENT_PLAYER_ARROW_DOWN_UP                                 = ConvertPlayerEvent(266) ---@type playerevent 
+    EVENT_PLAYER_ARROW_UP_DOWN                                 = ConvertPlayerEvent(267) ---@type playerevent 
+    EVENT_PLAYER_ARROW_UP_UP                                   = ConvertPlayerEvent(268) ---@type playerevent 
+    EVENT_PLAYER_MOUSE_DOWN                                    = ConvertPlayerEvent(305) ---@type playerevent 
+    EVENT_PLAYER_MOUSE_UP                                      = ConvertPlayerEvent(306) ---@type playerevent 
+    EVENT_PLAYER_MOUSE_MOVE                                    = ConvertPlayerEvent(307) ---@type playerevent 
+    EVENT_PLAYER_SYNC_DATA                                     = ConvertPlayerEvent(309) ---@type playerevent 
+    EVENT_PLAYER_KEY                                           = ConvertPlayerEvent(311) ---@type playerevent 
+    EVENT_PLAYER_KEY_DOWN                                      = ConvertPlayerEvent(312) ---@type playerevent 
+    EVENT_PLAYER_KEY_UP                                        = ConvertPlayerEvent(313) ---@type playerevent 
+
+    --===================================================
+    -- For use with TriggerRegisterPlayerUnitEvent
+    --===================================================
+
+    EVENT_PLAYER_UNIT_SELL                                     = ConvertPlayerUnitEvent(269) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_CHANGE_OWNER                             = ConvertPlayerUnitEvent(270) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_SELL_ITEM                                = ConvertPlayerUnitEvent(271) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_SPELL_CHANNEL                            = ConvertPlayerUnitEvent(272) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_SPELL_CAST                               = ConvertPlayerUnitEvent(273) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_SPELL_EFFECT                             = ConvertPlayerUnitEvent(274) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_SPELL_FINISH                             = ConvertPlayerUnitEvent(275) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_SPELL_ENDCAST                            = ConvertPlayerUnitEvent(276) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_PAWN_ITEM                                = ConvertPlayerUnitEvent(277) ---@type playerunitevent 
+    EVENT_PLAYER_UNIT_STACK_ITEM                               = ConvertPlayerUnitEvent(319) ---@type playerunitevent 
+
+    --===================================================
+    -- For use with TriggerRegisterUnitEvent
+    --===================================================
+
+    EVENT_UNIT_SELL                                            = ConvertUnitEvent(286) ---@type unitevent 
+    EVENT_UNIT_CHANGE_OWNER                                    = ConvertUnitEvent(287) ---@type unitevent 
+    EVENT_UNIT_SELL_ITEM                                       = ConvertUnitEvent(288) ---@type unitevent 
+    EVENT_UNIT_SPELL_CHANNEL                                   = ConvertUnitEvent(289) ---@type unitevent 
+    EVENT_UNIT_SPELL_CAST                                      = ConvertUnitEvent(290) ---@type unitevent 
+    EVENT_UNIT_SPELL_EFFECT                                    = ConvertUnitEvent(291) ---@type unitevent 
+    EVENT_UNIT_SPELL_FINISH                                    = ConvertUnitEvent(292) ---@type unitevent 
+    EVENT_UNIT_SPELL_ENDCAST                                   = ConvertUnitEvent(293) ---@type unitevent 
+    EVENT_UNIT_PAWN_ITEM                                       = ConvertUnitEvent(294) ---@type unitevent 
+    EVENT_UNIT_STACK_ITEM                                      = ConvertUnitEvent(318) ---@type unitevent 
+
+    --===================================================
+    -- Limit Event API constants
+    -- variable, player state, game state, and unit state events
+    -- ( do NOT change the order of these... )
+    --===================================================
+    LESS_THAN                                      = ConvertLimitOp(0) ---@type limitop 
+    LESS_THAN_OR_EQUAL                             = ConvertLimitOp(1) ---@type limitop 
+    EQUAL                                          = ConvertLimitOp(2) ---@type limitop 
+    GREATER_THAN_OR_EQUAL                          = ConvertLimitOp(3) ---@type limitop 
+    GREATER_THAN                                   = ConvertLimitOp(4) ---@type limitop 
+    NOT_EQUAL                                      = ConvertLimitOp(5) ---@type limitop 
+
+--===================================================
+-- Unit Type Constants for use with IsUnitType()
+--===================================================
+
+    UNIT_TYPE_HERO                                 = ConvertUnitType(0) ---@type unittype 
+    UNIT_TYPE_DEAD                                 = ConvertUnitType(1) ---@type unittype 
+    UNIT_TYPE_STRUCTURE                            = ConvertUnitType(2) ---@type unittype 
+
+    UNIT_TYPE_FLYING                               = ConvertUnitType(3) ---@type unittype 
+    UNIT_TYPE_GROUND                               = ConvertUnitType(4) ---@type unittype 
+
+    UNIT_TYPE_ATTACKS_FLYING                       = ConvertUnitType(5) ---@type unittype 
+    UNIT_TYPE_ATTACKS_GROUND                       = ConvertUnitType(6) ---@type unittype 
+
+    UNIT_TYPE_MELEE_ATTACKER                       = ConvertUnitType(7) ---@type unittype 
+    UNIT_TYPE_RANGED_ATTACKER                      = ConvertUnitType(8) ---@type unittype 
+
+    UNIT_TYPE_GIANT                                = ConvertUnitType(9) ---@type unittype 
+    UNIT_TYPE_SUMMONED                             = ConvertUnitType(10) ---@type unittype 
+    UNIT_TYPE_STUNNED                              = ConvertUnitType(11) ---@type unittype 
+    UNIT_TYPE_PLAGUED                              = ConvertUnitType(12) ---@type unittype 
+    UNIT_TYPE_SNARED                               = ConvertUnitType(13) ---@type unittype 
+
+    UNIT_TYPE_UNDEAD                               = ConvertUnitType(14) ---@type unittype 
+    UNIT_TYPE_MECHANICAL                           = ConvertUnitType(15) ---@type unittype 
+    UNIT_TYPE_PEON                                 = ConvertUnitType(16) ---@type unittype 
+    UNIT_TYPE_SAPPER                               = ConvertUnitType(17) ---@type unittype 
+    UNIT_TYPE_TOWNHALL                             = ConvertUnitType(18) ---@type unittype 
+    UNIT_TYPE_ANCIENT                              = ConvertUnitType(19) ---@type unittype 
+
+    UNIT_TYPE_TAUREN                               = ConvertUnitType(20) ---@type unittype 
+    UNIT_TYPE_POISONED                             = ConvertUnitType(21) ---@type unittype 
+    UNIT_TYPE_POLYMORPHED                          = ConvertUnitType(22) ---@type unittype 
+    UNIT_TYPE_SLEEPING                             = ConvertUnitType(23) ---@type unittype 
+    UNIT_TYPE_RESISTANT                            = ConvertUnitType(24) ---@type unittype 
+    UNIT_TYPE_ETHEREAL                             = ConvertUnitType(25) ---@type unittype 
+    UNIT_TYPE_MAGIC_IMMUNE                         = ConvertUnitType(26) ---@type unittype 
+
+--===================================================
+-- Unit Type Constants for use with ChooseRandomItemEx()
+--===================================================
+
+    ITEM_TYPE_PERMANENT                            = ConvertItemType(0) ---@type itemtype 
+    ITEM_TYPE_CHARGED                              = ConvertItemType(1) ---@type itemtype 
+    ITEM_TYPE_POWERUP                              = ConvertItemType(2) ---@type itemtype 
+    ITEM_TYPE_ARTIFACT                             = ConvertItemType(3) ---@type itemtype 
+    ITEM_TYPE_PURCHASABLE                          = ConvertItemType(4) ---@type itemtype 
+    ITEM_TYPE_CAMPAIGN                             = ConvertItemType(5) ---@type itemtype 
+    ITEM_TYPE_MISCELLANEOUS                        = ConvertItemType(6) ---@type itemtype 
+    ITEM_TYPE_UNKNOWN                              = ConvertItemType(7) ---@type itemtype 
+    ITEM_TYPE_ANY                                  = ConvertItemType(8) ---@type itemtype 
+
+    -- Deprecated, should use ITEM_TYPE_POWERUP
+    ITEM_TYPE_TOME                                 = ConvertItemType(2) ---@type itemtype 
+
+--===================================================
+-- Animatable Camera Fields
+--===================================================
+
+    CAMERA_FIELD_TARGET_DISTANCE                   = ConvertCameraField(0) ---@type camerafield 
+    CAMERA_FIELD_FARZ                              = ConvertCameraField(1) ---@type camerafield 
+    CAMERA_FIELD_ANGLE_OF_ATTACK                   = ConvertCameraField(2) ---@type camerafield 
+    CAMERA_FIELD_FIELD_OF_VIEW                     = ConvertCameraField(3) ---@type camerafield 
+    CAMERA_FIELD_ROLL                              = ConvertCameraField(4) ---@type camerafield 
+    CAMERA_FIELD_ROTATION                          = ConvertCameraField(5) ---@type camerafield 
+    CAMERA_FIELD_ZOFFSET                           = ConvertCameraField(6) ---@type camerafield 
+    CAMERA_FIELD_NEARZ                             = ConvertCameraField(7) ---@type camerafield 
+    CAMERA_FIELD_LOCAL_PITCH                       = ConvertCameraField(8) ---@type camerafield 
+    CAMERA_FIELD_LOCAL_YAW                         = ConvertCameraField(9) ---@type camerafield 
+    CAMERA_FIELD_LOCAL_ROLL                        = ConvertCameraField(10) ---@type camerafield 
+
+    BLEND_MODE_NONE                                = ConvertBlendMode(0) ---@type blendmode 
+    BLEND_MODE_DONT_CARE                           = ConvertBlendMode(0) ---@type blendmode 
+    BLEND_MODE_KEYALPHA                            = ConvertBlendMode(1) ---@type blendmode 
+    BLEND_MODE_BLEND                               = ConvertBlendMode(2) ---@type blendmode 
+    BLEND_MODE_ADDITIVE                            = ConvertBlendMode(3) ---@type blendmode 
+    BLEND_MODE_MODULATE                            = ConvertBlendMode(4) ---@type blendmode 
+    BLEND_MODE_MODULATE_2X                         = ConvertBlendMode(5) ---@type blendmode 
+
+    RARITY_FREQUENT                                = ConvertRarityControl(0) ---@type raritycontrol 
+    RARITY_RARE                                    = ConvertRarityControl(1) ---@type raritycontrol 
+
+    TEXMAP_FLAG_NONE                               = ConvertTexMapFlags(0) ---@type texmapflags 
+    TEXMAP_FLAG_WRAP_U                             = ConvertTexMapFlags(1) ---@type texmapflags 
+    TEXMAP_FLAG_WRAP_V                             = ConvertTexMapFlags(2) ---@type texmapflags 
+    TEXMAP_FLAG_WRAP_UV                            = ConvertTexMapFlags(3) ---@type texmapflags 
+
+    FOG_OF_WAR_MASKED                              = ConvertFogState(1) ---@type fogstate 
+    FOG_OF_WAR_FOGGED                              = ConvertFogState(2) ---@type fogstate 
+    FOG_OF_WAR_VISIBLE                             = ConvertFogState(4) ---@type fogstate 
+
+--===================================================
+-- Camera Margin constants for use with GetCameraMargin
+--===================================================
+
+    CAMERA_MARGIN_LEFT                             = 0 ---@type integer 
+    CAMERA_MARGIN_RIGHT                            = 1 ---@type integer 
+    CAMERA_MARGIN_TOP                              = 2 ---@type integer 
+    CAMERA_MARGIN_BOTTOM                           = 3 ---@type integer 
+
+--===================================================
+-- Effect API constants
+--===================================================
+
+    EFFECT_TYPE_EFFECT                             = ConvertEffectType(0) ---@type effecttype 
+    EFFECT_TYPE_TARGET                             = ConvertEffectType(1) ---@type effecttype 
+    EFFECT_TYPE_CASTER                             = ConvertEffectType(2) ---@type effecttype 
+    EFFECT_TYPE_SPECIAL                            = ConvertEffectType(3) ---@type effecttype 
+    EFFECT_TYPE_AREA_EFFECT                        = ConvertEffectType(4) ---@type effecttype 
+    EFFECT_TYPE_MISSILE                            = ConvertEffectType(5) ---@type effecttype 
+    EFFECT_TYPE_LIGHTNING                          = ConvertEffectType(6) ---@type effecttype 
+
+    SOUND_TYPE_EFFECT                              = ConvertSoundType(0) ---@type soundtype 
+    SOUND_TYPE_EFFECT_LOOPED                       = ConvertSoundType(1) ---@type soundtype 
+
+--===================================================
+-- Custom UI API constants
+--===================================================
+
+    ORIGIN_FRAME_GAME_UI                                           = ConvertOriginFrameType(0) ---@type originframetype 
+    ORIGIN_FRAME_COMMAND_BUTTON                                    = ConvertOriginFrameType(1) ---@type originframetype 
+    ORIGIN_FRAME_HERO_BAR                                          = ConvertOriginFrameType(2) ---@type originframetype 
+    ORIGIN_FRAME_HERO_BUTTON                                       = ConvertOriginFrameType(3) ---@type originframetype 
+    ORIGIN_FRAME_HERO_HP_BAR                                       = ConvertOriginFrameType(4) ---@type originframetype 
+    ORIGIN_FRAME_HERO_MANA_BAR                                     = ConvertOriginFrameType(5) ---@type originframetype 
+    ORIGIN_FRAME_HERO_BUTTON_INDICATOR                             = ConvertOriginFrameType(6) ---@type originframetype 
+    ORIGIN_FRAME_ITEM_BUTTON                                       = ConvertOriginFrameType(7) ---@type originframetype 
+    ORIGIN_FRAME_MINIMAP                                           = ConvertOriginFrameType(8) ---@type originframetype 
+    ORIGIN_FRAME_MINIMAP_BUTTON                                    = ConvertOriginFrameType(9) ---@type originframetype 
+    ORIGIN_FRAME_SYSTEM_BUTTON                                     = ConvertOriginFrameType(10) ---@type originframetype 
+    ORIGIN_FRAME_TOOLTIP                                           = ConvertOriginFrameType(11) ---@type originframetype 
+    ORIGIN_FRAME_UBERTOOLTIP                                       = ConvertOriginFrameType(12) ---@type originframetype 
+    ORIGIN_FRAME_CHAT_MSG                                          = ConvertOriginFrameType(13) ---@type originframetype 
+    ORIGIN_FRAME_UNIT_MSG                                          = ConvertOriginFrameType(14) ---@type originframetype 
+    ORIGIN_FRAME_TOP_MSG                                           = ConvertOriginFrameType(15) ---@type originframetype 
+    ORIGIN_FRAME_PORTRAIT                                          = ConvertOriginFrameType(16) ---@type originframetype 
+    ORIGIN_FRAME_WORLD_FRAME                                       = ConvertOriginFrameType(17) ---@type originframetype 
+    ORIGIN_FRAME_SIMPLE_UI_PARENT                                  = ConvertOriginFrameType(18) ---@type originframetype 
+    ORIGIN_FRAME_PORTRAIT_HP_TEXT                                  = ConvertOriginFrameType(19) ---@type originframetype 
+    ORIGIN_FRAME_PORTRAIT_MANA_TEXT                                = ConvertOriginFrameType(20) ---@type originframetype 
+    ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR                               = ConvertOriginFrameType(21) ---@type originframetype 
+    ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR_LABEL                         = ConvertOriginFrameType(22) ---@type originframetype 
+
+    FRAMEPOINT_TOPLEFT                                          = ConvertFramePointType(0) ---@type framepointtype 
+    FRAMEPOINT_TOP                                              = ConvertFramePointType(1) ---@type framepointtype 
+    FRAMEPOINT_TOPRIGHT                                         = ConvertFramePointType(2) ---@type framepointtype 
+    FRAMEPOINT_LEFT                                             = ConvertFramePointType(3) ---@type framepointtype 
+    FRAMEPOINT_CENTER                                           = ConvertFramePointType(4) ---@type framepointtype 
+    FRAMEPOINT_RIGHT                                            = ConvertFramePointType(5) ---@type framepointtype 
+    FRAMEPOINT_BOTTOMLEFT                                       = ConvertFramePointType(6) ---@type framepointtype 
+    FRAMEPOINT_BOTTOM                                           = ConvertFramePointType(7) ---@type framepointtype 
+    FRAMEPOINT_BOTTOMRIGHT                                      = ConvertFramePointType(8) ---@type framepointtype 
+
+    TEXT_JUSTIFY_TOP                                            = ConvertTextAlignType(0) ---@type textaligntype 
+    TEXT_JUSTIFY_MIDDLE                                         = ConvertTextAlignType(1) ---@type textaligntype 
+    TEXT_JUSTIFY_BOTTOM                                         = ConvertTextAlignType(2) ---@type textaligntype 
+    TEXT_JUSTIFY_LEFT                                           = ConvertTextAlignType(3) ---@type textaligntype 
+    TEXT_JUSTIFY_CENTER                                         = ConvertTextAlignType(4) ---@type textaligntype 
+    TEXT_JUSTIFY_RIGHT                                          = ConvertTextAlignType(5) ---@type textaligntype 
+
+    FRAMEEVENT_CONTROL_CLICK                                    = ConvertFrameEventType(1) ---@type frameeventtype 
+    FRAMEEVENT_MOUSE_ENTER                                      = ConvertFrameEventType(2) ---@type frameeventtype 
+    FRAMEEVENT_MOUSE_LEAVE                                      = ConvertFrameEventType(3) ---@type frameeventtype 
+    FRAMEEVENT_MOUSE_UP                                         = ConvertFrameEventType(4) ---@type frameeventtype 
+    FRAMEEVENT_MOUSE_DOWN                                       = ConvertFrameEventType(5) ---@type frameeventtype 
+    FRAMEEVENT_MOUSE_WHEEL                                      = ConvertFrameEventType(6) ---@type frameeventtype 
+    FRAMEEVENT_CHECKBOX_CHECKED                                 = ConvertFrameEventType(7) ---@type frameeventtype 
+    FRAMEEVENT_CHECKBOX_UNCHECKED                               = ConvertFrameEventType(8) ---@type frameeventtype 
+    FRAMEEVENT_EDITBOX_TEXT_CHANGED                             = ConvertFrameEventType(9) ---@type frameeventtype 
+    FRAMEEVENT_POPUPMENU_ITEM_CHANGED                           = ConvertFrameEventType(10) ---@type frameeventtype 
+    FRAMEEVENT_MOUSE_DOUBLECLICK                                = ConvertFrameEventType(11) ---@type frameeventtype 
+    FRAMEEVENT_SPRITE_ANIM_UPDATE                               = ConvertFrameEventType(12) ---@type frameeventtype 
+    FRAMEEVENT_SLIDER_VALUE_CHANGED                             = ConvertFrameEventType(13) ---@type frameeventtype 
+    FRAMEEVENT_DIALOG_CANCEL                                    = ConvertFrameEventType(14) ---@type frameeventtype 
+    FRAMEEVENT_DIALOG_ACCEPT                                    = ConvertFrameEventType(15) ---@type frameeventtype 
+    FRAMEEVENT_EDITBOX_ENTER                                    = ConvertFrameEventType(16) ---@type frameeventtype 
+
+--===================================================
+-- OS Key constants
+--===================================================
+
+    OSKEY_BACKSPACE                                             = ConvertOsKeyType(0x08) ---@type oskeytype 
+    OSKEY_TAB                                                   = ConvertOsKeyType(0x09) ---@type oskeytype 
+    OSKEY_CLEAR                                                 = ConvertOsKeyType(0x0C) ---@type oskeytype 
+    OSKEY_RETURN                                                = ConvertOsKeyType(0x0D) ---@type oskeytype 
+    OSKEY_SHIFT                                                 = ConvertOsKeyType(0x10) ---@type oskeytype 
+    OSKEY_CONTROL                                               = ConvertOsKeyType(0x11) ---@type oskeytype 
+    OSKEY_ALT                                                   = ConvertOsKeyType(0x12) ---@type oskeytype 
+    OSKEY_PAUSE                                                 = ConvertOsKeyType(0x13) ---@type oskeytype 
+    OSKEY_CAPSLOCK                                              = ConvertOsKeyType(0x14) ---@type oskeytype 
+    OSKEY_KANA                                                  = ConvertOsKeyType(0x15) ---@type oskeytype 
+    OSKEY_HANGUL                                                = ConvertOsKeyType(0x15) ---@type oskeytype 
+    OSKEY_JUNJA                                                 = ConvertOsKeyType(0x17) ---@type oskeytype 
+    OSKEY_FINAL                                                 = ConvertOsKeyType(0x18) ---@type oskeytype 
+    OSKEY_HANJA                                                 = ConvertOsKeyType(0x19) ---@type oskeytype 
+    OSKEY_KANJI                                                 = ConvertOsKeyType(0x19) ---@type oskeytype 
+    OSKEY_ESCAPE                                                = ConvertOsKeyType(0x1B) ---@type oskeytype 
+    OSKEY_CONVERT                                               = ConvertOsKeyType(0x1C) ---@type oskeytype 
+    OSKEY_NONCONVERT                                            = ConvertOsKeyType(0x1D) ---@type oskeytype 
+    OSKEY_ACCEPT                                                = ConvertOsKeyType(0x1E) ---@type oskeytype 
+    OSKEY_MODECHANGE                                            = ConvertOsKeyType(0x1F) ---@type oskeytype 
+    OSKEY_SPACE                                                 = ConvertOsKeyType(0x20) ---@type oskeytype 
+    OSKEY_PAGEUP                                                = ConvertOsKeyType(0x21) ---@type oskeytype 
+    OSKEY_PAGEDOWN                                              = ConvertOsKeyType(0x22) ---@type oskeytype 
+    OSKEY_END                                                   = ConvertOsKeyType(0x23) ---@type oskeytype 
+    OSKEY_HOME                                                  = ConvertOsKeyType(0x24) ---@type oskeytype 
+    OSKEY_LEFT                                                  = ConvertOsKeyType(0x25) ---@type oskeytype 
+    OSKEY_UP                                                    = ConvertOsKeyType(0x26) ---@type oskeytype 
+    OSKEY_RIGHT                                                 = ConvertOsKeyType(0x27) ---@type oskeytype 
+    OSKEY_DOWN                                                  = ConvertOsKeyType(0x28) ---@type oskeytype 
+    OSKEY_SELECT                                                = ConvertOsKeyType(0x29) ---@type oskeytype 
+    OSKEY_PRINT                                                 = ConvertOsKeyType(0x2A) ---@type oskeytype 
+    OSKEY_EXECUTE                                               = ConvertOsKeyType(0x2B) ---@type oskeytype 
+    OSKEY_PRINTSCREEN                                           = ConvertOsKeyType(0x2C) ---@type oskeytype 
+    OSKEY_INSERT                                                = ConvertOsKeyType(0x2D) ---@type oskeytype 
+    OSKEY_DELETE                                                = ConvertOsKeyType(0x2E) ---@type oskeytype 
+    OSKEY_HELP                                                  = ConvertOsKeyType(0x2F) ---@type oskeytype 
+    OSKEY_0                                                     = ConvertOsKeyType(0x30) ---@type oskeytype 
+    OSKEY_1                                                     = ConvertOsKeyType(0x31) ---@type oskeytype 
+    OSKEY_2                                                     = ConvertOsKeyType(0x32) ---@type oskeytype 
+    OSKEY_3                                                     = ConvertOsKeyType(0x33) ---@type oskeytype 
+    OSKEY_4                                                     = ConvertOsKeyType(0x34) ---@type oskeytype 
+    OSKEY_5                                                     = ConvertOsKeyType(0x35) ---@type oskeytype 
+    OSKEY_6                                                     = ConvertOsKeyType(0x36) ---@type oskeytype 
+    OSKEY_7                                                     = ConvertOsKeyType(0x37) ---@type oskeytype 
+    OSKEY_8                                                     = ConvertOsKeyType(0x38) ---@type oskeytype 
+    OSKEY_9                                                     = ConvertOsKeyType(0x39) ---@type oskeytype 
+    OSKEY_A                                                     = ConvertOsKeyType(0x41) ---@type oskeytype 
+    OSKEY_B                                                     = ConvertOsKeyType(0x42) ---@type oskeytype 
+    OSKEY_C                                                     = ConvertOsKeyType(0x43) ---@type oskeytype 
+    OSKEY_D                                                     = ConvertOsKeyType(0x44) ---@type oskeytype 
+    OSKEY_E                                                     = ConvertOsKeyType(0x45) ---@type oskeytype 
+    OSKEY_F                                                     = ConvertOsKeyType(0x46) ---@type oskeytype 
+    OSKEY_G                                                     = ConvertOsKeyType(0x47) ---@type oskeytype 
+    OSKEY_H                                                     = ConvertOsKeyType(0x48) ---@type oskeytype 
+    OSKEY_I                                                     = ConvertOsKeyType(0x49) ---@type oskeytype 
+    OSKEY_J                                                     = ConvertOsKeyType(0x4A) ---@type oskeytype 
+    OSKEY_K                                                     = ConvertOsKeyType(0x4B) ---@type oskeytype 
+    OSKEY_L                                                     = ConvertOsKeyType(0x4C) ---@type oskeytype 
+    OSKEY_M                                                     = ConvertOsKeyType(0x4D) ---@type oskeytype 
+    OSKEY_N                                                     = ConvertOsKeyType(0x4E) ---@type oskeytype 
+    OSKEY_O                                                     = ConvertOsKeyType(0x4F) ---@type oskeytype 
+    OSKEY_P                                                     = ConvertOsKeyType(0x50) ---@type oskeytype 
+    OSKEY_Q                                                     = ConvertOsKeyType(0x51) ---@type oskeytype 
+    OSKEY_R                                                     = ConvertOsKeyType(0x52) ---@type oskeytype 
+    OSKEY_S                                                     = ConvertOsKeyType(0x53) ---@type oskeytype 
+    OSKEY_T                                                     = ConvertOsKeyType(0x54) ---@type oskeytype 
+    OSKEY_U                                                     = ConvertOsKeyType(0x55) ---@type oskeytype 
+    OSKEY_V                                                     = ConvertOsKeyType(0x56) ---@type oskeytype 
+    OSKEY_W                                                     = ConvertOsKeyType(0x57) ---@type oskeytype 
+    OSKEY_X                                                     = ConvertOsKeyType(0x58) ---@type oskeytype 
+    OSKEY_Y                                                     = ConvertOsKeyType(0x59) ---@type oskeytype 
+    OSKEY_Z                                                     = ConvertOsKeyType(0x5A) ---@type oskeytype 
+    OSKEY_LMETA                                                 = ConvertOsKeyType(0x5B) ---@type oskeytype 
+    OSKEY_RMETA                                                 = ConvertOsKeyType(0x5C) ---@type oskeytype 
+    OSKEY_APPS                                                  = ConvertOsKeyType(0x5D) ---@type oskeytype 
+    OSKEY_SLEEP                                                 = ConvertOsKeyType(0x5F) ---@type oskeytype 
+    OSKEY_NUMPAD0                                               = ConvertOsKeyType(0x60) ---@type oskeytype 
+    OSKEY_NUMPAD1                                               = ConvertOsKeyType(0x61) ---@type oskeytype 
+    OSKEY_NUMPAD2                                               = ConvertOsKeyType(0x62) ---@type oskeytype 
+    OSKEY_NUMPAD3                                               = ConvertOsKeyType(0x63) ---@type oskeytype 
+    OSKEY_NUMPAD4                                               = ConvertOsKeyType(0x64) ---@type oskeytype 
+    OSKEY_NUMPAD5                                               = ConvertOsKeyType(0x65) ---@type oskeytype 
+    OSKEY_NUMPAD6                                               = ConvertOsKeyType(0x66) ---@type oskeytype 
+    OSKEY_NUMPAD7                                               = ConvertOsKeyType(0x67) ---@type oskeytype 
+    OSKEY_NUMPAD8                                               = ConvertOsKeyType(0x68) ---@type oskeytype 
+    OSKEY_NUMPAD9                                               = ConvertOsKeyType(0x69) ---@type oskeytype 
+    OSKEY_MULTIPLY                                              = ConvertOsKeyType(0x6A) ---@type oskeytype 
+    OSKEY_ADD                                                   = ConvertOsKeyType(0x6B) ---@type oskeytype 
+    OSKEY_SEPARATOR                                             = ConvertOsKeyType(0x6C) ---@type oskeytype 
+    OSKEY_SUBTRACT                                              = ConvertOsKeyType(0x6D) ---@type oskeytype 
+    OSKEY_DECIMAL                                               = ConvertOsKeyType(0x6E) ---@type oskeytype 
+    OSKEY_DIVIDE                                                = ConvertOsKeyType(0x6F) ---@type oskeytype 
+    OSKEY_F1                                                    = ConvertOsKeyType(0x70) ---@type oskeytype 
+    OSKEY_F2                                                    = ConvertOsKeyType(0x71) ---@type oskeytype 
+    OSKEY_F3                                                    = ConvertOsKeyType(0x72) ---@type oskeytype 
+    OSKEY_F4                                                    = ConvertOsKeyType(0x73) ---@type oskeytype 
+    OSKEY_F5                                                    = ConvertOsKeyType(0x74) ---@type oskeytype 
+    OSKEY_F6                                                    = ConvertOsKeyType(0x75) ---@type oskeytype 
+    OSKEY_F7                                                    = ConvertOsKeyType(0x76) ---@type oskeytype 
+    OSKEY_F8                                                    = ConvertOsKeyType(0x77) ---@type oskeytype 
+    OSKEY_F9                                                    = ConvertOsKeyType(0x78) ---@type oskeytype 
+    OSKEY_F10                                                   = ConvertOsKeyType(0x79) ---@type oskeytype 
+    OSKEY_F11                                                   = ConvertOsKeyType(0x7A) ---@type oskeytype 
+    OSKEY_F12                                                   = ConvertOsKeyType(0x7B) ---@type oskeytype 
+    OSKEY_F13                                                   = ConvertOsKeyType(0x7C) ---@type oskeytype 
+    OSKEY_F14                                                   = ConvertOsKeyType(0x7D) ---@type oskeytype 
+    OSKEY_F15                                                   = ConvertOsKeyType(0x7E) ---@type oskeytype 
+    OSKEY_F16                                                   = ConvertOsKeyType(0x7F) ---@type oskeytype 
+    OSKEY_F17                                                   = ConvertOsKeyType(0x80) ---@type oskeytype 
+    OSKEY_F18                                                   = ConvertOsKeyType(0x81) ---@type oskeytype 
+    OSKEY_F19                                                   = ConvertOsKeyType(0x82) ---@type oskeytype 
+    OSKEY_F20                                                   = ConvertOsKeyType(0x83) ---@type oskeytype 
+    OSKEY_F21                                                   = ConvertOsKeyType(0x84) ---@type oskeytype 
+    OSKEY_F22                                                   = ConvertOsKeyType(0x85) ---@type oskeytype 
+    OSKEY_F23                                                   = ConvertOsKeyType(0x86) ---@type oskeytype 
+    OSKEY_F24                                                   = ConvertOsKeyType(0x87) ---@type oskeytype 
+    OSKEY_NUMLOCK                                               = ConvertOsKeyType(0x90) ---@type oskeytype 
+    OSKEY_SCROLLLOCK                                            = ConvertOsKeyType(0x91) ---@type oskeytype 
+    OSKEY_OEM_NEC_EQUAL                                         = ConvertOsKeyType(0x92) ---@type oskeytype 
+    OSKEY_OEM_FJ_JISHO                                          = ConvertOsKeyType(0x92) ---@type oskeytype 
+    OSKEY_OEM_FJ_MASSHOU                                        = ConvertOsKeyType(0x93) ---@type oskeytype 
+    OSKEY_OEM_FJ_TOUROKU                                        = ConvertOsKeyType(0x94) ---@type oskeytype 
+    OSKEY_OEM_FJ_LOYA                                           = ConvertOsKeyType(0x95) ---@type oskeytype 
+    OSKEY_OEM_FJ_ROYA                                           = ConvertOsKeyType(0x96) ---@type oskeytype 
+    OSKEY_LSHIFT                                                = ConvertOsKeyType(0xA0) ---@type oskeytype 
+    OSKEY_RSHIFT                                                = ConvertOsKeyType(0xA1) ---@type oskeytype 
+    OSKEY_LCONTROL                                              = ConvertOsKeyType(0xA2) ---@type oskeytype 
+    OSKEY_RCONTROL                                              = ConvertOsKeyType(0xA3) ---@type oskeytype 
+    OSKEY_LALT                                                  = ConvertOsKeyType(0xA4) ---@type oskeytype 
+    OSKEY_RALT                                                  = ConvertOsKeyType(0xA5) ---@type oskeytype 
+    OSKEY_BROWSER_BACK                                          = ConvertOsKeyType(0xA6) ---@type oskeytype 
+    OSKEY_BROWSER_FORWARD                                       = ConvertOsKeyType(0xA7) ---@type oskeytype 
+    OSKEY_BROWSER_REFRESH                                       = ConvertOsKeyType(0xA8) ---@type oskeytype 
+    OSKEY_BROWSER_STOP                                          = ConvertOsKeyType(0xA9) ---@type oskeytype 
+    OSKEY_BROWSER_SEARCH                                        = ConvertOsKeyType(0xAA) ---@type oskeytype 
+    OSKEY_BROWSER_FAVORITES                                     = ConvertOsKeyType(0xAB) ---@type oskeytype 
+    OSKEY_BROWSER_HOME                                          = ConvertOsKeyType(0xAC) ---@type oskeytype 
+    OSKEY_VOLUME_MUTE                                           = ConvertOsKeyType(0xAD) ---@type oskeytype 
+    OSKEY_VOLUME_DOWN                                           = ConvertOsKeyType(0xAE) ---@type oskeytype 
+    OSKEY_VOLUME_UP                                             = ConvertOsKeyType(0xAF) ---@type oskeytype 
+    OSKEY_MEDIA_NEXT_TRACK                                      = ConvertOsKeyType(0xB0) ---@type oskeytype 
+    OSKEY_MEDIA_PREV_TRACK                                      = ConvertOsKeyType(0xB1) ---@type oskeytype 
+    OSKEY_MEDIA_STOP                                            = ConvertOsKeyType(0xB2) ---@type oskeytype 
+    OSKEY_MEDIA_PLAY_PAUSE                                      = ConvertOsKeyType(0xB3) ---@type oskeytype 
+    OSKEY_LAUNCH_MAIL                                           = ConvertOsKeyType(0xB4) ---@type oskeytype 
+    OSKEY_LAUNCH_MEDIA_SELECT                                   = ConvertOsKeyType(0xB5) ---@type oskeytype 
+    OSKEY_LAUNCH_APP1                                           = ConvertOsKeyType(0xB6) ---@type oskeytype 
+    OSKEY_LAUNCH_APP2                                           = ConvertOsKeyType(0xB7) ---@type oskeytype 
+    OSKEY_OEM_1                                                 = ConvertOsKeyType(0xBA) ---@type oskeytype 
+    OSKEY_OEM_PLUS                                              = ConvertOsKeyType(0xBB) ---@type oskeytype 
+    OSKEY_OEM_COMMA                                             = ConvertOsKeyType(0xBC) ---@type oskeytype 
+    OSKEY_OEM_MINUS                                             = ConvertOsKeyType(0xBD) ---@type oskeytype 
+    OSKEY_OEM_PERIOD                                            = ConvertOsKeyType(0xBE) ---@type oskeytype 
+    OSKEY_OEM_2                                                 = ConvertOsKeyType(0xBF) ---@type oskeytype 
+    OSKEY_OEM_3                                                 = ConvertOsKeyType(0xC0) ---@type oskeytype 
+    OSKEY_OEM_4                                                 = ConvertOsKeyType(0xDB) ---@type oskeytype 
+    OSKEY_OEM_5                                                 = ConvertOsKeyType(0xDC) ---@type oskeytype 
+    OSKEY_OEM_6                                                 = ConvertOsKeyType(0xDD) ---@type oskeytype 
+    OSKEY_OEM_7                                                 = ConvertOsKeyType(0xDE) ---@type oskeytype 
+    OSKEY_OEM_8                                                 = ConvertOsKeyType(0xDF) ---@type oskeytype 
+    OSKEY_OEM_AX                                                = ConvertOsKeyType(0xE1) ---@type oskeytype 
+    OSKEY_OEM_102                                               = ConvertOsKeyType(0xE2) ---@type oskeytype 
+    OSKEY_ICO_HELP                                              = ConvertOsKeyType(0xE3) ---@type oskeytype 
+    OSKEY_ICO_00                                                = ConvertOsKeyType(0xE4) ---@type oskeytype 
+    OSKEY_PROCESSKEY                                            = ConvertOsKeyType(0xE5) ---@type oskeytype 
+    OSKEY_ICO_CLEAR                                             = ConvertOsKeyType(0xE6) ---@type oskeytype 
+    OSKEY_PACKET                                                = ConvertOsKeyType(0xE7) ---@type oskeytype 
+    OSKEY_OEM_RESET                                             = ConvertOsKeyType(0xE9) ---@type oskeytype 
+    OSKEY_OEM_JUMP                                              = ConvertOsKeyType(0xEA) ---@type oskeytype 
+    OSKEY_OEM_PA1                                               = ConvertOsKeyType(0xEB) ---@type oskeytype 
+    OSKEY_OEM_PA2                                               = ConvertOsKeyType(0xEC) ---@type oskeytype 
+    OSKEY_OEM_PA3                                               = ConvertOsKeyType(0xED) ---@type oskeytype 
+    OSKEY_OEM_WSCTRL                                            = ConvertOsKeyType(0xEE) ---@type oskeytype 
+    OSKEY_OEM_CUSEL                                             = ConvertOsKeyType(0xEF) ---@type oskeytype 
+    OSKEY_OEM_ATTN                                              = ConvertOsKeyType(0xF0) ---@type oskeytype 
+    OSKEY_OEM_FINISH                                            = ConvertOsKeyType(0xF1) ---@type oskeytype 
+    OSKEY_OEM_COPY                                              = ConvertOsKeyType(0xF2) ---@type oskeytype 
+    OSKEY_OEM_AUTO                                              = ConvertOsKeyType(0xF3) ---@type oskeytype 
+    OSKEY_OEM_ENLW                                              = ConvertOsKeyType(0xF4) ---@type oskeytype 
+    OSKEY_OEM_BACKTAB                                           = ConvertOsKeyType(0xF5) ---@type oskeytype 
+    OSKEY_ATTN                                                  = ConvertOsKeyType(0xF6) ---@type oskeytype 
+    OSKEY_CRSEL                                                 = ConvertOsKeyType(0xF7) ---@type oskeytype 
+    OSKEY_EXSEL                                                 = ConvertOsKeyType(0xF8) ---@type oskeytype 
+    OSKEY_EREOF                                                 = ConvertOsKeyType(0xF9) ---@type oskeytype 
+    OSKEY_PLAY                                                  = ConvertOsKeyType(0xFA) ---@type oskeytype 
+    OSKEY_ZOOM                                                  = ConvertOsKeyType(0xFB) ---@type oskeytype 
+    OSKEY_NONAME                                                = ConvertOsKeyType(0xFC) ---@type oskeytype 
+    OSKEY_PA1                                                   = ConvertOsKeyType(0xFD) ---@type oskeytype 
+    OSKEY_OEM_CLEAR                                             = ConvertOsKeyType(0xFE) ---@type oskeytype 
+
+--===================================================
+-- Instanced Object Operation API constants
+--===================================================
+    
+    -- Ability
+    ABILITY_IF_BUTTON_POSITION_NORMAL_X                            = ConvertAbilityIntegerField(FourCC('abpx')) ---@type abilityintegerfield 
+    ABILITY_IF_BUTTON_POSITION_NORMAL_Y                            = ConvertAbilityIntegerField(FourCC('abpy')) ---@type abilityintegerfield 
+    ABILITY_IF_BUTTON_POSITION_ACTIVATED_X                         = ConvertAbilityIntegerField(FourCC('aubx')) ---@type abilityintegerfield 
+    ABILITY_IF_BUTTON_POSITION_ACTIVATED_Y                         = ConvertAbilityIntegerField(FourCC('auby')) ---@type abilityintegerfield 
+    ABILITY_IF_BUTTON_POSITION_RESEARCH_X                          = ConvertAbilityIntegerField(FourCC('arpx')) ---@type abilityintegerfield 
+    ABILITY_IF_BUTTON_POSITION_RESEARCH_Y                          = ConvertAbilityIntegerField(FourCC('arpy')) ---@type abilityintegerfield 
+    ABILITY_IF_MISSILE_SPEED                                       = ConvertAbilityIntegerField(FourCC('amsp')) ---@type abilityintegerfield 
+    ABILITY_IF_TARGET_ATTACHMENTS                                  = ConvertAbilityIntegerField(FourCC('atac')) ---@type abilityintegerfield 
+    ABILITY_IF_CASTER_ATTACHMENTS                                  = ConvertAbilityIntegerField(FourCC('acac')) ---@type abilityintegerfield 
+    ABILITY_IF_PRIORITY                                            = ConvertAbilityIntegerField(FourCC('apri')) ---@type abilityintegerfield 
+    ABILITY_IF_LEVELS                                              = ConvertAbilityIntegerField(FourCC('alev')) ---@type abilityintegerfield 
+    ABILITY_IF_REQUIRED_LEVEL                                      = ConvertAbilityIntegerField(FourCC('arlv')) ---@type abilityintegerfield 
+    ABILITY_IF_LEVEL_SKIP_REQUIREMENT                              = ConvertAbilityIntegerField(FourCC('alsk'))  ---@type abilityintegerfield 
+
+    ABILITY_BF_HERO_ABILITY                                        = ConvertAbilityBooleanField(FourCC('aher'))  ---@type abilitybooleanfield -- Get only
+    ABILITY_BF_ITEM_ABILITY                                        = ConvertAbilityBooleanField(FourCC('aite')) ---@type abilitybooleanfield 
+    ABILITY_BF_CHECK_DEPENDENCIES                                  = ConvertAbilityBooleanField(FourCC('achd')) ---@type abilitybooleanfield 
+
+    ABILITY_RF_ARF_MISSILE_ARC                                     = ConvertAbilityRealField(FourCC('amac')) ---@type abilityrealfield 
+
+    ABILITY_SF_NAME                                                = ConvertAbilityStringField(FourCC('anam'))  ---@type abilitystringfield -- Get Only
+    ABILITY_SF_ICON_ACTIVATED                                      = ConvertAbilityStringField(FourCC('auar')) ---@type abilitystringfield 
+    ABILITY_SF_ICON_RESEARCH                                       = ConvertAbilityStringField(FourCC('arar')) ---@type abilitystringfield 
+    ABILITY_SF_EFFECT_SOUND                                        = ConvertAbilityStringField(FourCC('aefs')) ---@type abilitystringfield 
+    ABILITY_SF_EFFECT_SOUND_LOOPING                                = ConvertAbilityStringField(FourCC('aefl')) ---@type abilitystringfield 
+
+    ABILITY_ILF_MANA_COST                                                  = ConvertAbilityIntegerLevelField(FourCC('amcs')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_WAVES                                            = ConvertAbilityIntegerLevelField(FourCC('Hbz1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_SHARDS                                           = ConvertAbilityIntegerLevelField(FourCC('Hbz3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_UNITS_TELEPORTED                                 = ConvertAbilityIntegerLevelField(FourCC('Hmt1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_COUNT_HWE2                                   = ConvertAbilityIntegerLevelField(FourCC('Hwe2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_IMAGES                                           = ConvertAbilityIntegerLevelField(FourCC('Omi1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_CORPSES_RAISED_UAN1                              = ConvertAbilityIntegerLevelField(FourCC('Uan1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MORPHING_FLAGS                                             = ConvertAbilityIntegerLevelField(FourCC('Eme2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_STRENGTH_BONUS_NRG5                                        = ConvertAbilityIntegerLevelField(FourCC('Nrg5')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DEFENSE_BONUS_NRG6                                         = ConvertAbilityIntegerLevelField(FourCC('Nrg6')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_TARGETS_HIT                                      = ConvertAbilityIntegerLevelField(FourCC('Ocl2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DETECTION_TYPE_OFS1                                        = ConvertAbilityIntegerLevelField(FourCC('Ofs1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_OSF2                              = ConvertAbilityIntegerLevelField(FourCC('Osf2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_EFN1                              = ConvertAbilityIntegerLevelField(FourCC('Efn1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_CORPSES_RAISED_HRE1                              = ConvertAbilityIntegerLevelField(FourCC('Hre1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_STACK_FLAGS                                                = ConvertAbilityIntegerLevelField(FourCC('Hca4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MINIMUM_NUMBER_OF_UNITS                                    = ConvertAbilityIntegerLevelField(FourCC('Ndp2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_NUMBER_OF_UNITS_NDP3                               = ConvertAbilityIntegerLevelField(FourCC('Ndp3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_UNITS_CREATED_NRC2                               = ConvertAbilityIntegerLevelField(FourCC('Nrc2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SHIELD_LIFE                                                = ConvertAbilityIntegerLevelField(FourCC('Ams3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MANA_LOSS_AMS4                                             = ConvertAbilityIntegerLevelField(FourCC('Ams4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_GOLD_PER_INTERVAL_BGM1                                     = ConvertAbilityIntegerLevelField(FourCC('Bgm1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_NUMBER_OF_MINERS                                       = ConvertAbilityIntegerLevelField(FourCC('Bgm3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_CARGO_CAPACITY                                             = ConvertAbilityIntegerLevelField(FourCC('Car1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_CREEP_LEVEL_DEV3                                   = ConvertAbilityIntegerLevelField(FourCC('Dev3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_CREEP_LEVEL_DEV1                                       = ConvertAbilityIntegerLevelField(FourCC('Dev1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_GOLD_PER_INTERVAL_EGM1                                     = ConvertAbilityIntegerLevelField(FourCC('Egm1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DEFENSE_REDUCTION                                          = ConvertAbilityIntegerLevelField(FourCC('Fae1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DETECTION_TYPE_FLA1                                        = ConvertAbilityIntegerLevelField(FourCC('Fla1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_FLARE_COUNT                                                = ConvertAbilityIntegerLevelField(FourCC('Fla3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_GOLD                                                   = ConvertAbilityIntegerLevelField(FourCC('Gld1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MINING_CAPACITY                                            = ConvertAbilityIntegerLevelField(FourCC('Gld3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_NUMBER_OF_CORPSES_GYD1                             = ConvertAbilityIntegerLevelField(FourCC('Gyd1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DAMAGE_TO_TREE                                             = ConvertAbilityIntegerLevelField(FourCC('Har1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_LUMBER_CAPACITY                                            = ConvertAbilityIntegerLevelField(FourCC('Har2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_GOLD_CAPACITY                                              = ConvertAbilityIntegerLevelField(FourCC('Har3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DEFENSE_INCREASE_INF2                                      = ConvertAbilityIntegerLevelField(FourCC('Inf2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_INTERACTION_TYPE                                           = ConvertAbilityIntegerLevelField(FourCC('Neu2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_GOLD_COST_NDT1                                             = ConvertAbilityIntegerLevelField(FourCC('Ndt1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_LUMBER_COST_NDT2                                           = ConvertAbilityIntegerLevelField(FourCC('Ndt2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DETECTION_TYPE_NDT3                                        = ConvertAbilityIntegerLevelField(FourCC('Ndt3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_STACKING_TYPE_POI4                                         = ConvertAbilityIntegerLevelField(FourCC('Poi4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_STACKING_TYPE_POA5                                         = ConvertAbilityIntegerLevelField(FourCC('Poa5')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_CREEP_LEVEL_PLY1                                   = ConvertAbilityIntegerLevelField(FourCC('Ply1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_CREEP_LEVEL_POS1                                   = ConvertAbilityIntegerLevelField(FourCC('Pos1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MOVEMENT_UPDATE_FREQUENCY_PRG1                             = ConvertAbilityIntegerLevelField(FourCC('Prg1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ATTACK_UPDATE_FREQUENCY_PRG2                               = ConvertAbilityIntegerLevelField(FourCC('Prg2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MANA_LOSS_PRG6                                             = ConvertAbilityIntegerLevelField(FourCC('Prg6')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UNITS_SUMMONED_TYPE_ONE                                    = ConvertAbilityIntegerLevelField(FourCC('Rai1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UNITS_SUMMONED_TYPE_TWO                                    = ConvertAbilityIntegerLevelField(FourCC('Rai2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_UNITS_SUMMONED                                         = ConvertAbilityIntegerLevelField(FourCC('Ucb5')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ALLOW_WHEN_FULL_REJ3                                       = ConvertAbilityIntegerLevelField(FourCC('Rej3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_UNITS_CHARGED_TO_CASTER                            = ConvertAbilityIntegerLevelField(FourCC('Rpb5')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_UNITS_AFFECTED                                     = ConvertAbilityIntegerLevelField(FourCC('Rpb6')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DEFENSE_INCREASE_ROA2                                      = ConvertAbilityIntegerLevelField(FourCC('Roa2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_UNITS_ROA7                                             = ConvertAbilityIntegerLevelField(FourCC('Roa7')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ROOTED_WEAPONS                                             = ConvertAbilityIntegerLevelField(FourCC('Roo1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UPROOTED_WEAPONS                                           = ConvertAbilityIntegerLevelField(FourCC('Roo2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UPROOTED_DEFENSE_TYPE                                      = ConvertAbilityIntegerLevelField(FourCC('Roo4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ACCUMULATION_STEP                                          = ConvertAbilityIntegerLevelField(FourCC('Sal2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_OWLS                                             = ConvertAbilityIntegerLevelField(FourCC('Esn4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_STACKING_TYPE_SPO4                                         = ConvertAbilityIntegerLevelField(FourCC('Spo4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_UNITS                                            = ConvertAbilityIntegerLevelField(FourCC('Sod1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SPIDER_CAPACITY                                            = ConvertAbilityIntegerLevelField(FourCC('Spa1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_INTERVALS_BEFORE_CHANGING_TREES                            = ConvertAbilityIntegerLevelField(FourCC('Wha2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_AGILITY_BONUS                                              = ConvertAbilityIntegerLevelField(FourCC('Iagi')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_INTELLIGENCE_BONUS                                         = ConvertAbilityIntegerLevelField(FourCC('Iint')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_STRENGTH_BONUS_ISTR                                        = ConvertAbilityIntegerLevelField(FourCC('Istr')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ATTACK_BONUS                                               = ConvertAbilityIntegerLevelField(FourCC('Iatt')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DEFENSE_BONUS_IDEF                                         = ConvertAbilityIntegerLevelField(FourCC('Idef')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMON_1_AMOUNT                                            = ConvertAbilityIntegerLevelField(FourCC('Isn1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMON_2_AMOUNT                                            = ConvertAbilityIntegerLevelField(FourCC('Isn2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_EXPERIENCE_GAINED                                          = ConvertAbilityIntegerLevelField(FourCC('Ixpg')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_HIT_POINTS_GAINED_IHPG                                     = ConvertAbilityIntegerLevelField(FourCC('Ihpg')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MANA_POINTS_GAINED_IMPG                                    = ConvertAbilityIntegerLevelField(FourCC('Impg')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_HIT_POINTS_GAINED_IHP2                                     = ConvertAbilityIntegerLevelField(FourCC('Ihp2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MANA_POINTS_GAINED_IMP2                                    = ConvertAbilityIntegerLevelField(FourCC('Imp2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DAMAGE_BONUS_DICE                                          = ConvertAbilityIntegerLevelField(FourCC('Idic')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ARMOR_PENALTY_IARP                                         = ConvertAbilityIntegerLevelField(FourCC('Iarp')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ENABLED_ATTACK_INDEX_IOB5                                  = ConvertAbilityIntegerLevelField(FourCC('Iob5')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_LEVELS_GAINED                                              = ConvertAbilityIntegerLevelField(FourCC('Ilev')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_LIFE_GAINED                                            = ConvertAbilityIntegerLevelField(FourCC('Ilif')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_MANA_GAINED                                            = ConvertAbilityIntegerLevelField(FourCC('Iman')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_GOLD_GIVEN                                                 = ConvertAbilityIntegerLevelField(FourCC('Igol')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_LUMBER_GIVEN                                               = ConvertAbilityIntegerLevelField(FourCC('Ilum')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DETECTION_TYPE_IFA1                                        = ConvertAbilityIntegerLevelField(FourCC('Ifa1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_CREEP_LEVEL_ICRE                                   = ConvertAbilityIntegerLevelField(FourCC('Icre')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MOVEMENT_SPEED_BONUS                                       = ConvertAbilityIntegerLevelField(FourCC('Imvb')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_HIT_POINTS_REGENERATED_PER_SECOND                          = ConvertAbilityIntegerLevelField(FourCC('Ihpr')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SIGHT_RANGE_BONUS                                          = ConvertAbilityIntegerLevelField(FourCC('Isib')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DAMAGE_PER_DURATION                                        = ConvertAbilityIntegerLevelField(FourCC('Icfd')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MANA_USED_PER_SECOND                                       = ConvertAbilityIntegerLevelField(FourCC('Icfm')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_EXTRA_MANA_REQUIRED                                        = ConvertAbilityIntegerLevelField(FourCC('Icfx')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DETECTION_RADIUS_IDET                                      = ConvertAbilityIntegerLevelField(FourCC('Idet')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MANA_LOSS_PER_UNIT_IDIM                                    = ConvertAbilityIntegerLevelField(FourCC('Idim')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DAMAGE_TO_SUMMONED_UNITS_IDID                              = ConvertAbilityIntegerLevelField(FourCC('Idid')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_NUMBER_OF_UNITS_IREC                               = ConvertAbilityIntegerLevelField(FourCC('Irec')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DELAY_AFTER_DEATH_SECONDS                                  = ConvertAbilityIntegerLevelField(FourCC('Ircd')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_RESTORED_LIFE                                              = ConvertAbilityIntegerLevelField(FourCC('irc2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_RESTORED_MANA__1_FOR_CURRENT                               = ConvertAbilityIntegerLevelField(FourCC('irc3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_HIT_POINTS_RESTORED                                        = ConvertAbilityIntegerLevelField(FourCC('Ihps')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MANA_POINTS_RESTORED                                       = ConvertAbilityIntegerLevelField(FourCC('Imps')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_NUMBER_OF_UNITS_ITPM                               = ConvertAbilityIntegerLevelField(FourCC('Itpm')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_CORPSES_RAISED_CAD1                              = ConvertAbilityIntegerLevelField(FourCC('Cad1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_TERRAIN_DEFORMATION_DURATION_MS                            = ConvertAbilityIntegerLevelField(FourCC('Wrs3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_UNITS                                              = ConvertAbilityIntegerLevelField(FourCC('Uds1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DETECTION_TYPE_DET1                                        = ConvertAbilityIntegerLevelField(FourCC('Det1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_GOLD_COST_PER_STRUCTURE                                    = ConvertAbilityIntegerLevelField(FourCC('Nsp1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_LUMBER_COST_PER_USE                                        = ConvertAbilityIntegerLevelField(FourCC('Nsp2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DETECTION_TYPE_NSP3                                        = ConvertAbilityIntegerLevelField(FourCC('Nsp3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_SWARM_UNITS                                      = ConvertAbilityIntegerLevelField(FourCC('Uls1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_SWARM_UNITS_PER_TARGET                                 = ConvertAbilityIntegerLevelField(FourCC('Uls3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_NBA2                              = ConvertAbilityIntegerLevelField(FourCC('Nba2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_CREEP_LEVEL_NCH1                                   = ConvertAbilityIntegerLevelField(FourCC('Nch1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ATTACKS_PREVENTED                                          = ConvertAbilityIntegerLevelField(FourCC('Nsi1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_NUMBER_OF_TARGETS_EFK3                             = ConvertAbilityIntegerLevelField(FourCC('Efk3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_ESV1                              = ConvertAbilityIntegerLevelField(FourCC('Esv1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_NUMBER_OF_CORPSES_EXH1                             = ConvertAbilityIntegerLevelField(FourCC('exh1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ITEM_CAPACITY                                              = ConvertAbilityIntegerLevelField(FourCC('inv1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_NUMBER_OF_TARGETS_SPL2                             = ConvertAbilityIntegerLevelField(FourCC('spl2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ALLOW_WHEN_FULL_IRL3                                       = ConvertAbilityIntegerLevelField(FourCC('irl3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_DISPELLED_UNITS                                    = ConvertAbilityIntegerLevelField(FourCC('idc3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_LURES                                            = ConvertAbilityIntegerLevelField(FourCC('imo1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NEW_TIME_OF_DAY_HOUR                                       = ConvertAbilityIntegerLevelField(FourCC('ict1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NEW_TIME_OF_DAY_MINUTE                                     = ConvertAbilityIntegerLevelField(FourCC('ict2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_UNITS_CREATED_MEC1                               = ConvertAbilityIntegerLevelField(FourCC('mec1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MINIMUM_SPELLS                                             = ConvertAbilityIntegerLevelField(FourCC('spb3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_SPELLS                                             = ConvertAbilityIntegerLevelField(FourCC('spb4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DISABLED_ATTACK_INDEX                                      = ConvertAbilityIntegerLevelField(FourCC('gra3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ENABLED_ATTACK_INDEX_GRA4                                  = ConvertAbilityIntegerLevelField(FourCC('gra4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAXIMUM_ATTACKS                                            = ConvertAbilityIntegerLevelField(FourCC('gra5')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_BUILDING_TYPES_ALLOWED_NPR1                                = ConvertAbilityIntegerLevelField(FourCC('Npr1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_BUILDING_TYPES_ALLOWED_NSA1                                = ConvertAbilityIntegerLevelField(FourCC('Nsa1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ATTACK_MODIFICATION                                        = ConvertAbilityIntegerLevelField(FourCC('Iaa1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_COUNT_NPA5                                   = ConvertAbilityIntegerLevelField(FourCC('Npa5')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UPGRADE_LEVELS                                             = ConvertAbilityIntegerLevelField(FourCC('Igl1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_SUMMONED_UNITS_NDO2                              = ConvertAbilityIntegerLevelField(FourCC('Ndo2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_BEASTS_PER_SECOND                                          = ConvertAbilityIntegerLevelField(FourCC('Nst1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_TARGET_TYPE                                                = ConvertAbilityIntegerLevelField(FourCC('Ncl2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_OPTIONS                                                    = ConvertAbilityIntegerLevelField(FourCC('Ncl3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ARMOR_PENALTY_NAB3                                         = ConvertAbilityIntegerLevelField(FourCC('Nab3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_WAVE_COUNT_NHS6                                            = ConvertAbilityIntegerLevelField(FourCC('Nhs6')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_CREEP_LEVEL_NTM3                                       = ConvertAbilityIntegerLevelField(FourCC('Ntm3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MISSILE_COUNT                                              = ConvertAbilityIntegerLevelField(FourCC('Ncs3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SPLIT_ATTACK_COUNT                                         = ConvertAbilityIntegerLevelField(FourCC('Nlm3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_GENERATION_COUNT                                           = ConvertAbilityIntegerLevelField(FourCC('Nlm6')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ROCK_RING_COUNT                                            = ConvertAbilityIntegerLevelField(FourCC('Nvc1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_WAVE_COUNT_NVC2                                            = ConvertAbilityIntegerLevelField(FourCC('Nvc2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_PREFER_HOSTILES_TAU1                                       = ConvertAbilityIntegerLevelField(FourCC('Tau1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_PREFER_FRIENDLIES_TAU2                                     = ConvertAbilityIntegerLevelField(FourCC('Tau2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_MAX_UNITS_TAU3                                             = ConvertAbilityIntegerLevelField(FourCC('Tau3')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NUMBER_OF_PULSES                                           = ConvertAbilityIntegerLevelField(FourCC('Tau4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_TYPE_HWE1                                    = ConvertAbilityIntegerLevelField(FourCC('Hwe1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_UIN4                                         = ConvertAbilityIntegerLevelField(FourCC('Uin4')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_OSF1                                         = ConvertAbilityIntegerLevelField(FourCC('Osf1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_TYPE_EFNU                                    = ConvertAbilityIntegerLevelField(FourCC('Efnu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_TYPE_NBAU                                    = ConvertAbilityIntegerLevelField(FourCC('Nbau')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_TYPE_NTOU                                    = ConvertAbilityIntegerLevelField(FourCC('Ntou')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_TYPE_ESVU                                    = ConvertAbilityIntegerLevelField(FourCC('Esvu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_TYPES                                        = ConvertAbilityIntegerLevelField(FourCC('Nef1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SUMMONED_UNIT_TYPE_NDOU                                    = ConvertAbilityIntegerLevelField(FourCC('Ndou')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ALTERNATE_FORM_UNIT_EMEU                                   = ConvertAbilityIntegerLevelField(FourCC('Emeu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_PLAGUE_WARD_UNIT_TYPE                                      = ConvertAbilityIntegerLevelField(FourCC('Aplu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ALLOWED_UNIT_TYPE_BTL1                                     = ConvertAbilityIntegerLevelField(FourCC('Btl1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_NEW_UNIT_TYPE                                              = ConvertAbilityIntegerLevelField(FourCC('Cha1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_RESULTING_UNIT_TYPE_ENT1                                   = ConvertAbilityIntegerLevelField(FourCC('ent1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_CORPSE_UNIT_TYPE                                           = ConvertAbilityIntegerLevelField(FourCC('Gydu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_ALLOWED_UNIT_TYPE_LOA1                                     = ConvertAbilityIntegerLevelField(FourCC('Loa1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UNIT_TYPE_FOR_LIMIT_CHECK                                  = ConvertAbilityIntegerLevelField(FourCC('Raiu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_WARD_UNIT_TYPE_STAU                                        = ConvertAbilityIntegerLevelField(FourCC('Stau')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_EFFECT_ABILITY                                             = ConvertAbilityIntegerLevelField(FourCC('Iobu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_CONVERSION_UNIT                                            = ConvertAbilityIntegerLevelField(FourCC('Ndc2')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UNIT_TO_PRESERVE                                           = ConvertAbilityIntegerLevelField(FourCC('Nsl1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UNIT_TYPE_ALLOWED                                          = ConvertAbilityIntegerLevelField(FourCC('Chl1')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SWARM_UNIT_TYPE                                            = ConvertAbilityIntegerLevelField(FourCC('Ulsu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_RESULTING_UNIT_TYPE_COAU                                   = ConvertAbilityIntegerLevelField(FourCC('coau')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UNIT_TYPE_EXHU                                             = ConvertAbilityIntegerLevelField(FourCC('exhu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_WARD_UNIT_TYPE_HWDU                                        = ConvertAbilityIntegerLevelField(FourCC('hwdu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_LURE_UNIT_TYPE                                             = ConvertAbilityIntegerLevelField(FourCC('imou')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UNIT_TYPE_IPMU                                             = ConvertAbilityIntegerLevelField(FourCC('ipmu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_FACTORY_UNIT_ID                                            = ConvertAbilityIntegerLevelField(FourCC('Nsyu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_SPAWN_UNIT_ID_NFYU                                         = ConvertAbilityIntegerLevelField(FourCC('Nfyu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_DESTRUCTIBLE_ID                                            = ConvertAbilityIntegerLevelField(FourCC('Nvcu')) ---@type abilityintegerlevelfield 
+    ABILITY_ILF_UPGRADE_TYPE                                               = ConvertAbilityIntegerLevelField(FourCC('Iglu')) ---@type abilityintegerlevelfield 
+
+    ABILITY_RLF_CASTING_TIME                                                            = ConvertAbilityRealLevelField(FourCC('acas')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DURATION_NORMAL                                                         = ConvertAbilityRealLevelField(FourCC('adur')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DURATION_HERO                                                           = ConvertAbilityRealLevelField(FourCC('ahdu')) ---@type abilityreallevelfield 
+    ABILITY_RLF_COOLDOWN                                                                = ConvertAbilityRealLevelField(FourCC('acdn')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AREA_OF_EFFECT                                                          = ConvertAbilityRealLevelField(FourCC('aare')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CAST_RANGE                                                              = ConvertAbilityRealLevelField(FourCC('aran')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_HBZ2                                                             = ConvertAbilityRealLevelField(FourCC('Hbz2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BUILDING_REDUCTION_HBZ4                                                 = ConvertAbilityRealLevelField(FourCC('Hbz4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_HBZ5                                                  = ConvertAbilityRealLevelField(FourCC('Hbz5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAXIMUM_DAMAGE_PER_WAVE                                                 = ConvertAbilityRealLevelField(FourCC('Hbz6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_REGENERATION_INCREASE                                              = ConvertAbilityRealLevelField(FourCC('Hab1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CASTING_DELAY                                                           = ConvertAbilityRealLevelField(FourCC('Hmt2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_OWW1                                                  = ConvertAbilityRealLevelField(FourCC('Oww1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_OWW2                                             = ConvertAbilityRealLevelField(FourCC('Oww2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_CRITICAL_STRIKE                                               = ConvertAbilityRealLevelField(FourCC('Ocr1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_MULTIPLIER_OCR2                                                  = ConvertAbilityRealLevelField(FourCC('Ocr2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_OCR3                                                       = ConvertAbilityRealLevelField(FourCC('Ocr3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_EVADE_OCR4                                                    = ConvertAbilityRealLevelField(FourCC('Ocr4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_DEALT_PERCENT_OMI2                                               = ConvertAbilityRealLevelField(FourCC('Omi2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_TAKEN_PERCENT_OMI3                                               = ConvertAbilityRealLevelField(FourCC('Omi3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ANIMATION_DELAY                                                         = ConvertAbilityRealLevelField(FourCC('Omi4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_TRANSITION_TIME                                                         = ConvertAbilityRealLevelField(FourCC('Owk1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_INCREASE_PERCENT_OWK2                                    = ConvertAbilityRealLevelField(FourCC('Owk2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BACKSTAB_DAMAGE                                                         = ConvertAbilityRealLevelField(FourCC('Owk3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AMOUNT_HEALED_DAMAGED_UDC1                                              = ConvertAbilityRealLevelField(FourCC('Udc1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_CONVERTED_TO_MANA                                                  = ConvertAbilityRealLevelField(FourCC('Udp1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_CONVERTED_TO_LIFE                                                  = ConvertAbilityRealLevelField(FourCC('Udp2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_INCREASE_PERCENT_UAU1                                    = ConvertAbilityRealLevelField(FourCC('Uau1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_REGENERATION_INCREASE_PERCENT                                      = ConvertAbilityRealLevelField(FourCC('Uau2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_EVADE_EEV1                                                    = ConvertAbilityRealLevelField(FourCC('Eev1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_INTERVAL                                                     = ConvertAbilityRealLevelField(FourCC('Eim1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_DRAINED_PER_SECOND_EIM2                                            = ConvertAbilityRealLevelField(FourCC('Eim2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BUFFER_MANA_REQUIRED                                                    = ConvertAbilityRealLevelField(FourCC('Eim3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAX_MANA_DRAINED                                                        = ConvertAbilityRealLevelField(FourCC('Emb1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BOLT_DELAY                                                              = ConvertAbilityRealLevelField(FourCC('Emb2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BOLT_LIFETIME                                                           = ConvertAbilityRealLevelField(FourCC('Emb3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ALTITUDE_ADJUSTMENT_DURATION                                            = ConvertAbilityRealLevelField(FourCC('Eme3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LANDING_DELAY_TIME                                                      = ConvertAbilityRealLevelField(FourCC('Eme4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ALTERNATE_FORM_HIT_POINT_BONUS                                          = ConvertAbilityRealLevelField(FourCC('Eme5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVE_SPEED_BONUS_INFO_PANEL_ONLY                                        = ConvertAbilityRealLevelField(FourCC('Ncr5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_BONUS_INFO_PANEL_ONLY                                      = ConvertAbilityRealLevelField(FourCC('Ncr6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_REGENERATION_RATE_PER_SECOND                                       = ConvertAbilityRealLevelField(FourCC('ave5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_STUN_DURATION_USL1                                                      = ConvertAbilityRealLevelField(FourCC('Usl1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_DAMAGE_STOLEN_PERCENT                                            = ConvertAbilityRealLevelField(FourCC('Uav1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_UCS1                                                             = ConvertAbilityRealLevelField(FourCC('Ucs1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAX_DAMAGE_UCS2                                                         = ConvertAbilityRealLevelField(FourCC('Ucs2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DISTANCE_UCS3                                                           = ConvertAbilityRealLevelField(FourCC('Ucs3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FINAL_AREA_UCS4                                                         = ConvertAbilityRealLevelField(FourCC('Ucs4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_UIN1                                                             = ConvertAbilityRealLevelField(FourCC('Uin1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DURATION                                                                = ConvertAbilityRealLevelField(FourCC('Uin2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_IMPACT_DELAY                                                            = ConvertAbilityRealLevelField(FourCC('Uin3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_TARGET_OCL1                                                  = ConvertAbilityRealLevelField(FourCC('Ocl1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_REDUCTION_PER_TARGET                                             = ConvertAbilityRealLevelField(FourCC('Ocl3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_EFFECT_DELAY_OEQ1                                                       = ConvertAbilityRealLevelField(FourCC('Oeq1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_TO_BUILDINGS                                          = ConvertAbilityRealLevelField(FourCC('Oeq2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_UNITS_SLOWED_PERCENT                                                    = ConvertAbilityRealLevelField(FourCC('Oeq3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FINAL_AREA_OEQ4                                                         = ConvertAbilityRealLevelField(FourCC('Oeq4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_EER1                                                  = ConvertAbilityRealLevelField(FourCC('Eer1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_DEALT_TO_ATTACKERS                                               = ConvertAbilityRealLevelField(FourCC('Eah1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_HEALED                                                             = ConvertAbilityRealLevelField(FourCC('Etq1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HEAL_INTERVAL                                                           = ConvertAbilityRealLevelField(FourCC('Etq2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BUILDING_REDUCTION_ETQ3                                                 = ConvertAbilityRealLevelField(FourCC('Etq3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_INITIAL_IMMUNITY_DURATION                                               = ConvertAbilityRealLevelField(FourCC('Etq4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAX_LIFE_DRAINED_PER_SECOND_PERCENT                                     = ConvertAbilityRealLevelField(FourCC('Udd1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BUILDING_REDUCTION_UDD2                                                 = ConvertAbilityRealLevelField(FourCC('Udd2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ARMOR_DURATION                                                          = ConvertAbilityRealLevelField(FourCC('Ufa1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ARMOR_BONUS_UFA2                                                        = ConvertAbilityRealLevelField(FourCC('Ufa2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AREA_OF_EFFECT_DAMAGE                                                   = ConvertAbilityRealLevelField(FourCC('Ufn1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SPECIFIC_TARGET_DAMAGE_UFN2                                             = ConvertAbilityRealLevelField(FourCC('Ufn2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_HFA1                                                       = ConvertAbilityRealLevelField(FourCC('Hfa1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_DEALT_ESF1                                                       = ConvertAbilityRealLevelField(FourCC('Esf1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_INTERVAL_ESF2                                                    = ConvertAbilityRealLevelField(FourCC('Esf2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BUILDING_REDUCTION_ESF3                                                 = ConvertAbilityRealLevelField(FourCC('Esf3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_PERCENT                                                    = ConvertAbilityRealLevelField(FourCC('Ear1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DEFENSE_BONUS_HAV1                                                      = ConvertAbilityRealLevelField(FourCC('Hav1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HIT_POINT_BONUS                                                         = ConvertAbilityRealLevelField(FourCC('Hav2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_HAV3                                                       = ConvertAbilityRealLevelField(FourCC('Hav3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_HAV4                                             = ConvertAbilityRealLevelField(FourCC('Hav4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_BASH                                                          = ConvertAbilityRealLevelField(FourCC('Hbh1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_MULTIPLIER_HBH2                                                  = ConvertAbilityRealLevelField(FourCC('Hbh2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_HBH3                                                       = ConvertAbilityRealLevelField(FourCC('Hbh3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_MISS_HBH4                                                     = ConvertAbilityRealLevelField(FourCC('Hbh4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_HTB1                                                             = ConvertAbilityRealLevelField(FourCC('Htb1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AOE_DAMAGE                                                              = ConvertAbilityRealLevelField(FourCC('Htc1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SPECIFIC_TARGET_DAMAGE_HTC2                                             = ConvertAbilityRealLevelField(FourCC('Htc2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_HTC3                                   = ConvertAbilityRealLevelField(FourCC('Htc3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_HTC4                                     = ConvertAbilityRealLevelField(FourCC('Htc4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ARMOR_BONUS_HAD1                                                        = ConvertAbilityRealLevelField(FourCC('Had1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AMOUNT_HEALED_DAMAGED_HHB1                                              = ConvertAbilityRealLevelField(FourCC('Hhb1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_EXTRA_DAMAGE_HCA1                                                       = ConvertAbilityRealLevelField(FourCC('Hca1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_FACTOR_HCA2                                              = ConvertAbilityRealLevelField(FourCC('Hca2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_FACTOR_HCA3                                                = ConvertAbilityRealLevelField(FourCC('Hca3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_INCREASE_PERCENT_OAE1                                    = ConvertAbilityRealLevelField(FourCC('Oae1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_INCREASE_PERCENT_OAE2                                      = ConvertAbilityRealLevelField(FourCC('Oae2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_REINCARNATION_DELAY                                                     = ConvertAbilityRealLevelField(FourCC('Ore1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_OSH1                                                             = ConvertAbilityRealLevelField(FourCC('Osh1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAXIMUM_DAMAGE_OSH2                                                     = ConvertAbilityRealLevelField(FourCC('Osh2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DISTANCE_OSH3                                                           = ConvertAbilityRealLevelField(FourCC('Osh3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FINAL_AREA_OSH4                                                         = ConvertAbilityRealLevelField(FourCC('Osh4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_GRAPHIC_DELAY_NFD1                                                      = ConvertAbilityRealLevelField(FourCC('Nfd1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_GRAPHIC_DURATION_NFD2                                                   = ConvertAbilityRealLevelField(FourCC('Nfd2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_NFD3                                                             = ConvertAbilityRealLevelField(FourCC('Nfd3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_UNIT_DAMAGE_AMS1                                               = ConvertAbilityRealLevelField(FourCC('Ams1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_AMS2                                             = ConvertAbilityRealLevelField(FourCC('Ams2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AURA_DURATION                                                           = ConvertAbilityRealLevelField(FourCC('Apl1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_APL2                                                  = ConvertAbilityRealLevelField(FourCC('Apl2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DURATION_OF_PLAGUE_WARD                                                 = ConvertAbilityRealLevelField(FourCC('Apl3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AMOUNT_OF_HIT_POINTS_REGENERATED                                        = ConvertAbilityRealLevelField(FourCC('Oar1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_DAMAGE_INCREASE_AKB1                                             = ConvertAbilityRealLevelField(FourCC('Akb1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_LOSS_ADM1                                                          = ConvertAbilityRealLevelField(FourCC('Adm1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_UNIT_DAMAGE_ADM2                                               = ConvertAbilityRealLevelField(FourCC('Adm2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_EXPANSION_AMOUNT                                                        = ConvertAbilityRealLevelField(FourCC('Bli1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_INTERVAL_DURATION_BGM2                                                  = ConvertAbilityRealLevelField(FourCC('Bgm2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_RADIUS_OF_MINING_RING                                                   = ConvertAbilityRealLevelField(FourCC('Bgm4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_INCREASE_PERCENT_BLO1                                      = ConvertAbilityRealLevelField(FourCC('Blo1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_INCREASE_PERCENT_BLO2                                    = ConvertAbilityRealLevelField(FourCC('Blo2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SCALING_FACTOR                                                          = ConvertAbilityRealLevelField(FourCC('Blo3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HIT_POINTS_PER_SECOND_CAN1                                              = ConvertAbilityRealLevelField(FourCC('Can1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAX_HIT_POINTS                                                          = ConvertAbilityRealLevelField(FourCC('Can2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_DEV2                                                  = ConvertAbilityRealLevelField(FourCC('Dev2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_UPDATE_FREQUENCY_CHD1                                          = ConvertAbilityRealLevelField(FourCC('Chd1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_UPDATE_FREQUENCY_CHD2                                            = ConvertAbilityRealLevelField(FourCC('Chd2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_UNIT_DAMAGE_CHD3                                               = ConvertAbilityRealLevelField(FourCC('Chd3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_CRI1                                   = ConvertAbilityRealLevelField(FourCC('Cri1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_CRI2                                     = ConvertAbilityRealLevelField(FourCC('Cri2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_REDUCTION_CRI3                                                   = ConvertAbilityRealLevelField(FourCC('Cri3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_MISS_CRS                                                      = ConvertAbilityRealLevelField(FourCC('Crs1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FULL_DAMAGE_RADIUS_DDA1                                                 = ConvertAbilityRealLevelField(FourCC('Dda1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FULL_DAMAGE_AMOUNT_DDA2                                                 = ConvertAbilityRealLevelField(FourCC('Dda2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_PARTIAL_DAMAGE_RADIUS                                                   = ConvertAbilityRealLevelField(FourCC('Dda3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_PARTIAL_DAMAGE_AMOUNT                                                   = ConvertAbilityRealLevelField(FourCC('Dda4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BUILDING_DAMAGE_FACTOR_SDS1                                             = ConvertAbilityRealLevelField(FourCC('Sds1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAX_DAMAGE_UCO5                                                         = ConvertAbilityRealLevelField(FourCC('Uco5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVE_SPEED_BONUS_UCO6                                                   = ConvertAbilityRealLevelField(FourCC('Uco6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_TAKEN_PERCENT_DEF1                                               = ConvertAbilityRealLevelField(FourCC('Def1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_DEALT_PERCENT_DEF2                                               = ConvertAbilityRealLevelField(FourCC('Def2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_FACTOR_DEF3                                              = ConvertAbilityRealLevelField(FourCC('Def3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_FACTOR_DEF4                                                = ConvertAbilityRealLevelField(FourCC('Def4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_DEF5                                             = ConvertAbilityRealLevelField(FourCC('Def5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_DEFLECT                                                       = ConvertAbilityRealLevelField(FourCC('Def6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DEFLECT_DAMAGE_TAKEN_PIERCING                                           = ConvertAbilityRealLevelField(FourCC('Def7')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DEFLECT_DAMAGE_TAKEN_SPELLS                                             = ConvertAbilityRealLevelField(FourCC('Def8')) ---@type abilityreallevelfield 
+    ABILITY_RLF_RIP_DELAY                                                               = ConvertAbilityRealLevelField(FourCC('Eat1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_EAT_DELAY                                                               = ConvertAbilityRealLevelField(FourCC('Eat2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HIT_POINTS_GAINED_EAT3                                                  = ConvertAbilityRealLevelField(FourCC('Eat3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AIR_UNIT_LOWER_DURATION                                                 = ConvertAbilityRealLevelField(FourCC('Ens1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AIR_UNIT_HEIGHT                                                         = ConvertAbilityRealLevelField(FourCC('Ens2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MELEE_ATTACK_RANGE                                                      = ConvertAbilityRealLevelField(FourCC('Ens3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_INTERVAL_DURATION_EGM2                                                  = ConvertAbilityRealLevelField(FourCC('Egm2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_EFFECT_DELAY_FLA2                                                       = ConvertAbilityRealLevelField(FourCC('Fla2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MINING_DURATION                                                         = ConvertAbilityRealLevelField(FourCC('Gld2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_RADIUS_OF_GRAVESTONES                                                   = ConvertAbilityRealLevelField(FourCC('Gyd2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_RADIUS_OF_CORPSES                                                       = ConvertAbilityRealLevelField(FourCC('Gyd3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HIT_POINTS_GAINED_HEA1                                                  = ConvertAbilityRealLevelField(FourCC('Hea1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_INCREASE_PERCENT_INF1                                            = ConvertAbilityRealLevelField(FourCC('Inf1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AUTOCAST_RANGE                                                          = ConvertAbilityRealLevelField(FourCC('Inf3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_REGEN_RATE                                                         = ConvertAbilityRealLevelField(FourCC('Inf4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_GRAPHIC_DELAY_LIT1                                                      = ConvertAbilityRealLevelField(FourCC('Lit1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_GRAPHIC_DURATION_LIT2                                                   = ConvertAbilityRealLevelField(FourCC('Lit2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_LSH1                                                  = ConvertAbilityRealLevelField(FourCC('Lsh1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_GAINED                                                             = ConvertAbilityRealLevelField(FourCC('Mbt1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HIT_POINTS_GAINED_MBT2                                                  = ConvertAbilityRealLevelField(FourCC('Mbt2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AUTOCAST_REQUIREMENT                                                    = ConvertAbilityRealLevelField(FourCC('Mbt3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_WATER_HEIGHT                                                            = ConvertAbilityRealLevelField(FourCC('Mbt4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ACTIVATION_DELAY_MIN1                                                   = ConvertAbilityRealLevelField(FourCC('Min1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_INVISIBILITY_TRANSITION_TIME                                            = ConvertAbilityRealLevelField(FourCC('Min2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ACTIVATION_RADIUS                                                       = ConvertAbilityRealLevelField(FourCC('Neu1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AMOUNT_REGENERATED                                                      = ConvertAbilityRealLevelField(FourCC('Arm1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_POI1                                                  = ConvertAbilityRealLevelField(FourCC('Poi1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_FACTOR_POI2                                                = ConvertAbilityRealLevelField(FourCC('Poi2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_FACTOR_POI3                                              = ConvertAbilityRealLevelField(FourCC('Poi3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_EXTRA_DAMAGE_POA1                                                       = ConvertAbilityRealLevelField(FourCC('Poa1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_POA2                                                  = ConvertAbilityRealLevelField(FourCC('Poa2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_FACTOR_POA3                                                = ConvertAbilityRealLevelField(FourCC('Poa3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_FACTOR_POA4                                              = ConvertAbilityRealLevelField(FourCC('Poa4'))    ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_AMPLIFICATION                                                    = ConvertAbilityRealLevelField(FourCC('Pos2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_STOMP_PERCENT                                                 = ConvertAbilityRealLevelField(FourCC('War1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_DEALT_WAR2                                                       = ConvertAbilityRealLevelField(FourCC('War2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FULL_DAMAGE_RADIUS_WAR3                                                 = ConvertAbilityRealLevelField(FourCC('War3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HALF_DAMAGE_RADIUS_WAR4                                                 = ConvertAbilityRealLevelField(FourCC('War4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_UNIT_DAMAGE_PRG3                                               = ConvertAbilityRealLevelField(FourCC('Prg3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_UNIT_PAUSE_DURATION                                                     = ConvertAbilityRealLevelField(FourCC('Prg4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HERO_PAUSE_DURATION                                                     = ConvertAbilityRealLevelField(FourCC('Prg5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HIT_POINTS_GAINED_REJ1                                                  = ConvertAbilityRealLevelField(FourCC('Rej1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_POINTS_GAINED_REJ2                                                 = ConvertAbilityRealLevelField(FourCC('Rej2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MINIMUM_LIFE_REQUIRED                                                   = ConvertAbilityRealLevelField(FourCC('Rpb3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MINIMUM_MANA_REQUIRED                                                   = ConvertAbilityRealLevelField(FourCC('Rpb4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_REPAIR_COST_RATIO                                                       = ConvertAbilityRealLevelField(FourCC('Rep1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_REPAIR_TIME_RATIO                                                       = ConvertAbilityRealLevelField(FourCC('Rep2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_POWERBUILD_COST                                                         = ConvertAbilityRealLevelField(FourCC('Rep3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_POWERBUILD_RATE                                                         = ConvertAbilityRealLevelField(FourCC('Rep4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_NAVAL_RANGE_BONUS                                                       = ConvertAbilityRealLevelField(FourCC('Rep5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_INCREASE_PERCENT_ROA1                                            = ConvertAbilityRealLevelField(FourCC('Roa1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_REGENERATION_RATE                                                  = ConvertAbilityRealLevelField(FourCC('Roa3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_REGEN                                                              = ConvertAbilityRealLevelField(FourCC('Roa4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_INCREASE                                                         = ConvertAbilityRealLevelField(FourCC('Nbr1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SALVAGE_COST_RATIO                                                      = ConvertAbilityRealLevelField(FourCC('Sal1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_IN_FLIGHT_SIGHT_RADIUS                                                  = ConvertAbilityRealLevelField(FourCC('Esn1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HOVERING_SIGHT_RADIUS                                                   = ConvertAbilityRealLevelField(FourCC('Esn2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HOVERING_HEIGHT                                                         = ConvertAbilityRealLevelField(FourCC('Esn3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DURATION_OF_OWLS                                                        = ConvertAbilityRealLevelField(FourCC('Esn5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FADE_DURATION                                                           = ConvertAbilityRealLevelField(FourCC('Shm1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAY_NIGHT_DURATION                                                      = ConvertAbilityRealLevelField(FourCC('Shm2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ACTION_DURATION                                                         = ConvertAbilityRealLevelField(FourCC('Shm3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_FACTOR_SLO1                                              = ConvertAbilityRealLevelField(FourCC('Slo1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_FACTOR_SLO2                                                = ConvertAbilityRealLevelField(FourCC('Slo2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_SPO1                                                  = ConvertAbilityRealLevelField(FourCC('Spo1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_FACTOR_SPO2                                              = ConvertAbilityRealLevelField(FourCC('Spo2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_FACTOR_SPO3                                                = ConvertAbilityRealLevelField(FourCC('Spo3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ACTIVATION_DELAY_STA1                                                   = ConvertAbilityRealLevelField(FourCC('Sta1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DETECTION_RADIUS_STA2                                                   = ConvertAbilityRealLevelField(FourCC('Sta2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DETONATION_RADIUS                                                       = ConvertAbilityRealLevelField(FourCC('Sta3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_STUN_DURATION_STA4                                                      = ConvertAbilityRealLevelField(FourCC('Sta4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_BONUS_PERCENT                                              = ConvertAbilityRealLevelField(FourCC('Uhf1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_UHF2                                                  = ConvertAbilityRealLevelField(FourCC('Uhf2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LUMBER_PER_INTERVAL                                                     = ConvertAbilityRealLevelField(FourCC('Wha1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ART_ATTACHMENT_HEIGHT                                                   = ConvertAbilityRealLevelField(FourCC('Wha3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_TELEPORT_AREA_WIDTH                                                     = ConvertAbilityRealLevelField(FourCC('Wrp1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_TELEPORT_AREA_HEIGHT                                                    = ConvertAbilityRealLevelField(FourCC('Wrp2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_STOLEN_PER_ATTACK                                                  = ConvertAbilityRealLevelField(FourCC('Ivam')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_IDAM                                                       = ConvertAbilityRealLevelField(FourCC('Idam')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_HIT_UNITS_PERCENT                                             = ConvertAbilityRealLevelField(FourCC('Iob2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_HIT_HEROS_PERCENT                                             = ConvertAbilityRealLevelField(FourCC('Iob3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_HIT_SUMMONS_PERCENT                                           = ConvertAbilityRealLevelField(FourCC('Iob4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DELAY_FOR_TARGET_EFFECT                                                 = ConvertAbilityRealLevelField(FourCC('Idel')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_DEALT_PERCENT_OF_NORMAL                                          = ConvertAbilityRealLevelField(FourCC('Iild')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_RECEIVED_MULTIPLIER                                              = ConvertAbilityRealLevelField(FourCC('Iilw')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_REGENERATION_BONUS_AS_FRACTION_OF_NORMAL                           = ConvertAbilityRealLevelField(FourCC('Imrp')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_INCREASE_ISPI                                            = ConvertAbilityRealLevelField(FourCC('Ispi')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_IDPS                                                  = ConvertAbilityRealLevelField(FourCC('Idps')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_DAMAGE_INCREASE_CAC1                                             = ConvertAbilityRealLevelField(FourCC('Cac1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_COR1                                                  = ConvertAbilityRealLevelField(FourCC('Cor1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_INCREASE_ISX1                                              = ConvertAbilityRealLevelField(FourCC('Isx1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_WRS1                                                             = ConvertAbilityRealLevelField(FourCC('Wrs1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_TERRAIN_DEFORMATION_AMPLITUDE                                           = ConvertAbilityRealLevelField(FourCC('Wrs2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_CTC1                                                             = ConvertAbilityRealLevelField(FourCC('Ctc1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_EXTRA_DAMAGE_TO_TARGET                                                  = ConvertAbilityRealLevelField(FourCC('Ctc2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_CTC3                                           = ConvertAbilityRealLevelField(FourCC('Ctc3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_REDUCTION_CTC4                                             = ConvertAbilityRealLevelField(FourCC('Ctc4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_CTB1                                                             = ConvertAbilityRealLevelField(FourCC('Ctb1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CASTING_DELAY_SECONDS                                                   = ConvertAbilityRealLevelField(FourCC('Uds2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_LOSS_PER_UNIT_DTN1                                                 = ConvertAbilityRealLevelField(FourCC('Dtn1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_TO_SUMMONED_UNITS_DTN2                                           = ConvertAbilityRealLevelField(FourCC('Dtn2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_TRANSITION_TIME_SECONDS                                                 = ConvertAbilityRealLevelField(FourCC('Ivs1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_DRAINED_PER_SECOND_NMR1                                            = ConvertAbilityRealLevelField(FourCC('Nmr1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_REDUCE_DAMAGE_PERCENT                                         = ConvertAbilityRealLevelField(FourCC('Ssk1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MINIMUM_DAMAGE                                                          = ConvertAbilityRealLevelField(FourCC('Ssk2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_IGNORED_DAMAGE                                                          = ConvertAbilityRealLevelField(FourCC('Ssk3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FULL_DAMAGE_DEALT                                                       = ConvertAbilityRealLevelField(FourCC('Hfs1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FULL_DAMAGE_INTERVAL                                                    = ConvertAbilityRealLevelField(FourCC('Hfs2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HALF_DAMAGE_DEALT                                                       = ConvertAbilityRealLevelField(FourCC('Hfs3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HALF_DAMAGE_INTERVAL                                                    = ConvertAbilityRealLevelField(FourCC('Hfs4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BUILDING_REDUCTION_HFS5                                                 = ConvertAbilityRealLevelField(FourCC('Hfs5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAXIMUM_DAMAGE_HFS6                                                     = ConvertAbilityRealLevelField(FourCC('Hfs6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_PER_HIT_POINT                                                      = ConvertAbilityRealLevelField(FourCC('Nms1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_ABSORBED_PERCENT                                                 = ConvertAbilityRealLevelField(FourCC('Nms2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_WAVE_DISTANCE                                                           = ConvertAbilityRealLevelField(FourCC('Uim1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_WAVE_TIME_SECONDS                                                       = ConvertAbilityRealLevelField(FourCC('Uim2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_DEALT_UIM3                                                       = ConvertAbilityRealLevelField(FourCC('Uim3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AIR_TIME_SECONDS_UIM4                                                   = ConvertAbilityRealLevelField(FourCC('Uim4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_UNIT_RELEASE_INTERVAL_SECONDS                                           = ConvertAbilityRealLevelField(FourCC('Uls2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_RETURN_FACTOR                                                    = ConvertAbilityRealLevelField(FourCC('Uls4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_RETURN_THRESHOLD                                                 = ConvertAbilityRealLevelField(FourCC('Uls5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_RETURNED_DAMAGE_FACTOR                                                  = ConvertAbilityRealLevelField(FourCC('Uts1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_RECEIVED_DAMAGE_FACTOR                                                  = ConvertAbilityRealLevelField(FourCC('Uts2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DEFENSE_BONUS_UTS3                                                      = ConvertAbilityRealLevelField(FourCC('Uts3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_NBA1                                                       = ConvertAbilityRealLevelField(FourCC('Nba1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_UNIT_DURATION_SECONDS_NBA3                                     = ConvertAbilityRealLevelField(FourCC('Nba3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_PER_SUMMONED_HITPOINT                                              = ConvertAbilityRealLevelField(FourCC('Cmg2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHARGE_FOR_CURRENT_LIFE                                                 = ConvertAbilityRealLevelField(FourCC('Cmg3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HIT_POINTS_DRAINED                                                      = ConvertAbilityRealLevelField(FourCC('Ndr1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_POINTS_DRAINED                                                     = ConvertAbilityRealLevelField(FourCC('Ndr2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DRAIN_INTERVAL_SECONDS                                                  = ConvertAbilityRealLevelField(FourCC('Ndr3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_TRANSFERRED_PER_SECOND                                             = ConvertAbilityRealLevelField(FourCC('Ndr4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_TRANSFERRED_PER_SECOND                                             = ConvertAbilityRealLevelField(FourCC('Ndr5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BONUS_LIFE_FACTOR                                                       = ConvertAbilityRealLevelField(FourCC('Ndr6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BONUS_LIFE_DECAY                                                        = ConvertAbilityRealLevelField(FourCC('Ndr7')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BONUS_MANA_FACTOR                                                       = ConvertAbilityRealLevelField(FourCC('Ndr8')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BONUS_MANA_DECAY                                                        = ConvertAbilityRealLevelField(FourCC('Ndr9')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_MISS_PERCENT                                                  = ConvertAbilityRealLevelField(FourCC('Nsi2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_MODIFIER                                                 = ConvertAbilityRealLevelField(FourCC('Nsi3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_MODIFIER                                                   = ConvertAbilityRealLevelField(FourCC('Nsi4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_TDG1                                                  = ConvertAbilityRealLevelField(FourCC('Tdg1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MEDIUM_DAMAGE_RADIUS_TDG2                                               = ConvertAbilityRealLevelField(FourCC('Tdg2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MEDIUM_DAMAGE_PER_SECOND                                                = ConvertAbilityRealLevelField(FourCC('Tdg3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SMALL_DAMAGE_RADIUS_TDG4                                                = ConvertAbilityRealLevelField(FourCC('Tdg4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SMALL_DAMAGE_PER_SECOND                                                 = ConvertAbilityRealLevelField(FourCC('Tdg5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_AIR_TIME_SECONDS_TSP1                                                   = ConvertAbilityRealLevelField(FourCC('Tsp1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MINIMUM_HIT_INTERVAL_SECONDS                                            = ConvertAbilityRealLevelField(FourCC('Tsp2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_NBF5                                                  = ConvertAbilityRealLevelField(FourCC('Nbf5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAXIMUM_RANGE                                                           = ConvertAbilityRealLevelField(FourCC('Ebl1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MINIMUM_RANGE                                                           = ConvertAbilityRealLevelField(FourCC('Ebl2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_TARGET_EFK1                                                  = ConvertAbilityRealLevelField(FourCC('Efk1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAXIMUM_TOTAL_DAMAGE                                                    = ConvertAbilityRealLevelField(FourCC('Efk2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAXIMUM_SPEED_ADJUSTMENT                                                = ConvertAbilityRealLevelField(FourCC('Efk4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DECAYING_DAMAGE                                                         = ConvertAbilityRealLevelField(FourCC('Esh1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_FACTOR_ESH2                                              = ConvertAbilityRealLevelField(FourCC('Esh2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_FACTOR_ESH3                                                = ConvertAbilityRealLevelField(FourCC('Esh3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DECAY_POWER                                                             = ConvertAbilityRealLevelField(FourCC('Esh4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_INITIAL_DAMAGE_ESH5                                                     = ConvertAbilityRealLevelField(FourCC('Esh5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAXIMUM_LIFE_ABSORBED                                                   = ConvertAbilityRealLevelField(FourCC('abs1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAXIMUM_MANA_ABSORBED                                                   = ConvertAbilityRealLevelField(FourCC('abs2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_INCREASE_BSK1                                            = ConvertAbilityRealLevelField(FourCC('bsk1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_INCREASE_BSK2                                              = ConvertAbilityRealLevelField(FourCC('bsk2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_TAKEN_INCREASE                                                   = ConvertAbilityRealLevelField(FourCC('bsk3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_PER_UNIT                                                           = ConvertAbilityRealLevelField(FourCC('dvm1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_PER_UNIT                                                           = ConvertAbilityRealLevelField(FourCC('dvm2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_PER_BUFF                                                           = ConvertAbilityRealLevelField(FourCC('dvm3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_PER_BUFF                                                           = ConvertAbilityRealLevelField(FourCC('dvm4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_UNIT_DAMAGE_DVM5                                               = ConvertAbilityRealLevelField(FourCC('dvm5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_FAK1                                                       = ConvertAbilityRealLevelField(FourCC('fak1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MEDIUM_DAMAGE_FACTOR_FAK2                                               = ConvertAbilityRealLevelField(FourCC('fak2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SMALL_DAMAGE_FACTOR_FAK3                                                = ConvertAbilityRealLevelField(FourCC('fak3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FULL_DAMAGE_RADIUS_FAK4                                                 = ConvertAbilityRealLevelField(FourCC('fak4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HALF_DAMAGE_RADIUS_FAK5                                                 = ConvertAbilityRealLevelField(FourCC('fak5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_EXTRA_DAMAGE_PER_SECOND                                                 = ConvertAbilityRealLevelField(FourCC('liq1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_LIQ2                                           = ConvertAbilityRealLevelField(FourCC('liq2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_REDUCTION_LIQ3                                             = ConvertAbilityRealLevelField(FourCC('liq3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAGIC_DAMAGE_FACTOR                                                     = ConvertAbilityRealLevelField(FourCC('mim1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_UNIT_DAMAGE_PER_MANA_POINT                                              = ConvertAbilityRealLevelField(FourCC('mfl1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HERO_DAMAGE_PER_MANA_POINT                                              = ConvertAbilityRealLevelField(FourCC('mfl2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_UNIT_MAXIMUM_DAMAGE                                                     = ConvertAbilityRealLevelField(FourCC('mfl3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HERO_MAXIMUM_DAMAGE                                                     = ConvertAbilityRealLevelField(FourCC('mfl4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_COOLDOWN                                                         = ConvertAbilityRealLevelField(FourCC('mfl5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DISTRIBUTED_DAMAGE_FACTOR_SPL1                                          = ConvertAbilityRealLevelField(FourCC('spl1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_REGENERATED                                                        = ConvertAbilityRealLevelField(FourCC('irl1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_REGENERATED                                                        = ConvertAbilityRealLevelField(FourCC('irl2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_LOSS_PER_UNIT_IDC1                                                 = ConvertAbilityRealLevelField(FourCC('idc1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_UNIT_DAMAGE_IDC2                                               = ConvertAbilityRealLevelField(FourCC('idc2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ACTIVATION_DELAY_IMO2                                                   = ConvertAbilityRealLevelField(FourCC('imo2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LURE_INTERVAL_SECONDS                                                   = ConvertAbilityRealLevelField(FourCC('imo3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_ISR1                                                       = ConvertAbilityRealLevelField(FourCC('isr1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_REDUCTION_ISR2                                                   = ConvertAbilityRealLevelField(FourCC('isr2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_IPV1                                                       = ConvertAbilityRealLevelField(FourCC('ipv1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_STEAL_AMOUNT                                                       = ConvertAbilityRealLevelField(FourCC('ipv2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_RESTORED_FACTOR                                                    = ConvertAbilityRealLevelField(FourCC('ast1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MANA_RESTORED_FACTOR                                                    = ConvertAbilityRealLevelField(FourCC('ast2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACH_DELAY                                                            = ConvertAbilityRealLevelField(FourCC('gra1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_REMOVE_DELAY                                                            = ConvertAbilityRealLevelField(FourCC('gra2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HERO_REGENERATION_DELAY                                                 = ConvertAbilityRealLevelField(FourCC('Nsa2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_UNIT_REGENERATION_DELAY                                                 = ConvertAbilityRealLevelField(FourCC('Nsa3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_NSA4                                             = ConvertAbilityRealLevelField(FourCC('Nsa4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HIT_POINTS_PER_SECOND_NSA5                                              = ConvertAbilityRealLevelField(FourCC('Nsa5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_TO_SUMMONED_UNITS_IXS1                                           = ConvertAbilityRealLevelField(FourCC('Ixs1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAGIC_DAMAGE_REDUCTION_IXS2                                             = ConvertAbilityRealLevelField(FourCC('Ixs2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_UNIT_DURATION                                                  = ConvertAbilityRealLevelField(FourCC('Npa6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SHIELD_COOLDOWN_TIME                                                    = ConvertAbilityRealLevelField(FourCC('Nse1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_NDO1                                                  = ConvertAbilityRealLevelField(FourCC('Ndo1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_UNIT_DURATION_SECONDS_NDO3                                     = ConvertAbilityRealLevelField(FourCC('Ndo3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MEDIUM_DAMAGE_RADIUS_FLK1                                               = ConvertAbilityRealLevelField(FourCC('flk1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SMALL_DAMAGE_RADIUS_FLK2                                                = ConvertAbilityRealLevelField(FourCC('flk2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FULL_DAMAGE_AMOUNT_FLK3                                                 = ConvertAbilityRealLevelField(FourCC('flk3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MEDIUM_DAMAGE_AMOUNT                                                    = ConvertAbilityRealLevelField(FourCC('flk4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SMALL_DAMAGE_AMOUNT                                                     = ConvertAbilityRealLevelField(FourCC('flk5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_HBN1                                   = ConvertAbilityRealLevelField(FourCC('Hbn1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_HBN2                                     = ConvertAbilityRealLevelField(FourCC('Hbn2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAX_MANA_DRAINED_UNITS                                                  = ConvertAbilityRealLevelField(FourCC('fbk1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_RATIO_UNITS_PERCENT                                              = ConvertAbilityRealLevelField(FourCC('fbk2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAX_MANA_DRAINED_HEROS                                                  = ConvertAbilityRealLevelField(FourCC('fbk3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_RATIO_HEROS_PERCENT                                              = ConvertAbilityRealLevelField(FourCC('fbk4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SUMMONED_DAMAGE                                                         = ConvertAbilityRealLevelField(FourCC('fbk5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DISTRIBUTED_DAMAGE_FACTOR_NCA1                                          = ConvertAbilityRealLevelField(FourCC('nca1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_INITIAL_DAMAGE_PXF1                                                     = ConvertAbilityRealLevelField(FourCC('pxf1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_PXF2                                                  = ConvertAbilityRealLevelField(FourCC('pxf2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PER_SECOND_MLS1                                                  = ConvertAbilityRealLevelField(FourCC('mls1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BEAST_COLLISION_RADIUS                                                  = ConvertAbilityRealLevelField(FourCC('Nst2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_AMOUNT_NST3                                                      = ConvertAbilityRealLevelField(FourCC('Nst3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_RADIUS                                                           = ConvertAbilityRealLevelField(FourCC('Nst4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_DELAY                                                            = ConvertAbilityRealLevelField(FourCC('Nst5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FOLLOW_THROUGH_TIME                                                     = ConvertAbilityRealLevelField(FourCC('Ncl1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ART_DURATION                                                            = ConvertAbilityRealLevelField(FourCC('Ncl4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_NAB1                                   = ConvertAbilityRealLevelField(FourCC('Nab1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_NAB2                                     = ConvertAbilityRealLevelField(FourCC('Nab2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_PRIMARY_DAMAGE                                                          = ConvertAbilityRealLevelField(FourCC('Nab4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SECONDARY_DAMAGE                                                        = ConvertAbilityRealLevelField(FourCC('Nab5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_INTERVAL_NAB6                                                    = ConvertAbilityRealLevelField(FourCC('Nab6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_GOLD_COST_FACTOR                                                        = ConvertAbilityRealLevelField(FourCC('Ntm1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LUMBER_COST_FACTOR                                                      = ConvertAbilityRealLevelField(FourCC('Ntm2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVE_SPEED_BONUS_NEG1                                                   = ConvertAbilityRealLevelField(FourCC('Neg1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_BONUS_NEG2                                                       = ConvertAbilityRealLevelField(FourCC('Neg2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_AMOUNT_NCS1                                                      = ConvertAbilityRealLevelField(FourCC('Ncs1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_INTERVAL_NCS2                                                    = ConvertAbilityRealLevelField(FourCC('Ncs2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAX_DAMAGE_NCS4                                                         = ConvertAbilityRealLevelField(FourCC('Ncs4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BUILDING_DAMAGE_FACTOR_NCS5                                             = ConvertAbilityRealLevelField(FourCC('Ncs5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_EFFECT_DURATION                                                         = ConvertAbilityRealLevelField(FourCC('Ncs6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SPAWN_INTERVAL_NSY1                                                     = ConvertAbilityRealLevelField(FourCC('Nsy1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SPAWN_UNIT_DURATION                                                     = ConvertAbilityRealLevelField(FourCC('Nsy3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SPAWN_UNIT_OFFSET                                                       = ConvertAbilityRealLevelField(FourCC('Nsy4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LEASH_RANGE_NSY5                                                        = ConvertAbilityRealLevelField(FourCC('Nsy5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SPAWN_INTERVAL_NFY1                                                     = ConvertAbilityRealLevelField(FourCC('Nfy1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LEASH_RANGE_NFY2                                                        = ConvertAbilityRealLevelField(FourCC('Nfy2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_CHANCE_TO_DEMOLISH                                                      = ConvertAbilityRealLevelField(FourCC('Nde1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_MULTIPLIER_BUILDINGS                                             = ConvertAbilityRealLevelField(FourCC('Nde2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_MULTIPLIER_UNITS                                                 = ConvertAbilityRealLevelField(FourCC('Nde3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_MULTIPLIER_HEROES                                                = ConvertAbilityRealLevelField(FourCC('Nde4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BONUS_DAMAGE_MULTIPLIER                                                 = ConvertAbilityRealLevelField(FourCC('Nic1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DEATH_DAMAGE_FULL_AMOUNT                                                = ConvertAbilityRealLevelField(FourCC('Nic2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DEATH_DAMAGE_FULL_AREA                                                  = ConvertAbilityRealLevelField(FourCC('Nic3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DEATH_DAMAGE_HALF_AMOUNT                                                = ConvertAbilityRealLevelField(FourCC('Nic4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DEATH_DAMAGE_HALF_AREA                                                  = ConvertAbilityRealLevelField(FourCC('Nic5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DEATH_DAMAGE_DELAY                                                      = ConvertAbilityRealLevelField(FourCC('Nic6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_AMOUNT_NSO1                                                      = ConvertAbilityRealLevelField(FourCC('Nso1')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PERIOD                                                           = ConvertAbilityRealLevelField(FourCC('Nso2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_DAMAGE_PENALTY                                                          = ConvertAbilityRealLevelField(FourCC('Nso3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MOVEMENT_SPEED_REDUCTION_PERCENT_NSO4                                   = ConvertAbilityRealLevelField(FourCC('Nso4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_ATTACK_SPEED_REDUCTION_PERCENT_NSO5                                     = ConvertAbilityRealLevelField(FourCC('Nso5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_SPLIT_DELAY                                                             = ConvertAbilityRealLevelField(FourCC('Nlm2')) ---@type abilityreallevelfield 
+    ABILITY_RLF_MAX_HITPOINT_FACTOR                                                     = ConvertAbilityRealLevelField(FourCC('Nlm4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_LIFE_DURATION_SPLIT_BONUS                                               = ConvertAbilityRealLevelField(FourCC('Nlm5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_WAVE_INTERVAL                                                           = ConvertAbilityRealLevelField(FourCC('Nvc3')) ---@type abilityreallevelfield 
+    ABILITY_RLF_BUILDING_DAMAGE_FACTOR_NVC4                                             = ConvertAbilityRealLevelField(FourCC('Nvc4')) ---@type abilityreallevelfield 
+    ABILITY_RLF_FULL_DAMAGE_AMOUNT_NVC5                                                 = ConvertAbilityRealLevelField(FourCC('Nvc5')) ---@type abilityreallevelfield 
+    ABILITY_RLF_HALF_DAMAGE_FACTOR                                                      = ConvertAbilityRealLevelField(FourCC('Nvc6')) ---@type abilityreallevelfield 
+    ABILITY_RLF_INTERVAL_BETWEEN_PULSES                                                 = ConvertAbilityRealLevelField(FourCC('Tau5')) ---@type abilityreallevelfield 
+
+    ABILITY_BLF_PERCENT_BONUS_HAB2                                     = ConvertAbilityBooleanLevelField(FourCC('Hab2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_USE_TELEPORT_CLUSTERING_HMT3                           = ConvertAbilityBooleanLevelField(FourCC('Hmt3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_NEVER_MISS_OCR5                                        = ConvertAbilityBooleanLevelField(FourCC('Ocr5')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_EXCLUDE_ITEM_DAMAGE                                    = ConvertAbilityBooleanLevelField(FourCC('Ocr6')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_BACKSTAB_DAMAGE                                        = ConvertAbilityBooleanLevelField(FourCC('Owk4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_INHERIT_UPGRADES_UAN3                                  = ConvertAbilityBooleanLevelField(FourCC('Uan3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_MANA_CONVERSION_AS_PERCENT                             = ConvertAbilityBooleanLevelField(FourCC('Udp3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_LIFE_CONVERSION_AS_PERCENT                             = ConvertAbilityBooleanLevelField(FourCC('Udp4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_LEAVE_TARGET_ALIVE                                     = ConvertAbilityBooleanLevelField(FourCC('Udp5')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_PERCENT_BONUS_UAU3                                     = ConvertAbilityBooleanLevelField(FourCC('Uau3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_DAMAGE_IS_PERCENT_RECEIVED                             = ConvertAbilityBooleanLevelField(FourCC('Eah2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_MELEE_BONUS                                            = ConvertAbilityBooleanLevelField(FourCC('Ear2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_RANGED_BONUS                                           = ConvertAbilityBooleanLevelField(FourCC('Ear3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_FLAT_BONUS                                             = ConvertAbilityBooleanLevelField(FourCC('Ear4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_NEVER_MISS_HBH5                                        = ConvertAbilityBooleanLevelField(FourCC('Hbh5')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_PERCENT_BONUS_HAD2                                     = ConvertAbilityBooleanLevelField(FourCC('Had2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_CAN_DEACTIVATE                                         = ConvertAbilityBooleanLevelField(FourCC('Hds1')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_RAISED_UNITS_ARE_INVULNERABLE                          = ConvertAbilityBooleanLevelField(FourCC('Hre2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_PERCENTAGE_OAR2                                        = ConvertAbilityBooleanLevelField(FourCC('Oar2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_SUMMON_BUSY_UNITS                                      = ConvertAbilityBooleanLevelField(FourCC('Btl2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_CREATES_BLIGHT                                         = ConvertAbilityBooleanLevelField(FourCC('Bli2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_EXPLODES_ON_DEATH                                      = ConvertAbilityBooleanLevelField(FourCC('Sds6')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_ALWAYS_AUTOCAST_FAE2                                   = ConvertAbilityBooleanLevelField(FourCC('Fae2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_REGENERATE_ONLY_AT_NIGHT                               = ConvertAbilityBooleanLevelField(FourCC('Mbt5')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_SHOW_SELECT_UNIT_BUTTON                                = ConvertAbilityBooleanLevelField(FourCC('Neu3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_SHOW_UNIT_INDICATOR                                    = ConvertAbilityBooleanLevelField(FourCC('Neu4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_CHARGE_OWNING_PLAYER                                   = ConvertAbilityBooleanLevelField(FourCC('Ans6')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_PERCENTAGE_ARM2                                        = ConvertAbilityBooleanLevelField(FourCC('Arm2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_TARGET_IS_INVULNERABLE                                 = ConvertAbilityBooleanLevelField(FourCC('Pos3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_TARGET_IS_MAGIC_IMMUNE                                 = ConvertAbilityBooleanLevelField(FourCC('Pos4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_KILL_ON_CASTER_DEATH                                   = ConvertAbilityBooleanLevelField(FourCC('Ucb6')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_NO_TARGET_REQUIRED_REJ4                                = ConvertAbilityBooleanLevelField(FourCC('Rej4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_ACCEPTS_GOLD                                           = ConvertAbilityBooleanLevelField(FourCC('Rtn1')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_ACCEPTS_LUMBER                                         = ConvertAbilityBooleanLevelField(FourCC('Rtn2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_PREFER_HOSTILES_ROA5                                   = ConvertAbilityBooleanLevelField(FourCC('Roa5')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_PREFER_FRIENDLIES_ROA6                                 = ConvertAbilityBooleanLevelField(FourCC('Roa6')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_ROOTED_TURNING                                         = ConvertAbilityBooleanLevelField(FourCC('Roo3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_ALWAYS_AUTOCAST_SLO3                                   = ConvertAbilityBooleanLevelField(FourCC('Slo3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_HIDE_BUTTON                                            = ConvertAbilityBooleanLevelField(FourCC('Ihid')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_USE_TELEPORT_CLUSTERING_ITP2                           = ConvertAbilityBooleanLevelField(FourCC('Itp2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_IMMUNE_TO_MORPH_EFFECTS                                = ConvertAbilityBooleanLevelField(FourCC('Eth1')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_DOES_NOT_BLOCK_BUILDINGS                               = ConvertAbilityBooleanLevelField(FourCC('Eth2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_AUTO_ACQUIRE_ATTACK_TARGETS                            = ConvertAbilityBooleanLevelField(FourCC('Gho1')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_IMMUNE_TO_MORPH_EFFECTS_GHO2                           = ConvertAbilityBooleanLevelField(FourCC('Gho2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_DO_NOT_BLOCK_BUILDINGS                                 = ConvertAbilityBooleanLevelField(FourCC('Gho3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_INCLUDE_RANGED_DAMAGE                                  = ConvertAbilityBooleanLevelField(FourCC('Ssk4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_INCLUDE_MELEE_DAMAGE                                   = ConvertAbilityBooleanLevelField(FourCC('Ssk5')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_MOVE_TO_PARTNER                                        = ConvertAbilityBooleanLevelField(FourCC('coa2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_CAN_BE_DISPELLED                                       = ConvertAbilityBooleanLevelField(FourCC('cyc1')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_IGNORE_FRIENDLY_BUFFS                                  = ConvertAbilityBooleanLevelField(FourCC('dvm6')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_DROP_ITEMS_ON_DEATH                                    = ConvertAbilityBooleanLevelField(FourCC('inv2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_CAN_USE_ITEMS                                          = ConvertAbilityBooleanLevelField(FourCC('inv3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_CAN_GET_ITEMS                                          = ConvertAbilityBooleanLevelField(FourCC('inv4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_CAN_DROP_ITEMS                                         = ConvertAbilityBooleanLevelField(FourCC('inv5')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_REPAIRS_ALLOWED                                        = ConvertAbilityBooleanLevelField(FourCC('liq4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_CASTER_ONLY_SPLASH                                     = ConvertAbilityBooleanLevelField(FourCC('mfl6')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_NO_TARGET_REQUIRED_IRL4                                = ConvertAbilityBooleanLevelField(FourCC('irl4')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_DISPEL_ON_ATTACK                                       = ConvertAbilityBooleanLevelField(FourCC('irl5')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_AMOUNT_IS_RAW_VALUE                                    = ConvertAbilityBooleanLevelField(FourCC('ipv3')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_SHARED_SPELL_COOLDOWN                                  = ConvertAbilityBooleanLevelField(FourCC('spb2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_SLEEP_ONCE                                             = ConvertAbilityBooleanLevelField(FourCC('sla1')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_ALLOW_ON_ANY_PLAYER_SLOT                               = ConvertAbilityBooleanLevelField(FourCC('sla2')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_DISABLE_OTHER_ABILITIES                                = ConvertAbilityBooleanLevelField(FourCC('Ncl5')) ---@type abilitybooleanlevelfield 
+    ABILITY_BLF_ALLOW_BOUNTY                                           = ConvertAbilityBooleanLevelField(FourCC('Ntm4')) ---@type abilitybooleanlevelfield 
+
+    ABILITY_SLF_ICON_NORMAL                                            = ConvertAbilityStringLevelField(FourCC('aart')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_CASTER                                                 = ConvertAbilityStringLevelField(FourCC('acat')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_TARGET                                                 = ConvertAbilityStringLevelField(FourCC('atat')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_SPECIAL                                                = ConvertAbilityStringLevelField(FourCC('asat')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_EFFECT                                                 = ConvertAbilityStringLevelField(FourCC('aeat')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_AREA_EFFECT                                            = ConvertAbilityStringLevelField(FourCC('aaea')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_LIGHTNING_EFFECTS                                      = ConvertAbilityStringLevelField(FourCC('alig')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_MISSILE_ART                                            = ConvertAbilityStringLevelField(FourCC('amat')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_TOOLTIP_LEARN                                          = ConvertAbilityStringLevelField(FourCC('aret')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_TOOLTIP_LEARN_EXTENDED                                 = ConvertAbilityStringLevelField(FourCC('arut')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_TOOLTIP_NORMAL                                         = ConvertAbilityStringLevelField(FourCC('atp1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_TOOLTIP_TURN_OFF                                       = ConvertAbilityStringLevelField(FourCC('aut1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_TOOLTIP_NORMAL_EXTENDED                                = ConvertAbilityStringLevelField(FourCC('aub1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_TOOLTIP_TURN_OFF_EXTENDED                              = ConvertAbilityStringLevelField(FourCC('auu1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_NORMAL_FORM_UNIT_EME1                                  = ConvertAbilityStringLevelField(FourCC('Eme1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_SPAWNED_UNITS                                          = ConvertAbilityStringLevelField(FourCC('Ndp1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_ABILITY_FOR_UNIT_CREATION                              = ConvertAbilityStringLevelField(FourCC('Nrc1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_NORMAL_FORM_UNIT_MIL1                                  = ConvertAbilityStringLevelField(FourCC('Mil1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_ALTERNATE_FORM_UNIT_MIL2                               = ConvertAbilityStringLevelField(FourCC('Mil2')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_BASE_ORDER_ID_ANS5                                     = ConvertAbilityStringLevelField(FourCC('Ans5')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_MORPH_UNITS_GROUND                                     = ConvertAbilityStringLevelField(FourCC('Ply2')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_MORPH_UNITS_AIR                                        = ConvertAbilityStringLevelField(FourCC('Ply3')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_MORPH_UNITS_AMPHIBIOUS                                 = ConvertAbilityStringLevelField(FourCC('Ply4')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_MORPH_UNITS_WATER                                      = ConvertAbilityStringLevelField(FourCC('Ply5')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_UNIT_TYPE_ONE                                          = ConvertAbilityStringLevelField(FourCC('Rai3')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_UNIT_TYPE_TWO                                          = ConvertAbilityStringLevelField(FourCC('Rai4')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_UNIT_TYPE_SOD2                                         = ConvertAbilityStringLevelField(FourCC('Sod2')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_SUMMON_1_UNIT_TYPE                                     = ConvertAbilityStringLevelField(FourCC('Ist1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_SUMMON_2_UNIT_TYPE                                     = ConvertAbilityStringLevelField(FourCC('Ist2')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_RACE_TO_CONVERT                                        = ConvertAbilityStringLevelField(FourCC('Ndc1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_PARTNER_UNIT_TYPE                                      = ConvertAbilityStringLevelField(FourCC('coa1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_PARTNER_UNIT_TYPE_ONE                                  = ConvertAbilityStringLevelField(FourCC('dcp1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_PARTNER_UNIT_TYPE_TWO                                  = ConvertAbilityStringLevelField(FourCC('dcp2')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_REQUIRED_UNIT_TYPE                                     = ConvertAbilityStringLevelField(FourCC('tpi1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_CONVERTED_UNIT_TYPE                                    = ConvertAbilityStringLevelField(FourCC('tpi2')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_SPELL_LIST                                             = ConvertAbilityStringLevelField(FourCC('spb1')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_BASE_ORDER_ID_SPB5                                     = ConvertAbilityStringLevelField(FourCC('spb5')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_BASE_ORDER_ID_NCL6                                     = ConvertAbilityStringLevelField(FourCC('Ncl6')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_ABILITY_UPGRADE_1                                      = ConvertAbilityStringLevelField(FourCC('Neg3')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_ABILITY_UPGRADE_2                                      = ConvertAbilityStringLevelField(FourCC('Neg4')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_ABILITY_UPGRADE_3                                      = ConvertAbilityStringLevelField(FourCC('Neg5')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_ABILITY_UPGRADE_4                                      = ConvertAbilityStringLevelField(FourCC('Neg6')) ---@type abilitystringlevelfield 
+    ABILITY_SLF_SPAWN_UNIT_ID_NSY2                                     = ConvertAbilityStringLevelField(FourCC('Nsy2')) ---@type abilitystringlevelfield 
+
+    -- Item
+    ITEM_IF_LEVEL                                  = ConvertItemIntegerField(FourCC('ilev')) ---@type itemintegerfield 
+    ITEM_IF_NUMBER_OF_CHARGES                      = ConvertItemIntegerField(FourCC('iuse')) ---@type itemintegerfield 
+    ITEM_IF_COOLDOWN_GROUP                         = ConvertItemIntegerField(FourCC('icid')) ---@type itemintegerfield 
+    ITEM_IF_MAX_HIT_POINTS                         = ConvertItemIntegerField(FourCC('ihtp')) ---@type itemintegerfield 
+    ITEM_IF_HIT_POINTS                             = ConvertItemIntegerField(FourCC('ihpc')) ---@type itemintegerfield 
+    ITEM_IF_PRIORITY                               = ConvertItemIntegerField(FourCC('ipri')) ---@type itemintegerfield 
+    ITEM_IF_ARMOR_TYPE                             = ConvertItemIntegerField(FourCC('iarm')) ---@type itemintegerfield 
+    ITEM_IF_TINTING_COLOR_RED                      = ConvertItemIntegerField(FourCC('iclr')) ---@type itemintegerfield 
+    ITEM_IF_TINTING_COLOR_GREEN                    = ConvertItemIntegerField(FourCC('iclg')) ---@type itemintegerfield 
+    ITEM_IF_TINTING_COLOR_BLUE                     = ConvertItemIntegerField(FourCC('iclb')) ---@type itemintegerfield 
+    ITEM_IF_TINTING_COLOR_ALPHA                    = ConvertItemIntegerField(FourCC('ical')) ---@type itemintegerfield 
+
+    ITEM_RF_SCALING_VALUE                          = ConvertItemRealField(FourCC('isca')) ---@type itemrealfield 
+
+    ITEM_BF_DROPPED_WHEN_CARRIER_DIES                          = ConvertItemBooleanField(FourCC('idrp')) ---@type itembooleanfield 
+    ITEM_BF_CAN_BE_DROPPED                                     = ConvertItemBooleanField(FourCC('idro')) ---@type itembooleanfield 
+    ITEM_BF_PERISHABLE                                         = ConvertItemBooleanField(FourCC('iper')) ---@type itembooleanfield 
+    ITEM_BF_INCLUDE_AS_RANDOM_CHOICE                           = ConvertItemBooleanField(FourCC('iprn')) ---@type itembooleanfield 
+    ITEM_BF_USE_AUTOMATICALLY_WHEN_ACQUIRED                    = ConvertItemBooleanField(FourCC('ipow')) ---@type itembooleanfield 
+    ITEM_BF_CAN_BE_SOLD_TO_MERCHANTS                           = ConvertItemBooleanField(FourCC('ipaw')) ---@type itembooleanfield 
+    ITEM_BF_ACTIVELY_USED                                      = ConvertItemBooleanField(FourCC('iusa')) ---@type itembooleanfield 
+
+    ITEM_SF_MODEL_USED                                         = ConvertItemStringField(FourCC('ifil')) ---@type itemstringfield 
+
+    -- Unit
+    UNIT_IF_DEFENSE_TYPE                                           = ConvertUnitIntegerField(FourCC('udty')) ---@type unitintegerfield 
+    UNIT_IF_ARMOR_TYPE                                             = ConvertUnitIntegerField(FourCC('uarm')) ---@type unitintegerfield 
+    UNIT_IF_LOOPING_FADE_IN_RATE                                   = ConvertUnitIntegerField(FourCC('ulfi')) ---@type unitintegerfield 
+    UNIT_IF_LOOPING_FADE_OUT_RATE                                  = ConvertUnitIntegerField(FourCC('ulfo')) ---@type unitintegerfield 
+    UNIT_IF_AGILITY                                                = ConvertUnitIntegerField(FourCC('uagc')) ---@type unitintegerfield 
+    UNIT_IF_INTELLIGENCE                                           = ConvertUnitIntegerField(FourCC('uinc')) ---@type unitintegerfield 
+    UNIT_IF_STRENGTH                                               = ConvertUnitIntegerField(FourCC('ustc')) ---@type unitintegerfield 
+    UNIT_IF_AGILITY_PERMANENT                                      = ConvertUnitIntegerField(FourCC('uagm')) ---@type unitintegerfield 
+    UNIT_IF_INTELLIGENCE_PERMANENT                                 = ConvertUnitIntegerField(FourCC('uinm')) ---@type unitintegerfield 
+    UNIT_IF_STRENGTH_PERMANENT                                     = ConvertUnitIntegerField(FourCC('ustm')) ---@type unitintegerfield 
+    UNIT_IF_AGILITY_WITH_BONUS                                     = ConvertUnitIntegerField(FourCC('uagb')) ---@type unitintegerfield 
+    UNIT_IF_INTELLIGENCE_WITH_BONUS                                = ConvertUnitIntegerField(FourCC('uinb')) ---@type unitintegerfield 
+    UNIT_IF_STRENGTH_WITH_BONUS                                    = ConvertUnitIntegerField(FourCC('ustb')) ---@type unitintegerfield 
+    UNIT_IF_GOLD_BOUNTY_AWARDED_NUMBER_OF_DICE                     = ConvertUnitIntegerField(FourCC('ubdi')) ---@type unitintegerfield 
+    UNIT_IF_GOLD_BOUNTY_AWARDED_BASE                               = ConvertUnitIntegerField(FourCC('ubba')) ---@type unitintegerfield 
+    UNIT_IF_GOLD_BOUNTY_AWARDED_SIDES_PER_DIE                      = ConvertUnitIntegerField(FourCC('ubsi')) ---@type unitintegerfield 
+    UNIT_IF_LUMBER_BOUNTY_AWARDED_NUMBER_OF_DICE                   = ConvertUnitIntegerField(FourCC('ulbd')) ---@type unitintegerfield 
+    UNIT_IF_LUMBER_BOUNTY_AWARDED_BASE                             = ConvertUnitIntegerField(FourCC('ulba')) ---@type unitintegerfield 
+    UNIT_IF_LUMBER_BOUNTY_AWARDED_SIDES_PER_DIE                    = ConvertUnitIntegerField(FourCC('ulbs')) ---@type unitintegerfield 
+    UNIT_IF_LEVEL                                                  = ConvertUnitIntegerField(FourCC('ulev')) ---@type unitintegerfield 
+    UNIT_IF_FORMATION_RANK                                         = ConvertUnitIntegerField(FourCC('ufor')) ---@type unitintegerfield 
+    UNIT_IF_ORIENTATION_INTERPOLATION                              = ConvertUnitIntegerField(FourCC('uori')) ---@type unitintegerfield 
+    UNIT_IF_ELEVATION_SAMPLE_POINTS                                = ConvertUnitIntegerField(FourCC('uept')) ---@type unitintegerfield 
+    UNIT_IF_TINTING_COLOR_RED                                      = ConvertUnitIntegerField(FourCC('uclr')) ---@type unitintegerfield 
+    UNIT_IF_TINTING_COLOR_GREEN                                    = ConvertUnitIntegerField(FourCC('uclg')) ---@type unitintegerfield 
+    UNIT_IF_TINTING_COLOR_BLUE                                     = ConvertUnitIntegerField(FourCC('uclb')) ---@type unitintegerfield 
+    UNIT_IF_TINTING_COLOR_ALPHA                                    = ConvertUnitIntegerField(FourCC('ucal')) ---@type unitintegerfield 
+    UNIT_IF_MOVE_TYPE                                              = ConvertUnitIntegerField(FourCC('umvt')) ---@type unitintegerfield 
+    UNIT_IF_TARGETED_AS                                            = ConvertUnitIntegerField(FourCC('utar')) ---@type unitintegerfield 
+    UNIT_IF_UNIT_CLASSIFICATION                                    = ConvertUnitIntegerField(FourCC('utyp')) ---@type unitintegerfield 
+    UNIT_IF_HIT_POINTS_REGENERATION_TYPE                           = ConvertUnitIntegerField(FourCC('uhrt')) ---@type unitintegerfield 
+    UNIT_IF_PLACEMENT_PREVENTED_BY                                 = ConvertUnitIntegerField(FourCC('upar')) ---@type unitintegerfield 
+    UNIT_IF_PRIMARY_ATTRIBUTE                                      = ConvertUnitIntegerField(FourCC('upra')) ---@type unitintegerfield 
+
+    UNIT_RF_STRENGTH_PER_LEVEL                                     = ConvertUnitRealField(FourCC('ustp')) ---@type unitrealfield 
+    UNIT_RF_AGILITY_PER_LEVEL                                      = ConvertUnitRealField(FourCC('uagp')) ---@type unitrealfield 
+    UNIT_RF_INTELLIGENCE_PER_LEVEL                                 = ConvertUnitRealField(FourCC('uinp')) ---@type unitrealfield 
+    UNIT_RF_HIT_POINTS_REGENERATION_RATE                           = ConvertUnitRealField(FourCC('uhpr')) ---@type unitrealfield 
+    UNIT_RF_MANA_REGENERATION                                      = ConvertUnitRealField(FourCC('umpr')) ---@type unitrealfield 
+    UNIT_RF_DEATH_TIME                                             = ConvertUnitRealField(FourCC('udtm')) ---@type unitrealfield 
+    UNIT_RF_FLY_HEIGHT                                             = ConvertUnitRealField(FourCC('ufyh')) ---@type unitrealfield 
+    UNIT_RF_TURN_RATE                                              = ConvertUnitRealField(FourCC('umvr')) ---@type unitrealfield 
+    UNIT_RF_ELEVATION_SAMPLE_RADIUS                                = ConvertUnitRealField(FourCC('uerd')) ---@type unitrealfield 
+    UNIT_RF_FOG_OF_WAR_SAMPLE_RADIUS                               = ConvertUnitRealField(FourCC('ufrd')) ---@type unitrealfield 
+    UNIT_RF_MAXIMUM_PITCH_ANGLE_DEGREES                            = ConvertUnitRealField(FourCC('umxp')) ---@type unitrealfield 
+    UNIT_RF_MAXIMUM_ROLL_ANGLE_DEGREES                             = ConvertUnitRealField(FourCC('umxr')) ---@type unitrealfield 
+    UNIT_RF_SCALING_VALUE                                          = ConvertUnitRealField(FourCC('usca')) ---@type unitrealfield 
+    UNIT_RF_ANIMATION_RUN_SPEED                                    = ConvertUnitRealField(FourCC('urun')) ---@type unitrealfield 
+    UNIT_RF_SELECTION_SCALE                                        = ConvertUnitRealField(FourCC('ussc')) ---@type unitrealfield 
+    UNIT_RF_SELECTION_CIRCLE_HEIGHT                                = ConvertUnitRealField(FourCC('uslz')) ---@type unitrealfield 
+    UNIT_RF_SHADOW_IMAGE_HEIGHT                                    = ConvertUnitRealField(FourCC('ushh')) ---@type unitrealfield 
+    UNIT_RF_SHADOW_IMAGE_WIDTH                                     = ConvertUnitRealField(FourCC('ushw')) ---@type unitrealfield 
+    UNIT_RF_SHADOW_IMAGE_CENTER_X                                  = ConvertUnitRealField(FourCC('ushx')) ---@type unitrealfield 
+    UNIT_RF_SHADOW_IMAGE_CENTER_Y                                  = ConvertUnitRealField(FourCC('ushy')) ---@type unitrealfield 
+    UNIT_RF_ANIMATION_WALK_SPEED                                   = ConvertUnitRealField(FourCC('uwal')) ---@type unitrealfield 
+    UNIT_RF_DEFENSE                                                = ConvertUnitRealField(FourCC('udfc')) ---@type unitrealfield 
+    UNIT_RF_SIGHT_RADIUS                                           = ConvertUnitRealField(FourCC('usir')) ---@type unitrealfield 
+    UNIT_RF_PRIORITY                                               = ConvertUnitRealField(FourCC('upri')) ---@type unitrealfield 
+    UNIT_RF_SPEED                                                  = ConvertUnitRealField(FourCC('umvc')) ---@type unitrealfield 
+    UNIT_RF_OCCLUDER_HEIGHT                                        = ConvertUnitRealField(FourCC('uocc')) ---@type unitrealfield 
+    UNIT_RF_HP                                                     = ConvertUnitRealField(FourCC('uhpc')) ---@type unitrealfield 
+    UNIT_RF_MANA                                                   = ConvertUnitRealField(FourCC('umpc')) ---@type unitrealfield 
+    UNIT_RF_ACQUISITION_RANGE                                      = ConvertUnitRealField(FourCC('uacq')) ---@type unitrealfield 
+    UNIT_RF_CAST_BACK_SWING                                        = ConvertUnitRealField(FourCC('ucbs')) ---@type unitrealfield 
+    UNIT_RF_CAST_POINT                                             = ConvertUnitRealField(FourCC('ucpt')) ---@type unitrealfield 
+    UNIT_RF_MINIMUM_ATTACK_RANGE                                   = ConvertUnitRealField(FourCC('uamn')) ---@type unitrealfield 
+
+    UNIT_BF_RAISABLE                                               = ConvertUnitBooleanField(FourCC('urai')) ---@type unitbooleanfield 
+    UNIT_BF_DECAYABLE                                              = ConvertUnitBooleanField(FourCC('udec')) ---@type unitbooleanfield 
+    UNIT_BF_IS_A_BUILDING                                          = ConvertUnitBooleanField(FourCC('ubdg')) ---@type unitbooleanfield 
+    UNIT_BF_USE_EXTENDED_LINE_OF_SIGHT                             = ConvertUnitBooleanField(FourCC('ulos')) ---@type unitbooleanfield 
+    UNIT_BF_NEUTRAL_BUILDING_SHOWS_MINIMAP_ICON                    = ConvertUnitBooleanField(FourCC('unbm')) ---@type unitbooleanfield 
+    UNIT_BF_HERO_HIDE_HERO_INTERFACE_ICON                          = ConvertUnitBooleanField(FourCC('uhhb')) ---@type unitbooleanfield 
+    UNIT_BF_HERO_HIDE_HERO_MINIMAP_DISPLAY                         = ConvertUnitBooleanField(FourCC('uhhm')) ---@type unitbooleanfield 
+    UNIT_BF_HERO_HIDE_HERO_DEATH_MESSAGE                           = ConvertUnitBooleanField(FourCC('uhhd')) ---@type unitbooleanfield 
+    UNIT_BF_HIDE_MINIMAP_DISPLAY                                   = ConvertUnitBooleanField(FourCC('uhom')) ---@type unitbooleanfield 
+    UNIT_BF_SCALE_PROJECTILES                                      = ConvertUnitBooleanField(FourCC('uscb')) ---@type unitbooleanfield 
+    UNIT_BF_SELECTION_CIRCLE_ON_WATER                              = ConvertUnitBooleanField(FourCC('usew')) ---@type unitbooleanfield 
+    UNIT_BF_HAS_WATER_SHADOW                                       = ConvertUnitBooleanField(FourCC('ushr')) ---@type unitbooleanfield 
+
+    UNIT_SF_NAME                                   = ConvertUnitStringField(FourCC('unam')) ---@type unitstringfield 
+    UNIT_SF_PROPER_NAMES                           = ConvertUnitStringField(FourCC('upro')) ---@type unitstringfield 
+    UNIT_SF_GROUND_TEXTURE                         = ConvertUnitStringField(FourCC('uubs')) ---@type unitstringfield 
+    UNIT_SF_SHADOW_IMAGE_UNIT                      = ConvertUnitStringField(FourCC('ushu')) ---@type unitstringfield 
+
+    -- Unit Weapon
+    UNIT_WEAPON_IF_ATTACK_DAMAGE_NUMBER_OF_DICE                            = ConvertUnitWeaponIntegerField(FourCC('ua1d')) ---@type unitweaponintegerfield 
+    UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE                                      = ConvertUnitWeaponIntegerField(FourCC('ua1b')) ---@type unitweaponintegerfield 
+    UNIT_WEAPON_IF_ATTACK_DAMAGE_SIDES_PER_DIE                             = ConvertUnitWeaponIntegerField(FourCC('ua1s')) ---@type unitweaponintegerfield 
+    UNIT_WEAPON_IF_ATTACK_MAXIMUM_NUMBER_OF_TARGETS                        = ConvertUnitWeaponIntegerField(FourCC('utc1')) ---@type unitweaponintegerfield 
+    UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE                                      = ConvertUnitWeaponIntegerField(FourCC('ua1t')) ---@type unitweaponintegerfield 
+    UNIT_WEAPON_IF_ATTACK_WEAPON_SOUND                                     = ConvertUnitWeaponIntegerField(FourCC('ucs1')) ---@type unitweaponintegerfield 
+    UNIT_WEAPON_IF_ATTACK_AREA_OF_EFFECT_TARGETS                           = ConvertUnitWeaponIntegerField(FourCC('ua1p')) ---@type unitweaponintegerfield 
+    UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED                                  = ConvertUnitWeaponIntegerField(FourCC('ua1g')) ---@type unitweaponintegerfield 
+
+    UNIT_WEAPON_RF_ATTACK_BACKSWING_POINT                                  = ConvertUnitWeaponRealField(FourCC('ubs1')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_DAMAGE_POINT                                     = ConvertUnitWeaponRealField(FourCC('udp1')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_BASE_COOLDOWN                                    = ConvertUnitWeaponRealField(FourCC('ua1c')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_DAMAGE_LOSS_FACTOR                               = ConvertUnitWeaponRealField(FourCC('udl1')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_DAMAGE_FACTOR_MEDIUM                             = ConvertUnitWeaponRealField(FourCC('uhd1')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_DAMAGE_FACTOR_SMALL                              = ConvertUnitWeaponRealField(FourCC('uqd1')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_DAMAGE_SPILL_DISTANCE                            = ConvertUnitWeaponRealField(FourCC('usd1')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_DAMAGE_SPILL_RADIUS                              = ConvertUnitWeaponRealField(FourCC('usr1')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_PROJECTILE_SPEED                                 = ConvertUnitWeaponRealField(FourCC('ua1z')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_PROJECTILE_ARC                                   = ConvertUnitWeaponRealField(FourCC('uma1')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_AREA_OF_EFFECT_FULL_DAMAGE                       = ConvertUnitWeaponRealField(FourCC('ua1f')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_AREA_OF_EFFECT_MEDIUM_DAMAGE                     = ConvertUnitWeaponRealField(FourCC('ua1h')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_AREA_OF_EFFECT_SMALL_DAMAGE                      = ConvertUnitWeaponRealField(FourCC('ua1q')) ---@type unitweaponrealfield 
+    UNIT_WEAPON_RF_ATTACK_RANGE                                            = ConvertUnitWeaponRealField(FourCC('ua1r')) ---@type unitweaponrealfield 
+
+    UNIT_WEAPON_BF_ATTACK_SHOW_UI                                          = ConvertUnitWeaponBooleanField(FourCC('uwu1')) ---@type unitweaponbooleanfield 
+    UNIT_WEAPON_BF_ATTACKS_ENABLED                                         = ConvertUnitWeaponBooleanField(FourCC('uaen')) ---@type unitweaponbooleanfield 
+    UNIT_WEAPON_BF_ATTACK_PROJECTILE_HOMING_ENABLED                        = ConvertUnitWeaponBooleanField(FourCC('umh1')) ---@type unitweaponbooleanfield 
+    
+    UNIT_WEAPON_SF_ATTACK_PROJECTILE_ART                                   = ConvertUnitWeaponStringField(FourCC('ua1m')) ---@type unitweaponstringfield 
+
+    -- Move Type
+    MOVE_TYPE_UNKNOWN                              = ConvertMoveType(0) ---@type movetype 
+    MOVE_TYPE_FOOT                                 = ConvertMoveType(1) ---@type movetype 
+    MOVE_TYPE_FLY                                  = ConvertMoveType(2) ---@type movetype 
+    MOVE_TYPE_HORSE                                = ConvertMoveType(4) ---@type movetype 
+    MOVE_TYPE_HOVER                                = ConvertMoveType(8) ---@type movetype 
+    MOVE_TYPE_FLOAT                                = ConvertMoveType(16) ---@type movetype 
+    MOVE_TYPE_AMPHIBIOUS                           = ConvertMoveType(32) ---@type movetype 
+    MOVE_TYPE_UNBUILDABLE                          = ConvertMoveType(64) ---@type movetype 
+    
+    -- Target Flag
+    TARGET_FLAG_NONE                               = ConvertTargetFlag(1) ---@type targetflag 
+    TARGET_FLAG_GROUND                             = ConvertTargetFlag(2) ---@type targetflag 
+    TARGET_FLAG_AIR                                = ConvertTargetFlag(4) ---@type targetflag 
+    TARGET_FLAG_STRUCTURE                          = ConvertTargetFlag(8) ---@type targetflag 
+    TARGET_FLAG_WARD                               = ConvertTargetFlag(16) ---@type targetflag 
+    TARGET_FLAG_ITEM                               = ConvertTargetFlag(32) ---@type targetflag 
+    TARGET_FLAG_TREE                               = ConvertTargetFlag(64) ---@type targetflag 
+    TARGET_FLAG_WALL                               = ConvertTargetFlag(128) ---@type targetflag 
+    TARGET_FLAG_DEBRIS                             = ConvertTargetFlag(256) ---@type targetflag 
+    TARGET_FLAG_DECORATION                         = ConvertTargetFlag(512) ---@type targetflag 
+    TARGET_FLAG_BRIDGE                             = ConvertTargetFlag(1024) ---@type targetflag 
+
+    -- defense type
+    DEFENSE_TYPE_LIGHT                             = ConvertDefenseType(0) ---@type defensetype 
+    DEFENSE_TYPE_MEDIUM                            = ConvertDefenseType(1) ---@type defensetype 
+    DEFENSE_TYPE_LARGE                             = ConvertDefenseType(2) ---@type defensetype 
+    DEFENSE_TYPE_FORT                              = ConvertDefenseType(3) ---@type defensetype 
+    DEFENSE_TYPE_NORMAL                            = ConvertDefenseType(4) ---@type defensetype 
+    DEFENSE_TYPE_HERO                              = ConvertDefenseType(5) ---@type defensetype 
+    DEFENSE_TYPE_DIVINE                            = ConvertDefenseType(6) ---@type defensetype 
+    DEFENSE_TYPE_NONE                              = ConvertDefenseType(7) ---@type defensetype 
+
+    -- Hero Attribute
+    HERO_ATTRIBUTE_STR                             = ConvertHeroAttribute(1) ---@type heroattribute 
+    HERO_ATTRIBUTE_INT                             = ConvertHeroAttribute(2) ---@type heroattribute 
+    HERO_ATTRIBUTE_AGI                             = ConvertHeroAttribute(3) ---@type heroattribute 
+
+    -- Armor Type
+    ARMOR_TYPE_WHOKNOWS                            = ConvertArmorType(0) ---@type armortype 
+    ARMOR_TYPE_FLESH                               = ConvertArmorType(1) ---@type armortype 
+    ARMOR_TYPE_METAL                               = ConvertArmorType(2) ---@type armortype 
+    ARMOR_TYPE_WOOD                                = ConvertArmorType(3) ---@type armortype 
+    ARMOR_TYPE_ETHREAL                             = ConvertArmorType(4) ---@type armortype 
+    ARMOR_TYPE_STONE                               = ConvertArmorType(5) ---@type armortype 
+
+    -- Regeneration Type
+    REGENERATION_TYPE_NONE                         = ConvertRegenType(0) ---@type regentype 
+    REGENERATION_TYPE_ALWAYS                       = ConvertRegenType(1) ---@type regentype 
+    REGENERATION_TYPE_BLIGHT                       = ConvertRegenType(2) ---@type regentype 
+    REGENERATION_TYPE_DAY                          = ConvertRegenType(3) ---@type regentype 
+    REGENERATION_TYPE_NIGHT                        = ConvertRegenType(4) ---@type regentype 
+
+    -- Unit Category
+    UNIT_CATEGORY_GIANT                            = ConvertUnitCategory(1) ---@type unitcategory 
+    UNIT_CATEGORY_UNDEAD                           = ConvertUnitCategory(2) ---@type unitcategory 
+    UNIT_CATEGORY_SUMMONED                         = ConvertUnitCategory(4) ---@type unitcategory 
+    UNIT_CATEGORY_MECHANICAL                       = ConvertUnitCategory(8) ---@type unitcategory 
+    UNIT_CATEGORY_PEON                             = ConvertUnitCategory(16) ---@type unitcategory 
+    UNIT_CATEGORY_SAPPER                           = ConvertUnitCategory(32) ---@type unitcategory 
+    UNIT_CATEGORY_TOWNHALL                         = ConvertUnitCategory(64) ---@type unitcategory 
+    UNIT_CATEGORY_ANCIENT                          = ConvertUnitCategory(128) ---@type unitcategory 
+    UNIT_CATEGORY_NEUTRAL                          = ConvertUnitCategory(256) ---@type unitcategory 
+    UNIT_CATEGORY_WARD                             = ConvertUnitCategory(512) ---@type unitcategory 
+    UNIT_CATEGORY_STANDON                          = ConvertUnitCategory(1024) ---@type unitcategory 
+    UNIT_CATEGORY_TAUREN                           = ConvertUnitCategory(2048) ---@type unitcategory 
+
+    -- Pathing Flag
+    PATHING_FLAG_UNWALKABLE                            = ConvertPathingFlag(2) ---@type pathingflag 
+    PATHING_FLAG_UNFLYABLE                             = ConvertPathingFlag(4) ---@type pathingflag 
+    PATHING_FLAG_UNBUILDABLE                           = ConvertPathingFlag(8) ---@type pathingflag 
+    PATHING_FLAG_UNPEONHARVEST                         = ConvertPathingFlag(16) ---@type pathingflag 
+    PATHING_FLAG_BLIGHTED                              = ConvertPathingFlag(32) ---@type pathingflag 
+    PATHING_FLAG_UNFLOATABLE                           = ConvertPathingFlag(64) ---@type pathingflag 
+    PATHING_FLAG_UNAMPHIBIOUS                          = ConvertPathingFlag(128) ---@type pathingflag 
+    PATHING_FLAG_UNITEMPLACABLE                        = ConvertPathingFlag(256) ---@type pathingflag 
+
+
+
+--============================================================================
+-- MathAPI
+Deg2Rad=nil  ---@type fun(degrees: number): number (native)
+Rad2Deg=nil  ---@type fun(radians: number): number (native)
+
+Sin=nil      ---@type fun(radians: number): number (native)
+Cos=nil      ---@type fun(radians: number): number (native)
+Tan=nil      ---@type fun(radians: number): number (native)
+
+-- Expect values between -1 and 1...returns 0 for invalid input
+Asin=nil     ---@type fun(y: number): number (native)
+Acos=nil     ---@type fun(x: number): number (native)
+
+Atan=nil     ---@type fun(x: number): number (native)
+
+-- Returns 0 if x and y are both 0
+Atan2=nil    ---@type fun(y: number, x: number): number (native)
+
+-- Returns 0 if x <= 0
+SquareRoot=nil ---@type fun(x: number): number (native)
+
+-- computes x to the y power
+-- y == 0.0             => 1
+-- x ==0.0 and y < 0    => 0
+--
+Pow=nil      ---@type fun(x: number, power: number): number (native)
+
+MathRound=nil ---@type fun(r: number): integer (native)
+
+--============================================================================
+-- String Utility API
+I2R=nil  ---@type fun(i: integer): number (native)
+R2I=nil  ---@type fun(r: number): integer (native)
+I2S=nil  ---@type fun(i: integer): string (native)
+R2S=nil  ---@type fun(r: number): string (native)
+R2SW=nil ---@type fun(r: number, width: integer, precision: integer): string (native)
+S2I=nil  ---@type fun(s: string): integer (native)
+S2R=nil  ---@type fun(s: string): number (native)
+GetHandleId=nil ---@type fun(h: handle): integer (native)
+SubString=nil ---@type fun(source: string, start: integer, end_: integer): string (native)
+StringLength=nil ---@type fun(s: string): integer (native)
+StringCase=nil ---@type fun(source: string, upper: boolean): string (native)
+StringHash=nil ---@type fun(s: string): integer (native)
+
+GetLocalizedString=nil ---@type fun(source: string): string (native)
+GetLocalizedHotkey=nil ---@type fun(source: string): integer (native)
+
+--============================================================================
+-- Map Setup API
+--
+--  These are native functions for describing the map configuration
+--  these funcs should only be used in the "config" function of
+--  a map script. The functions should also be called in this order
+--  ( i.e. call SetPlayers before SetPlayerColor...
+--
+
+SetMapName=nil           ---@type fun(name: string) (native)
+SetMapDescription=nil    ---@type fun(description: string) (native)
+
+SetTeams=nil             ---@type fun(teamcount: integer) (native)
+SetPlayers=nil           ---@type fun(playercount: integer) (native)
+
+DefineStartLocation=nil          ---@type fun(whichStartLoc: integer, x: number, y: number) (native)
+DefineStartLocationLoc=nil       ---@type fun(whichStartLoc: integer, whichLocation: location) (native)
+SetStartLocPrioCount=nil         ---@type fun(whichStartLoc: integer, prioSlotCount: integer) (native)
+SetStartLocPrio=nil              ---@type fun(whichStartLoc: integer, prioSlotIndex: integer, otherStartLocIndex: integer, priority: startlocprio) (native)
+GetStartLocPrioSlot=nil          ---@type fun(whichStartLoc: integer, prioSlotIndex: integer): integer (native)
+GetStartLocPrio=nil              ---@type fun(whichStartLoc: integer, prioSlotIndex: integer): startlocprio (native)
+SetEnemyStartLocPrioCount=nil    ---@type fun(whichStartLoc: integer, prioSlotCount: integer) (native)
+SetEnemyStartLocPrio=nil         ---@type fun(whichStartLoc: integer, prioSlotIndex: integer, otherStartLocIndex: integer, priority: startlocprio) (native)
+
+SetGameTypeSupported=nil ---@type fun(whichGameType: gametype, value: boolean) (native)
+SetMapFlag=nil           ---@type fun(whichMapFlag: mapflag, value: boolean) (native)
+SetGamePlacement=nil     ---@type fun(whichPlacementType: placement) (native)
+SetGameSpeed=nil         ---@type fun(whichspeed: gamespeed) (native)
+SetGameDifficulty=nil    ---@type fun(whichdifficulty: gamedifficulty) (native)
+SetResourceDensity=nil   ---@type fun(whichdensity: mapdensity) (native)
+SetCreatureDensity=nil   ---@type fun(whichdensity: mapdensity) (native)
+
+GetTeams=nil             ---@type fun(): integer (native)
+GetPlayers=nil           ---@type fun(): integer (native)
+
+IsGameTypeSupported=nil  ---@type fun(whichGameType: gametype): boolean (native)
+GetGameTypeSelected=nil  ---@type fun(): gametype (native)
+IsMapFlagSet=nil         ---@type fun(whichMapFlag: mapflag): boolean (native)
+
+GetGamePlacement=nil     ---@type fun(): placement (native)
+GetGameSpeed=nil         ---@type fun(): gamespeed (native)
+GetGameDifficulty=nil    ---@type fun(): gamedifficulty (native)
+GetResourceDensity=nil   ---@type fun(): mapdensity (native)
+GetCreatureDensity=nil   ---@type fun(): mapdensity (native)
+GetStartLocationX=nil    ---@type fun(whichStartLocation: integer): number (native)
+GetStartLocationY=nil    ---@type fun(whichStartLocation: integer): number (native)
+GetStartLocationLoc=nil  ---@type fun(whichStartLocation: integer): location (native)
+
+
+SetPlayerTeam=nil            ---@type fun(whichPlayer: player, whichTeam: integer) (native)
+SetPlayerStartLocation=nil   ---@type fun(whichPlayer: player, startLocIndex: integer) (native)
+-- forces player to have the specified start loc and marks the start loc as occupied
+-- which removes it from consideration for subsequently placed players
+-- ( i.e. you can use this to put people in a fixed loc and then
+--   use random placement for any unplaced players etc )
+ForcePlayerStartLocation=nil ---@type fun(whichPlayer: player, startLocIndex: integer) (native)
+SetPlayerColor=nil           ---@type fun(whichPlayer: player, color: playercolor) (native)
+SetPlayerAlliance=nil        ---@type fun(sourcePlayer: player, otherPlayer: player, whichAllianceSetting: alliancetype, value: boolean) (native)
+SetPlayerTaxRate=nil         ---@type fun(sourcePlayer: player, otherPlayer: player, whichResource: playerstate, rate: integer) (native)
+SetPlayerRacePreference=nil  ---@type fun(whichPlayer: player, whichRacePreference: racepreference) (native)
+SetPlayerRaceSelectable=nil  ---@type fun(whichPlayer: player, value: boolean) (native)
+SetPlayerController=nil      ---@type fun(whichPlayer: player, controlType: mapcontrol) (native)
+SetPlayerName=nil            ---@type fun(whichPlayer: player, name: string) (native)
+
+SetPlayerOnScoreScreen=nil   ---@type fun(whichPlayer: player, flag: boolean) (native)
+
+GetPlayerTeam=nil            ---@type fun(whichPlayer: player): integer (native)
+GetPlayerStartLocation=nil   ---@type fun(whichPlayer: player): integer (native)
+GetPlayerColor=nil           ---@type fun(whichPlayer: player): playercolor (native)
+GetPlayerSelectable=nil      ---@type fun(whichPlayer: player): boolean (native)
+GetPlayerController=nil      ---@type fun(whichPlayer: player): mapcontrol (native)
+GetPlayerSlotState=nil       ---@type fun(whichPlayer: player): playerslotstate (native)
+GetPlayerTaxRate=nil         ---@type fun(sourcePlayer: player, otherPlayer: player, whichResource: playerstate): integer (native)
+IsPlayerRacePrefSet=nil      ---@type fun(whichPlayer: player, pref: racepreference): boolean (native)
+GetPlayerName=nil            ---@type fun(whichPlayer: player): string (native)
+
+--============================================================================
+-- Timer API
+--
+CreateTimer=nil          ---@type fun(): timer (native)
+DestroyTimer=nil         ---@type fun(whichTimer: timer) (native)
+TimerStart=nil           ---@type fun(whichTimer: timer, timeout: number, periodic: boolean, handlerFunc?: function) (native)
+TimerGetElapsed=nil      ---@type fun(whichTimer: timer): number (native)
+TimerGetRemaining=nil    ---@type fun(whichTimer: timer): number (native)
+TimerGetTimeout=nil      ---@type fun(whichTimer: timer): number (native)
+PauseTimer=nil           ---@type fun(whichTimer: timer) (native)
+ResumeTimer=nil          ---@type fun(whichTimer: timer) (native)
+GetExpiredTimer=nil      ---@type fun(): timer (native)
+
+--============================================================================
+-- Group API
+--
+CreateGroup=nil                          ---@type fun(): group (native)
+DestroyGroup=nil                         ---@type fun(whichGroup: group) (native)
+GroupAddUnit=nil                         ---@type fun(whichGroup: group, whichUnit: unit): boolean (native)
+GroupRemoveUnit=nil                      ---@type fun(whichGroup: group, whichUnit: unit): boolean (native)
+BlzGroupAddGroupFast=nil                 ---@type fun(whichGroup: group, addGroup: group): integer (native)
+BlzGroupRemoveGroupFast=nil              ---@type fun(whichGroup: group, removeGroup: group): integer (native)
+GroupClear=nil                           ---@type fun(whichGroup: group) (native)
+BlzGroupGetSize=nil                      ---@type fun(whichGroup: group): integer (native)
+BlzGroupUnitAt=nil                       ---@type fun(whichGroup: group, index: integer): unit (native)
+GroupEnumUnitsOfType=nil                 ---@type fun(whichGroup: group, unitname: string, filter?: boolexpr) (native)
+GroupEnumUnitsOfPlayer=nil               ---@type fun(whichGroup: group, whichPlayer: player, filter?: boolexpr) (native)
+GroupEnumUnitsOfTypeCounted=nil          ---@type fun(whichGroup: group, unitname: string, filter?: boolexpr, countLimit: integer) (native)
+GroupEnumUnitsInRect=nil                 ---@type fun(whichGroup: group, r: rect, filter?: boolexpr) (native)
+GroupEnumUnitsInRectCounted=nil          ---@type fun(whichGroup: group, r: rect, filter?: boolexpr, countLimit: integer) (native)
+GroupEnumUnitsInRange=nil                ---@type fun(whichGroup: group, x: number, y: number, radius: number, filter?: boolexpr) (native)
+GroupEnumUnitsInRangeOfLoc=nil           ---@type fun(whichGroup: group, whichLocation: location, radius: number, filter?: boolexpr) (native)
+GroupEnumUnitsInRangeCounted=nil         ---@type fun(whichGroup: group, x: number, y: number, radius: number, filter?: boolexpr, countLimit: integer) (native)
+GroupEnumUnitsInRangeOfLocCounted=nil    ---@type fun(whichGroup: group, whichLocation: location, radius: number, filter?: boolexpr, countLimit: integer) (native)
+GroupEnumUnitsSelected=nil               ---@type fun(whichGroup: group, whichPlayer: player, filter?: boolexpr) (native)
+
+GroupImmediateOrder=nil                  ---@type fun(whichGroup: group, order: string): boolean (native)
+GroupImmediateOrderById=nil              ---@type fun(whichGroup: group, order: integer): boolean (native)
+GroupPointOrder=nil                      ---@type fun(whichGroup: group, order: string, x: number, y: number): boolean (native)
+GroupPointOrderLoc=nil                   ---@type fun(whichGroup: group, order: string, whichLocation: location): boolean (native)
+GroupPointOrderById=nil                  ---@type fun(whichGroup: group, order: integer, x: number, y: number): boolean (native)
+GroupPointOrderByIdLoc=nil               ---@type fun(whichGroup: group, order: integer, whichLocation: location): boolean (native)
+GroupTargetOrder=nil                     ---@type fun(whichGroup: group, order: string, targetWidget: widget): boolean (native)
+GroupTargetOrderById=nil                 ---@type fun(whichGroup: group, order: integer, targetWidget: widget): boolean (native)
+
+-- This will be difficult to support with potentially disjoint, cell-based regions
+-- as it would involve enumerating all the cells that are covered by a particularregion
+-- a better implementation would be a trigger that adds relevant units as they enter
+-- and removes them if they leave...
+ForGroup=nil                 ---@type fun(whichGroup: group, callback: function) (native)
+FirstOfGroup=nil             ---@type fun(whichGroup: group): unit (native)
+
+--============================================================================
+-- Force API
+--
+CreateForce=nil              ---@type fun(): force (native)
+DestroyForce=nil             ---@type fun(whichForce: force) (native)
+ForceAddPlayer=nil           ---@type fun(whichForce: force, whichPlayer: player) (native)
+ForceRemovePlayer=nil        ---@type fun(whichForce: force, whichPlayer: player) (native)
+BlzForceHasPlayer=nil        ---@type fun(whichForce: force, whichPlayer: player): boolean (native)
+ForceClear=nil               ---@type fun(whichForce: force) (native)
+ForceEnumPlayers=nil         ---@type fun(whichForce: force, filter?: boolexpr) (native)
+ForceEnumPlayersCounted=nil  ---@type fun(whichForce: force, filter?: boolexpr, countLimit: integer) (native)
+ForceEnumAllies=nil          ---@type fun(whichForce: force, whichPlayer: player, filter?: boolexpr) (native)
+ForceEnumEnemies=nil         ---@type fun(whichForce: force, whichPlayer: player, filter?: boolexpr) (native)
+ForForce=nil                 ---@type fun(whichForce: force, callback: function) (native)
+
+--============================================================================
+-- Region and Location API
+--
+Rect=nil                     ---@type fun(minx: number, miny: number, maxx: number, maxy: number): rect (native)
+RectFromLoc=nil              ---@type fun(min: location, max: location): rect (native)
+RemoveRect=nil               ---@type fun(whichRect: rect) (native)
+SetRect=nil                  ---@type fun(whichRect: rect, minx: number, miny: number, maxx: number, maxy: number) (native)
+SetRectFromLoc=nil           ---@type fun(whichRect: rect, min: location, max: location) (native)
+MoveRectTo=nil               ---@type fun(whichRect: rect, newCenterX: number, newCenterY: number) (native)
+MoveRectToLoc=nil            ---@type fun(whichRect: rect, newCenterLoc: location) (native)
+
+GetRectCenterX=nil           ---@type fun(whichRect: rect): number (native)
+GetRectCenterY=nil           ---@type fun(whichRect: rect): number (native)
+GetRectMinX=nil              ---@type fun(whichRect: rect): number (native)
+GetRectMinY=nil              ---@type fun(whichRect: rect): number (native)
+GetRectMaxX=nil              ---@type fun(whichRect: rect): number (native)
+GetRectMaxY=nil              ---@type fun(whichRect: rect): number (native)
+
+CreateRegion=nil             ---@type fun(): region (native)
+RemoveRegion=nil             ---@type fun(whichRegion: region) (native)
+
+RegionAddRect=nil            ---@type fun(whichRegion: region, r: rect) (native)
+RegionClearRect=nil          ---@type fun(whichRegion: region, r: rect) (native)
+
+RegionAddCell=nil           ---@type fun(whichRegion: region, x: number, y: number) (native)
+RegionAddCellAtLoc=nil      ---@type fun(whichRegion: region, whichLocation: location) (native)
+RegionClearCell=nil         ---@type fun(whichRegion: region, x: number, y: number) (native)
+RegionClearCellAtLoc=nil    ---@type fun(whichRegion: region, whichLocation: location) (native)
+
+Location=nil                 ---@type fun(x: number, y: number): location (native)
+RemoveLocation=nil           ---@type fun(whichLocation: location) (native)
+MoveLocation=nil             ---@type fun(whichLocation: location, newX: number, newY: number) (native)
+GetLocationX=nil             ---@type fun(whichLocation: location): number (native)
+GetLocationY=nil             ---@type fun(whichLocation: location): number (native)
+
+-- This function is asynchronous. The values it returns are not guaranteed synchronous between each player.
+--  If you attempt to use it in a synchronous manner, it may cause a desync.
+GetLocationZ=nil             ---@type fun(whichLocation: location): number (native)
+
+IsUnitInRegion=nil               ---@type fun(whichRegion: region, whichUnit: unit): boolean (native)
+IsPointInRegion=nil              ---@type fun(whichRegion: region, x: number, y: number): boolean (native)
+IsLocationInRegion=nil           ---@type fun(whichRegion: region, whichLocation: location): boolean (native)
+
+-- Returns full map bounds, including unplayable borders, in world coordinates
+GetWorldBounds=nil           ---@type fun(): rect (native)
+
+--============================================================================
+-- Native trigger interface
+--
+CreateTrigger=nil    ---@type fun(): trigger (native)
+DestroyTrigger=nil   ---@type fun(whichTrigger: trigger) (native)
+ResetTrigger=nil     ---@type fun(whichTrigger: trigger) (native)
+EnableTrigger=nil    ---@type fun(whichTrigger: trigger) (native)
+DisableTrigger=nil   ---@type fun(whichTrigger: trigger) (native)
+IsTriggerEnabled=nil ---@type fun(whichTrigger: trigger): boolean (native)
+
+TriggerWaitOnSleeps=nil   ---@type fun(whichTrigger: trigger, flag: boolean) (native)
+IsTriggerWaitOnSleeps=nil ---@type fun(whichTrigger: trigger): boolean (native)
+
+GetFilterUnit=nil       ---@type fun(): unit (native)
+GetEnumUnit=nil         ---@type fun(): unit (native)
+
+GetFilterDestructable=nil   ---@type fun(): destructable (native)
+GetEnumDestructable=nil     ---@type fun(): destructable (native)
+
+GetFilterItem=nil           ---@type fun(): item (native)
+GetEnumItem=nil             ---@type fun(): item (native)
+
+ParseTags=nil               ---@type fun(taggedString: string): string (native)
+
+GetFilterPlayer=nil     ---@type fun(): player (native)
+GetEnumPlayer=nil       ---@type fun(): player (native)
+
+GetTriggeringTrigger=nil    ---@type fun(): trigger (native)
+GetTriggerEventId=nil       ---@type fun(): eventid (native)
+GetTriggerEvalCount=nil     ---@type fun(whichTrigger: trigger): integer (native)
+GetTriggerExecCount=nil     ---@type fun(whichTrigger: trigger): integer (native)
+
+ExecuteFunc=nil          ---@type fun(funcName: string) (native)
+
+--============================================================================
+-- Boolean Expr API ( for compositing trigger conditions and unit filter funcs...)
+--============================================================================
+And=nil              ---@type fun(operandA: boolexpr, operandB: boolexpr): boolexpr (native)
+Or=nil               ---@type fun(operandA: boolexpr, operandB: boolexpr): boolexpr (native)
+Not=nil              ---@type fun(operand: boolexpr): boolexpr (native)
+Condition=nil        ---@type fun(func: function): conditionfunc (native)
+DestroyCondition=nil ---@type fun(c: conditionfunc) (native)
+Filter=nil           ---@type fun(func: function): filterfunc (native)
+DestroyFilter=nil    ---@type fun(f: filterfunc) (native)
+DestroyBoolExpr=nil  ---@type fun(e: boolexpr) (native)
+
+--============================================================================
+-- Trigger Game Event API
+--============================================================================
+
+TriggerRegisterVariableEvent=nil ---@type fun(whichTrigger: trigger, varName: string, opcode: limitop, limitval: number): event (native)
+
+    -- EVENT_GAME_VARIABLE_LIMIT
+    --constant native string GetTriggeringVariableName takes nothing returns string
+
+-- Creates it's own timer and triggers when it expires
+TriggerRegisterTimerEvent=nil ---@type fun(whichTrigger: trigger, timeout: number, periodic: boolean): event (native)
+
+-- Triggers when the timer you tell it about expires
+TriggerRegisterTimerExpireEvent=nil ---@type fun(whichTrigger: trigger, t: timer): event (native)
+
+TriggerRegisterGameStateEvent=nil ---@type fun(whichTrigger: trigger, whichState: gamestate, opcode: limitop, limitval: number): event (native)
+
+TriggerRegisterDialogEvent=nil       ---@type fun(whichTrigger: trigger, whichDialog: dialog): event (native)
+TriggerRegisterDialogButtonEvent=nil ---@type fun(whichTrigger: trigger, whichButton: button): event (native)
+
+--  EVENT_GAME_STATE_LIMIT
+GetEventGameState=nil ---@type fun(): gamestate (native)
+
+TriggerRegisterGameEvent=nil ---@type fun(whichTrigger: trigger, whichGameEvent: gameevent): event (native)
+
+-- EVENT_GAME_VICTORY
+GetWinningPlayer=nil ---@type fun(): player (native)
+
+
+TriggerRegisterEnterRegion=nil ---@type fun(whichTrigger: trigger, whichRegion: region, filter?: boolexpr): event (native)
+
+-- EVENT_GAME_ENTER_REGION
+GetTriggeringRegion=nil ---@type fun(): region (native)
+GetEnteringUnit=nil ---@type fun(): unit (native)
+
+-- EVENT_GAME_LEAVE_REGION
+
+TriggerRegisterLeaveRegion=nil ---@type fun(whichTrigger: trigger, whichRegion: region, filter?: boolexpr): event (native)
+GetLeavingUnit=nil ---@type fun(): unit (native)
+
+TriggerRegisterTrackableHitEvent=nil ---@type fun(whichTrigger: trigger, t: trackable): event (native)
+TriggerRegisterTrackableTrackEvent=nil ---@type fun(whichTrigger: trigger, t: trackable): event (native)
+
+-- EVENT_COMMAND_BUTTON_CLICK
+TriggerRegisterCommandEvent=nil ---@type fun(whichTrigger: trigger, whichAbility: integer, order: string): event (native)
+TriggerRegisterUpgradeCommandEvent=nil ---@type fun(whichTrigger: trigger, whichUpgrade: integer): event (native)
+
+-- EVENT_GAME_TRACKABLE_HIT
+-- EVENT_GAME_TRACKABLE_TRACK
+GetTriggeringTrackable=nil ---@type fun(): trackable (native)
+
+-- EVENT_DIALOG_BUTTON_CLICK
+GetClickedButton=nil ---@type fun(): button (native)
+GetClickedDialog=nil    ---@type fun(): dialog (native)
+
+-- EVENT_GAME_TOURNAMENT_FINISH_SOON
+GetTournamentFinishSoonTimeRemaining=nil ---@type fun(): number (native)
+GetTournamentFinishNowRule=nil ---@type fun(): integer (native)
+GetTournamentFinishNowPlayer=nil ---@type fun(): player (native)
+GetTournamentScore=nil ---@type fun(whichPlayer: player): integer (native)
+
+-- EVENT_GAME_SAVE
+GetSaveBasicFilename=nil ---@type fun(): string (native)
+
+--============================================================================
+-- Trigger Player Based Event API
+--============================================================================
+
+TriggerRegisterPlayerEvent=nil ---@type fun(whichTrigger: trigger, whichPlayer: player, whichPlayerEvent: playerevent): event (native)
+
+-- EVENT_PLAYER_DEFEAT
+-- EVENT_PLAYER_VICTORY
+GetTriggerPlayer=nil ---@type fun(): player (native)
+
+TriggerRegisterPlayerUnitEvent=nil ---@type fun(whichTrigger: trigger, whichPlayer: player, whichPlayerUnitEvent: playerunitevent, filter?: boolexpr): event (native)
+
+-- EVENT_PLAYER_HERO_LEVEL
+-- EVENT_UNIT_HERO_LEVEL
+GetLevelingUnit=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_HERO_SKILL
+-- EVENT_UNIT_HERO_SKILL
+GetLearningUnit=nil      ---@type fun(): unit (native)
+GetLearnedSkill=nil      ---@type fun(): integer (native)
+GetLearnedSkillLevel=nil ---@type fun(): integer (native)
+
+-- EVENT_PLAYER_HERO_REVIVABLE
+GetRevivableUnit=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_HERO_REVIVE_START
+-- EVENT_PLAYER_HERO_REVIVE_CANCEL
+-- EVENT_PLAYER_HERO_REVIVE_FINISH
+-- EVENT_UNIT_HERO_REVIVE_START
+-- EVENT_UNIT_HERO_REVIVE_CANCEL
+-- EVENT_UNIT_HERO_REVIVE_FINISH
+GetRevivingUnit=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_ATTACKED
+GetAttacker=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_RESCUED
+GetRescuer=nil  ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_DEATH
+GetDyingUnit=nil ---@type fun(): unit (native)
+GetKillingUnit=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_DECAY
+GetDecayingUnit=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_SELECTED
+--constant native GetSelectedUnit takes nothing returns unit
+
+-- EVENT_PLAYER_UNIT_CONSTRUCT_START
+GetConstructingStructure=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_CONSTRUCT_FINISH
+-- EVENT_PLAYER_UNIT_CONSTRUCT_CANCEL
+GetCancelledStructure=nil ---@type fun(): unit (native)
+GetConstructedStructure=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_RESEARCH_START
+-- EVENT_PLAYER_UNIT_RESEARCH_CANCEL
+-- EVENT_PLAYER_UNIT_RESEARCH_FINISH
+GetResearchingUnit=nil ---@type fun(): unit (native)
+GetResearched=nil ---@type fun(): integer (native)
+
+-- EVENT_PLAYER_UNIT_TRAIN_START
+-- EVENT_PLAYER_UNIT_TRAIN_CANCEL
+GetTrainedUnitType=nil ---@type fun(): integer (native)
+
+-- EVENT_PLAYER_UNIT_TRAIN_FINISH
+GetTrainedUnit=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_DETECTED
+GetDetectedUnit=nil ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_SUMMONED
+GetSummoningUnit=nil    ---@type fun(): unit (native)
+GetSummonedUnit=nil     ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_LOADED
+GetTransportUnit=nil    ---@type fun(): unit (native)
+GetLoadedUnit=nil       ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_SELL
+GetSellingUnit=nil      ---@type fun(): unit (native)
+GetSoldUnit=nil         ---@type fun(): unit (native)
+GetBuyingUnit=nil       ---@type fun(): unit (native)
+
+-- EVENT_PLAYER_UNIT_SELL_ITEM
+GetSoldItem=nil         ---@type fun(): item (native)
+
+-- EVENT_PLAYER_UNIT_CHANGE_OWNER
+GetChangingUnit=nil             ---@type fun(): unit (native)
+GetChangingUnitPrevOwner=nil    ---@type fun(): player (native)
+
+-- EVENT_PLAYER_UNIT_DROP_ITEM
+-- EVENT_PLAYER_UNIT_PICKUP_ITEM
+-- EVENT_PLAYER_UNIT_USE_ITEM
+GetManipulatingUnit=nil ---@type fun(): unit (native)
+GetManipulatedItem=nil  ---@type fun(): item (native)
+
+-- For EVENT_PLAYER_UNIT_PICKUP_ITEM, returns the item absorbing the picked up item in case it is stacking.
+-- Returns null if the item was a powerup and not a stacking item.
+BlzGetAbsorbingItem=nil ---@type fun(): item (native)
+BlzGetManipulatedItemWasAbsorbed=nil ---@type fun(): boolean (native)
+
+-- EVENT_PLAYER_UNIT_STACK_ITEM
+-- Source is the item that is losing charges, Target is the item getting charges.
+BlzGetStackingItemSource=nil ---@type fun(): item (native)
+BlzGetStackingItemTarget=nil ---@type fun(): item (native)
+BlzGetStackingItemTargetPreviousCharges=nil ---@type fun(): integer (native)
+
+-- EVENT_PLAYER_UNIT_ISSUED_ORDER
+GetOrderedUnit=nil ---@type fun(): unit (native)
+GetIssuedOrderId=nil ---@type fun(): integer (native)
+
+-- EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER
+GetOrderPointX=nil ---@type fun(): number (native)
+GetOrderPointY=nil ---@type fun(): number (native)
+GetOrderPointLoc=nil ---@type fun(): location (native)
+
+-- EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER
+GetOrderTarget=nil              ---@type fun(): widget (native)
+GetOrderTargetDestructable=nil  ---@type fun(): destructable (native)
+GetOrderTargetItem=nil          ---@type fun(): item (native)
+GetOrderTargetUnit=nil          ---@type fun(): unit (native)
+
+-- EVENT_UNIT_SPELL_CHANNEL
+-- EVENT_UNIT_SPELL_CAST
+-- EVENT_UNIT_SPELL_EFFECT
+-- EVENT_UNIT_SPELL_FINISH
+-- EVENT_UNIT_SPELL_ENDCAST
+-- EVENT_PLAYER_UNIT_SPELL_CHANNEL
+-- EVENT_PLAYER_UNIT_SPELL_CAST
+-- EVENT_PLAYER_UNIT_SPELL_EFFECT
+-- EVENT_PLAYER_UNIT_SPELL_FINISH
+-- EVENT_PLAYER_UNIT_SPELL_ENDCAST
+GetSpellAbilityUnit=nil         ---@type fun(): unit (native)
+GetSpellAbilityId=nil           ---@type fun(): integer (native)
+GetSpellAbility=nil             ---@type fun(): ability (native)
+GetSpellTargetLoc=nil           ---@type fun(): location (native)
+GetSpellTargetX=nil             ---@type fun(): number (native)
+GetSpellTargetY=nil             ---@type fun(): number (native)
+GetSpellTargetDestructable=nil  ---@type fun(): destructable (native)
+GetSpellTargetItem=nil          ---@type fun(): item (native)
+GetSpellTargetUnit=nil          ---@type fun(): unit (native)
+
+TriggerRegisterPlayerAllianceChange=nil ---@type fun(whichTrigger: trigger, whichPlayer: player, whichAlliance: alliancetype): event (native)
+TriggerRegisterPlayerStateEvent=nil ---@type fun(whichTrigger: trigger, whichPlayer: player, whichState: playerstate, opcode: limitop, limitval: number): event (native)
+
+-- EVENT_PLAYER_STATE_LIMIT
+GetEventPlayerState=nil ---@type fun(): playerstate (native)
+
+TriggerRegisterPlayerChatEvent=nil ---@type fun(whichTrigger: trigger, whichPlayer: player, chatMessageToDetect: string, exactMatchOnly: boolean): event (native)
+
+-- EVENT_PLAYER_CHAT
+
+-- returns the actual string they typed in ( same as what you registered for
+-- if you required exact match )
+GetEventPlayerChatString=nil ---@type fun(): string (native)
+
+-- returns the string that you registered for
+GetEventPlayerChatStringMatched=nil ---@type fun(): string (native)
+
+TriggerRegisterDeathEvent=nil ---@type fun(whichTrigger: trigger, whichWidget: widget): event (native)
+
+--============================================================================
+-- Trigger Unit Based Event API
+--============================================================================
+
+-- returns handle to unit which triggered the most recent event when called from
+-- within a trigger action function...returns null handle when used incorrectly
+
+GetTriggerUnit=nil ---@type fun(): unit (native)
+
+TriggerRegisterUnitStateEvent=nil ---@type fun(whichTrigger: trigger, whichUnit: unit, whichState: unitstate, opcode: limitop, limitval: number): event (native)
+
+-- EVENT_UNIT_STATE_LIMIT
+GetEventUnitState=nil ---@type fun(): unitstate (native)
+
+TriggerRegisterUnitEvent=nil ---@type fun(whichTrigger: trigger, whichUnit: unit, whichEvent: unitevent): event (native)
+
+-- EVENT_UNIT_DAMAGED
+GetEventDamage=nil ---@type fun(): number (native)
+GetEventDamageSource=nil ---@type fun(): unit (native)
+
+-- EVENT_UNIT_DEATH
+-- EVENT_UNIT_DECAY
+-- Use the GetDyingUnit and GetDecayingUnit funcs above
+
+-- EVENT_UNIT_DETECTED
+GetEventDetectingPlayer=nil ---@type fun(): player (native)
+
+TriggerRegisterFilterUnitEvent=nil ---@type fun(whichTrigger: trigger, whichUnit: unit, whichEvent: unitevent, filter?: boolexpr): event (native)
+
+-- EVENT_UNIT_ACQUIRED_TARGET
+-- EVENT_UNIT_TARGET_IN_RANGE
+GetEventTargetUnit=nil ---@type fun(): unit (native)
+
+-- EVENT_UNIT_ATTACKED
+-- Use GetAttacker from the Player Unit Event API Below...
+
+-- EVENT_UNIT_RESCUEDED
+-- Use GetRescuer from the Player Unit Event API Below...
+
+-- EVENT_UNIT_CONSTRUCT_CANCEL
+-- EVENT_UNIT_CONSTRUCT_FINISH
+
+-- See the Player Unit Construction Event API above for event info funcs
+
+-- EVENT_UNIT_TRAIN_START
+-- EVENT_UNIT_TRAIN_CANCELLED
+-- EVENT_UNIT_TRAIN_FINISH
+
+-- See the Player Unit Training Event API above for event info funcs
+
+-- EVENT_UNIT_SELL
+
+-- See the Player Unit Sell Event API above for event info funcs
+
+-- EVENT_UNIT_DROP_ITEM
+-- EVENT_UNIT_PICKUP_ITEM
+-- EVENT_UNIT_USE_ITEM
+-- See the Player Unit/Item manipulation Event API above for event info funcs
+
+-- EVENT_UNIT_STACK_ITEM
+-- See the Player Unit/Item stack Event API above for event info funcs
+
+-- EVENT_UNIT_ISSUED_ORDER
+-- EVENT_UNIT_ISSUED_POINT_ORDER
+-- EVENT_UNIT_ISSUED_TARGET_ORDER
+
+-- See the Player Unit Order Event API above for event info funcs
+
+TriggerRegisterUnitInRange=nil ---@type fun(whichTrigger: trigger, whichUnit: unit, range: number, filter?: boolexpr): event (native)
+
+TriggerAddCondition=nil    ---@type fun(whichTrigger: trigger, condition: boolexpr): triggercondition (native)
+TriggerRemoveCondition=nil ---@type fun(whichTrigger: trigger, whichCondition: triggercondition) (native)
+TriggerClearConditions=nil ---@type fun(whichTrigger: trigger) (native)
+
+TriggerAddAction=nil     ---@type fun(whichTrigger: trigger, actionFunc: function): triggeraction (native)
+TriggerRemoveAction=nil  ---@type fun(whichTrigger: trigger, whichAction: triggeraction) (native)
+TriggerClearActions=nil  ---@type fun(whichTrigger: trigger) (native)
+TriggerSleepAction=nil   ---@type fun(timeout: number) (native)
+TriggerWaitForSound=nil  ---@type fun(s: sound, offset: number) (native)
+TriggerEvaluate=nil      ---@type fun(whichTrigger: trigger): boolean (native)
+TriggerExecute=nil       ---@type fun(whichTrigger: trigger) (native)
+TriggerExecuteWait=nil   ---@type fun(whichTrigger: trigger) (native)
+TriggerSyncStart=nil     ---@type fun() (native)
+TriggerSyncReady=nil     ---@type fun() (native)
+
+--============================================================================
+-- Widget API
+GetWidgetLife=nil   ---@type fun(whichWidget: widget): number (native)
+SetWidgetLife=nil   ---@type fun(whichWidget: widget, newLife: number) (native)
+GetWidgetX=nil      ---@type fun(whichWidget: widget): number (native)
+GetWidgetY=nil      ---@type fun(whichWidget: widget): number (native)
+GetTriggerWidget=nil ---@type fun(): widget (native)
+
+--============================================================================
+-- Destructable Object API
+-- Facing arguments are specified in degrees
+CreateDestructable=nil          ---@type fun(objectid: integer, x: number, y: number, face: number, scale: number, variation: integer): destructable (native)
+CreateDestructableZ=nil         ---@type fun(objectid: integer, x: number, y: number, z: number, face: number, scale: number, variation: integer): destructable (native)
+CreateDeadDestructable=nil      ---@type fun(objectid: integer, x: number, y: number, face: number, scale: number, variation: integer): destructable (native)
+CreateDeadDestructableZ=nil     ---@type fun(objectid: integer, x: number, y: number, z: number, face: number, scale: number, variation: integer): destructable (native)
+RemoveDestructable=nil          ---@type fun(d: destructable) (native)
+KillDestructable=nil            ---@type fun(d: destructable) (native)
+SetDestructableInvulnerable=nil ---@type fun(d: destructable, flag: boolean) (native)
+IsDestructableInvulnerable=nil  ---@type fun(d: destructable): boolean (native)
+EnumDestructablesInRect=nil     ---@type fun(r: rect, filter?: boolexpr, actionFunc?: function) (native)
+GetDestructableTypeId=nil       ---@type fun(d: destructable): integer (native)
+GetDestructableX=nil            ---@type fun(d: destructable): number (native)
+GetDestructableY=nil            ---@type fun(d: destructable): number (native)
+SetDestructableLife=nil         ---@type fun(d: destructable, life: number) (native)
+GetDestructableLife=nil         ---@type fun(d: destructable): number (native)
+SetDestructableMaxLife=nil      ---@type fun(d: destructable, max: number) (native)
+GetDestructableMaxLife=nil      ---@type fun(d: destructable): number (native)
+DestructableRestoreLife=nil     ---@type fun(d: destructable, life: number, birth: boolean) (native)
+QueueDestructableAnimation=nil  ---@type fun(d: destructable, whichAnimation: string) (native)
+SetDestructableAnimation=nil    ---@type fun(d: destructable, whichAnimation: string) (native)
+SetDestructableAnimationSpeed=nil ---@type fun(d: destructable, speedFactor: number) (native)
+ShowDestructable=nil            ---@type fun(d: destructable, flag: boolean) (native)
+GetDestructableOccluderHeight=nil ---@type fun(d: destructable): number (native)
+SetDestructableOccluderHeight=nil ---@type fun(d: destructable, height: number) (native)
+GetDestructableName=nil         ---@type fun(d: destructable): string (native)
+GetTriggerDestructable=nil ---@type fun(): destructable (native)
+
+--============================================================================
+-- Item API
+CreateItem=nil      ---@type fun(itemid: integer, x: number, y: number): item (native)
+RemoveItem=nil      ---@type fun(whichItem: item) (native)
+GetItemPlayer=nil   ---@type fun(whichItem: item): player (native)
+GetItemTypeId=nil   ---@type fun(i: item): integer (native)
+GetItemX=nil        ---@type fun(i: item): number (native)
+GetItemY=nil        ---@type fun(i: item): number (native)
+SetItemPosition=nil ---@type fun(i: item, x: number, y: number) (native)
+SetItemDropOnDeath=nil  ---@type fun(whichItem: item, flag: boolean) (native)
+SetItemDroppable=nil ---@type fun(i: item, flag: boolean) (native)
+SetItemPawnable=nil ---@type fun(i: item, flag: boolean) (native)
+SetItemPlayer=nil    ---@type fun(whichItem: item, whichPlayer: player, changeColor: boolean) (native)
+SetItemInvulnerable=nil ---@type fun(whichItem: item, flag: boolean) (native)
+IsItemInvulnerable=nil  ---@type fun(whichItem: item): boolean (native)
+SetItemVisible=nil  ---@type fun(whichItem: item, show: boolean) (native)
+IsItemVisible=nil   ---@type fun(whichItem: item): boolean (native)
+IsItemOwned=nil     ---@type fun(whichItem: item): boolean (native)
+IsItemPowerup=nil   ---@type fun(whichItem: item): boolean (native)
+IsItemSellable=nil  ---@type fun(whichItem: item): boolean (native)
+IsItemPawnable=nil  ---@type fun(whichItem: item): boolean (native)
+IsItemIdPowerup=nil ---@type fun(itemId: integer): boolean (native)
+IsItemIdSellable=nil ---@type fun(itemId: integer): boolean (native)
+IsItemIdPawnable=nil ---@type fun(itemId: integer): boolean (native)
+EnumItemsInRect=nil     ---@type fun(r: rect, filter?: boolexpr, actionFunc?: function) (native)
+GetItemLevel=nil    ---@type fun(whichItem: item): integer (native)
+GetItemType=nil     ---@type fun(whichItem: item): itemtype (native)
+SetItemDropID=nil   ---@type fun(whichItem: item, unitId: integer) (native)
+GetItemName=nil     ---@type fun(whichItem: item): string (native)
+GetItemCharges=nil  ---@type fun(whichItem: item): integer (native)
+SetItemCharges=nil  ---@type fun(whichItem: item, charges: integer) (native)
+GetItemUserData=nil ---@type fun(whichItem: item): integer (native)
+SetItemUserData=nil ---@type fun(whichItem: item, data: integer) (native)
+
+--============================================================================
+-- Unit API
+-- Facing arguments are specified in degrees
+CreateUnit=nil              ---@type fun(id: player, unitid: integer, x: number, y: number, face: number): unit (native)
+CreateUnitByName=nil        ---@type fun(whichPlayer: player, unitname: string, x: number, y: number, face: number): unit (native)
+CreateUnitAtLoc=nil         ---@type fun(id: player, unitid: integer, whichLocation: location, face: number): unit (native)
+CreateUnitAtLocByName=nil   ---@type fun(id: player, unitname: string, whichLocation: location, face: number): unit (native)
+CreateCorpse=nil            ---@type fun(whichPlayer: player, unitid: integer, x: number, y: number, face: number): unit (native)
+
+KillUnit=nil            ---@type fun(whichUnit: unit) (native)
+RemoveUnit=nil          ---@type fun(whichUnit: unit) (native)
+ShowUnit=nil            ---@type fun(whichUnit: unit, show: boolean) (native)
+
+SetUnitState=nil        ---@type fun(whichUnit: unit, whichUnitState: unitstate, newVal: number) (native)
+SetUnitX=nil            ---@type fun(whichUnit: unit, newX: number) (native)
+SetUnitY=nil            ---@type fun(whichUnit: unit, newY: number) (native)
+SetUnitPosition=nil     ---@type fun(whichUnit: unit, newX: number, newY: number) (native)
+SetUnitPositionLoc=nil  ---@type fun(whichUnit: unit, whichLocation: location) (native)
+SetUnitFacing=nil       ---@type fun(whichUnit: unit, facingAngle: number) (native)
+SetUnitFacingTimed=nil  ---@type fun(whichUnit: unit, facingAngle: number, duration: number) (native)
+SetUnitMoveSpeed=nil    ---@type fun(whichUnit: unit, newSpeed: number) (native)
+SetUnitFlyHeight=nil    ---@type fun(whichUnit: unit, newHeight: number, rate: number) (native)
+SetUnitTurnSpeed=nil    ---@type fun(whichUnit: unit, newTurnSpeed: number) (native)
+SetUnitPropWindow=nil   ---@type fun(whichUnit: unit, newPropWindowAngle: number) (native)
+SetUnitAcquireRange=nil ---@type fun(whichUnit: unit, newAcquireRange: number) (native)
+SetUnitCreepGuard=nil   ---@type fun(whichUnit: unit, creepGuard: boolean) (native)
+
+GetUnitAcquireRange=nil     ---@type fun(whichUnit: unit): number (native)
+GetUnitTurnSpeed=nil        ---@type fun(whichUnit: unit): number (native)
+GetUnitPropWindow=nil       ---@type fun(whichUnit: unit): number (native)
+GetUnitFlyHeight=nil        ---@type fun(whichUnit: unit): number (native)
+
+GetUnitDefaultAcquireRange=nil      ---@type fun(whichUnit: unit): number (native)
+GetUnitDefaultTurnSpeed=nil         ---@type fun(whichUnit: unit): number (native)
+GetUnitDefaultPropWindow=nil        ---@type fun(whichUnit: unit): number (native)
+GetUnitDefaultFlyHeight=nil         ---@type fun(whichUnit: unit): number (native)
+
+SetUnitOwner=nil        ---@type fun(whichUnit: unit, whichPlayer: player, changeColor: boolean) (native)
+SetUnitColor=nil        ---@type fun(whichUnit: unit, whichColor: playercolor) (native)
+
+SetUnitScale=nil        ---@type fun(whichUnit: unit, scaleX: number, scaleY: number, scaleZ: number) (native)
+SetUnitTimeScale=nil    ---@type fun(whichUnit: unit, timeScale: number) (native)
+SetUnitBlendTime=nil    ---@type fun(whichUnit: unit, blendTime: number) (native)
+SetUnitVertexColor=nil  ---@type fun(whichUnit: unit, red: integer, green: integer, blue: integer, alpha: integer) (native)
+
+QueueUnitAnimation=nil          ---@type fun(whichUnit: unit, whichAnimation: string) (native)
+SetUnitAnimation=nil            ---@type fun(whichUnit: unit, whichAnimation: string) (native)
+SetUnitAnimationByIndex=nil     ---@type fun(whichUnit: unit, whichAnimation: integer) (native)
+SetUnitAnimationWithRarity=nil  ---@type fun(whichUnit: unit, whichAnimation: string, rarity: raritycontrol) (native)
+AddUnitAnimationProperties=nil  ---@type fun(whichUnit: unit, animProperties: string, add: boolean) (native)
+
+SetUnitLookAt=nil       ---@type fun(whichUnit: unit, whichBone: string, lookAtTarget: unit, offsetX: number, offsetY: number, offsetZ: number) (native)
+ResetUnitLookAt=nil     ---@type fun(whichUnit: unit) (native)
+
+SetUnitRescuable=nil    ---@type fun(whichUnit: unit, byWhichPlayer: player, flag: boolean) (native)
+SetUnitRescueRange=nil  ---@type fun(whichUnit: unit, range: number) (native)
+
+SetHeroStr=nil          ---@type fun(whichHero: unit, newStr: integer, permanent: boolean) (native)
+SetHeroAgi=nil          ---@type fun(whichHero: unit, newAgi: integer, permanent: boolean) (native)
+SetHeroInt=nil          ---@type fun(whichHero: unit, newInt: integer, permanent: boolean) (native)
+
+GetHeroStr=nil          ---@type fun(whichHero: unit, includeBonuses: boolean): integer (native)
+GetHeroAgi=nil          ---@type fun(whichHero: unit, includeBonuses: boolean): integer (native)
+GetHeroInt=nil          ---@type fun(whichHero: unit, includeBonuses: boolean): integer (native)
+
+UnitStripHeroLevel=nil  ---@type fun(whichHero: unit, howManyLevels: integer): boolean (native)
+
+GetHeroXP=nil           ---@type fun(whichHero: unit): integer (native)
+SetHeroXP=nil           ---@type fun(whichHero: unit, newXpVal: integer, showEyeCandy: boolean) (native)
+
+GetHeroSkillPoints=nil      ---@type fun(whichHero: unit): integer (native)
+UnitModifySkillPoints=nil   ---@type fun(whichHero: unit, skillPointDelta: integer): boolean (native)
+
+AddHeroXP=nil           ---@type fun(whichHero: unit, xpToAdd: integer, showEyeCandy: boolean) (native)
+SetHeroLevel=nil        ---@type fun(whichHero: unit, level: integer, showEyeCandy: boolean) (native)
+GetHeroLevel=nil        ---@type fun(whichHero: unit): integer (native)
+GetUnitLevel=nil        ---@type fun(whichUnit: unit): integer (native)
+GetHeroProperName=nil   ---@type fun(whichHero: unit): string (native)
+SuspendHeroXP=nil       ---@type fun(whichHero: unit, flag: boolean) (native)
+IsSuspendedXP=nil       ---@type fun(whichHero: unit): boolean (native)
+SelectHeroSkill=nil     ---@type fun(whichHero: unit, abilcode: integer) (native)
+GetUnitAbilityLevel=nil ---@type fun(whichUnit: unit, abilcode: integer): integer (native)
+DecUnitAbilityLevel=nil ---@type fun(whichUnit: unit, abilcode: integer): integer (native)
+IncUnitAbilityLevel=nil ---@type fun(whichUnit: unit, abilcode: integer): integer (native)
+SetUnitAbilityLevel=nil ---@type fun(whichUnit: unit, abilcode: integer, level: integer): integer (native)
+ReviveHero=nil          ---@type fun(whichHero: unit, x: number, y: number, doEyecandy: boolean): boolean (native)
+ReviveHeroLoc=nil       ---@type fun(whichHero: unit, loc: location, doEyecandy: boolean): boolean (native)
+SetUnitExploded=nil     ---@type fun(whichUnit: unit, exploded: boolean) (native)
+SetUnitInvulnerable=nil ---@type fun(whichUnit: unit, flag: boolean) (native)
+PauseUnit=nil           ---@type fun(whichUnit: unit, flag: boolean) (native)
+IsUnitPaused=nil        ---@type fun(whichHero: unit): boolean (native)
+SetUnitPathing=nil      ---@type fun(whichUnit: unit, flag: boolean) (native)
+
+ClearSelection=nil      ---@type fun() (native)
+SelectUnit=nil          ---@type fun(whichUnit: unit, flag: boolean) (native)
+
+GetUnitPointValue=nil       ---@type fun(whichUnit: unit): integer (native)
+GetUnitPointValueByType=nil ---@type fun(unitType: integer): integer (native)
+--native        SetUnitPointValueByType takes integer unitType, integer newPointValue returns nothing
+
+UnitAddItem=nil             ---@type fun(whichUnit: unit, whichItem: item): boolean (native)
+UnitAddItemById=nil         ---@type fun(whichUnit: unit, itemId: integer): item (native)
+UnitAddItemToSlotById=nil   ---@type fun(whichUnit: unit, itemId: integer, itemSlot: integer): boolean (native)
+UnitRemoveItem=nil          ---@type fun(whichUnit: unit, whichItem: item) (native)
+UnitRemoveItemFromSlot=nil  ---@type fun(whichUnit: unit, itemSlot: integer): item (native)
+UnitHasItem=nil             ---@type fun(whichUnit: unit, whichItem: item): boolean (native)
+UnitItemInSlot=nil          ---@type fun(whichUnit: unit, itemSlot: integer): item (native)
+UnitInventorySize=nil       ---@type fun(whichUnit: unit): integer (native)
+
+UnitDropItemPoint=nil       ---@type fun(whichUnit: unit, whichItem: item, x: number, y: number): boolean (native)
+UnitDropItemSlot=nil        ---@type fun(whichUnit: unit, whichItem: item, slot: integer): boolean (native)
+UnitDropItemTarget=nil      ---@type fun(whichUnit: unit, whichItem: item, target: widget): boolean (native)
+
+UnitUseItem=nil             ---@type fun(whichUnit: unit, whichItem: item): boolean (native)
+UnitUseItemPoint=nil        ---@type fun(whichUnit: unit, whichItem: item, x: number, y: number): boolean (native)
+UnitUseItemTarget=nil       ---@type fun(whichUnit: unit, whichItem: item, target: widget): boolean (native)
+
+GetUnitX=nil            ---@type fun(whichUnit: unit): number (native)
+GetUnitY=nil            ---@type fun(whichUnit: unit): number (native)
+GetUnitLoc=nil          ---@type fun(whichUnit: unit): location (native)
+GetUnitFacing=nil       ---@type fun(whichUnit: unit): number (native)
+GetUnitMoveSpeed=nil    ---@type fun(whichUnit: unit): number (native)
+GetUnitDefaultMoveSpeed=nil ---@type fun(whichUnit: unit): number (native)
+GetUnitState=nil        ---@type fun(whichUnit: unit, whichUnitState: unitstate): number (native)
+GetOwningPlayer=nil     ---@type fun(whichUnit: unit): player (native)
+GetUnitTypeId=nil       ---@type fun(whichUnit: unit): integer (native)
+GetUnitRace=nil         ---@type fun(whichUnit: unit): race (native)
+GetUnitName=nil         ---@type fun(whichUnit: unit): string (native)
+GetUnitFoodUsed=nil     ---@type fun(whichUnit: unit): integer (native)
+GetUnitFoodMade=nil     ---@type fun(whichUnit: unit): integer (native)
+GetFoodMade=nil         ---@type fun(unitId: integer): integer (native)
+GetFoodUsed=nil         ---@type fun(unitId: integer): integer (native)
+SetUnitUseFood=nil      ---@type fun(whichUnit: unit, useFood: boolean) (native)
+
+GetUnitRallyPoint=nil           ---@type fun(whichUnit: unit): location (native)
+GetUnitRallyUnit=nil            ---@type fun(whichUnit: unit): unit (native)
+GetUnitRallyDestructable=nil    ---@type fun(whichUnit: unit): destructable (native)
+
+IsUnitInGroup=nil       ---@type fun(whichUnit: unit, whichGroup: group): boolean (native)
+IsUnitInForce=nil       ---@type fun(whichUnit: unit, whichForce: force): boolean (native)
+IsUnitOwnedByPlayer=nil ---@type fun(whichUnit: unit, whichPlayer: player): boolean (native)
+IsUnitAlly=nil          ---@type fun(whichUnit: unit, whichPlayer: player): boolean (native)
+IsUnitEnemy=nil         ---@type fun(whichUnit: unit, whichPlayer: player): boolean (native)
+IsUnitVisible=nil       ---@type fun(whichUnit: unit, whichPlayer: player): boolean (native)
+IsUnitDetected=nil      ---@type fun(whichUnit: unit, whichPlayer: player): boolean (native)
+IsUnitInvisible=nil     ---@type fun(whichUnit: unit, whichPlayer: player): boolean (native)
+IsUnitFogged=nil        ---@type fun(whichUnit: unit, whichPlayer: player): boolean (native)
+IsUnitMasked=nil        ---@type fun(whichUnit: unit, whichPlayer: player): boolean (native)
+IsUnitSelected=nil      ---@type fun(whichUnit: unit, whichPlayer: player): boolean (native)
+IsUnitRace=nil          ---@type fun(whichUnit: unit, whichRace: race): boolean (native)
+IsUnitType=nil          ---@type fun(whichUnit: unit, whichUnitType: unittype): boolean (native)
+IsUnit=nil              ---@type fun(whichUnit: unit, whichSpecifiedUnit: unit): boolean (native)
+IsUnitInRange=nil       ---@type fun(whichUnit: unit, otherUnit: unit, distance: number): boolean (native)
+IsUnitInRangeXY=nil     ---@type fun(whichUnit: unit, x: number, y: number, distance: number): boolean (native)
+IsUnitInRangeLoc=nil    ---@type fun(whichUnit: unit, whichLocation: location, distance: number): boolean (native)
+IsUnitHidden=nil        ---@type fun(whichUnit: unit): boolean (native)
+IsUnitIllusion=nil      ---@type fun(whichUnit: unit): boolean (native)
+
+IsUnitInTransport=nil   ---@type fun(whichUnit: unit, whichTransport: unit): boolean (native)
+IsUnitLoaded=nil        ---@type fun(whichUnit: unit): boolean (native)
+
+IsHeroUnitId=nil        ---@type fun(unitId: integer): boolean (native)
+IsUnitIdType=nil        ---@type fun(unitId: integer, whichUnitType: unittype): boolean (native)
+
+UnitShareVision=nil              ---@type fun(whichUnit: unit, whichPlayer: player, share: boolean) (native)
+UnitSuspendDecay=nil             ---@type fun(whichUnit: unit, suspend: boolean) (native)
+UnitAddType=nil                  ---@type fun(whichUnit: unit, whichUnitType: unittype): boolean (native)
+UnitRemoveType=nil               ---@type fun(whichUnit: unit, whichUnitType: unittype): boolean (native)
+
+UnitAddAbility=nil               ---@type fun(whichUnit: unit, abilityId: integer): boolean (native)
+UnitRemoveAbility=nil            ---@type fun(whichUnit: unit, abilityId: integer): boolean (native)
+UnitMakeAbilityPermanent=nil     ---@type fun(whichUnit: unit, permanent: boolean, abilityId: integer): boolean (native)
+UnitRemoveBuffs=nil              ---@type fun(whichUnit: unit, removePositive: boolean, removeNegative: boolean) (native)
+UnitRemoveBuffsEx=nil            ---@type fun(whichUnit: unit, removePositive: boolean, removeNegative: boolean, magic: boolean, physical: boolean, timedLife: boolean, aura: boolean, autoDispel: boolean) (native)
+UnitHasBuffsEx=nil               ---@type fun(whichUnit: unit, removePositive: boolean, removeNegative: boolean, magic: boolean, physical: boolean, timedLife: boolean, aura: boolean, autoDispel: boolean): boolean (native)
+UnitCountBuffsEx=nil             ---@type fun(whichUnit: unit, removePositive: boolean, removeNegative: boolean, magic: boolean, physical: boolean, timedLife: boolean, aura: boolean, autoDispel: boolean): integer (native)
+UnitAddSleep=nil                 ---@type fun(whichUnit: unit, add: boolean) (native)
+UnitCanSleep=nil                 ---@type fun(whichUnit: unit): boolean (native)
+UnitAddSleepPerm=nil             ---@type fun(whichUnit: unit, add: boolean) (native)
+UnitCanSleepPerm=nil             ---@type fun(whichUnit: unit): boolean (native)
+UnitIsSleeping=nil               ---@type fun(whichUnit: unit): boolean (native)
+UnitWakeUp=nil                   ---@type fun(whichUnit: unit) (native)
+UnitApplyTimedLife=nil           ---@type fun(whichUnit: unit, buffId: integer, duration: number) (native)
+UnitIgnoreAlarm=nil              ---@type fun(whichUnit: unit, flag: boolean): boolean (native)
+UnitIgnoreAlarmToggled=nil       ---@type fun(whichUnit: unit): boolean (native)
+UnitResetCooldown=nil            ---@type fun(whichUnit: unit) (native)
+UnitSetConstructionProgress=nil  ---@type fun(whichUnit: unit, constructionPercentage: integer) (native)
+UnitSetUpgradeProgress=nil       ---@type fun(whichUnit: unit, upgradePercentage: integer) (native)
+UnitPauseTimedLife=nil           ---@type fun(whichUnit: unit, flag: boolean) (native)
+UnitSetUsesAltIcon=nil           ---@type fun(whichUnit: unit, flag: boolean) (native)
+
+UnitDamagePoint=nil              ---@type fun(whichUnit: unit, delay: number, radius: number, x: number, y: number, amount: number, attack: boolean, ranged: boolean, attackType: attacktype, damageType: damagetype, weaponType: weapontype): boolean (native)
+UnitDamageTarget=nil             ---@type fun(whichUnit: unit, target: widget, amount: number, attack: boolean, ranged: boolean, attackType: attacktype, damageType: damagetype, weaponType: weapontype): boolean (native)
+
+IssueImmediateOrder=nil          ---@type fun(whichUnit: unit, order: string): boolean (native)
+IssueImmediateOrderById=nil      ---@type fun(whichUnit: unit, order: integer): boolean (native)
+IssuePointOrder=nil              ---@type fun(whichUnit: unit, order: string, x: number, y: number): boolean (native)
+IssuePointOrderLoc=nil           ---@type fun(whichUnit: unit, order: string, whichLocation: location): boolean (native)
+IssuePointOrderById=nil          ---@type fun(whichUnit: unit, order: integer, x: number, y: number): boolean (native)
+IssuePointOrderByIdLoc=nil       ---@type fun(whichUnit: unit, order: integer, whichLocation: location): boolean (native)
+IssueTargetOrder=nil             ---@type fun(whichUnit: unit, order: string, targetWidget: widget): boolean (native)
+IssueTargetOrderById=nil         ---@type fun(whichUnit: unit, order: integer, targetWidget: widget): boolean (native)
+IssueInstantPointOrder=nil       ---@type fun(whichUnit: unit, order: string, x: number, y: number, instantTargetWidget: widget): boolean (native)
+IssueInstantPointOrderById=nil   ---@type fun(whichUnit: unit, order: integer, x: number, y: number, instantTargetWidget: widget): boolean (native)
+IssueInstantTargetOrder=nil      ---@type fun(whichUnit: unit, order: string, targetWidget: widget, instantTargetWidget: widget): boolean (native)
+IssueInstantTargetOrderById=nil  ---@type fun(whichUnit: unit, order: integer, targetWidget: widget, instantTargetWidget: widget): boolean (native)
+IssueBuildOrder=nil              ---@type fun(whichPeon: unit, unitToBuild: string, x: number, y: number): boolean (native)
+IssueBuildOrderById=nil          ---@type fun(whichPeon: unit, unitId: integer, x: number, y: number): boolean (native)
+
+IssueNeutralImmediateOrder=nil       ---@type fun(forWhichPlayer: player, neutralStructure: unit, unitToBuild: string): boolean (native)
+IssueNeutralImmediateOrderById=nil   ---@type fun(forWhichPlayer: player, neutralStructure: unit, unitId: integer): boolean (native)
+IssueNeutralPointOrder=nil           ---@type fun(forWhichPlayer: player, neutralStructure: unit, unitToBuild: string, x: number, y: number): boolean (native)
+IssueNeutralPointOrderById=nil       ---@type fun(forWhichPlayer: player, neutralStructure: unit, unitId: integer, x: number, y: number): boolean (native)
+IssueNeutralTargetOrder=nil          ---@type fun(forWhichPlayer: player, neutralStructure: unit, unitToBuild: string, target: widget): boolean (native)
+IssueNeutralTargetOrderById=nil      ---@type fun(forWhichPlayer: player, neutralStructure: unit, unitId: integer, target: widget): boolean (native)
+
+GetUnitCurrentOrder=nil          ---@type fun(whichUnit: unit): integer (native)
+
+SetResourceAmount=nil            ---@type fun(whichUnit: unit, amount: integer) (native)
+AddResourceAmount=nil            ---@type fun(whichUnit: unit, amount: integer) (native)
+GetResourceAmount=nil            ---@type fun(whichUnit: unit): integer (native)
+
+WaygateGetDestinationX=nil       ---@type fun(waygate: unit): number (native)
+WaygateGetDestinationY=nil       ---@type fun(waygate: unit): number (native)
+WaygateSetDestination=nil        ---@type fun(waygate: unit, x: number, y: number) (native)
+WaygateActivate=nil              ---@type fun(waygate: unit, activate: boolean) (native)
+WaygateIsActive=nil              ---@type fun(waygate: unit): boolean (native)
+
+AddItemToAllStock=nil            ---@type fun(itemId: integer, currentStock: integer, stockMax: integer) (native)
+AddItemToStock=nil               ---@type fun(whichUnit: unit, itemId: integer, currentStock: integer, stockMax: integer) (native)
+AddUnitToAllStock=nil            ---@type fun(unitId: integer, currentStock: integer, stockMax: integer) (native)
+AddUnitToStock=nil               ---@type fun(whichUnit: unit, unitId: integer, currentStock: integer, stockMax: integer) (native)
+
+RemoveItemFromAllStock=nil       ---@type fun(itemId: integer) (native)
+RemoveItemFromStock=nil          ---@type fun(whichUnit: unit, itemId: integer) (native)
+RemoveUnitFromAllStock=nil       ---@type fun(unitId: integer) (native)
+RemoveUnitFromStock=nil          ---@type fun(whichUnit: unit, unitId: integer) (native)
+
+SetAllItemTypeSlots=nil          ---@type fun(slots: integer) (native)
+SetAllUnitTypeSlots=nil          ---@type fun(slots: integer) (native)
+SetItemTypeSlots=nil             ---@type fun(whichUnit: unit, slots: integer) (native)
+SetUnitTypeSlots=nil             ---@type fun(whichUnit: unit, slots: integer) (native)
+
+GetUnitUserData=nil              ---@type fun(whichUnit: unit): integer (native)
+SetUnitUserData=nil              ---@type fun(whichUnit: unit, data: integer) (native)
+
+--============================================================================
+-- Player API
+Player=nil              ---@type fun(number: integer): player (native)
+GetLocalPlayer=nil      ---@type fun(): player (native)
+IsPlayerAlly=nil        ---@type fun(whichPlayer: player, otherPlayer: player): boolean (native)
+IsPlayerEnemy=nil       ---@type fun(whichPlayer: player, otherPlayer: player): boolean (native)
+IsPlayerInForce=nil     ---@type fun(whichPlayer: player, whichForce: force): boolean (native)
+IsPlayerObserver=nil    ---@type fun(whichPlayer: player): boolean (native)
+IsVisibleToPlayer=nil           ---@type fun(x: number, y: number, whichPlayer: player): boolean (native)
+IsLocationVisibleToPlayer=nil   ---@type fun(whichLocation: location, whichPlayer: player): boolean (native)
+IsFoggedToPlayer=nil            ---@type fun(x: number, y: number, whichPlayer: player): boolean (native)
+IsLocationFoggedToPlayer=nil    ---@type fun(whichLocation: location, whichPlayer: player): boolean (native)
+IsMaskedToPlayer=nil            ---@type fun(x: number, y: number, whichPlayer: player): boolean (native)
+IsLocationMaskedToPlayer=nil    ---@type fun(whichLocation: location, whichPlayer: player): boolean (native)
+
+GetPlayerRace=nil           ---@type fun(whichPlayer: player): race (native)
+GetPlayerId=nil             ---@type fun(whichPlayer: player): integer (native)
+GetPlayerUnitCount=nil      ---@type fun(whichPlayer: player, includeIncomplete: boolean): integer (native)
+GetPlayerTypedUnitCount=nil ---@type fun(whichPlayer: player, unitName: string, includeIncomplete: boolean, includeUpgrades: boolean): integer (native)
+GetPlayerStructureCount=nil ---@type fun(whichPlayer: player, includeIncomplete: boolean): integer (native)
+GetPlayerState=nil          ---@type fun(whichPlayer: player, whichPlayerState: playerstate): integer (native)
+GetPlayerScore=nil          ---@type fun(whichPlayer: player, whichPlayerScore: playerscore): integer (native)
+GetPlayerAlliance=nil       ---@type fun(sourcePlayer: player, otherPlayer: player, whichAllianceSetting: alliancetype): boolean (native)
+
+GetPlayerHandicap=nil       ---@type fun(whichPlayer: player): number (native)
+GetPlayerHandicapXP=nil     ---@type fun(whichPlayer: player): number (native)
+GetPlayerHandicapReviveTime=nil ---@type fun(whichPlayer: player): number (native)
+GetPlayerHandicapDamage=nil ---@type fun(whichPlayer: player): number (native)
+SetPlayerHandicap=nil       ---@type fun(whichPlayer: player, handicap: number) (native)
+SetPlayerHandicapXP=nil     ---@type fun(whichPlayer: player, handicap: number) (native)
+SetPlayerHandicapReviveTime=nil ---@type fun(whichPlayer: player, handicap: number) (native)
+SetPlayerHandicapDamage=nil ---@type fun(whichPlayer: player, handicap: number) (native)
+
+SetPlayerTechMaxAllowed=nil ---@type fun(whichPlayer: player, techid: integer, maximum: integer) (native)
+GetPlayerTechMaxAllowed=nil ---@type fun(whichPlayer: player, techid: integer): integer (native)
+AddPlayerTechResearched=nil ---@type fun(whichPlayer: player, techid: integer, levels: integer) (native)
+SetPlayerTechResearched=nil ---@type fun(whichPlayer: player, techid: integer, setToLevel: integer) (native)
+GetPlayerTechResearched=nil ---@type fun(whichPlayer: player, techid: integer, specificonly: boolean): boolean (native)
+GetPlayerTechCount=nil      ---@type fun(whichPlayer: player, techid: integer, specificonly: boolean): integer (native)
+
+SetPlayerUnitsOwner=nil ---@type fun(whichPlayer: player, newOwner: integer) (native)
+CripplePlayer=nil ---@type fun(whichPlayer: player, toWhichPlayers: force, flag: boolean) (native)
+
+SetPlayerAbilityAvailable=nil        ---@type fun(whichPlayer: player, abilid: integer, avail: boolean) (native)
+
+SetPlayerState=nil   ---@type fun(whichPlayer: player, whichPlayerState: playerstate, value: integer) (native)
+RemovePlayer=nil     ---@type fun(whichPlayer: player, gameResult: playergameresult) (native)
+
+-- Used to store hero level data for the scorescreen
+-- before units are moved to neutral passive in melee games
+--
+CachePlayerHeroData=nil ---@type fun(whichPlayer: player) (native)
+
+--============================================================================
+-- Fog of War API
+SetFogStateRect=nil      ---@type fun(forWhichPlayer: player, whichState: fogstate, where: rect, useSharedVision: boolean) (native)
+SetFogStateRadius=nil    ---@type fun(forWhichPlayer: player, whichState: fogstate, centerx: number, centerY: number, radius: number, useSharedVision: boolean) (native)
+SetFogStateRadiusLoc=nil ---@type fun(forWhichPlayer: player, whichState: fogstate, center: location, radius: number, useSharedVision: boolean) (native)
+FogMaskEnable=nil        ---@type fun(enable: boolean) (native)
+IsFogMaskEnabled=nil     ---@type fun(): boolean (native)
+FogEnable=nil            ---@type fun(enable: boolean) (native)
+IsFogEnabled=nil         ---@type fun(): boolean (native)
+
+CreateFogModifierRect=nil        ---@type fun(forWhichPlayer: player, whichState: fogstate, where: rect, useSharedVision: boolean, afterUnits: boolean): fogmodifier (native)
+CreateFogModifierRadius=nil      ---@type fun(forWhichPlayer: player, whichState: fogstate, centerx: number, centerY: number, radius: number, useSharedVision: boolean, afterUnits: boolean): fogmodifier (native)
+CreateFogModifierRadiusLoc=nil   ---@type fun(forWhichPlayer: player, whichState: fogstate, center: location, radius: number, useSharedVision: boolean, afterUnits: boolean): fogmodifier (native)
+DestroyFogModifier=nil           ---@type fun(whichFogModifier: fogmodifier) (native)
+FogModifierStart=nil             ---@type fun(whichFogModifier: fogmodifier) (native)
+FogModifierStop=nil              ---@type fun(whichFogModifier: fogmodifier) (native)
+
+--============================================================================
+-- Game API
+VersionGet=nil ---@type fun(): version (native)
+VersionCompatible=nil ---@type fun(whichVersion: version): boolean (native)
+VersionSupported=nil ---@type fun(whichVersion: version): boolean (native)
+
+EndGame=nil ---@type fun(doScoreScreen: boolean) (native)
+
+-- Async only!
+ChangeLevel=nil         ---@type fun(newLevel: string, doScoreScreen: boolean) (native)
+RestartGame=nil         ---@type fun(doScoreScreen: boolean) (native)
+ReloadGame=nil          ---@type fun() (native)
+-- %%% SetCampaignMenuRace is deprecated.  It must remain to support
+-- old maps which use it, but all new maps should use SetCampaignMenuRaceEx
+SetCampaignMenuRace=nil ---@type fun(r: race) (native)
+SetCampaignMenuRaceEx=nil ---@type fun(campaignIndex: integer) (native)
+ForceCampaignSelectScreen=nil ---@type fun() (native)
+
+LoadGame=nil                ---@type fun(saveFileName: string, doScoreScreen: boolean) (native)
+SaveGame=nil                ---@type fun(saveFileName: string) (native)
+RenameSaveDirectory=nil     ---@type fun(sourceDirName: string, destDirName: string): boolean (native)
+RemoveSaveDirectory=nil     ---@type fun(sourceDirName: string): boolean (native)
+CopySaveGame=nil            ---@type fun(sourceSaveName: string, destSaveName: string): boolean (native)
+SaveGameExists=nil          ---@type fun(saveName: string): boolean (native)
+SetMaxCheckpointSaves=nil   ---@type fun(maxCheckpointSaves: integer) (native)
+SaveGameCheckpoint=nil      ---@type fun(saveFileName: string, showWindow: boolean) (native)
+SyncSelections=nil          ---@type fun() (native)
+SetFloatGameState=nil       ---@type fun(whichFloatGameState: fgamestate, value: number) (native)
+GetFloatGameState=nil       ---@type fun(whichFloatGameState: fgamestate): number (native)
+SetIntegerGameState=nil     ---@type fun(whichIntegerGameState: igamestate, value: integer) (native)
+GetIntegerGameState=nil     ---@type fun(whichIntegerGameState: igamestate): integer (native)
+
+
+--============================================================================
+-- Campaign API
+SetTutorialCleared=nil      ---@type fun(cleared: boolean) (native)
+SetMissionAvailable=nil     ---@type fun(campaignNumber: integer, missionNumber: integer, available: boolean) (native)
+SetCampaignAvailable=nil    ---@type fun(campaignNumber: integer, available: boolean) (native)
+SetOpCinematicAvailable=nil ---@type fun(campaignNumber: integer, available: boolean) (native)
+SetEdCinematicAvailable=nil ---@type fun(campaignNumber: integer, available: boolean) (native)
+GetDefaultDifficulty=nil    ---@type fun(): gamedifficulty (native)
+SetDefaultDifficulty=nil    ---@type fun(g: gamedifficulty) (native)
+SetCustomCampaignButtonVisible=nil  ---@type fun(whichButton: integer, visible: boolean) (native)
+GetCustomCampaignButtonVisible=nil  ---@type fun(whichButton: integer): boolean (native)
+DoNotSaveReplay=nil         ---@type fun() (native)
+
+--============================================================================
+-- Dialog API
+DialogCreate=nil                 ---@type fun(): dialog (native)
+DialogDestroy=nil                ---@type fun(whichDialog: dialog) (native)
+DialogClear=nil                  ---@type fun(whichDialog: dialog) (native)
+DialogSetMessage=nil             ---@type fun(whichDialog: dialog, messageText: string) (native)
+DialogAddButton=nil              ---@type fun(whichDialog: dialog, buttonText: string, hotkey: integer): button (native)
+DialogAddQuitButton=nil          ---@type fun(whichDialog: dialog, doScoreScreen: boolean, buttonText: string, hotkey: integer): button (native)
+DialogDisplay=nil                ---@type fun(whichPlayer: player, whichDialog: dialog, flag: boolean) (native)
+
+-- Creates a new or reads in an existing game cache file stored
+-- in the current campaign profile dir
+--
+ReloadGameCachesFromDisk=nil ---@type fun(): boolean (native)
+
+InitGameCache=nil    ---@type fun(campaignFile: string): gamecache (native)
+SaveGameCache=nil    ---@type fun(whichCache: gamecache): boolean (native)
+
+StoreInteger=nil                    ---@type fun(cache: gamecache, missionKey: string, key: string, value: integer) (native)
+StoreReal=nil                       ---@type fun(cache: gamecache, missionKey: string, key: string, value: number) (native)
+StoreBoolean=nil                    ---@type fun(cache: gamecache, missionKey: string, key: string, value: boolean) (native)
+StoreUnit=nil                       ---@type fun(cache: gamecache, missionKey: string, key: string, whichUnit: unit): boolean (native)
+StoreString=nil                     ---@type fun(cache: gamecache, missionKey: string, key: string, value: string): boolean (native)
+
+SyncStoredInteger=nil        ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+SyncStoredReal=nil           ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+SyncStoredBoolean=nil        ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+SyncStoredUnit=nil           ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+SyncStoredString=nil         ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+
+HaveStoredInteger=nil                   ---@type fun(cache: gamecache, missionKey: string, key: string): boolean (native)
+HaveStoredReal=nil                      ---@type fun(cache: gamecache, missionKey: string, key: string): boolean (native)
+HaveStoredBoolean=nil                   ---@type fun(cache: gamecache, missionKey: string, key: string): boolean (native)
+HaveStoredUnit=nil                      ---@type fun(cache: gamecache, missionKey: string, key: string): boolean (native)
+HaveStoredString=nil                    ---@type fun(cache: gamecache, missionKey: string, key: string): boolean (native)
+
+FlushGameCache=nil                      ---@type fun(cache: gamecache) (native)
+FlushStoredMission=nil                  ---@type fun(cache: gamecache, missionKey: string) (native)
+FlushStoredInteger=nil                  ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+FlushStoredReal=nil                     ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+FlushStoredBoolean=nil                  ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+FlushStoredUnit=nil                     ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+FlushStoredString=nil                   ---@type fun(cache: gamecache, missionKey: string, key: string) (native)
+
+-- Will return 0 if the specified value's data is not found in the cache
+GetStoredInteger=nil                ---@type fun(cache: gamecache, missionKey: string, key: string): integer (native)
+GetStoredReal=nil                   ---@type fun(cache: gamecache, missionKey: string, key: string): number (native)
+GetStoredBoolean=nil                ---@type fun(cache: gamecache, missionKey: string, key: string): boolean (native)
+GetStoredString=nil                 ---@type fun(cache: gamecache, missionKey: string, key: string): string (native)
+RestoreUnit=nil                     ---@type fun(cache: gamecache, missionKey: string, key: string, forWhichPlayer: player, x: number, y: number, facing: number): unit (native)
+
+
+InitHashtable=nil    ---@type fun(): hashtable (native)
+
+SaveInteger=nil                     ---@type fun(table: hashtable, parentKey: integer, childKey: integer, value: integer) (native)
+SaveReal=nil                        ---@type fun(table: hashtable, parentKey: integer, childKey: integer, value: number) (native)
+SaveBoolean=nil                     ---@type fun(table: hashtable, parentKey: integer, childKey: integer, value: boolean) (native)
+SaveStr=nil                         ---@type fun(table: hashtable, parentKey: integer, childKey: integer, value: string): boolean (native)
+SavePlayerHandle=nil                ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichPlayer: player): boolean (native)
+SaveWidgetHandle=nil                ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichWidget: widget): boolean (native)
+SaveDestructableHandle=nil          ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichDestructable: destructable): boolean (native)
+SaveItemHandle=nil                  ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichItem: item): boolean (native)
+SaveUnitHandle=nil                  ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichUnit: unit): boolean (native)
+SaveAbilityHandle=nil               ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichAbility: ability): boolean (native)
+SaveTimerHandle=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichTimer: timer): boolean (native)
+SaveTriggerHandle=nil               ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichTrigger: trigger): boolean (native)
+SaveTriggerConditionHandle=nil      ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichTriggercondition: triggercondition): boolean (native)
+SaveTriggerActionHandle=nil         ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichTriggeraction: triggeraction): boolean (native)
+SaveTriggerEventHandle=nil          ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichEvent: event): boolean (native)
+SaveForceHandle=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichForce: force): boolean (native)
+SaveGroupHandle=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichGroup: group): boolean (native)
+SaveLocationHandle=nil              ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichLocation: location): boolean (native)
+SaveRectHandle=nil                  ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichRect: rect): boolean (native)
+SaveBooleanExprHandle=nil           ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichBoolexpr: boolexpr): boolean (native)
+SaveSoundHandle=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichSound: sound): boolean (native)
+SaveEffectHandle=nil                ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichEffect: effect): boolean (native)
+SaveUnitPoolHandle=nil              ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichUnitpool: unitpool): boolean (native)
+SaveItemPoolHandle=nil              ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichItempool: itempool): boolean (native)
+SaveQuestHandle=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichQuest: quest): boolean (native)
+SaveQuestItemHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichQuestitem: questitem): boolean (native)
+SaveDefeatConditionHandle=nil       ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichDefeatcondition: defeatcondition): boolean (native)
+SaveTimerDialogHandle=nil           ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichTimerdialog: timerdialog): boolean (native)
+SaveLeaderboardHandle=nil           ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichLeaderboard: leaderboard): boolean (native)
+SaveMultiboardHandle=nil            ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichMultiboard: multiboard): boolean (native)
+SaveMultiboardItemHandle=nil        ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichMultiboarditem: multiboarditem): boolean (native)
+SaveTrackableHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichTrackable: trackable): boolean (native)
+SaveDialogHandle=nil                ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichDialog: dialog): boolean (native)
+SaveButtonHandle=nil                ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichButton: button): boolean (native)
+SaveTextTagHandle=nil               ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichTexttag: texttag): boolean (native)
+SaveLightningHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichLightning: lightning): boolean (native)
+SaveImageHandle=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichImage: image): boolean (native)
+SaveUbersplatHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichUbersplat: ubersplat): boolean (native)
+SaveRegionHandle=nil                ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichRegion: region): boolean (native)
+SaveFogStateHandle=nil              ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichFogState: fogstate): boolean (native)
+SaveFogModifierHandle=nil           ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichFogModifier: fogmodifier): boolean (native)
+SaveAgentHandle=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichAgent: agent): boolean (native)
+SaveHashtableHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichHashtable: hashtable): boolean (native)
+SaveFrameHandle=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer, whichFrameHandle: framehandle): boolean (native)
+
+
+LoadInteger=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer): integer (native)
+LoadReal=nil                    ---@type fun(table: hashtable, parentKey: integer, childKey: integer): number (native)
+LoadBoolean=nil                 ---@type fun(table: hashtable, parentKey: integer, childKey: integer): boolean (native)
+LoadStr=nil                     ---@type fun(table: hashtable, parentKey: integer, childKey: integer): string (native)
+LoadPlayerHandle=nil            ---@type fun(table: hashtable, parentKey: integer, childKey: integer): player (native)
+LoadWidgetHandle=nil            ---@type fun(table: hashtable, parentKey: integer, childKey: integer): widget (native)
+LoadDestructableHandle=nil      ---@type fun(table: hashtable, parentKey: integer, childKey: integer): destructable (native)
+LoadItemHandle=nil              ---@type fun(table: hashtable, parentKey: integer, childKey: integer): item (native)
+LoadUnitHandle=nil              ---@type fun(table: hashtable, parentKey: integer, childKey: integer): unit (native)
+LoadAbilityHandle=nil           ---@type fun(table: hashtable, parentKey: integer, childKey: integer): ability (native)
+LoadTimerHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer): timer (native)
+LoadTriggerHandle=nil           ---@type fun(table: hashtable, parentKey: integer, childKey: integer): trigger (native)
+LoadTriggerConditionHandle=nil  ---@type fun(table: hashtable, parentKey: integer, childKey: integer): triggercondition (native)
+LoadTriggerActionHandle=nil     ---@type fun(table: hashtable, parentKey: integer, childKey: integer): triggeraction (native)
+LoadTriggerEventHandle=nil      ---@type fun(table: hashtable, parentKey: integer, childKey: integer): event (native)
+LoadForceHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer): force (native)
+LoadGroupHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer): group (native)
+LoadLocationHandle=nil          ---@type fun(table: hashtable, parentKey: integer, childKey: integer): location (native)
+LoadRectHandle=nil              ---@type fun(table: hashtable, parentKey: integer, childKey: integer): rect (native)
+LoadBooleanExprHandle=nil       ---@type fun(table: hashtable, parentKey: integer, childKey: integer): boolexpr (native)
+LoadSoundHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer): sound (native)
+LoadEffectHandle=nil            ---@type fun(table: hashtable, parentKey: integer, childKey: integer): effect (native)
+LoadUnitPoolHandle=nil          ---@type fun(table: hashtable, parentKey: integer, childKey: integer): unitpool (native)
+LoadItemPoolHandle=nil          ---@type fun(table: hashtable, parentKey: integer, childKey: integer): itempool (native)
+LoadQuestHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer): quest (native)
+LoadQuestItemHandle=nil         ---@type fun(table: hashtable, parentKey: integer, childKey: integer): questitem (native)
+LoadDefeatConditionHandle=nil   ---@type fun(table: hashtable, parentKey: integer, childKey: integer): defeatcondition (native)
+LoadTimerDialogHandle=nil       ---@type fun(table: hashtable, parentKey: integer, childKey: integer): timerdialog (native)
+LoadLeaderboardHandle=nil       ---@type fun(table: hashtable, parentKey: integer, childKey: integer): leaderboard (native)
+LoadMultiboardHandle=nil        ---@type fun(table: hashtable, parentKey: integer, childKey: integer): multiboard (native)
+LoadMultiboardItemHandle=nil    ---@type fun(table: hashtable, parentKey: integer, childKey: integer): multiboarditem (native)
+LoadTrackableHandle=nil         ---@type fun(table: hashtable, parentKey: integer, childKey: integer): trackable (native)
+LoadDialogHandle=nil            ---@type fun(table: hashtable, parentKey: integer, childKey: integer): dialog (native)
+LoadButtonHandle=nil            ---@type fun(table: hashtable, parentKey: integer, childKey: integer): button (native)
+LoadTextTagHandle=nil           ---@type fun(table: hashtable, parentKey: integer, childKey: integer): texttag (native)
+LoadLightningHandle=nil         ---@type fun(table: hashtable, parentKey: integer, childKey: integer): lightning (native)
+LoadImageHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer): image (native)
+LoadUbersplatHandle=nil         ---@type fun(table: hashtable, parentKey: integer, childKey: integer): ubersplat (native)
+LoadRegionHandle=nil            ---@type fun(table: hashtable, parentKey: integer, childKey: integer): region (native)
+LoadFogStateHandle=nil          ---@type fun(table: hashtable, parentKey: integer, childKey: integer): fogstate (native)
+LoadFogModifierHandle=nil       ---@type fun(table: hashtable, parentKey: integer, childKey: integer): fogmodifier (native)
+LoadHashtableHandle=nil         ---@type fun(table: hashtable, parentKey: integer, childKey: integer): hashtable (native)
+LoadFrameHandle=nil             ---@type fun(table: hashtable, parentKey: integer, childKey: integer): framehandle (native)
+
+HaveSavedInteger=nil                    ---@type fun(table: hashtable, parentKey: integer, childKey: integer): boolean (native)
+HaveSavedReal=nil                       ---@type fun(table: hashtable, parentKey: integer, childKey: integer): boolean (native)
+HaveSavedBoolean=nil                    ---@type fun(table: hashtable, parentKey: integer, childKey: integer): boolean (native)
+HaveSavedString=nil                     ---@type fun(table: hashtable, parentKey: integer, childKey: integer): boolean (native)
+HaveSavedHandle=nil                     ---@type fun(table: hashtable, parentKey: integer, childKey: integer): boolean (native)
+
+RemoveSavedInteger=nil                  ---@type fun(table: hashtable, parentKey: integer, childKey: integer) (native)
+RemoveSavedReal=nil                     ---@type fun(table: hashtable, parentKey: integer, childKey: integer) (native)
+RemoveSavedBoolean=nil                  ---@type fun(table: hashtable, parentKey: integer, childKey: integer) (native)
+RemoveSavedString=nil                   ---@type fun(table: hashtable, parentKey: integer, childKey: integer) (native)
+RemoveSavedHandle=nil                   ---@type fun(table: hashtable, parentKey: integer, childKey: integer) (native)
+
+FlushParentHashtable=nil                        ---@type fun(table: hashtable) (native)
+FlushChildHashtable=nil                 ---@type fun(table: hashtable, parentKey: integer) (native)
+
+
+--============================================================================
+-- Randomization API
+GetRandomInt=nil ---@type fun(lowBound: integer, highBound: integer): integer (native)
+GetRandomReal=nil ---@type fun(lowBound: number, highBound: number): number (native)
+
+CreateUnitPool=nil           ---@type fun(): unitpool (native)
+DestroyUnitPool=nil          ---@type fun(whichPool: unitpool) (native)
+UnitPoolAddUnitType=nil      ---@type fun(whichPool: unitpool, unitId: integer, weight: number) (native)
+UnitPoolRemoveUnitType=nil   ---@type fun(whichPool: unitpool, unitId: integer) (native)
+PlaceRandomUnit=nil          ---@type fun(whichPool: unitpool, forWhichPlayer: player, x: number, y: number, facing: number): unit (native)
+
+CreateItemPool=nil           ---@type fun(): itempool (native)
+DestroyItemPool=nil          ---@type fun(whichItemPool: itempool) (native)
+ItemPoolAddItemType=nil      ---@type fun(whichItemPool: itempool, itemId: integer, weight: number) (native)
+ItemPoolRemoveItemType=nil   ---@type fun(whichItemPool: itempool, itemId: integer) (native)
+PlaceRandomItem=nil          ---@type fun(whichItemPool: itempool, x: number, y: number): item (native)
+
+-- Choose any random unit/item. (NP means Neutral Passive)
+ChooseRandomCreep=nil        ---@type fun(level: integer): integer (native)
+ChooseRandomNPBuilding=nil   ---@type fun(): integer (native)
+ChooseRandomItem=nil         ---@type fun(level: integer): integer (native)
+ChooseRandomItemEx=nil       ---@type fun(whichType: itemtype, level: integer): integer (native)
+SetRandomSeed=nil            ---@type fun(seed: integer) (native)
+
+--============================================================================
+-- Visual API
+SetTerrainFog=nil                ---@type fun(a: number, b: number, c: number, d: number, e: number) (native)
+ResetTerrainFog=nil              ---@type fun() (native)
+
+SetUnitFog=nil                   ---@type fun(a: number, b: number, c: number, d: number, e: number) (native)
+SetTerrainFogEx=nil              ---@type fun(style: integer, zstart: number, zend: number, density: number, red: number, green: number, blue: number) (native)
+DisplayTextToPlayer=nil          ---@type fun(toPlayer: player, x: number, y: number, message: string) (native)
+DisplayTimedTextToPlayer=nil     ---@type fun(toPlayer: player, x: number, y: number, duration: number, message: string) (native)
+DisplayTimedTextFromPlayer=nil   ---@type fun(toPlayer: player, x: number, y: number, duration: number, message: string) (native)
+ClearTextMessages=nil            ---@type fun() (native)
+SetDayNightModels=nil            ---@type fun(terrainDNCFile: string, unitDNCFile: string) (native)
+SetPortraitLight=nil             ---@type fun(portraitDNCFile: string) (native)
+SetSkyModel=nil                  ---@type fun(skyModelFile: string) (native)
+EnableUserControl=nil            ---@type fun(b: boolean) (native)
+EnableUserUI=nil                 ---@type fun(b: boolean) (native)
+SuspendTimeOfDay=nil             ---@type fun(b: boolean) (native)
+SetTimeOfDayScale=nil            ---@type fun(r: number) (native)
+GetTimeOfDayScale=nil            ---@type fun(): number (native)
+ShowInterface=nil                ---@type fun(flag: boolean, fadeDuration: number) (native)
+PauseGame=nil                    ---@type fun(flag: boolean) (native)
+UnitAddIndicator=nil             ---@type fun(whichUnit: unit, red: integer, green: integer, blue: integer, alpha: integer) (native)
+AddIndicator=nil                 ---@type fun(whichWidget: widget, red: integer, green: integer, blue: integer, alpha: integer) (native)
+PingMinimap=nil                  ---@type fun(x: number, y: number, duration: number) (native)
+PingMinimapEx=nil                ---@type fun(x: number, y: number, duration: number, red: integer, green: integer, blue: integer, extraEffects: boolean) (native)
+CreateMinimapIconOnUnit=nil      ---@type fun(whichUnit: unit, red: integer, green: integer, blue: integer, pingPath: string, fogVisibility: fogstate): minimapicon (native)
+CreateMinimapIconAtLoc=nil       ---@type fun(where: location, red: integer, green: integer, blue: integer, pingPath: string, fogVisibility: fogstate): minimapicon (native)
+CreateMinimapIcon=nil            ---@type fun(x: number, y: number, red: integer, green: integer, blue: integer, pingPath: string, fogVisibility: fogstate): minimapicon (native)
+SkinManagerGetLocalPath=nil      ---@type fun(key: string): string (native)
+DestroyMinimapIcon=nil           ---@type fun(pingId: minimapicon) (native)
+SetMinimapIconVisible=nil        ---@type fun(whichMinimapIcon: minimapicon, visible: boolean) (native)
+SetMinimapIconOrphanDestroy=nil  ---@type fun(whichMinimapIcon: minimapicon, doDestroy: boolean) (native)
+EnableOcclusion=nil              ---@type fun(flag: boolean) (native)
+SetIntroShotText=nil             ---@type fun(introText: string) (native)
+SetIntroShotModel=nil            ---@type fun(introModelPath: string) (native)
+EnableWorldFogBoundary=nil       ---@type fun(b: boolean) (native)
+PlayModelCinematic=nil           ---@type fun(modelName: string) (native)
+PlayCinematic=nil                ---@type fun(movieName: string) (native)
+ForceUIKey=nil                   ---@type fun(key: string) (native)
+ForceUICancel=nil                ---@type fun() (native)
+DisplayLoadDialog=nil            ---@type fun() (native)
+SetAltMinimapIcon=nil            ---@type fun(iconPath: string) (native)
+DisableRestartMission=nil        ---@type fun(flag: boolean) (native)
+
+CreateTextTag=nil                ---@type fun(): texttag (native)
+DestroyTextTag=nil               ---@type fun(t: texttag) (native)
+SetTextTagText=nil               ---@type fun(t: texttag, s: string, height: number) (native)
+SetTextTagPos=nil                ---@type fun(t: texttag, x: number, y: number, heightOffset: number) (native)
+SetTextTagPosUnit=nil            ---@type fun(t: texttag, whichUnit: unit, heightOffset: number) (native)
+SetTextTagColor=nil              ---@type fun(t: texttag, red: integer, green: integer, blue: integer, alpha: integer) (native)
+SetTextTagVelocity=nil           ---@type fun(t: texttag, xvel: number, yvel: number) (native)
+SetTextTagVisibility=nil         ---@type fun(t: texttag, flag: boolean) (native)
+SetTextTagSuspended=nil          ---@type fun(t: texttag, flag: boolean) (native)
+SetTextTagPermanent=nil          ---@type fun(t: texttag, flag: boolean) (native)
+SetTextTagAge=nil                ---@type fun(t: texttag, age: number) (native)
+SetTextTagLifespan=nil           ---@type fun(t: texttag, lifespan: number) (native)
+SetTextTagFadepoint=nil          ---@type fun(t: texttag, fadepoint: number) (native)
+
+SetReservedLocalHeroButtons=nil  ---@type fun(reserved: integer) (native)
+GetAllyColorFilterState=nil      ---@type fun(): integer (native)
+SetAllyColorFilterState=nil      ---@type fun(state: integer) (native)
+GetCreepCampFilterState=nil      ---@type fun(): boolean (native)
+SetCreepCampFilterState=nil      ---@type fun(state: boolean) (native)
+EnableMinimapFilterButtons=nil   ---@type fun(enableAlly: boolean, enableCreep: boolean) (native)
+EnableDragSelect=nil             ---@type fun(state: boolean, ui: boolean) (native)
+EnablePreSelect=nil              ---@type fun(state: boolean, ui: boolean) (native)
+EnableSelect=nil                 ---@type fun(state: boolean, ui: boolean) (native)
+
+--============================================================================
+-- Trackable API
+CreateTrackable=nil      ---@type fun(trackableModelPath: string, x: number, y: number, facing: number): trackable (native)
+
+--============================================================================
+-- Quest API
+CreateQuest=nil          ---@type fun(): quest (native)
+DestroyQuest=nil         ---@type fun(whichQuest: quest) (native)
+QuestSetTitle=nil        ---@type fun(whichQuest: quest, title: string) (native)
+QuestSetDescription=nil  ---@type fun(whichQuest: quest, description: string) (native)
+QuestSetIconPath=nil     ---@type fun(whichQuest: quest, iconPath: string) (native)
+
+QuestSetRequired=nil     ---@type fun(whichQuest: quest, required: boolean) (native)
+QuestSetCompleted=nil    ---@type fun(whichQuest: quest, completed: boolean) (native)
+QuestSetDiscovered=nil   ---@type fun(whichQuest: quest, discovered: boolean) (native)
+QuestSetFailed=nil       ---@type fun(whichQuest: quest, failed: boolean) (native)
+QuestSetEnabled=nil      ---@type fun(whichQuest: quest, enabled: boolean) (native)
+
+IsQuestRequired=nil     ---@type fun(whichQuest: quest): boolean (native)
+IsQuestCompleted=nil    ---@type fun(whichQuest: quest): boolean (native)
+IsQuestDiscovered=nil   ---@type fun(whichQuest: quest): boolean (native)
+IsQuestFailed=nil       ---@type fun(whichQuest: quest): boolean (native)
+IsQuestEnabled=nil      ---@type fun(whichQuest: quest): boolean (native)
+
+QuestCreateItem=nil          ---@type fun(whichQuest: quest): questitem (native)
+QuestItemSetDescription=nil  ---@type fun(whichQuestItem: questitem, description: string) (native)
+QuestItemSetCompleted=nil    ---@type fun(whichQuestItem: questitem, completed: boolean) (native)
+
+IsQuestItemCompleted=nil     ---@type fun(whichQuestItem: questitem): boolean (native)
+
+CreateDefeatCondition=nil            ---@type fun(): defeatcondition (native)
+DestroyDefeatCondition=nil           ---@type fun(whichCondition: defeatcondition) (native)
+DefeatConditionSetDescription=nil    ---@type fun(whichCondition: defeatcondition, description: string) (native)
+
+FlashQuestDialogButton=nil   ---@type fun() (native)
+ForceQuestDialogUpdate=nil   ---@type fun() (native)
+
+--============================================================================
+-- Timer Dialog API
+CreateTimerDialog=nil                ---@type fun(t: timer): timerdialog (native)
+DestroyTimerDialog=nil               ---@type fun(whichDialog: timerdialog) (native)
+TimerDialogSetTitle=nil              ---@type fun(whichDialog: timerdialog, title: string) (native)
+TimerDialogSetTitleColor=nil         ---@type fun(whichDialog: timerdialog, red: integer, green: integer, blue: integer, alpha: integer) (native)
+TimerDialogSetTimeColor=nil          ---@type fun(whichDialog: timerdialog, red: integer, green: integer, blue: integer, alpha: integer) (native)
+TimerDialogSetSpeed=nil              ---@type fun(whichDialog: timerdialog, speedMultFactor: number) (native)
+TimerDialogDisplay=nil               ---@type fun(whichDialog: timerdialog, display: boolean) (native)
+IsTimerDialogDisplayed=nil           ---@type fun(whichDialog: timerdialog): boolean (native)
+TimerDialogSetRealTimeRemaining=nil  ---@type fun(whichDialog: timerdialog, timeRemaining: number) (native)
+
+--============================================================================
+-- Leaderboard API
+
+-- Create a leaderboard object
+CreateLeaderboard=nil                ---@type fun(): leaderboard (native)
+DestroyLeaderboard=nil               ---@type fun(lb: leaderboard) (native)
+
+LeaderboardDisplay=nil               ---@type fun(lb: leaderboard, show: boolean) (native)
+IsLeaderboardDisplayed=nil           ---@type fun(lb: leaderboard): boolean (native)
+
+LeaderboardGetItemCount=nil          ---@type fun(lb: leaderboard): integer (native)
+
+LeaderboardSetSizeByItemCount=nil    ---@type fun(lb: leaderboard, count: integer) (native)
+LeaderboardAddItem=nil               ---@type fun(lb: leaderboard, label: string, value: integer, p: player) (native)
+LeaderboardRemoveItem=nil            ---@type fun(lb: leaderboard, index: integer) (native)
+LeaderboardRemovePlayerItem=nil      ---@type fun(lb: leaderboard, p: player) (native)
+LeaderboardClear=nil                 ---@type fun(lb: leaderboard) (native)
+
+LeaderboardSortItemsByValue=nil      ---@type fun(lb: leaderboard, ascending: boolean) (native)
+LeaderboardSortItemsByPlayer=nil     ---@type fun(lb: leaderboard, ascending: boolean) (native)
+LeaderboardSortItemsByLabel=nil      ---@type fun(lb: leaderboard, ascending: boolean) (native)
+
+LeaderboardHasPlayerItem=nil         ---@type fun(lb: leaderboard, p: player): boolean (native)
+LeaderboardGetPlayerIndex=nil        ---@type fun(lb: leaderboard, p: player): integer (native)
+LeaderboardSetLabel=nil              ---@type fun(lb: leaderboard, label: string) (native)
+LeaderboardGetLabelText=nil          ---@type fun(lb: leaderboard): string (native)
+
+PlayerSetLeaderboard=nil             ---@type fun(toPlayer: player, lb: leaderboard) (native)
+PlayerGetLeaderboard=nil             ---@type fun(toPlayer: player): leaderboard (native)
+
+LeaderboardSetLabelColor=nil         ---@type fun(lb: leaderboard, red: integer, green: integer, blue: integer, alpha: integer) (native)
+LeaderboardSetValueColor=nil         ---@type fun(lb: leaderboard, red: integer, green: integer, blue: integer, alpha: integer) (native)
+LeaderboardSetStyle=nil              ---@type fun(lb: leaderboard, showLabel: boolean, showNames: boolean, showValues: boolean, showIcons: boolean) (native)
+
+LeaderboardSetItemValue=nil          ---@type fun(lb: leaderboard, whichItem: integer, val: integer) (native)
+LeaderboardSetItemLabel=nil          ---@type fun(lb: leaderboard, whichItem: integer, val: string) (native)
+LeaderboardSetItemStyle=nil          ---@type fun(lb: leaderboard, whichItem: integer, showLabel: boolean, showValue: boolean, showIcon: boolean) (native)
+LeaderboardSetItemLabelColor=nil     ---@type fun(lb: leaderboard, whichItem: integer, red: integer, green: integer, blue: integer, alpha: integer) (native)
+LeaderboardSetItemValueColor=nil     ---@type fun(lb: leaderboard, whichItem: integer, red: integer, green: integer, blue: integer, alpha: integer) (native)
+
+--============================================================================
+-- Multiboard API
+--============================================================================
+
+-- Create a multiboard object
+CreateMultiboard=nil                 ---@type fun(): multiboard (native)
+DestroyMultiboard=nil                ---@type fun(lb: multiboard) (native)
+
+MultiboardDisplay=nil                ---@type fun(lb: multiboard, show: boolean) (native)
+IsMultiboardDisplayed=nil            ---@type fun(lb: multiboard): boolean (native)
+
+MultiboardMinimize=nil               ---@type fun(lb: multiboard, minimize: boolean) (native)
+IsMultiboardMinimized=nil            ---@type fun(lb: multiboard): boolean (native)
+MultiboardClear=nil                  ---@type fun(lb: multiboard) (native)
+
+MultiboardSetTitleText=nil           ---@type fun(lb: multiboard, label: string) (native)
+MultiboardGetTitleText=nil           ---@type fun(lb: multiboard): string (native)
+MultiboardSetTitleTextColor=nil      ---@type fun(lb: multiboard, red: integer, green: integer, blue: integer, alpha: integer) (native)
+
+MultiboardGetRowCount=nil            ---@type fun(lb: multiboard): integer (native)
+MultiboardGetColumnCount=nil         ---@type fun(lb: multiboard): integer (native)
+
+MultiboardSetColumnCount=nil         ---@type fun(lb: multiboard, count: integer) (native)
+MultiboardSetRowCount=nil            ---@type fun(lb: multiboard, count: integer) (native)
+
+-- broadcast settings to all items
+MultiboardSetItemsStyle=nil          ---@type fun(lb: multiboard, showValues: boolean, showIcons: boolean) (native)
+MultiboardSetItemsValue=nil          ---@type fun(lb: multiboard, value: string) (native)
+MultiboardSetItemsValueColor=nil     ---@type fun(lb: multiboard, red: integer, green: integer, blue: integer, alpha: integer) (native)
+MultiboardSetItemsWidth=nil          ---@type fun(lb: multiboard, width: number) (native)
+MultiboardSetItemsIcon=nil           ---@type fun(lb: multiboard, iconPath: string) (native)
+
+
+-- funcs for modifying individual items
+MultiboardGetItem=nil                ---@type fun(lb: multiboard, row: integer, column: integer): multiboarditem (native)
+MultiboardReleaseItem=nil            ---@type fun(mbi: multiboarditem) (native)
+
+MultiboardSetItemStyle=nil           ---@type fun(mbi: multiboarditem, showValue: boolean, showIcon: boolean) (native)
+MultiboardSetItemValue=nil           ---@type fun(mbi: multiboarditem, val: string) (native)
+MultiboardSetItemValueColor=nil      ---@type fun(mbi: multiboarditem, red: integer, green: integer, blue: integer, alpha: integer) (native)
+MultiboardSetItemWidth=nil           ---@type fun(mbi: multiboarditem, width: number) (native)
+MultiboardSetItemIcon=nil            ---@type fun(mbi: multiboarditem, iconFileName: string) (native)
+
+-- meant to unequivocally suspend display of existing and
+-- subsequently displayed multiboards
+--
+MultiboardSuppressDisplay=nil        ---@type fun(flag: boolean) (native)
+
+--============================================================================
+-- Camera API
+SetCameraPosition=nil            ---@type fun(x: number, y: number) (native)
+SetCameraQuickPosition=nil       ---@type fun(x: number, y: number) (native)
+SetCameraBounds=nil              ---@type fun(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, x4: number, y4: number) (native)
+StopCamera=nil                   ---@type fun() (native)
+ResetToGameCamera=nil            ---@type fun(duration: number) (native)
+PanCameraTo=nil                  ---@type fun(x: number, y: number) (native)
+PanCameraToTimed=nil             ---@type fun(x: number, y: number, duration: number) (native)
+PanCameraToWithZ=nil             ---@type fun(x: number, y: number, zOffsetDest: number) (native)
+PanCameraToTimedWithZ=nil        ---@type fun(x: number, y: number, zOffsetDest: number, duration: number) (native)
+SetCinematicCamera=nil           ---@type fun(cameraModelFile: string) (native)
+SetCameraRotateMode=nil          ---@type fun(x: number, y: number, radiansToSweep: number, duration: number) (native)
+SetCameraField=nil               ---@type fun(whichField: camerafield, value: number, duration: number) (native)
+AdjustCameraField=nil            ---@type fun(whichField: camerafield, offset: number, duration: number) (native)
+SetCameraTargetController=nil    ---@type fun(whichUnit: unit, xoffset: number, yoffset: number, inheritOrientation: boolean) (native)
+SetCameraOrientController=nil    ---@type fun(whichUnit: unit, xoffset: number, yoffset: number) (native)
+
+CreateCameraSetup=nil                    ---@type fun(): camerasetup (native)
+CameraSetupSetField=nil                  ---@type fun(whichSetup: camerasetup, whichField: camerafield, value: number, duration: number) (native)
+CameraSetupGetField=nil                  ---@type fun(whichSetup: camerasetup, whichField: camerafield): number (native)
+CameraSetupSetDestPosition=nil           ---@type fun(whichSetup: camerasetup, x: number, y: number, duration: number) (native)
+CameraSetupGetDestPositionLoc=nil        ---@type fun(whichSetup: camerasetup): location (native)
+CameraSetupGetDestPositionX=nil          ---@type fun(whichSetup: camerasetup): number (native)
+CameraSetupGetDestPositionY=nil          ---@type fun(whichSetup: camerasetup): number (native)
+CameraSetupApply=nil                     ---@type fun(whichSetup: camerasetup, doPan: boolean, panTimed: boolean) (native)
+CameraSetupApplyWithZ=nil                ---@type fun(whichSetup: camerasetup, zDestOffset: number) (native)
+CameraSetupApplyForceDuration=nil        ---@type fun(whichSetup: camerasetup, doPan: boolean, forceDuration: number) (native)
+CameraSetupApplyForceDurationWithZ=nil   ---@type fun(whichSetup: camerasetup, zDestOffset: number, forceDuration: number) (native)
+BlzCameraSetupSetLabel=nil               ---@type fun(whichSetup: camerasetup, label: string) (native)
+BlzCameraSetupGetLabel=nil               ---@type fun(whichSetup: camerasetup): string (native)
+
+CameraSetTargetNoise=nil             ---@type fun(mag: number, velocity: number) (native)
+CameraSetSourceNoise=nil             ---@type fun(mag: number, velocity: number) (native)
+
+CameraSetTargetNoiseEx=nil           ---@type fun(mag: number, velocity: number, vertOnly: boolean) (native)
+CameraSetSourceNoiseEx=nil           ---@type fun(mag: number, velocity: number, vertOnly: boolean) (native)
+
+CameraSetSmoothingFactor=nil         ---@type fun(factor: number) (native)
+
+CameraSetFocalDistance=nil           ---@type fun(distance: number) (native)
+CameraSetDepthOfFieldScale=nil       ---@type fun(scale: number) (native)
+
+SetCineFilterTexture=nil             ---@type fun(filename: string) (native)
+SetCineFilterBlendMode=nil           ---@type fun(whichMode: blendmode) (native)
+SetCineFilterTexMapFlags=nil         ---@type fun(whichFlags: texmapflags) (native)
+SetCineFilterStartUV=nil             ---@type fun(minu: number, minv: number, maxu: number, maxv: number) (native)
+SetCineFilterEndUV=nil               ---@type fun(minu: number, minv: number, maxu: number, maxv: number) (native)
+SetCineFilterStartColor=nil          ---@type fun(red: integer, green: integer, blue: integer, alpha: integer) (native)
+SetCineFilterEndColor=nil            ---@type fun(red: integer, green: integer, blue: integer, alpha: integer) (native)
+SetCineFilterDuration=nil            ---@type fun(duration: number) (native)
+DisplayCineFilter=nil                ---@type fun(flag: boolean) (native)
+IsCineFilterDisplayed=nil            ---@type fun(): boolean (native)
+
+SetCinematicScene=nil                ---@type fun(portraitUnitId: integer, color: playercolor, speakerTitle: string, text: string, sceneDuration: number, voiceoverDuration: number) (native)
+EndCinematicScene=nil                ---@type fun() (native)
+ForceCinematicSubtitles=nil          ---@type fun(flag: boolean) (native)
+SetCinematicAudio=nil                ---@type fun(cinematicAudio: boolean) (native)
+
+GetCameraMargin=nil                  ---@type fun(whichMargin: integer): number (native)
+
+-- These return values for the local players camera only...
+GetCameraBoundMinX=nil          ---@type fun(): number (native)
+GetCameraBoundMinY=nil          ---@type fun(): number (native)
+GetCameraBoundMaxX=nil          ---@type fun(): number (native)
+GetCameraBoundMaxY=nil          ---@type fun(): number (native)
+GetCameraField=nil              ---@type fun(whichField: camerafield): number (native)
+GetCameraTargetPositionX=nil    ---@type fun(): number (native)
+GetCameraTargetPositionY=nil    ---@type fun(): number (native)
+GetCameraTargetPositionZ=nil    ---@type fun(): number (native)
+GetCameraTargetPositionLoc=nil  ---@type fun(): location (native)
+GetCameraEyePositionX=nil       ---@type fun(): number (native)
+GetCameraEyePositionY=nil       ---@type fun(): number (native)
+GetCameraEyePositionZ=nil       ---@type fun(): number (native)
+GetCameraEyePositionLoc=nil     ---@type fun(): location (native)
+
+--============================================================================
+-- Sound API
+--
+NewSoundEnvironment=nil          ---@type fun(environmentName: string) (native)
+
+CreateSound=nil                  ---@type fun(fileName: string, looping: boolean, is3D: boolean, stopwhenoutofrange: boolean, fadeInRate: integer, fadeOutRate: integer, eaxSetting: string): sound (native)
+CreateSoundFilenameWithLabel=nil ---@type fun(fileName: string, looping: boolean, is3D: boolean, stopwhenoutofrange: boolean, fadeInRate: integer, fadeOutRate: integer, SLKEntryName: string): sound (native)
+CreateSoundFromLabel=nil         ---@type fun(soundLabel: string, looping: boolean, is3D: boolean, stopwhenoutofrange: boolean, fadeInRate: integer, fadeOutRate: integer): sound (native)
+CreateMIDISound=nil              ---@type fun(soundLabel: string, fadeInRate: integer, fadeOutRate: integer): sound (native)
+
+SetSoundParamsFromLabel=nil      ---@type fun(soundHandle: sound, soundLabel: string) (native)
+SetSoundDistanceCutoff=nil       ---@type fun(soundHandle: sound, cutoff: number) (native)
+SetSoundChannel=nil              ---@type fun(soundHandle: sound, channel: integer) (native)
+SetSoundVolume=nil               ---@type fun(soundHandle: sound, volume: integer) (native)
+SetSoundPitch=nil                ---@type fun(soundHandle: sound, pitch: number) (native)
+
+-- the following method must be called immediately after calling "StartSound"
+SetSoundPlayPosition=nil         ---@type fun(soundHandle: sound, millisecs: integer) (native)
+
+-- these calls are only valid if the sound was created with 3d enabled
+SetSoundDistances=nil            ---@type fun(soundHandle: sound, minDist: number, maxDist: number) (native)
+SetSoundConeAngles=nil           ---@type fun(soundHandle: sound, inside: number, outside: number, outsideVolume: integer) (native)
+SetSoundConeOrientation=nil      ---@type fun(soundHandle: sound, x: number, y: number, z: number) (native)
+SetSoundPosition=nil             ---@type fun(soundHandle: sound, x: number, y: number, z: number) (native)
+SetSoundVelocity=nil             ---@type fun(soundHandle: sound, x: number, y: number, z: number) (native)
+AttachSoundToUnit=nil            ---@type fun(soundHandle: sound, whichUnit: unit) (native)
+
+StartSound=nil                   ---@type fun(soundHandle: sound) (native)
+StartSoundEx=nil                 ---@type fun(soundHandle: sound, fadeIn: boolean) (native)
+StopSound=nil                    ---@type fun(soundHandle: sound, killWhenDone: boolean, fadeOut: boolean) (native)
+KillSoundWhenDone=nil            ---@type fun(soundHandle: sound) (native)
+
+-- Music Interface. Note that if music is disabled, these calls do nothing
+SetMapMusic=nil                  ---@type fun(musicName: string, random: boolean, index: integer) (native)
+ClearMapMusic=nil                ---@type fun() (native)
+
+PlayMusic=nil                    ---@type fun(musicName: string) (native)
+PlayMusicEx=nil                  ---@type fun(musicName: string, frommsecs: integer, fadeinmsecs: integer) (native)
+StopMusic=nil                    ---@type fun(fadeOut: boolean) (native)
+ResumeMusic=nil                  ---@type fun() (native)
+
+PlayThematicMusic=nil            ---@type fun(musicFileName: string) (native)
+PlayThematicMusicEx=nil          ---@type fun(musicFileName: string, frommsecs: integer) (native)
+EndThematicMusic=nil             ---@type fun() (native)
+
+SetMusicVolume=nil               ---@type fun(volume: integer) (native)
+SetMusicPlayPosition=nil         ---@type fun(millisecs: integer) (native)
+SetThematicMusicVolume=nil       ---@type fun(volume: integer) (native)
+SetThematicMusicPlayPosition=nil ---@type fun(millisecs: integer) (native)
+
+-- other music and sound calls
+SetSoundDuration=nil             ---@type fun(soundHandle: sound, duration: integer) (native)
+GetSoundDuration=nil             ---@type fun(soundHandle: sound): integer (native)
+GetSoundFileDuration=nil         ---@type fun(musicFileName: string): integer (native)
+
+VolumeGroupSetVolume=nil         ---@type fun(vgroup: volumegroup, scale: number) (native)
+VolumeGroupReset=nil             ---@type fun() (native)
+
+GetSoundIsPlaying=nil            ---@type fun(soundHandle: sound): boolean (native)
+GetSoundIsLoading=nil            ---@type fun(soundHandle: sound): boolean (native)
+
+RegisterStackedSound=nil         ---@type fun(soundHandle: sound, byPosition: boolean, rectwidth: number, rectheight: number) (native)
+UnregisterStackedSound=nil       ---@type fun(soundHandle: sound, byPosition: boolean, rectwidth: number, rectheight: number) (native)
+
+SetSoundFacialAnimationLabel=nil ---@type fun(soundHandle: sound, animationLabel: string): boolean (native)
+SetSoundFacialAnimationGroupLabel=nil ---@type fun(soundHandle: sound, groupLabel: string): boolean (native)
+SetSoundFacialAnimationSetFilepath=nil ---@type fun(soundHandle: sound, animationSetFilepath: string): boolean (native)
+
+--Subtitle support that is attached to the soundHandle rather than as disperate data with the legacy UI
+SetDialogueSpeakerNameKey=nil    ---@type fun(soundHandle: sound, speakerName: string): boolean (native)
+GetDialogueSpeakerNameKey=nil    ---@type fun(soundHandle: sound): string (native)
+SetDialogueTextKey=nil           ---@type fun(soundHandle: sound, dialogueText: string): boolean (native)
+GetDialogueTextKey=nil           ---@type fun(soundHandle: sound): string (native)
+
+--============================================================================
+-- Effects API
+--
+AddWeatherEffect=nil             ---@type fun(where: rect, effectID: integer): weathereffect (native)
+RemoveWeatherEffect=nil          ---@type fun(whichEffect: weathereffect) (native)
+EnableWeatherEffect=nil          ---@type fun(whichEffect: weathereffect, enable: boolean) (native)
+
+TerrainDeformCrater=nil          ---@type fun(x: number, y: number, radius: number, depth: number, duration: integer, permanent: boolean): terraindeformation (native)
+TerrainDeformRipple=nil          ---@type fun(x: number, y: number, radius: number, depth: number, duration: integer, count: integer, spaceWaves: number, timeWaves: number, radiusStartPct: number, limitNeg: boolean): terraindeformation (native)
+TerrainDeformWave=nil            ---@type fun(x: number, y: number, dirX: number, dirY: number, distance: number, speed: number, radius: number, depth: number, trailTime: integer, count: integer): terraindeformation (native)
+TerrainDeformRandom=nil          ---@type fun(x: number, y: number, radius: number, minDelta: number, maxDelta: number, duration: integer, updateInterval: integer): terraindeformation (native)
+TerrainDeformStop=nil            ---@type fun(deformation: terraindeformation, duration: integer) (native)
+TerrainDeformStopAll=nil         ---@type fun() (native)
+
+AddSpecialEffect=nil             ---@type fun(modelName: string, x: number, y: number): effect (native)
+AddSpecialEffectLoc=nil          ---@type fun(modelName: string, where: location): effect (native)
+AddSpecialEffectTarget=nil       ---@type fun(modelName: string, targetWidget: widget, attachPointName: string): effect (native)
+DestroyEffect=nil                ---@type fun(whichEffect: effect) (native)
+
+AddSpellEffect=nil               ---@type fun(abilityString: string, t: effecttype, x: number, y: number): effect (native)
+AddSpellEffectLoc=nil            ---@type fun(abilityString: string, t: effecttype, where: location): effect (native)
+AddSpellEffectById=nil           ---@type fun(abilityId: integer, t: effecttype, x: number, y: number): effect (native)
+AddSpellEffectByIdLoc=nil        ---@type fun(abilityId: integer, t: effecttype, where: location): effect (native)
+AddSpellEffectTarget=nil         ---@type fun(modelName: string, t: effecttype, targetWidget: widget, attachPoint: string): effect (native)
+AddSpellEffectTargetById=nil     ---@type fun(abilityId: integer, t: effecttype, targetWidget: widget, attachPoint: string): effect (native)
+
+AddLightning=nil                 ---@type fun(codeName: string, checkVisibility: boolean, x1: number, y1: number, x2: number, y2: number): lightning (native)
+AddLightningEx=nil               ---@type fun(codeName: string, checkVisibility: boolean, x1: number, y1: number, z1: number, x2: number, y2: number, z2: number): lightning (native)
+DestroyLightning=nil             ---@type fun(whichBolt: lightning): boolean (native)
+MoveLightning=nil                ---@type fun(whichBolt: lightning, checkVisibility: boolean, x1: number, y1: number, x2: number, y2: number): boolean (native)
+MoveLightningEx=nil              ---@type fun(whichBolt: lightning, checkVisibility: boolean, x1: number, y1: number, z1: number, x2: number, y2: number, z2: number): boolean (native)
+GetLightningColorA=nil           ---@type fun(whichBolt: lightning): number (native)
+GetLightningColorR=nil           ---@type fun(whichBolt: lightning): number (native)
+GetLightningColorG=nil           ---@type fun(whichBolt: lightning): number (native)
+GetLightningColorB=nil           ---@type fun(whichBolt: lightning): number (native)
+SetLightningColor=nil            ---@type fun(whichBolt: lightning, r: number, g: number, b: number, a: number): boolean (native)
+
+GetAbilityEffect=nil             ---@type fun(abilityString: string, t: effecttype, index: integer): string (native)
+GetAbilityEffectById=nil         ---@type fun(abilityId: integer, t: effecttype, index: integer): string (native)
+GetAbilitySound=nil              ---@type fun(abilityString: string, t: soundtype): string (native)
+GetAbilitySoundById=nil          ---@type fun(abilityId: integer, t: soundtype): string (native)
+
+--============================================================================
+-- Terrain API
+--
+GetTerrainCliffLevel=nil         ---@type fun(x: number, y: number): integer (native)
+SetWaterBaseColor=nil            ---@type fun(red: integer, green: integer, blue: integer, alpha: integer) (native)
+SetWaterDeforms=nil              ---@type fun(val: boolean) (native)
+GetTerrainType=nil               ---@type fun(x: number, y: number): integer (native)
+GetTerrainVariance=nil           ---@type fun(x: number, y: number): integer (native)
+SetTerrainType=nil               ---@type fun(x: number, y: number, terrainType: integer, variation: integer, area: integer, shape: integer) (native)
+IsTerrainPathable=nil            ---@type fun(x: number, y: number, t: pathingtype): boolean (native)
+SetTerrainPathable=nil           ---@type fun(x: number, y: number, t: pathingtype, flag: boolean) (native)
+
+--============================================================================
+-- Image API
+--
+CreateImage=nil                  ---@type fun(file: string, sizeX: number, sizeY: number, sizeZ: number, posX: number, posY: number, posZ: number, originX: number, originY: number, originZ: number, imageType: integer): image (native)
+DestroyImage=nil                 ---@type fun(whichImage: image) (native)
+ShowImage=nil                    ---@type fun(whichImage: image, flag: boolean) (native)
+SetImageConstantHeight=nil       ---@type fun(whichImage: image, flag: boolean, height: number) (native)
+SetImagePosition=nil             ---@type fun(whichImage: image, x: number, y: number, z: number) (native)
+SetImageColor=nil                ---@type fun(whichImage: image, red: integer, green: integer, blue: integer, alpha: integer) (native)
+SetImageRender=nil               ---@type fun(whichImage: image, flag: boolean) (native)
+SetImageRenderAlways=nil         ---@type fun(whichImage: image, flag: boolean) (native)
+SetImageAboveWater=nil           ---@type fun(whichImage: image, flag: boolean, useWaterAlpha: boolean) (native)
+SetImageType=nil                 ---@type fun(whichImage: image, imageType: integer) (native)
+
+--============================================================================
+-- Ubersplat API
+--
+CreateUbersplat=nil              ---@type fun(x: number, y: number, name: string, red: integer, green: integer, blue: integer, alpha: integer, forcePaused: boolean, noBirthTime: boolean): ubersplat (native)
+DestroyUbersplat=nil             ---@type fun(whichSplat: ubersplat) (native)
+ResetUbersplat=nil               ---@type fun(whichSplat: ubersplat) (native)
+FinishUbersplat=nil              ---@type fun(whichSplat: ubersplat) (native)
+ShowUbersplat=nil                ---@type fun(whichSplat: ubersplat, flag: boolean) (native)
+SetUbersplatRender=nil           ---@type fun(whichSplat: ubersplat, flag: boolean) (native)
+SetUbersplatRenderAlways=nil     ---@type fun(whichSplat: ubersplat, flag: boolean) (native)
+
+--============================================================================
+-- Blight API
+--
+SetBlight=nil                ---@type fun(whichPlayer: player, x: number, y: number, radius: number, addBlight: boolean) (native)
+SetBlightRect=nil            ---@type fun(whichPlayer: player, r: rect, addBlight: boolean) (native)
+SetBlightPoint=nil           ---@type fun(whichPlayer: player, x: number, y: number, addBlight: boolean) (native)
+SetBlightLoc=nil             ---@type fun(whichPlayer: player, whichLocation: location, radius: number, addBlight: boolean) (native)
+CreateBlightedGoldmine=nil   ---@type fun(id: player, x: number, y: number, face: number): unit (native)
+IsPointBlighted=nil          ---@type fun(x: number, y: number): boolean (native)
+
+--============================================================================
+-- Doodad API
+--
+SetDoodadAnimation=nil       ---@type fun(x: number, y: number, radius: number, doodadID: integer, nearestOnly: boolean, animName: string, animRandom: boolean) (native)
+SetDoodadAnimationRect=nil   ---@type fun(r: rect, doodadID: integer, animName: string, animRandom: boolean) (native)
+
+--============================================================================
+-- Computer AI interface
+--
+StartMeleeAI=nil         ---@type fun(num: player, script: string) (native)
+StartCampaignAI=nil      ---@type fun(num: player, script: string) (native)
+CommandAI=nil            ---@type fun(num: player, command: integer, data: integer) (native)
+PauseCompAI=nil          ---@type fun(p: player, pause: boolean) (native)
+GetAIDifficulty=nil      ---@type fun(num: player): aidifficulty (native)
+
+RemoveGuardPosition=nil  ---@type fun(hUnit: unit) (native)
+RecycleGuardPosition=nil ---@type fun(hUnit: unit) (native)
+RemoveAllGuardPositions=nil ---@type fun(num: player) (native)
+
+--============================================================================
+Cheat=nil            ---@type fun(cheatStr: string) (native)
+IsNoVictoryCheat=nil ---@type fun(): boolean (native)
+IsNoDefeatCheat=nil  ---@type fun(): boolean (native)
+
+Preload=nil          ---@type fun(filename: string) (native)
+PreloadEnd=nil       ---@type fun(timeout: number) (native)
+
+PreloadStart=nil     ---@type fun() (native)
+PreloadRefresh=nil   ---@type fun() (native)
+PreloadEndEx=nil     ---@type fun() (native)
+
+PreloadGenClear=nil  ---@type fun() (native)
+PreloadGenStart=nil  ---@type fun() (native)
+PreloadGenEnd=nil    ---@type fun(filename: string) (native)
+Preloader=nil        ---@type fun(filename: string) (native)
+
+
+--============================================================================
+--Machinima API
+--============================================================================
+BlzHideCinematicPanels=nil                     ---@type fun(enable: boolean) (native)
+
+
+-- Automation Test
+AutomationSetTestType=nil                    ---@type fun(testType: string) (native)
+AutomationTestStart=nil                      ---@type fun(testName: string) (native)
+AutomationTestEnd=nil                        ---@type fun() (native)
+AutomationTestingFinished=nil                ---@type fun() (native)
+
+-- JAPI Functions
+BlzGetTriggerPlayerMouseX=nil                   ---@type fun(): number (native)
+BlzGetTriggerPlayerMouseY=nil                   ---@type fun(): number (native)
+BlzGetTriggerPlayerMousePosition=nil            ---@type fun(): location (native)
+BlzGetTriggerPlayerMouseButton=nil              ---@type fun(): mousebuttontype (native)
+BlzSetAbilityTooltip=nil                        ---@type fun(abilCode: integer, tooltip: string, level: integer) (native)
+BlzSetAbilityActivatedTooltip=nil               ---@type fun(abilCode: integer, tooltip: string, level: integer) (native)
+BlzSetAbilityExtendedTooltip=nil                ---@type fun(abilCode: integer, extendedTooltip: string, level: integer) (native)
+BlzSetAbilityActivatedExtendedTooltip=nil       ---@type fun(abilCode: integer, extendedTooltip: string, level: integer) (native)
+BlzSetAbilityResearchTooltip=nil                ---@type fun(abilCode: integer, researchTooltip: string, level: integer) (native)
+BlzSetAbilityResearchExtendedTooltip=nil        ---@type fun(abilCode: integer, researchExtendedTooltip: string, level: integer) (native)
+BlzGetAbilityTooltip=nil                        ---@type fun(abilCode: integer, level: integer): string (native)
+BlzGetAbilityActivatedTooltip=nil               ---@type fun(abilCode: integer, level: integer): string (native)
+BlzGetAbilityExtendedTooltip=nil                ---@type fun(abilCode: integer, level: integer): string (native)
+BlzGetAbilityActivatedExtendedTooltip=nil       ---@type fun(abilCode: integer, level: integer): string (native)
+BlzGetAbilityResearchTooltip=nil                ---@type fun(abilCode: integer, level: integer): string (native)
+BlzGetAbilityResearchExtendedTooltip=nil        ---@type fun(abilCode: integer, level: integer): string (native)
+BlzSetAbilityIcon=nil                           ---@type fun(abilCode: integer, iconPath: string) (native)
+BlzGetAbilityIcon=nil                           ---@type fun(abilCode: integer): string (native)
+BlzSetAbilityActivatedIcon=nil                  ---@type fun(abilCode: integer, iconPath: string) (native)
+BlzGetAbilityActivatedIcon=nil                  ---@type fun(abilCode: integer): string (native)
+BlzGetAbilityPosX=nil                           ---@type fun(abilCode: integer): integer (native)
+BlzGetAbilityPosY=nil                           ---@type fun(abilCode: integer): integer (native)
+BlzSetAbilityPosX=nil                           ---@type fun(abilCode: integer, x: integer) (native)
+BlzSetAbilityPosY=nil                           ---@type fun(abilCode: integer, y: integer) (native)
+BlzGetAbilityActivatedPosX=nil                  ---@type fun(abilCode: integer): integer (native)
+BlzGetAbilityActivatedPosY=nil                  ---@type fun(abilCode: integer): integer (native)
+BlzSetAbilityActivatedPosX=nil                  ---@type fun(abilCode: integer, x: integer) (native)
+BlzSetAbilityActivatedPosY=nil                  ---@type fun(abilCode: integer, y: integer) (native)
+BlzGetUnitMaxHP=nil                             ---@type fun(whichUnit: unit): integer (native)
+BlzSetUnitMaxHP=nil                             ---@type fun(whichUnit: unit, hp: integer) (native)
+BlzGetUnitMaxMana=nil                           ---@type fun(whichUnit: unit): integer (native)
+BlzSetUnitMaxMana=nil                           ---@type fun(whichUnit: unit, mana: integer) (native)
+BlzSetItemName=nil                              ---@type fun(whichItem: item, name: string) (native)
+BlzSetItemDescription=nil                       ---@type fun(whichItem: item, description: string) (native)
+BlzGetItemDescription=nil                       ---@type fun(whichItem: item): string (native)
+BlzSetItemTooltip=nil                           ---@type fun(whichItem: item, tooltip: string) (native)
+BlzGetItemTooltip=nil                           ---@type fun(whichItem: item): string (native)
+BlzSetItemExtendedTooltip=nil                   ---@type fun(whichItem: item, extendedTooltip: string) (native)
+BlzGetItemExtendedTooltip=nil                   ---@type fun(whichItem: item): string (native)
+BlzSetItemIconPath=nil                          ---@type fun(whichItem: item, iconPath: string) (native)
+BlzGetItemIconPath=nil                          ---@type fun(whichItem: item): string (native)
+BlzSetUnitName=nil                              ---@type fun(whichUnit: unit, name: string) (native)
+BlzSetHeroProperName=nil                        ---@type fun(whichUnit: unit, heroProperName: string) (native)
+BlzGetUnitBaseDamage=nil                        ---@type fun(whichUnit: unit, weaponIndex: integer): integer (native)
+BlzSetUnitBaseDamage=nil                        ---@type fun(whichUnit: unit, baseDamage: integer, weaponIndex: integer) (native)
+BlzGetUnitDiceNumber=nil                        ---@type fun(whichUnit: unit, weaponIndex: integer): integer (native)
+BlzSetUnitDiceNumber=nil                        ---@type fun(whichUnit: unit, diceNumber: integer, weaponIndex: integer) (native)
+BlzGetUnitDiceSides=nil                         ---@type fun(whichUnit: unit, weaponIndex: integer): integer (native)
+BlzSetUnitDiceSides=nil                         ---@type fun(whichUnit: unit, diceSides: integer, weaponIndex: integer) (native)
+BlzGetUnitAttackCooldown=nil                    ---@type fun(whichUnit: unit, weaponIndex: integer): number (native)
+BlzSetUnitAttackCooldown=nil                    ---@type fun(whichUnit: unit, cooldown: number, weaponIndex: integer) (native)
+BlzSetSpecialEffectColorByPlayer=nil            ---@type fun(whichEffect: effect, whichPlayer: player) (native)
+BlzSetSpecialEffectColor=nil                    ---@type fun(whichEffect: effect, r: integer, g: integer, b: integer) (native)
+BlzSetSpecialEffectAlpha=nil                    ---@type fun(whichEffect: effect, alpha: integer) (native)
+BlzSetSpecialEffectScale=nil                    ---@type fun(whichEffect: effect, scale: number) (native)
+BlzSetSpecialEffectPosition=nil                 ---@type fun(whichEffect: effect, x: number, y: number, z: number) (native)
+BlzSetSpecialEffectHeight=nil                   ---@type fun(whichEffect: effect, height: number) (native)
+BlzSetSpecialEffectTimeScale=nil                ---@type fun(whichEffect: effect, timeScale: number) (native)
+BlzSetSpecialEffectTime=nil                     ---@type fun(whichEffect: effect, time: number) (native)
+BlzSetSpecialEffectOrientation=nil              ---@type fun(whichEffect: effect, yaw: number, pitch: number, roll: number) (native)
+BlzSetSpecialEffectYaw=nil                      ---@type fun(whichEffect: effect, yaw: number) (native)
+BlzSetSpecialEffectPitch=nil                    ---@type fun(whichEffect: effect, pitch: number) (native)
+BlzSetSpecialEffectRoll=nil                     ---@type fun(whichEffect: effect, roll: number) (native)
+BlzSetSpecialEffectX=nil                        ---@type fun(whichEffect: effect, x: number) (native)
+BlzSetSpecialEffectY=nil                        ---@type fun(whichEffect: effect, y: number) (native)
+BlzSetSpecialEffectZ=nil                        ---@type fun(whichEffect: effect, z: number) (native)
+BlzSetSpecialEffectPositionLoc=nil              ---@type fun(whichEffect: effect, loc: location) (native)
+BlzGetLocalSpecialEffectX=nil                   ---@type fun(whichEffect: effect): number (native)
+BlzGetLocalSpecialEffectY=nil                   ---@type fun(whichEffect: effect): number (native)
+BlzGetLocalSpecialEffectZ=nil                   ---@type fun(whichEffect: effect): number (native)
+BlzSpecialEffectClearSubAnimations=nil          ---@type fun(whichEffect: effect) (native)
+BlzSpecialEffectRemoveSubAnimation=nil          ---@type fun(whichEffect: effect, whichSubAnim: subanimtype) (native)
+BlzSpecialEffectAddSubAnimation=nil             ---@type fun(whichEffect: effect, whichSubAnim: subanimtype) (native)
+BlzPlaySpecialEffect=nil                        ---@type fun(whichEffect: effect, whichAnim: animtype) (native)
+BlzPlaySpecialEffectWithTimeScale=nil           ---@type fun(whichEffect: effect, whichAnim: animtype, timeScale: number) (native)
+BlzGetAnimName=nil                              ---@type fun(whichAnim: animtype): string (native)
+BlzGetUnitArmor=nil                             ---@type fun(whichUnit: unit): number (native)
+BlzSetUnitArmor=nil                             ---@type fun(whichUnit: unit, armorAmount: number) (native)
+BlzUnitHideAbility=nil                          ---@type fun(whichUnit: unit, abilId: integer, flag: boolean) (native)
+BlzUnitDisableAbility=nil                       ---@type fun(whichUnit: unit, abilId: integer, flag: boolean, hideUI: boolean) (native)
+BlzUnitCancelTimedLife=nil                      ---@type fun(whichUnit: unit) (native)
+BlzIsUnitSelectable=nil                         ---@type fun(whichUnit: unit): boolean (native)
+BlzIsUnitInvulnerable=nil                       ---@type fun(whichUnit: unit): boolean (native)
+BlzUnitInterruptAttack=nil                      ---@type fun(whichUnit: unit) (native)
+BlzGetUnitCollisionSize=nil                     ---@type fun(whichUnit: unit): number (native)
+BlzGetAbilityManaCost=nil                       ---@type fun(abilId: integer, level: integer): integer (native)
+BlzGetAbilityCooldown=nil                       ---@type fun(abilId: integer, level: integer): number (native)
+BlzSetUnitAbilityCooldown=nil                   ---@type fun(whichUnit: unit, abilId: integer, level: integer, cooldown: number) (native)
+BlzGetUnitAbilityCooldown=nil                   ---@type fun(whichUnit: unit, abilId: integer, level: integer): number (native)
+BlzGetUnitAbilityCooldownRemaining=nil          ---@type fun(whichUnit: unit, abilId: integer): number (native)
+BlzEndUnitAbilityCooldown=nil                   ---@type fun(whichUnit: unit, abilCode: integer) (native)
+BlzStartUnitAbilityCooldown=nil                 ---@type fun(whichUnit: unit, abilCode: integer, cooldown: number) (native)
+BlzGetUnitAbilityManaCost=nil                   ---@type fun(whichUnit: unit, abilId: integer, level: integer): integer (native)
+BlzSetUnitAbilityManaCost=nil                   ---@type fun(whichUnit: unit, abilId: integer, level: integer, manaCost: integer) (native)
+BlzGetLocalUnitZ=nil                            ---@type fun(whichUnit: unit): number (native)
+BlzDecPlayerTechResearched=nil                  ---@type fun(whichPlayer: player, techid: integer, levels: integer) (native)
+BlzSetEventDamage=nil                           ---@type fun(damage: number) (native)
+BlzGetEventDamageTarget=nil                     ---@type fun(): unit (native)
+BlzGetEventAttackType=nil                       ---@type fun(): attacktype (native)
+BlzGetEventDamageType=nil                       ---@type fun(): damagetype (native)
+BlzGetEventWeaponType=nil                       ---@type fun(): weapontype (native)
+BlzSetEventAttackType=nil                       ---@type fun(attackType: attacktype): boolean (native)
+BlzSetEventDamageType=nil                       ---@type fun(damageType: damagetype): boolean (native)
+BlzSetEventWeaponType=nil                       ---@type fun(weaponType: weapontype): boolean (native)
+BlzGetEventIsAttack=nil                         ---@type fun(): boolean (native)
+RequestExtraIntegerData=nil                     ---@type fun(dataType: integer, whichPlayer: player, param1: string, param2: string, param3: boolean, param4: integer, param5: integer, param6: integer): integer (native)
+RequestExtraBooleanData=nil                     ---@type fun(dataType: integer, whichPlayer: player, param1: string, param2: string, param3: boolean, param4: integer, param5: integer, param6: integer): boolean (native)
+RequestExtraStringData=nil                      ---@type fun(dataType: integer, whichPlayer: player, param1: string, param2: string, param3: boolean, param4: integer, param5: integer, param6: integer): string (native)
+RequestExtraRealData=nil                        ---@type fun(dataType: integer, whichPlayer: player, param1: string, param2: string, param3: boolean, param4: integer, param5: integer, param6: integer): number (native)
+-- Add this function to follow the style of GetUnitX and GetUnitY, it has the same result as BlzGetLocalUnitZ
+BlzGetUnitZ=nil                                 ---@type fun(whichUnit: unit): number (native)
+BlzEnableSelections=nil                         ---@type fun(enableSelection: boolean, enableSelectionCircle: boolean) (native)
+BlzIsSelectionEnabled=nil                       ---@type fun(): boolean (native)
+BlzIsSelectionCircleEnabled=nil                 ---@type fun(): boolean (native)
+BlzCameraSetupApplyForceDurationSmooth=nil      ---@type fun(whichSetup: camerasetup, doPan: boolean, forcedDuration: number, easeInDuration: number, easeOutDuration: number, smoothFactor: number) (native)
+BlzEnableTargetIndicator=nil                    ---@type fun(enable: boolean) (native)
+BlzIsTargetIndicatorEnabled=nil                 ---@type fun(): boolean (native)
+BlzShowTerrain=nil                              ---@type fun(show: boolean) (native)
+BlzShowSkyBox=nil                               ---@type fun(show: boolean) (native)
+BlzStartRecording=nil                           ---@type fun(fps: integer) (native)
+BlzEndRecording=nil                             ---@type fun() (native)
+BlzShowUnitTeamGlow=nil                         ---@type fun(whichUnit: unit, show: boolean) (native)
+
+BlzGetOriginFrame=nil                           ---@type fun(frameType: originframetype, index: integer): framehandle (native)
+BlzEnableUIAutoPosition=nil                     ---@type fun(enable: boolean) (native)
+BlzHideOriginFrames=nil                         ---@type fun(enable: boolean) (native)
+BlzConvertColor=nil                             ---@type fun(a: integer, r: integer, g: integer, b: integer): integer (native)
+BlzLoadTOCFile=nil                              ---@type fun(TOCFile: string): boolean (native)
+BlzCreateFrame=nil                              ---@type fun(name: string, owner: framehandle, priority: integer, createContext: integer): framehandle (native)
+BlzCreateSimpleFrame=nil                        ---@type fun(name: string, owner: framehandle, createContext: integer): framehandle (native)
+BlzCreateFrameByType=nil                        ---@type fun(typeName: string, name: string, owner: framehandle, inherits: string, createContext: integer): framehandle (native)
+BlzDestroyFrame=nil                             ---@type fun(frame: framehandle) (native)
+BlzFrameSetPoint=nil                            ---@type fun(frame: framehandle, point: framepointtype, relative: framehandle, relativePoint: framepointtype, x: number, y: number) (native)
+BlzFrameSetAbsPoint=nil                         ---@type fun(frame: framehandle, point: framepointtype, x: number, y: number) (native)
+BlzFrameClearAllPoints=nil                      ---@type fun(frame: framehandle) (native)
+BlzFrameSetAllPoints=nil                        ---@type fun(frame: framehandle, relative: framehandle) (native)
+BlzFrameSetVisible=nil                          ---@type fun(frame: framehandle, visible: boolean) (native)
+BlzFrameIsVisible=nil                           ---@type fun(frame: framehandle): boolean (native)
+BlzGetFrameByName=nil                           ---@type fun(name: string, createContext: integer): framehandle (native)
+BlzFrameGetName=nil                             ---@type fun(frame: framehandle): string (native)
+BlzFrameClick=nil                               ---@type fun(frame: framehandle) (native)
+BlzFrameSetText=nil                             ---@type fun(frame: framehandle, text: string) (native)
+BlzFrameGetText=nil                             ---@type fun(frame: framehandle): string (native)
+BlzFrameAddText=nil                             ---@type fun(frame: framehandle, text: string) (native)
+BlzFrameSetTextSizeLimit=nil                    ---@type fun(frame: framehandle, size: integer) (native)
+BlzFrameGetTextSizeLimit=nil                    ---@type fun(frame: framehandle): integer (native)
+BlzFrameSetTextColor=nil                        ---@type fun(frame: framehandle, color: integer) (native)
+BlzFrameSetFocus=nil                            ---@type fun(frame: framehandle, flag: boolean) (native)
+BlzFrameSetModel=nil                            ---@type fun(frame: framehandle, modelFile: string, cameraIndex: integer) (native)
+BlzFrameSetEnable=nil                           ---@type fun(frame: framehandle, enabled: boolean) (native)
+BlzFrameGetEnable=nil                           ---@type fun(frame: framehandle): boolean (native)
+BlzFrameSetAlpha=nil                            ---@type fun(frame: framehandle, alpha: integer) (native)
+BlzFrameGetAlpha=nil                            ---@type fun(frame: framehandle): integer (native)
+BlzFrameSetSpriteAnimate=nil                    ---@type fun(frame: framehandle, primaryProp: integer, flags: integer) (native)
+BlzFrameSetTexture=nil                          ---@type fun(frame: framehandle, texFile: string, flag: integer, blend: boolean) (native)
+BlzFrameSetScale=nil                            ---@type fun(frame: framehandle, scale: number) (native)
+BlzFrameSetTooltip=nil                          ---@type fun(frame: framehandle, tooltip: framehandle) (native)
+BlzFrameCageMouse=nil                           ---@type fun(frame: framehandle, enable: boolean) (native)
+BlzFrameSetValue=nil                            ---@type fun(frame: framehandle, value: number) (native)
+BlzFrameGetValue=nil                            ---@type fun(frame: framehandle): number (native)
+BlzFrameSetMinMaxValue=nil                      ---@type fun(frame: framehandle, minValue: number, maxValue: number) (native)
+BlzFrameSetStepSize=nil                         ---@type fun(frame: framehandle, stepSize: number) (native)
+BlzFrameSetSize=nil                             ---@type fun(frame: framehandle, width: number, height: number) (native)
+BlzFrameSetVertexColor=nil                      ---@type fun(frame: framehandle, color: integer) (native)
+BlzFrameSetLevel=nil                            ---@type fun(frame: framehandle, level: integer) (native)
+BlzFrameSetParent=nil                           ---@type fun(frame: framehandle, parent: framehandle) (native)
+BlzFrameGetParent=nil                           ---@type fun(frame: framehandle): framehandle (native)
+BlzFrameGetHeight=nil                           ---@type fun(frame: framehandle): number (native)
+BlzFrameGetWidth=nil                            ---@type fun(frame: framehandle): number (native)
+BlzFrameSetFont=nil                             ---@type fun(frame: framehandle, fileName: string, height: number, flags: integer) (native)
+BlzFrameSetTextAlignment=nil                    ---@type fun(frame: framehandle, vert: textaligntype, horz: textaligntype) (native)
+BlzFrameGetChildrenCount=nil                    ---@type fun(frame: framehandle): integer (native)
+BlzFrameGetChild=nil                            ---@type fun(frame: framehandle, index: integer): framehandle (native)
+BlzTriggerRegisterFrameEvent=nil                ---@type fun(whichTrigger: trigger, frame: framehandle, eventId: frameeventtype): event (native)
+BlzGetTriggerFrame=nil                          ---@type fun(): framehandle (native)
+BlzGetTriggerFrameEvent=nil                     ---@type fun(): frameeventtype (native)
+BlzGetTriggerFrameValue=nil                     ---@type fun(): number (native)
+BlzGetTriggerFrameText=nil                      ---@type fun(): string (native)
+BlzTriggerRegisterPlayerSyncEvent=nil           ---@type fun(whichTrigger: trigger, whichPlayer: player, prefix: string, fromServer: boolean): event (native)
+BlzSendSyncData=nil                             ---@type fun(prefix: string, data: string): boolean (native)
+BlzGetTriggerSyncPrefix=nil                     ---@type fun(): string (native)
+BlzGetTriggerSyncData=nil                       ---@type fun(): string (native)
+BlzTriggerRegisterPlayerKeyEvent=nil            ---@type fun(whichTrigger: trigger, whichPlayer: player, key: oskeytype, metaKey: integer, keyDown: boolean): event (native)
+BlzGetTriggerPlayerKey=nil                      ---@type fun(): oskeytype (native)
+BlzGetTriggerPlayerMetaKey=nil                  ---@type fun(): integer (native)
+BlzGetTriggerPlayerIsKeyDown=nil                ---@type fun(): boolean (native)
+BlzEnableCursor=nil                             ---@type fun(enable: boolean) (native)
+BlzSetMousePos=nil                              ---@type fun(x: integer, y: integer) (native)
+BlzGetLocalClientWidth=nil                      ---@type fun(): integer (native)
+BlzGetLocalClientHeight=nil                     ---@type fun(): integer (native)
+BlzIsLocalClientActive=nil                      ---@type fun(): boolean (native)
+BlzGetMouseFocusUnit=nil                        ---@type fun(): unit (native)
+BlzChangeMinimapTerrainTex=nil                  ---@type fun(texFile: string): boolean (native)
+BlzGetLocale=nil                                ---@type fun(): string (native)
+BlzGetSpecialEffectScale=nil                    ---@type fun(whichEffect: effect): number (native)
+BlzSetSpecialEffectMatrixScale=nil              ---@type fun(whichEffect: effect, x: number, y: number, z: number) (native)
+BlzResetSpecialEffectMatrix=nil                 ---@type fun(whichEffect: effect) (native)
+BlzGetUnitAbility=nil                           ---@type fun(whichUnit: unit, abilId: integer): ability (native)
+BlzGetUnitAbilityByIndex=nil                    ---@type fun(whichUnit: unit, index: integer): ability (native)
+BlzGetAbilityId=nil                             ---@type fun(whichAbility: ability): integer (native)
+BlzDisplayChatMessage=nil                       ---@type fun(whichPlayer: player, recipient: integer, message: string) (native)
+BlzPauseUnitEx=nil                              ---@type fun(whichUnit: unit, flag: boolean) (native)
+-- native BlzFourCC2S                                 takes integer value returns string
+-- native BlzS2FourCC                                 takes string value returns integer
+BlzSetUnitFacingEx=nil                          ---@type fun(whichUnit: unit, facingAngle: number) (native)
+
+CreateCommandButtonEffect=nil                   ---@type fun(abilityId: integer, order: string): commandbuttoneffect (native)
+CreateUpgradeCommandButtonEffect=nil            ---@type fun(whichUprgade: integer): commandbuttoneffect (native)
+CreateLearnCommandButtonEffect=nil              ---@type fun(abilityId: integer): commandbuttoneffect (native)
+DestroyCommandButtonEffect=nil                  ---@type fun(whichEffect: commandbuttoneffect) (native)
+
+-- Bit Operations
+BlzBitOr=nil                                    ---@type fun(x: integer, y: integer): integer (native)
+BlzBitAnd=nil                                   ---@type fun(x: integer, y: integer): integer (native)
+BlzBitXor=nil                                   ---@type fun(x: integer, y: integer): integer (native)
+
+-- Intanced Object Operations
+-- Ability
+BlzGetAbilityBooleanField=nil                   ---@type fun(whichAbility: ability, whichField: abilitybooleanfield): boolean (native)
+BlzGetAbilityIntegerField=nil                   ---@type fun(whichAbility: ability, whichField: abilityintegerfield): integer (native)
+BlzGetAbilityRealField=nil                      ---@type fun(whichAbility: ability, whichField: abilityrealfield): number (native)
+BlzGetAbilityStringField=nil                    ---@type fun(whichAbility: ability, whichField: abilitystringfield): string (native)
+BlzGetAbilityBooleanLevelField=nil              ---@type fun(whichAbility: ability, whichField: abilitybooleanlevelfield, level: integer): boolean (native)
+BlzGetAbilityIntegerLevelField=nil              ---@type fun(whichAbility: ability, whichField: abilityintegerlevelfield, level: integer): integer (native)
+BlzGetAbilityRealLevelField=nil                 ---@type fun(whichAbility: ability, whichField: abilityreallevelfield, level: integer): number (native)
+BlzGetAbilityStringLevelField=nil               ---@type fun(whichAbility: ability, whichField: abilitystringlevelfield, level: integer): string (native)
+BlzGetAbilityBooleanLevelArrayField=nil         ---@type fun(whichAbility: ability, whichField: abilitybooleanlevelarrayfield, level: integer, index: integer): boolean (native)
+BlzGetAbilityIntegerLevelArrayField=nil         ---@type fun(whichAbility: ability, whichField: abilityintegerlevelarrayfield, level: integer, index: integer): integer (native)
+BlzGetAbilityRealLevelArrayField=nil            ---@type fun(whichAbility: ability, whichField: abilityreallevelarrayfield, level: integer, index: integer): number (native)
+BlzGetAbilityStringLevelArrayField=nil          ---@type fun(whichAbility: ability, whichField: abilitystringlevelarrayfield, level: integer, index: integer): string (native)
+BlzSetAbilityBooleanField=nil                   ---@type fun(whichAbility: ability, whichField: abilitybooleanfield, value: boolean): boolean (native)
+BlzSetAbilityIntegerField=nil                   ---@type fun(whichAbility: ability, whichField: abilityintegerfield, value: integer): boolean (native)
+BlzSetAbilityRealField=nil                      ---@type fun(whichAbility: ability, whichField: abilityrealfield, value: number): boolean (native)
+BlzSetAbilityStringField=nil                    ---@type fun(whichAbility: ability, whichField: abilitystringfield, value: string): boolean (native)
+BlzSetAbilityBooleanLevelField=nil              ---@type fun(whichAbility: ability, whichField: abilitybooleanlevelfield, level: integer, value: boolean): boolean (native)
+BlzSetAbilityIntegerLevelField=nil              ---@type fun(whichAbility: ability, whichField: abilityintegerlevelfield, level: integer, value: integer): boolean (native)
+BlzSetAbilityRealLevelField=nil                 ---@type fun(whichAbility: ability, whichField: abilityreallevelfield, level: integer, value: number): boolean (native)
+BlzSetAbilityStringLevelField=nil               ---@type fun(whichAbility: ability, whichField: abilitystringlevelfield, level: integer, value: string): boolean (native)
+BlzSetAbilityBooleanLevelArrayField=nil         ---@type fun(whichAbility: ability, whichField: abilitybooleanlevelarrayfield, level: integer, index: integer, value: boolean): boolean (native)
+BlzSetAbilityIntegerLevelArrayField=nil         ---@type fun(whichAbility: ability, whichField: abilityintegerlevelarrayfield, level: integer, index: integer, value: integer): boolean (native)
+BlzSetAbilityRealLevelArrayField=nil            ---@type fun(whichAbility: ability, whichField: abilityreallevelarrayfield, level: integer, index: integer, value: number): boolean (native)
+BlzSetAbilityStringLevelArrayField=nil          ---@type fun(whichAbility: ability, whichField: abilitystringlevelarrayfield, level: integer, index: integer, value: string): boolean (native)
+BlzAddAbilityBooleanLevelArrayField=nil         ---@type fun(whichAbility: ability, whichField: abilitybooleanlevelarrayfield, level: integer, value: boolean): boolean (native)
+BlzAddAbilityIntegerLevelArrayField=nil         ---@type fun(whichAbility: ability, whichField: abilityintegerlevelarrayfield, level: integer, value: integer): boolean (native)
+BlzAddAbilityRealLevelArrayField=nil            ---@type fun(whichAbility: ability, whichField: abilityreallevelarrayfield, level: integer, value: number): boolean (native)
+BlzAddAbilityStringLevelArrayField=nil          ---@type fun(whichAbility: ability, whichField: abilitystringlevelarrayfield, level: integer, value: string): boolean (native)
+BlzRemoveAbilityBooleanLevelArrayField=nil      ---@type fun(whichAbility: ability, whichField: abilitybooleanlevelarrayfield, level: integer, value: boolean): boolean (native)
+BlzRemoveAbilityIntegerLevelArrayField=nil      ---@type fun(whichAbility: ability, whichField: abilityintegerlevelarrayfield, level: integer, value: integer): boolean (native)
+BlzRemoveAbilityRealLevelArrayField=nil         ---@type fun(whichAbility: ability, whichField: abilityreallevelarrayfield, level: integer, value: number): boolean (native)
+BlzRemoveAbilityStringLevelArrayField=nil       ---@type fun(whichAbility: ability, whichField: abilitystringlevelarrayfield, level: integer, value: string): boolean (native)
+
+-- Item 
+BlzGetItemAbilityByIndex=nil                    ---@type fun(whichItem: item, index: integer): ability (native)
+BlzGetItemAbility=nil                           ---@type fun(whichItem: item, abilCode: integer): ability (native)
+BlzItemAddAbility=nil                           ---@type fun(whichItem: item, abilCode: integer): boolean (native)
+BlzGetItemBooleanField=nil                      ---@type fun(whichItem: item, whichField: itembooleanfield): boolean (native)
+BlzGetItemIntegerField=nil                      ---@type fun(whichItem: item, whichField: itemintegerfield): integer (native)
+BlzGetItemRealField=nil                         ---@type fun(whichItem: item, whichField: itemrealfield): number (native)
+BlzGetItemStringField=nil                       ---@type fun(whichItem: item, whichField: itemstringfield): string (native)
+BlzSetItemBooleanField=nil                      ---@type fun(whichItem: item, whichField: itembooleanfield, value: boolean): boolean (native)
+BlzSetItemIntegerField=nil                      ---@type fun(whichItem: item, whichField: itemintegerfield, value: integer): boolean (native)
+BlzSetItemRealField=nil                         ---@type fun(whichItem: item, whichField: itemrealfield, value: number): boolean (native)
+BlzSetItemStringField=nil                       ---@type fun(whichItem: item, whichField: itemstringfield, value: string): boolean (native)
+BlzItemRemoveAbility=nil                        ---@type fun(whichItem: item, abilCode: integer): boolean (native)
+
+-- Unit 
+BlzGetUnitBooleanField=nil                      ---@type fun(whichUnit: unit, whichField: unitbooleanfield): boolean (native)
+BlzGetUnitIntegerField=nil                      ---@type fun(whichUnit: unit, whichField: unitintegerfield): integer (native)
+BlzGetUnitRealField=nil                         ---@type fun(whichUnit: unit, whichField: unitrealfield): number (native)
+BlzGetUnitStringField=nil                       ---@type fun(whichUnit: unit, whichField: unitstringfield): string (native)
+BlzSetUnitBooleanField=nil                      ---@type fun(whichUnit: unit, whichField: unitbooleanfield, value: boolean): boolean (native)
+BlzSetUnitIntegerField=nil                      ---@type fun(whichUnit: unit, whichField: unitintegerfield, value: integer): boolean (native)
+BlzSetUnitRealField=nil                         ---@type fun(whichUnit: unit, whichField: unitrealfield, value: number): boolean (native)
+BlzSetUnitStringField=nil                       ---@type fun(whichUnit: unit, whichField: unitstringfield, value: string): boolean (native)
+
+-- Unit Weapon
+BlzGetUnitWeaponBooleanField=nil                ---@type fun(whichUnit: unit, whichField: unitweaponbooleanfield, index: integer): boolean (native)
+BlzGetUnitWeaponIntegerField=nil                ---@type fun(whichUnit: unit, whichField: unitweaponintegerfield, index: integer): integer (native)
+BlzGetUnitWeaponRealField=nil                   ---@type fun(whichUnit: unit, whichField: unitweaponrealfield, index: integer): number (native)
+BlzGetUnitWeaponStringField=nil                 ---@type fun(whichUnit: unit, whichField: unitweaponstringfield, index: integer): string (native)
+BlzSetUnitWeaponBooleanField=nil                ---@type fun(whichUnit: unit, whichField: unitweaponbooleanfield, index: integer, value: boolean): boolean (native)
+BlzSetUnitWeaponIntegerField=nil                ---@type fun(whichUnit: unit, whichField: unitweaponintegerfield, index: integer, value: integer): boolean (native)
+BlzSetUnitWeaponRealField=nil                   ---@type fun(whichUnit: unit, whichField: unitweaponrealfield, index: integer, value: number): boolean (native)
+BlzSetUnitWeaponStringField=nil                 ---@type fun(whichUnit: unit, whichField: unitweaponstringfield, index: integer, value: string): boolean (native)
+
+-- Skin
+BlzGetUnitSkin=nil                                 ---@type fun(whichUnit: unit): integer (native)
+BlzGetItemSkin=nil                                 ---@type fun(whichItem: item): integer (native)
+-- native BlzGetDestructableSkin                         takes destructable whichDestructable returns integer
+BlzSetUnitSkin=nil                                 ---@type fun(whichUnit: unit, skinId: integer) (native)
+BlzSetItemSkin=nil                                 ---@type fun(whichItem: item, skinId: integer) (native)
+-- native BlzSetDestructableSkin                         takes destructable whichDestructable, integer skinId returns nothing
+
+BlzCreateItemWithSkin=nil                       ---@type fun(itemid: integer, x: number, y: number, skinId: integer): item (native)
+BlzCreateUnitWithSkin=nil                       ---@type fun(id: player, unitid: integer, x: number, y: number, face: number, skinId: integer): unit (native)
+BlzCreateDestructableWithSkin=nil               ---@type fun(objectid: integer, x: number, y: number, face: number, scale: number, variation: integer, skinId: integer): destructable (native)
+BlzCreateDestructableZWithSkin=nil              ---@type fun(objectid: integer, x: number, y: number, z: number, face: number, scale: number, variation: integer, skinId: integer): destructable (native)
+BlzCreateDeadDestructableWithSkin=nil           ---@type fun(objectid: integer, x: number, y: number, face: number, scale: number, variation: integer, skinId: integer): destructable (native)
+BlzCreateDeadDestructableZWithSkin=nil          ---@type fun(objectid: integer, x: number, y: number, z: number, face: number, scale: number, variation: integer, skinId: integer): destructable (native)
+BlzGetPlayerTownHallCount=nil                   ---@type fun(whichPlayer: player): integer (native)
+
+BlzQueueImmediateOrderById=nil      ---@type fun(whichUnit: unit, order: integer): boolean (native)
+BlzQueuePointOrderById=nil          ---@type fun(whichUnit: unit, order: integer, x: number, y: number): boolean (native)
+BlzQueueTargetOrderById=nil         ---@type fun(whichUnit: unit, order: integer, targetWidget: widget): boolean (native)
+BlzQueueInstantPointOrderById=nil   ---@type fun(whichUnit: unit, order: integer, x: number, y: number, instantTargetWidget: widget): boolean (native)
+BlzQueueInstantTargetOrderById=nil  ---@type fun(whichUnit: unit, order: integer, targetWidget: widget, instantTargetWidget: widget): boolean (native)
+BlzQueueBuildOrderById=nil          ---@type fun(whichPeon: unit, unitId: integer, x: number, y: number): boolean (native)
+BlzQueueNeutralImmediateOrderById=nil   ---@type fun(forWhichPlayer: player, neutralStructure: unit, unitId: integer): boolean (native)
+BlzQueueNeutralPointOrderById=nil       ---@type fun(forWhichPlayer: player, neutralStructure: unit, unitId: integer, x: number, y: number): boolean (native)
+BlzQueueNeutralTargetOrderById=nil      ---@type fun(forWhichPlayer: player, neutralStructure: unit, unitId: integer, target: widget): boolean (native)
+
+-- returns the number of orders the unit currently has queued up
+BlzGetUnitOrderCount=nil ---@type fun(whichUnit: unit): integer (native)
+-- clears either all orders or only queued up orders
+BlzUnitClearOrders=nil ---@type fun(whichUnit: unit, onlyQueued: boolean) (native)
+-- stops the current order and optionally clears the queue
+BlzUnitForceStopOrder=nil ---@type fun(whichUnit: unit, clearQueue: boolean) (native)
+--Conversion by vJass2Lua v0.A.3.0 beta

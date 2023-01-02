@@ -4,7 +4,6 @@ OnInit("PressSaveOrLoad", function ()
 
     local NormalColor = "FCD20D"
     local DisabledColor = "FFFFFF"
-    local DEFAULT_AUTO_SAVE_INTERVAL = 3 -- minutes
     local LocalPlayer = GetLocalPlayer()
 
     local Pressed = __jarray(0) ---@type table<player, integer>
@@ -12,9 +11,6 @@ OnInit("PressSaveOrLoad", function ()
     local LoadButton = nil ---@type framehandle
     local SaveLoadMenu = nil ---@type framehandle
     local SaveSlotT = {} ---@type framehandle[]
-    local AutoSaveSlot = nil ---@type framehandle
-    local AutoSaveText = nil ---@type framehandle
-    local AutoSaveSlider = nil ---@type framehandle
     local Information = nil ---@type framehandle
     local TooltipName = nil ---@type framehandle
     local TooltipGold = nil ---@type framehandle
@@ -149,9 +145,6 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetVisible(AbsoluteSave, true)
             BlzFrameSetEnable(AbsoluteSave, false)
             BlzFrameSetVisible(AbsoluteLoad, false)
-            BlzFrameSetVisible(AutoSaveSlot, false)
-            BlzFrameSetVisible(AutoSaveText, true)
-            BlzFrameSetVisible(AutoSaveSlider, true)
             UpdateMenu()
         end
     end
@@ -163,9 +156,6 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetVisible(AbsoluteSave, false)
             BlzFrameSetVisible(AbsoluteLoad, true)
             BlzFrameSetEnable(AbsoluteLoad, false)
-            BlzFrameSetVisible(AutoSaveSlot, true)
-            BlzFrameSetVisible(AutoSaveText, false)
-            BlzFrameSetVisible(AutoSaveSlider, false)
             UpdateMenu()
         end
     end
@@ -182,30 +172,13 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     local function AbsoluteLoadFunc()
-        xpcall(function ()
         TriggerExecute(gg_trg_Absolute_Load)
         UseData(GetTriggerPlayer(), Pressed[GetTriggerPlayer()])
         ExitFunc()
         if GetTriggerPlayer() == LocalPlayer then
             BlzFrameSetEnable(AbsoluteLoad, false)
         end
-        end, print)
     end
-
-    -- AutoSave
-
-    local AutoSaveTimers = {} ---@type table<player, function>
-    local AutoSaveIntervals = __jarray(DEFAULT_AUTO_SAVE_INTERVAL) ---@type table<player, number>
-
-    local function AutoSaveSliderFunc()
-        local p = GetTriggerPlayer()
-        local v = BlzGetTriggerFrameValue()
-
-        AutoSaveIntervals[p] = v
-        SetAutoSaveInterval(p, v)
-    end
-
-    -- --
 
     local function InitFrames()
         local t = nil ---@type trigger
@@ -245,23 +218,23 @@ OnInit("PressSaveOrLoad", function ()
 
         SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.580000, 0.540000)
-        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.280000)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.320000)
         BlzFrameSetVisible(SaveLoadMenu, false)
 
         y1[0] = -0.01000
-        y2[0] = 0.22000
+        y2[0] = 0.18000
 
         y1[1] = -0.04500
-        y2[1] = 0.18500
+        y2[1] = 0.14500
 
         y1[2] = -0.08000
-        y2[2] = 0.15000
+        y2[2] = 0.11000
 
         y1[3] = -0.11500
-        y2[3] = 0.11500
+        y2[3] = 0.07500
 
         y1[4] = -0.15000
-        y2[4] = 0.08000
+        y2[4] = 0.04000
 
         for i = 0, 4 do
             SaveSlotT[i] = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
@@ -274,36 +247,8 @@ OnInit("PressSaveOrLoad", function ()
             TriggerAddAction(t, function () SaveLoadActions(i) end) -- :D
         end
 
-        AutoSaveSlot = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu, 0, 0)
-        BlzFrameSetPoint(AutoSaveSlot, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.18500)
-        BlzFrameSetPoint(AutoSaveSlot, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.045000)
-        BlzFrameSetText(AutoSaveSlot, "|cffFCD20DAuto-save|r")
-        BlzFrameSetScale(AutoSaveSlot, 1.00)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, AutoSaveSlot, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, function () SaveLoadActions(5) end)
-
-        AutoSaveText = BlzCreateFrameByType("TEXT", "name", SaveLoadMenu, "", 0)
-        BlzFrameSetPoint(AutoSaveText, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.18313)
-        BlzFrameSetPoint(AutoSaveText, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.061260)
-        BlzFrameSetText(AutoSaveText, "Auto-save every |cffFFCC00" .. math.floor(DEFAULT_AUTO_SAVE_INTERVAL) .. "|r minutes.")
-        BlzFrameSetEnable(AutoSaveText, false)
-        BlzFrameSetScale(AutoSaveText, 1.00)
-        BlzFrameSetTextAlignment(AutoSaveText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
-
-        AutoSaveSlider = BlzCreateFrame("EscMenuSliderTemplate", SaveLoadMenu, 0, 0)
-        BlzFrameSetPoint(AutoSaveSlider, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.20000)
-        BlzFrameSetSize(AutoSaveSlider, 0.20000, -0.24500)
-        BlzFrameSetPoint(AutoSaveSlider, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.045000)
-        BlzFrameSetMinMaxValue(AutoSaveSlider, 2, 10)
-        BlzFrameSetStepSize(AutoSaveSlider, 1.)
-        BlzFrameSetValue(AutoSaveSlider, DEFAULT_AUTO_SAVE_INTERVAL)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, AutoSaveSlider, FRAMEEVENT_SLIDER_VALUE_CHANGED)
-        TriggerAddAction(t, AutoSaveSliderFunc)
-
         AbsoluteSave = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
-        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.22000)
+        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.18000)
         BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.010000)
         BlzFrameSetText(AbsoluteSave, "|cffFCD20DSave|r")
         BlzFrameSetScale(AbsoluteSave, 1.00)
@@ -313,7 +258,7 @@ OnInit("PressSaveOrLoad", function ()
         TriggerAddAction(t, AbsoluteSaveFunc)
 
         AbsoluteLoad = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
-        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.22000)
+        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.18000)
         BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.010000)
         BlzFrameSetText(AbsoluteLoad, "|cffFCD20DLoad|r")
         BlzFrameSetScale(AbsoluteLoad, 1.00)
@@ -323,7 +268,7 @@ OnInit("PressSaveOrLoad", function ()
         TriggerAddAction(t, AbsoluteLoadFunc)
 
         Exit = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
-        BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.12000, -0.22000)
+        BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.12000, -0.18000)
         BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.010000)
         BlzFrameSetText(Exit, "|cffFCD20DExit|r")
         BlzFrameSetScale(Exit, 1.00)
@@ -335,7 +280,7 @@ OnInit("PressSaveOrLoad", function ()
 
         Information = BlzCreateFrame("CheckListBox", SaveLoadMenu,0,0)
         BlzFrameSetPoint(Information, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, -0.16706, 0.0067310)
-        BlzFrameSetPoint(Information, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.21672, -0.20045)
+        BlzFrameSetPoint(Information, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.21672, -0.24045)
         BlzFrameSetVisible(Information, false)
 
         TooltipName = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
@@ -422,35 +367,6 @@ OnInit("PressSaveOrLoad", function ()
     function ShowLoad(p, flag)
         if p == LocalPlayer then
             BlzFrameSetVisible(LoadButton, flag)
-        end
-    end
-
-    ---@param p player
-    ---@return integer
-    function GetAutoSaveInterval(p)
-        return AutoSaveIntervals[p]
-    end
-
-    ---@param p player
-    ---@param i integer
-    function SetAutoSaveInterval(p, i)
-        i = i < 2 and DEFAULT_AUTO_SAVE_INTERVAL or i
-        AutoSaveIntervals[p] = i
-        Timed.call(AutoSaveTimers[p] and AutoSaveTimers[p]() or 0, function ()
-            local function callback()
-                udg_SaveLoadSlot = 6
-                udg_SaveLoadEvent_Player = p
-                TriggerExecute(gg_trg_Save_GUI)
-                if p == LocalPlayer then
-                    UpdateInformation()
-                end
-            end
-            callback()
-            AutoSaveTimers[p] = Timed.echo(callback, i * 60)
-        end)
-        if p == LocalPlayer then
-            BlzFrameSetValue(AutoSaveSlider, i)
-            BlzFrameSetText(AutoSaveText, "Auto-save every |cffFFCC00" .. math.floor(i) .. "|r minutes.")
         end
     end
 

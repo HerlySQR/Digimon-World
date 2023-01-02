@@ -166,7 +166,7 @@ OnInit(function ()
     ---Returns a random neighbour that didn't reach its limit and is not in cooldown, if there is not, then return nil
     ---@param r RegionData
     ---@param quantity integer
-    ---@return RegionData
+    ---@return RegionData | nil
     local function GetFreeNeighbour(r, quantity)
         list = {}
 
@@ -218,21 +218,29 @@ OnInit(function ()
     end
 
     local PlayersInRegion = Set.create()
+    local regionData, lvl
+    local function checkForUnit(u)
+        if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+            regionData.someoneClose = true
+            regionData.inregion = true
+            PlayersInRegion:addSingle(GetOwningPlayer(u))
+            lvl = math.max(lvl, GetHeroLevel(u))
+        end
+    end
+
+    local function checkNearby(u)
+        if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+            regionData.someoneClose = true
+        end
+    end
 
     local function Update()
         for node in All:loop() do
-            local regionData = node.value ---@type RegionData
+            regionData = node.value ---@type RegionData
             -- Check if the unit nearby the spawn region belongs to a player
             regionData.inregion = false
-            local lvl = 1
-            ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, function (u)
-                if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-                    regionData.someoneClose = true
-                    regionData.inregion = true
-                    PlayersInRegion:addSingle(GetOwningPlayer(u))
-                    lvl = math.max(lvl, GetHeroLevel(u))
-                end
-            end)
+            lvl = 1
+            ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, checkForUnit)
             -- Control the creep or the spawn
             if regionData.inregion then
                 regionData.delay = regionData.delay - INTERVAL
@@ -256,11 +264,7 @@ OnInit(function ()
             else
                 -- Check if a unit is still nearby the spawn region
                 regionData.someoneClose = false
-                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, function (u)
-                    if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-                        regionData.someoneClose = true
-                    end
-                end)
+                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, checkNearby)
                 for _, creep in ipairs(regionData.creeps) do
                     if creep.rd == regionData then
                         creep.remaining = creep.remaining - INTERVAL

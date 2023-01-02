@@ -4,6 +4,7 @@ OnInit("Backpack", function ()
     Require "GetMainSelectedUnit"
     Require "PlayerUtils"
 
+    local OriginFrame = BlzGetOriginFrame(ORIGIN_FRAME_WORLD_FRAME, 0)
     local Backpack = nil ---@type framehandle
     local BackdropBackpack = nil ---@type framehandle
     local BackpackMenu = nil ---@type framehandle
@@ -81,6 +82,10 @@ OnInit("Backpack", function ()
         local p = GetTriggerPlayer()
         DiscardMode[p] = false
         if p == LocalPlayer then
+            -- To unfocus the button
+            BlzFrameSetEnable(Backpack, false)
+            BlzFrameSetEnable(Backpack, true)
+
             if not BlzFrameIsVisible(BackpackMenu) then
                 BlzFrameSetText(BackpackText, "Use an item for the focused unit")
                 BlzFrameSetVisible(BackpackMenu, true)
@@ -173,7 +178,7 @@ OnInit("Backpack", function ()
     local function InitFrames()
         local t = nil ---@type trigger
 
-        Backpack = BlzCreateFrame("IconButtonTemplate", BlzGetOriginFrame(ORIGIN_FRAME_WORLD_FRAME, 0), 0, 0)
+        Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.760000, 0.195000)
         BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.790000, 0.165000)
         BlzFrameSetVisible(Backpack, false)
@@ -185,7 +190,7 @@ OnInit("Backpack", function ()
         BlzTriggerRegisterFrameEvent(t, Backpack, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BackpackFunc)
 
-        BackpackMenu = BlzCreateFrame("CheckListBox", BlzGetOriginFrame(ORIGIN_FRAME_WORLD_FRAME, 0), 0, 0)
+        BackpackMenu = BlzCreateFrame("CheckListBox", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.680000, 0.345000)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.195000)
         BlzFrameSetVisible(BackpackMenu, false)

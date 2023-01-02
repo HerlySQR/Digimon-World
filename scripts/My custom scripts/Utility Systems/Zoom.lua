@@ -2,7 +2,7 @@ OnInit("Zoom", function ()
     Require "Timed"
     Require "PlayerUtils"
 
-    local DEFAULT_CAMERA_DISTANCE = 1240.
+    --[=[local DEFAULT_CAMERA_DISTANCE = 1240.
     local MAX_CAMERA_DISTANCE = 4000.
     local MIN_CAMERA_DISTANCE = 500.
 
@@ -58,5 +58,8 @@ OnInit("Zoom", function ()
         TriggerAddAction(t, function ()
             Distances[GetTriggerPlayer()] = DEFAULT_CAMERA_DISTANCE
         end)
-    end)
+    end)]=]
+
+    
+
 end)

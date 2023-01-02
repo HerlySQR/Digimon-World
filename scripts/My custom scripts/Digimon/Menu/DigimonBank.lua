@@ -11,11 +11,13 @@ OnInit("DigimonBank", function ()
     ---@field main Digimon
     ---@field spawnPoint Vec2
     ---@field allDead boolean
-    local Bank = {} ---@type Bank[]
+    local Bank = {}
     local LocalPlayer = GetLocalPlayer() ---@type player
 
+    Bank.__index = Bank
+
     for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-        Bank[i] = {
+        Bank[i] = setmetatable({
             stocked = {},
             inUse = {},
             pressed = -1,
@@ -26,71 +28,104 @@ OnInit("DigimonBank", function ()
                 y = GetRectCenterY(gg_rct_Player_1_Spawn)
             },
             allDead = false
-        }
+        }, Bank)
     end
 
     -- Conditions
 
-    ---@param bank Bank
-    ---@return boolean
-    local function UseDigimonConditions(bank)
-        if bank.pressed == -1 then
-            return false
-        end
-        return GetDigimonCooldown(bank.stocked[bank.pressed]) <= 0
-    end
-
-    ---@param bank Bank
-    ---@return boolean
-    local function StoreDigimonConditions(bank)
-        if bank.pressed == -1 then
-            return false
-        end
-        if bank.stocked[bank.pressed].onCombat then
-            return false
-        end
+    ---@return integer
+    function Bank:used()
         local max = 0
         for i = 0, 5 do
-            if bank.inUse[i] then
+            if self.inUse[i] then
                 max = max + 1
             end
         end
+        return max
+    end
+
+    ---@return boolean
+    function Bank:useDigimonConditions()
+        if self.pressed == -1 then
+            return false
+        end
+        return GetDigimonCooldown(self.stocked[self.pressed]) <= 0 and self:used() < 3
+    end
+
+    ---@return Digimon[]
+    function Bank:getUsedDigimons()
+        local list = {}
+        for i = 0, 5 do
+            if self.inUse[i] then
+                table.insert(list, self.inUse[i])
+            end
+        end
+        return list
+    end
+
+    ---@return boolean
+    function Bank:storeDigimonConditions()
+        if self.pressed == -1 then
+            return false
+        end
+
+        if self.stocked[self.pressed].onCombat then
+            return false
+        end
+
+        local max = self:used()
         if max <= 1 then
             return false
         end
+
+        -- All should be together (already check there should be at least 2 used digimons)
+        local centerX, centerY = 0, 0
+        local list = self:getUsedDigimons()
+
+        for _, d in ipairs(list) do
+            centerX = centerX + d:getX()
+            centerY = centerY + d:getY()
+        end
+
+        centerX = centerX / max
+        centerY = centerY / max
+
+        for _, d in ipairs(list) do
+            if math.sqrt((d:getX() - centerX)^2 + (d:getY() -centerY)^2) > 400. then
+                return false
+            end
+        end
+
         return true
     end
 
-    ---@param bank Bank
     ---@return boolean
-    local function FreeDigimonConditions(bank)
-        return GetDigimonCount(bank.p) > 1
+    function Bank:freeDigimonConditions()
+        return GetDigimonCount(self.p) > 1
     end
 
-    ---@param bank Bank
     ---@return boolean
-    local function SearchMain(bank)
+    function Bank:searchMain()
         for i = 0, MAX_STOCK - 1 do
-            if bank.inUse[i] then
-                bank.main = bank.inUse[i]
+            if self.inUse[i] then
+                self.main = self.inUse[i]
                 return true
             end
         end
-        bank.main = nil
+        self.main = nil
         return false
     end
 
     ---Returns true if the player is using this Digimon
-    ---@param bank Bank
     ---@param index integer
     ---@param hide boolean
     ---@return boolean
-    local function StoreDigimon(bank, index, hide)
-        local d = bank.inUse[index] ---@type Digimon
+    function Bank:storeDigimon(index, hide)
+        local d = self.inUse[index] ---@type Digimon
         if d then
-            bank.inUse[index] = nil
-            if bank.main == d then
-                SearchMain(bank)
+            self.inUse[index] = nil
+            if self.main == d then
+                self:searchMain()
             end
             if hide then
                 d:setOwner(Digimon.PASSIVE)
@@ -102,11 +137,10 @@ OnInit("DigimonBank", function ()
     end
 
     ---Returns true if the slot has a digimon avaible to summon
-    ---@param bank Bank
     ---@param index integer
     ---@return boolean
-    local function Avaible(bank, index)
-        return index ~= -1 and bank.stocked[index] ~= nil and bank.inUse[index] == nil
+    function Bank:avaible(index)
+        return index ~= -1 and self.stocked[index] ~= nil and self.inUse[index] == nil
     end
 
     local SummonADigimon = nil ---@type framehandle
@@ -455,16 +489,16 @@ OnInit("DigimonBank", function ()
     -- Update frames
     Timed.echo(function ()
         for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-            local bank = Bank[i]
+            local bank = Bank[i] ---@type Bank
             if GetDigimonCount(bank.p) > 0 then
                 if bank.p == LocalPlayer then
-                    BlzFrameSetEnable(Summon, UseDigimonConditions(bank) and Avaible(bank, bank.pressed))
-                    BlzFrameSetEnable(Store, StoreDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
-                    BlzFrameSetEnable(Free, FreeDigimonConditions(bank) and bank.inUse[bank.pressed] ~= nil)
+                    BlzFrameSetEnable(Summon, bank:useDigimonConditions() and bank:avaible(bank.pressed))
+                    BlzFrameSetEnable(Store, bank:storeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
+                    BlzFrameSetEnable(Free, bank:freeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
                 end
             end
         end
-    end, 0.03125)
+    end, 0.1)
 
     -- Functions to use
 
@@ -479,7 +513,7 @@ OnInit("DigimonBank", function ()
     ---@param d Digimon
     ---@return integer
     function SendToBank(p, d)
-        local bank = Bank[GetPlayerId(p)]
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
         local index = -1
         for i = 0, MAX_STOCK - 1 do
             if not bank.stocked[i] then
@@ -487,7 +521,7 @@ OnInit("DigimonBank", function ()
                 d:setOwner(Digimon.PASSIVE)
                 d:hideInTheCorner()
                 if bank.main == d then
-                    SearchMain(bank)
+                    bank:searchMain()
                 end
                 index = i
                 break
@@ -503,7 +537,7 @@ OnInit("DigimonBank", function ()
     ---@param index integer
     ---@return boolean
     function SummonDigimon(p, index)
-        local bank = Bank[GetPlayerId(p)]
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
         local d = bank.stocked[index] ---@type Digimon
         local b = false
         if d then
@@ -532,7 +566,7 @@ OnInit("DigimonBank", function ()
     ---@param index integer
     ---@return Digimon
     function RemoveFromBank(p, index)
-        local bank = Bank[GetPlayerId(p)]
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
         local d = bank.stocked[index] ---@type Digimon
         if d then
             bank.stocked[index] = nil
@@ -544,7 +578,7 @@ OnInit("DigimonBank", function ()
                 d:showFromTheCorner(bank.main:getX(), bank.main:getY())
             end
             if bank.main == d then
-                SearchMain(bank)
+                bank:searchMain()
             end
             Timed.call(5 * math.random(), function ()
                 d:issueOrder(Orders.smart, MapBounds:getRandomX(), MapBounds:getRandomY())
@@ -561,7 +595,7 @@ OnInit("DigimonBank", function ()
     ---@param d Digimon
     ---@return integer
     function GetBankIndex(p, d)
-        local bank = Bank[GetPlayerId(p)]
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
         for i = 0, 5 do
             if bank.stocked[i] == d then
                 return i
@@ -660,6 +694,12 @@ OnInit("DigimonBank", function ()
     ---@return number
     function GetDigimonCooldown(d)
         return cooldowns[d]
+    end
+
+    ---@param p player
+    ---@return Digimon[]
+    function GetUsedDigimons(p)
+        return Bank[GetPlayerId(p)]:getUsedDigimons()
     end
 
     ---@param p player

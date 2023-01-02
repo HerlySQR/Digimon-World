@@ -13,6 +13,8 @@ OnInit("DigimonEvolution", function ()
 
     -- Register when a digimon enters/leaves in a rect for evolution
 
+    local regions = {} ---@type table<rect, region>
+
     local rectsE = {} ---@type table<rect, trigger>
 
     ---@param r rect
@@ -21,7 +23,13 @@ OnInit("DigimonEvolution", function ()
         local t = rectsE[r]
         if not t then
             t = CreateTrigger()
-            TriggerRegisterEnterRectSimple(t, r)
+            local rg = regions[r]
+            if not rg then
+                rg = CreateRegion()
+                RegionAddRect(rg, r)
+                regions[r] = rg
+            end
+            TriggerRegisterEnterRegion(t, rg)
             rectsE[r] = t
         end
         TriggerAddAction(t, function ()
@@ -40,7 +48,13 @@ OnInit("DigimonEvolution", function ()
         local t = rectsL[r]
         if not t then
             t = CreateTrigger()
-            TriggerRegisterLeaveRectSimple(t, r)
+            local rg = regions[r]
+            if not rg then
+                rg = CreateRegion()
+                RegionAddRect(rg, r)
+                regions[r] = rg
+            end
+            TriggerRegisterLeaveRegion(t, rg)
             rectsL[r] = t
         end
         TriggerAddAction(t, function ()
@@ -134,19 +148,34 @@ OnInit("DigimonEvolution", function ()
         evolve:addAbility(EvolveAbilDis)
     end
 
+    local onlyDayTypes = {} ---@type table<integer, fun(evolve: Digimon)>
+    local onlyNightTypes = {} ---@type table<integer, fun(evolve: Digimon)>
+
+    ---Consider day or night time
+    ---@return boolean
+    local function isTime(onlyDay, onlyNight)
+        return (not onlyDay or (GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK))
+        and (not onlyNight or (GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK))
+    end
+
     ---The conditions to evolve (to ignore level just set the param level to 0)
     ---@param initial integer
     ---@param toEvolve integer
     ---@param level integer
     ---@param place rect nilable
     ---@param stone integer nilable
-    local function CreateSpecificCondtions(initial, toEvolve, level, place, stone)
+    ---@param onlyDay boolean
+    ---@param onlyNight boolean
+    local function CreateSpecificCondtions(initial, toEvolve, level, place, stone, onlyDay, onlyNight)
+        if onlyDay and onlyNight then
+            error("Digimon Evolution: Contradiction with time day condition in " .. GetObjectName(initial) .. " to " .. GetObjectName(toEvolve))
+        end
         ---Unlock evolve
         ---@param evolve Digimon
         ---@param otherCond? fun(evo: Digimon):boolean is an aditional condition that uses evolve as parameter, if is not set, then is ignored
         local function active(evolve, otherCond)
             local p = evolve:getOwner()
-            if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE and evolve:getTypeId() == initial and evolve:getLevel() >= level and (not otherCond or otherCond(evolve)) then
+            if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE and evolve:getTypeId() == initial and evolve:getLevel() >= level and isTime(onlyDay, onlyNight) and (not otherCond or otherCond(evolve)) then
                 AddPossibleEvolution(evolve, toEvolve)
             end
         end
@@ -158,6 +187,12 @@ OnInit("DigimonEvolution", function ()
             if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE and evolve:getTypeId() == initial then
                 RemovePossibleEvolution(evolve, toEvolve)
             end
+        end
+
+        if onlyDay then
+            onlyDayTypes[initial] = deactive
+        elseif onlyNight then
+            onlyNightTypes[initial] = deactive
         end
 
         -- Case 1: Only level
@@ -209,8 +244,8 @@ OnInit("DigimonEvolution", function ()
             end)
             RegisterItemDrop(stone, deactive)
         end
-
     end
+
     for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
         local p = Player(i)
         EvolveDialog[p] = DialogCreate()
@@ -243,17 +278,33 @@ OnInit("DigimonEvolution", function ()
         DialogDisplay(p, EvolveDialog[p], true)
     end)
 
+    -- Consider day and night
+
+    local isNotDayEvent = EventListener.create()
+    local isNotNightEvent = EventListener.create()
+
+    local triggerDay = CreateTrigger()
+    TriggerRegisterGameStateEventTimeOfDay(triggerDay, GREATER_THAN, bj_TOD_DUSK)
+    TriggerRegisterGameStateEventTimeOfDay(triggerDay, LESS_THAN_OR_EQUAL, bj_TOD_DAWN)
+    TriggerAddAction(triggerDay, function () isNotDayEvent:run() end)
+
+    local triggerNight = CreateTrigger()
+    TriggerRegisterGameStateEventTimeOfDay(triggerNight, GREATER_THAN, bj_TOD_DAWN)
+    TriggerAddCondition(triggerNight, Condition(function () return GetTimeOfDay() <= bj_TOD_DUSK end))
+    TriggerAddAction(triggerNight, function () isNotNightEvent:run() end)
+
+    local callbacks = {} ---@type table<Digimon, fun(d: Digimon)>
+
     -- Add the evolution ability to the new digimon
     Digimon.createEvent:register(function (new)
-        local p = new:getOwner()
-        if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
-            new:addAbility(EvolveAbilDis)
-        end
-    end)
-    Digimon.capturedEvent:register(function (info)
-        local p = info.target:getOwner()
-        if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
-            info.target:addAbility(EvolveAbilDis)
+        new:addAbility(EvolveAbilDis)
+        local typ = new:getTypeId()
+        if onlyDayTypes[typ] then
+            callbacks[new] = function () onlyDayTypes[typ](new) end
+            isNotDayEvent:register(callbacks[new])
+        elseif onlyNightTypes[typ] then
+            callbacks[new] = function () onlyNightTypes[typ](new) end
+            isNotNightEvent:register(callbacks[new])
         end
     end)
 
@@ -261,6 +312,14 @@ OnInit("DigimonEvolution", function ()
     Digimon.destroyEvent:register(function (old)
         old:removeAbility(EvolveAbil)
         old:removeAbility(EvolveAbilDis)
+        local typ = old:getTypeId()
+        if onlyDayTypes[typ] then
+            isNotDayEvent:unregister(callbacks[old])
+            callbacks[old] = nil
+        elseif onlyNightTypes[typ] then
+            isNotNightEvent:unregister(callbacks[old])
+            callbacks[old] = nil
+        end
     end)
 
     -- Evolve Run
@@ -323,12 +382,21 @@ OnInit("DigimonEvolution", function ()
     -- For GUI
     udg_CreateEvolutionCondition = CreateTrigger()
     TriggerAddAction(udg_CreateEvolutionCondition, function ()
-        CreateSpecificCondtions(udg_InitialForm, udg_EvolvedForm, udg_EvolveLevelCondition, rawget(_G, "udg_EvolveRegionCondition"), rawget(_G, "udg_EvolveItemCondition"))
+        CreateSpecificCondtions(udg_InitialForm,
+            udg_EvolvedForm,
+            udg_EvolveLevelCondition,
+            rawget(_G, "udg_EvolveRegionCondition"),
+            rawget(_G, "udg_EvolveItemCondition"),
+            udg_EvolveOnlyDayCondition,
+            udg_EvolveOnlyNightCondition
+        )
         udg_InitialForm = 0
         udg_EvolvedForm = 0
         udg_EvolveLevelCondition = 0
         udg_EvolveRegionCondition = nil
         udg_EvolveItemCondition = nil
+        udg_EvolveOnlyDayCondition = false
+        udg_EvolveOnlyNightCondition = false
     end)
 
 end)
