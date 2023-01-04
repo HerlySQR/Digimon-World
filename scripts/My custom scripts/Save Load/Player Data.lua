@@ -55,6 +55,17 @@ OnInit("Player Data", function ()
         PlayerDatas[Player(i)] = {}
     end
 
+    ---Since the save-load system loads the data in the reverse order, I have to reverse it again
+    ---@param list table
+    ---@return table
+    local function reverse(list)
+        local newList = {}
+        for i = #list, 1, -1 do
+            table.insert(newList, list[i])
+        end
+        return newList
+    end
+
     ---After set the GUI variables use this function to store them in a slot
     ---@param p player
     ---@param slot integer
@@ -64,12 +75,12 @@ OnInit("Player Data", function ()
             gold = udg_SaveLoadGold, ---@type integer
             lumber = udg_SaveLoadLumber, ---@type integer
             food = udg_SaveLoadFood, ---@type integer
-            backpackItems = udg_SaveLoadBackpackItems, ---@type integer[]
-            backpackItemCharges = udg_SaveLoadBackpackItemCharges, ---@type integer[]
-            digimons = udg_SaveLoadDigimons, ---@type Digimon[]
-            inventories = udg_SaveLoadInventories, ---@type Inventory[]
-            levels = udg_SaveLoadLevels, ---@type integer[]
-            experiences = udg_SaveLoadExps, ---@type integer[]
+            backpackItems = reverse(udg_SaveLoadBackpackItems), ---@type integer[]
+            backpackItemCharges = reverse(udg_SaveLoadBackpackItemCharges), ---@type integer[]
+            digimons = reverse(udg_SaveLoadDigimons), ---@type Digimon[]
+            inventories = reverse(udg_SaveLoadInventories), ---@type Inventory[]
+            levels = reverse(udg_SaveLoadLevels), ---@type integer[]
+            experiences = reverse(udg_SaveLoadExps), ---@type integer[]
         }
 
         udg_SaveLoadBackpackItems = {}

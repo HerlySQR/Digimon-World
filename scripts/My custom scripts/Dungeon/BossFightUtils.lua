@@ -76,7 +76,7 @@ OnInit("BossFightUtils", function ()
                 INTERVAL = 2.
 
                 EnableTrigger(enterTrigger)
-                --EnableTrigger(lowHP)
+                EnableTrigger(lowHP)
                 currentTimer = nil
                 return true
             end
@@ -130,7 +130,24 @@ OnInit("BossFightUtils", function ()
                     SetUnitOwner(boss, owner, true)
                     ShowUnit(boss, true)
                     ReviveHeroLoc(boss, initialPos, true)
-                    EnableTrigger(enterTrigger)
+
+                    local isThereAUnit = nil ---@type unit
+                    for i = 1, numRect do
+                        ForUnitsInRect(battlefield[i], function (u)
+                            if u ~= boss and UnitAlive(u) and IsUnitType(u, UNIT_TYPE_HERO) then
+                                isThereAUnit = u
+                            end
+                        end)
+                    end
+
+                    if isThereAUnit then
+                        if not currentTimer then
+                            currentTimer = Timed.echo(INTERVAL, BossFightActions)
+                        end
+                        IssuePointOrderById(boss, Orders.attack, GetUnitX(isThereAUnit), GetUnitY(isThereAUnit))
+                    else
+                        EnableTrigger(enterTrigger)
+                    end
                 end)
             end
         end)

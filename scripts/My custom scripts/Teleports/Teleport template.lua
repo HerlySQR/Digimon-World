@@ -1,5 +1,6 @@
 OnInit(function ()
     Require "Digimon"
+    Require "DigimonBank"
 
     local LocalPlayer = GetLocalPlayer() ---@type player
 
@@ -31,11 +32,16 @@ OnInit(function ()
             if d then
                 d.environment = innerEnv
             end
-            if IsUnitSelected(u, p) then
-                innerEnv:apply(p, true)
-                if p == LocalPlayer then
-                    PanCameraToTimed(enterX, enterY, 0)
+
+            for _, d2 in ipairs(GetUsedDigimons(p)) do
+                if d2 ~= d then
+                    StoreToBank(p, d2, true)
                 end
+            end
+
+            innerEnv:apply(p, true)
+            if p == LocalPlayer then
+                PanCameraToTimed(enterX, enterY, 0)
             end
         end)
 
@@ -50,11 +56,16 @@ OnInit(function ()
             if d then
                 d.environment = outerEnv
             end
-            if IsUnitSelected(u, p) then
-                outerEnv:apply(p, true)
-                if p == LocalPlayer then
-                    PanCameraToTimed(leaveX, leaveY, 0)
+
+            for _, d2 in ipairs(GetUsedDigimons(p)) do
+                if d2 ~= d then
+                    StoreToBank(p, d2, true)
                 end
+            end
+
+            outerEnv:apply(p, true)
+            if p == LocalPlayer then
+                PanCameraToTimed(leaveX, leaveY, 0)
             end
         end)
     end

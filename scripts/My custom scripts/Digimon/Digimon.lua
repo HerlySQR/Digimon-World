@@ -178,6 +178,14 @@ OnInit("Digimon", function ()
         return GetUnitX(self.root), GetUnitY(self.root)
     end
 
+    function Digimon:show()
+        ShowUnitShow(self.root)
+    end
+
+    function Digimon:hide()
+        ShowUnitHide(self.root)
+    end
+
     function Digimon:hideInTheCorner()
         ShowUnitHide(self.root)
         SetUnitPosition(self.root, WorldBounds.maxX, WorldBounds.maxY)

@@ -1,5 +1,6 @@
 OnInit("DigimonBank", function ()
     Require "PlayerDigimons"
+    Require "AFK"
 
     local MAX_STOCK = 6
 
@@ -143,6 +144,15 @@ OnInit("DigimonBank", function ()
         return index ~= -1 and self.stocked[index] ~= nil and self.inUse[index] == nil
     end
 
+    -- Store all the digimon in case of AFK
+    AFKEvent:register(function (p)
+        local bank = Bank[GetPlayerId(p)]
+        for i = 0, 5 do
+            bank:storeDigimon(i, true)
+        end
+        DisplayTextToPlayer(LocalPlayer, 0, 0, GetPlayerName(p) .. " was afk for too long, all its digimons were stored.")
+    end)
+
     local SummonADigimon = nil ---@type framehandle
     local StockedDigimonsMenu = nil ---@type framehandle
     local Exit = nil ---@type framehandle
@@ -259,7 +269,7 @@ OnInit("DigimonBank", function ()
     local function StoreFunc()
         local p = GetTriggerPlayer()
         local bank = Bank[GetPlayerId(p)]
-        StoreDigimon(bank, bank.pressed, true)
+        bank:storeDigimon(bank.pressed, true)
         if p == LocalPlayer then
             BlzFrameSetVisible(Summon, true)
             BlzFrameSetVisible(Store, false)
@@ -534,6 +544,14 @@ OnInit("DigimonBank", function ()
     end
 
     ---@param p player
+    ---@param d Digimon
+    ---@param hide boolean
+    ---@return integer
+    function StoreToBank(p, d, hide)
+        return Bank[GetPlayerId(p)]:storeDigimon(GetBankIndex(p, d), hide)
+    end
+
+    ---@param p player
     ---@param index integer
     ---@return boolean
     function SummonDigimon(p, index)
@@ -612,7 +630,6 @@ OnInit("DigimonBank", function ()
     end
 
     -- When dies
-    local respawnTime = 60
     local cooldowns = __jarray(0) ---@type table<Digimon, number>
 
     Digimon.killEvent:register(function (info)
@@ -644,7 +661,7 @@ OnInit("DigimonBank", function ()
             end
             bank.allDead = allDead
 
-            StoreDigimon(bank, index, false)
+            bank:storeDigimon(index, false)
             Timed.call(function () dead:setOwner(Digimon.PASSIVE) end) -- Just to not be detected by the auto-recycler
             -- Hide after 2 seconds to not do it automatically
             Timed.call(2., function ()
@@ -652,7 +669,16 @@ OnInit("DigimonBank", function ()
             end)
 
             -- Cooldown
-            cooldowns[dead] = respawnTime
+            local lvl = dead:getLevel()
+            if lvl > 0 and lvl <= 20 then
+                cooldowns[dead] = 30
+            elseif lvl > 20 and lvl <= 50 then
+                cooldowns[dead] = 60
+            elseif lvl > 50 and lvl <= 90 then
+                cooldowns[dead] = 90
+            else
+                cooldowns[dead] = 120
+            end
             if p == LocalPlayer then
                 UpdateMenu()
                 BlzFrameSetVisible(DigimonTCooldownT[index], true)
