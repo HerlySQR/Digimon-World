@@ -6,13 +6,14 @@ OnInit(function ()
     ---@param envName string
     local function Create(ticket, receiver, envName)
         local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_USE_ITEM)
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
         TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == ticket end))
         TriggerAddAction(t, function ()
             local d = Digimon.getInstance(GetManipulatingUnit())
             d:hide()
             d:setLoc(receiver)
             Environment.get(envName):apply(d:getOwner(), true)
+            d.environment = Environment.get(envName)
             if d:getOwner() == GetLocalPlayer() then
                 PanCameraToTimed(d:getX(), d:getY(), 0)
             end

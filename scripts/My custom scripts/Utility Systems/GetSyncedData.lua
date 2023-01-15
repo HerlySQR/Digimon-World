@@ -36,18 +36,20 @@ OnInit("GetSyncedData", function ()
     ---@vararg any
     ---@return T | table
     function GetSyncedData(p, func, ...)
-        if p == GetLocalPlayer() then
-            if type(func) == "function" then
+        if type(func) == "function" then
+            if p == GetLocalPlayer() then
                 BlzSendSyncData(PREFIX, Obj2Str(func(...)))
-            elseif type(func) == "table" then
+            end
+        elseif type(func) == "table" then
+            if p == GetLocalPlayer() then
                 local result = {}
                 for i = 1, #func, 2 do
                     table.insert(result, func[i](table.unpack(func[i+1])))
                 end
                 BlzSendSyncData(PREFIX, Obj2Str(result))
-            else
-                error("Invalid parameter", 2)
             end
+        else
+            error("Invalid parameter", 2)
         end
 
         EnqueueThread(coroutine.running())

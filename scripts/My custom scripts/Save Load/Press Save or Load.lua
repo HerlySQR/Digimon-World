@@ -25,10 +25,21 @@ OnInit("PressSaveOrLoad", function ()
     local WarningMessage = nil ---@type dialog
     local WarningMessageReceived = __jarray(false) ---@type table<player, boolean>
 
+    local NotOnline = false
+
     OnInit.final(function ()
         WarningMessage = DialogCreate()
         DialogSetMessage(WarningMessage, "|cffff0000WARNING|r\nTo properly save, you should\nrestart the Warcraft 3.")
         DialogAddButton(WarningMessage, "Understood", 0)
+
+        NotOnline = ReloadGameCachesFromDisk() and not udg_SaveOnSinglePlayer
+
+        PolledWait(1.)
+
+        if NotOnline then
+            print("You are in single player, save data is disabled.")
+            BlzFrameSetEnable(AbsoluteSave, false)
+        end
     end)
 
     ---This function always should be in a "if player == GetLocalPlayer() then" block
@@ -72,8 +83,8 @@ OnInit("PressSaveOrLoad", function ()
         local data = PlayerDatas[LocalPlayer][Pressed[LocalPlayer]]
         if data then
             BlzFrameSetText(TooltipName, "|cffff6600Information|r")
-            BlzFrameSetText(TooltipGold, "|cffFFCC00Gold: |r" .. data.gold)
-            BlzFrameSetText(TooltipLumber, "|cff20bc20Lumber: |r" .. data.lumber)
+            BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. data.gold)
+            BlzFrameSetText(TooltipLumber, "|cffc8c800DigiGold: |r" .. data.lumber)
             for i = 1, #data.digimons do
                 if data.digimons[i] then
                     local s = ""
@@ -100,8 +111,8 @@ OnInit("PressSaveOrLoad", function ()
             end
         else
             BlzFrameSetText(TooltipName, "|cffff6600Empty|r")
-            BlzFrameSetText(TooltipGold, "|cffFFCC00Gold:|r")
-            BlzFrameSetText(TooltipLumber, "|cff20bc20Lumber:|r")
+            BlzFrameSetText(TooltipGold, "|cff828282DigiBits:|r")
+            BlzFrameSetText(TooltipLumber, "|cffc8c800DigiGold:|r")
             for i = 0, 5 do
                 BlzFrameSetText(TooltipDigimonItemsT[i], "|cff00ffffItems:|r")
                 BlzFrameSetTexture(TooltipDigimonIconT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
@@ -118,7 +129,7 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetEnable(SaveSlotT[oldSlot], true)
             BlzFrameSetEnable(SaveSlotT[slot], false)
             BlzFrameSetVisible(Information, true)
-            BlzFrameSetEnable(AbsoluteSave, BlzFrameIsVisible(AbsoluteSave))
+            BlzFrameSetEnable(AbsoluteSave, BlzFrameIsVisible(AbsoluteSave) and not NotOnline)
             BlzFrameSetEnable(AbsoluteLoad, BlzFrameIsVisible(AbsoluteLoad))
             UpdateInformation()
             if not WarningMessageReceived[p] then
@@ -167,7 +178,6 @@ OnInit("PressSaveOrLoad", function ()
         if udg_SaveLoadEvent_Player == LocalPlayer then
             UpdateMenu()
             UpdateInformation()
-            BlzFrameSetEnable(AbsoluteSave, false)
         end
     end
 
@@ -175,9 +185,6 @@ OnInit("PressSaveOrLoad", function ()
         TriggerExecute(gg_trg_Absolute_Load)
         UseData(GetTriggerPlayer(), Pressed[GetTriggerPlayer()])
         ExitFunc()
-        if GetTriggerPlayer() == LocalPlayer then
-            BlzFrameSetEnable(AbsoluteLoad, false)
-        end
     end
 
     local function InitFrames()
@@ -294,7 +301,7 @@ OnInit("PressSaveOrLoad", function ()
         TooltipGold = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetAbsPoint(TooltipGold, FRAMEPOINT_TOPLEFT, 0.421110, 0.507466)
         BlzFrameSetAbsPoint(TooltipGold, FRAMEPOINT_BOTTOMRIGHT, 0.496110, 0.487660)
-        BlzFrameSetText(TooltipGold, "|cffFFCC00Gold: |r")
+        BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r")
         BlzFrameSetEnable(TooltipGold, false)
         BlzFrameSetScale(TooltipGold, 1.00)
         BlzFrameSetTextAlignment(TooltipGold, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -302,7 +309,7 @@ OnInit("PressSaveOrLoad", function ()
         TooltipLumber = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetAbsPoint(TooltipLumber, FRAMEPOINT_TOPLEFT, 0.495000, 0.505000)
         BlzFrameSetAbsPoint(TooltipLumber, FRAMEPOINT_BOTTOMRIGHT, 0.570000, 0.485000)
-        BlzFrameSetText(TooltipLumber, "|cff20bc20Lumber: |r")
+        BlzFrameSetText(TooltipLumber, "|cffc8c800DigiGold: |r")
         BlzFrameSetEnable(TooltipLumber, false)
         BlzFrameSetScale(TooltipLumber, 1.00)
         BlzFrameSetTextAlignment(TooltipLumber, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)

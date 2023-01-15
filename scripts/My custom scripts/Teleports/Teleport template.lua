@@ -13,13 +13,8 @@ OnInit(function ()
     ---@param leaveText string
     local function CreateTeleport(enterRect, leaveRect, enterTP, leaveTP, enterText, leaveText)
         local enterX, enterY = GetLocationX(enterTP), GetLocationY(enterTP)
-        local leaveX, leaveY = GetLocationX(leaveTP), GetLocationY(leaveTP)
-
         local innerEnv = Environment.get(enterText)
-        local outerEnv = Environment.get(leaveText)
-
         RemoveLocation(enterTP)
-        RemoveLocation(leaveTP)
 
         -- Enter
         local t = CreateTrigger()
@@ -46,28 +41,34 @@ OnInit(function ()
         end)
 
         -- Leave
-        t = CreateTrigger()
-        TriggerRegisterEnterRectSimple(t, leaveRect)
-        TriggerAddAction(t, function ()
-            local u = GetEnteringUnit()
-            local p = GetOwningPlayer(u)
-            SetUnitPosition(u, leaveX, leaveY)
-            local d = Digimon.getInstance(u)
-            if d then
-                d.environment = outerEnv
-            end
+        if leaveRect and leaveTP and leaveText then
+            local leaveX, leaveY = GetLocationX(leaveTP), GetLocationY(leaveTP)
+            local outerEnv = Environment.get(leaveText)
+            RemoveLocation(leaveTP)
 
-            for _, d2 in ipairs(GetUsedDigimons(p)) do
-                if d2 ~= d then
-                    StoreToBank(p, d2, true)
+            t = CreateTrigger()
+            TriggerRegisterEnterRectSimple(t, leaveRect)
+            TriggerAddAction(t, function ()
+                local u = GetEnteringUnit()
+                local p = GetOwningPlayer(u)
+                SetUnitPosition(u, leaveX, leaveY)
+                local d = Digimon.getInstance(u)
+                if d then
+                    d.environment = outerEnv
                 end
-            end
 
-            outerEnv:apply(p, true)
-            if p == LocalPlayer then
-                PanCameraToTimed(leaveX, leaveY, 0)
-            end
-        end)
+                for _, d2 in ipairs(GetUsedDigimons(p)) do
+                    if d2 ~= d then
+                        StoreToBank(p, d2, true)
+                    end
+                end
+
+                outerEnv:apply(p, true)
+                if p == LocalPlayer then
+                    PanCameraToTimed(leaveX, leaveY, 0)
+                end
+            end)
+        end
     end
 
     -- For GUI

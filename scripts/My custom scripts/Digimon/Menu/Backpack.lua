@@ -1,8 +1,11 @@
 OnInit("Backpack", function ()
     Require "UnitEnum"
-    Require "GetSyncedData"
-    Require "GetMainSelectedUnit"
     Require "PlayerUtils"
+    Require "GlobalRemap"
+    Require "WorldBounds"
+    Require "Orders"
+    Require "Timed"
+    Require "ErrorMessage"
 
     local OriginFrame = BlzGetOriginFrame(ORIGIN_FRAME_WORLD_FRAME, 0)
     local Backpack = nil ---@type framehandle
@@ -28,12 +31,21 @@ OnInit("Backpack", function ()
     ---@field description string
     ---@field cooldown integer
     ---@field spellCooldown integer
+    ---@field slot integer
+
+    local dummyCaster = FourCC('n01B')
+    local dummyCasters = {} ---@type table<player, unit>
+    local usingDummyCaster = __jarray(false) ---@type table<player, boolean>
+    local selectedUnits = {} ---@type table<player, group>
+    local itemDatas = {} ---@type table<unit, ItemData>
 
     local PlayerItems = {} ---@type table<player, ItemData[]>
     local MinRange = 700. ---The minimun range a player's digimon should be to the target to cast the spell
     local DiscardMode = __jarray(false) ---@type table<player, boolean>
 
     local AllowedItems = {}
+
+    GlobalRemap("udg_GoesToBackpack", function () return AllowedItems[udg_BackpackItem] ~= nil end, nil)
 
     local LocalPlayer = GetLocalPlayer() ---@type player
 
@@ -96,6 +108,14 @@ OnInit("Backpack", function ()
         end
     end
 
+    OnInit.final(function ()
+        ForForce(bj_FORCE_ALL_PLAYERS, function ()
+            local p = GetEnumPlayer()
+            dummyCasters[p] = CreateUnit(Digimon.PASSIVE, dummyCaster, WorldBounds.maxX, WorldBounds.maxY, 0)
+            selectedUnits[p] = CreateGroup()
+        end)
+    end)
+
     local function UseItem(i)
         local p = GetTriggerPlayer()
         if not DiscardMode[p] then
@@ -104,53 +124,24 @@ OnInit("Backpack", function ()
                 BlzFrameSetText(BackpackText, "|cffffcc00Item is on cooldown|r")
                 return
             end
-            local u = GetSyncedData(p, GetMainSelectedUnitEx)
-            if u then
-                if GetRandomUnitOnRange(GetUnitX(u), GetUnitY(u), MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
-                    if DummyCast(p, GetUnitX(u), GetUnitY(u), itemData.spell, itemData.order, itemData.level, CastType.TARGET, u) then
-                        itemData.charges = itemData.charges - 1
+            local caster = dummyCasters[p]
+            SetUnitOwner(caster, p, false)
+            SyncSelections()
+            GroupEnumUnitsSelected(selectedUnits[p], p)
+            UnitAddAbility(caster, itemData.spell)
+            itemDatas[caster] = itemData
 
-                        if itemData.charges == 0 then
-                            table.remove(PlayerItems[p], i)
-                        else
-                            if itemData.spellCooldown > 0 then
-                                itemData.cooldown = itemData.spellCooldown
-                                BlzFrameSetVisible(BackpackItemCooldownT[i], true)
-                                BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
-                                Timed.echo(function ()
-                                    itemData.cooldown = itemData.cooldown - 1
-                                    if itemData.cooldown > 0 then
-                                        BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
-                                    else
-                                        BlzFrameSetVisible(BackpackItemCooldownT[i], false)
-                                        return true
-                                    end
-                                end, 1.)
-                            end
-                        end
-
-                        if p == LocalPlayer then
-                            UpdateMenu()
-                        end
-                    else
-                        if p == LocalPlayer then
-                            BlzFrameSetText(BackpackText, "|cffffcc00Invalid target|r")
-                        end
-                    end
-                else
-                    if p == LocalPlayer then
-                        BlzFrameSetText(BackpackText, "|cffffcc00A digimon should be nearby the target|r")
-                    end
-                end
-            else
-                if p == LocalPlayer then
-                    BlzFrameSetText(BackpackText, "|cffff0000You don't have a unit focused|r")
-                end
-            end
-            PolledWait(1.)
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item for the focused unit")
+                SelectUnitSingle(caster)
             end
+            Timed.call(0.04, function ()
+                if p == LocalPlayer then
+                    ForceUIKey("Q")
+                end
+            end)
+            usingDummyCaster[p] = true
+
+            BlzFrameSetText(BackpackText, "|cff00ff00Select a target|r")
         else
             table.remove(PlayerItems[p], i)
             if p == LocalPlayer then
@@ -159,6 +150,97 @@ OnInit("Backpack", function ()
             end
         end
     end
+
+    ---@param p player
+    local function BackpackDummyCastEnd(p)
+        UnitRemoveAbility(dummyCasters[p], itemDatas[dummyCasters[p]].spell)
+        SetUnitOwner(dummyCasters[p], Digimon.PASSIVE, false)
+        SelectGroupForPlayerBJ(selectedUnits[p], p)
+        GroupClear(selectedUnits[p])
+        usingDummyCaster[p] = false
+
+        PolledWait(1.)
+
+        if p == LocalPlayer then
+            BlzFrameSetText(BackpackText, "Use an item for the focused unit")
+        end
+    end
+
+    local trig = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_CAST)
+    TriggerAddAction(trig, function ()
+        local caster = GetSpellAbilityUnit()
+        local itemData = itemDatas[caster]
+
+        if itemData and itemData.spell == GetSpellAbilityId() then
+            local p = GetOwningPlayer(caster)
+            local target = GetSpellTargetUnit()
+
+            if not GetRandomUnitOnRange(GetUnitX(target), GetUnitY(target), MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
+                IssueImmediateOrderById(caster, Orders.stop)
+                ErrorMessage("|cffffcc00A digimon should be nearby the target|r", p)
+            end
+        end
+    end)
+
+    trig = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
+    TriggerAddAction(trig, function ()
+        local caster = GetSpellAbilityUnit()
+        local itemData = itemDatas[caster]
+
+        if itemData and itemData.spell == GetSpellAbilityId() then
+            local p = GetOwningPlayer(caster)
+            local i = itemData.slot
+
+            itemData.charges = itemData.charges - 1
+
+            if itemData.charges == 0 then
+                table.remove(PlayerItems[p], i)
+                for newSlot, otherData in ipairs(PlayerItems[p]) do
+                    otherData.slot = newSlot
+                end
+            else
+                if itemData.spellCooldown > 0 then
+                    itemData.cooldown = itemData.spellCooldown
+                    BlzFrameSetVisible(BackpackItemCooldownT[i], true)
+                    BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
+                    Timed.echo(function ()
+                        itemData.cooldown = itemData.cooldown - 1
+                        if itemData.cooldown > 0 then
+                            BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
+                        else
+                            BlzFrameSetVisible(BackpackItemCooldownT[i], false)
+                            return true
+                        end
+                    end, 1.)
+                end
+            end
+
+            if p == LocalPlayer then
+                UpdateMenu()
+            end
+
+            BackpackDummyCastEnd(p)
+        end
+    end)
+
+
+    OnInit.final(function ()
+        trig = CreateTrigger()
+        ForForce(bj_FORCE_ALL_PLAYERS, function ()
+            TriggerRegisterPlayerEvent(trig, GetEnumPlayer(), EVENT_PLAYER_MOUSE_DOWN)
+            TriggerRegisterPlayerEvent(trig, GetEnumPlayer(), EVENT_PLAYER_END_CINEMATIC)
+        end)
+        TriggerAddAction(trig, function ()
+            if GetTriggerEventId() ~= EVENT_PLAYER_MOUSE_DOWN or BlzGetTriggerPlayerMouseButton() == MOUSE_BUTTON_TYPE_RIGHT then
+                local p = GetTriggerPlayer()
+                if usingDummyCaster[p] then
+                    BackpackDummyCastEnd(p)
+                end
+            end
+        end)
+    end)
 
     local function BackpackDiscardFunc()
         local p = GetTriggerPlayer()
@@ -318,6 +400,7 @@ OnInit("Backpack", function ()
             if not itemData then
                 itemData = CreateItemData(id)
                 table.insert(items, itemData)
+                itemData.slot = #items
             end
             itemData.charges = itemData.charges + GetItemCharges(m)
             RemoveItem(m)

@@ -5,7 +5,7 @@ OnInit(function ()
         Artifact = Weapon (max. 1)
         Campaing = Accesories (max. 2)
         Charged = Digivice (max. 1)
-        Purchasable = Crest (max. 1)
+        Miscellaneous = Crest (max. 1)
     ]]
 
     local t = CreateTrigger()
@@ -19,10 +19,9 @@ OnInit(function ()
             local has = false
 
             if typ ~= ITEM_TYPE_CAMPAIGN then
-
                 for i = 0, 5 do
                     local itm = UnitItemInSlot(u, i)
-                    if typ == GetItemType(itm) and m ~= itm then
+                    if itm and typ == GetItemType(itm) and m ~= itm then
                         has = true
                         break
                     end
@@ -39,7 +38,7 @@ OnInit(function ()
                             break
                         end
                     end
-                    if GetItemTypeId(itm) == GetItemTypeId(m) and itm ~= m then
+                    if itm and GetItemTypeId(itm) == GetItemTypeId(m) and itm ~= m then
                         has = true
                         break
                     end

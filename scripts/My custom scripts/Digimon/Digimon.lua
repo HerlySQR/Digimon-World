@@ -272,7 +272,7 @@ OnInit("Digimon", function ()
 
             self.rarity = rarities[GetUnitTypeId(u)]
 
-            self.environment = Environment.allMap
+            self.environment = Environment.initial
             self.onCombat = false
 
             Digimon._instance[u] = self

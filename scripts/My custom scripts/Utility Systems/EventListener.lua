@@ -176,11 +176,13 @@ do
     if _APPEND_INDEX then
         invokeFunction =
         function(func, i, ...)
+            print(i)
             pcall(func, i, ...)
         end
     else
         invokeFunction =
         function(func, i, ...)
+            print(i)
             pcall(func, ...)
         end
     end

@@ -49,7 +49,17 @@ OnInit("Player Data", function ()
         end
     end
 
-    PlayerDatas = {}
+    ---@class PlayerData
+    ---@field gold integer
+    ---@field lumber integer
+    ---@field food integer
+    ---@field backpackItems integer[]
+    ---@field backpackItemCharges integer[]
+    ---@field digimons integer[]
+    ---@field inventories Inventory[]
+    ---@field levels integer[]
+    ---@field experiences integer[]
+    PlayerDatas = {} ---@type table<player, PlayerData[]>
 
     for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
         PlayerDatas[Player(i)] = {}
@@ -66,10 +76,30 @@ OnInit("Player Data", function ()
         return newList
     end
 
+    ---Since the save-load system loads the data in the reverse order, I have to reverse it again
+    ---@param list table
+    ---@param begin? integer
+    ---@param final? integer
+    ---@return table
+    local function reverseManual(list, begin, final)
+        local newList = {}
+        for i = final, begin, -1 do
+            newList[final + begin - i] = list[i]
+        end
+        return newList
+    end
+
     ---After set the GUI variables use this function to store them in a slot
     ---@param p player
     ---@param slot integer
     function StoreData(p, slot)
+        for i = 1, #udg_SaveLoadInventories do
+            local inv = udg_SaveLoadInventories[i]
+            inv.items = reverseManual(inv.items, 0, 5)
+            inv.charges = reverseManual(inv.charges, 0, 5)
+            inv.classes = reverseManual(inv.classes, 0, 5)
+        end
+
         -- This overwrites the slot if was previously set
         PlayerDatas[p][slot] = {
             gold = udg_SaveLoadGold, ---@type integer
@@ -77,7 +107,7 @@ OnInit("Player Data", function ()
             food = udg_SaveLoadFood, ---@type integer
             backpackItems = reverse(udg_SaveLoadBackpackItems), ---@type integer[]
             backpackItemCharges = reverse(udg_SaveLoadBackpackItemCharges), ---@type integer[]
-            digimons = reverse(udg_SaveLoadDigimons), ---@type Digimon[]
+            digimons = reverse(udg_SaveLoadDigimons), ---@type integer[]
             inventories = reverse(udg_SaveLoadInventories), ---@type Inventory[]
             levels = reverse(udg_SaveLoadLevels), ---@type integer[]
             experiences = reverse(udg_SaveLoadExps), ---@type integer[]

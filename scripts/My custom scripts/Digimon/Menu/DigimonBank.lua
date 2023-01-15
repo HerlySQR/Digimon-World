@@ -548,7 +548,13 @@ OnInit("DigimonBank", function ()
     ---@param hide boolean
     ---@return integer
     function StoreToBank(p, d, hide)
-        return Bank[GetPlayerId(p)]:storeDigimon(GetBankIndex(p, d), hide)
+        local result = Bank[GetPlayerId(p)]:storeDigimon(GetBankIndex(p, d), hide)
+
+        if p == LocalPlayer then
+            UpdateMenu()
+        end
+
+        return result
     end
 
     ---@param p player
@@ -654,7 +660,7 @@ OnInit("DigimonBank", function ()
                 bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
                 bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
                 -- The player can see all the map if all their digimons are dead
-                Environment.allMap:apply(p, false)
+                -- Environment.allMap:apply(p, false)
             else
                 bank.spawnPoint.x = GetRectCenterX(gg_rct_Player_1_Spawn)
                 bank.spawnPoint.y = GetRectCenterY(gg_rct_Player_1_Spawn)
