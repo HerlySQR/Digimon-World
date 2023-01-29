@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("FrameLoader") end
 -- in 1.31 and upto 1.32.9 PTR (when I wrote this). Frames are not correctly saved and loaded, breaking the game.
 -- This runs all functions added to it with a 0s delay after the game was loaded.
 OnInit("FrameLoader", function ()
@@ -19,3 +20,4 @@ OnInit("FrameLoader", function ()
         table.insert(FrameLoader, func)
     end
 end)
+if Debug then Debug.endFile() end

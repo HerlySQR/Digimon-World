@@ -15,7 +15,7 @@ OnInit(function ()
         MotionSensor.addUnit(u)
         local node = MotionSensor.get(u)
         effs[u] = {AddSpecialEffectTarget(feetModel, u, "right foot"), AddSpecialEffectTarget(feetModel, u, "left foot")}
-        staticTimer[u] = Timed.echo(function ()
+        staticTimer[u] = Timed.echo(0.1, function ()
             if node.moving then
                 local e = AddSpecialEffect(stepModel, GetUnitX(u), GetUnitY(u))
                 BlzSetSpecialEffectScale(e, 0.5)

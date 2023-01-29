@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("DamageEngine") end
 --if  Hook        -- https://www.hiveworkshop.com/threads/hook.339153
 --and Timed then  -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
 
@@ -596,12 +597,15 @@ OnInit("Damage", function() Damage = {}
     
     t2 = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(t2, EVENT_PLAYER_UNIT_DAMAGED)
-    TriggerAddCondition(t2, Filter(function() 
+    TriggerAddCondition(t2, Filter(function()
+        if not current then
+            return
+        end
         local r = GetDamage()
         local d = current
         --print("Second damage event running for " .. GetUnitName(GetTriggerUnit()))
         if prepped                              then prepped = nil
-        elseif dreaming or d.prevAmt == 0.00    then return
+        elseif dreaming or d and d.prevAmt == 0.00    then return
         elseif totem                            then totem = nil
         else
             afterDamage()
@@ -953,3 +957,4 @@ a breakthrough in coding thanks to the innovation brought forth via Global Varia
     end
 end)
 --end
+if Debug then Debug.endFile() end

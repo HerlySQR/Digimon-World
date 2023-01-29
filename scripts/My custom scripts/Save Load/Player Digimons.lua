@@ -1,3 +1,4 @@
+Debug.beginFile("PlayerDigimons")
 OnInit("PlayerDigimons", function ()
     Require "Digimon"
 
@@ -69,3 +70,4 @@ OnInit("PlayerDigimons", function ()
         return #digimons[owner] == MAX_DIGIMONS
     end
 end)
+Debug.endFile()

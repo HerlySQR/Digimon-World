@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("PreciseWait") end
 OnInit("PreciseWait", function(require) --https://www.hiveworkshop.com/threads/total-initialization.317099/
 
     local hook  = require.optionally "AddHook"     --https://www.hiveworkshop.com/threads/hook.339153
@@ -63,3 +64,4 @@ OnInit("PreciseWait", function(require) --https://www.hiveworkshop.com/threads/t
     end, _ACTION_PRIORITY)
     
 end)
+if Debug then Debug.endFile() end

@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("SyncedTable") end
 --SyncedTable v1.0 by Eikonium. https://www.hiveworkshop.com/threads/lua-syncedtable.332894/
 
 do
@@ -105,3 +106,4 @@ do
         return SyncedTable.create(t)
     end})
 end
+if Debug then Debug.endFile() end

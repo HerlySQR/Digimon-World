@@ -1,3 +1,4 @@
+Debug.beginFile("BossFightUtils")
 OnInit("BossFightUtils", function ()
     Require "AbilityUtils"
 
@@ -24,7 +25,7 @@ OnInit("BossFightUtils", function ()
 
     ---@param name string
     ---@param boss unit
-    ---@param actions fun(unitsInTheField: unit[])
+    ---@param actions fun(u: unit)
     function InitBossFight(name, boss, actions)
         local owner = GetOwningPlayer(boss)
         local battlefield = {} ---@type rect[]
@@ -82,7 +83,7 @@ OnInit("BossFightUtils", function ()
             end
 
             -- Spells
-            actions(unitsInTheField)
+            actions(unitsInTheField[math.random(1, #unitsInTheField)])
         end
 
         -- Enter the boss area
@@ -164,3 +165,4 @@ OnInit("BossFightUtils", function ()
         end)
     end
 end)
+Debug.endFile()

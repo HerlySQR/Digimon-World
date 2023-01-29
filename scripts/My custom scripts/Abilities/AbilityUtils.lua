@@ -1,3 +1,4 @@
+Debug.beginFile("AbilityUtils")
 OnInit("AbilityUtils", function ()
     Require "Digimon"
     Require "RegisterSpellEvent"
@@ -5,6 +6,7 @@ OnInit("AbilityUtils", function ()
     Require "Knockback"
 
     LOCUST_ID = FourCC('Aloc')
+    CROW_FORM_ID = FourCC('Arav')
 
     ARMOR_REDUCE_SPELL = FourCC('A01R')
     ARMOR_REDUCE_ORDER = Orders.innerfire
@@ -117,3 +119,4 @@ OnInit("AbilityUtils", function ()
     end
 
 end)
+Debug.endFile()

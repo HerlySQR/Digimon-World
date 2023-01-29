@@ -6,7 +6,7 @@ do
         * with Issue###OrderById(...) to make no mistakes when spelling string orders
         * when you need to use some unique orders you could knew from internet, but in the right way. ]]
 
-    ---@type integer[]
+    ---@type table<string, integer>
     Orders = {
         ---This is an order with no target that opens up the build menu of a unit that can build structures.
         buildmenu				= 851994,

@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("MotionSensor") end
 OnInit("MotionSensor", function ()
     Require "LinkedList" -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
     Require "EventListener" -- https://www.hiveworkshop.com/threads/event-gui-friendly.339451/
@@ -78,8 +79,7 @@ OnInit("MotionSensor", function ()
     local staticTimer ---@type function
 
     local function OnPeriodic()
-        for node in MotionSensor:loop() do
-            local sensor = node.value
+        for sensor in MotionSensor:loop() do
             local u = sensor.main
             local prevState = sensor.moving
             local unitX, unitY = GetUnitX(u), GetUnitY(u)
@@ -116,17 +116,15 @@ OnInit("MotionSensor", function ()
         if MotionSensor[u] then
             return
         end
-        local self = {} ---@type MotionSensor
+        local self = MotionSensor:insert() ---@type MotionSensor
 
         self.main = u
         MotionSensor[u] = self
 
         -- Enable the Sensor iterator again when this is the first instance to be added on the list
-        if enabled and MotionSensor.n == 0 then
-            staticTimer = Timed.echo(OnPeriodic, PERIOD)
+        if enabled and MotionSensor.n == 1 then
+            staticTimer = Timed.echo(PERIOD, OnPeriodic)
         end
-
-        MotionSensor:insert(self)
 
         self.motionState = MOTION_STATE_STATIONARY
         SENSOR_GROUP_STATIONARY:addSingle(u)
@@ -145,7 +143,7 @@ OnInit("MotionSensor", function ()
         if not self then
             return
         end
-        MotionSensor:remove(self)
+        self:remove() ---@type MotionSensor
         MotionSensor[u] = nil
         if SENSOR_GROUP_MOVING:contains(u) then
             SENSOR_GROUP_MOVING:remove(u)
@@ -204,3 +202,4 @@ OnInit("MotionSensor", function ()
     enabled = true
 
 end)
+if Debug then Debug.endFile() end

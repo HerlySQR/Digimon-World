@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("ProgressBar") end
 OnInit("ProgressBar", function ()
     Require "Timed"
     local Color = Require "Color"
@@ -246,3 +247,4 @@ OnInit("ProgressBar", function ()
 
     return ProgressBar
 end)
+if Debug then Debug.endFile() end

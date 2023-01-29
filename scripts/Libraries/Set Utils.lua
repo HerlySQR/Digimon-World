@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("SetUtils") end
 --[[
 ----------------------------------
 -- | API Set & Set Utils v1.3 | --
@@ -1082,3 +1083,4 @@ do
 
     if OnTrigInit then OnTrigInit(SetUtils.createTriggers) end --use GlobalInit library, if available.
 end
+if Debug then Debug.endFile() end

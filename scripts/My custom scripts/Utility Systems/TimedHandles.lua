@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("TimedHandles") end
 OnInit("TimedHandles", function ()
     Require "Timed"
 
@@ -51,3 +52,4 @@ OnInit("TimedHandles", function ()
     end
 
 end)
+if Debug then Debug.endFile() end

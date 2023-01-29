@@ -161,14 +161,12 @@ OnInit(function ()
         return this
     end
 
-    local list = nil ---@type RegionData[]
-
     ---Returns a random neighbour that didn't reach its limit and is not in cooldown, if there is not, then return nil
     ---@param r RegionData
     ---@param quantity integer
     ---@return RegionData | nil
     local function GetFreeNeighbour(r, quantity)
-        list = {}
+        local list = {} ---@type RegionData[]
 
         for n in r.neighbourhood:elements() do
             if #n.creeps < quantity and n.waitToSpawn <= 0. and n.delay <= 0
@@ -218,7 +216,7 @@ OnInit(function ()
     end
 
     local PlayersInRegion = Set.create()
-    local regionData, lvl
+    local regionData, lvl ---@type RegionData, integer
     local function checkForUnit(u)
         if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
             regionData.someoneClose = true
@@ -321,7 +319,7 @@ OnInit(function ()
         RANGE_LEVEL_2 = udg_RANGE_LEVEL_2
         RANGE_RETURN = udg_RANGE_RETURN
         RANGE_IN_HOME = udg_RANGE_IN_HOME
-        INTERVAL = udg_SPAWN_INTERVAL
+        INTERVAL = udg_UPDATE_INTERVAL
         NEIGHBOURHOOD = udg_NEIGHBOURHOOD
         CHANCE_UNCOMMON = udg_CHANCE_UNCOMMON
         CHANCE_RARE = udg_CHANCE_RARE
@@ -339,7 +337,7 @@ OnInit(function ()
         udg_RANGE_LEVEL_2 = nil
         udg_RANGE_RETURN = nil
         udg_RANGE_IN_HOME = nil
-        udg_SPAWN_INTERVAL = nil
+        udg_UPDATE_INTERVAL = nil
         udg_NEIGHBOURHOOD = nil
         udg_CHANCE_UNCOMMON = nil
         udg_CHANCE_RARE = nil

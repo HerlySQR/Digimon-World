@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("LinkedList") end
 --[[
     Doubly-Linked List v1.5.4.1 by Wrda, Eikonium and Bribe, with special thanks to Jampion
     ------------------------------------------------------------------------------
@@ -166,3 +167,4 @@ function LinkedList.loop(start, finish, backward)
     end
 end
 --End of LinkedList library
+if Debug then Debug.endFile() end

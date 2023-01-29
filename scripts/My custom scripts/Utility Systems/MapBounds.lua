@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("MapBounds") end
 --[[ mapbounds.lua v1.0.0 |
 
 
@@ -109,3 +110,4 @@ OnInit("WorldBounds", function ()
     InitData(MapBounds)
     InitData(WorldBounds)
 end)
+if Debug then Debug.endFile() end

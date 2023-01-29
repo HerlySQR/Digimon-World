@@ -7,9 +7,8 @@ OnInit(function ()
     local brownStingerOrder = Orders.charm
     local poisonPowderOrder = Orders.cloudoffog
 
-    InitBossFight("Flymon", boss, function (unitsInTheField)
+    InitBossFight("Flymon", boss, function (u)
         if not BossStillCasting(boss) then
-            local u = unitsInTheField[math.random(1, #unitsInTheField)]
             if not IssueTargetOrderById(boss, brownStingerOrder, u) then
                 if math.random(0, 100) <= 50 then
                     IssuePointOrderById(boss, brownStingerShotsOrder, GetUnitX(u), GetUnitY(u))

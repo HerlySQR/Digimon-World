@@ -1,3 +1,4 @@
+Debug.beginFile("Digimon")
 OnInit("Digimon", function ()
     Require "HeroRecycler"
     Require "UnitEnum"
@@ -228,7 +229,9 @@ OnInit("Digimon", function ()
     ---@param callback fun(d:Digimon)
     function Digimon.enumInRect(where, callback)
         ForUnitsInRect(where, function (u)
-            callback(Digimon._instance[u])
+            if Digimon._instance[u] then
+                callback(Digimon._instance[u])
+            end
         end)
     end
 
@@ -238,7 +241,9 @@ OnInit("Digimon", function ()
     ---@param callback fun(d:Digimon)
     function Digimon.enumInRange(x, y, range, callback)
         ForUnitsInRange(x, y, range, function (u)
-            callback(Digimon._instance[u])
+            if Digimon._instance[u] then
+                callback(Digimon._instance[u])
+            end
         end)
     end
 
@@ -592,3 +597,4 @@ OnInit("Digimon", function ()
         end
     end)
 end)
+Debug.endFile()

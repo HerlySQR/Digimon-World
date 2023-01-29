@@ -7,10 +7,10 @@ OnInit(function ()
     local lavaExplosionsOrder = Orders.volcano
     local scorchingHeatOrder = Orders.incineratearrow
 
-    InitBossFight("Meramon", boss, function (unitsInTheField)
+    InitBossFight("Meramon", boss, function (u)
         local fireBallChance = math.random(0, 100)
             if fireBallChance <= 50 then
-                IssueTargetOrderById(boss, fireBallOrder, unitsInTheField[math.random(1, #unitsInTheField)])
+                IssueTargetOrderById(boss, fireBallOrder, u)
             end
             if not BossStillCasting(boss) then
                 local spellChance = math.random(0, 100)

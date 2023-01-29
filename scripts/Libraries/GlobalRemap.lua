@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("GlobalRemap") end
 OnInit("GlobalRemap", function()
 
     Require "AddHook" --https://www.hiveworkshop.com/threads/hook.339153
@@ -88,3 +89,4 @@ function GlobalRemapArray(var, getFunc, setFunc) --will get inserted into Global
     })
 end
 end)
+if Debug then Debug.endFile() end

@@ -3,7 +3,7 @@ OnInit(function ()
 
     local inPeace = {} ---@type table<player, table<player, boolean>>
 
-    Digimon.issueTargetOrderEvent(function (digimon, order, target)
+    Digimon.issueTargetOrderEvent:register(function (digimon, order, target)
         if order == Orders.attack then
             if inPeace[digimon:getOwner()][target:getOwner()] then
                 digimon:issueOrder(Orders.smart, target.root)

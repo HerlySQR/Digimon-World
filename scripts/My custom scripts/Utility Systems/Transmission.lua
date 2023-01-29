@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("UnitTransmission") end
 OnInit("Transmission", function ()
     Require "LinkedList"
     Require "Timed"
@@ -68,7 +69,7 @@ OnInit("Transmission", function ()
     ---@field DefTimeType integer
     ---@field DefDuration number
     ---@field DefWillWait boolean
-    Transmission = {}
+    Transmission = setmetatable({}, LinkedList)
     Transmission.__index = Transmission
 
     local All = LinkedList.create()
@@ -381,7 +382,7 @@ OnInit("Transmission", function ()
     ---@param data? any
     ---@return Transmission
     function Transmission.create(toForce, data)
-        local self = All:insert()
+        local self = All:insert() ---@type Transmission
         setmetatable(self, Transmission) -- Sorry, but I don't wanna have LinkedList as its metatable
 
         self._skipped = false
@@ -494,3 +495,4 @@ OnInit("Transmission", function ()
     ForceCinematicSubtitles(true)
 
 end)
+if Debug then Debug.endFile() end

@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("FourCCTable") end
 do
     --[[ FourCCTable by Tasyen
 
@@ -20,3 +21,4 @@ do
         return setmetatable(object, metaTable)
     end
 end
+if Debug then Debug.endFile() end

@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("RepairKit") end
 --[[
     Lua-Infused GUI with automatic memory leak resolution: Modernizing the experience for a better future for users of the Trigger Editor.
 
@@ -926,3 +927,4 @@ GetDyingDestructable                    = GetTriggerDestructable -- I think they
 GetAbilityName                          = GetObjectName -- I think they just wanted a better name
 
 end
+if Debug then Debug.endFile() end

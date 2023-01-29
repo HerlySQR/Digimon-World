@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("Event") end
 do
     -- Determines the default amount of times a function can recursively be called
     -- before the system treats it as a runaway infinite loop.
@@ -176,13 +177,11 @@ do
     if _APPEND_INDEX then
         invokeFunction =
         function(func, i, ...)
-            print(i)
             pcall(func, i, ...)
         end
     else
         invokeFunction =
         function(func, i, ...)
-            print(i)
             pcall(func, ...)
         end
     end
@@ -331,3 +330,4 @@ do
         return self._funcAbleCounter[i] > 0
     end
 end
+if Debug then Debug.endFile() end

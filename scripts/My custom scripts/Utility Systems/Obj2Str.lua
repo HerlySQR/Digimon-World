@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("Obj2Str") end
 OnInit("Obj2Str", function ()
     Require "Wc3Type" -- https://www.hiveworkshop.com/threads/debug-utils-ingame-console-etc.330758/
 
@@ -130,3 +131,4 @@ OnInit("Obj2Str", function ()
     end
 
 end)
+if Debug then Debug.endFile() end

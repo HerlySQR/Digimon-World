@@ -1,3 +1,4 @@
+Debug.beginFile("Backpack")
 OnInit("Backpack", function ()
     Require "UnitEnum"
     Require "PlayerUtils"
@@ -468,3 +469,4 @@ OnInit("Backpack", function ()
     end
 
 end)
+Debug.endFile()

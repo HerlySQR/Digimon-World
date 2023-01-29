@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("FourCCTable") end
 OnInit("FrameEffects", function ()
     Require "Timed" -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
 
@@ -20,7 +21,7 @@ OnInit("FrameEffects", function ()
         local stepSize = 255 // steps
         local alpha = 255
 
-        Fades[frame] = Timed.echo(function ()
+        Fades[frame] = Timed.echo(INTERVAL, function ()
             steps = steps - 1
             alpha = alpha - stepSize
             if steps > 0 then
@@ -34,7 +35,7 @@ OnInit("FrameEffects", function ()
                 Fades[frame] = nil
                 return true
             end
-        end, INTERVAL)
+        end)
     end
 
     ---@param frame framehandle -- Not nil
@@ -70,3 +71,4 @@ OnInit("FrameEffects", function ()
         end, INTERVAL)
     end
 end)
+if Debug then Debug.endFile() end

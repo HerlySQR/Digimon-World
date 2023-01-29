@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("Message") end
 do
     -- Error message
 
@@ -17,3 +18,4 @@ do
         end
     end
 end
+if Debug then Debug.endFile() end

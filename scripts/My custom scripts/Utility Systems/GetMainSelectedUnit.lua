@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("GetMainSelectedUnit") end
 OnInit("GetMainSelectedUnit", function ()
     ---Returns the local current main selected unit, using it in a sync gamestate relevant manner breaks the game.
     ---@return unit
@@ -91,3 +92,4 @@ OnInit("GetMainSelectedUnit", function ()
         frames[int] = BlzFrameGetChild(buttonContainer, 0)
     end
 end)
+if Debug then Debug.endFile() end

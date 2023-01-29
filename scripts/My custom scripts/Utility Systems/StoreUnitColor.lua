@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("StoreUnitColor") end
 OnInit(function () -- https://www.hiveworkshop.com/threads/global-initialization.317099/
     local AddHook = Require.optional "AddHook"
 
@@ -54,3 +55,4 @@ OnInit(function () -- https://www.hiveworkshop.com/threads/global-initialization
         return UnitColor[whichUnit]
     end
 end)
+if Debug then Debug.endFile() end

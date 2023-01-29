@@ -24,8 +24,8 @@ OnInit(function ()
 
         local bar = ProgressBar.create()
         bar:setColor(PLAYER_COLOR_PEANUT)
-        bar:setZOffset(200)
-        bar:setSize(1)
+        bar:setZOffset(300)
+        bar:setSize(1.3)
         bar:setTargetUnit(caster)
 
         local progress = 0

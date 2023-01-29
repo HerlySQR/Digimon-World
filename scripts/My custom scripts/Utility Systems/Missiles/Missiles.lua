@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("Missiles") end
 --[[ requires MissileEffect, optional MissilesUtils
     ----------------------- Missiles v2.6 by Chopinski -----------------------
     Thanks and Credits to BPower, Dirac and Vexorian for the Missile Library's at which i based
@@ -12,6 +13,7 @@
 OnInit("Missiles", function ()
     Require "MissileEffect"
     Require "UnitEnum"
+    Require "Timed"
     -- -------------------------------------------------------------------------- --
     --                                Configuration                               --
     -- -------------------------------------------------------------------------- --
@@ -694,7 +696,7 @@ OnInit("Missiles", function ()
 
     -- ---------------------------- Flush hit targets --------------------------- --
     function mt:flushAll()
-        array[self] = nil
+        array[self] = {}
     end
 
     function mt:flush(widget)
@@ -779,7 +781,9 @@ OnInit("Missiles", function ()
     
     -- -------------------------------- Terminate ------------------------------- --
     function mt:terminate()
-        self:OnRemove()
+        Timed.call(function ()
+            self:OnRemove()
+        end)
     end
 
     -- -------------------------- Destroys the missile -------------------------- --
@@ -908,3 +912,4 @@ OnInit("Missiles", function ()
         return this
     end
 end)
+if Debug then Debug.endFile() end

@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("Event") end
 --[[
     Event v2.1
 
@@ -281,3 +282,4 @@ OnInit(function(require) --https://github.com/BribeFromTheHive/Lua-Core/blob/mai
         return event
     end
 end)
+if Debug then Debug.endFile() end

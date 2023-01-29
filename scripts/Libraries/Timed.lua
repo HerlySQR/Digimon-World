@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("Timed") end
 --[[--------------------------------------------------------------------------------------
     Timed Call and Echo v2.0.1.0 by Bribe, special thanks to Eikonium and Jesus4Lyf
     
@@ -154,3 +155,4 @@ Timed = {
     end
 }
 end
+if Debug then Debug.endFile() end

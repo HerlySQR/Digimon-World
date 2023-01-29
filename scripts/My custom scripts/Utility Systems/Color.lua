@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("Color") end
 OnInit("Color", function ()
     Require "AddHook" -- https://www.hiveworkshop.com/threads/hook.339153/
 
@@ -168,22 +169,24 @@ OnInit("Color", function ()
     if HOOK_COLOR_FUNCTIONS then
         ---@param func string
         local function hook1(func)
-            AddHook(func, function (h, red, green, blue, alpha)
+            local oldFunc
+            oldFunc = AddHook(func, function (h, red, green, blue, alpha)
                 if not green then
-                    _G[func].original(h, red.red, red.green, red.blue, red.alpha)
+                    oldFunc(h, red.red, red.green, red.blue, red.alpha)
                 else
-                    _G[func].original(h, red, green, blue, alpha)
+                    oldFunc(h, red, green, blue, alpha)
                 end
             end)
         end
 
         ---@param func string
         local function hook2(func)
-            AddHook(func, function (red, green, blue, alpha)
+            local oldFunc
+            oldFunc = AddHook(func, function (red, green, blue, alpha)
                 if not green then
-                    _G[func].original(red.red, red.green, red.blue, red.alpha)
+                    oldFunc(red.red, red.green, red.blue, red.alpha)
                 else
-                    _G[func].original(red, green, blue, alpha)
+                    oldFunc(red, green, blue, alpha)
                 end
             end)
         end
@@ -200,34 +203,42 @@ OnInit("Color", function ()
         hook1("MultiboardSetItemsValueColor")
         hook1("MultiboardSetItemValueColor")
         hook1("LeaderboardSetItemValueColor")
-        AddHook("SetLightningColor", function (whichBolt, r, g, b)
+
+        local oldFunc1
+        oldFunc1 = AddHook("SetLightningColor", function (whichBolt, r, g, b)
             if not g then
-                SetLightningColor.original(whichBolt, r.red/255, r.green/255, r.blue/255, r.alpha/255)
+                oldFunc1(whichBolt, r.red/255, r.green/255, r.blue/255, r.alpha/255)
             else
-                SetLightningColor.original(whichBolt, r, g, b)
+                oldFunc1(whichBolt, r, g, b)
             end
         end)
         hook1("SetImageColor")
-        AddHook("BlzSetSpecialEffectColor", function (whichEffect, r, g, b)
+
+        local oldFunc2
+        oldFunc2 = AddHook("BlzSetSpecialEffectColor", function (whichEffect, r, g, b)
             if not g then
-                BlzSetSpecialEffectColor.original(whichEffect, r.red, r.green, r.blue)
+                oldFunc2(whichEffect, r.red, r.green, r.blue)
                 BlzSetSpecialEffectAlpha(whichEffect, r.alpha)
             else
-                BlzSetSpecialEffectColor.original(whichEffect, r, g, b)
+                oldFunc2(whichEffect, r, g, b)
             end
         end)
-        AddHook("BlzFrameSetTextColor", function (frame, color)
+
+        local oldFunc3
+        oldFunc3 = AddHook("BlzFrameSetTextColor", function (frame, color)
             if type(color) == "table" then
-                BlzFrameSetTextColor.original(frame, color:toHex())
+                oldFunc3(frame, color:toHex())
             else
-                BlzFrameSetTextColor.original(frame, color)
+                oldFunc3(frame, color)
             end
         end)
-        AddHook("BlzFrameSetVertexColor", function (frame, color)
+
+        local oldFunc4
+        oldFunc4 = AddHook("BlzFrameSetVertexColor", function (frame, color)
             if type(color) == "table" then
-                BlzFrameSetTextColor.original(frame, color:toHex())
+                oldFunc4(frame, color:toHex())
             else
-                BlzFrameSetTextColor.original(frame, color)
+                oldFunc4(frame, color)
             end
         end)
 
@@ -238,3 +249,4 @@ OnInit("Color", function ()
 
     return Color
 end)
+if Debug then Debug.endFile() end

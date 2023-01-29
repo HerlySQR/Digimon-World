@@ -1,4 +1,5 @@
-do
+if Debug then Debug.beginFile("Maths") end
+OnInit("Maths", function ()
     --[[ Library based on Advanced Mathematics v 1.2.0.0 by looking_for_help
     **********************************************************************************
     *
@@ -422,4 +423,5 @@ do
         end
         return false
     end
-end
+end)
+if Debug then Debug.endFile() end

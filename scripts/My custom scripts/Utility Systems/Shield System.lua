@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("Shield") end
 OnInit("Shield", function ()
     Require "Damage" -- https://www.hiveworkshop.com/threads/damage-engine-5-9-0-0.201016/
     Require "Set" -- https://www.hiveworkshop.com/threads/set-group-datastructure.331886/
@@ -67,7 +68,7 @@ OnInit("Shield", function ()
             self:setModel(self._model, self._point)
         end
 
-        self._timer = Timed.echo(function ()
+        self._timer = Timed.echo(INTERVAL, function ()
             self._elapsed = self._elapsed + INTERVAL
 
             if self.onPeriodic then
@@ -77,7 +78,7 @@ OnInit("Shield", function ()
             if self._elapsed >= self.duration then
                 self:destroy()
             end
-        end, INTERVAL)
+        end)
 
         Shield.applyEvent:run(self)
     end
@@ -155,3 +156,4 @@ OnInit("Shield", function ()
         end)
     end)
 end)
+if Debug then Debug.endFile() end

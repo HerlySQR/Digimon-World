@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("DummyCaster") end
 OnInit("DummyCaster", function ()
     Require "WorldBounds"
     Require "Timed"
@@ -19,6 +20,7 @@ OnInit("DummyCaster", function ()
 
     local Dummies = {}
     local Abilities = __jarray(0)
+    local Neutral = Player(PLAYER_NEUTRAL_PASSIVE)
 
     local function GetDummy(player, x, y, angle)
         local dummy = table.remove(Dummies)
@@ -34,6 +36,7 @@ OnInit("DummyCaster", function ()
     end
 
     local function RefreshDummy(dummy)
+        SetUnitOwner(dummy, Neutral, false)
         ShowUnitHide(dummy)
         SetUnitPosition(dummy, WorldBounds.maxX, WorldBounds.maxY)
         UnitRemoveAbility(dummy, Abilities[dummy])
@@ -104,3 +107,4 @@ OnInit("DummyCaster", function ()
         end
     end)
 end)
+if Debug then Debug.endFile() end

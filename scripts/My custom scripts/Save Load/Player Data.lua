@@ -1,3 +1,4 @@
+Debug.beginFile("Player Data")
 OnInit("Player Data", function ()
     Require "PlayerDigimons"
 
@@ -39,6 +40,7 @@ OnInit("Player Data", function ()
                     if self.charges[i] > 1 then
                         SetItemCharges(m, self.charges[i])
                     end
+                    SetItemPlayer(m, GetOwningPlayer(u), true)
                 end
             end
         end
@@ -167,3 +169,4 @@ OnInit("Player Data", function ()
     end
 
 end)
+Debug.endFile()

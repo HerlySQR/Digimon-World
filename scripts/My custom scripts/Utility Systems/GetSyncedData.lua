@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("GetSyncedData") end
 OnInit("GetSyncedData", function ()
     Require "LinkedList" -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
     Require "Obj2Str" -- https://www.hiveworkshop.com/pastebin/65b5fc46fc82087ba24609b14f2dc4ff.25120
@@ -71,3 +72,4 @@ OnInit("GetSyncedData", function ()
         coroutine.resume(DequeueThread(), pcall(Str2Obj, BlzGetTriggerSyncData()))
     end)
 end)
+if Debug then Debug.endFile() end

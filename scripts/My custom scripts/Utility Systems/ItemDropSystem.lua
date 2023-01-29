@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("ItemDropSystem") end
 OnInit(function ()
     local instances = {}
 
@@ -81,3 +82,4 @@ OnInit(function ()
     end)
 
 end)
+if Debug then Debug.endFile() end

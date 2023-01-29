@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("Knockback") end
 OnInit("Knockback", function ()
     Require "LinkedList"
     -- System based in Paladon's GUI Knockback System
@@ -86,3 +87,4 @@ OnInit("Knockback", function ()
         return Knockbacked[u] > 0
     end
 end)
+if Debug then Debug.endFile() end

@@ -1,3 +1,4 @@
+Debug.beginFile("PressSaveOrLoad")
 OnInit("PressSaveOrLoad", function ()
     Require "Player Data"
     Require "Timed"
@@ -389,3 +390,4 @@ OnInit("PressSaveOrLoad", function ()
         WarningMessageReceived[p] = flag == 1
     end
 end)
+Debug.endFile()

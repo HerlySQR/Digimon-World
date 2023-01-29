@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("AFK") end
 OnInit("AFK", function ()
     Require "PlayerUtils"
     Require "Timed"
@@ -39,3 +40,4 @@ OnInit("AFK", function ()
     end)
 
 end)
+if Debug then Debug.endFile() end

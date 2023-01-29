@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("RegisterSpellEvent") end
 OnInit("RegisterSpellEvent", function ()
     -- I use the handle id because when these events are type casted to
     -- eventid they become different objects
@@ -63,3 +64,4 @@ end)
 
 --syntax is:
 --RegisterSpellEffectEvent(FourCC('Abil'), function() print(GetUnitName(GetTriggerUnit())) end)
+if Debug then Debug.endFile() end

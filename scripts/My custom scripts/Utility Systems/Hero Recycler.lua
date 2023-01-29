@@ -1,7 +1,6 @@
+if Debug then Debug.beginFile("HeroRecycler") end
 OnInit("HeroRecycler", function ()
-    Require "LinkedList"
     Require "Timed"
-    Require "AddHook"
     Require.optional "WorldBounds"
 
     -- System based on UnitRecycler https://www.hiveworkshop.com/threads/286701/
@@ -33,8 +32,6 @@ OnInit("HeroRecycler", function ()
     local function UnitTypeFilter(u)
         return IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitIllusion(u) and not IsUnitType(u, UNIT_TYPE_SUMMONED)
     end
-
-    local originalScale = __jarray(1) ---@type number[]
 
     -- When recycling a unit back to the stock, these resets will be applied to the
     -- unit. You can add more actions to this or you can delete this module if you
@@ -121,7 +118,6 @@ OnInit("HeroRecycler", function ()
             local u = table.remove(list)
             if not u then
                 u = CreateUnit(owner, id, x, y, angle)
-                originalScale[id] = BlzGetUnitRealField(u, UNIT_RF_SCALING_VALUE)
             else
                 SetUnitOwner(u, owner, true)
                 SetUnitPosition(u, x, y)
@@ -161,3 +157,4 @@ OnInit("HeroRecycler", function ()
         end)
     end
 end)
+if Debug then Debug.endFile() end

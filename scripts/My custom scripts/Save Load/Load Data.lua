@@ -1,3 +1,4 @@
+Debug.beginFile("Load Data")
 OnInit(function ()
     Require "FrameLoader"
     Require "SaveHelper"
@@ -119,3 +120,4 @@ OnInit(function ()
     end)
 
 end)
+Debug.endFile()

@@ -7,12 +7,11 @@ OnInit(function ()
     local movingEarthquake = Orders.earthquake
     local burrowOrder = Orders.burrow
 
-    InitBossFight("Drimogemon", boss, function (unitsInTheField)
+    InitBossFight("Drimogemon", boss, function (u)
         local spellChance = math.random(0, 100)
         if spellChance <= 35 then
-            IssueTargetOrderById(boss, dashOrder, unitsInTheField[math.random(1, #unitsInTheField)])
+            IssueTargetOrderById(boss, dashOrder, u)
         elseif spellChance > 35 and spellChance <= 45 then
-            local u = unitsInTheField[math.random(1, #unitsInTheField)]
             IssuePointOrderById(boss, movingEarthquake, GetUnitX(u), GetUnitY(u))
         end
         if not BossStillCasting(boss) then

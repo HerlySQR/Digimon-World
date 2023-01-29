@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("UnitEnum") end
 OnInit("UnitEnum", function ()
 
     local ENUM_GROUP = CreateGroup()
@@ -85,3 +86,4 @@ OnInit("UnitEnum", function ()
         return units[math.random(#units)]
     end
 end)
+if Debug then Debug.endFile() end
