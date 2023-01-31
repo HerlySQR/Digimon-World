@@ -139,7 +139,6 @@ OnInit("Savecode", function ()
     ---@param val integer
     ---@param max integer
     function Savecode:Encode(val, max)
-        assert(val >= 0, "Error, encoding a negative value")
         self.digits = self.digits + log(max + 1, BASE())
         self.bigNum:MulSmall(max + 1)
         self.bigNum:AddSmall(val)

@@ -23,16 +23,9 @@ OnInit("PressSaveOrLoad", function ()
     local AbsoluteLoad = nil ---@type framehandle
     local Exit = nil ---@type framehandle
 
-    local WarningMessage = nil ---@type dialog
-    local WarningMessageReceived = __jarray(false) ---@type table<player, boolean>
-
     local NotOnline = false
 
     OnInit.final(function ()
-        WarningMessage = DialogCreate()
-        DialogSetMessage(WarningMessage, "|cffff0000WARNING|r\nTo properly save, you should\nrestart the Warcraft 3.")
-        DialogAddButton(WarningMessage, "Understood", 0)
-
         NotOnline = ReloadGameCachesFromDisk() and not udg_SaveOnSinglePlayer
 
         PolledWait(1.)
@@ -133,12 +126,6 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetEnable(AbsoluteSave, BlzFrameIsVisible(AbsoluteSave) and not NotOnline)
             BlzFrameSetEnable(AbsoluteLoad, BlzFrameIsVisible(AbsoluteLoad))
             UpdateInformation()
-            if not WarningMessageReceived[p] then
-                DialogDisplay(p, WarningMessage, true)
-            end
-        end
-        if not WarningMessageReceived[p] then
-            WarningMessageReceived[p] = true
         end
     end
 
@@ -376,18 +363,6 @@ OnInit("PressSaveOrLoad", function ()
         if p == LocalPlayer then
             BlzFrameSetVisible(LoadButton, flag)
         end
-    end
-
-    ---@param p player
-    ---@return integer
-    function IsWarningMessageReceived(p)
-        return WarningMessageReceived[p] and 1 or 0
-    end
-
-    ---@param p player
-    ---@param flag integer
-    function SetWarningMessageReceived(p, flag)
-        WarningMessageReceived[p] = flag == 1
     end
 end)
 Debug.endFile()

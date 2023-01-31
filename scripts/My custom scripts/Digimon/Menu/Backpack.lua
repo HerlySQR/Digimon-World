@@ -8,7 +8,7 @@ OnInit("Backpack", function ()
     Require "Timed"
     Require "ErrorMessage"
 
-    local OriginFrame = BlzGetOriginFrame(ORIGIN_FRAME_WORLD_FRAME, 0)
+    local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local Backpack = nil ---@type framehandle
     local BackdropBackpack = nil ---@type framehandle
     local BackpackMenu = nil ---@type framehandle
@@ -196,7 +196,7 @@ OnInit("Backpack", function ()
 
             itemData.charges = itemData.charges - 1
 
-            if itemData.charges == 0 then
+            if itemData.charges <= 0 then
                 table.remove(PlayerItems[p], i)
                 for newSlot, otherData in ipairs(PlayerItems[p]) do
                     otherData.slot = newSlot
@@ -262,8 +262,8 @@ OnInit("Backpack", function ()
         local t = nil ---@type trigger
 
         Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.760000, 0.195000)
-        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.790000, 0.165000)
+        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.820000, 0.140000)
+        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.850000, 0.110000)
         BlzFrameSetVisible(Backpack, false)
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
@@ -274,8 +274,8 @@ OnInit("Backpack", function ()
         TriggerAddAction(t, BackpackFunc)
 
         BackpackMenu = BlzCreateFrame("CheckListBox", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.680000, 0.345000)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.195000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.80000, 0.32000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, 0.920000, 0.17000)
         BlzFrameSetVisible(BackpackMenu, false)
 
         BackpackText = BlzCreateFrameByType("TEXT", "name", BackpackMenu, "", 0)

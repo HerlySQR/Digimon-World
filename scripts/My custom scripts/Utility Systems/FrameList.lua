@@ -62,9 +62,9 @@ OnInit("FrameList", function ()
         if GetLocalPlayer() == GetTriggerPlayer() then
             if BlzGetTriggerFrameEvent() == FRAMEEVENT_MOUSE_WHEEL then
                 if BlzGetTriggerFrameValue() > 0 then
-                    BlzFrameSetValue(frame, BlzFrameGetValue(frame) + 1)
-                else
                     BlzFrameSetValue(frame, BlzFrameGetValue(frame) - 1)
+                else
+                    BlzFrameSetValue(frame, BlzFrameGetValue(frame) + 1)
                 end
             end
             FrameList[frame]:setContentPoints()
@@ -89,6 +89,7 @@ OnInit("FrameList", function ()
             frameListTable.Slider = BlzGetFrameByName("FrameListSliderH", createContext)
             frameListTable.Mode = FrameList.Horizontal
         end
+        BlzFrameSetParent(frameListTable.Slider, parent)
         frameListTable.Content = {}
         FrameList[frameListTable.Slider] = frameListTable
         FrameList[frameListTable.Frame] = frameListTable
@@ -99,9 +100,9 @@ OnInit("FrameList", function ()
 
     ---Update the shown content, should be done automatic
     function FrameList:setContentPoints()
-        local sliderValue = math.tointeger(BlzFrameGetValue(self.Slider))
         local sizeFrameList = self.Mode.GetSize(self.Frame)
         local contentCount = #self.Content
+        local sliderValue = contentCount - math.tointeger(BlzFrameGetValue(self.Slider))
 
         for index = 1, contentCount, 1 do
             local frame = self.Content[index]
@@ -141,12 +142,13 @@ OnInit("FrameList", function ()
         table.insert(self.Content, frame)
         --BlzFrameSetParent(frame, self.Frame)
         BlzFrameSetMinMaxValue(self.Slider, 1, #self.Content)
+        BlzFrameSetValue(frame, 1)
         self:setContentPoints()
     end
 
     ---Removes frame (can be a number) from frameListTable, skip noUpdate that is only used from FrameList.destory
     ---@param frame framehandle | integer
-    ---@param noUpdate boolean
+    ---@param noUpdate? boolean
     ---@return number | boolean
     function FrameList:remove(frame, noUpdate)
         local removed ---@type framehandle
@@ -154,7 +156,7 @@ OnInit("FrameList", function ()
         if not frame then
             removed = table.remove(self.Content)
         elseif type(frame) == "number" then
-            removed = table.remove( self.Content, frame)
+            removed = table.remove(self.Content, frame)
         else
             for index, value in ipairs(self.Content) do
                 if frame == value then
@@ -169,7 +171,7 @@ OnInit("FrameList", function ()
             BlzFrameSetVisible(removed, false)
             if not noUpdate then
                 BlzFrameSetMinMaxValue(self.Slider, 1, #self.Content)
-                BlzFrameSetValue(self.Slider, 1)
+                BlzFrameSetValue(self.Slider, #self.Content)
                 self:setContentPoints()
             end
         end
