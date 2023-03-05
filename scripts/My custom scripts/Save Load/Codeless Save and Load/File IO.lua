@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("File IO") end
 OnInit("FileIO", function ()
     --[[**************************************************************
     *
@@ -110,7 +111,7 @@ OnInit("FileIO", function ()
 
             local chunk = contents:sub(i, i + File.PreloadLimit)
             Preload("\" )\ncall BlzSetAbilityTooltip(" .. File.AbilityList[c] .. ", \"" .. "-" .. chunk .. "\", " .. 0 .. ")\n//")
-            i = i + File.PreloadLimit
+            i = i + File.PreloadLimit + 1
             c = c + 1
         end
         Preload("\" )\nendfunction\nfunction a takes nothing returns nothing\n //")
@@ -264,3 +265,4 @@ OnInit("FileIO", function ()
         return File.open(filename):readEx(true)
     end
 end)
+if Debug then Debug.endFile() end

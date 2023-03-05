@@ -1,6 +1,8 @@
 Debug.beginFile("Player Data")
 OnInit("Player Data", function ()
     Require "PlayerDigimons"
+    Require "AddHook"
+    Require "Quests"
 
     do
         ---@class Inventory
@@ -61,11 +63,17 @@ OnInit("Player Data", function ()
     ---@field inventories Inventory[]
     ---@field levels integer[]
     ---@field experiences integer[]
+    ---@field completedQuests integer
     PlayerDatas = {} ---@type table<player, PlayerData[]>
 
     for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
         PlayerDatas[Player(i)] = {}
     end
+
+    udg_SaveLoadBackpackItems = {}
+    udg_SaveLoadBackpackItemCharges = {}
+    udg_SaveLoadDigimons = {}
+    udg_SaveLoadInventories = {}
 
     ---Since the save-load system loads the data in the reverse order, I have to reverse it again
     ---@param list table
@@ -94,25 +102,29 @@ OnInit("Player Data", function ()
     ---After set the GUI variables use this function to store them in a slot
     ---@param p player
     ---@param slot integer
-    function StoreData(p, slot)
-        for i = 1, #udg_SaveLoadInventories do
-            local inv = udg_SaveLoadInventories[i]
-            inv.items = reverseManual(inv.items, 0, 5)
-            inv.charges = reverseManual(inv.charges, 0, 5)
-            inv.classes = reverseManual(inv.classes, 0, 5)
+    ---@param save? boolean
+    function StoreData(p, slot, save)
+        if not save then
+            for i = 1, #udg_SaveLoadInventories do
+                local inv = udg_SaveLoadInventories[i]
+                inv.items = reverseManual(inv.items, 0, 5)
+                inv.charges = reverseManual(inv.charges, 0, 5)
+                inv.classes = reverseManual(inv.classes, 0, 5)
+            end
         end
 
         -- This overwrites the slot if was previously set
         PlayerDatas[p][slot] = {
-            gold = udg_SaveLoadGold, ---@type integer
-            lumber = udg_SaveLoadLumber, ---@type integer
-            food = udg_SaveLoadFood, ---@type integer
-            backpackItems = reverse(udg_SaveLoadBackpackItems), ---@type integer[]
-            backpackItemCharges = reverse(udg_SaveLoadBackpackItemCharges), ---@type integer[]
-            digimons = reverse(udg_SaveLoadDigimons), ---@type integer[]
-            inventories = reverse(udg_SaveLoadInventories), ---@type Inventory[]
-            levels = reverse(udg_SaveLoadLevels), ---@type integer[]
-            experiences = reverse(udg_SaveLoadExps), ---@type integer[]
+            gold = udg_SaveLoadGold,
+            lumber = udg_SaveLoadLumber,
+            food = udg_SaveLoadFood,
+            backpackItems = save and udg_SaveLoadBackpackItems or reverse(udg_SaveLoadBackpackItems),
+            backpackItemCharges = save and udg_SaveLoadBackpackItemCharges or reverse(udg_SaveLoadBackpackItemCharges),
+            digimons = save and udg_SaveLoadDigimons or reverse(udg_SaveLoadDigimons),
+            inventories = save and udg_SaveLoadInventories or reverse(udg_SaveLoadInventories),
+            levels = save and udg_SaveLoadLevels or reverse(udg_SaveLoadLevels),
+            experiences = save and udg_SaveLoadExps or reverse(udg_SaveLoadExps),
+            completedQuests = udg_SaveLoadCompletedQuests
         }
 
         udg_SaveLoadBackpackItems = {}
@@ -123,20 +135,33 @@ OnInit("Player Data", function ()
         udg_SaveLoadExps = __jarray(0)
     end
 
+    ---Clears all the data of the player
+    ---@param p player
+    function RestartData(p)
+        for i = 0, 5 do
+            pcall(function ()
+                RemoveFromBank(p, i):destroy() -- Also remove from the stored
+            end)
+        end
+        SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, 0)
+        SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, 0)
+        SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, 0)
+        SetBackpackItems(p, nil)
+        ClearDigimons(p)
+        SetCompletedQuests(p, 0)
+    end
+
     ---After store the data use this function from the slot to use them
     ---@param p player
     ---@param slot integer
     function UseData(p, slot)
         if PlayerDatas[p] then
+            -- Flush the previous data
+            RestartData(p)
+
+            -- Use the new data
             local data = PlayerDatas[p][slot]
             if data then
-                -- Flush the previous data
-                for i = 0, 5 do
-                    pcall(function ()
-                        RemoveFromBank(p, i):destroy() -- Also remove from the stored
-                    end)
-                end
-                -- Use the new data
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, data.gold)
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, data.lumber)
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, data.food)
@@ -150,8 +175,22 @@ OnInit("Player Data", function ()
                     StoreDigimon(p, d)
                     SendToBank(p, d)
                 end
+                SetCompletedQuests(p, data.completedQuests)
             end
         end
+    end
+
+    function ClearSaveLoadData()
+        udg_SaveLoadGold = 0
+        udg_SaveLoadLumber = 0
+        udg_SaveLoadFood = 0
+        udg_SaveLoadBackpackItems = {}
+        udg_SaveLoadBackpackItemCharges = {}
+        udg_SaveLoadDigimons = {}
+        udg_SaveLoadInventories = {}
+        udg_SaveLoadLevels = __jarray(0)
+        udg_SaveLoadExps = __jarray(0)
+        udg_SaveLoadCompletedQuests = 0
     end
 
     ---I prefered create my own level XP function
@@ -167,6 +206,34 @@ OnInit("Player Data", function ()
         end
         return xp
     end
+
+    -- Check for invalid values
+
+    local function hook(func, thing)
+        local old
+        old = AddHook(func, function (id)
+            if not id or id == 0 then
+                error("Trying to get an invalid " .. thing .. ".\nMaybe you have an invalid or corrupted saved file.", 2)
+            end
+            return old(id)
+        end)
+    end
+    hook("BlzGetAbilityIcon", "icon")
+    hook("GetObjectName", "name")
+    local old1
+    old1 = AddHook("BlzGetAbilityExtendedTooltip", function (id, lvl)
+        if not id or id == 0 then
+            error("Trying to get an invalid tooltip.\nMaybe you have an invalid or corrupted saved file.", 2)
+        end
+        return old1(id, lvl)
+    end)
+    local old2
+    old2 = AddHook("CreateUnit", function (owningPlayer, unitid, x, y, face)
+        if not unitid or unitid == 0 then
+            error("Trying to create an invalid unit.\nMaybe you have an invalid or corrupted saved file.", 2)
+        end
+        return old2(owningPlayer, unitid, x, y, face)
+    end)
 
 end)
 Debug.endFile()

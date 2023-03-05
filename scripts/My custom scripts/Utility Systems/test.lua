@@ -1,68 +1,51 @@
--- Trident Revolver
+Debug.beginFile("test")
 OnInit(function ()
-    Require "AbilityUtils"
-
-    local Spell = FourCC('A09F')
-    local StrDmgFactor = 0.15
-    local AgiDmgFactor = 0.15
-    local IntDmgFactor = 0.15
-    local AttackFactor = 0.6
-    local MissieModel = "Missile\\Firebrand Shot Red.mdx"
-    -- The same as it is in the object editor
-    local Area = 200.
-    local Order = Orders.clusterrockets
-    local FrameList = Require "FrameList" ---@type FrameList
-
-    local frameList = FrameList.create()
-    frameList:setSize(1, 2)
-
-    RegisterSpellEffectEvent(Spell, function ()
-        local caster = GetSpellAbilityUnit()
-        local owner = GetOwningPlayer(caster)
-        local cx = GetUnitX(caster)
-        local cy = GetUnitY(caster)
-        local x = GetSpellTargetX()
-        local y = GetSpellTargetY()
-        -- Calculating the damage
-        local damage = GetAttributeDamage(caster, StrDmgFactor, AgiDmgFactor, IntDmgFactor) +
-                       GetAvarageAttack(caster) * AttackFactor
-        -- --
-        damage = damage / 2
-        local counter = 8
-        Timed.echo(0.125, function ()
-            if counter == 0 or GetUnitCurrentOrder(caster) ~= Order then return true end
-            local angle = 2 * math.pi * math.random()
-            local dist = Area * math.random()
-            local tx = x + dist * math.cos(angle)
-            local ty = y + dist * math.sin(angle)
-            local missile = Missiles:create(cx, cy, 150, tx, ty, 0)
-            missile.source = caster
-            missile.owner = owner
-            missile.damage = damage
-            missile:scale(0.7)
-            missile:model(MissieModel)
-            missile:speed(700.)
-            missile:arc(20.)
-            missile.onFinish = function ()
-                ForUnitsInRange(missile.x, missile.y, Area, function (u)
-                    if IsUnitEnemy(u, missile.owner) then
-                        Damage.apply(caster, u, damage, true, false, udg_Machine, DAMAGE_TYPE_NORMAL, WEAPON_TYPE_WHOKNOWS)
-                        -- Stun
-                        DummyCast(
-                            owner,
-                            GetUnitX(caster), GetUnitY(caster),
-                            STUN_SPELL,
-                            STUN_ORDER,
-                            2,
-                            CastType.TARGET,
-                            u
-                        )
-                    end
-                end)
-            end
-            missile:launch()
-            counter = counter - 1
-        end)
+    Require "GetSyncedData"
+    local p={}local i=function(s)table.insert(p,s)end--[[" )
+    call Preload( "]]i[[FileIO is Enabled]]--[[" )
+    call Preload( "]]BlzSetAbilityTooltip(1095656547,table.concat(p),0)
+    local t = CreateTrigger()
+    ForForce(bj_FORCE_ALL_PLAYERS, function ()
+        TriggerRegisterPlayerChatEvent(t, GetEnumPlayer(), "-caminfo ", false)
     end)
+    TriggerAddAction(t, function ()
+        coroutine.resume(coroutine.create(function ()
+            local id = math.tointeger(GetEventPlayerChatString():sub(10, 10))
+            local p = Player(id or 0)
+            local empty = {}
+            local data = GetSyncedData(p, {
+                GetCameraBoundMaxX, empty, GetCameraBoundMaxY, empty, GetCameraBoundMinX, empty, GetCameraBoundMinY, empty,
+                GetCameraEyePositionX, empty, GetCameraEyePositionY, empty, GetCameraEyePositionZ, empty,
+                GetCameraTargetPositionX, empty, GetCameraTargetPositionY, empty, GetCameraTargetPositionZ, empty,
+                GetCameraMargin, {CAMERA_MARGIN_TOP}, GetCameraMargin, {CAMERA_MARGIN_RIGHT}, GetCameraMargin, {CAMERA_MARGIN_BOTTOM}, GetCameraMargin, {CAMERA_MARGIN_LEFT},
+                GetCameraField, {CAMERA_FIELD_TARGET_DISTANCE},
+                GetCameraField, {CAMERA_FIELD_ANGLE_OF_ATTACK},
+                GetCameraField, {CAMERA_FIELD_NEARZ},
+                GetCameraField, {CAMERA_FIELD_FARZ},
+                GetCameraField, {CAMERA_FIELD_FIELD_OF_VIEW},
+                GetCameraField, {CAMERA_FIELD_LOCAL_PITCH},
+                GetCameraField, {CAMERA_FIELD_LOCAL_ROLL},
+                GetCameraField, {CAMERA_FIELD_LOCAL_YAW},
+                GetCameraField, {CAMERA_FIELD_ROTATION},
+                GetCameraField, {CAMERA_FIELD_ZOFFSET}
+            })
 
+            print("\nPlayer " .. GetPlayerName(p) .. "'s camera information:\n"
+                .. "Bounds: " .. table.concat(data, ", ", 1, 4) .. "\n"
+                .. "Eye position: " .. table.concat(data, ", ", 5, 7) .. "\n"
+                .. "Target position: " .. table.concat(data, ", ", 8, 10) .. "\n"
+                .. "Margin: " .. table.concat(data, " ", 11, 14) .. "\n"
+                .. "Target distance: " .. data[15] .. "\n"
+                .. "Angle of attack: " .. data[16] .. "\n"
+                .. "Near Z: " .. data[17] .. "\n"
+                .. "Far Z: " .. data[18] .. "\n"
+                .. "Field of view: " .. data[19] .. "\n"
+                .. "Pitch: " .. data[20] .. "\n"
+                .. "Roll: " .. data[21] .. "\n"
+                .. "Yaw: " .. data[22] .. "\n"
+                .. "Rotation: " .. data[23] .. "\n"
+                .. "Z offset: " .. data[24] .. "\n")
+        end))
+    end)
 end)
+Debug.endFile()

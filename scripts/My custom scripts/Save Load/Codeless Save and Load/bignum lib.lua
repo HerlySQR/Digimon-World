@@ -1,10 +1,10 @@
+if Debug then Debug.beginFile("bignum lib") end
 OnInit("BigNum", function ()
     --prefer algebraic approach because of real subtraction issues
     ---@param y number
     ---@param base number
     ---@return number
     function log(y, base)
-        local x
         local factor = 1.0
         local logy = 0.0
         local sign = 1.0
@@ -228,3 +228,4 @@ OnInit("BigNum", function ()
         assert(prop_Arith(), "BigNum aritmethic failed")
     end)]]
 end)
+if Debug then Debug.endFile() end

@@ -51,6 +51,7 @@ OnInit("Digimon", function ()
     ---@field rarity Rarity
     ---@field environment Environment
     ---@field onCombat boolean
+    ---@field isSummon boolean
     Digimon = {
         _instance = {} ---@type table<unit, Digimon>
     }
@@ -279,6 +280,7 @@ OnInit("Digimon", function ()
 
             self.environment = Environment.initial
             self.onCombat = false
+            self.isSummon = false
 
             Digimon._instance[u] = self
         end
@@ -316,13 +318,21 @@ OnInit("Digimon", function ()
             local target = Digimon._instance[GetDyingUnit()]
 
             if target then
-                Digimon.killEvent:run({killer = Digimon._instance[killer] or killer, target = target})
+                Digimon.killEvent:run({killer = killer and Digimon._instance[killer] or killer, target = target})
 
-                if not IsUnitType(target.root, UNIT_TYPE_ANCIENT) and (target:getOwner() == Digimon.NEUTRAL or target:getOwner() == Digimon.PASSIVE) then
+                if target.isSummon or (not IsUnitType(target.root, UNIT_TYPE_ANCIENT) and (target:getOwner() == Digimon.NEUTRAL or target:getOwner() == Digimon.PASSIVE)) then
                     target:remove(6.)
                 end
             end
         end)
+    end
+
+    ---@param notDestroy? boolean
+    function Digimon:kill(notDestroy)
+        KillUnit(self.root)
+        if not notDestroy and not self.isSummon and (IsUnitType(self.root, UNIT_TYPE_ANCIENT) or (self:getOwner() ~= Digimon.NEUTRAL and self:getOwner() ~= Digimon.PASSIVE)) then
+            self:remove(6.)
+        end
     end
 
     -- Level Up
@@ -565,6 +575,13 @@ OnInit("Digimon", function ()
 
     Digimon.NEUTRAL = Player(12)
     Digimon.PASSIVE = Player(PLAYER_NEUTRAL_PASSIVE)
+    Digimon.VILLAIN = Player(13)
+
+    ---@param p player
+    ---@return boolean
+    function Digimon.isNeutral(p)
+        return p == Digimon.NEUTRAL or p == Digimon.PASSIVE or p == Digimon.VILLAIN
+    end
 
     GlobalRemap("udg_SetCommon", nil, function (id) rarities[id] = Rarity.COMMON end)
     GlobalRemap("udg_SetUncommon", nil, function (id) rarities[id] = Rarity.UNCOMMON end)

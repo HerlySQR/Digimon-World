@@ -7,6 +7,7 @@ OnInit("DummyCaster", function ()
 
     -- Import the dummy from the object editor
     local DummyID = FourCC('n000')
+    local MAX_DUMMIES = 99
 
     -- WARNING: Do not touch anything below this line!
 
@@ -36,12 +37,16 @@ OnInit("DummyCaster", function ()
     end
 
     local function RefreshDummy(dummy)
-        SetUnitOwner(dummy, Neutral, false)
-        ShowUnitHide(dummy)
-        SetUnitPosition(dummy, WorldBounds.maxX, WorldBounds.maxY)
-        UnitRemoveAbility(dummy, Abilities[dummy])
-        Abilities[dummy] = nil
-        table.insert(Dummies, dummy)
+        if #Dummies == MAX_DUMMIES then
+            RemoveUnit(dummy)
+        else
+            SetUnitOwner(dummy, Neutral, false)
+            ShowUnitHide(dummy)
+            SetUnitPosition(dummy, WorldBounds.maxX, WorldBounds.maxY)
+            UnitRemoveAbility(dummy, Abilities[dummy])
+            Abilities[dummy] = nil
+            table.insert(Dummies, dummy)
+        end
     end
 
     ---Casts a spell from a dummy caster, returns if the spell was successfully casted

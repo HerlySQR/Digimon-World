@@ -6,8 +6,8 @@ OnInit("BountyController", function() -- https://www.hiveworkshop.com/threads/gl
 
     -- These can be edited (obviously only valid values)
 
-    local DEF_COLOR_GOLD = "ffcc00"
-    local DEF_COLOR_LUMBER = "32cd32"
+    local DEF_COLOR_GOLD = "828282"
+    local DEF_COLOR_LUMBER = "c8c800"
     local DEF_SIZE = 10
     local DEF_LIFE_SPAN = 3.50
     local DEF_AGE = 0.00

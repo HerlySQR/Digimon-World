@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("SyncHelper") end
 OnInit("SyncHelper", function ()
     local SYNC_PREFIX = "S"
 
@@ -27,3 +28,4 @@ OnInit("SyncHelper", function ()
         end
     end)
 end)
+if Debug then Debug.endFile() end

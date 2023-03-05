@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("PlayerUtils") end
 OnInit("PlayerUtils", function ()
 
     --[[*************************************************************
@@ -284,3 +285,4 @@ OnInit("PlayerUtils", function ()
         end)
     end
 end)
+if Debug then Debug.endFile() end

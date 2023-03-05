@@ -4,6 +4,7 @@ OnInit("AbilityUtils", function ()
     Require "RegisterSpellEvent"
     Require "Missiles"
     Require "Knockback"
+    local MCT = Require "MCT" ---@type MCT
 
     LOCUST_ID = FourCC('Aloc')
     CROW_FORM_ID = FourCC('Arav')
@@ -116,6 +117,48 @@ OnInit("AbilityUtils", function ()
         hiddenItems = {}
 
         return DistanceBetweenCoordsSq(x, y, tempX, tempY) <= MAX_RANGE and not IsTerrainPathable(x, y, PATHING_TYPE_WALKABILITY)
+    end
+
+    local pos = Location(0, 0)
+
+    ---@param u unit
+    ---@param withFly? boolean
+    ---@return number
+    function GetUnitZ(u, withFly)
+        MoveLocation(pos, GetUnitX(u), GetUnitY(u))
+        return GetLocationZ(pos) + (withFly and GetUnitFlyHeight(u) or 0)
+    end
+
+    ---@param x number
+    ---@param y number
+    ---@param range number
+    ---@param owner player
+    ---@param area number
+    ---@return nil | number posX, number posY
+    function GetConcentration(x, y, range, owner, area)
+        local xVals, yVals = {}, {} ---@type number[]
+
+        ForUnitsInRange(x, y, range, function (u)
+            if UnitAlive(u) and IsUnitEnemy(u, owner) and not BlzIsUnitInvulnerable(u) then
+                table.insert(xVals, GetUnitX(u))
+                table.insert(yVals, GetUnitY(u))
+            end
+        end)
+
+        if #xVals >= 3 then
+            local posX, posY = MCT.mode(xVals, true), MCT.mode(yVals, true)
+
+            local count = 0
+            ForUnitsInRange(posX, posY, area, function (u)
+                if UnitAlive(u) and IsUnitEnemy(u, owner) and not BlzIsUnitInvulnerable(u) then
+                    count = count + 1
+                end
+            end)
+
+            if count >= 3 then
+                return posX, posY
+            end
+        end
     end
 
 end)

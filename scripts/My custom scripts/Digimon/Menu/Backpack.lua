@@ -42,6 +42,8 @@ OnInit("Backpack", function ()
 
     local PlayerItems = {} ---@type table<player, ItemData[]>
     local MinRange = 700. ---The minimun range a player's digimon should be to the target to cast the spell
+    local MAX_STACK = udg_MAX_STACK ---The maximun number of items that you can have in every slot
+    local MAX_ITEMS = udg_MAX_ITEMS
     local DiscardMode = __jarray(false) ---@type table<player, boolean>
 
     local AllowedItems = {}
@@ -73,13 +75,13 @@ OnInit("Backpack", function ()
     ---Always use this function in a `if player == GetLocalPlayer() then` block
     local function UpdateMenu()
         local items = PlayerItems[LocalPlayer]
-        for i = 1, 16 do
+        for i = 1, MAX_ITEMS do
             BlzFrameSetVisible(BackpackItemT[i], false)
         end
 
         for i, itemData in ipairs(items) do
             BlzFrameSetTexture(BackdropBackpackItemT[i], BlzGetAbilityIcon(itemData.id), 0, true)
-            BlzFrameSetText(BackPackItemCharges[i], tostring(itemData.charges))
+            BlzFrameSetText(BackPackItemCharges[i], I2S(itemData.charges))
 
             BlzFrameSetText(BackpackItemTooltipText[i], itemData.description)
             BlzFrameSetSize(BackpackItemTooltipText[i], 0.15, 0)
@@ -160,8 +162,6 @@ OnInit("Backpack", function ()
         GroupClear(selectedUnits[p])
         usingDummyCaster[p] = false
 
-        PolledWait(1.)
-
         if p == LocalPlayer then
             BlzFrameSetText(BackpackText, "Use an item for the focused unit")
         end
@@ -178,7 +178,9 @@ OnInit("Backpack", function ()
             local target = GetSpellTargetUnit()
 
             if not GetRandomUnitOnRange(GetUnitX(target), GetUnitY(target), MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
+                PauseUnit(caster, true)
                 IssueImmediateOrderById(caster, Orders.stop)
+                PauseUnit(caster, false)
                 ErrorMessage("|cffffcc00A digimon should be nearby the target|r", p)
             end
         end
@@ -209,9 +211,13 @@ OnInit("Backpack", function ()
                     Timed.echo(function ()
                         itemData.cooldown = itemData.cooldown - 1
                         if itemData.cooldown > 0 then
-                            BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
+                            if p == LocalPlayer then
+                                BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
+                            end
                         else
-                            BlzFrameSetVisible(BackpackItemCooldownT[i], false)
+                            if p == LocalPlayer then
+                                BlzFrameSetVisible(BackpackItemCooldownT[i], false)
+                            end
                             return true
                         end
                     end, 1.)
@@ -274,8 +280,8 @@ OnInit("Backpack", function ()
         TriggerAddAction(t, BackpackFunc)
 
         BackpackMenu = BlzCreateFrame("CheckListBox", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.80000, 0.32000)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, 0.920000, 0.17000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.780000, 0.32000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, 0.90000, 0.17000)
         BlzFrameSetVisible(BackpackMenu, false)
 
         BackpackText = BlzCreateFrameByType("TEXT", "name", BackpackMenu, "", 0)
@@ -317,7 +323,7 @@ OnInit("Backpack", function ()
             startY = startY - stepSize
         end
 
-        for i = 1, 16 do
+        for i = 1, MAX_ITEMS do
             BackpackItemT[i] = BlzCreateFrame("IconButtonTemplate", BackpackItems, 0, 0)
             BlzFrameSetPoint(BackpackItemT[i], FRAMEPOINT_TOPLEFT, BackpackItems, FRAMEPOINT_TOPLEFT, x[i], y[i])
             BlzFrameSetSize(BackpackItemT[i], stepSize, stepSize)
@@ -383,8 +389,10 @@ OnInit("Backpack", function ()
     TriggerAddAction(t, function ()
         local m = GetManipulatedItem()
         if AllowedItems[GetItemTypeId(m)] then
-            local p = GetOwningPlayer(GetManipulatingUnit())
+            local u = GetManipulatingUnit()
+            local p = GetOwningPlayer(u)
             local items = PlayerItems[p]
+
             local id = GetItemTypeId(m)
             local itemData ---@type ItemData
 
@@ -392,13 +400,18 @@ OnInit("Backpack", function ()
             ShowBackpack(p, true)
 
             for _, v in ipairs(items) do
-                if v.id == id then
+                if v.id == id and v.charges < MAX_STACK then
                     itemData = v
                     break
                 end
             end
 
             if not itemData then
+                if #items >= MAX_ITEMS then
+                    UnitRemoveItem(u, m)
+                    ErrorMessage("Backpack is full", p)
+                    return
+                end
                 itemData = CreateItemData(id)
                 table.insert(items, itemData)
                 itemData.slot = #items
@@ -408,6 +421,39 @@ OnInit("Backpack", function ()
             if p == LocalPlayer then
                 UpdateMenu()
             end
+        end
+    end)
+
+    --Prevent to get more than the max items
+    t = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+    TriggerAddAction(t, function ()
+        local m = GetOrderTargetItem()
+        if AllowedItems[GetItemTypeId(m)] and GetIssuedOrderId() == Orders.smart then
+            local u = GetOrderedUnit()
+            local p = GetOwningPlayer(u)
+            local items = PlayerItems[p]
+
+            if #items < MAX_ITEMS then
+                return
+            end
+
+            local id = GetItemTypeId(m)
+            local itemData ---@type ItemData
+
+            for _, v in ipairs(items) do
+                if v.id == id and v.charges < MAX_STACK then
+                    itemData = v
+                    break
+                end
+            end
+
+            if itemData then
+                return
+            end
+
+            IssueTargetOrderById(u, Orders.attack, u)
+            ErrorMessage("Backpack is full", p)
         end
     end)
 
@@ -445,9 +491,14 @@ OnInit("Backpack", function ()
     end
 
     ---@param p any
-    ---@param items integer[]
+    ---@param items integer[] | nil
     ---@param charges? integer[]
     function SetBackpackItems(p, items, charges)
+        if not items then
+            PlayerItems[p] = {}
+            return
+        end
+
         for i = #items, 1, -1 do
             if items[i] == 0 then
                 DisplayTextToPlayer(p, 0, 0, "You loaded an invalid object in the backpack.")

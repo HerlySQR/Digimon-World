@@ -1,6 +1,10 @@
+Debug.beginFile("Digimon Evolution")
 OnInit("DigimonEvolution", function ()
     Require "Digimon"
     Require "Digimon Capture"
+    Require "Timed"
+    Require "PlayerUtils"
+    Require "PlayerDigimons"
 
     local EvolveDialog = {} ---@type table<player, dialog>
     local EvolveClicked = __jarray(-1) ---@type table<player, integer>
@@ -11,103 +15,17 @@ OnInit("DigimonEvolution", function ()
     EvolveAbil = FourCC('A02H')
     EvolveAbilDis = FourCC('A02I')
 
-    -- Register when a digimon enters/leaves in a rect for evolution
+    ---@class EvolutionCondition
+    ---@field toEvolve integer
+    ---@field level integer
+    ---@field place rect nilable
+    ---@field stone integer nilable
+    ---@field onlyDay boolean
+    ---@field onlyNight boolean
 
-    local regions = {} ---@type table<rect, region>
+    local EvolutionConditions = {} ---@type table<integer, EvolutionCondition[]>
 
-    local rectsE = {} ---@type table<rect, trigger>
-
-    ---@param r rect
-    ---@param callback fun(evolve: Digimon)
-    local function RegisterEnterRect(r, callback)
-        local t = rectsE[r]
-        if not t then
-            t = CreateTrigger()
-            local rg = regions[r]
-            if not rg then
-                rg = CreateRegion()
-                RegionAddRect(rg, r)
-                regions[r] = rg
-            end
-            TriggerRegisterEnterRegion(t, rg)
-            rectsE[r] = t
-        end
-        TriggerAddAction(t, function ()
-            local d = Digimon.getInstance(GetEnteringUnit())
-            if d then
-                callback(d)
-            end
-        end)
-    end
-
-    local rectsL = {} ---@type table<rect, trigger>
-
-    ---@param r rect
-    ---@param callback fun(evolve: Digimon)
-    local function RegisterLeaveRect(r, callback)
-        local t = rectsL[r]
-        if not t then
-            t = CreateTrigger()
-            local rg = regions[r]
-            if not rg then
-                rg = CreateRegion()
-                RegionAddRect(rg, r)
-                regions[r] = rg
-            end
-            TriggerRegisterLeaveRegion(t, rg)
-            rectsL[r] = t
-        end
-        TriggerAddAction(t, function ()
-            local d = Digimon.getInstance(GetLeavingUnit())
-            if d then
-                callback(d)
-            end
-        end)
-    end
-
-    -- Register when a digimon acquires/loses an item for evolution
-
-    local itemsP = {} ---@type table<integer, trigger>
-
-    ---@param m integer
-    ---@param callback fun(evolve: Digimon)
-    local function RegisterItemPick(m, callback)
-        local t = itemsP[m]
-        if not t then
-            t = CreateTrigger()
-            TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-            TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == m end))
-            itemsP[m] = t
-        end
-        TriggerAddAction(t, function ()
-            local d = Digimon.getInstance(GetTriggerUnit())
-            if d then
-                callback(d)
-            end
-        end)
-    end
-
-    local itemsD = {} ---@type table<integer, trigger>
-
-    ---@param m integer
-    ---@param callback fun(evolve: Digimon)
-    local function RegisterItemDrop(m, callback)
-        local t = itemsD[m]
-        if not t then
-            t = CreateTrigger()
-            TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DROP_ITEM)
-            TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == m end))
-            itemsD[m] = t
-        end
-        TriggerAddAction(t, function ()
-            local d = Digimon.getInstance(GetTriggerUnit())
-            if d then
-                callback(d)
-            end
-        end)
-    end
-
-    local PossibleEvolution = {} ---@type Set[]
+    local PossibleEvolution = {} ---@type table<Digimon, Set>
 
     ---@param evolve Digimon
     ---@param toEvolve integer
@@ -148,15 +66,44 @@ OnInit("DigimonEvolution", function ()
         evolve:addAbility(EvolveAbilDis)
     end
 
-    local onlyDayTypes = {} ---@type table<integer, fun(evolve: Digimon)>
-    local onlyNightTypes = {} ---@type table<integer, fun(evolve: Digimon)>
+    local function CheckDigimonEvolutionConditions()
+        ForForce(FORCE_PLAYING, function ()
+            for _, d in ipairs(GetDigimons(GetEnumPlayer())) do
+                local initial = d:getTypeId()
+                if EvolutionConditions[initial] then
+                    for _, cond in ipairs(EvolutionConditions[initial]) do
+                        local canEvolve = true
+                        -- Check lvl
+                        canEvolve = canEvolve and d:getLevel() >= cond.level
+                        -- Check place
+                        if cond.place then
+                            canEvolve = canEvolve and RectContainsUnit(cond.place, d.root)
+                        end
+                        -- Check stone
+                        if cond.stone then
+                            canEvolve = canEvolve and UnitHasItemOfTypeBJ(d.root, cond.stone)
+                        end
+                        -- Check day/night
+                        if cond.onlyDay then
+                            canEvolve = canEvolve and (GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK)
+                        elseif cond.onlyNight then
+                            canEvolve = canEvolve and (GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK)
+                        end
 
-    ---Consider day or night time
-    ---@return boolean
-    local function isTime(onlyDay, onlyNight)
-        return (not onlyDay or (GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK))
-        and (not onlyNight or (GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK))
+                        if canEvolve then
+                            AddPossibleEvolution(d, cond.toEvolve)
+                        else
+                            RemovePossibleEvolution(d, cond.toEvolve)
+                        end
+                    end
+                end
+            end
+        end)
     end
+
+    OnInit.final(function ()
+        Timed.echo(0.5, CheckDigimonEvolutionConditions)
+    end)
 
     ---The conditions to evolve (to ignore level just set the param level to 0)
     ---@param initial integer
@@ -170,80 +117,19 @@ OnInit("DigimonEvolution", function ()
         if onlyDay and onlyNight then
             error("Digimon Evolution: Contradiction with time day condition in " .. GetObjectName(initial) .. " to " .. GetObjectName(toEvolve))
         end
-        ---Unlock evolve
-        ---@param evolve Digimon
-        ---@param otherCond? fun(evo: Digimon):boolean is an aditional condition that uses evolve as parameter, if is not set, then is ignored
-        local function active(evolve, otherCond)
-            local p = evolve:getOwner()
-            if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE and evolve:getTypeId() == initial and evolve:getLevel() >= level and isTime(onlyDay, onlyNight) and (not otherCond or otherCond(evolve)) then
-                AddPossibleEvolution(evolve, toEvolve)
-            end
+
+        if not EvolutionConditions[initial] then
+            EvolutionConditions[initial] = {}
         end
 
-        ---Lock evolve
-        ---@param evolve Digimon
-        local function deactive(evolve)
-            local p = evolve:getOwner()
-            if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE and evolve:getTypeId() == initial then
-                RemovePossibleEvolution(evolve, toEvolve)
-            end
-        end
-
-        if onlyDay then
-            onlyDayTypes[initial] = deactive
-        elseif onlyNight then
-            onlyNightTypes[initial] = deactive
-        end
-
-        -- Case 1: Only level
-        if not place and not stone then
-            Digimon.levelUpEvent:register(active)
-        end
-
-        -- Case 2: Level and place
-        if place and not stone then
-            Digimon.levelUpEvent:register(function (evolve)
-                active(evolve, function (evo)
-                    return RectContainsCoords(place, evo:getX(), evo:getY())
-                end)
-            end)
-            RegisterEnterRect(place, active)
-            RegisterLeaveRect(place, deactive)
-        end
-
-        -- Case 3: Level and stone
-        if not place and stone then
-            Digimon.levelUpEvent:register(function (evolve)
-                active(evolve, function (evo)
-                    return UnitHasItemOfTypeBJ(evo.root, stone)
-                end)
-            end)
-            RegisterItemPick(stone, active)
-            RegisterItemDrop(stone, deactive)
-        end
-
-        -- Case 4: Level, place and stone
-        if place and stone then
-            Digimon.levelUpEvent:register(function (evolve)
-                active(evolve, function (evo)
-                    return RectContainsCoords(place, evo:getX(), evo:getY()) and UnitHasItemOfTypeBJ(evo.root, stone)
-                end)
-            end)
-
-            RegisterEnterRect(place, function (evolve)
-                active(evolve, function (evo)
-                    return UnitHasItemOfTypeBJ(evo.root, stone)
-                end)
-            end)
-            RegisterLeaveRect(place, deactive)
-
-            RegisterItemPick(stone, function (evolve)
-                active(evolve, function (evo)
-                    return RectContainsCoords(place, evo:getX(), evo:getY())
-                end)
-            end)
-            RegisterItemDrop(stone, deactive)
-        end
+        table.insert(EvolutionConditions[initial], {
+            toEvolve = toEvolve,
+            level = level,
+            place = place,
+            stone = stone,
+            onlyDay = onlyDay,
+            onlyNight = onlyNight
+        })
     end
 
     for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
@@ -278,48 +164,15 @@ OnInit("DigimonEvolution", function ()
         DialogDisplay(p, EvolveDialog[p], true)
     end)
 
-    -- Consider day and night
-
-    local isNotDayEvent = EventListener.create()
-    local isNotNightEvent = EventListener.create()
-
-    local triggerDay = CreateTrigger()
-    TriggerRegisterGameStateEventTimeOfDay(triggerDay, GREATER_THAN, bj_TOD_DUSK)
-    TriggerRegisterGameStateEventTimeOfDay(triggerDay, LESS_THAN_OR_EQUAL, bj_TOD_DAWN)
-    TriggerAddAction(triggerDay, function () isNotDayEvent:run() end)
-
-    local triggerNight = CreateTrigger()
-    TriggerRegisterGameStateEventTimeOfDay(triggerNight, GREATER_THAN, bj_TOD_DAWN)
-    TriggerAddCondition(triggerNight, Condition(function () return GetTimeOfDay() <= bj_TOD_DUSK end))
-    TriggerAddAction(triggerNight, function () isNotNightEvent:run() end)
-
-    local callbacks = {} ---@type table<Digimon, fun(d: Digimon)>
-
     -- Add the evolution ability to the new digimon
     Digimon.createEvent:register(function (new)
         new:addAbility(EvolveAbilDis)
-        local typ = new:getTypeId()
-        if onlyDayTypes[typ] then
-            callbacks[new] = function () onlyDayTypes[typ](new) end
-            isNotDayEvent:register(callbacks[new])
-        elseif onlyNightTypes[typ] then
-            callbacks[new] = function () onlyNightTypes[typ](new) end
-            isNotNightEvent:register(callbacks[new])
-        end
     end)
 
     -- Remove the evolution ability to destroyed digimon
     Digimon.destroyEvent:register(function (old)
         old:removeAbility(EvolveAbil)
         old:removeAbility(EvolveAbilDis)
-        local typ = old:getTypeId()
-        if onlyDayTypes[typ] then
-            isNotDayEvent:unregister(callbacks[old])
-            callbacks[old] = nil
-        elseif onlyNightTypes[typ] then
-            isNotNightEvent:unregister(callbacks[old])
-            callbacks[old] = nil
-        end
     end)
 
     -- Evolve Run
@@ -359,6 +212,9 @@ OnInit("DigimonEvolution", function ()
                 BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_BLUE),
                 127)
 
+            if p == GetLocalPlayer() then
+                StartSound(gg_snd_Evolution_1)
+            end
             local cur = Transmission.create(Force(p))
             cur.isSkippable = false
             cur:AddLine(u, nil, GetHeroProperName(u), nil, "is digievolving into...", Transmission.SET, time, true)
@@ -378,6 +234,15 @@ OnInit("DigimonEvolution", function ()
             cur:Start()
         end)
     end
+
+    -- Preload sound
+    OnInit.map(function ()
+        SetSoundVolume(gg_snd_Evolution_1, 0)
+        StartSound(gg_snd_Evolution_1)
+        Timed.call(GetSoundDurationBJ(gg_snd_Evolution_1), function ()
+            SetSoundVolume(gg_snd_Evolution_1, 127)
+        end)
+    end)
 
     -- For GUI
     udg_CreateEvolutionCondition = CreateTrigger()
@@ -400,3 +265,4 @@ OnInit("DigimonEvolution", function ()
     end)
 
 end)
+Debug.endFile()

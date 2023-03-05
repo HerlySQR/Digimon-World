@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("SaveHelper") end
 OnInit("SaveHelper", function ()
     Require "SyncHelper"
     Require "PlayerUtils"
@@ -107,13 +108,13 @@ OnInit("SaveHelper", function ()
     ---@param index integer
     ---@return integer
     function SaveHelper.GetItem(index)
-        return udg_SaveItemType[index]
+        return udg_Setup_Items[index]
     end
 
     ---@param index integer
     ---@return integer
     function SaveHelper.GetUnit(index)
-        return udg_SaveUnitType[index]
+        return udg_Setup_Heroes[index]
     end
 
     ---@param itemId integer
@@ -147,6 +148,10 @@ OnInit("SaveHelper", function ()
     end
 
     function SaveHelper.GUILoadNext()
+        if udg_SaveTempInt:IsEmpty() then
+            udg_SaveCodeLegacy = true
+            return
+        end
         udg_SaveValue[udg_SaveCount] = udg_SaveTempInt:Decode(udg_SaveMaxValue[udg_SaveCount])
     end
 
@@ -164,13 +169,13 @@ OnInit("SaveHelper", function ()
     function SaveHelper.Init()
         SaveHelper.Hashtable[SaveHelper.KEY_ITEMS] = {}
         for i = 0, SaveHelper.MaxItems() do
-            --if udg_SaveItemType[i] == 0 then break end
-            SaveHelper.Hashtable[SaveHelper.KEY_ITEMS][udg_SaveItemType[i]] = i
+            --if udg_Setup_Items[i] == 0 then break end
+            SaveHelper.Hashtable[SaveHelper.KEY_ITEMS][udg_Setup_Items[i]] = i
         end
         SaveHelper.Hashtable[SaveHelper.KEY_UNITS] = {}
         for i = 0, SaveHelper.MaxUnits() do
-            --if udg_SaveUnitType[i] == 0 then break end
-            SaveHelper.Hashtable[SaveHelper.KEY_UNITS][udg_SaveUnitType[i]] = i
+            --if udg_Setup_Heroes[i] == 0 then break end
+            SaveHelper.Hashtable[SaveHelper.KEY_UNITS][udg_Setup_Heroes[i]] = i
         end
         SaveHelper.Hashtable[SaveHelper.KEY_NAMES] = {}
         for i = 0, SaveHelper.MaxNames() do
@@ -241,3 +246,4 @@ OnInit("SaveHelper", function ()
     end)
 
 end)
+if Debug then Debug.endFile() end

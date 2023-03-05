@@ -1,3 +1,4 @@
+if Debug then Debug.beginFile("SaveFile") end
 OnInit("SaveFile", function ()
     Require "FileIO"
 
@@ -49,7 +50,7 @@ OnInit("SaveFile", function ()
         return slot
     end
 
-    -- async
+    ---@async
     ---@param p player
     ---@param slot integer
     ---@return boolean
@@ -57,7 +58,7 @@ OnInit("SaveFile", function ()
         return FileIO.Read(SaveFile.getPath(p, slot)):len() > 1
     end
 
-    -- async
+    ---@async
     ---@param p player
     ---@param slot integer
     ---@param line integer
@@ -88,7 +89,7 @@ OnInit("SaveFile", function ()
         return ""
     end
 
-    -- async
+    ---@async
     ---@param p player
     ---@param slot integer
     ---@param line integer
@@ -97,7 +98,7 @@ OnInit("SaveFile", function ()
         return SaveFile.getLines(p, slot, line, false)
     end
 
-    -- async
+    ---@async
     ---@param p player
     ---@param slot integer
     ---@return string
@@ -105,7 +106,7 @@ OnInit("SaveFile", function ()
         return SaveFile.getLines(p, slot, 0, false)
     end
 
-    -- async
+    ---@async
     ---@param p player
     ---@param slot integer
     ---@return string
@@ -113,3 +114,4 @@ OnInit("SaveFile", function ()
         return SaveFile.getLines(p, slot, 1, false)
     end
 end)
+if Debug then Debug.endFile() end

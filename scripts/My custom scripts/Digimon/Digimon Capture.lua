@@ -16,11 +16,15 @@ OnInit("Digimon Capture", function ()
             if not IsFullOfDigimons(p) then
                 local dTarget = Digimon.getInstance(target)
                 local captureChance = 0
-                if dTarget.rank == Rank.ROOKIE then
-                    captureChance = R2I(Lerp(25, 50, 100 - GetUnitLifePercent(target)))
+                if not udg_NetAlwaysCapture then
+                    if dTarget.rank == Rank.ROOKIE then
+                        captureChance = R2I(Lerp(25, 50, 100 - GetUnitLifePercent(target)))
+                    else
+                        DisplayTextToPlayer(p, 0, 0, "This digimon is too powerful.")
+                        return
+                    end
                 else
-                    DisplayTextToPlayer(p, 0, 0, "This digimon is too powerful.")
-                    return
+                    captureChance = 101
                 end
                 local randomCapture = math.random(0, 100)
                 DisplayTextToPlayer(p, 0, 0, "Your chance is: " .. captureChance)

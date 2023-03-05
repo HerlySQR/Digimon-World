@@ -26,7 +26,10 @@ OnInit("BossFightUtils", function ()
     ---@param name string
     ---@param boss unit
     ---@param actions fun(u: unit)
-    function InitBossFight(name, boss, actions)
+    ---@param onStart? function
+    function InitBossFight(name, boss, actions, onStart)
+        assert(_G["gg_rct_" .. name .. "_1"], "The regions of " .. name .. " are not set")
+        assert(boss, "The boss is not set")
         local owner = GetOwningPlayer(boss)
         local battlefield = {} ---@type rect[]
         local INTERVAL = 2. -- seconds
@@ -110,6 +113,7 @@ OnInit("BossFightUtils", function ()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
         TriggerAddAction(t, function ()
             if GetDyingUnit() == boss then
+                DisableTrigger(lowHP)
                 if currentTimer then
                     currentTimer()
                     currentTimer = nil
@@ -129,8 +133,8 @@ OnInit("BossFightUtils", function ()
                     dead = false
                     SetTextTagVisibility(advice, false)
                     SetUnitOwner(boss, owner, true)
-                    ShowUnit(boss, true)
                     ReviveHeroLoc(boss, initialPos, true)
+                    ShowUnit(boss, true)
 
                     local isThereAUnit = nil ---@type unit
                     for i = 1, numRect do
@@ -149,6 +153,10 @@ OnInit("BossFightUtils", function ()
                     else
                         EnableTrigger(enterTrigger)
                     end
+
+                    if onStart then
+                        onStart()
+                    end
                 end)
             end
         end)
@@ -163,6 +171,10 @@ OnInit("BossFightUtils", function ()
             currentTimer = Timed.echo(INTERVAL, BossFightActions)
             DisableTrigger(lowHP)
         end)
+
+        if onStart then
+            onStart()
+        end
     end
 end)
 Debug.endFile()

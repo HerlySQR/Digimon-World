@@ -2,7 +2,7 @@ Debug.beginFile("PlayerDigimons")
 OnInit("PlayerDigimons", function ()
     Require "Digimon"
 
-    local MAX_DIGIMONS = 6
+    local MAX_DIGIMONS = udg_MAX_DIGIMONS
 
     local digimons = {}
 
@@ -68,6 +68,11 @@ OnInit("PlayerDigimons", function ()
     ---@return boolean
     function IsFullOfDigimons(owner)
         return #digimons[owner] == MAX_DIGIMONS
+    end
+
+    ---@param owner player
+    function ClearDigimons(owner)
+        digimons[owner] = {}
     end
 end)
 Debug.endFile()

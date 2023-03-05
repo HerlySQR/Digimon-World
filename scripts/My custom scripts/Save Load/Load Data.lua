@@ -51,7 +51,7 @@ OnInit(function ()
             PlayerStatus[i] = BlzCreateFrameByType("TEXT", "name", PlayerLabel[i], "", 0)
             BlzFrameSetPoint(PlayerStatus[i], FRAMEPOINT_TOPLEFT, PlayerLabel[i], FRAMEPOINT_TOPLEFT, 0.030000, -0.010000)
             BlzFrameSetPoint(PlayerStatus[i], FRAMEPOINT_BOTTOMRIGHT, PlayerLabel[i], FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.0000)
-            BlzFrameSetText(PlayerStatus[i], "|cffff7f00Status|r")
+            BlzFrameSetText(PlayerStatus[i], "Status")
             BlzFrameSetEnable(PlayerStatus[i], false)
             BlzFrameSetScale(PlayerStatus[i], 1.00)
             BlzFrameSetTextAlignment(PlayerStatus[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
@@ -83,34 +83,51 @@ OnInit(function ()
                 SaveHelper.SetUserLoading(user, true)
                 local loaded = 0
                 for slot = 1, 6 do
+                    local invalid = false
                     local exists = GetSyncedData(p, SaveFile.exists, p, slot)
                     if exists then
                         local s = GetSyncedData(p, SaveFile.getData, p, slot)
                         SaveHelper.SetSaveSlot(user, slot)
                         local savecode = Savecode.create()
                         if savecode:Load(p, s, 1) then
-                            loaded = loaded + 1
                             udg_SaveCount = 0
                             udg_SaveTempInt = savecode
                             TriggerExecute(gg_trg_Load_Actions)
-                            StoreData(p, slot)
+
+                            if udg_SaveCodeLegacy then
+                                udg_SaveCodeLegacy = false
+                                invalid = true
+                            end
+                        else
+                            invalid = true
                         end
+
+                        if not invalid then
+                            loaded = loaded + 1
+                            StoreData(p, slot)
+                        else
+                            if p == GetLocalPlayer() then
+                                print("You are using an invalid code.\n")
+                            end
+                            ClearSaveLoadData()
+                        end
+
                         savecode:destroy()
                     end
                 end
                 SaveHelper.SetUserLoading(user, false)
                 if not user.isPlaying then
-                    BlzFrameSetText(PlayerStatus[i], "Left the game")
+                    BlzFrameSetText(PlayerStatus[i], "|cffffff00Left the game|r")
                 elseif loaded == 0 then
-                    BlzFrameSetText(PlayerStatus[i], "Data not found")
+                    BlzFrameSetText(PlayerStatus[i], "|cffBFBFBFData not found")
                 else
-                    BlzFrameSetText(PlayerStatus[i], "Data loaded")
+                    BlzFrameSetText(PlayerStatus[i], "|cff00ff00Data loaded|r")
                     ShowLoad(p, true)
                 end
                 BlzFrameSetVisible(BlzFrameGetChild(PlayerReady[i], 3), true)
             end
 
-            PolledWait(2.)
+            PolledWait(1.)
 
             BlzHideOriginFrames(false)
             BlzFrameSetSize(BlzGetFrameByName("ConsoleUIBackdrop",0), 0, DefaultHeight)

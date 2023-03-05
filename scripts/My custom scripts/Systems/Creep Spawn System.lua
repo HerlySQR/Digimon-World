@@ -1,3 +1,4 @@
+Debug.beginFile("Creep Spawn System")
 OnInit(function ()
     Require "Timed"
     Require "LinkedList"
@@ -126,6 +127,7 @@ OnInit(function ()
     ---@param maxLevel integer
     ---@return RegionData
     local function Create(re, types, inDay, inNight, minLevel, maxLevel)
+        assert(re, "You are trying to create an spawn in a nil region")
         local x, y = GetRectCenterX(re), GetRectCenterY(re)
         local this = { ---@type RegionData
             rectID = re,
@@ -383,3 +385,4 @@ OnInit(function ()
         udg_CreepSpawnMaxLevel = 1
     end)
 end)
+Debug.endFile()

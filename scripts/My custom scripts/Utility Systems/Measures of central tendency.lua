@@ -3,11 +3,12 @@ OnInit("MCT", function ()
     Require "Maths"
 
     ---@class MCT
-    ---@field mean fun(data: number[], weights?: number[]): number Returns the mean of the given data, add weights if is a weighted mean (use a copy of the data if you wanna use it again).
-    ---@field mode fun(data: number[], forGroupedData?: boolean): number Returns the mode of the given data, you can set if is for grouped data (use a copy of the data if you wanna use it again).
-    ---@field median fun(data: number[], forGroupedData?: boolean): number Returns the median of the given data, you can set if is for grouped data (use a copy of the data if you wanna use it again).
     local MCT = {}
 
+    ---Returns the mean of the given data, add weights if is a weighted mean (use a copy of the data if you wanna use it again).
+    ---@param data number[]
+    ---@param weights? number[]
+    ---@return integer
     function MCT.mean(data, weights)
         local n = #data
         if n == 0 then
@@ -36,6 +37,10 @@ OnInit("MCT", function ()
         return mean
     end
 
+    ---Returns the mode of the given data, you can set if is for grouped data (use a copy of the data if you wanna use it again).
+    ---@param data number[]
+    ---@param forGroupedData? boolean
+    ---@return integer
     function MCT.mode(data, forGroupedData)
         local n = #data
         if n == 0 then
@@ -61,7 +66,7 @@ OnInit("MCT", function ()
             for i = intervalNumber, 1, -1 do
                 for j = #data, 1, -1 do
                     local x = data[j]
-                    if x.isBetween(l[i], L[i]) then
+                    if x >= l[i] and x <= L[i] then
                         f[i] = f[i] + 1
                         table.remove(data, j)
                     end
@@ -96,6 +101,10 @@ OnInit("MCT", function ()
         end
     end
 
+    ---Returns the median of the given data, you can set if is for grouped data (use a copy of the data if you wanna use it again).
+    ---@param data number[]
+    ---@param forGroupedData? boolean
+    ---@return number
     function MCT.median(data, forGroupedData)
         local n = #data
         if forGroupedData then
@@ -118,7 +127,7 @@ OnInit("MCT", function ()
             for i = intervalNumber, 1, -1 do
                 for j = #data, 1, -1 do
                     local x = data[j]
-                    if x.isBetween(l[i], L[i]) then
+                    if x >= l[i] and x <= L[i] then
                         f[i] = f[i] + 1
                         table.remove(data, j)
                     end

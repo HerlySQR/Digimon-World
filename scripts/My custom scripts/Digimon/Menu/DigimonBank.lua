@@ -1,8 +1,9 @@
+Debug.beginFile("DigimonBank")
 OnInit("DigimonBank", function ()
     Require "PlayerDigimons"
     Require "AFK"
 
-    local MAX_STOCK = 6
+    local MAX_STOCK = udg_MAX_DIGIMONS
 
     ---@class Bank
     ---@field stocked Digimon[]
@@ -37,7 +38,7 @@ OnInit("DigimonBank", function ()
     ---@return integer
     function Bank:used()
         local max = 0
-        for i = 0, 5 do
+        for i = 0, MAX_STOCK - 1 do
             if self.inUse[i] then
                 max = max + 1
             end
@@ -56,7 +57,7 @@ OnInit("DigimonBank", function ()
     ---@return Digimon[]
     function Bank:getUsedDigimons()
         local list = {}
-        for i = 0, 5 do
+        for i = 0, MAX_STOCK - 1 do
             if self.inUse[i] then
                 table.insert(list, self.inUse[i])
             end
@@ -147,7 +148,7 @@ OnInit("DigimonBank", function ()
     -- Store all the digimon in case of AFK
     AFKEvent:register(function (p)
         local bank = Bank[GetPlayerId(p)]
-        for i = 0, 5 do
+        for i = 0, MAX_STOCK - 1 do
             bank:storeDigimon(i, true)
         end
         DisplayTextToPlayer(LocalPlayer, 0, 0, GetPlayerName(p) .. " was afk for too long, all its digimons were stored.")
@@ -319,35 +320,16 @@ OnInit("DigimonBank", function ()
         local x2 = {}
         local y2 = {}
 
-        x1[0] = 0.030000
-        y1[0] = -0.051428
-        x2[0] = -0.15033
-        y2[0] = 0.098960
-
-        x1[1] = 0.089667
-        y1[1] = -0.051428
-        x2[1] = -0.090666
-        y2[1] = 0.098960
-
-        x1[2] = 0.14933
-        y1[2] = -0.051428
-        x2[2] = -0.030999
-        y2[2] = 0.098960
-
-        x1[3] = 0.030000
-        y1[3] = -0.10104
-        x2[3] = -0.15033
-        y2[3] = 0.049348
-
-        x1[4] = 0.089667
-        y1[4] = -0.10104
-        x2[4] = -0.090666
-        y2[4] = 0.049348
-
-        x1[5] = 0.14933
-        y1[5] = -0.10104
-        x2[5] = -0.030999
-        y2[5] = 0.049348
+        local part = MAX_STOCK // 2
+        for i = 0, part - 1 do
+            for j = 0, 1 do
+                local index = i + part * j
+                x1[index] = 0.022500 + i * 0.045
+                y1[index] = -0.05 - j * 0.045
+                x2[index] = -0.022500 - (part - 1 - i) * 0.045
+                y2[index] = 0.05 + (1 - j) * 0.045
+            end
+        end
 
         SummonADigimon = BlzCreateFrame("ScriptDialogButton", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
         BlzFrameSetAbsPoint(SummonADigimon, FRAMEPOINT_TOPLEFT, 0.0100000, 0.205000)
@@ -373,7 +355,7 @@ OnInit("DigimonBank", function ()
         BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, ExitFunc)
 
-        for i = 0, 5 do
+        for i = 0, MAX_STOCK - 1 do
             DigimonT[i] = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu, 0, 0)
             BlzFrameSetPoint(DigimonT[i], FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, x1[i], y1[i])
             BlzFrameSetPoint(DigimonT[i], FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, x2[i], y2[i])
@@ -497,7 +479,7 @@ OnInit("DigimonBank", function ()
     InitFrames()
     FrameLoaderAdd(InitFrames)
     -- Update frames
-    Timed.echo(function ()
+    Timed.echo(0.1, function ()
         for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
             local bank = Bank[i] ---@type Bank
             if GetDigimonCount(bank.p) > 0 then
@@ -508,7 +490,7 @@ OnInit("DigimonBank", function ()
                 end
             end
         end
-    end, 0.1)
+    end)
 
     -- Functions to use
 
@@ -620,7 +602,7 @@ OnInit("DigimonBank", function ()
     ---@return integer
     function GetBankIndex(p, d)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
-        for i = 0, 5 do
+        for i = 0, MAX_STOCK - 1 do
             if bank.stocked[i] == d then
                 return i
             end
@@ -641,11 +623,11 @@ OnInit("DigimonBank", function ()
     Digimon.killEvent:register(function (info)
         local dead = info.target ---@type Digimon
         local p = dead:getOwner()
-        if p ~= Digimon.NEUTRAL and p ~= Digimon.PASSIVE then
+        if not Digimon.isNeutral(p) then
             local bank = Bank[GetPlayerId(p)] ---@type Bank
             local allDead = true
             local index = -1
-            for i = 0, 5 do
+            for i = 0, MAX_STOCK - 1 do
                 local d = bank.stocked[i]
                 if d then
                     if dead == d then
@@ -689,7 +671,7 @@ OnInit("DigimonBank", function ()
                 UpdateMenu()
                 BlzFrameSetVisible(DigimonTCooldownT[index], true)
             end
-            Timed.echo(function ()
+            Timed.echo(1., function ()
                 -- In case the digimon revived by another method
                 if dead:isAlive() then
                     cooldowns[dead] = 0
@@ -709,7 +691,11 @@ OnInit("DigimonBank", function ()
                     ReviveHero(dead.root, dead:getX(), dead:getY(), false)
                     SetUnitLifePercentBJ(dead.root, 5)
                     if bank.allDead then
-                        dead.environment = Environment.hospital
+                        for i = 0, MAX_STOCK - 1 do
+                            if bank.stocked[i] then
+                                bank.stocked[i].environment = Environment.hospital
+                            end
+                        end
                         SummonDigimon(p, index)
                     end
                     if p == LocalPlayer then
@@ -718,7 +704,7 @@ OnInit("DigimonBank", function ()
                     bank.allDead = false
                     return true
                 end
-            end, 1)
+            end)
         end
     end)
 
@@ -742,3 +728,4 @@ OnInit("DigimonBank", function ()
         end
     end
 end)
+Debug.endFile()
