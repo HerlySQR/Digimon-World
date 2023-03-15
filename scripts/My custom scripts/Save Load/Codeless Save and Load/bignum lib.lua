@@ -31,7 +31,6 @@ OnInit("BigNum", function ()
     ---@class BigNum_l
     ---@field leaf integer
     ---@field next BigNum_l
-
     BigNum_l = {
         nalloc = 0
     }
@@ -79,7 +78,6 @@ OnInit("BigNum", function ()
     ---@class BigNum
     ---@field list BigNum_l
     ---@field base integer
-
     BigNum = {}
     BigNum.__index = BigNum
 

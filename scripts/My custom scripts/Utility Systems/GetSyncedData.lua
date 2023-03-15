@@ -7,19 +7,13 @@ OnInit("GetSyncedData", function ()
     local END_PREFIX = "END_SYNC"
     local BLOCK_LENGHT = 246
 
-    local threads = LinkedList.create()
+    local LocalPlayer = GetLocalPlayer()
+    local callbacks = LinkedList.create()
+    local actString = ""
+    local actThread = nil ---@type thread
 
-    ---@param co thread
-    local function EnqueueThread(co)
-        threads:insert(co)
-    end
-
-    ---@return thread
-    local function DequeueThread()
-        local node = threads:getNext() ---@type LinkedList
-        local co = node.value
-        node:remove()
-        return co
+    local function CallFirst()
+        actThread = callbacks:getNext().value()
     end
 
     ---@param s string
@@ -51,23 +45,39 @@ OnInit("GetSyncedData", function ()
     ---@vararg any
     ---@return T | table
     function GetSyncedData(p, func, ...)
+        if not (GetPlayerController(p) == MAP_CONTROL_USER and GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) then
+            error("The player " .. GetPlayerName(p) .. " is not an in-game player.", 2)
+        end
+
+        local data = ""
         if type(func) == "function" then
-            if p == GetLocalPlayer() then
-                Sync(Obj2Str(func(...)))
+            if p == LocalPlayer then
+                data = Obj2Str(func(...))
             end
         elseif type(func) == "table" then
-            if p == GetLocalPlayer() then
+            if p == LocalPlayer then
                 local result = {}
                 for i = 1, #func, 2 do
                     table.insert(result, func[i](table.unpack(func[i+1])))
                 end
-                Sync(Obj2Str(result))
+                data = Obj2Str(result)
             end
         else
             error("Invalid parameter", 2)
         end
 
-        EnqueueThread(coroutine.running())
+        local t = coroutine.running()
+
+        callbacks:insert(function ()
+            if p == LocalPlayer then
+                Sync(data)
+            end
+            return t
+        end)
+
+        if callbacks.n == 1 then
+            CallFirst()
+        end
 
         local success, value = coroutine.yield() ---@type boolean, T | table
 
@@ -78,8 +88,6 @@ OnInit("GetSyncedData", function ()
         return value
     end
 
-    local actString = ""
-
     local t = CreateTrigger()
     for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
         BlzTriggerRegisterPlayerSyncEvent(t, Player(i), PREFIX, false)
@@ -88,8 +96,12 @@ OnInit("GetSyncedData", function ()
     TriggerAddAction(t, function ()
         actString = actString .. BlzGetTriggerSyncData()
         if BlzGetTriggerSyncPrefix() == END_PREFIX then
-            coroutine.resume(DequeueThread(), pcall(Str2Obj, actString))
+            coroutine.resume(actThread, pcall(Str2Obj, actString))
             actString = ""
+            callbacks:getNext():remove()
+            if callbacks.n > 0 then
+                CallFirst()
+            end
         end
     end)
 end)

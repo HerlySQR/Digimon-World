@@ -235,5 +235,17 @@ OnInit("Player Data", function ()
         return old2(owningPlayer, unitid, x, y, face)
     end)
 
+    -- I don't know why these functions returns real now
+
+    local function hookReal(func)
+        local old
+        old = AddHook(func, function (obj)
+            return math.floor(old(obj))
+        end)
+    end
+
+    hookReal("GetItemCharges")
+    hookReal("GetHeroXP")
+
 end)
 Debug.endFile()

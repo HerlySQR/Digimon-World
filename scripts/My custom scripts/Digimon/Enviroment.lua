@@ -1,3 +1,4 @@
+Debug.beginFile("Environment")
 -- Abstraction of the place a digimon is staying
 OnInit("Environment", function ()
     Require "FrameEffects"
@@ -155,7 +156,6 @@ OnInit("Environment", function ()
         BlzFrameSetAlpha(TopMsg, 0)
     end
 
-    InitFrames()
     FrameLoaderAdd(InitFrames)
 
     Environment.allMap = Environment.create("", bj_mapInitialPlayableArea, "entireMap.tga")
@@ -165,5 +165,8 @@ OnInit("Environment", function ()
     Environment.jijimon = nil
     Environment.initial = nil
     Environment.hospital = nil
+    Environment.gymLobby = nil
+    Environment.gymArena = {}
 
 end)
+Debug.endFile()

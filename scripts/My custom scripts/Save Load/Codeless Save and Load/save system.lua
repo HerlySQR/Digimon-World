@@ -120,9 +120,6 @@ OnInit("Savecode", function ()
     ---@class Savecode
     ---@field digits number    logarithmic approximation
     ---@field bigNum BigNum
-    ---@field Encode fun(self: Savecode, val: integer, max: integer)
-    ---@field Decode fun(self: Savecode, max: integer)
-
     Savecode = {}
     Savecode.__index = Savecode
 

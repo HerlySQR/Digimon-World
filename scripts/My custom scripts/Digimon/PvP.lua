@@ -1,4 +1,5 @@
-OnInit(function ()
+Debug.beginFile("PvP")
+OnInit("PvP", function ()
     Require "Digimon"
 
     local inPeace = {} ---@type table<player, table<player, boolean>>
@@ -11,12 +12,18 @@ OnInit(function ()
         end
     end)
 
+    ---@param p1 player
+    ---@param p2 player
     function EnablePvP(p1, p2)
         inPeace[p1][p2] = false
+        inPeace[p2][p1] = false
     end
 
+    ---@param p1 player
+    ---@param p2 player
     function DisablePvP(p1, p2)
         inPeace[p1][p2] = true
+        inPeace[p2][p1] = true
     end
 
     for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
@@ -28,3 +35,4 @@ OnInit(function ()
         end
     end
 end)
+Debug.endFile()

@@ -180,6 +180,11 @@ OnInit("Digimon", function ()
         return GetUnitX(self.root), GetUnitY(self.root)
     end
 
+    ---@param degrees number
+    function Digimon:setFacing(degrees)
+        BlzSetUnitFacingEx(self.root, degrees)
+    end
+
     function Digimon:show()
         ShowUnitShow(self.root)
     end
@@ -213,6 +218,22 @@ OnInit("Digimon", function ()
             return IssueImmediateOrderById(self.root, order)
         end
         error("Invalid target order", 2)
+    end
+
+    ---@param flag boolean
+    function Digimon:setInvulnerable(flag)
+        SetUnitInvulnerable(self.root, flag)
+    end
+
+    ---@return boolean
+    function Digimon:isHidden()
+        return IsUnitHidden(self.root)
+    end
+
+    ---@param x any
+    ---@param y any
+    function Digimon:revive(x, y)
+        ReviveHero(self.root, x, y, false)
     end
 
     ---@param u unit

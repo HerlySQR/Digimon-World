@@ -375,7 +375,6 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetText(TooltipCompletedQuestsArea, "|cffFFCC00Quest 0|r")
     end
 
-    InitFrames()
     FrameLoaderAdd(InitFrames)
 
     -- Functions to use

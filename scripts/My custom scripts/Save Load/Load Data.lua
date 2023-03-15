@@ -64,7 +64,6 @@ OnInit(function ()
 
     -- Run load
     OnInit.final(function ()
-        InitFrames()
         FrameLoaderAdd(InitFrames)
         BlzFrameSetVisible(WaitPlayers, true)
 

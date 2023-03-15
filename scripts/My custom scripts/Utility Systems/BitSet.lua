@@ -23,14 +23,14 @@ OnInit("BitSet", function ()
     ---@param index integer
     ---@return boolean
     function BitSet:get(index)
-        return self:containsPow(2^index)
+        return self:containsPow(math.floor(2^index))
     end
 
     ---Sets the bit at the specified index to true.
     ---@param index integer
     ---@return BitSet
     function BitSet:set(index)
-        local pow = 2^index
+        local pow = math.floor(2^index)
         if not self:containsPow(pow) then
             self.val = self.val + pow
         end
@@ -41,7 +41,7 @@ OnInit("BitSet", function ()
     ---@param index integer
     ---@return BitSet
     function BitSet:reset(index)
-        local pow = 2^index
+        local pow = math.floor(2^index)
         if self:containsPow(pow) then
             self.val = self.val - pow
         end

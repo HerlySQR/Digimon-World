@@ -7,6 +7,7 @@ OnInit("Quests", function ()
     Require "Timed"
     Require "AbilityUtils"
     local BitSet = Require "BitSet" ---@type BitSet
+    Require "Menu"
 
     local QuestButton = nil ---@type framehandle
     local BackdropQuestButton = nil ---@type framehandle
@@ -110,6 +111,7 @@ OnInit("Quests", function ()
         BlzTriggerRegisterFrameEvent(t, QuestButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, ShowMenu)
         BlzFrameSetVisible(QuestButton, false)
+        AddFrameToMenu(QuestButton)
 
         BackdropQuestButton = BlzCreateFrameByType("BACKDROP", "BackdropQuestButton", QuestButton, "", 0)
         BlzFrameSetAllPoints(BackdropQuestButton, QuestButton)
@@ -119,6 +121,7 @@ OnInit("Quests", function ()
         BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_TOPLEFT, 0.740000, 0.440000)
         BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_BOTTOMRIGHT, 0.930000, 0.200000)
         BlzFrameSetVisible(QuestMenu, false)
+        AddFrameToMenu(QuestMenu)
 
         QuestInformation = BlzCreateFrame("CheckListBox", QuestMenu, 0, 0)
         BlzFrameSetAbsPoint(QuestInformation, FRAMEPOINT_TOPLEFT, 0.550000, 0.440000)
@@ -185,7 +188,6 @@ OnInit("Quests", function ()
         QuestList:setSize(BlzFrameGetWidth(QuestList.Frame), BlzFrameGetHeight(QuestList.Frame) + 0.05)
     end
 
-    InitFrames()
     FrameLoaderAdd(InitFrames)
 
     Timed.call(function ()

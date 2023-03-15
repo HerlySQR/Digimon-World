@@ -2,6 +2,7 @@ Debug.beginFile("DigimonBank")
 OnInit("DigimonBank", function ()
     Require "PlayerDigimons"
     Require "AFK"
+    Require "Menu"
 
     local MAX_STOCK = udg_MAX_DIGIMONS
 
@@ -15,6 +16,9 @@ OnInit("DigimonBank", function ()
     ---@field allDead boolean
     local Bank = {}
     local LocalPlayer = GetLocalPlayer() ---@type player
+
+    local cooldowns = __jarray(0) ---@type table<Digimon, number>
+    local revivingSuspended = __jarray(false) ---@type table<player, boolean>
 
     Bank.__index = Bank
 
@@ -143,6 +147,17 @@ OnInit("DigimonBank", function ()
     ---@return boolean
     function Bank:avaible(index)
         return index ~= -1 and self.stocked[index] ~= nil and self.inUse[index] == nil
+    end
+
+    ---Returns true if the digimon in the slot is alive
+    ---@param index integer
+    ---@return boolean
+    function Bank:isAlive(index)
+        local d = self.stocked[index]
+        if d then
+            return cooldowns[d] <= 0
+        end
+        return false
     end
 
     -- Store all the digimon in case of AFK
@@ -340,11 +355,13 @@ OnInit("DigimonBank", function ()
         BlzTriggerRegisterFrameEvent(t, SummonADigimon, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, SummonADigimonFunc)
         BlzFrameSetVisible(SummonADigimon, false)
+        AddFrameToMenu(SummonADigimon)
 
         StockedDigimonsMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
         BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.00000, 0.340000)
         BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, 0.220000, 0.150000)
         BlzFrameSetVisible(StockedDigimonsMenu, false)
+        AddFrameToMenu(StockedDigimonsMenu)
 
         Exit = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
         BlzFrameSetAbsPoint(Exit, FRAMEPOINT_TOPLEFT, 0.190000, 0.330000)
@@ -476,8 +493,8 @@ OnInit("DigimonBank", function ()
 
     end
 
-    InitFrames()
     FrameLoaderAdd(InitFrames)
+
     -- Update frames
     Timed.echo(0.1, function ()
         for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
@@ -618,7 +635,6 @@ OnInit("DigimonBank", function ()
     end
 
     -- When dies
-    local cooldowns = __jarray(0) ---@type table<Digimon, number>
 
     Digimon.killEvent:register(function (info)
         local dead = info.target ---@type Digimon
@@ -672,6 +688,10 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetVisible(DigimonTCooldownT[index], true)
             end
             Timed.echo(1., function ()
+                if revivingSuspended[p] then
+                    return
+                end
+
                 -- In case the digimon revived by another method
                 if dead:isAlive() then
                     cooldowns[dead] = 0
@@ -726,6 +746,30 @@ OnInit("DigimonBank", function ()
         if p == LocalPlayer then
             BlzFrameSetVisible(SummonADigimon, flag)
         end
+    end
+
+    ---@param p player
+    function SuspendRevive(p)
+        revivingSuspended[p] = true
+        if p == LocalPlayer then
+            local bank = Bank[p] ---@type Bank
+            for i = 0, MAX_STOCK - 1 do
+                if bank.stocked[i] and not bank:isAlive(i) then
+                    BlzFrameSetText(DigimonTCooldownT[i], "ll")
+                end
+            end
+        end
+    end
+
+    ---@param p player
+    function ResumeRevive(p)
+        revivingSuspended[p] = false
+    end
+
+    function SetSpawnPoint(p, x, y)
+        local bank = Bank[p] ---@type Bank
+        bank.spawnPoint.x = x
+        bank.spawnPoint.y = y
     end
 end)
 Debug.endFile()

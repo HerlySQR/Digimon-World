@@ -7,6 +7,7 @@ OnInit("Backpack", function ()
     Require "Orders"
     Require "Timed"
     Require "ErrorMessage"
+    Require "Menu"
 
     local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local Backpack = nil ---@type framehandle
@@ -208,7 +209,7 @@ OnInit("Backpack", function ()
                     itemData.cooldown = itemData.spellCooldown
                     BlzFrameSetVisible(BackpackItemCooldownT[i], true)
                     BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
-                    Timed.echo(function ()
+                    Timed.echo(1., function ()
                         itemData.cooldown = itemData.cooldown - 1
                         if itemData.cooldown > 0 then
                             if p == LocalPlayer then
@@ -220,7 +221,7 @@ OnInit("Backpack", function ()
                             end
                             return true
                         end
-                    end, 1.)
+                    end)
                 end
             end
 
@@ -271,6 +272,7 @@ OnInit("Backpack", function ()
         BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.820000, 0.140000)
         BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.850000, 0.110000)
         BlzFrameSetVisible(Backpack, false)
+        AddFrameToMenu(Backpack)
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
         BlzFrameSetAllPoints(BackdropBackpack, Backpack)
@@ -283,6 +285,7 @@ OnInit("Backpack", function ()
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.780000, 0.32000)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, 0.90000, 0.17000)
         BlzFrameSetVisible(BackpackMenu, false)
+        AddFrameToMenu(BackpackMenu)
 
         BackpackText = BlzCreateFrameByType("TEXT", "name", BackpackMenu, "", 0)
         BlzFrameSetPoint(BackpackText, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.0050000)
@@ -380,7 +383,6 @@ OnInit("Backpack", function ()
         PlayerItems[Player(i)] = {}
     end
 
-    InitFrames()
     FrameLoaderAdd(InitFrames)
 
     -- Store the charged items

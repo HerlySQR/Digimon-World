@@ -47,7 +47,6 @@ OnInit("FileIO", function ()
     ---@class File
     ---@field filename string
     ---@field buffer string
-
     File = {
         AbilityCount = 10,
         PreloadLimit = 200,
