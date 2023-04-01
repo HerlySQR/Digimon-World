@@ -24,9 +24,11 @@ OnInit("Quests", function ()
     local QuestList = nil ---@type FrameList
     local Origin = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local LocalPlayer = GetLocalPlayer()
-    local PressedQuest = 0
+    local PressedQuest = -1
     local QUEST_MARK = "Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl"
+    local MAX_QUESTS = udg_MAX_QUESTS
     local MAX_UNIQUE_QUESTS = udg_MAX_UNIQUE_QUESTS - 1
+    local DO_QUEST_AGAIN_DELAY = udg_DO_QUEST_AGAIN_DELAY
 
     ---@class QuestTemplate
     ---@field name string
@@ -35,6 +37,7 @@ OnInit("Quests", function ()
     ---@field onlyOnce boolean
     ---@field maxProgress integer
     ---@field questMark effect
+    ---@field counter texttag
 
     local QuestTemplates = {} ---@type table<integer, QuestTemplate>
 
@@ -51,14 +54,14 @@ OnInit("Quests", function ()
     local BitSets = {} ---@type table<player, BitSet>
 
     local function UpdateMenu()
-        if PressedQuest == 0 then
+        if PressedQuest < 0 or PressedQuest > MAX_QUESTS then
             BlzFrameSetVisible(QuestInformation, false)
         else
             local quest = PlayerQuests[LocalPlayer][PressedQuest]
             BlzFrameSetText(QuestInformationName, "|cffFFCC00" .. quest.name .. "|r")
             BlzFrameSetText(QuestInformationDescription, quest.description)
             local max = QuestTemplates[quest.id].maxProgress
-            if max > 0 then
+            if max > 1 then
                 BlzFrameSetVisible(QuestInformationProgress, true)
                 if quest.progress < max then
                     BlzFrameSetText(QuestInformationProgress, quest.progress .. "/" .. max)
@@ -72,7 +75,7 @@ OnInit("Quests", function ()
         for i, q in pairs(PlayerQuests[LocalPlayer]) do
             local progress = "In progress"
             local max = QuestTemplates[q.id].maxProgress
-            if max > 0 then
+            if max > 1 then
                 if q.progress < max then
                     progress = progress .. " " .. q.progress .. "/" .. max
                 else
@@ -93,6 +96,11 @@ OnInit("Quests", function ()
 
     local function ShowMenu()
         if GetTriggerPlayer() == LocalPlayer then
+            if BlzFrameIsVisible(QuestMenu) then
+                RemoveButtonFromEscStack(QuestButton)
+            else
+                AddButtonToEscStack(QuestButton)
+            end
             BlzFrameSetVisible(QuestMenu, not BlzFrameIsVisible(QuestMenu))
             BlzFrameSetVisible(QuestInformation, false)
             BlzFrameSetEnable(QuestButton, false)
@@ -105,8 +113,8 @@ OnInit("Quests", function ()
         BlzLoadTOCFile("war3mapImported\\QuestsTOC.toc")
 
         QuestButton = BlzCreateFrame("IconButtonTemplate", Origin, 0, 0)
-        BlzFrameSetAbsPoint(QuestButton, FRAMEPOINT_TOPLEFT, 0.820000, 0.105000)
-        BlzFrameSetAbsPoint(QuestButton, FRAMEPOINT_BOTTOMRIGHT, 0.850000, 0.0750000)
+        BlzFrameSetAbsPoint(QuestButton, FRAMEPOINT_TOPLEFT, 0.515000, 0.175000)
+        BlzFrameSetAbsPoint(QuestButton, FRAMEPOINT_BOTTOMRIGHT, 0.545000, 0.145000)
         local t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, QuestButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, ShowMenu)
@@ -115,7 +123,7 @@ OnInit("Quests", function ()
 
         BackdropQuestButton = BlzCreateFrameByType("BACKDROP", "BackdropQuestButton", QuestButton, "", 0)
         BlzFrameSetAllPoints(BackdropQuestButton, QuestButton)
-        BlzFrameSetTexture(BackdropQuestButton, "ReplaceableTextures\\CommandButtons\\BTNBansheeMaster.blp", 0, true)
+        BlzFrameSetTexture(BackdropQuestButton, "ReplaceableTextures\\CommandButtons\\BTNQuestIcon.blp", 0, true)
 
         QuestMenu = BlzCreateFrame("QuestButtonBaseTemplate", Origin, 0, 0)
         BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_TOPLEFT, 0.740000, 0.440000)
@@ -162,7 +170,7 @@ OnInit("Quests", function ()
         BlzFrameSetScale(QuestInformationProgress, 1.)
         BlzFrameSetTextAlignment(QuestInformationProgress, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_RIGHT)
 
-        for i = 0, udg_MAX_QUESTS do
+        for i = 0, MAX_QUESTS do
             QuestOptionT[i] = BlzCreateFrame("ScriptDialogButton", Quests, 0, 0)
             BlzFrameSetPoint(QuestOptionT[i], FRAMEPOINT_TOPLEFT, Quests, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
             BlzFrameSetSize(QuestOptionT[i], 0.15300, 0.04000)
@@ -248,17 +256,43 @@ OnInit("Quests", function ()
         QuestTemplates[id] = {name = name, description = description, level = level, onlyOnce = onlyOnce, maxProgress = maxProgress}
         if petitioner then
             local questMark = AddSpecialEffect(QUEST_MARK, GetUnitX(petitioner), GetUnitY(petitioner))
+            if not onlyOnce then
+                BlzSetSpecialEffectColor(questMark, 100, 100, 255)
+            end
             BlzSetSpecialEffectZ(questMark, GetUnitZ(petitioner, true) + 50)
             QuestTemplates[id].questMark = questMark
+            QuestTemplates[id].counter = CreateTextTagUnitBJ("", petitioner, 50., 10., 100., 100., 100., 0.)
         end
     end
 
     ---@param p player
     ---@param id integer
     local function SetQuestCompleted(p, id)
+        if not PlayerQuests[p][id] then
+            return
+        end
         if not QuestTemplates[id].onlyOnce then
-            Timed.call(udg_DO_QUEST_AGAIN_DELAY, function ()
+            local counter = QuestTemplates[id].counter
+            local remain = DO_QUEST_AGAIN_DELAY
+            if counter then
+                if p == LocalPlayer then
+                    SetTextTagTextBJ(counter, "Comeback in: " .. DO_QUEST_AGAIN_DELAY, 10.)
+                end
+            end
+            Timed.echo(1., DO_QUEST_AGAIN_DELAY, function ()
+                remain = remain - 1
+                if counter then
+                    if p == LocalPlayer then
+                        SetTextTagTextBJ(counter, "Comeback in: " .. remain, 10.)
+                    end
+                end
+            end, function ()
                 PlayerQuests[p][id] = nil
+                if p == LocalPlayer then
+                    if QuestTemplates[id].questMark then
+                        BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 255)
+                    end
+                end
             end)
         else
             BitSets[p]:set(id)
@@ -266,7 +300,7 @@ OnInit("Quests", function ()
         PlayerQuests[p][id].completed = true
         if p == LocalPlayer then
             QuestList:remove(QuestOptionT[id])
-            PressedQuest = 0
+            PressedQuest = -1
             UpdateMenu()
             StartSound(bj_questCompletedSound)
             if not BlzFrameIsVisible(QuestMenu) then
@@ -334,7 +368,10 @@ OnInit("Quests", function ()
         udg_QuestDefine = CreateTrigger()
         TriggerAddAction(udg_QuestDefine, function ()
             if udg_QuestOnlyOnce and udg_QuestId > MAX_UNIQUE_QUESTS then
-                error("You are asigning an id greater than the max to the unique mission: " .. udg_QuestName)
+                error("You are asigning an id greater than the max to the unique quest: " .. udg_QuestName)
+            end
+            if udg_QuestMaxProgress <= 0 then
+                error("You are asigning a max progress lesser than 1 to the quest: " .. udg_QuestName)
             end
             DefineQuestTemplate(udg_QuestName, udg_QuestDescription, udg_QuestId, udg_QuestLevel, udg_QuestOnlyOnce, udg_QuestMaxProgress, udg_QuestPetitioner)
             udg_QuestName = ""
@@ -342,7 +379,7 @@ OnInit("Quests", function ()
             udg_QuestId = 0
             udg_QuestLevel = 0
             udg_QuestOnlyOnce = false
-            udg_QuestMaxProgress = 0
+            udg_QuestMaxProgress = 1
             udg_QuestPetitioner = nil
         end)
 
@@ -363,8 +400,14 @@ OnInit("Quests", function ()
         return udg_PlayerIsOnQuest and PlayerQuests[udg_QuestPlayer][udg_QuestId].completed
     end)
     GlobalRemap("udg_QuestProgress", function ()
+        if not udg_PlayerIsOnQuest then
+            return 0
+        end
         return PlayerQuests[udg_QuestPlayer][udg_QuestId].progress
     end, function (value)
+        if not udg_PlayerIsOnQuest then
+            return
+        end
         PlayerQuests[udg_QuestPlayer][udg_QuestId].progress = value
         if udg_QuestPlayer == LocalPlayer then
             UpdateMenu()

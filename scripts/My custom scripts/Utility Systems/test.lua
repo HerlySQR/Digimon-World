@@ -1,55 +1,87 @@
-Debug.beginFile("test")
+Debug.beginFile("test") local l = Debug.getLine()
 OnInit(function ()
-    Require "GetSyncedData"
+    Require "AddHook"
 
-    local t = CreateTrigger()
-    ForForce(bj_FORCE_ALL_PLAYERS, function ()
-        TriggerRegisterPlayerChatEvent(t, GetEnumPlayer(), "-caminfo", true)
-    end)
-    TriggerAddAction(t, function ()
-        -- To be sure that it works for multiple threads being runned at the same time
-        for i = 0, 2 do
-            TimerStart(CreateTimer(), 0.01, false, function ()
-                coroutine.resume(coroutine.create(function ()
-                    local p = Player(i)
-                    local empty = {}
-                    local data = GetSyncedData(p, {
-                        GetCameraBoundMaxX, empty, GetCameraBoundMaxY, empty, GetCameraBoundMinX, empty, GetCameraBoundMinY, empty,
-                        GetCameraEyePositionX, empty, GetCameraEyePositionY, empty, GetCameraEyePositionZ, empty,
-                        GetCameraTargetPositionX, empty, GetCameraTargetPositionY, empty, GetCameraTargetPositionZ, empty,
-                        GetCameraMargin, {CAMERA_MARGIN_TOP}, GetCameraMargin, {CAMERA_MARGIN_RIGHT}, GetCameraMargin, {CAMERA_MARGIN_BOTTOM}, GetCameraMargin, {CAMERA_MARGIN_LEFT},
-                        GetCameraField, {CAMERA_FIELD_TARGET_DISTANCE},
-                        GetCameraField, {CAMERA_FIELD_ANGLE_OF_ATTACK},
-                        GetCameraField, {CAMERA_FIELD_NEARZ},
-                        GetCameraField, {CAMERA_FIELD_FARZ},
-                        GetCameraField, {CAMERA_FIELD_FIELD_OF_VIEW},
-                        GetCameraField, {CAMERA_FIELD_LOCAL_PITCH},
-                        GetCameraField, {CAMERA_FIELD_LOCAL_ROLL},
-                        GetCameraField, {CAMERA_FIELD_LOCAL_YAW}
-                    })
+    local ROAR_BUFF = FourCC('Broa')
 
-                    local finalField1 = GetSyncedData(p, GetCameraField, CAMERA_FIELD_ROTATION)
-                    local finalField2 = GetSyncedData(p, GetCameraField, CAMERA_FIELD_ZOFFSET)
+    ---@param caster unit
+    ---@return number
+    local function InternalGetAverageAttack(caster)
+        local base = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
+        local dice = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_NUMBER_OF_DICE, 0)
+        local side = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_SIDES_PER_DIE, 0)
+        return base + (dice * (side + 1)) / 2
+    end
 
-                    print("\nPlayer " .. GetPlayerName(p) .. "'s camera information:\n"
-                        .. "Bounds: " .. table.concat(data, ", ", 1, 4) .. "\n"
-                        .. "Eye position: " .. table.concat(data, ", ", 5, 7) .. "\n"
-                        .. "Target position: " .. table.concat(data, ", ", 8, 10) .. "\n"
-                        .. "Margin: " .. table.concat(data, " ", 11, 14) .. "\n"
-                        .. "Target distance: " .. data[15] .. "\n"
-                        .. "Angle of attack: " .. data[16] .. "\n"
-                        .. "Near Z: " .. data[17] .. "\n"
-                        .. "Far Z: " .. data[18] .. "\n"
-                        .. "Field of view: " .. data[19] .. "\n"
-                        .. "Pitch: " .. data[20] .. "\n"
-                        .. "Roll: " .. data[21] .. "\n"
-                        .. "Yaw: " .. data[22] .. "\n"
-                        .. "Rotation: " .. finalField1 .. "\n"
-                        .. "Z offset: " .. finalField2 .. "\n")
-                    print("\n")
-                end))
-            end)
+    ---Returns the average attack damage of the unit
+    ---@param caster unit
+    ---@param damage? number
+    ---@return number
+    function GetBonusAttack(caster, damage)
+        damage = damage or InternalGetAverageAttack(caster)
+        local bonus = 0
+        local i = 0
+        while true do
+            local spell = BlzGetUnitAbilityByIndex(caster, i)
+            if not spell then break end
+            local level = GetUnitAbilityLevel(caster, BlzGetAbilityId(spell)) - 1
+
+            bonus = bonus
+                -- + BlzGetAbilityIntegerLevelField(spell, ABILITY_ILF_ATTACK_BONUS, level) -- Attack bonus (Base damage?)
+                + BlzGetAbilityRealLevelField(spell, ABILITY_RLF_DAMAGE_BONUS_HAV3, level) -- Mountain King Avatar
+                + BlzGetAbilityRealLevelField(spell, ABILITY_RLF_DAMAGE_BONUS_IDAM, level) -- Orb
+                + BlzGetAbilityRealLevelField(spell, ABILITY_RLF_DAMAGE_BONUS_FAK1, level) -- Orb of Annihilation
+                + BlzGetAbilityRealLevelField(spell, ABILITY_RLF_DAMAGE_BONUS_IPV1, level) -- Vampirism Potion
+                + BlzGetAbilityRealLevelField(spell, ABILITY_RLF_DAMAGE_BONUS_NEG2, level) -- Tinker Engineering Upgrade
+                + damage * (
+                    (BlzGetAbilityId(spell) == ROAR_BUFF and 1 or -1) * BlzGetAbilityRealLevelField(spell, ABILITY_RLF_DAMAGE_INCREASE_PERCENT_ROA1, level) -- Roar / Howl of terror
+                    - BlzGetAbilityRealLevelField(spell, ABILITY_RLF_DAMAGE_PENALTY, level) -- Soul burn
+                    + BlzGetAbilityRealLevelField(spell, ABILITY_RLF_DAMAGE_INCREASE_PERCENT_INF1, level) -- Inner fire
+                )
+
+            -- Trueshot aura
+            if IsUnitType(caster, UNIT_TYPE_RANGED_ATTACKER) then
+                bonus = bonus + damage * BlzGetAbilityRealLevelField(spell, ABILITY_RLF_DAMAGE_BONUS_PERCENT, level)
+            end
+
+            -- Command aura
+            local add = BlzGetAbilityRealLevelField(spell, ABILITY_RLF_ATTACK_DAMAGE_INCREASE_CAC1, level)
+            if add > 0 then
+                if (IsUnitType(caster, UNIT_TYPE_MELEE_ATTACKER) and BlzGetAbilityBooleanLevelField(spell, ABILITY_BLF_MELEE_BONUS, level))
+                    or (IsUnitType(caster, UNIT_TYPE_RANGED_ATTACKER) and BlzGetAbilityBooleanLevelField(spell, ABILITY_BLF_RANGED_BONUS, level)) then
+
+                    if BlzGetAbilityBooleanLevelField(spell, ABILITY_BLF_FLAT_BONUS, level) then
+                        bonus = bonus + add
+                    else
+                        bonus = bonus + damage * add
+                    end
+                end
+            end
+
+            i = i + 1
         end
+        return bonus
+    end
+
+    ---Returns the average attack damage of the unit
+    ---@param caster unit
+    ---@param withoutBonus? boolean
+    ---@return number
+    function GetAverageAttack(caster, withoutBonus)
+        local damage = InternalGetAverageAttack(caster)
+        return damage + (withoutBonus and 0 or GetBonusAttack(caster, damage))
+    end
+
+    GetAvarageAttack = GetAverageAttack -- ay
+
+    local old
+    old = AddHook("BlzGetAbilityRealLevelField", function (ability, abilityreallevelfield, integer)
+        local get = old(ability, abilityreallevelfield, integer)
+        if get > 0 then
+            print(GetObjectName(BlzGetAbilityId(ability)), get)
+            print(Debug.getLine(1) - l + 1)
+        end
+        return get
     end)
 end)
 Debug.endFile()

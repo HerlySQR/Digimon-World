@@ -27,14 +27,16 @@ OnInit("FrameLoader", function ()
 
     local t = CreateTrigger()
     TriggerAddAction(t, function ()
-        BlzFrameSetEnable(BlzGetTriggerFrame(), false)
-        BlzFrameSetEnable(BlzGetTriggerFrame(), true)
+        if BlzFrameGetEnable(BlzGetTriggerFrame()) then
+            BlzFrameSetEnable(BlzGetTriggerFrame(), false)
+            BlzFrameSetEnable(BlzGetTriggerFrame(), true)
+        end
     end)
 
     local oldCreateFrame
     oldCreateFrame = AddHook("BlzCreateFrame", function (name, owner, priority, createContext)
         local frame = oldCreateFrame(name, owner, priority, createContext)
-        if name == "IconButtonTemplate" then
+        if name == "IconButtonTemplate" or name == "ScriptDialogButton" then
             BlzTriggerRegisterFrameEvent(t, frame, FRAMEEVENT_CONTROL_CLICK)
         end
         return frame

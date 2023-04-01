@@ -118,6 +118,7 @@ OnInit("BossFightUtils", function ()
                     currentTimer()
                     currentTimer = nil
                 end
+                isCasting[boss] = false
                 unitsInTheField = {} -- Clear
                 DisableTrigger(enterTrigger)
                 dead = true

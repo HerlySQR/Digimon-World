@@ -259,6 +259,7 @@ OnInit("DigimonBank", function ()
             BlzFrameSetVisible(SummonADigimon, false)
             BlzFrameSetVisible(StockedDigimonsMenu, true)
             UpdateMenu()
+            AddButtonToEscStack(Exit)
         end
     end
 
@@ -269,6 +270,7 @@ OnInit("DigimonBank", function ()
             BlzFrameSetVisible(StockedDigimonsMenu, false)
             BlzFrameSetVisible(DigimonTUsed[bank.pressed], false)
             BlzFrameSetVisible(DigimonTSelected[bank.pressed], false)
+            RemoveButtonFromEscStack(Exit)
         end
         bank.pressed = -1
     end
@@ -654,7 +656,9 @@ OnInit("DigimonBank", function ()
             end
             -- If all the digimons died then the spawnpoint will be the clinic
             if allDead then
-                DisplayTextToPlayer(p, 0, 0, "All your digimons are death, they will respawn in the clinic")
+                if not revivingSuspended[p] then
+                    DisplayTextToPlayer(p, 0, 0, "All your digimons are death, they will respawn in the clinic")
+                end
                 bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
                 bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
                 -- The player can see all the map if all their digimons are dead
@@ -752,7 +756,7 @@ OnInit("DigimonBank", function ()
     function SuspendRevive(p)
         revivingSuspended[p] = true
         if p == LocalPlayer then
-            local bank = Bank[p] ---@type Bank
+            local bank = Bank[GetPlayerId(p)] ---@type Bank
             for i = 0, MAX_STOCK - 1 do
                 if bank.stocked[i] and not bank:isAlive(i) then
                     BlzFrameSetText(DigimonTCooldownT[i], "ll")
@@ -767,7 +771,7 @@ OnInit("DigimonBank", function ()
     end
 
     function SetSpawnPoint(p, x, y)
-        local bank = Bank[p] ---@type Bank
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
         bank.spawnPoint.x = x
         bank.spawnPoint.y = y
     end

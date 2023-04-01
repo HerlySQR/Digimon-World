@@ -2,6 +2,7 @@ Debug.beginFile("PressSaveOrLoad")
 OnInit("PressSaveOrLoad", function ()
     Require "Player Data"
     Require "Timed"
+    Require "Menu"
 
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
 
@@ -151,12 +152,16 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetEnable(SaveSlotT[Pressed[LocalPlayer] - 1], true)
             BlzFrameSetVisible(Information, false)
             BlzFrameSetVisible(SaveLoadMenu, false)
+            RemoveButtonFromEscStack(Exit)
         end
     end
 
     local function SaveFunc()
         ExitFunc()
         if GetTriggerPlayer() == LocalPlayer then
+            if not BlzFrameIsVisible(SaveLoadMenu) then
+                AddButtonToEscStack(Exit)
+            end
             BlzFrameSetVisible(SaveLoadMenu, true)
             BlzFrameSetVisible(AbsoluteSave, true)
             BlzFrameSetEnable(AbsoluteSave, false)
@@ -168,6 +173,9 @@ OnInit("PressSaveOrLoad", function ()
     local function LoadFunc()
         ExitFunc()
         if GetTriggerPlayer() == LocalPlayer then
+            if not BlzFrameIsVisible(SaveLoadMenu) then
+                AddButtonToEscStack(Exit)
+            end
             BlzFrameSetVisible(SaveLoadMenu, true)
             BlzFrameSetVisible(AbsoluteSave, false)
             BlzFrameSetVisible(AbsoluteLoad, true)
@@ -206,6 +214,7 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetText(SaveButton, "|cff" .. NormalColor .. "Save|r")
         BlzFrameSetScale(SaveButton, 1.00)
         BlzFrameSetVisible(SaveButton, false)
+        AddFrameToMenu(SaveButton)
 
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SaveButton, FRAMEEVENT_CONTROL_CLICK)
@@ -219,6 +228,7 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetText(LoadButton, "|cff" .. NormalColor .. "Load|r")
         BlzFrameSetScale(LoadButton, 1.00)
         BlzFrameSetVisible(LoadButton, false)
+        AddFrameToMenu(LoadButton)
 
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, LoadButton, FRAMEEVENT_CONTROL_CLICK)
@@ -230,6 +240,7 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.580000, 0.540000)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.320000)
         BlzFrameSetVisible(SaveLoadMenu, false)
+        AddFrameToMenu(SaveLoadMenu)
 
         for i = 0, 4 do
             SaveSlotT[i] = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)

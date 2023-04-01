@@ -94,14 +94,14 @@ OnInit("WorldBounds", function ()
     end
 
     local function InitData(bounds)
-        bounds.region = CreateRegion()
+        --bounds.region = CreateRegion()
         bounds.minX = GetRectMinX(bounds.rect)
         bounds.minY = GetRectMinY(bounds.rect)
         bounds.maxX = GetRectMaxX(bounds.rect)
         bounds.maxY = GetRectMaxY(bounds.rect)
         bounds.centerX = (bounds.minX + bounds.maxX) / 2.00
         bounds.centerY = (bounds.minY + bounds.maxY) / 2.00
-        RegionAddRect(bounds.region, bounds.rect)
+        --RegionAddRect(bounds.region, bounds.rect)
     end
 
     MapBounds.rect = bj_mapInitialPlayableArea

@@ -109,8 +109,8 @@ OnInit("DigimonEvolution", function ()
     ---@param initial integer
     ---@param toEvolve integer
     ---@param level integer
-    ---@param place rect nilable
-    ---@param stone integer nilable
+    ---@param place rect | nil
+    ---@param stone integer | nil
     ---@param onlyDay boolean
     ---@param onlyNight boolean
     local function CreateSpecificCondtions(initial, toEvolve, level, place, stone, onlyDay, onlyNight)
@@ -212,9 +212,11 @@ OnInit("DigimonEvolution", function ()
                 BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_BLUE),
                 127)
 
-            if p == GetLocalPlayer() then
-                StartSound(gg_snd_Evolution_1)
-            end
+            local s = CreateSound("war3mapImported\\Evolution_1", false, true, true, 1, 1, "DefaultEAXON")
+            SetSoundVolume(s, 127)
+            StartSound(s)
+            KillSoundWhenDone(s)
+
             local cur = Transmission.create(Force(p))
             cur.isSkippable = false
             cur:AddLine(u, nil, GetHeroProperName(u), nil, "is digievolving into...", Transmission.SET, time, true)

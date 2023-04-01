@@ -379,6 +379,7 @@ OnInit("Digimon", function ()
     ---@param evolveForm integer
     function Digimon:evolveTo(evolveForm)
         local old = self.root
+        local oldLvl = self:getLevel()
         local oldExp = self:getExp()
         local hidden = IsUnitHidden(old)
         local paused = IsUnitPaused(old)
@@ -441,6 +442,7 @@ OnInit("Digimon", function ()
 
         RecycleHero(old)
 
+        self:setLevel(oldLvl) -- This could run the level up event
         self:setExp(oldExp) -- This could run the level up event
 
         Digimon.evolutionEvent:run(self)

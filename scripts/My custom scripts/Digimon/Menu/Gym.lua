@@ -7,7 +7,6 @@ OnInit(function ()
     Require "AbilityUtils"
     Require "Timed"
     Require "DigimonBank"
-    Require "Menu"
     Require "ErrorMessage"
     local MCT = Require "MCT" ---@type MCT
 
@@ -50,7 +49,7 @@ OnInit(function ()
     ---@field index integer
     ---@field pi PlayerInfo[]
     ---@field arena rect
-    ---@field selectTime integer
+    ---@field selectTime number
     ---@field fightTime integer
     ---@field votedStart integer
     ---@field rank integer
@@ -150,12 +149,10 @@ OnInit(function ()
         end
         if self:localPlayerCond() then
             TimerDialogDisplay(self.clockWindow, true)
+            PanCameraTo(GetRectCenterX(self.arena), GetRectCenterY(self.arena))
         end
         TimerStart(self.clock, 300., false, function ()
             self:finish()
-            if self:localPlayerCond() then
-                TimerDialogDisplay(self.clockWindow, false)
-            end
         end)
     end
 
@@ -186,6 +183,12 @@ OnInit(function ()
                 SetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED, GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED) + 1)
             end
         end
+
+        if self:localPlayerCond() then
+            TimerDialogDisplay(self.clockWindow, false)
+        end
+        PauseTimer(self.clock)
+
         Timed.call(2., function ()
             for i = 1, MAX_FIGHTERS do
                 local info = self.pi[i]
@@ -326,32 +329,34 @@ OnInit(function ()
             if info1.clickedGroup == 1 then
                 BlzFrameSetEnable(Select, not info1.bannedDigimons:contains(i))
                 BlzFrameSetEnable(Ban, false)
-                BlzFrameSetText(Select, "|cffFCD20" .. (info1.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
+                BlzFrameSetText(Select, "|cffFCD20D" .. (info1.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
             elseif info1.clickedGroup == 2 then
                 BlzFrameSetEnable(Select, false)
                 BlzFrameSetEnable(Ban, not info2.selectedDigimons:contains(i))
                 BlzFrameSetText(Ban, "|cffFCD20D" .. (info2.bannedDigimons:contains(i) and "Unban" or "Ban") .. "|r")
             end
+            BlzFrameSetEnable(Ready, info1.availableSelects == 0)
+            BlzFrameSetText(Ready, "|cffFCD20D" .. (info1.votedStart and "I'm not ready" or "I'm ready") .. "|r")
         elseif info2.p == LocalPlayer then
             local i = info2.clicked
             if info2.clickedGroup == 2 then
                 BlzFrameSetEnable(Select, not info2.bannedDigimons:contains(i))
                 BlzFrameSetEnable(Ban, false)
-                BlzFrameSetText(Select, "|cffFCD20" .. (info2.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
+                BlzFrameSetText(Select, "|cffFCD20D" .. (info2.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
             elseif info2.clickedGroup == 1 then
                 BlzFrameSetEnable(Select, false)
                 BlzFrameSetEnable(Ban, not info1.selectedDigimons:contains(i))
                 BlzFrameSetText(Ban, "|cffFCD20D" .. (info1.bannedDigimons:contains(i) and "Unban" or "Ban") .. "|r")
             end
+            BlzFrameSetEnable(Ready, info2.availableSelects == 0)
+            BlzFrameSetText(Ready, "|cffFCD20D" .. (info2.votedStart and "I'm not ready" or "I'm ready") .. "|r")
         end
 
         BlzFrameSetText(PlayerSelections[1], "Selections: " .. info1.availableSelects)
         BlzFrameSetText(PlayerBans[1], "Bans: " .. info1.availableBans)
-        BlzFrameSetText(Ready, "|cffFCD20D" .. (info1.votedStart and "I'm not ready" or "I'm ready") .. "|r")
 
         BlzFrameSetText(PlayerSelections[2], "Selections: " .. info2.availableSelects)
         BlzFrameSetText(PlayerBans[2], "Bans: " .. info2.availableBans)
-        BlzFrameSetText(Ready, "|cffFCD20D" .. (info2.votedStart and "I'm not ready" or "I'm ready") .. "|r")
     end
 
     local function SelectFunc()
@@ -413,7 +418,11 @@ OnInit(function ()
             end
 
             if fight.votedStart == MAX_FIGHTERS then
-                fight.selectTime = 0
+                Timed.call(2., function ()
+                    if fight.votedStart == MAX_FIGHTERS then
+                        fight.selectTime = math.min(fight.selectTime, 3)
+                    end
+                end)
             end
         end
     end
@@ -444,13 +453,13 @@ OnInit(function ()
 
     local function InitFrames()
         GymMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        BlzFrameSetAbsPoint(GymMenu, FRAMEPOINT_TOPLEFT, 0.100000, 0.520000)
-        BlzFrameSetAbsPoint(GymMenu, FRAMEPOINT_BOTTOMRIGHT, 0.700000, 0.170000)
+        BlzFrameSetAbsPoint(GymMenu, FRAMEPOINT_TOPLEFT, 0.070000, 0.56000)
+        BlzFrameSetAbsPoint(GymMenu, FRAMEPOINT_BOTTOMRIGHT, 0.730000, 0.130000)
         BlzFrameSetVisible(GymMenu, false)
 
         Select = BlzCreateFrame("ScriptDialogButton", GymMenu, 0, 0)
-        BlzFrameSetPoint(Select, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.19000, -0.28000)
-        BlzFrameSetPoint(Select, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.040000)
+        BlzFrameSetPoint(Select, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.16500, -0.27500)
+        BlzFrameSetPoint(Select, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.27500, 0.035000)
         BlzFrameSetText(Select, "|cffFCD20DSelect|r")
         BlzFrameSetScale(Select, 1.29)
         local t = CreateTrigger()
@@ -458,8 +467,8 @@ OnInit(function ()
         TriggerAddAction(t, SelectFunc)
 
         Ban = BlzCreateFrame("ScriptDialogButton", GymMenu, 0, 0)
-        BlzFrameSetPoint(Ban, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.31000, -0.28000)
-        BlzFrameSetPoint(Ban, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.18000, 0.040000)
+        BlzFrameSetPoint(Ban, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.28500, -0.27500)
+        BlzFrameSetPoint(Ban, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.15500, 0.035000)
         BlzFrameSetText(Ban, "|cffFCD20DBan|r")
         BlzFrameSetScale(Ban, 1.29)
         t = CreateTrigger()
@@ -467,8 +476,8 @@ OnInit(function ()
         TriggerAddAction(t, BanFunc)
 
         Ready = BlzCreateFrame("ScriptDialogButton", GymMenu, 0, 0)
-        BlzFrameSetPoint(Ready, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.43000, -0.28000)
-        BlzFrameSetPoint(Ready, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.060000, 0.040000)
+        BlzFrameSetPoint(Ready, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.40500, -0.27500)
+        BlzFrameSetPoint(Ready, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.035000, 0.035000)
         BlzFrameSetText(Ready, "|cffFCD20DI'm ready|r")
         BlzFrameSetScale(Ready, 1.29)
         t = CreateTrigger()
@@ -476,33 +485,34 @@ OnInit(function ()
         TriggerAddAction(t, ReadyFunc)
 
         Remaining = BlzCreateFrameByType("TEXT", "name", GymMenu, "", 0)
-        BlzFrameSetPoint(Remaining, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.060000, -0.28000)
-        BlzFrameSetPoint(Remaining, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.42000, 0.040000)
-        BlzFrameSetText(Remaining, "|cffffffffRemain: 0|r")
+        BlzFrameSetPoint(Remaining, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.040000, -0.27500)
+        BlzFrameSetPoint(Remaining, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.40000, 0.035000)
+        BlzFrameSetText(Remaining, "|cffffffffReamain: 0|r")
         BlzFrameSetEnable(Remaining, false)
         BlzFrameSetScale(Remaining, 1.29)
+        BlzFrameSetTextAlignment(Remaining, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
         BlzFrameSetTextAlignment(Remaining, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         for j = 1, MAX_FIGHTERS do
             PlayerName[j] = BlzCreateFrameByType("TEXT", "name", GymMenu, "", 0)
-            BlzFrameSetPoint(PlayerName[j], FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.060000, -0.040000 - (j-1) * 0.125)
-            BlzFrameSetPoint(PlayerName[j], FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.41000, 0.29000 - (j-1) * 0.125)
+            BlzFrameSetPoint(PlayerName[j], FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.040000, -0.040000 - (j-1) * 0.12)
+            BlzFrameSetPoint(PlayerName[j], FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.28000 - (j-1) * 0.12)
             BlzFrameSetText(PlayerName[j], "|cffFFCC00Name|r")
             BlzFrameSetEnable(PlayerName[j], false)
             BlzFrameSetScale(PlayerName[j], 1.29)
             BlzFrameSetTextAlignment(PlayerName[j], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             PlayerSelections[j] = BlzCreateFrameByType("TEXT", "name", GymMenu, "", 0)
-            BlzFrameSetPoint(PlayerSelections[j], FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.23500, -0.040000 - (j-1) * 0.125)
-            BlzFrameSetPoint(PlayerSelections[j], FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.23500, 0.29000 - (j-1) * 0.125)
+            BlzFrameSetPoint(PlayerSelections[j], FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.21500, -0.040000 - (j-1) * 0.12)
+            BlzFrameSetPoint(PlayerSelections[j], FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.20500, 0.28000 - (j-1) * 0.12)
             BlzFrameSetText(PlayerSelections[j], "|cffffffffSelections: 0|r")
             BlzFrameSetEnable(PlayerSelections[j], false)
             BlzFrameSetScale(PlayerSelections[j], 1.29)
             BlzFrameSetTextAlignment(PlayerSelections[j], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             PlayerBans[j] = BlzCreateFrameByType("TEXT", "name", GymMenu, "", 0)
-            BlzFrameSetPoint(PlayerBans[j], FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.41000, -0.040000 - (j-1) * 0.125)
-            BlzFrameSetPoint(PlayerBans[j], FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.060000, 0.29000 - (j-1) * 0.125)
+            BlzFrameSetPoint(PlayerBans[j], FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.39000, -0.040000 - (j-1) * 0.125)
+            BlzFrameSetPoint(PlayerBans[j], FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.28000 - (j-1) * 0.125)
             BlzFrameSetText(PlayerBans[j], "|cffffffffBans: 0|r")
             BlzFrameSetEnable(PlayerBans[j], false)
             BlzFrameSetScale(PlayerBans[j], 1.29)
@@ -516,15 +526,15 @@ OnInit(function ()
 
             for i = 0, MAX_DIGIMONS - 1 do
                 PlayerDigimonT[j][i] = BlzCreateFrame("IconButtonTemplate", GymMenu, 0, 0)
-                BlzFrameSetPoint(PlayerDigimonT[j][i], FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.065000 + i * 0.06, -0.085000 - (j-1) * 0.125)
-                BlzFrameSetPoint(PlayerDigimonT[j][i], FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.48500 + i * 0.06, 0.21500 - (j-1) * 0.125)
+                BlzFrameSetPoint(PlayerDigimonT[j][i], FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.03500 + i * 0.075, -0.10000 - (j-1) * 0.165)
+                BlzFrameSetPoint(PlayerDigimonT[j][i], FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.555 + i * 0.075, 0.2700 - (j-1) * 0.165)
 
                 BackdropPlayerDigimonT[j][i] = BlzCreateFrameByType("BACKDROP", "BackdropPlayerDigimonT[" .. j .. "][" .. i .. "]", PlayerDigimonT[j][i], "", 0)
                 BlzFrameSetAllPoints(BackdropPlayerDigimonT[j][i], PlayerDigimonT[j][i])
                 BlzFrameSetTexture(BackdropPlayerDigimonT[j][i], "CustomFrame.png", 0, true)
                 t = CreateTrigger()
                 BlzTriggerRegisterFrameEvent(t, PlayerDigimonT[j][i], FRAMEEVENT_CONTROL_CLICK)
-                TriggerAddAction(t, function () PlayerDigimonFunc(i, 1) end)
+                TriggerAddAction(t, function () PlayerDigimonFunc(i, j) end)
 
                 PlayerDigimonClicked[j][i] = BlzCreateFrameByType("BACKDROP", "PlayerDigimonClicked[" .. j .. "][" .. i .. "]", PlayerDigimonT[j][i], "", 1)
                 BlzFrameSetAllPoints(PlayerDigimonClicked[j][i], PlayerDigimonT[j][i])
@@ -571,8 +581,10 @@ OnInit(function ()
         local index = 0
         for v in PlayerOptions[p]:elements() do
             index = index + 1
-            PlayerClicked[p] = DialogAddButton(SelectPlayer[p], User[v]:getNameColored() .. " (" .. (PlayerSelected[v] == p and "Accept" or "Challenge") .. ")", 0)
+            PlayerClicked[p][index] = DialogAddButton(SelectPlayer[p], User[v]:getNameColored() .. " (" .. (PlayerSelected[v] == p and "Accept" or "Challenge") .. ")", 0)
         end
+
+        DialogAddButton(SelectPlayer[p], "Cancel", 0)
     end
 
     ---@param p1 player
@@ -621,7 +633,9 @@ OnInit(function ()
                 return
             end
             AddPlayers(p)
-            DialogDisplay(p, SelectPlayer[p], true)
+            if not PlayerOptions[p]:isEmpty() then
+                DialogDisplay(p, SelectPlayer[p], true)
+            end
         end)
     end
 
@@ -754,8 +768,6 @@ OnInit(function ()
                         BlzFrameSetEnable(PlayerDigimonT[1][i], false)
                     end
                     BlzFrameSetVisible(PlayerDigimonClicked[1][i], false)
-                    BlzFrameSetVisible(PlayerDigimonSelected[1][i], false)
-                    BlzFrameSetVisible(PlayerDigimonBanned[1][i], false)
 
                     d = GetBankDigimon(p2, i)
                     if d and GetDigimonCooldown(d) <= 0 then
@@ -766,14 +778,9 @@ OnInit(function ()
                         BlzFrameSetEnable(PlayerDigimonT[2][i], false)
                     end
                     BlzFrameSetVisible(PlayerDigimonClicked[2][i], false)
-                    BlzFrameSetVisible(PlayerDigimonSelected[2][i], false)
-                    BlzFrameSetVisible(PlayerDigimonBanned[2][i], false)
                 end
 
-                BlzFrameSetText(PlayerSelections[1], "Selections: " .. canSelect1)
-                BlzFrameSetText(PlayerBans[1], "Bans: " .. canBan1)
-                BlzFrameSetText(PlayerSelections[2], "Selections: " .. canSelect2)
-                BlzFrameSetText(PlayerBans[2], "Bans: " .. canBan2)
+                UpdateMenu()
 
                 BlzFrameSetVisible(GymMenu, true)
             end
@@ -791,7 +798,6 @@ OnInit(function ()
 
             EnablePvP(p1, p2)
             SuspendRevive(p1)
-            SuspendRevive(p2)
 
             local available = 0
             for i = 0, MAX_DIGIMONS - 1 do
@@ -871,8 +877,6 @@ OnInit(function ()
                         BlzFrameSetEnable(PlayerDigimonT[1][i], false)
                     end
                     BlzFrameSetVisible(PlayerDigimonClicked[1][i], false)
-                    BlzFrameSetVisible(PlayerDigimonSelected[1][i], false)
-                    BlzFrameSetVisible(PlayerDigimonBanned[1][i], false)
 
                     BlzFrameSetTexture(BackdropPlayerDigimonT[2][i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
                     BlzFrameSetEnable(PlayerDigimonT[2][i], false)
@@ -881,10 +885,7 @@ OnInit(function ()
                     BlzFrameSetVisible(PlayerDigimonBanned[2][i], false)
                 end
 
-                BlzFrameSetText(PlayerSelections[1], "Selections: " .. info.availableSelects)
-                BlzFrameSetText(PlayerBans[1], "Bans: ")
-                BlzFrameSetText(PlayerSelections[2], "Selections: ")
-                BlzFrameSetText(PlayerBans[2], "Bans: ")
+                UpdateMenu()
 
                 BlzFrameSetVisible(GymMenu, true)
             end
@@ -915,12 +916,26 @@ OnInit(function ()
                 if PlayerSelected[toFight] ~= p then
                     PlayerSelected[p] = toFight
                 else
+                    PlayerSelected[toFight] = nil
+                    PlayerSelected[p] = nil
                     local i = GetFreeArena()
                     if not i then
                         if LocalPlayer == p or LocalPlayer == toFight then
                             DisplayTextToPlayer(LocalPlayer, 0, 0, "All the arenas are being used, you have to wait until they are free.")
                         end
                         return
+                    end
+                    for _, d in ipairs(GetDigimons(p)) do
+                        if UnitHasItemOfTypeBJ(d.root, PVP_TICKET) then
+                            RemoveItem(GetItemOfTypeFromUnitBJ(d.root, PVP_TICKET))
+                            break
+                        end
+                    end
+                    for _, d in ipairs(GetDigimons(toFight)) do
+                        if UnitHasItemOfTypeBJ(d.root, PVP_TICKET) then
+                            RemoveItem(GetItemOfTypeFromUnitBJ(d.root, PVP_TICKET))
+                            break
+                        end
                     end
                     StartFight(p, toFight, i)
                 end
@@ -930,10 +945,17 @@ OnInit(function ()
 
     do
         local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_USE_ITEM)
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
         TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == ARENA_TICKET end))
         TriggerAddAction(t, function ()
             local p = GetOwningPlayer(GetManipulatingUnit())
+            local gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
+            local requiredGold = 50 + 50 * GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED)
+            if requiredGold > gold then
+                ErrorMessage("You don't have enough digibits.", p)
+                return
+            end
+            SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, gold - requiredGold)
             if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
                 ErrorMessage("You can only use this ticket in the gym lobby.", p)
                 return

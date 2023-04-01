@@ -34,6 +34,7 @@ OnInit("Backpack", function ()
     ---@field cooldown integer
     ---@field spellCooldown integer
     ---@field slot integer
+    ---@field stopped boolean
 
     local dummyCaster = FourCC('n01B')
     local dummyCasters = {} ---@type table<player, unit>
@@ -65,7 +66,8 @@ OnInit("Backpack", function ()
             order = AllowedItems[itemId].order,
             level = AllowedItems[itemId].level,
             charges = 0,
-            description = GetObjectName(itemId) .. "\n" .. BlzGetAbilityExtendedTooltip(itemId, 0)
+            description = GetObjectName(itemId) .. "\n" .. BlzGetAbilityExtendedTooltip(itemId, 0),
+            stopped = false
         }
         itemData.cooldown = 0
         itemData.spellCooldown = math.floor(BlzGetAbilityCooldown(itemData.spell, itemData.level - 1))
@@ -103,11 +105,13 @@ OnInit("Backpack", function ()
             BlzFrameSetEnable(Backpack, true)
 
             if not BlzFrameIsVisible(BackpackMenu) then
-                BlzFrameSetText(BackpackText, "Use an item for the focused unit")
+                BlzFrameSetText(BackpackText, "Use an item")
                 BlzFrameSetVisible(BackpackMenu, true)
+                AddButtonToEscStack(Backpack)
                 UpdateMenu()
             else
                 BlzFrameSetVisible(BackpackMenu, false)
+                RemoveButtonFromEscStack(Backpack)
             end
         end
     end
@@ -125,7 +129,16 @@ OnInit("Backpack", function ()
         if not DiscardMode[p] then
             local itemData = PlayerItems[p][i]
             if itemData.cooldown > 0 then
-                BlzFrameSetText(BackpackText, "|cffffcc00Item is on cooldown|r")
+                if p == LocalPlayer then
+                    BlzFrameSetText(BackpackText, "|cffffcc00Item is on cooldown|r")
+                end
+                Timed.call(2., function ()
+                    if p == LocalPlayer then
+                        if BlzFrameGetText(BackpackText) == "|cffffcc00Item is on cooldown|r" then
+                            BlzFrameSetText(BackpackText, "Use an item")
+                        end
+                    end
+                end)
                 return
             end
             local caster = dummyCasters[p]
@@ -145,11 +158,13 @@ OnInit("Backpack", function ()
             end)
             usingDummyCaster[p] = true
 
-            BlzFrameSetText(BackpackText, "|cff00ff00Select a target|r")
+            if p == LocalPlayer then
+                BlzFrameSetText(BackpackText, "|cff00ff00Select a target|r")
+            end
         else
             table.remove(PlayerItems[p], i)
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item for the focused unit")
+                BlzFrameSetText(BackpackText, "Use an item")
                 UpdateMenu()
             end
         end
@@ -164,7 +179,7 @@ OnInit("Backpack", function ()
         usingDummyCaster[p] = false
 
         if p == LocalPlayer then
-            BlzFrameSetText(BackpackText, "Use an item for the focused unit")
+            BlzFrameSetText(BackpackText, "Use an item")
         end
     end
 
@@ -179,6 +194,7 @@ OnInit("Backpack", function ()
             local target = GetSpellTargetUnit()
 
             if not GetRandomUnitOnRange(GetUnitX(target), GetUnitY(target), MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
+                itemData.stopped = true
                 PauseUnit(caster, true)
                 IssueImmediateOrderById(caster, Orders.stop)
                 PauseUnit(caster, false)
@@ -197,32 +213,36 @@ OnInit("Backpack", function ()
             local p = GetOwningPlayer(caster)
             local i = itemData.slot
 
-            itemData.charges = itemData.charges - 1
+            if not itemData.stopped then
+                itemData.charges = itemData.charges - 1
 
-            if itemData.charges <= 0 then
-                table.remove(PlayerItems[p], i)
-                for newSlot, otherData in ipairs(PlayerItems[p]) do
-                    otherData.slot = newSlot
+                if itemData.charges <= 0 then
+                    table.remove(PlayerItems[p], i)
+                    for newSlot, otherData in ipairs(PlayerItems[p]) do
+                        otherData.slot = newSlot
+                    end
+                else
+                    if itemData.spellCooldown > 0 then
+                        itemData.cooldown = itemData.spellCooldown
+                        BlzFrameSetVisible(BackpackItemCooldownT[i], true)
+                        BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
+                        Timed.echo(1., function ()
+                            itemData.cooldown = itemData.cooldown - 1
+                            if itemData.cooldown > 0 then
+                                if p == LocalPlayer then
+                                    BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
+                                end
+                            else
+                                if p == LocalPlayer then
+                                    BlzFrameSetVisible(BackpackItemCooldownT[i], false)
+                                end
+                                return true
+                            end
+                        end)
+                    end
                 end
             else
-                if itemData.spellCooldown > 0 then
-                    itemData.cooldown = itemData.spellCooldown
-                    BlzFrameSetVisible(BackpackItemCooldownT[i], true)
-                    BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
-                    Timed.echo(1., function ()
-                        itemData.cooldown = itemData.cooldown - 1
-                        if itemData.cooldown > 0 then
-                            if p == LocalPlayer then
-                                BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
-                            end
-                        else
-                            if p == LocalPlayer then
-                                BlzFrameSetVisible(BackpackItemCooldownT[i], false)
-                            end
-                            return true
-                        end
-                    end)
-                end
+                itemData.stopped = false
             end
 
             if p == LocalPlayer then
@@ -260,7 +280,7 @@ OnInit("Backpack", function ()
         else
             DiscardMode[p] = false
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item for the focused unit")
+                BlzFrameSetText(BackpackText, "Use an item")
             end
         end
     end
@@ -269,14 +289,14 @@ OnInit("Backpack", function ()
         local t = nil ---@type trigger
 
         Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.820000, 0.140000)
-        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.850000, 0.110000)
+        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.555000, 0.175000)
+        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.585000, 0.145000)
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
         BlzFrameSetAllPoints(BackdropBackpack, Backpack)
-        BlzFrameSetTexture(BackdropBackpack, "ReplaceableTextures\\CommandButtons\\BTNINV_Misc_Bag_07_Blue.blp", 0, true)
+        BlzFrameSetTexture(BackdropBackpack, "ReplaceableTextures\\CommandButtons\\BTNBackpackIcon.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Backpack, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BackpackFunc)
