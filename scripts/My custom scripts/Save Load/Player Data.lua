@@ -60,6 +60,7 @@ OnInit("Player Data", function ()
     ---@field backpackItems integer[]
     ---@field backpackItemCharges integer[]
     ---@field digimons integer[]
+    ---@field isSaved integer[]
     ---@field inventories Inventory[]
     ---@field levels integer[]
     ---@field experiences integer[]
@@ -121,6 +122,7 @@ OnInit("Player Data", function ()
             backpackItems = save and udg_SaveLoadBackpackItems or reverse(udg_SaveLoadBackpackItems),
             backpackItemCharges = save and udg_SaveLoadBackpackItemCharges or reverse(udg_SaveLoadBackpackItemCharges),
             digimons = save and udg_SaveLoadDigimons or reverse(udg_SaveLoadDigimons),
+            isSaved = save and udg_SaveLoadIsSaved or reverse(udg_SaveLoadIsSaved),
             inventories = save and udg_SaveLoadInventories or reverse(udg_SaveLoadInventories),
             levels = save and udg_SaveLoadLevels or reverse(udg_SaveLoadLevels),
             experiences = save and udg_SaveLoadExps or reverse(udg_SaveLoadExps),
@@ -130,6 +132,7 @@ OnInit("Player Data", function ()
         udg_SaveLoadBackpackItems = {}
         udg_SaveLoadBackpackItemCharges = {}
         udg_SaveLoadDigimons = {}
+        udg_SaveLoadIsSaved = __jarray(0)
         udg_SaveLoadInventories = {}
         udg_SaveLoadLevels = __jarray(0)
         udg_SaveLoadExps = __jarray(0)
@@ -138,9 +141,14 @@ OnInit("Player Data", function ()
     ---Clears all the data of the player
     ---@param p player
     function RestartData(p)
-        for i = 0, 5 do
+        for i = 0, udg_MAX_DIGIMONS - 1 do
             pcall(function ()
                 RemoveFromBank(p, i):destroy() -- Also remove from the stored
+            end)
+        end
+        for i = 0, udg_MAX_SAVED_DIGIMONS - 1 do
+            pcall(function ()
+                RemoveSavedDigimon(p, i)
             end)
         end
         SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, 0)
@@ -172,8 +180,12 @@ OnInit("Player Data", function ()
                     --d:setLevel(math.max(1, data.levels[i])) -- Just in case
                     --d:setExp(d:getExp() + data.experiences[i])
                     d:setExp(data.experiences[i])
-                    StoreDigimon(p, d)
-                    SendToBank(p, d)
+                    if data.isSaved[i] == 0 then
+                        StoreDigimon(p, d)
+                        SendToBank(p, d)
+                    else
+                        SaveDigimon(p, d)
+                    end
                 end
                 SetCompletedQuests(p, data.completedQuests)
             end

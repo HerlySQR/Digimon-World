@@ -52,6 +52,7 @@ OnInit("Digimon", function ()
     ---@field environment Environment
     ---@field onCombat boolean
     ---@field isSummon boolean
+    ---@field saved boolean
     Digimon = {
         _instance = {} ---@type table<unit, Digimon>
     }
@@ -236,6 +237,14 @@ OnInit("Digimon", function ()
         ReviveHero(self.root, x, y, false)
     end
 
+    function Digimon:pause()
+        PauseUnit(self.root, true)
+    end
+
+    function Digimon:unpause()
+        PauseUnit(self.root, false)
+    end
+
     ---@param u unit
     ---@return Digimon
     function Digimon.getInstance(u)
@@ -302,6 +311,7 @@ OnInit("Digimon", function ()
             self.environment = Environment.initial
             self.onCombat = false
             self.isSummon = false
+            self.saved = false
 
             Digimon._instance[u] = self
         end
@@ -500,32 +510,36 @@ OnInit("Digimon", function ()
 
         Digimon.postDamageEvent:register(function (info)
             local source = info.source ---@type Digimon
-            source.onCombat = true
-            Digimon.onCombatEvent:run(source)
             onCombat[source] = 3.
-            Timed.echo(function ()
-                local cd = onCombat[source] - 1
-                onCombat[source] = cd
-                if cd <= 0 then
-                    source.onCombat = false
-                    Digimon.offCombatEvent:run(source)
-                    return true
-                end
-            end)
+            if not source.onCombat then
+                source.onCombat = true
+                Digimon.onCombatEvent:run(source)
+                Timed.echo(1., function ()
+                    local cd = onCombat[source] - 1
+                    onCombat[source] = cd
+                    if cd <= 0 then
+                        source.onCombat = false
+                        Digimon.offCombatEvent:run(source)
+                        return true
+                    end
+                end)
+            end
 
             local target = info.target ---@type Digimon
-            target.onCombat = true
-            Digimon.onCombatEvent:run(target)
             onCombat[target] = 3.
-            Timed.echo(function ()
-                local cd = onCombat[target] - 1
-                onCombat[target] = cd
-                if cd <= 0 then
-                    target.onCombat = false
-                    Digimon.offCombatEvent:run(target)
-                    return true
-                end
-            end)
+            if not target.onCombat then
+                target.onCombat = true
+                Digimon.onCombatEvent:run(target)
+                Timed.echo(1., function ()
+                    local cd = onCombat[target] - 1
+                    onCombat[target] = cd
+                    if cd <= 0 then
+                        target.onCombat = false
+                        Digimon.offCombatEvent:run(target)
+                        return true
+                    end
+                end)
+            end
         end)
     end
 

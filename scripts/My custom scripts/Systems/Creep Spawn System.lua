@@ -282,14 +282,6 @@ OnInit(function ()
             for i = #regionData.creeps, 1, -1 do
                 local creep = regionData.creeps[i] ---@type Creep
                 if creep.rd == regionData then
-                    local distance = creep.spawnpoint:dist(creep:getPos())
-                    if distance > RANGE_RETURN then
-                        creep:issueOrder(Orders.move, creep.spawnpoint.x, creep.spawnpoint.y)
-                        creep.returning = true
-                    end
-                    if distance <= RANGE_IN_HOME then
-                        creep.returning = false
-                    end
                     if creep.captured or creep.remaining <= 0. then
                         if creep.remaining <= 0. then
                             regionData.delay = DELAY_NORMAL
@@ -299,6 +291,15 @@ OnInit(function ()
                         end
                         for r2 in regionData.sameRegion:elements() do
                             table.remove(r2.creeps, i)
+                        end
+                    else
+                        local distance = creep.spawnpoint:dist(creep:getPos())
+                        if distance > RANGE_RETURN then
+                            creep:issueOrder(Orders.move, creep.spawnpoint.x, creep.spawnpoint.y)
+                            creep.returning = true
+                        end
+                        if distance <= RANGE_IN_HOME then
+                            creep.returning = false
                         end
                     end
                 end

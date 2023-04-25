@@ -11,6 +11,7 @@ OnInit("Quests", function ()
 
     local QuestButton = nil ---@type framehandle
     local BackdropQuestButton = nil ---@type framehandle
+    local QuestButtonSprite = nil ---@type framehandle
     local QuestMenu = nil ---@type framehandle
     local QuestInformation = nil ---@type framehandle
     local QuestText = nil ---@type framehandle
@@ -113,8 +114,8 @@ OnInit("Quests", function ()
         BlzLoadTOCFile("war3mapImported\\QuestsTOC.toc")
 
         QuestButton = BlzCreateFrame("IconButtonTemplate", Origin, 0, 0)
-        BlzFrameSetAbsPoint(QuestButton, FRAMEPOINT_TOPLEFT, 0.515000, 0.175000)
-        BlzFrameSetAbsPoint(QuestButton, FRAMEPOINT_BOTTOMRIGHT, 0.545000, 0.145000)
+        BlzFrameSetAbsPoint(QuestButton, FRAMEPOINT_TOPLEFT, 0.515000, 0.180000)
+        BlzFrameSetAbsPoint(QuestButton, FRAMEPOINT_BOTTOMRIGHT, 0.550000, 0.145000)
         local t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, QuestButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, ShowMenu)
@@ -124,6 +125,11 @@ OnInit("Quests", function ()
         BackdropQuestButton = BlzCreateFrameByType("BACKDROP", "BackdropQuestButton", QuestButton, "", 0)
         BlzFrameSetAllPoints(BackdropQuestButton, QuestButton)
         BlzFrameSetTexture(BackdropQuestButton, "ReplaceableTextures\\CommandButtons\\BTNQuestIcon.blp", 0, true)
+
+        QuestButtonSprite =  BlzCreateFrameByType("SPRITE", "QuestButtonSprite", QuestButton, "", 0)
+        BlzFrameSetAllPoints(QuestButtonSprite, QuestButton)
+        BlzFrameSetModel(QuestButtonSprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
+        BlzFrameSetScale(QuestButtonSprite, BlzFrameGetWidth(QuestButtonSprite)/0.039)
 
         QuestMenu = BlzCreateFrame("QuestButtonBaseTemplate", Origin, 0, 0)
         BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_TOPLEFT, 0.740000, 0.440000)
@@ -230,14 +236,21 @@ OnInit("Quests", function ()
             BlzPlaySpecialEffect(QuestTemplates[id].questMark, ANIM_TYPE_DEATH)
             UpdateMenu()
             StartSound(bj_questDiscoveredSound)
+            BlzFrameSetVisible(QuestButton, true)
             if not BlzFrameIsVisible(QuestMenu) then
                 DisplayTextToPlayer(p, 0, 0, "|cffFFCC00NEW QUEST:|r " .. PlayerQuests[p][id].name)
+                BlzFrameSetVisible(QuestButtonSprite, true)
+                BlzFrameSetSpriteAnimate(QuestButtonSprite, 1, 0)
             end
-            BlzFrameSetVisible(QuestButton, true)
         end
         Timed.call(0.667, function ()
             if p == LocalPlayer then
                 BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
+            end
+        end)
+        Timed.call(8., function ()
+            if p == LocalPlayer then
+                BlzFrameSetVisible(QuestButtonSprite, false)
             end
         end)
     end
@@ -291,6 +304,10 @@ OnInit("Quests", function ()
                 if p == LocalPlayer then
                     if QuestTemplates[id].questMark then
                         BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 255)
+                        BlzPlaySpecialEffect(QuestTemplates[id].questMark, ANIM_TYPE_STAND)
+                    end
+                    if counter then
+                        SetTextTagTextBJ(counter, "", 10.)
                     end
                 end
             end)

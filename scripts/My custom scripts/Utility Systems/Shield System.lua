@@ -105,7 +105,9 @@ OnInit("Shield", function ()
             DestroyEffect(self._eff)
         end
 
-        self:onDestroy()
+        if self.onDestroy then
+            self:onDestroy()
+        end
 
         if self._timer then
             self._timer()

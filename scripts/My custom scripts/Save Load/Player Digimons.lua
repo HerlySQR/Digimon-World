@@ -74,5 +74,18 @@ OnInit("PlayerDigimons", function ()
     function ClearDigimons(owner)
         digimons[owner] = {}
     end
+
+    ---@param owner player
+    ---@return Digimon[]
+    function GetAllDigimons(owner)
+        local list = {}
+        for _, v in ipairs(digimons[owner]) do
+            table.insert(v)
+        end
+        for _, v in ipairs(GetSavedDigimons(owner)) do
+            table.insert(v)
+        end
+        return list
+    end
 end)
 Debug.endFile()

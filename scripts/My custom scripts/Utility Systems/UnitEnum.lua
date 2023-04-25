@@ -59,6 +59,7 @@ OnInit("UnitEnum", function ()
         table.remove(callbacks)
     end
 
+    ---@nodiscard
     ---@param x number
     ---@param y number
     ---@param radius number
@@ -75,6 +76,7 @@ OnInit("UnitEnum", function ()
         return units[math.random(#units)]
     end
 
+    ---@nodiscard
     ---@param where rect
     ---@param includeLocust? boolean
     ---@return unit

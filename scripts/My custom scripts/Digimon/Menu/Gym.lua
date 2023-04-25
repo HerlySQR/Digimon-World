@@ -8,17 +8,32 @@ OnInit(function ()
     Require "Timed"
     Require "DigimonBank"
     Require "ErrorMessage"
-    local MCT = Require "MCT" ---@type MCT
+
+    local GymMenu = nil ---@type framehandle
+    local Select = nil ---@type framehandle
+    local Ban = nil ---@type framehandle
+    local Ready = nil ---@type framehandle
+    local Remaining = nil ---@type framehandle
+    local PlayerName = {} ---@type framehandle[]
+    local PlayerSelections = {} ---@type framehandle[]
+    local PlayerBans = {} ---@type framehandle[]
+    local PlayerDigimonT = {} ---@type framehandle[][]
+    local BackdropPlayerDigimonT = {} ---@type framehandle[][]
+    local PlayerDigimonClicked = {} ---@type framehandle[][]
+    local PlayerDigimonSelected = {} ---@type framehandle[][]
+    local PlayerDigimonBanned = {} ---@type framehandle[][]
+    local FIGHT = nil ---@type framehandle
 
     local LocalPlayer = GetLocalPlayer()
     local MAX_ARENAS = 4
     local MAX_FIGHTERS = 2
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
     local MAX_RANK = 99
+    local RANK_UPGRADE = FourCC('R005')
 
-    local DigimonTypes = {} ---@type Set[]
+    local DigimonTypes = {} ---@type integer[][]
     for i = 0, MAX_RANK do
-        DigimonTypes[i] = Set.create()
+        DigimonTypes[i] = {}
     end
 
     local PVP_TICKET = FourCC('I03A')
@@ -104,12 +119,14 @@ OnInit(function ()
             local info = self.pi[i]
             if info.availableSelects > 0 then
                 for j = 0, MAX_DIGIMONS do
-                    if GetBankDigimon(info.p, j)
+                    local d = GetBankDigimon(info.p, j)
+                    if d and GetDigimonCooldown(d) <= 0
                         and not info.selectedDigimons:contains(j)
                         and not info.bannedDigimons:contains(j) then
 
                         info.selectedDigimons:addSingle(j)
                         info.availableSelects = info.availableSelects - 1
+                        if info.availableSelects <= 0 then break end
                     end
                 end
             end
@@ -118,17 +135,24 @@ OnInit(function ()
 
     function FightInfo:start()
         local centerX, centerY = GetRectCenterX(self.arena), GetRectCenterY(self.arena)
+        local paused = {} ---@type Digimon[]
         for i = 1, MAX_FIGHTERS do
             local info = self.pi[i]
             if info.p == Digimon.NEUTRAL then
+                local list = DigimonTypes[self.rank]
+                self.level = list[#list]
                 for j = 1, 3 do
-                    local angle = math.pi*(j/4 + (i-1))
-                    local d = Digimon.create(Digimon.NEUTRAL, DigimonTypes[self.rank]:random(),
-                    centerX + 300*math.cos(angle), centerY + 300*math.sin(angle),
-                    90 + 180*i)
-                    DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", d:getPos()))
-                    info.digimonsInArena:addSingle(d)
-                    d:setLevel(self.level)
+                    if list[j] then
+                        local angle = math.pi*(j/4 + (i-1))
+                        local d = Digimon.create(Digimon.NEUTRAL, list[j],
+                        centerX + 500*math.cos(angle), centerY + 500*math.sin(angle),
+                        90 + 180*i)
+                        DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", d:getPos()))
+                        info.digimonsInArena:addSingle(d)
+                        d:setLevel(self.level)
+                        d:pause()
+                        table.insert(paused, d)
+                    end
                 end
             else
                 local n = info.selectedDigimons:size()
@@ -138,21 +162,61 @@ OnInit(function ()
                     SummonDigimon(info.p, j)
                     local d = GetBankDigimon(info.p, j)
                     local angle = math.pi*(m/(n+1) + (i-1))
-                    d:setPos(centerX + 300*math.cos(angle), centerY + 300*math.sin(angle))
+                    d:setPos(centerX + 500*math.cos(angle), centerY + 500*math.sin(angle))
                     d:setFacing(90 + 180*i)
                     DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", d:getPos()))
                     info.digimonsInArena:addSingle(d)
                     d.environment = self.env
+                    d:pause()
+                    table.insert(paused, d)
                 end
                 self.env:apply(info.p, true)
             end
         end
         if self:localPlayerCond() then
-            TimerDialogDisplay(self.clockWindow, true)
-            PanCameraTo(GetRectCenterX(self.arena), GetRectCenterY(self.arena))
+            PanCameraToTimed(GetRectCenterX(self.arena), GetRectCenterY(self.arena), 0)
         end
-        TimerStart(self.clock, 300., false, function ()
-            self:finish()
+        Timed.call(function ()
+            if self:localPlayerCond() then
+                PanCameraTo(GetRectCenterX(self.arena), GetRectCenterY(self.arena))
+            end
+        end)
+        Timed.call(2., function ()
+            if self:localPlayerCond() then
+                BlzFrameSetScale(FIGHT, 12.5)
+                BlzFrameSetText(FIGHT, "|cff00ff003|r")
+                BlzFrameSetVisible(FIGHT, true)
+            end
+            Timed.call(1., function ()
+                if self:localPlayerCond() then
+                    BlzFrameSetScale(FIGHT, 13.9)
+                    BlzFrameSetText(FIGHT, "|cffffff002|r")
+                end
+                Timed.call(1., function ()
+                    if self:localPlayerCond() then
+                        BlzFrameSetScale(FIGHT, 15.3)
+                        BlzFrameSetText(FIGHT, "|cffff00001|r")
+                    end
+                    Timed.call(1., function ()
+                        if self:localPlayerCond() then
+                            BlzFrameSetText(FIGHT, "|cffff0000FIGHT!|r")
+                        end
+                        Timed.call(1., function ()
+                            if self:localPlayerCond() then
+                                BlzFrameSetVisible(FIGHT, false)
+                                TimerDialogDisplay(self.clockWindow, true)
+                                ShowMenu(true)
+                            end
+                            for _, d in ipairs(paused) do
+                                d:unpause()
+                            end
+                            TimerStart(self.clock, 300., false, function ()
+                                self:finish()
+                            end)
+                        end)
+                    end)
+                end)
+            end)
         end)
     end
 
@@ -181,6 +245,7 @@ OnInit(function ()
             end
             if loser.p == Digimon.NEUTRAL then
                 SetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED, GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED) + 1)
+                SetPlayerTechResearched(winner.p, RANK_UPGRADE, GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED))
             end
         end
 
@@ -205,6 +270,7 @@ OnInit(function ()
                 end
             end
             Timed.call(4., function ()
+                local notNeutral = true
                 for i = 1, MAX_FIGHTERS do
                     local info = self.pi[i]
                     if info.p ~= Digimon.NEUTRAL then
@@ -219,11 +285,17 @@ OnInit(function ()
                                 break
                             end
                         end
+                    else
+                        notNeutral = false
                     end
                     ShowBank(info.p, true)
                     if i > 1 then
                         DisablePvP(info.p, self.pi[i-1].p)
                     end
+                end
+                if notNeutral then
+                    SetPlayerAllianceStateBJ(self.pi[1].p, self.pi[2].p, bj_ALLIANCE_ALLIED_VISION)
+                    SetPlayerAllianceStateBJ(self.pi[2].p, self.pi[1].p, bj_ALLIANCE_ALLIED_VISION)
                 end
                 self:clear()
                 UsedArena[self.index] = false
@@ -297,20 +369,6 @@ OnInit(function ()
 
     -- Player vs Player
 
-    local GymMenu = nil ---@type framehandle
-    local Select = nil ---@type framehandle
-    local Ban = nil ---@type framehandle
-    local Ready = nil ---@type framehandle
-    local Remaining = nil ---@type framehandle
-    local PlayerName = {} ---@type framehandle[]
-    local PlayerSelections = {} ---@type framehandle[]
-    local PlayerBans = {} ---@type framehandle[]
-    local PlayerDigimonT = {} ---@type framehandle[][]
-    local BackdropPlayerDigimonT = {} ---@type framehandle[][]
-    local PlayerDigimonClicked = {} ---@type framehandle[][]
-    local PlayerDigimonSelected = {} ---@type framehandle[][]
-    local PlayerDigimonBanned = {} ---@type framehandle[][]
-
     local function UpdateMenu()
         local fight = FightInfos[LocalPlayer]
         local info1 = fight.pi[1]
@@ -327,12 +385,12 @@ OnInit(function ()
         if info1.p == LocalPlayer then
             local i = info1.clicked
             if info1.clickedGroup == 1 then
-                BlzFrameSetEnable(Select, not info1.bannedDigimons:contains(i))
+                BlzFrameSetEnable(Select, not info1.bannedDigimons:contains(i) and info1.aliveDigimons > 3)
                 BlzFrameSetEnable(Ban, false)
                 BlzFrameSetText(Select, "|cffFCD20D" .. (info1.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
             elseif info1.clickedGroup == 2 then
                 BlzFrameSetEnable(Select, false)
-                BlzFrameSetEnable(Ban, not info2.selectedDigimons:contains(i))
+                BlzFrameSetEnable(Ban, not info2.selectedDigimons:contains(i) and info2.aliveDigimons > 3)
                 BlzFrameSetText(Ban, "|cffFCD20D" .. (info2.bannedDigimons:contains(i) and "Unban" or "Ban") .. "|r")
             end
             BlzFrameSetEnable(Ready, info1.availableSelects == 0)
@@ -340,12 +398,12 @@ OnInit(function ()
         elseif info2.p == LocalPlayer then
             local i = info2.clicked
             if info2.clickedGroup == 2 then
-                BlzFrameSetEnable(Select, not info2.bannedDigimons:contains(i))
+                BlzFrameSetEnable(Select, not info2.bannedDigimons:contains(i) and info2.aliveDigimons > 3)
                 BlzFrameSetEnable(Ban, false)
                 BlzFrameSetText(Select, "|cffFCD20D" .. (info2.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
             elseif info2.clickedGroup == 1 then
                 BlzFrameSetEnable(Select, false)
-                BlzFrameSetEnable(Ban, not info1.selectedDigimons:contains(i))
+                BlzFrameSetEnable(Ban, not info1.selectedDigimons:contains(i) and info1.aliveDigimons > 3)
                 BlzFrameSetText(Ban, "|cffFCD20D" .. (info1.bannedDigimons:contains(i) and "Unban" or "Ban") .. "|r")
             end
             BlzFrameSetEnable(Ready, info2.availableSelects == 0)
@@ -388,10 +446,10 @@ OnInit(function ()
             local otherInfo = fight.pi[info.clickedGroup]
             if otherInfo.bannedDigimons:contains(info.clicked) then
                 otherInfo.bannedDigimons:removeSingle(info.clicked)
-                otherInfo.availableBans = otherInfo.availableBans + 1
+                info.availableBans = info.availableBans + 1
             else
                 otherInfo.bannedDigimons:addSingle(info.clicked)
-                otherInfo.availableBans = otherInfo.availableBans - 1
+                info.availableBans = info.availableBans - 1
             end
 
             if fight:localPlayerCond() then
@@ -555,6 +613,15 @@ OnInit(function ()
                 BlzFrameSetVisible(PlayerDigimonBanned[j][i], false)
             end
         end
+
+        FIGHT = BlzCreateFrameByType("TEXT", "FIGHT", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), "", 0)
+        BlzFrameSetAbsPoint(FIGHT, FRAMEPOINT_TOPLEFT, 0.160000, 0.480000)
+        BlzFrameSetAbsPoint(FIGHT, FRAMEPOINT_BOTTOMRIGHT, 0.640000, 0.280000)
+        BlzFrameSetText(FIGHT, "|cff00ff003|r")
+        BlzFrameSetEnable(FIGHT, false)
+        BlzFrameSetScale(FIGHT, 12.5)
+        BlzFrameSetTextAlignment(FIGHT, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_MIDDLE)
+        BlzFrameSetVisible(FIGHT, false)
     end
 
     FrameLoaderAdd(InitFrames)
@@ -609,17 +676,16 @@ OnInit(function ()
         UpdateDialog(p1)
     end
 
-    local function CheckPlayersInLobby()
-        ForceClear(WannaPvP)
-        ForUnitsInRect(LOBBY, function (u)
-            if UnitHasItemOfTypeBJ(u, PVP_TICKET) then
-                ForceAddPlayer(WannaPvP, GetOwningPlayer(u))
-            end
-        end)
-    end
-
     OnInit.final(function ()
-        Timed.echo(0.5, CheckPlayersInLobby)
+        -- Check players in lobby
+        Timed.echo(0.5, function ()
+            ForceClear(WannaPvP)
+            ForUnitsInRect(LOBBY, function (u)
+                if UnitHasItemOfTypeBJ(u, PVP_TICKET) then
+                    ForceAddPlayer(WannaPvP, GetOwningPlayer(u))
+                end
+            end)
+        end)
     end)
 
     do
@@ -674,6 +740,8 @@ OnInit(function ()
                 StoreToBank(p2, d, true)
             end
 
+            SetPlayerAllianceStateBJ(p1, p2, bj_ALLIANCE_UNALLIED)
+            SetPlayerAllianceStateBJ(p2, p1, bj_ALLIANCE_UNALLIED)
             EnablePvP(p1, p2)
             SuspendRevive(p1)
             SuspendRevive(p2)
@@ -816,13 +884,11 @@ OnInit(function ()
             info.availableBans = 0
             FightInfos[p1] = fight
 
-            local levels = {}
             if info.availableSelects == 0 then
                 for i = 0, MAX_DIGIMONS - 1 do
                     local d = GetBankDigimon(p1, i)
                     if d and GetDigimonCooldown(d) <= 0 then
                         info.selectedDigimons:addSingle(i)
-                        table.insert(levels, d:getLevel())
                     end
                 end
             end
@@ -835,7 +901,7 @@ OnInit(function ()
             info.votedStart = true
             FightInfos[p2] = fight
             fight.votedStart = 1
-            fight.level = MCT.mean(levels)
+            fight.rank = GetPlayerState(p1, PLAYER_STATE_RESOURCE_FOOD_USED)
 
             fight.selectTime = 60.
             Timed.echo(1., function ()
@@ -850,7 +916,6 @@ OnInit(function ()
                     end
                     Timed.call(2., function ()
                         if p1 == LocalPlayer then
-                            ShowMenu(true)
                             BlzFrameSetVisible(GymMenu, false)
                         end
                         fight:start()
@@ -916,8 +981,6 @@ OnInit(function ()
                 if PlayerSelected[toFight] ~= p then
                     PlayerSelected[p] = toFight
                 else
-                    PlayerSelected[toFight] = nil
-                    PlayerSelected[p] = nil
                     local i = GetFreeArena()
                     if not i then
                         if LocalPlayer == p or LocalPlayer == toFight then
@@ -972,14 +1035,11 @@ OnInit(function ()
     OnInit.trig(function ()
         udg_GymAdd = CreateTrigger()
         TriggerAddAction(udg_GymAdd, function ()
-            for i = udg_GymMinRank, udg_GymMaxRank do
-                for j = 1, #udg_GymDigimonType do
-                    DigimonTypes[i]:addSingle(udg_GymDigimonType[j])
-                end
-            end
-            udg_GymMinRank = 0
-            udg_GymMaxRank = 0
+            DigimonTypes[udg_GymRank] = udg_GymDigimonType
+            DigimonTypes[udg_GymRank][#udg_GymDigimonType + 1] = udg_GymLevel
+            udg_GymRank = 0
             udg_GymDigimonType = __jarray(0)
+            udg_GymLevel = 1
         end)
     end)
 

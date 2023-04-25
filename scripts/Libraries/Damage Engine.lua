@@ -615,6 +615,12 @@ OnInit("Damage", function() Damage = {}
             canKick         = true
         end
         setArmor(true)
+        
+        if not d then
+            finish()
+            return
+        end
+        
         d.userAmt = d.damage
         d.damage = r
         

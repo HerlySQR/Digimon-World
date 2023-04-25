@@ -70,7 +70,6 @@ OnInit("PlayerUtils", function ()
     ---@field prev User
     ---@field originalName string
     ---@field isPlaying boolean
-
     User = {}
     User.__index = User
 

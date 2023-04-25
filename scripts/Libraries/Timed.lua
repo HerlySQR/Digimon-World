@@ -19,6 +19,7 @@ Timed = {
         Args: [delay, ]userFunc
         Desc: After "delay" seconds, call "userFunc". Delay defaults to 0 seconds.
     ----------------------------------------------------------------------------------------]]
+    ---@overload fun(userFunc: function): removalFunc: fun(doNotDestroy:boolean):number
     ---@param delay? number
     ---@param userFunc function
     ---@return fun(doNotDestroy:boolean):number removalFunc -> only gets returned if the delay is > 0.
@@ -70,9 +71,10 @@ Timed = {
     Note: This merges all matching timeouts together, so it is advisable only to use this
         for smaller numbers (e.g. <.3 seconds) where the difference is less noticeable.
     ----------------------------------------------------------------------------------------]]
+    ---@overload fun(timeout: number, userFunc: fun():boolean?): remove_func: function
     ---@param timeout? number
     ---@param duration? number
-    ---@param userFunc fun():boolean -- if true, echo will stop
+    ---@param userFunc fun():boolean? -- if true, echo will stop
     ---@param onExpire? function     -- If the duration is specified and expiration occurs naturally, call this function.
     ---@param tolerance? number      -- Ranges from 0-1. If the duration is specified, the tolerance helps to measure the accuracy of the final tick.
     ---@return function remove_func

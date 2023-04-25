@@ -35,7 +35,9 @@ OnInit("AFK", function ()
             TriggerRegisterPlayerEvent(t, p, EVENT_PLAYER_ALLIANCE_CHANGED)
         end)
         TriggerAddAction(t, function ()
-            afkTime[GetTriggerPlayer()] = 0
+            if GetTriggerPlayer() then
+                afkTime[GetTriggerPlayer()] = 0
+            end
         end)
     end)
 

@@ -1,3 +1,4 @@
+Debug.beginFile("Digimon Capture")
 OnInit("Digimon Capture", function ()
     Require "AbilityUtils"
 
@@ -13,35 +14,32 @@ OnInit("Digimon Capture", function ()
         local p = GetOwningPlayer(caster)
 
         if GetOwningPlayer(target) == Digimon.NEUTRAL then
-            if not IsFullOfDigimons(p) then
+            if not IsFullOfDigimons(p) or CanSaveDigimons(p) then
                 local dTarget = Digimon.getInstance(target)
                 local captureChance = 0
                 if not udg_NetAlwaysCapture then
                     if dTarget.rank == Rank.ROOKIE then
-                        -- The first 2 parameters of Lerp are the min. and max. chance that you need to capture
                         captureChance = R2I(Lerp(25, 50, 100 - GetUnitLifePercent(target)))
                     else
                         DisplayTextToPlayer(p, 0, 0, "This digimon is too powerful.")
                         return
                     end
-                    -- Add this to divide the chance based on the rarity, but what rarity exactly?
-                    if dTarget.rarity == Rarity.UNCOMMON then
-                        captureChance = captureChance // 2
-                    end
                 else
                     captureChance = 101
                 end
-                -- Here is the chance that you get and should be lesser than the capture chance to capture
                 local randomCapture = math.random(0, 100)
                 DisplayTextToPlayer(p, 0, 0, "Your chance is: " .. captureChance)
                 DisplayTextToPlayer(p, 0, 0, "You got: " .. randomCapture)
                 if randomCapture < captureChance then
-                    StoreDigimon(p, dTarget)
-                    SendToBank(p, dTarget)
+                    if SendToBank(p, dTarget) == -1 then
+                        SaveDigimon(p, dTarget)
+                    else
+                        StoreDigimon(p, dTarget)
+                    end
                     DestroyEffectTimed(AddSpecialEffect("Abilities\\Spells\\Undead\\DarkRitual\\DarkRitualCaster.mdl", GetUnitX(target), GetUnitY(target)), 2.00)
                     Digimon.capturedEvent:run({caster = Digimon.getInstance(caster), target = dTarget})
                 else
-                    DisplayTextToPlayer(p, 0, 0, "Not this time.")
+                    DisplayTextToPlayer(p, 0, 0, "Was not this time.")
                 end
             else
                 DisplayTextToPlayer(p, 0, 0, "You can't have more digimons.")
@@ -51,3 +49,4 @@ OnInit("Digimon Capture", function ()
         end
     end)
 end)
+Debug.endFile()

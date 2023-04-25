@@ -8,10 +8,12 @@ OnInit(function ()
     local Effect = "Abilities\\Spells\\Orc\\WarStomp\\WarStompCaster.mdl"
     local Sound = "Abilities\\Spells\\Orc\\Shockwave\\Shockwave.flac"
 
+    local ignore = false
+
     Digimon.preDamageEvent:register(function (info)
         if udg_IsDamageAttack then
             local source = info.source ---@type Digimon
-            if source:hasAbility(Spell) then
+            if source:hasAbility(Spell) and not ignore then
                 if math.random(0, 100) <= Chance then
                     local target = info.target ---@type Digimon
                     local amount = info.amount * DmgFactor
@@ -25,7 +27,9 @@ OnInit(function ()
                     KillSoundWhenDone(snd)
 
                     ForUnitsInRange(target:getX(), source:getY(), Area, function (u)
+                        ignore = true
                         Damage.apply(source.root, u, amount, false, false, ATTACK_TYPE_MELEE, DAMAGE_TYPE_NORMAL, WEAPON_TYPE_AXE_MEDIUM_CHOP)
+                        ignore = false
                     end)
 
                     info.amount = 0.

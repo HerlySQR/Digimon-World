@@ -9,23 +9,28 @@ OnInit("SaveFile", function ()
         MAX = 10
     }
 
+    ---@param version? string
     ---@return string
-    function SaveFile.getFolder()
-        return udg_MapName
+    function SaveFile.getFolder(version)
+        if not version then
+            return udg_MapName
+        end
+        return udg_MapName:sub(1, udg_MapName:find("\\")) .. version
     end
 
     ---@param p player
     ---@param slot integer
+    ---@param version? string
     ---@return string
-    function SaveFile.getPath(p, slot)
+    function SaveFile.getPath(p, slot, version)
         if slot == 0 then
-            return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. SaveFile.InvalidPath .. ".pld"
+            return SaveFile.getFolder(version) .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. SaveFile.InvalidPath .. ".pld"
         elseif slot > 0 and (slot < SaveFile.MIN or slot > SaveFile.MAX) then
-            return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. SaveFile.InvalidPath .. ".pld"
+            return SaveFile.getFolder(version) .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. SaveFile.InvalidPath .. ".pld"
         elseif slot < 0 then
-            return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. SaveFile.ManualPath .. ".pld"
+            return SaveFile.getFolder(version) .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. SaveFile.ManualPath .. ".pld"
         end
-        return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. slot .. ".pld"
+        return SaveFile.getFolder(version) .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. slot .. ".pld"
     end
 
     ---@param p player

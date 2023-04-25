@@ -5,6 +5,7 @@ OnInit("PressSaveOrLoad", function ()
     Require "Menu"
 
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
+    local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
 
     local NormalColor = "FCD20D"
     local DisabledColor = "FFFFFF"
@@ -86,8 +87,8 @@ OnInit("PressSaveOrLoad", function ()
         if data then
             BlzFrameSetText(TooltipName, "|cffff6600Information|r")
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. data.gold)
-            BlzFrameSetText(TooltipLumber, "|cffc8c800DigiGold: |r" .. data.lumber)
-            BlzFrameSetText(TooltipFood, "|cffc882c8DigiCrystal: |r" .. data.food)
+            BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal: |r" .. data.lumber)
+            BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank: |r" .. data.food)
             for i = 1, MAX_DIGIMONS do
                 if data.digimons[i] and data.digimons[i] ~= 0 then
                     local s = ""
@@ -121,8 +122,8 @@ OnInit("PressSaveOrLoad", function ()
         else
             BlzFrameSetText(TooltipName, "|cffff6600Empty|r")
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits:|r")
-            BlzFrameSetText(TooltipLumber, "|cffc8c800DigiGold:|r")
-            BlzFrameSetText(TooltipFood, "|cffc882c8DigiCrystal:|r")
+            BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal:|r")
+            BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank:|r")
             for i = 0, MAX_DIGIMONS - 1 do
                 BlzFrameSetText(TooltipDigimonItemsT[i], "|cff00ffffItems:|r")
                 BlzFrameSetTexture(TooltipDigimonIconT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)

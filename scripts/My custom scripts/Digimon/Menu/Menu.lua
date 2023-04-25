@@ -3,8 +3,10 @@ OnInit("Menu", function ()
     local Frames = {} ---@type framehandle[]
     local WasVisible = __jarray(false) ---@type boolean[]
     local LocalPlayer = GetLocalPlayer()
-    local DefaultHeight = BlzFrameGetHeight(BlzGetFrameByName("ConsoleUIBackdrop",0))
+    local Console = BlzGetFrameByName("ConsoleUIBackdrop", 0)
+    local DefaultHeight = BlzFrameGetHeight(Console)
     local MenuStack = {} ---@type framehandle[]
+    local HideSimpleFrame = nil ---@type framehandle
 
     ---@param showOriginFrames boolean?
     function ShowMenu(showOriginFrames)
@@ -13,7 +15,7 @@ OnInit("Menu", function ()
         end
         if showOriginFrames then
             BlzHideOriginFrames(false)
-            BlzFrameSetSize(BlzGetFrameByName("ConsoleUIBackdrop",0), 0, DefaultHeight)
+            BlzFrameSetSize(Console, 0, DefaultHeight)
         end
     end
 
@@ -24,8 +26,9 @@ OnInit("Menu", function ()
             BlzFrameSetVisible(frame, false)
         end
         if hideOriginFrames then
+            ClearSelection()
             BlzHideOriginFrames(true)
-            BlzFrameSetSize(BlzGetFrameByName("ConsoleUIBackdrop",0), 0, 0.0001)
+            BlzFrameSetSize(Console, 0, 0.0001)
         end
     end
 
@@ -63,6 +66,13 @@ OnInit("Menu", function ()
                 end
             end
         end)
+
+        HideSimpleFrame = BlzCreateFrameByType("SIMPLEFRAME", "HideSimpleFrame", BlzGetFrameByName("ConsoleUI", 0), "", 0)
+        -- Warcraft 3 V1.31
+        BlzFrameSetParent(BlzFrameGetParent(BlzGetOriginFrame(ORIGIN_FRAME_COMMAND_BUTTON, 0)), HideSimpleFrame)
+        -- Current has access by Name for it (Parent hierachy is a little bit different from V1.31)
+        BlzFrameSetParent(BlzGetFrameByName("CommandBarFrame", 0), HideSimpleFrame)
+        AddFrameToMenu(HideSimpleFrame)
     end)
 
 end)

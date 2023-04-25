@@ -12,6 +12,7 @@ OnInit("Backpack", function ()
     local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local Backpack = nil ---@type framehandle
     local BackdropBackpack = nil ---@type framehandle
+    local BackpackSprite = nil ---@type framehandle
     local BackpackMenu = nil ---@type framehandle
     local BackpackText = nil ---@type framehandle
     local BackpackDiscard = nil ---@type framehandle
@@ -174,7 +175,14 @@ OnInit("Backpack", function ()
     local function BackpackDummyCastEnd(p)
         UnitRemoveAbility(dummyCasters[p], itemDatas[dummyCasters[p]].spell)
         SetUnitOwner(dummyCasters[p], Digimon.PASSIVE, false)
-        SelectGroupForPlayerBJ(selectedUnits[p], p)
+        if p == LocalPlayer then
+            ClearSelection()
+        end
+        ForGroup(selectedUnits[p], function ()
+            if p == LocalPlayer then
+                SelectUnit(GetEnumUnit(), true)
+            end
+        end)
         GroupClear(selectedUnits[p])
         usingDummyCaster[p] = false
 
@@ -289,8 +297,8 @@ OnInit("Backpack", function ()
         local t = nil ---@type trigger
 
         Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.555000, 0.175000)
-        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.585000, 0.145000)
+        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.555000, 0.180000)
+        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.590000, 0.145000)
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
 
@@ -300,6 +308,11 @@ OnInit("Backpack", function ()
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Backpack, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BackpackFunc)
+
+        BackpackSprite =  BlzCreateFrameByType("SPRITE", "BackpackSprite", Backpack, "", 0)
+        BlzFrameSetAllPoints(BackpackSprite, Backpack)
+        BlzFrameSetModel(BackpackSprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
+        BlzFrameSetScale(BackpackSprite, BlzFrameGetWidth(BackpackSprite)/0.039)
 
         BackpackMenu = BlzCreateFrame("CheckListBox", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.780000, 0.32000)
@@ -418,6 +431,18 @@ OnInit("Backpack", function ()
             local id = GetItemTypeId(m)
             local itemData ---@type ItemData
 
+            if not gotItem[p] then
+                if p == LocalPlayer then
+                    BlzFrameSetVisible(BackpackSprite, true)
+                    BlzFrameSetSpriteAnimate(BackpackSprite, 1, 0)
+                end
+                Timed.call(8., function ()
+                    if p == LocalPlayer then
+                        BlzFrameSetVisible(BackpackSprite, false)
+                    end
+                end)
+            end
+
             gotItem[p] = true
             ShowBackpack(p, true)
 
@@ -502,6 +527,9 @@ OnInit("Backpack", function ()
         if gotItem[p] or bypass then
             if p == LocalPlayer then
                 BlzFrameSetVisible(Backpack, flag)
+            end
+            if bypass then
+                gotItem[p] = true
             end
         end
     end
