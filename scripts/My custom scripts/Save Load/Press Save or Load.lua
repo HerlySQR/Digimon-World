@@ -3,6 +3,7 @@ OnInit("PressSaveOrLoad", function ()
     Require "Player Data"
     Require "Timed"
     Require "Menu"
+    Require "GameStatus"
 
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
@@ -25,6 +26,8 @@ OnInit("PressSaveOrLoad", function ()
     local TooltipDigimonIconT = {} ---@type framehandle[]
     local TooltipDigimonItemsT = {} ---@type framehandle[]
     local TooltipDigimonLevelT = {} ---@type framehandle[]
+    local TooltipUsing = nil ---@type framehandle
+    local TooltipSaved = nil ---@type framehandle
     local TooltipBackpack = nil ---@type framehandle
     local TooltipCompletedQuests = nil ---@type framehandle
     local TooltipCompletedQuestsArea = nil ---@type framehandle
@@ -35,7 +38,7 @@ OnInit("PressSaveOrLoad", function ()
     local NotOnline = false
 
     OnInit.final(function ()
-        NotOnline = ReloadGameCachesFromDisk() and not udg_SaveOnSinglePlayer
+        NotOnline = GameStatus.get() ~= GameStatus.ONLINE and not udg_SaveOnSinglePlayer
 
         PolledWait(1.)
 
@@ -89,7 +92,9 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. data.gold)
             BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal: |r" .. data.lumber)
             BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank: |r" .. data.food)
-            for i = 1, MAX_DIGIMONS do
+            local currentUsing = 0
+            local currentSaved = MAX_DIGIMONS
+            for i = 1, MAX_DIGIMONS + MAX_SAVED do
                 if data.digimons[i] and data.digimons[i] ~= 0 then
                     local s = ""
                     local inv = data.inventories[i]
@@ -104,13 +109,29 @@ OnInit("PressSaveOrLoad", function ()
                             end
                         end
                     end
-                    BlzFrameSetText(TooltipDigimonItemsT[i-1], "|cff00ffffItems: |r" .. s)
-                    BlzFrameSetTexture(TooltipDigimonIconT[i-1], BlzGetAbilityIcon(data.digimons[i]), 0, true)
-                    BlzFrameSetText(TooltipDigimonLevelT[i-1], "|cffFFCC00Level " .. I2S(data.levels[i]) .. "|r")
+                    local index
+                    if data.isSaved[i] == 1 then
+                        index = currentSaved
+                        currentSaved = currentSaved + 1
+                    else
+                        index = currentUsing
+                        currentUsing = currentUsing + 1
+                    end
+                    BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r" .. s)
+                    BlzFrameSetTexture(TooltipDigimonIconT[index], BlzGetAbilityIcon(data.digimons[i]), 0, true)
+                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level " .. I2S(data.levels[i]) .. "|r")
                 else
-                    BlzFrameSetText(TooltipDigimonItemsT[i-1], "|cff00ffffItems: |r")
-                    BlzFrameSetTexture(TooltipDigimonIconT[i-1], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
-                    BlzFrameSetText(TooltipDigimonLevelT[i-1], "|cffFFCC00Level 0|r")
+                    local index
+                    if currentUsing < MAX_DIGIMONS then
+                        index = currentUsing
+                        currentUsing = currentUsing + 1
+                    else
+                        index = currentSaved
+                        currentSaved = currentSaved + 1
+                    end
+                    BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r")
+                    BlzFrameSetTexture(TooltipDigimonIconT[index], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level 0|r")
                 end
             end
             local result = ""
@@ -124,7 +145,7 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits:|r")
             BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal:|r")
             BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank:|r")
-            for i = 0, MAX_DIGIMONS - 1 do
+            for i = 0, MAX_DIGIMONS + MAX_SAVED - 1 do
                 BlzFrameSetText(TooltipDigimonItemsT[i], "|cff00ffffItems:|r")
                 BlzFrameSetTexture(TooltipDigimonIconT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
                 BlzFrameSetText(TooltipDigimonLevelT[i], "|cffFFCC00Level 0|r")
@@ -286,12 +307,12 @@ OnInit("PressSaveOrLoad", function ()
         -- Tooltip
 
         Information = BlzCreateFrame("CheckListBox", SaveLoadMenu, 0, 0)
-        BlzFrameSetPoint(Information, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, -0.34000, 0.0000)
-        BlzFrameSetPoint(Information, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.22000, -0.25000)
+        BlzFrameSetPoint(Information, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, -0.50000, 0.0000)
+        BlzFrameSetPoint(Information, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.22000, -0.30000)
 
         TooltipName = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipName, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.010000)
-        BlzFrameSetPoint(TooltipName, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.44000)
+        BlzFrameSetPoint(TooltipName, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.49000)
         BlzFrameSetText(TooltipName, "|cffff6600Name|r")
         BlzFrameSetEnable(TooltipName, false)
         BlzFrameSetScale(TooltipName, 1.00)
@@ -299,23 +320,23 @@ OnInit("PressSaveOrLoad", function ()
 
         TooltipGold = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipGold, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)
-        BlzFrameSetPoint(TooltipGold, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.22500, 0.42000)
+        BlzFrameSetPoint(TooltipGold, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.33000, 0.47000)
         BlzFrameSetText(TooltipGold, "|cffFFCC00Gold: |r")
         BlzFrameSetEnable(TooltipGold, false)
         BlzFrameSetScale(TooltipGold, 1.00)
         BlzFrameSetTextAlignment(TooltipGold, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         TooltipLumber = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
-        BlzFrameSetPoint(TooltipLumber, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.11500, -0.030000)
-        BlzFrameSetPoint(TooltipLumber, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.42000)
+        BlzFrameSetPoint(TooltipLumber, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.17000, -0.030000)
+        BlzFrameSetPoint(TooltipLumber, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.17000, 0.47000)
         BlzFrameSetText(TooltipLumber, "|cff20bc20Lumber: |r")
         BlzFrameSetEnable(TooltipLumber, false)
         BlzFrameSetScale(TooltipLumber, 1.00)
         BlzFrameSetTextAlignment(TooltipLumber, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         TooltipFood = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
-        BlzFrameSetPoint(TooltipFood, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.22000, -0.030000)
-        BlzFrameSetPoint(TooltipFood, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.42000)
+        BlzFrameSetPoint(TooltipFood, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.33000, -0.030000)
+        BlzFrameSetPoint(TooltipFood, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.47000)
         BlzFrameSetText(TooltipFood, "|cffa34f00Food: |r")
         BlzFrameSetEnable(TooltipFood, false)
         BlzFrameSetScale(TooltipFood, 1.00)
@@ -326,18 +347,32 @@ OnInit("PressSaveOrLoad", function ()
         local x2 = {}
         local y2 = {}
 
-        local div = MAX_DIGIMONS // 2
-        for i = 0, 1 do
+        local div = math.ceil(MAX_DIGIMONS / 3)
+        for i = 0, 2 do
             for j = 0, div - 1 do
                 local id = i*div + j
-                x1[id] = 0.015000 + i * 0.1568
-                y1[id] = -0.054250 - j * 0.05875
-                x2[id] = -0.17500 + i * 0.1568
-                y2[id] = 0.36000 - j * 0.05875
+                if id >= MAX_DIGIMONS then break end
+                x1[id] = 0.015000 + i * 0.16
+                y1[id] = -0.071750 - j * 0.06075
+                x2[id] = -0.33500 + i * 0.16
+                y2[id] = 0.39250 - j * 0.06075
             end
         end
 
-        for i = 0, MAX_DIGIMONS - 1 do
+        div = math.ceil(MAX_SAVED / 3)
+        for i = 0, 2 do
+            for j = 0, div - 1 do
+                local id = i*div + j
+                if id >= MAX_SAVED then break end
+                id = id + MAX_DIGIMONS
+                x1[id] = 0.015000 + i * 0.16
+                y1[id] = -0.27050 - j * 0.06075
+                x2[id] = -0.33500 + i * 0.16
+                y2[id] = 0.19375 - j * 0.06075
+            end
+        end
+
+        for i = 0, MAX_DIGIMONS + MAX_SAVED - 1 do
             TooltipDigimonT[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", Information, "", 1)
             BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, x1[i], y1[i])
             BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, x2[i], y2[i])
@@ -365,25 +400,41 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetTextAlignment(TooltipDigimonLevelT[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
         end
 
+        TooltipUsing = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
+        BlzFrameSetPoint(TooltipUsing, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.050000)
+        BlzFrameSetPoint(TooltipUsing, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.38500, 0.45000)
+        BlzFrameSetText(TooltipUsing, "|cff00eeffUsing:|r")
+        BlzFrameSetEnable(TooltipUsing, false)
+        BlzFrameSetScale(TooltipUsing, 1.00)
+        BlzFrameSetTextAlignment(TooltipUsing, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+        TooltipSaved = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
+        BlzFrameSetPoint(TooltipSaved, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.25000)
+        BlzFrameSetPoint(TooltipSaved, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.38500, 0.25000)
+        BlzFrameSetText(TooltipSaved, "|cff00eeffSaved:|r")
+        BlzFrameSetEnable(TooltipSaved, false)
+        BlzFrameSetScale(TooltipSaved, 1.00)
+        BlzFrameSetTextAlignment(TooltipSaved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
         TooltipBackpack = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
-        BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.015000, -0.29000)
-        BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.17500, 0.020000)
+        BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.39000)
+        BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.25500, 0.010000)
         BlzFrameSetText(TooltipBackpack, "|cff3874ffBackpack:|r")
         BlzFrameSetEnable(TooltipBackpack, false)
         BlzFrameSetScale(TooltipBackpack, 1.00)
         BlzFrameSetTextAlignment(TooltipBackpack, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         TooltipCompletedQuests = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
-        BlzFrameSetPoint(TooltipCompletedQuests, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.17250, -0.29000)
-        BlzFrameSetPoint(TooltipCompletedQuests, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.017500, 0.020000)
-        BlzFrameSetText(TooltipCompletedQuests, "|cff5257ffCompleted Main Quests:|r")
+        BlzFrameSetPoint(TooltipCompletedQuests, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.25500, -0.39000)
+        BlzFrameSetPoint(TooltipCompletedQuests, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
+        BlzFrameSetText(TooltipCompletedQuests, "|cff5257ffCompleted Unique Quests:|r")
         BlzFrameSetEnable(TooltipCompletedQuests, false)
         BlzFrameSetScale(TooltipCompletedQuests, 1.00)
         BlzFrameSetTextAlignment(TooltipCompletedQuests, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         TooltipCompletedQuestsArea = BlzCreateFrameByType("TEXTAREA", "name", TooltipCompletedQuests, "", 0)
-        BlzFrameSetPoint(TooltipCompletedQuestsArea, FRAMEPOINT_TOPLEFT, TooltipCompletedQuests, FRAMEPOINT_TOPLEFT, 0.0025000, -0.015000)
-        BlzFrameSetPoint(TooltipCompletedQuestsArea, FRAMEPOINT_BOTTOMRIGHT, TooltipCompletedQuests, FRAMEPOINT_BOTTOMRIGHT, -0.0025000, 0.0000)
+        BlzFrameSetPoint(TooltipCompletedQuestsArea, FRAMEPOINT_TOPLEFT, TooltipCompletedQuests, FRAMEPOINT_TOPLEFT, 0.0050000, -0.010000)
+        BlzFrameSetPoint(TooltipCompletedQuestsArea, FRAMEPOINT_BOTTOMRIGHT, TooltipCompletedQuests, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0000)
         BlzFrameSetText(TooltipCompletedQuestsArea, "|cffFFCC00Quest 0|r")
     end
 

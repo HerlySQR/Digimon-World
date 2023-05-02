@@ -180,11 +180,11 @@ OnInit("Player Data", function ()
                     --d:setLevel(math.max(1, data.levels[i])) -- Just in case
                     --d:setExp(d:getExp() + data.experiences[i])
                     d:setExp(data.experiences[i])
-                    if data.isSaved[i] == 0 then
+                    if data.isSaved[i] == 1 then
+                        SaveDigimon(p, d)
+                    else
                         StoreDigimon(p, d)
                         SendToBank(p, d)
-                    else
-                        SaveDigimon(p, d)
                     end
                 end
                 SetCompletedQuests(p, data.completedQuests)

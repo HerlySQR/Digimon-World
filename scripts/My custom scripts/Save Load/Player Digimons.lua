@@ -80,10 +80,10 @@ OnInit("PlayerDigimons", function ()
     function GetAllDigimons(owner)
         local list = {}
         for _, v in ipairs(digimons[owner]) do
-            table.insert(v)
+            table.insert(list, v)
         end
         for _, v in ipairs(GetSavedDigimons(owner)) do
-            table.insert(v)
+            table.insert(list, v)
         end
         return list
     end

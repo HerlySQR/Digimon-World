@@ -9,7 +9,6 @@ do
     -- This is actually author-exclusive and excludes all copies of
     -- certain functions if set to false.
     local _LEGACY_MODE          = false
-    EventListener               = {}
     ---@param baseFunc function -> The base function / method.
     ---@param baseName string -> The name of the base function / method.
     ---@param targetName string -> The name of the target function / method.
@@ -29,6 +28,7 @@ do
     ---@field private _curDepth integer -> The current depth of the EventListener object in a recursive context.
     ---@field private _curFunc function -> The current executing function of the EventListener object.
     ---@field private _curIndex integer -> The current executing function's index of the EventListener object.
+    EventListener               = {}
     EventListener.__index       = EventListener
     EventListener.__metatable   = EventListener
     EventListener.__newindex    = 

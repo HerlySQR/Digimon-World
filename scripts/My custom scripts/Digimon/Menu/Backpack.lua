@@ -16,6 +16,7 @@ OnInit("Backpack", function ()
     local BackpackMenu = nil ---@type framehandle
     local BackpackText = nil ---@type framehandle
     local BackpackDiscard = nil ---@type framehandle
+    local BackpackDrop = nil ---@type framehandle
     local BackpackItems = nil ---@type framehandle
     local BackpackItemT = {} ---@type framehandle[]
     local BackdropBackpackItemT = {} ---@type framehandle[]
@@ -32,7 +33,6 @@ OnInit("Backpack", function ()
     ---@field level integer
     ---@field charges integer
     ---@field description string
-    ---@field cooldown integer
     ---@field spellCooldown integer
     ---@field slot integer
     ---@field stopped boolean
@@ -42,12 +42,14 @@ OnInit("Backpack", function ()
     local usingDummyCaster = __jarray(false) ---@type table<player, boolean>
     local selectedUnits = {} ---@type table<player, group>
     local itemDatas = {} ---@type table<unit, ItemData>
+    local cooldowns = __jarray(0) ---@type table<integer, number>
 
     local PlayerItems = {} ---@type table<player, ItemData[]>
     local MinRange = 700. ---The minimun range a player's digimon should be to the target to cast the spell
     local MAX_STACK = udg_MAX_STACK ---The maximun number of items that you can have in every slot
     local MAX_ITEMS = udg_MAX_ITEMS
     local DiscardMode = __jarray(false) ---@type table<player, boolean>
+    local DropMode = __jarray(false) ---@type table<player, boolean>
 
     local AllowedItems = {}
 
@@ -70,10 +72,22 @@ OnInit("Backpack", function ()
             description = GetObjectName(itemId) .. "\n" .. BlzGetAbilityExtendedTooltip(itemId, 0),
             stopped = false
         }
-        itemData.cooldown = 0
         itemData.spellCooldown = math.floor(BlzGetAbilityCooldown(itemData.spell, itemData.level - 1))
 
         return itemData
+    end
+
+    local function UpdateCooldowns()
+        local items = PlayerItems[LocalPlayer]
+
+        for i, itemData in ipairs(items) do
+            if cooldowns[itemData.id] > 0 then
+                BlzFrameSetVisible(BackpackItemCooldownT[i], true)
+                BlzFrameSetText(BackpackItemCooldownT[i], tostring(cooldowns[itemData.id]))
+            else
+                BlzFrameSetVisible(BackpackItemCooldownT[i], false)
+            end
+        end
     end
 
     ---Always use this function in a `if player == GetLocalPlayer() then` block
@@ -127,9 +141,40 @@ OnInit("Backpack", function ()
 
     local function UseItem(i)
         local p = GetTriggerPlayer()
-        if not DiscardMode[p] then
+        if DiscardMode[p] then
+            DiscardMode[p] = false
+            table.remove(PlayerItems[p], i)
+            if p == LocalPlayer then
+                BlzFrameSetText(BackpackText, "Use an item")
+                UpdateMenu()
+            end
+        elseif DropMode[p] then
+            DropMode[p] = false
+            local d = GetMainDigimon(p)
+            if not d then
+                if p == LocalPlayer then
+                    BlzFrameSetText(BackpackText, "|cffffcc00There is no a main digimon|r")
+                end
+                Timed.call(2., function ()
+                    if p == LocalPlayer then
+                        if BlzFrameGetText(BackpackText) == "|cffffcc00There is no a main digimon|r" then
+                            BlzFrameSetText(BackpackText, "Use an item")
+                        end
+                    end
+                end)
+                return
+            end
+            local data = table.remove(PlayerItems[p], i) ---@type ItemData
+
+            SetItemCharges(CreateItem(data.id, d:getPos()), data.charges)
+
+            if p == LocalPlayer then
+                BlzFrameSetText(BackpackText, "Use an item")
+                UpdateMenu()
+            end
+        else
             local itemData = PlayerItems[p][i]
-            if itemData.cooldown > 0 then
+            if cooldowns[itemData.id] > 0 then
                 if p == LocalPlayer then
                     BlzFrameSetText(BackpackText, "|cffffcc00Item is on cooldown|r")
                 end
@@ -160,13 +205,12 @@ OnInit("Backpack", function ()
             usingDummyCaster[p] = true
 
             if p == LocalPlayer then
+                for j = 1, MAX_ITEMS do
+                    BlzFrameSetEnable(BackpackItemT[j], false)
+                end
+                BlzFrameSetEnable(BackpackDiscard, false)
+                BlzFrameSetEnable(BackpackDrop, false)
                 BlzFrameSetText(BackpackText, "|cff00ff00Select a target|r")
-            end
-        else
-            table.remove(PlayerItems[p], i)
-            if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item")
-                UpdateMenu()
             end
         end
     end
@@ -176,6 +220,11 @@ OnInit("Backpack", function ()
         UnitRemoveAbility(dummyCasters[p], itemDatas[dummyCasters[p]].spell)
         SetUnitOwner(dummyCasters[p], Digimon.PASSIVE, false)
         if p == LocalPlayer then
+            for i = 1, MAX_ITEMS do
+                BlzFrameSetEnable(BackpackItemT[i], true)
+            end
+            BlzFrameSetEnable(BackpackDiscard, true)
+            BlzFrameSetEnable(BackpackDrop, true)
             ClearSelection()
         end
         ForGroup(selectedUnits[p], function ()
@@ -198,16 +247,29 @@ OnInit("Backpack", function ()
         local itemData = itemDatas[caster]
 
         if itemData and itemData.spell == GetSpellAbilityId() then
+
+            itemData.stopped = true -- This will set to false if is casts
+
             local p = GetOwningPlayer(caster)
             local target = GetSpellTargetUnit()
 
             if not GetRandomUnitOnRange(GetUnitX(target), GetUnitY(target), MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
-                itemData.stopped = true
                 PauseUnit(caster, true)
                 IssueImmediateOrderById(caster, Orders.stop)
                 PauseUnit(caster, false)
-                ErrorMessage("|cffffcc00A digimon should be nearby the target|r", p)
+                ErrorMessage("A digimon should be nearby the target", p)
             end
+        end
+    end)
+
+    trig = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+    TriggerAddAction(trig, function ()
+        local caster = GetSpellAbilityUnit()
+        local itemData = itemDatas[caster]
+
+        if itemData and itemData.spell == GetSpellAbilityId() then
+            itemData.stopped = false
         end
     end)
 
@@ -231,19 +293,16 @@ OnInit("Backpack", function ()
                     end
                 else
                     if itemData.spellCooldown > 0 then
-                        itemData.cooldown = itemData.spellCooldown
-                        BlzFrameSetVisible(BackpackItemCooldownT[i], true)
-                        BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
+                        cooldowns[itemData.id] = itemData.spellCooldown
+                        if p == LocalPlayer then
+                            UpdateCooldowns()
+                        end
                         Timed.echo(1., function ()
-                            itemData.cooldown = itemData.cooldown - 1
-                            if itemData.cooldown > 0 then
-                                if p == LocalPlayer then
-                                    BlzFrameSetText(BackpackItemCooldownT[i], tostring(itemData.cooldown))
-                                end
-                            else
-                                if p == LocalPlayer then
-                                    BlzFrameSetVisible(BackpackItemCooldownT[i], false)
-                                end
+                            cooldowns[itemData.id] = cooldowns[itemData.id] - 1
+                            if p == LocalPlayer then
+                                UpdateCooldowns()
+                            end
+                            if cooldowns[itemData.id] <= 0 then
                                 return true
                             end
                         end)
@@ -261,7 +320,6 @@ OnInit("Backpack", function ()
         end
     end)
 
-
     OnInit.final(function ()
         trig = CreateTrigger()
         ForForce(bj_FORCE_ALL_PLAYERS, function ()
@@ -276,6 +334,17 @@ OnInit("Backpack", function ()
                 end
             end
         end)
+
+        trig = CreateTrigger()
+        ForForce(bj_FORCE_ALL_PLAYERS, function ()
+            TriggerRegisterPlayerUnitEvent(trig, GetEnumPlayer(), EVENT_PLAYER_UNIT_DESELECTED)
+        end)
+        TriggerAddAction(trig, function ()
+            local p = GetTriggerPlayer()
+            if GetTriggerUnit() == dummyCasters[p] then
+                BackpackDummyCastEnd(p)
+            end
+        end)
     end)
 
     local function BackpackDiscardFunc()
@@ -287,6 +356,21 @@ OnInit("Backpack", function ()
             end
         else
             DiscardMode[p] = false
+            if p == LocalPlayer then
+                BlzFrameSetText(BackpackText, "Use an item")
+            end
+        end
+    end
+
+    local function BackpackDropFunc()
+        local p = GetTriggerPlayer()
+        if not DropMode[p] then
+            DropMode[p] = true
+            if p == LocalPlayer then
+                BlzFrameSetText(BackpackText, "|cffffcc00Select to drop an item.|r Press again to cancel")
+            end
+        else
+            DropMode[p] = false
             if p == LocalPlayer then
                 BlzFrameSetText(BackpackText, "Use an item")
             end
@@ -313,6 +397,7 @@ OnInit("Backpack", function ()
         BlzFrameSetAllPoints(BackpackSprite, Backpack)
         BlzFrameSetModel(BackpackSprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
         BlzFrameSetScale(BackpackSprite, BlzFrameGetWidth(BackpackSprite)/0.039)
+        BlzFrameSetVisible(BackpackSprite, false)
 
         BackpackMenu = BlzCreateFrame("CheckListBox", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.780000, 0.32000)
@@ -336,6 +421,15 @@ OnInit("Backpack", function ()
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, BackpackDiscard, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BackpackDiscardFunc)
+
+        BackpackDrop = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
+        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.14245)
+        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.070000, 0.0025500)
+        BlzFrameSetText(BackpackDrop, "|cffFCD20DDrop|r")
+        BlzFrameSetScale(BackpackDrop, 0.858)
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, BackpackDrop, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, BackpackDropFunc)
 
         BackpackItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", BackpackMenu, "", 1)
         BlzFrameSetPoint(BackpackItems, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)
