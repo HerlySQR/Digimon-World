@@ -52,7 +52,6 @@ OnInit("Quests", function ()
     ---@field completed boolean
 
     local PlayerQuests = {} ---@type table<player, Quest[]>
-    local BitSets = {} ---@type table<player, BitSet>
 
     local function UpdateMenu()
         if PressedQuest < 0 or PressedQuest > MAX_QUESTS then
@@ -130,6 +129,7 @@ OnInit("Quests", function ()
         BlzFrameSetAllPoints(QuestButtonSprite, QuestButton)
         BlzFrameSetModel(QuestButtonSprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
         BlzFrameSetScale(QuestButtonSprite, BlzFrameGetWidth(QuestButtonSprite)/0.039)
+        BlzFrameSetVisible(QuestButtonSprite, false)
 
         QuestMenu = BlzCreateFrame("QuestButtonBaseTemplate", Origin, 0, 0)
         BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_TOPLEFT, 0.740000, 0.440000)
@@ -207,7 +207,6 @@ OnInit("Quests", function ()
     Timed.call(function ()
         ForForce(bj_FORCE_ALL_PLAYERS, function ()
             PlayerQuests[GetEnumPlayer()] = {}
-            BitSets[GetEnumPlayer()] = BitSet.create()
         end)
     end)
 
@@ -311,8 +310,6 @@ OnInit("Quests", function ()
                     end
                 end
             end)
-        else
-            BitSets[p]:set(id)
         end
         PlayerQuests[p][id].completed = true
         if p == LocalPlayer then
@@ -355,15 +352,9 @@ OnInit("Quests", function ()
                 end
             end
         end
-        BitSets[p] = bitset
     end
 
-    ---@param p player
-    ---@return integer
-    function GetCompletedQuests(p)
-        return BitSets[p]:toInt()
-    end
-
+    ---@version >1.2
     ---@param bit integer
     ---@return string
     function GetCompletedQuestNames(bit)
@@ -379,6 +370,86 @@ OnInit("Quests", function ()
             end
         end
         return result
+    end
+
+    ---@param p player
+    ---@return integer[] ids, integer[] progresses, boolean[] isCompleted
+    function GetQuestsData(p)
+        local ids, progresses, isCompleted = {}, {}, {} ---@type integer[], integer[], boolean[]
+
+        for i, q in pairs(PlayerQuests[p]) do
+            table.insert(ids, i)
+            table.insert(progresses, q.progress)
+            table.insert(isCompleted, q.completed)
+        end
+
+        return ids, progresses, isCompleted
+    end
+
+    ---@param id integer
+    ---@return integer
+    function GetQuestMaxProgress(id)
+        if not QuestTemplates[id] then
+            return 0
+        end
+        return QuestTemplates[id].maxProgress
+    end
+
+    ---@overload fun(p: player)
+    ---@param p player
+    ---@param ids integer[]
+    ---@param progresses integer[]
+    ---@param isCompleted boolean[]
+    function SetQuestsData(p, ids, progresses, isCompleted)
+        local have = __jarray(false)
+        if ids then
+            for i = 1, #ids do
+                local id = ids[i]
+                if QuestTemplates[id] then
+                    PlayerQuests[p][id] = {
+                        name = QuestTemplates[id].name,
+                        description = QuestTemplates[id].description,
+                        owner = p,
+                        id = id,
+                        level = QuestTemplates[id].level,
+                        completed = isCompleted[i],
+                        progress = progresses[i]
+                    }
+                    if p == LocalPlayer then
+                        if isCompleted[i] then
+                            QuestList:remove(QuestOptionT[id])
+                        else
+                            QuestList:add(QuestOptionT[id])
+                        end
+                        if QuestTemplates[id].questMark then
+                            BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
+                        end
+                        UpdateMenu()
+                        BlzFrameSetVisible(QuestButton, true)
+                    end
+                    have[id] = true
+                end
+            end
+        end
+        for i = 0, MAX_QUESTS do
+            if not have[i] and QuestTemplates[i] then
+                PlayerQuests[p][i] = nil
+                if p == LocalPlayer then
+                    if QuestTemplates[i].questMark then
+                        BlzSetSpecialEffectAlpha(QuestTemplates[i].questMark, 255)
+                    end
+                end
+            end
+        end
+    end
+
+    ---@param id integer
+    ---@return string
+    function GetQuestName(id)
+        if not QuestTemplates[id] then
+            return ""
+        end
+        return QuestTemplates[id].name
     end
 
     OnInit.trig(function ()
@@ -411,6 +482,9 @@ OnInit("Quests", function ()
     end)
 
     GlobalRemap("udg_PlayerIsOnQuest", function ()
+        if not udg_QuestPlayer or not PlayerQuests[udg_QuestPlayer] then
+            return false
+        end
         return PlayerQuests[udg_QuestPlayer][udg_QuestId] ~= nil
     end)
     GlobalRemap("udg_QuestIsCompleted", function ()

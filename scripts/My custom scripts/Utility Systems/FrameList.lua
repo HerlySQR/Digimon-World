@@ -158,9 +158,9 @@ OnInit("FrameList", function ()
         elseif type(frame) == "number" then
             removed = table.remove(self.Content, frame)
         else
-            for index, value in ipairs(self.Content) do
-                if frame == value then
-                    removed = table.remove(self.Content, index)
+            for i = #self.Content, 1, -1 do
+                if frame == self.Content[i] then
+                    removed = table.remove(self.Content, i)
                     break
                 end
             end

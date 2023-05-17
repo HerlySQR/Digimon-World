@@ -5,6 +5,8 @@ OnInit(function ()
     Require "Player Data"
     Require "GetSyncedData"
 
+    local loads = {} ---@type table<string, trigger>
+
     local WaitPlayers = nil ---@type framehandle
     local WaitPlayersText = nil ---@type framehandle
     local PlayerLabel = {} ---@type framehandle[]
@@ -133,6 +135,69 @@ OnInit(function ()
             BlzFrameSetVisible(WaitPlayers, false)
             EnableUserControl(true)
         end))
+
+        -- Run load manually
+        loads["1.3"] = gg_trg_Load_Actions
+        loads["1.2"] = gg_trg_Load_Actions_12
+
+        local t = CreateTrigger()
+        ForForce(FORCE_PLAYING, function ()
+            TriggerRegisterPlayerChatEvent(t, GetEnumPlayer(), "-", false)
+        end)
+        TriggerAddCondition(t, Condition(function () return GetEventPlayerChatString():sub(2, 6) == "load " end))
+        TriggerAddAction(t, function ()
+            local p = GetTriggerPlayer()
+            local ver = GetEventPlayerChatString():sub(7)
+
+            if not loads[ver] then
+                DisplayTextToPlayer(p, 0, 0, "Invalid version")
+                return
+            end
+
+            RestartData(p)
+            PlayerDatas[p] = {}
+            UpdateSaveLoad(p)
+
+            local user = User[p] ---@type User
+            SaveHelper.SetUserLoading(user, true)
+            local loaded = 0
+            for slot = 1, 6 do
+                local invalid = false
+                local exists = GetSyncedData(p, SaveFile.exists, p, slot, ver)
+                if exists then
+                    local s = GetSyncedData(p, SaveFile.getData, p, slot, ver)
+                    SaveHelper.SetSaveSlot(user, slot)
+                    local savecode = Savecode.create()
+                    if savecode:Load(p, s, 1) then
+                        udg_SaveCount = 0
+                        udg_SaveTempInt = savecode
+                        TriggerExecute(loads[ver])
+
+                        if udg_SaveCodeLegacy then
+                            udg_SaveCodeLegacy = false
+                            invalid = true
+                        end
+                    else
+                        invalid = true
+                    end
+
+                    if not invalid then
+                        loaded = loaded + 1
+                        StoreData(p, slot)
+                    else
+                        ClearSaveLoadData()
+                    end
+
+                    savecode:destroy()
+                end
+            end
+            SaveHelper.SetUserLoading(user, false)
+            if not user.isPlaying and loaded ~= 0 then
+                ShowLoad(p, true)
+            else
+                DisplayTextToPlayer(p, 0, 0, "Can't load this data")
+            end
+        end)
     end)
 
 end)

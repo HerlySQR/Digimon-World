@@ -8,6 +8,7 @@ OnInit("Backpack", function ()
     Require "Timed"
     Require "ErrorMessage"
     Require "Menu"
+    Require "Hotkeys"
 
     local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local Backpack = nil ---@type framehandle
@@ -29,7 +30,6 @@ OnInit("Backpack", function ()
     ---@class ItemData
     ---@field id integer
     ---@field spell integer
-    ---@field order integer
     ---@field level integer
     ---@field charges integer
     ---@field description string
@@ -66,7 +66,6 @@ OnInit("Backpack", function ()
         local itemData = {
             id = itemId,
             spell = AllowedItems[itemId].ability,
-            order = AllowedItems[itemId].order,
             level = AllowedItems[itemId].level,
             charges = 0,
             description = GetObjectName(itemId) .. "\n" .. BlzGetAbilityExtendedTooltip(itemId, 0),
@@ -252,11 +251,11 @@ OnInit("Backpack", function ()
 
             local p = GetOwningPlayer(caster)
             local target = GetSpellTargetUnit()
+            local x = target and GetUnitX(target) or GetSpellTargetX()
+            local y = target and GetUnitY(target) or GetSpellTargetY()
 
-            if not GetRandomUnitOnRange(GetUnitX(target), GetUnitY(target), MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
-                PauseUnit(caster, true)
-                IssueImmediateOrderById(caster, Orders.stop)
-                PauseUnit(caster, false)
+            if not GetRandomUnitOnRange(x, y, MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
+                UnitAbortCurrentOrder(caster)
                 ErrorMessage("A digimon should be nearby the target", p)
             end
         end
@@ -379,12 +378,14 @@ OnInit("Backpack", function ()
 
     local function InitFrames()
         local t = nil ---@type trigger
+        local start = 0
 
         Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.555000, 0.180000)
         BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.590000, 0.145000)
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
+        AssignFrame(Backpack, start) -- 0
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
         BlzFrameSetAllPoints(BackdropBackpack, Backpack)
@@ -400,8 +401,8 @@ OnInit("Backpack", function ()
         BlzFrameSetVisible(BackpackSprite, false)
 
         BackpackMenu = BlzCreateFrame("CheckListBox", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.780000, 0.32000)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, 0.90000, 0.17000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.590000, 0.32000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, 0.71000, 0.17000)
         BlzFrameSetVisible(BackpackMenu, false)
         AddFrameToMenu(BackpackMenu)
 
@@ -421,6 +422,8 @@ OnInit("Backpack", function ()
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, BackpackDiscard, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BackpackDiscardFunc)
+        start = start + 1
+        AssignFrame(BackpackDiscard, start) -- 1
 
         BackpackDrop = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
         BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.14245)
@@ -430,6 +433,8 @@ OnInit("Backpack", function ()
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, BackpackDrop, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BackpackDropFunc)
+        start = start + 1
+        AssignFrame(BackpackDrop, start) -- 2
 
         BackpackItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", BackpackMenu, "", 1)
         BlzFrameSetPoint(BackpackItems, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)
@@ -458,6 +463,8 @@ OnInit("Backpack", function ()
             BlzFrameSetPoint(BackpackItemT[i], FRAMEPOINT_TOPLEFT, BackpackItems, FRAMEPOINT_TOPLEFT, x[i], y[i])
             BlzFrameSetSize(BackpackItemT[i], stepSize, stepSize)
             BlzFrameSetVisible(BackpackItemT[i], false)
+            start = start + 1
+            AssignFrame(BackpackItemT[i], start) -- start in 3 and end in 19
 
             BackdropBackpackItemT[i] = BlzCreateFrameByType("BACKDROP", "BackdropBackpackItemT[" .. i .. "]", BackpackItemT[i], "", 0)
             BlzFrameSetAllPoints(BackdropBackpackItemT[i], BackpackItemT[i])
@@ -604,13 +611,11 @@ OnInit("Backpack", function ()
     TriggerAddAction(udg_BackpackRun, function ()
         AllowedItems[udg_BackpackItem] = {
             ability = udg_BackpackAbility,
-            order = Orders[udg_BackpackOrder],
             level = udg_BackpackLevel,
         }
 
         udg_BackpackItem = 0
         udg_BackpackAbility = 0
-        udg_BackpackOrder = ""
         udg_BackpackLevel = 1
     end)
 

@@ -161,5 +161,12 @@ OnInit("AbilityUtils", function ()
         end
     end
 
+    ---@param u unit
+    function UnitAbortCurrentOrder(u)
+        PauseUnit(u, true)
+        IssueImmediateOrderById(u, Orders.stop)
+        PauseUnit(u, false)
+    end
+
 end)
 Debug.endFile()

@@ -162,11 +162,11 @@ OnInit("Environment", function ()
     BlzChangeMinimapTerrainTex("entireMap.tga")
 
     -- Just to be detected by the extension
-    Environment.jijimon = nil
-    Environment.initial = nil
-    Environment.hospital = nil
-    Environment.gymLobby = nil
-    Environment.gymArena = {}
+    Environment.jijimon = nil ---@type Environment
+    Environment.initial = nil ---@type Environment
+    Environment.hospital = nil ---@type Environment
+    Environment.gymLobby = nil ---@type Environment
+    Environment.gymArena = {} ---@type Environment[]
 
 end)
 Debug.endFile()

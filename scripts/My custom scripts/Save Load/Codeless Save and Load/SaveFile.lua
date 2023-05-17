@@ -15,7 +15,7 @@ OnInit("SaveFile", function ()
         if not version then
             return udg_MapName
         end
-        return udg_MapName:sub(1, udg_MapName:find("\\")) .. version
+        return udg_MapName:sub(1, udg_MapName:find("\\") or -1) .. version
     end
 
     ---@param p player
@@ -37,20 +37,22 @@ OnInit("SaveFile", function ()
     ---@param title string
     ---@param slot integer
     ---@param data string
+    ---@param version? string
     ---@return integer
-    function SaveFile.create(p, title, slot, data)
+    function SaveFile.create(p, title, slot, data, version)
         if GetLocalPlayer() == p then
-            FileIO.Write(SaveFile.getPath(p, slot), title .. "\n" .. data)
+            FileIO.Write(SaveFile.getPath(p, slot, version), title .. "\n" .. data)
         end
         return slot
     end
 
     ---@param p player
     ---@param slot integer
+    ---@param version? string
     ---@return integer
-    function SaveFile.clear(p, slot)
+    function SaveFile.clear(p, slot, version)
         if GetLocalPlayer() == p then
-            FileIO.Write(SaveFile.getPath(p, slot), "")
+            FileIO.Write(SaveFile.getPath(p, slot, version), "")
         end
         return slot
     end
@@ -58,9 +60,10 @@ OnInit("SaveFile", function ()
     ---@async
     ---@param p player
     ---@param slot integer
+    ---@param version? string
     ---@return boolean
-    function SaveFile.exists(p, slot)
-        return FileIO.Read(SaveFile.getPath(p, slot)):len() > 1
+    function SaveFile.exists(p, slot, version)
+        return FileIO.Read(SaveFile.getPath(p, slot, version)):len() > 1
     end
 
     ---@async
@@ -68,9 +71,10 @@ OnInit("SaveFile", function ()
     ---@param slot integer
     ---@param line integer
     ---@param includePrevious boolean
+    ---@param version? string
     ---@return string
-    function SaveFile.getLines(p, slot, line, includePrevious)
-        local contents   = FileIO.Read(SaveFile.getPath(p, slot))
+    function SaveFile.getLines(p, slot, line, includePrevious, version)
+        local contents   = FileIO.Read(SaveFile.getPath(p, slot, version))
         local buffer     = ""
         local curLine   = 0
 
@@ -98,25 +102,28 @@ OnInit("SaveFile", function ()
     ---@param p player
     ---@param slot integer
     ---@param line integer
+    ---@param version? string
     ---@return string
-    function SaveFile.getLine(p, slot, line)
-        return SaveFile.getLines(p, slot, line, false)
+    function SaveFile.getLine(p, slot, line, version)
+        return SaveFile.getLines(p, slot, line, false, version)
     end
 
     ---@async
     ---@param p player
     ---@param slot integer
+    ---@param version? string
     ---@return string
-    function SaveFile.getTitle(p, slot)
-        return SaveFile.getLines(p, slot, 0, false)
+    function SaveFile.getTitle(p, slot, version)
+        return SaveFile.getLines(p, slot, 0, false, version)
     end
 
     ---@async
     ---@param p player
     ---@param slot integer
+    ---@param version? string
     ---@return string
-    function SaveFile.getData(p, slot)
-        return SaveFile.getLines(p, slot, 1, false)
+    function SaveFile.getData(p, slot, version)
+        return SaveFile.getLines(p, slot, 1, false, version)
     end
 end)
 if Debug then Debug.endFile() end

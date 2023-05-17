@@ -26,7 +26,7 @@
             -> Example: call UnitMirrorBonuses(GetTriggerUnit(), GetSummonedUnit())
 ]]--
 
-do
+OnInit("NewBonusUtils", function ()
     -- -------------------------------------------------------------------------- --
     --                                Configuration                               --
     -- -------------------------------------------------------------------------- --
@@ -153,21 +153,19 @@ do
         end
     end
     
-    onInit(function()
-        RegisterPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM, function()
-            local item = GetManipulatedItem()
-            local i = 1
-            local this
+    RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM, function()
+        local item = GetManipulatedItem()
+        local i = 1
+        local this
+        
+        while i <= k do
+            this = items[i]
             
-            while i <= k do
-                this = items[i]
-                
-                if this.item == item then
-                    i = this:destroy(i, true)
-                end
-                i = i + 1
+            if this.item == item then
+                i = this:destroy(i, true)
             end
-        end)
+            i = i + 1
+        end
     end)
     
     -- -------------------------------------------------------------------------- --
@@ -192,4 +190,4 @@ do
     function UnitMirrorBonuses(source, target)
         NewBonusUtils:mirror(source, target)
     end
-end
+end)

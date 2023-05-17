@@ -212,7 +212,7 @@ OnInit("DigimonEvolution", function ()
                 BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_BLUE),
                 127)
 
-            local s = CreateSound("war3mapImported\\Evolution_1", false, true, true, 1, 1, "DefaultEAXON")
+            local s = CreateSound("war3mapImported\\Evolution_1", false, true, true, 10, 10, "DefaultEAXON")
             SetSoundVolume(s, 127)
             StartSound(s)
             KillSoundWhenDone(s)

@@ -102,7 +102,7 @@ OnInit("DummyCaster", function ()
     end
 
     local t = CreateTrigger()
-    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_FINISH)
+    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
     TriggerAddAction(t, function ()
         if GetUnitTypeId(GetSpellAbilityUnit()) == DummyID then
             local u = GetSpellAbilityUnit()

@@ -59,11 +59,18 @@ OnInit("Player Data", function ()
     ---@field food integer
     ---@field backpackItems integer[]
     ---@field backpackItemCharges integer[]
+    ---@field bankItems integer[]
+    ---@field bankItemCharges integer[]
+    ---@field bankItemsMaxStock integer
     ---@field digimons integer[]
     ---@field isSaved integer[]
+    ---@field bankDigimonsMaxStock integer
     ---@field inventories Inventory[]
     ---@field levels integer[]
     ---@field experiences integer[]
+    ---@field questsIds integer[]
+    ---@field questsProgresses integer[]
+    ---@field questsIsCompleted boolean[]
     ---@field completedQuests integer
     PlayerDatas = {} ---@type table<player, PlayerData[]>
 
@@ -80,7 +87,7 @@ OnInit("Player Data", function ()
     ---@param list table
     ---@return table
     local function reverse(list)
-        local newList = {}
+        local newList = setmetatable({}, getmetatable(list))
         for i = #list, 1, -1 do
             table.insert(newList, list[i])
         end
@@ -89,11 +96,11 @@ OnInit("Player Data", function ()
 
     ---Since the save-load system loads the data in the reverse order, I have to reverse it again
     ---@param list table
-    ---@param begin? integer
-    ---@param final? integer
+    ---@param begin integer
+    ---@param final integer
     ---@return table
     local function reverseManual(list, begin, final)
-        local newList = {}
+        local newList = setmetatable({}, getmetatable(list))
         for i = final, begin, -1 do
             newList[final + begin - i] = list[i]
         end
@@ -105,15 +112,6 @@ OnInit("Player Data", function ()
     ---@param slot integer
     ---@param save? boolean
     function StoreData(p, slot, save)
-        if not save then
-            for i = 1, #udg_SaveLoadInventories do
-                local inv = udg_SaveLoadInventories[i]
-                inv.items = reverseManual(inv.items, 0, 5)
-                inv.charges = reverseManual(inv.charges, 0, 5)
-                inv.classes = reverseManual(inv.classes, 0, 5)
-            end
-        end
-
         -- This overwrites the slot if was previously set
         PlayerDatas[p][slot] = {
             gold = udg_SaveLoadGold,
@@ -121,21 +119,34 @@ OnInit("Player Data", function ()
             food = udg_SaveLoadFood,
             backpackItems = save and udg_SaveLoadBackpackItems or reverse(udg_SaveLoadBackpackItems),
             backpackItemCharges = save and udg_SaveLoadBackpackItemCharges or reverse(udg_SaveLoadBackpackItemCharges),
+            bankItems = save and udg_SaveLoadBankItems or reverse(udg_SaveLoadBankItems),
+            bankItemCharges = save and udg_SaveLoadBankItemsCharges or reverse(udg_SaveLoadBankItemsCharges),
+            bankItemsMaxStock = udg_SaveLoadBankItemsMaxStock,
             digimons = save and udg_SaveLoadDigimons or reverse(udg_SaveLoadDigimons),
             isSaved = save and udg_SaveLoadIsSaved or reverse(udg_SaveLoadIsSaved),
+            bankDigimonsMaxStock = udg_SaveLoadBankDigimonsMaxStock,
             inventories = save and udg_SaveLoadInventories or reverse(udg_SaveLoadInventories),
             levels = save and udg_SaveLoadLevels or reverse(udg_SaveLoadLevels),
             experiences = save and udg_SaveLoadExps or reverse(udg_SaveLoadExps),
+            questsIds = save and udg_SaveLoadQuestIds or reverse(udg_SaveLoadQuestIds),
+            questsProgresses = save and udg_SaveLoadQuestProgresses or reverse(udg_SaveLoadQuestProgresses),
+            questsIsCompleted = save and udg_SaveLoadQuestIsCompleted or reverse(udg_SaveLoadQuestIsCompleted),
             completedQuests = udg_SaveLoadCompletedQuests
         }
 
-        udg_SaveLoadBackpackItems = {}
-        udg_SaveLoadBackpackItemCharges = {}
+        udg_SaveLoadBackpackItems = __jarray(0)
+        udg_SaveLoadBackpackItemCharges = __jarray(0)
+        udg_SaveLoadBankItems = __jarray(0)
+        udg_SaveLoadBankItemsCharges = __jarray(0)
         udg_SaveLoadDigimons = {}
         udg_SaveLoadIsSaved = __jarray(0)
+        udg_SaveLoadBankDigimonsMaxStock = 0
         udg_SaveLoadInventories = {}
         udg_SaveLoadLevels = __jarray(0)
         udg_SaveLoadExps = __jarray(0)
+        udg_SaveLoadQuestIds = __jarray(0)
+        udg_SaveLoadQuestProgresses = __jarray(0)
+        udg_SaveLoadQuestIsCompleted = __jarray(false)
     end
 
     ---Clears all the data of the player
@@ -143,7 +154,7 @@ OnInit("Player Data", function ()
     function RestartData(p)
         for i = 0, udg_MAX_DIGIMONS - 1 do
             pcall(function ()
-                RemoveFromBank(p, i):destroy() -- Also remove from the stored
+                RemoveFromBank(p, i, true)
             end)
         end
         for i = 0, udg_MAX_SAVED_DIGIMONS - 1 do
@@ -156,7 +167,7 @@ OnInit("Player Data", function ()
         SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, 0)
         SetBackpackItems(p, nil)
         ClearDigimons(p)
-        SetCompletedQuests(p, 0)
+        SetQuestsData(p)
     end
 
     ---After store the data use this function from the slot to use them
@@ -174,6 +185,7 @@ OnInit("Player Data", function ()
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, data.lumber)
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, data.food)
                 SetBackpackItems(p, data.backpackItems, data.backpackItemCharges)
+                SetBankItems(p, data.bankItems, data.bankItemCharges, data.bankItemsMaxStock)
                 for i = 1, #data.digimons do
                     local d = Digimon.create(p, data.digimons[i], 0, 0, bj_UNIT_FACING)
                     data.inventories[i]:useTheItems(d.root)
@@ -187,7 +199,13 @@ OnInit("Player Data", function ()
                         SendToBank(p, d)
                     end
                 end
-                SetCompletedQuests(p, data.completedQuests)
+                SetMaxSavedDigimons(p, data.bankDigimonsMaxStock)
+                if data.completedQuests ~= -1 then
+                    SetCompletedQuests(p, data.completedQuests)
+                    data.questsIds, data.questsProgresses, data.questsIsCompleted = GetQuestsData(p)
+                else
+                    SetQuestsData(p, data.questsIds, data.questsProgresses, data.questsIsCompleted)
+                end
             end
         end
     end
@@ -196,13 +214,21 @@ OnInit("Player Data", function ()
         udg_SaveLoadGold = 0
         udg_SaveLoadLumber = 0
         udg_SaveLoadFood = 0
-        udg_SaveLoadBackpackItems = {}
-        udg_SaveLoadBackpackItemCharges = {}
+        udg_SaveLoadBackpackItems = __jarray(0)
+        udg_SaveLoadBackpackItemCharges = __jarray(0)
+        udg_SaveLoadBankItems = __jarray(0)
+        udg_SaveLoadBankItemsCharges = __jarray(0)
+        udg_SaveLoadBankItemsMaxStock = 0
         udg_SaveLoadDigimons = {}
+        udg_SaveLoadIsSaved = __jarray(0)
+        udg_SaveLoadBankDigimonsMaxStock = 0
         udg_SaveLoadInventories = {}
         udg_SaveLoadLevels = __jarray(0)
         udg_SaveLoadExps = __jarray(0)
         udg_SaveLoadCompletedQuests = 0
+        udg_SaveLoadQuestIds = __jarray(0)
+        udg_SaveLoadQuestProgresses = __jarray(0)
+        udg_SaveLoadQuestIsCompleted = __jarray(false)
     end
 
     ---I prefered create my own level XP function
@@ -225,7 +251,9 @@ OnInit("Player Data", function ()
         local old
         old = AddHook(func, function (id)
             if not id or id == 0 then
-                error("Trying to get an invalid " .. thing .. ".\nMaybe you have an invalid or corrupted saved file.", 2)
+                print("Trying to get an invalid " .. thing .. ".\nMaybe you have an invalid or corrupted saved file.")
+                print(Debug.traceback())
+                return ""
             end
             return old(id)
         end)
@@ -235,7 +263,9 @@ OnInit("Player Data", function ()
     local old1
     old1 = AddHook("BlzGetAbilityExtendedTooltip", function (id, lvl)
         if not id or id == 0 then
-            error("Trying to get an invalid tooltip.\nMaybe you have an invalid or corrupted saved file.", 2)
+            print("Trying to get an invalid tooltip.\nMaybe you have an invalid or corrupted saved file.")
+            print(Debug.traceback())
+            return ""
         end
         return old1(id, lvl)
     end)

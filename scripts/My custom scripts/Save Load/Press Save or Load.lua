@@ -4,9 +4,11 @@ OnInit("PressSaveOrLoad", function ()
     Require "Timed"
     Require "Menu"
     Require "GameStatus"
+    local FrameList = Require "FrameList" ---@type FrameList
 
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
+    local MAX_QUESTS = udg_MAX_QUESTS
 
     local NormalColor = "FCD20D"
     local DisabledColor = "FFFFFF"
@@ -29,13 +31,16 @@ OnInit("PressSaveOrLoad", function ()
     local TooltipUsing = nil ---@type framehandle
     local TooltipSaved = nil ---@type framehandle
     local TooltipBackpack = nil ---@type framehandle
-    local TooltipCompletedQuests = nil ---@type framehandle
-    local TooltipCompletedQuestsArea = nil ---@type framehandle
+    local TooltipSavedItems = nil ---@type framehandle
+    local TooltipQuests = nil ---@type framehandle
+    local TooltipQuestsArea = nil ---@type FrameList
+    local TooltipQuestsName = {} ---@type framehandle[]
     local AbsoluteSave = nil ---@type framehandle
     local AbsoluteLoad = nil ---@type framehandle
     local Exit = nil ---@type framehandle
 
     local NotOnline = false
+    local QuestsAdded = {}
 
     OnInit.final(function ()
         NotOnline = GameStatus.get() ~= GameStatus.ONLINE and not udg_SaveOnSinglePlayer
@@ -87,6 +92,12 @@ OnInit("PressSaveOrLoad", function ()
     -- This function always should be in a "if player == GetLocalPlayer() then" block
     local function UpdateInformation()
         local data = PlayerDatas[LocalPlayer][Pressed[LocalPlayer]]
+
+        for i = 1, #QuestsAdded do
+            TooltipQuestsArea:remove(TooltipQuestsName[QuestsAdded[i]])
+        end
+        QuestsAdded = {}
+
         if data then
             BlzFrameSetText(TooltipName, "|cffff6600Information|r")
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. data.gold)
@@ -134,12 +145,41 @@ OnInit("PressSaveOrLoad", function ()
                     BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level 0|r")
                 end
             end
+            BlzFrameSetText(TooltipSaved, "|cff00eeffSaved:|r |cffffff00Max. " .. data.bankDigimonsMaxStock .. "|r")
+
             local result = ""
-            for i, itm in ipairs(data.backpackItems) do
-                result = result .. GetObjectName(itm) .. "(" .. I2S(data.backpackItemCharges[i]) .. "), "
+            for i = 1, #data.backpackItems do
+                result = result .. GetObjectName(data.backpackItems[i]) .. "(" .. data.backpackItemCharges[i] .. "), "
             end
             BlzFrameSetText(TooltipBackpack, "|cff3874ffBackpack:|r\n" .. result:sub(1, result:len() - 2))
-            BlzFrameSetText(TooltipCompletedQuestsArea, GetCompletedQuestNames(data.completedQuests))
+
+            result = ""
+            for i = 1, #data.bankItems do
+                result = result .. GetObjectName(data.bankItems[i])
+                if data.bankItemCharges[i] > 1 then
+                    result = result .. "(" .. data.bankItemCharges[i] .. ")"
+                end
+                if i ~= #data.bankItems then
+                    result = result .. ", "
+                end
+            end
+            BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r |cffffff00Max. " .. data.bankItemsMaxStock .. "|r\n" .. result)
+
+            for i = 1, #data.questsIds do
+                local id = data.questsIds[i]
+                local s = GetQuestName(id)
+                if data.questsIsCompleted[i] then
+                    s = "|cffFFCC00" .. s .. "|r"
+                else
+                    local max = GetQuestMaxProgress(id)
+                    if max > 1 then
+                        s = s .. " " .. ((max == data.questsProgresses[i]) and "|cff00ff00" or "|cffffffff") .. "(" .. data.questsProgresses[i] .. "/" .. max .. ")|r"
+                    end
+                end
+                BlzFrameSetText(TooltipQuestsName[id], s)
+                TooltipQuestsArea:add(TooltipQuestsName[id])
+                table.insert(QuestsAdded, id)
+            end
         else
             BlzFrameSetText(TooltipName, "|cffff6600Empty|r")
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits:|r")
@@ -151,7 +191,7 @@ OnInit("PressSaveOrLoad", function ()
                 BlzFrameSetText(TooltipDigimonLevelT[i], "|cffFFCC00Level 0|r")
             end
             BlzFrameSetText(TooltipBackpack, "|cff3874ffBackpack:|r")
-            BlzFrameSetText(TooltipCompletedQuestsArea, "")
+            BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r")
         end
     end
 
@@ -418,24 +458,44 @@ OnInit("PressSaveOrLoad", function ()
 
         TooltipBackpack = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.39000)
-        BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.25500, 0.010000)
+        BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.34000, 0.010000)
         BlzFrameSetText(TooltipBackpack, "|cff3874ffBackpack:|r")
         BlzFrameSetEnable(TooltipBackpack, false)
         BlzFrameSetScale(TooltipBackpack, 1.00)
         BlzFrameSetTextAlignment(TooltipBackpack, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-        TooltipCompletedQuests = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
-        BlzFrameSetPoint(TooltipCompletedQuests, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.25500, -0.39000)
-        BlzFrameSetPoint(TooltipCompletedQuests, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
-        BlzFrameSetText(TooltipCompletedQuests, "|cff5257ffCompleted Unique Quests:|r")
-        BlzFrameSetEnable(TooltipCompletedQuests, false)
-        BlzFrameSetScale(TooltipCompletedQuests, 1.00)
-        BlzFrameSetTextAlignment(TooltipCompletedQuests, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+        TooltipSavedItems = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
+        BlzFrameSetPoint(TooltipSavedItems, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.17500, -0.39000)
+        BlzFrameSetPoint(TooltipSavedItems, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.17500, 0.010000)
+        BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r")
+        BlzFrameSetEnable(TooltipSavedItems, false)
+        BlzFrameSetScale(TooltipSavedItems, 1.00)
+        BlzFrameSetTextAlignment(TooltipSavedItems, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-        TooltipCompletedQuestsArea = BlzCreateFrameByType("TEXTAREA", "name", TooltipCompletedQuests, "", 0)
-        BlzFrameSetPoint(TooltipCompletedQuestsArea, FRAMEPOINT_TOPLEFT, TooltipCompletedQuests, FRAMEPOINT_TOPLEFT, 0.0050000, -0.010000)
-        BlzFrameSetPoint(TooltipCompletedQuestsArea, FRAMEPOINT_BOTTOMRIGHT, TooltipCompletedQuests, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0000)
-        BlzFrameSetText(TooltipCompletedQuestsArea, "|cffFFCC00Quest 0|r")
+        TooltipQuests = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
+        BlzFrameSetPoint(TooltipQuests, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.34000, -0.39000)
+        BlzFrameSetPoint(TooltipQuests, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
+        BlzFrameSetText(TooltipQuests, "|cff5257ffCompleted Unique Quests:|r")
+        BlzFrameSetEnable(TooltipQuests, false)
+        BlzFrameSetScale(TooltipQuests, 1.00)
+        BlzFrameSetTextAlignment(TooltipQuests, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        TooltipQuestsArea = FrameList.create(false, TooltipQuests)
+        BlzFrameSetPoint(TooltipQuestsArea.Frame, FRAMEPOINT_TOPLEFT, TooltipQuests, FRAMEPOINT_TOPLEFT, 0.0000, -0.010000)
+        BlzFrameSetPoint(TooltipQuestsArea.Frame, FRAMEPOINT_BOTTOMRIGHT, TooltipQuests, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.0000)
+        TooltipQuestsArea:setSize(BlzFrameGetWidth(TooltipQuestsArea.Frame), BlzFrameGetHeight(TooltipQuestsArea.Frame))
+
+        Timed.call(function ()
+            for i = 0, MAX_QUESTS do
+                TooltipQuestsName[i] = BlzCreateFrameByType("TEXT", "name", TooltipQuests, "", 0)
+                BlzFrameSetSize(TooltipQuestsName[i], 0.13, 0.015)
+                BlzFrameSetText(TooltipQuestsName[i], GetQuestName(i))
+                BlzFrameSetEnable(TooltipQuestsName[i], false)
+                BlzFrameSetScale(TooltipQuestsName[i], 1.00)
+                BlzFrameSetTextAlignment(TooltipQuestsName[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+                BlzFrameSetVisible(TooltipQuestsName[i], false)
+            end
+        end)
     end
 
     FrameLoaderAdd(InitFrames)
@@ -455,6 +515,14 @@ OnInit("PressSaveOrLoad", function ()
     function ShowLoad(p, flag)
         if p == LocalPlayer then
             BlzFrameSetVisible(LoadButton, flag)
+        end
+    end
+
+    ---@param p player
+    function UpdateSaveLoad(p)
+        if p == LocalPlayer then
+            UpdateMenu()
+            UpdateInformation()
         end
     end
 end)
