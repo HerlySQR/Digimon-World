@@ -50,6 +50,7 @@ OnInit("Hotkeys", function ()
     end
 
     local oskeyName = {} ---@type table<oskeytype, string>
+    local oskeyConverted = {} ---@type table<integer, oskeytype>
 
     -- These values are different for each player
     local LocalPlayer = GetLocalPlayer()
@@ -61,6 +62,8 @@ OnInit("Hotkeys", function ()
     local frameWithKey = {} ---@type table<oskeytype, table<integer, integer>>
     local edits = {} ---@type table<oskeytype, table<integer, integer>>
 
+    local HotkeyButton = nil ---@type framehandle
+    local BackdropHotkeyButton = nil ---@type framehandle
     local HotkeyMenu = nil ---@type framehandle
     local HotkeyMessage = nil ---@type framehandle
     local HotkeyBackpackSubMenu = nil ---@type framehandle
@@ -135,6 +138,8 @@ OnInit("Hotkeys", function ()
         if GetTriggerPlayer() == LocalPlayer then
             BlzFrameSetVisible(HotkeyMenu, false)
             BlzFrameSetVisible(visibleMenu, false)
+            BlzFrameSetEnable(HotkeyButton, true)
+            RemoveButtonFromEscStack(HotkeyExit)
             selectingKey = false
             frameSelected = -1
             BlzFrameSetText(HotkeyMessage, "")
@@ -148,14 +153,37 @@ OnInit("Hotkeys", function ()
                 frameWithKey[k] = v
             end
             edits = {}
-            SaveHotkeys()
             BlzFrameSetText(HotkeyMessage, "|cff00FF00Hotkeys saved|r")
+        end
+        SaveHotkeys(GetTriggerPlayer())
+    end
+
+    local function ShowMenu()
+        if GetTriggerPlayer() == LocalPlayer then
+            BlzFrameSetVisible(HotkeyMenu, true)
+            BlzFrameSetEnable(HotkeyButton, false)
+            AddButtonToEscStack(HotkeyExit)
+            UpdateHotkeys()
         end
     end
 
     local function InitFrames()
         local t = nil ---@type trigger
         local start = 0
+
+        HotkeyButton = BlzCreateFrame("IconButtonTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
+        BlzFrameSetAbsPoint(HotkeyButton, FRAMEPOINT_TOPLEFT, 0.475000, 0.180000)
+        BlzFrameSetAbsPoint(HotkeyButton, FRAMEPOINT_BOTTOMRIGHT, 0.510000, 0.145000)
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, HotkeyButton, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, ShowMenu)
+        BlzFrameSetVisible(HotkeyButton, false)
+        AddFrameToMenu(HotkeyButton)
+        AddDefaultTooltip(HotkeyButton, "Hotkeys", "Edit the hotkeys of the UI.")
+
+        BackdropHotkeyButton = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyButton", HotkeyButton, "", 0)
+        BlzFrameSetAllPoints(BackdropHotkeyButton, HotkeyButton)
+        BlzFrameSetTexture(BackdropHotkeyButton, "ReplaceableTextures\\CommandButtons\\BTNKeyboardIcon.blp", 0, true)
 
         HotkeyMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
         BlzFrameSetAbsPoint(HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.140000, 0.530000)
@@ -283,6 +311,7 @@ OnInit("Hotkeys", function ()
                     end
                 end)
                 oskeyName[v] = string.sub(k, 7)
+                oskeyConverted[GetHandleId(v)] = v
             end
         end
         TriggerAddAction(t, function ()
@@ -310,28 +339,15 @@ OnInit("Hotkeys", function ()
                     frameSelected = -1
                 else
                     local id = frameWithKey[key] and frameWithKey[key][meta]
-                    if id and frames[id] and BlzFrameIsVisible(frames[id]) then
+                    if id and frames[id] and BlzFrameIsVisible(frames[id]) and BlzFrameGetEnable(frames[id]) then
                         BlzFrameClick(frames[id])
                     end
                 end
             end
         end)
 
-        t = CreateTrigger()
         ForForce(FORCE_PLAYING, function ()
-            TriggerRegisterPlayerChatEvent(t, GetEnumPlayer(), "-hotkey", true)
-        end)
-        TriggerAddAction(t, function ()
-            if GetTriggerPlayer() == LocalPlayer then
-                BlzFrameSetVisible(HotkeyMenu, true)
-                UpdateHotkeys()
-            end
-        end)
-
-        ForForce(FORCE_PLAYING, function ()
-            if GetEnumPlayer() == LocalPlayer then
-                LoadHotkeys()
-            end
+            LoadHotkeys(GetEnumPlayer())
         end)
     end)
 
@@ -340,8 +356,14 @@ OnInit("Hotkeys", function ()
         referenceFrame[frame] = id
     end
 
-    ---Use this function in a `if player == GetLocalPlayer() then` block
-    function SaveHotkeys()
+    function ShowHotkeys(p, flag)
+        if p == LocalPlayer then
+            BlzFrameSetVisible(HotkeyButton, flag)
+        end
+    end
+
+    ---@param p player
+    function SaveHotkeys(p)
         local savecode = Savecode.create()
         local length1 = 0
         for key, list in pairs(frameWithKey) do
@@ -356,30 +378,39 @@ OnInit("Hotkeys", function ()
             length1 = length1 + 1
         end
         savecode:Encode(length1, MAX_KEYS) -- save the length of the key list
+        local save = savecode:Save(LocalPlayer, 1)
 
-        FileIO.Write(SaveFile.getFolder() .. "\\Hotkeys.pld", savecode:Save(LocalPlayer, 1))
+        if p == LocalPlayer then
+            FileIO.Write(SaveFile.getFolder() .. "\\Hotkeys.pld", save)
+        end
         savecode:destroy()
     end
 
-    ---Use this function in a `if player == GetLocalPlayer() then` block
-    function LoadHotkeys()
-        local load = FileIO.Read(SaveFile.getFolder() .. "\\Hotkeys.pld")
+    ---@param p player
+    function LoadHotkeys(p)
+        local load = GetSyncedData(p, FileIO.Read, SaveFile.getFolder() .. "\\Hotkeys.pld")
         if load:len() > 1 then
             local savecode = Savecode.create()
-            if savecode:Load(LocalPlayer, load, 1) then
+            if savecode:Load(p, load, 1) then
                 local length1 = savecode:Decode(MAX_KEYS) -- load the length of the key list
                 for _ = 1, length1 do
-                    local key = ConvertOsKeyType(savecode:Decode(MAX_KEYS)) -- load the key
-                    frameWithKey[key] = {}
+                    local key = oskeyConverted[savecode:Decode(MAX_KEYS)] -- load the key
+                    if p == LocalPlayer then
+                        frameWithKey[key] = {}
+                    end
                     local length2 = savecode:Decode(16) -- load the length of the metakey list
                     for _ = 1, length2 do
                         local meta = savecode:Decode(15) -- load the metakey
                         local id  = savecode:Decode(MAX_KEYS) -- load the id
-                        frameWithKey[key][meta] = id
+                        if p == LocalPlayer then
+                            frameWithKey[key][meta] = id
+                        end
                     end
                 end
-                UpdateHotkeys()
-                print("Hotkeys loaded")
+                if p == LocalPlayer then
+                    UpdateHotkeys()
+                end
+                DisplayTextToPlayer(p, 0, 0, "Hotkeys loaded")
             end
             savecode:destroy()
         end

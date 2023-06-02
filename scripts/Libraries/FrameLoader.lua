@@ -41,5 +41,14 @@ OnInit("FrameLoader", function ()
         end
         return frame
     end)
+
+    local oldBlzCreateFrameByType
+    oldBlzCreateFrameByType = AddHook("BlzCreateFrameByType", function (typeName, name, owner, inherits, createContext)
+        local frame = oldBlzCreateFrameByType(typeName, name, owner, inherits, createContext)
+        if typeName == "TEXT" then
+            BlzFrameSetEnable(frame, false)
+        end
+        return frame
+    end)
 end)
 if Debug then Debug.endFile() end

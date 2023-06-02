@@ -7,6 +7,7 @@ OnInit(function ()
     Require "Vec2"
     Require "SyncedTable"
     Require "Digimon Capture"
+    Require "ZTS"
 
     local CREEPS_PER_PLAYER     ---@type integer
     local CREEPS_PER_REGION     ---@type integer
@@ -41,6 +42,7 @@ OnInit(function ()
     ---@field inNight boolean
     ---@field minLevel integer
     ---@field maxLevel integer
+    ---@field isDungeon boolean
     ---@field inregion boolean
     ---@field delay number
     ---@field waitToSpawn number
@@ -125,8 +127,9 @@ OnInit(function ()
     ---@param inNight boolean
     ---@param minLevel integer
     ---@param maxLevel integer
+    ---@param isDungeon boolean
     ---@return RegionData
-    local function Create(re, types, inDay, inNight, minLevel, maxLevel)
+    local function Create(re, types, inDay, inNight, minLevel, maxLevel, isDungeon)
         assert(re, "You are trying to create an spawn in a nil region")
         local x, y = GetRectCenterX(re), GetRectCenterY(re)
         local this = { ---@type RegionData
@@ -137,6 +140,7 @@ OnInit(function ()
             inNight = inNight,
             minLevel = minLevel,
             maxLevel = maxLevel,
+            isDungeon = isDungeon,
 
             inregion = false,
             delay = 0.,
@@ -250,6 +254,9 @@ OnInit(function ()
                     local r = GetFreeNeighbour(regionData, math.min(CREEPS_PER_REGION, CREEPS_PER_PLAYER * PlayersInRegion:size())) -- If don't have neighbours, then just use the same region
                     if r then
                         local creep = CreateCreep(r.types, r.spawnpoint)
+                        if regionData.isDungeon then
+                            ZTS_AddThreatUnit(creep.root, true)
+                        end
                         creep:setLevel(GetProccessedLevel(lvl, r.minLevel, r.maxLevel))
                         creep.rd = regionData
                         for r2 in r.sameRegion:elements() do
@@ -285,6 +292,9 @@ OnInit(function ()
                     if creep.captured or creep.remaining <= 0. then
                         if creep.remaining <= 0. then
                             regionData.delay = DELAY_NORMAL
+                            if regionData.isDungeon then
+                                ZTS_RemoveThreatUnit(creep.root)
+                            end
                             creep:destroy()
                         elseif creep.captured  then
                             regionData.delay = DELAY_DEATH
@@ -293,13 +303,15 @@ OnInit(function ()
                             table.remove(r2.creeps, i)
                         end
                     else
-                        local distance = creep.spawnpoint:dist(creep:getPos())
-                        if distance > RANGE_RETURN then
-                            creep:issueOrder(Orders.move, creep.spawnpoint.x, creep.spawnpoint.y)
-                            creep.returning = true
-                        end
-                        if distance <= RANGE_IN_HOME then
-                            creep.returning = false
+                        if not regionData.isDungeon then
+                            local distance = creep.spawnpoint:dist(creep:getPos())
+                            if distance > RANGE_RETURN then
+                                creep:issueOrder(Orders.smart, creep.spawnpoint.x, creep.spawnpoint.y)
+                                creep.returning = true
+                            end
+                            if distance <= RANGE_IN_HOME then
+                                creep.returning = false
+                            end
                         end
                     end
                 end
@@ -355,16 +367,22 @@ OnInit(function ()
         Timed.echo(INTERVAL, Update)
     end)
 
-    local function killedOrCapturedfunction(info)
+    Digimon.capturedEvent:register(function (info)
+        local target = info.target ---@type Creep
+        target.captured = true
+        if target.rd and target.rd.isDungeon then
+            ZTS_RemoveThreatUnit(target.root)
+        end
+        ZTS_AddPlayerUnit(target.root)
+    end)
+    Digimon.killEvent:register(function (info)
         info.target.captured = true
-    end
-    Digimon.capturedEvent:register(killedOrCapturedfunction)
-    Digimon.killEvent:register(killedOrCapturedfunction)
+    end)
 
     Digimon.postDamageEvent:register(function (info)
         local creep = info.target ---@type Creep
         if creep.returning then
-            creep:issueOrder(Orders.attack, creep.spawnpoint.x, creep.spawnpoint.y)
+            creep:issueOrder(Orders.smart, creep.spawnpoint.x, creep.spawnpoint.y)
         end
     end)
 
@@ -377,13 +395,15 @@ OnInit(function ()
             udg_CreepSpawnInDay,
             udg_CreepSpawnInNight,
             udg_CreepSpawnMinLevel,
-            udg_CreepSpawnMaxLevel)
+            udg_CreepSpawnMaxLevel,
+            udg_CreepSpawnIsDungeon)
         udg_CreepSpawnRegion = nil
         udg_CreepSpawnTypes = __jarray(0)
         udg_CreepSpawnInDay = true
         udg_CreepSpawnInNight = true
         udg_CreepSpawnMinLevel = 1
         udg_CreepSpawnMaxLevel = 1
+        udg_CreepSpawnIsDungeon = false
     end)
 end)
 Debug.endFile()

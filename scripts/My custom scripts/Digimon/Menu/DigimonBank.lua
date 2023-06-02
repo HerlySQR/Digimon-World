@@ -265,7 +265,7 @@ OnInit("DigimonBank", function ()
     ---@param d Digimon
     ---@return integer
     function Bank:saveDigimon(d)
-        for i = 0, MAX_SAVED - 1 do
+        for i = 0, self.savedDigimonsStock - 1 do
             if not self.saved[i] then
                 self.saved[i] = d
                 d.saved = true
@@ -386,6 +386,7 @@ OnInit("DigimonBank", function ()
                     BlzFrameSetText(SaveItemTooltipText[i], "Empty")
                     BlzFrameSetSize(SaveItemTooltipText[i], 0, 0.01)
                 end
+                BlzFrameSetVisible(SaveItemLocked[i], false)
             else
                 BlzFrameSetTexture(BackdropSavedItemT[i], "ReplaceableTextures\\CommandButtons\\BTNLock.blp", 0, true)
                 if i == bank.savedItemsStock + 1 then
@@ -1062,6 +1063,7 @@ OnInit("DigimonBank", function ()
         SummonADigimon = BlzCreateFrame("IconButtonTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
         BlzFrameSetAbsPoint(SummonADigimon, FRAMEPOINT_TOPLEFT, 0.220000, 0.180000)
         BlzFrameSetAbsPoint(SummonADigimon, FRAMEPOINT_BOTTOMRIGHT, 0.255000, 0.145000)
+        AddDefaultTooltip(SummonADigimon, "Your digimons", "Look your stored digimons.")
 
         BackdropSummonADigimon = BlzCreateFrameByType("BACKDROP", "BackdropSummonADigimon", SummonADigimon, "", 0)
         BlzFrameSetAllPoints(BackdropSummonADigimon, SummonADigimon)
@@ -1200,6 +1202,7 @@ OnInit("DigimonBank", function ()
         SaveItem = BlzCreateFrame("IconButtonTemplate", SummonADigimon, 0, 0)
         BlzFrameSetAbsPoint(SaveItem, FRAMEPOINT_TOPLEFT, 0.26000, 0.180000)
         BlzFrameSetAbsPoint(SaveItem, FRAMEPOINT_BOTTOMRIGHT, 0.29500, 0.145000)
+        AddDefaultTooltip(SaveItem, "Save item", "Saves the selected item in the bank (you have to go to the bank to see it).")
 
         BackdropSaveItem = BlzCreateFrameByType("BACKDROP", "BackdropSaveItem", SaveItem, "", 0)
         BlzFrameSetAllPoints(BackdropSaveItem, SaveItem)
@@ -1433,11 +1436,7 @@ OnInit("DigimonBank", function ()
 
             SavedItemTSelected[i] = BlzCreateFrameByType("BACKDROP", "SavedItemTSelected[" .. i .."]", SavedItemT[i], "", 1)
             BlzFrameSetAllPoints(SavedItemTSelected[i], SavedItemT[i])
-            if i <= MIN_SAVED_ITEMS then
-                BlzFrameSetTexture(SavedItemTSelected[i], "UI\\Widgets\\EscMenu\\Human\\checkbox-background.blp", 0, true)
-            else
-                BlzFrameSetTexture(SavedItemTSelected[i], "", 0, true)
-            end
+            BlzFrameSetTexture(SavedItemTSelected[i], "UI\\Widgets\\EscMenu\\Human\\checkbox-background.blp", 0, true)
             BlzFrameSetLevel(SavedItemTSelected[i], 3)
             BlzFrameSetVisible(SavedItemTSelected[i], false)
 
@@ -1800,7 +1799,7 @@ OnInit("DigimonBank", function ()
     ---@return boolean
     function CanSaveDigimons(p)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
-        for i = 0, MAX_SAVED - 1 do
+        for i = 0, bank.savedDigimonsStock - 1 do
             if not bank.saved[i] then
                 return true
             end
@@ -1866,12 +1865,15 @@ OnInit("DigimonBank", function ()
     ---@param stock integer
     function SetBankItems(p, items, charges, stock)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
+        bank.savedItemsStock = stock
         for i = 1, #items do
             local m = CreateItem(items[i], WorldBounds.maxX, WorldBounds.maxY)
             SetItemCharges(m, charges[i])
             bank:saveItem(m)
         end
-        bank.savedItemsStock = stock
+        if p == LocalPlayer then
+            UpdateItems()
+        end
     end
 
 end)

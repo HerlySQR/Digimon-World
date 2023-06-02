@@ -342,6 +342,7 @@ do
                 local size = #group
                 if pos ~= size then
                     indexOf[group[size]] = pos
+                    group[pos] = group[size]
                 end
                 group[size]=nil
                 indexOf[unit]=nil
@@ -371,7 +372,9 @@ do
             local old = enumUnit
             GUI.forGroup(group, function(unit)
                 enumUnit=unit
-                code()
+                if enumUnit then
+                    code()
+                end
             end)
             enumUnit=old
         end

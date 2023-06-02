@@ -120,6 +120,7 @@ OnInit("Quests", function ()
         TriggerAddAction(t, ShowMenu)
         BlzFrameSetVisible(QuestButton, false)
         AddFrameToMenu(QuestButton)
+        AddDefaultTooltip(QuestButton, "Quest Log", "Look at the progress of your accepted quests.")
 
         BackdropQuestButton = BlzCreateFrameByType("BACKDROP", "BackdropQuestButton", QuestButton, "", 0)
         BlzFrameSetAllPoints(BackdropQuestButton, QuestButton)
@@ -455,8 +456,8 @@ OnInit("Quests", function ()
     OnInit.trig(function ()
         udg_QuestDefine = CreateTrigger()
         TriggerAddAction(udg_QuestDefine, function ()
-            if udg_QuestOnlyOnce and udg_QuestId > MAX_UNIQUE_QUESTS then
-                error("You are asigning an id greater than the max to the unique quest: " .. udg_QuestName)
+            if udg_QuestId > MAX_QUESTS then
+                error("You are asigning an id greater than the max to the quests: " .. udg_QuestName)
             end
             if udg_QuestMaxProgress <= 0 then
                 error("You are asigning a max progress lesser than 1 to the quest: " .. udg_QuestName)

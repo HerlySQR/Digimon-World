@@ -51,7 +51,7 @@ if Debug then Debug.beginFile("Zwiebelchen's threat system") end
 --
 --  3.1. Core functions
 --
---      call ZTS_AddThreatUnit(unit npc, boolean includeCombatCamps) returns nothing:
+--      ZTS_AddThreatUnit(unit npc, boolean includeCombatCamps) returns nothing:
 --
 --          This function registers the unit as an AI-controlled unit.
 --          ThreatUnits will automaticly attack the highest-in-threat attacker.
@@ -63,18 +63,18 @@ if Debug then Debug.beginFile("Zwiebelchen's threat system") end
 --          This should be false in most cases, but it can be useful when you have bosses that summon units infight, so that
 --          the summons will be added to the bossfight correctly instead of getting their own seperate group.
 --
---      call ZTS_AddPlayerUnit(unit pu) returns nothing:
+--      ZTS_AddPlayerUnit(unit pu) returns nothing:
 --
 --          Units add by this way will generate threat on ThreatUnits.
 --          If the unit is not registered as a PlayerUnit, it will not be attacked by ThreatUnits.
 --
---      call ZTS_RemoveThreatUnit(unit npc) returns nothing:
+--      ZTS_RemoveThreatUnit(unit npc) returns nothing:
 --
 --          Removes a ThreatUnit from the system. The unit will no longer be controlled by the threat system.
 --          Also, the threat list for that unit will be cleared.
 --          Dead or removed units will automaticly be cleared. You need to add them again after revival/recreation.
 --
---      call ZTS_RemovePlayerUnit(unit pu) returns nothing:
+--      ZTS_RemovePlayerUnit(unit pu) returns nothing:
 --
 --          Removes a player unit from the system. The unit will no longer generate threat on ThreatUnits.
 --          The unit will also be instantly removed from all threat lists.
@@ -83,7 +83,7 @@ if Debug then Debug.beginFile("Zwiebelchen's threat system") end
 --          You can use this, followed by AddPlayerUnit to that unit out of combat and reset all threat.
 --          Dead or removed units will automaticly be cleared. You need to add them again after revival/recreation.
 --
---      call ZTS_ModifyThreat(unit pu, unit npc, number amount, boolean add) returns nothing:
+--      ZTS_ModifyThreat(unit pu, unit npc, number amount, boolean add) returns nothing:
 --
 --          Adds, sets or substracts threat from npc's threat list caused by pu.
 --          Set 'add' to true to add or substract amount from the current value.
@@ -92,7 +92,7 @@ if Debug then Debug.beginFile("Zwiebelchen's threat system") end
 --          Remember: If a unit has 0 threat, it is still considered in-combat -
 --          this also means, that adding "0" to the units threat causes them to attack!
 --
---      call ZTS_ApplyHealThreat(unit pu, unit ally, number amount, boolean add, boolean divide) returns nothing:
+--      ZTS_ApplyHealThreat(unit pu, unit ally, number amount, boolean add, boolean divide) returns nothing:
 --
 --          Adds Healing Threat to all units, that have ally on threat-list
 --          This can be abused to apply global threat to a unit by passing the same unit to p and ally.
@@ -106,41 +106,41 @@ if Debug then Debug.beginFile("Zwiebelchen's threat system") end
 --
 --  3.2. Getter functions
 --
---      call ZTS_GetCombatState(unit U) returns boolean:
+--      ZTS_GetCombatState(unit U) returns boolean:
 --
 --          Returns the combat state of a player or npc unit.
 --          Returns true, if the unit is registered and in combat.
 --          Returns false, if the unit is not registered or out of combat.
 --
---      call ZTS_GetCombatTime(unit NPC) returns boolean:
+--      ZTS_GetCombatTime(unit NPC) returns boolean:
 --
 --          Returns the incombat time of the npc.
 --          Does not work for player units.
 --          Returns "0" if the unit is not in combat or currently returning to camp position.
 --
---      call ZTS_GetThreatUnitPosition(unit NPC, unit PU) returns integer:
+--      ZTS_GetThreatUnitPosition(unit NPC, unit PU) returns integer:
 --
 --          Returns the position of unit PU in unit NPC's threat list
 --          Returns "0" if the unit was not found, NPC does not feature a threat list or in case of invalid input data
 --
---      call ZTS_GetThreatUnitAmount(unit NPC, unit PU) returns number:
+--      ZTS_GetThreatUnitAmount(unit NPC, unit PU) returns number:
 --
 --          Returns the amount of threat unit PU has in unit NPC's threat list
 --          Returns "0" if the unit was not found, NPC does not feature a threat list or in case of invalid input data
 --
---      call ZTS_GetThreatSlotUnit(unit NPC, integer position) returns unit:
+--      ZTS_GetThreatSlotUnit(unit NPC, integer position) returns unit:
 --
 --          Returns the unit in threat-slot position
 --          Returns null if the NPC does not feature a threat list, the number is too large
 --          or in case of invalid input data
 --
---      call ZTS_GetThreatSlotAmount(unit NPC, integer position) returns number:
+--      ZTS_GetThreatSlotAmount(unit NPC, integer position) returns number:
 --
 --          Returns the threat amount of the threat-slot position
 --          Returns "0" if the NPC does not feature a threat list, the number is too large
 --          or in case of invalid input data
 --
---      call ZTS_GetAttackers(unit U) returns group:
+--      ZTS_GetAttackers(unit U) returns group:
 --
 --          If used on a ThreatUnit, this returns a group of all units in threat list;
 --          if used on a PlayerUnit, this returns a group of all units aggroed.
@@ -149,7 +149,7 @@ if Debug then Debug.beginFile("Zwiebelchen's threat system") end
 --  
 --  3.3. Advanced User features
 --
---      call ZTS_IsEvent() returns boolean
+--      ZTS_IsEvent() returns boolean
 --
 --          When using "A unit is issued an order without target" or "A unit is issued a target order" events,
 --          this function returns true when the order was issued by the threat system.
@@ -179,7 +179,7 @@ OnInit("ZTS", function ()
     local ReturnRange      = 1500  ---@type number --The range the unit can move away from the original camping position, before being ordered to return.
     local TimeToPort      = 10  ---@type number --This timer expires once a unit tries to return to its camping position.
                                           --If it reaches 0 before reaching the camp position, the unit will be teleported immediately.
-    local HealUnitsOnReturn         = true  ---@type boolean --If this is true, returning units will be healed to 100% health.
+    local HealUnitsOnReturn         = false  ---@type boolean --If this is true, returning units will be healed to 100% health.
     
     
 --      Do not edit below here!
@@ -229,10 +229,10 @@ OnInit("ZTS", function ()
     function ZTS_GetCombatState(u)
         if GetUnitTypeId(u) == 0 or IsUnitType(u, UNIT_TYPE_DEAD) then --unit dead or null
             return false
-        elseif HaveSavedInteger(NPClist, GetHandleId(u), 0) then --unit is npc
-            return LoadInteger(NPClist, GetHandleId(u), 0) > 0
-        elseif HaveSavedHandle(PUlist, GetHandleId(u), 0) then --unit is player unit
-            return LoadInteger(PUlist, GetHandleId(u), 1) > 0
+        elseif NPClist[u][0] then --unit is npc
+            return NPClist[u][0] > 0
+        elseif PUlist[u][0] then --unit is player unit
+            return PUlist[u][1] > 0
         end
         return false
     end
@@ -242,9 +242,9 @@ OnInit("ZTS", function ()
     function ZTS_GetCombatTime(u)
         if GetUnitTypeId(u) == 0 or IsUnitType(u, UNIT_TYPE_DEAD) then --unit dead or null
             return 0.
-        elseif HaveSavedInteger(NPClist, GetHandleId(u), 0) then --unit is npc
-            if LoadInteger(NPClist, GetHandleId(u), 0) == 1 then --only return a time when the unit is in combat
-                return LoadReal(NPClist, GetHandleId(u), 3)
+        elseif NPClist[u][0] then --unit is npc
+            if NPClist[u][0] == 1 then --only return a time when the unit is in combat
+                return NPClist[u][3] or 0.
             end
         end
         return 0.
@@ -256,10 +256,10 @@ OnInit("ZTS", function ()
     function ZTS_GetThreatUnitPosition(npc, pu)
         if GetUnitTypeId(npc) == 0 or IsUnitType(npc, UNIT_TYPE_DEAD) or GetUnitTypeId(pu) == 0 or IsUnitType(pu, UNIT_TYPE_DEAD) then --units dead or null
             return 0
-        elseif not (HaveSavedInteger(NPClist, GetHandleId(npc), 0) and HaveSavedHandle(PUlist, GetHandleId(pu), 0)) then --units not added
+        elseif not (NPClist[npc][0] and PUlist[pu][0]) then --units not added
             return 0
-        elseif HaveSavedInteger(PUlist, GetHandleId(pu), GetHandleId(npc)) then
-            return LoadInteger(PUlist, GetHandleId(pu), GetHandleId(npc))
+        elseif PUlist[pu][npc] then
+            return PUlist[pu][npc]
         end
         return 0
     end
@@ -270,10 +270,10 @@ OnInit("ZTS", function ()
     function ZTS_GetThreatUnitAmount(npc, pu)
         if GetUnitTypeId(npc) == 0 or IsUnitType(npc, UNIT_TYPE_DEAD) or GetUnitTypeId(pu) == 0 or IsUnitType(pu, UNIT_TYPE_DEAD) then --units dead or null
             return 0.
-        elseif not (HaveSavedInteger(NPClist, GetHandleId(npc), 0) and HaveSavedHandle(PUlist, GetHandleId(pu), 0)) then --units not added
+        elseif not (NPClist[npc][0] and PUlist[pu][0]) then --units not added
             return 0.
-        elseif HaveSavedInteger(PUlist, GetHandleId(pu), GetHandleId(npc)) then
-            return LoadReal(NPClist, GetHandleId(npc), Pos2Key(LoadInteger(PUlist, GetHandleId(pu), GetHandleId(npc)))+1)
+        elseif PUlist[pu][npc] then
+            return NPClist[npc][Pos2Key(PUlist[pu][npc])+1] or 0.
         end
         return 0.
     end
@@ -284,10 +284,10 @@ OnInit("ZTS", function ()
     function ZTS_GetThreatSlotUnit(npc, position)
         if GetUnitTypeId(npc) == 0 or IsUnitType(npc, UNIT_TYPE_DEAD) or position <= 0 then --unit dead or null or invalid slot
             return nil
-        elseif not HaveSavedInteger(NPClist, GetHandleId(npc), 0) then --unit not added
+        elseif not NPClist[npc][0] then --unit not added
             return nil
-        elseif HaveSavedHandle(NPClist, GetHandleId(npc), Pos2Key(position)) then
-            return LoadUnitHandle(NPClist, GetHandleId(npc), Pos2Key(position))
+        elseif NPClist[npc][Pos2Key(position)] then
+            return NPClist[npc][Pos2Key(position)]
         end
         return nil
     end
@@ -298,10 +298,10 @@ OnInit("ZTS", function ()
     function ZTS_GetThreatSlotAmount(npc, position)
         if GetUnitTypeId(npc) == 0 or IsUnitType(npc, UNIT_TYPE_DEAD) or position <= 0 then --unit dead or null or invalid slot
             return 0.
-        elseif not HaveSavedInteger(NPClist, GetHandleId(npc), 0) then --unit not added
+        elseif not NPClist[npc][0] then --unit not added
             return 0.
-        elseif HaveSavedReal(NPClist, GetHandleId(npc), Pos2Key(position)+1) then
-            return LoadReal(NPClist, GetHandleId(npc), Pos2Key(position)+1)
+        elseif NPClist[npc][Pos2Key(position)+1] then
+            return NPClist[npc][Pos2Key(position)+1] or 0.
         end
         return 0.
     end
@@ -319,58 +319,58 @@ OnInit("ZTS", function ()
         if GetUnitTypeId(u) == 0 or IsUnitType(u, UNIT_TYPE_DEAD) then --unit dead or null
             return g
         end
-        if HaveSavedInteger(NPClist, GetHandleId(u), 0) then --unit is npc
-            max = Pos2Key(LoadInteger(NPClist, GetHandleId(u), 5))
+        if NPClist[u][0] then --unit is npc
+            max = Pos2Key(NPClist[u][5] or 0)
             while key <= max do 
-                GroupAddUnit(g, LoadUnitHandle(NPClist, GetHandleId(u), key))
+                GroupAddUnit(g, NPClist[u][key])
                 key = key+2
             end
-        elseif HaveSavedHandle(PUlist, GetHandleId(u), 0) then --unit is player unit
+        elseif PUlist[u][0] then --unit is player unit
             TGroupGet = g
-            ForGroup(LoadGroupHandle(PUlist, GetHandleId(u), 0), GetAttackersSub)
+            ForGroup(PUlist[u][0], GetAttackersSub)
             g = TGroupGet
             TGroupGet = nil
         end
         return g
     end
 
-    ---@param npcID integer
+    ---@param npcID unit
     ---@param key1 integer
     ---@param key2 integer
     local function Swap(npcID, key1, key2)
-        local u      = LoadUnitHandle(NPClist, npcID, key1) ---@type unit 
-        local r      = LoadReal(NPClist, npcID, key1+1) ---@type number 
-        SaveUnitHandle(NPClist, npcID, key1, LoadUnitHandle(NPClist, npcID, key2))
-        SaveReal(NPClist, npcID, key1+1, LoadReal(NPClist, npcID, key2+1))
-        SaveInteger(PUlist, GetHandleId(LoadUnitHandle(NPClist, npcID, key1)), npcID, Key2Pos(key1)) --update position list
-        SaveUnitHandle(NPClist, npcID, key2, u)
-        SaveReal(NPClist, npcID, key2+1, r)
-        SaveInteger(PUlist, GetHandleId(u), npcID, Key2Pos(key2)) --update position list
+        local u      = NPClist[npcID][key1] ---@type unit 
+        local r      = NPClist[npcID][key1+1] or 0. ---@type number 
+        NPClist[npcID][key1] = NPClist[npcID][key2]
+        NPClist[npcID][key1+1] = NPClist[npcID][key2+1] or 0.
+        PUlist[NPClist[npcID][key1]][npcID] = Key2Pos(key1) --update position list
+        NPClist[npcID][key2] = u
+        NPClist[npcID][key2+1] = r
+        PUlist[u][npcID] = Key2Pos(key2) --update position list
         u = nil
     end
 
     local function CampThreat()
-        local npcID         = GetHandleId(GetEnumUnit()) ---@type integer 
-        local puID         = GetHandleId(TMod) ---@type integer 
+        local npcID         = GetEnumUnit() ---@type unit 
+        local puID         = TMod ---@type unit 
         local key ---@type integer 
         local listlength ---@type integer 
         if GetEnumUnit() == TSub then
             return
-        elseif HaveSavedInteger(PUlist, puID, npcID) then --original pu unit already listed in EnumUnit's threat list
+        elseif PUlist[puID][npcID] then --original pu unit already listed in EnumUnit's threat list
             return
-        elseif LoadInteger(NPClist, npcID, 0) > 1 or IsUnitType(GetEnumUnit(), UNIT_TYPE_DEAD) then --do not add threat to dead or units that are status: returning
+        elseif (NPClist[npcID][0] or 0) > 1 or IsUnitType(GetEnumUnit(), UNIT_TYPE_DEAD) then --do not add threat to dead or units that are status: returning
             return
         end
-        listlength = LoadInteger(NPClist, npcID, 5)+1
-        SaveInteger(NPClist, npcID, 5, listlength) --add to list length of EnumUnit
+        listlength = (NPClist[npcID][5] or 0)+1
+        NPClist[npcID][5] = listlength --add to list length of EnumUnit
         key = Pos2Key(listlength)
-        SaveUnitHandle(NPClist, npcID, key, TMod) --add original pu unit to end of EnumUnit's threat list
-        SaveReal(NPClist, npcID, key+1, 0)
-        SaveInteger(PUlist, puID, npcID, listlength) --add EnumUnit to slot list
-        GroupAddUnit(LoadGroupHandle(PUlist, puID, 0), GetEnumUnit()) --add EnumUnit to slot list group
-        SaveInteger(PUlist, puID, 1, LoadInteger(PUlist, puID, 1)+1) --increase group size count
-        if LoadInteger(NPClist, npcID, 0) == 0 then
-            SaveInteger(NPClist, npcID, 0, 1) --set unit status: combat
+        NPClist[npcID][key] = TMod --add original pu unit to end of EnumUnit's threat list
+        NPClist[npcID][key+1] = 0
+        PUlist[puID][npcID] = listlength --add EnumUnit to slot list
+        GroupAddUnit(PUlist[puID][0], GetEnumUnit()) --add EnumUnit to slot list group
+        PUlist[puID][1] = (PUlist[puID][1] or 0)+1 --increase group size count
+        if (NPClist[npcID][0] or 0) == 0 then
+            NPClist[npcID][0] = 1 --set unit status: combat
             GroupAddUnit(NPCgroup, GetEnumUnit()) --add the unit to incombat group
         end
     end
@@ -380,39 +380,39 @@ OnInit("ZTS", function ()
     ---@param amount number
     ---@param add boolean
     function ZTS_ModifyThreat(pu, npc, amount, add)
-        local npcID         = GetHandleId(npc) ---@type integer 
-        local puID         = GetHandleId(pu) ---@type integer 
+        local npcID         = npc ---@type unit 
+        local puID         = pu ---@type unit 
         local key ---@type integer 
         local listlength ---@type integer 
         local i         = 0 ---@type integer 
         local newamount ---@type number 
         local oldamount      = 0 ---@type number 
         local b         = false ---@type boolean 
-        if not (HaveSavedInteger(NPClist, npcID, 0) and HaveSavedHandle(PUlist, puID, 0)) then --units not added
+        if not (NPClist[npcID][0] and PUlist[puID][0]) then --units not added
             return
         elseif IsUnitType(pu, UNIT_TYPE_DEAD) or IsUnitType(npc, UNIT_TYPE_DEAD) then --units dead
             return
         elseif GetUnitTypeId(pu) == 0 or GetUnitTypeId(npc) == 0 then --null units
             return
-        elseif LoadInteger(NPClist, npcID, 0) > 1 then --do not add threat to units that are status: returning
+        elseif (NPClist[npcID][0] or 0) > 1 then --do not add threat to units that are status: returning
             return
         end
-        if not HaveSavedInteger(PUlist, puID, npcID) then --pu not listed in npc's threat list
-            listlength = LoadInteger(NPClist, npcID, 5)+1
-            SaveInteger(NPClist, npcID, 5, listlength) --add to list length of npc
+        if not PUlist[puID][npcID] then --pu not listed in npc's threat list
+            listlength = (NPClist[npcID][5] or 0)+1
+            NPClist[npcID][5] = listlength --add to list length of npc
             key = Pos2Key(listlength)
-            SaveUnitHandle(NPClist, npcID, key, pu) --add pu to end of npc's threat list
-            SaveInteger(PUlist, puID, npcID, listlength) --add npc to slot list
-            GroupAddUnit(LoadGroupHandle(PUlist, puID, 0), npc) --add npc to slot list group
-            SaveInteger(PUlist, puID, 1, LoadInteger(PUlist, puID, 1)+1) --increase group size count
-            if LoadInteger(NPClist, npcID, 0) == 0 then
-                SaveInteger(NPClist, npcID, 0, 1) --set unit status: combat
+            NPClist[npcID][key] = pu --add pu to end of npc's threat list
+            PUlist[puID][npcID] = listlength --add npc to slot list
+            GroupAddUnit(PUlist[puID][0], npc) --add npc to slot list group
+            PUlist[puID][1] = (PUlist[puID][1] or 0)+1 --increase group size count
+            if (NPClist[npcID][0] or 0) == 0 then
+                NPClist[npcID][0] = 1 --set unit status: combat
                 GroupAddUnit(NPCgroup, npc) --add the unit to incombat group
             end
             b = true
         else
-            key = Pos2Key(LoadInteger(PUlist, puID, npcID))
-            oldamount = LoadReal(NPClist, npcID, key+1)
+            key = Pos2Key(PUlist[puID][npcID] or 0)
+            oldamount = NPClist[npcID][key+1] or 0.
         end
         if add then
             newamount = oldamount+amount
@@ -422,11 +422,11 @@ OnInit("ZTS", function ()
         if newamount < 0 then
             newamount = 0
         end
-        SaveReal(NPClist, npcID, key+1, newamount)
+        NPClist[npcID][key+1] = newamount
         if newamount > oldamount then --check lower keys
             while true do
-                if HaveSavedReal(NPClist, npcID, key-1-i) then
-                    if LoadReal(NPClist, npcID, key-1-i) < newamount then --lower key amount is smaller
+                if NPClist[npcID][key-1-i] then
+                    if (NPClist[npcID][key-1-i] or 0.) < newamount then --lower key amount is smaller
                         Swap(npcID, key-2-i, key-i)
                     else
                         break
@@ -438,8 +438,8 @@ OnInit("ZTS", function ()
             end
         elseif newamount < oldamount then --check higher keys
             while true do
-                if HaveSavedReal(NPClist, npcID, key+3+i) then
-                    if LoadReal(NPClist, npcID, key+3+i) > newamount then --upper key amount is larger
+                if NPClist[npcID][key+3+i] then
+                    if (NPClist[npcID][key+3+i] or 0.) > newamount then --upper key amount is larger
                         Swap(npcID, key+2+i, key+i)
                     else
                         break
@@ -453,20 +453,20 @@ OnInit("ZTS", function ()
         if b then --set all units of the same camp to status: combat and apply 0 threat from pu to them
             TSub = npc
             TMod = pu
-            ForGroup(LoadGroupHandle(NPClist, npcID, 4), CampThreat)
+            ForGroup(NPClist[npcID][4], CampThreat)
         end
     end
 
     ---@param u unit
     function ZTS_AddPlayerUnit(u)
-        local ID         = GetHandleId(u) ---@type integer 
-        if HaveSavedInteger(NPClist, ID, 0) or HaveSavedHandle(PUlist, ID, 0) then --unit already added
+        local ID         = u ---@type unit 
+        if NPClist[ID][0] or PUlist[ID][0] then --unit already added
             return
         elseif GetUnitTypeId(u) == 0 or IsUnitType(u, UNIT_TYPE_DEAD) then --unit dead or null
             return
         end
-        SaveGroupHandle(PUlist, ID, 0, CreateGroup()) --slot list group
-        SaveInteger(PUlist, ID, 1, 0) --list group count
+        PUlist[ID][0] = CreateGroup() --slot list group
+        PUlist[ID][1] = 0 --list group count
     end
 
     ---@return boolean
@@ -479,7 +479,7 @@ OnInit("ZTS", function ()
             pu = GetOrderTargetUnit()
         end
         if IsUnitEnemy(pu, GetOwningPlayer(npc)) then
-            if LoadInteger(NPClist, GetHandleId(npc), 0) == 0 then --pull out of combat units only
+            if (NPClist[npc][0] or 0) == 0 then --pull out of combat units only
                 ZTS_ModifyThreat(pu, npc, 0, true)
             end
         end
@@ -490,35 +490,35 @@ OnInit("ZTS", function ()
 
     ---@return boolean
     local function FilterUnitsWithCampGroup()
-        return HaveSavedHandle(NPClist, GetHandleId(GetFilterUnit()), 4) and IsUnitType(GetFilterUnit(), UNIT_TYPE_DEAD) == false and LoadInteger(NPClist, GetHandleId(GetFilterUnit()), 0) <= TState
+        return NPClist[GetFilterUnit()][4] ~= nil and IsUnitType(GetFilterUnit(), UNIT_TYPE_DEAD) == false and (NPClist[GetFilterUnit()][0] or 0) <= TState
     end
 
     ---@param u unit
     ---@param includeCombatCamps boolean
     function ZTS_AddThreatUnit(u, includeCombatCamps)
-        local ID         = GetHandleId(u) ---@type integer 
+        local ID         = u ---@type unit 
         local g       = nil ---@type group 
         local t         = nil ---@type trigger 
         local other      = nil ---@type unit 
-        local otherID         = 0 ---@type integer 
+        local otherID         = nil ---@type unit 
         local temp      = nil ---@type unit 
         local i         = 0 ---@type integer 
         local listlength         = 0 ---@type integer 
-        if HaveSavedInteger(NPClist, ID, 0) or HaveSavedHandle(PUlist, ID, 0) then --unit already added
+        if NPClist[ID][0] or PUlist[ID][0] then --unit already added
             return
         elseif GetUnitTypeId(u) == 0 or IsUnitType(u, UNIT_TYPE_DEAD) then --unit dead or null
             return
         end
-        SaveInteger(NPClist, ID, 0, 0) --status
-        SaveReal(NPClist, ID, 1, GetUnitX(u)) --return X
-        SaveReal(NPClist, ID, 2, GetUnitY(u)) --return Y
-        SaveReal(NPClist, ID, 3, 0) --return countdown and incombat timer
-        SaveInteger(NPClist, ID, 5, 0) --list length
+        NPClist[ID][0] = 0 --status
+        NPClist[ID][1] = GetUnitX(u) --return X
+        NPClist[ID][2] = GetUnitY(u) --return Y
+        NPClist[ID][3] = 0 --return countdown and incombat timer
+        NPClist[ID][5] = 0 --list length
         t = CreateTrigger()
         TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
         TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ACQUIRED_TARGET)
         TriggerAddCondition(t, Condition(AcquireTarget))
-        SaveTriggerHandle(NPClist, ID, 6, t) --acquire target event trigger
+        NPClist[ID][6] = t --acquire target event trigger
         if includeCombatCamps then
             TState = 1
         else
@@ -527,24 +527,24 @@ OnInit("ZTS", function ()
         GroupEnumUnitsInRange(TGroupSub, GetUnitX(u), GetUnitY(u), HelpRange, Condition(FilterUnitsWithCampGroup))
         other = FirstOfGroup(TGroupSub)
         if other ~= nil then
-            otherID = GetHandleId(other)
-            g = LoadGroupHandle(NPClist, otherID, 4)
+            otherID = other
+            g = NPClist[otherID][4]
             if includeCombatCamps then
                 --don't forget to inherit the camp unit's threat list...
-                if LoadInteger(NPClist, otherID, 0) == 1 then --...but only if filtered unit is actually infight
-                    listlength = LoadInteger(NPClist, otherID, 5)
-                    SaveInteger(NPClist, ID, 5, listlength) --copy list length
+                if  (NPClist[otherID][0] or 0) == 1 then --...but only if filtered unit is actually infight
+                    listlength = NPClist[otherID][5] or 0
+                    NPClist[otherID][5] = listlength --copy list length
                     while true do --copy all list entries as the newly added unit has an empty list and will cause the camp to reset almost instantly
                         i = i + 1
                         if i > listlength then break end
-                        temp = LoadUnitHandle(NPClist, otherID, Pos2Key(i))
-                        SaveUnitHandle(NPClist, ID, Pos2Key(i), temp)
-                        SaveReal(NPClist, ID, Pos2Key(i)+1, 0)
-                        SaveInteger(PUlist, GetHandleId(temp), ID, i) --assign the threat position to the player unit's reference list
-                        GroupAddUnit(LoadGroupHandle(PUlist, GetHandleId(temp), 0), u) --add the unit to the player unit's threat group
-                        SaveInteger(PUlist, GetHandleId(temp), 1, LoadInteger(PUlist, GetHandleId(temp), 1)+1) --increase group size count
+                        temp = NPClist[otherID][Pos2Key(i)]
+                        NPClist[ID][Pos2Key(i)] = temp
+                        NPClist[ID][Pos2Key(i)+1] = 0
+                        PUlist[temp][ID] = i --assign the threat position to the player unit's reference list
+                        GroupAddUnit(PUlist[temp][0], u) --add the unit to the player unit's threat group
+                        PUlist[temp][1] = (PUlist[temp][1] or 0)+1 --increase group size count
                     end
-                    SaveInteger(NPClist, ID, 0, 1) --set unit status: combat
+                    NPClist[ID][0] = 1 --set unit status: combat
                     GroupAddUnit(NPCgroup, u) --add the unit to incombat group
                     temp = nil
                 end
@@ -553,7 +553,7 @@ OnInit("ZTS", function ()
             g = CreateGroup()
         end
         GroupAddUnit(g, u)
-        SaveGroupHandle(NPClist, ID, 4, g) --camp group
+        NPClist[ID][4] = g --camp group
         t = nil
         g = nil
         other = nil
@@ -561,16 +561,16 @@ OnInit("ZTS", function ()
 
     ---@param u unit
     function ZTS_RemoveThreatUnit(u)
-        local ID         = GetHandleId(u) ---@type integer 
-        local OtherID ---@type integer 
+        local ID         = u ---@type unit 
+        local OtherID ---@type unit 
         local g       = nil ---@type group 
         local key         = 10 ---@type integer 
-        if not HaveSavedInteger(NPClist, ID, 0) then --unit not added
+        if not NPClist[ID][0] then --unit not added
             return
         elseif GetUnitTypeId(u) == 0 then
             return
         end
-        if LoadInteger(NPClist, ID, 0) > 1 then --unit status is: returning
+        if (NPClist[ID][0] or 0) > 1 then --unit status is: returning
             IssueImmediateOrder(u, "stop")
             SetUnitInvulnerable(u, false)
             if IsUnitPaused(u) then
@@ -579,24 +579,24 @@ OnInit("ZTS", function ()
         end
         
         while true do --remove the entry in the player unit's position list and list group and decrease list group count
-            if HaveSavedHandle(NPClist, ID, key) then
-                OtherID = GetHandleId(LoadUnitHandle(NPClist, ID, key))
-                RemoveSavedInteger(PUlist, OtherID, ID)
-                GroupRemoveUnit(LoadGroupHandle(PUlist, OtherID, 0), u)
-                SaveInteger(PUlist, OtherID, 1, LoadInteger(PUlist, OtherID, 1)-1)
+            if NPClist[ID][key] then
+                OtherID = NPClist[ID][key]
+                PUlist[OtherID][ID] = nil
+                GroupRemoveUnit(PUlist[OtherID][0], u)
+                PUlist[OtherID][1] = (PUlist[OtherID][1] or 0)-1
                 key = key+2
             else --last entry reached
                 break
             end
         end
         
-        g = LoadGroupHandle(NPClist, ID, 4)
+        g = NPClist[ID][4]
         GroupRemoveUnit(g, u)
         if FirstOfGroup(g) == nil then --camp group is empty
             DestroyGroup(g)
         end
-        DestroyTrigger(LoadTriggerHandle(NPClist, ID, 6))
-        FlushChildHashtable(NPClist, ID)
+        DestroyTrigger(NPClist[ID][6])
+        NPClist[ID] = {}
         if IsUnitInGroup(u, NPCgroup) then
             GroupRemoveUnit(NPCgroup, u) --remove unit from incombat group
         end
@@ -604,19 +604,19 @@ OnInit("ZTS", function ()
     end
 
     local function RemovePlayerUnitEntries()
-        local ID         = GetHandleId(TSub) ---@type integer 
-        local OtherID         = GetHandleId(GetEnumUnit()) ---@type integer 
-        local key         = Pos2Key(LoadInteger(PUlist, ID, OtherID)) ---@type integer 
+        local ID         = TSub ---@type unit 
+        local OtherID         = GetEnumUnit() ---@type unit 
+        local key         = Pos2Key(PUlist[ID][OtherID] or 0) ---@type integer 
         while true do --remove the entry in u's threat list and fill the gap
-            if HaveSavedHandle(NPClist, OtherID, key+2) then --move up next entry
-                SaveUnitHandle(NPClist, OtherID, key, LoadUnitHandle(NPClist, OtherID, key+2))
-                SaveReal(NPClist, OtherID, key+1, LoadReal(NPClist, OtherID, key+3))
-                SaveInteger(PUlist, GetHandleId(LoadUnitHandle(NPClist, OtherID, key)), OtherID, Key2Pos(key)) --update position in player unit list
+            if NPClist[OtherID][key+2] then --move up next entry
+                NPClist[OtherID][key] = NPClist[OtherID][key+2]
+                NPClist[OtherID][key+1] = NPClist[OtherID][key+3] or 0.
+                PUlist[NPClist[OtherID][key]][OtherID] = Key2Pos(key) --update position in player unit list
                 key = key+2
             else --last entry reached
-                RemoveSavedHandle(NPClist, OtherID, key)
-                RemoveSavedReal(NPClist, OtherID, key+1)
-                SaveInteger(NPClist, OtherID, 5, Key2Pos(key-2)) --decrease list length
+                NPClist[OtherID][key] = nil
+                NPClist[OtherID][key+1] = nil
+                NPClist[OtherID][5] = Key2Pos(key-2) --decrease list length
                 break
             end
         end
@@ -624,17 +624,17 @@ OnInit("ZTS", function ()
 
     ---@param u unit
     function ZTS_RemovePlayerUnit(u)
-        local ID         = GetHandleId(u) ---@type integer 
-        if not HaveSavedHandle(PUlist, ID, 0) then --unit not added
+        local ID         = u ---@type unit 
+        if not PUlist[ID][0] then --unit not added
             return
         elseif GetUnitTypeId(u) == 0 then
             return
         end
         TSub = u
-        ForGroup(LoadGroupHandle(PUlist, ID, 0), RemovePlayerUnitEntries)
+        ForGroup(PUlist[ID][0], RemovePlayerUnitEntries)
         
-        DestroyGroup(LoadGroupHandle(PUlist, ID, 0))
-        FlushChildHashtable(PUlist, ID)
+        DestroyGroup(PUlist[ID][0])
+        PUlist[ID] = {}
     end
 
     local function HealThreatSub()
@@ -647,58 +647,58 @@ OnInit("ZTS", function ()
     ---@param add boolean
     ---@param divide boolean
     function ZTS_ApplyHealThreat(pu, ally, amount, add, divide)
-        local puID         = GetHandleId(pu) ---@type integer 
-        local allyID         = GetHandleId(ally) ---@type integer 
-        if not (HaveSavedHandle(PUlist, puID, 0) and HaveSavedHandle(PUlist, allyID, 0)) then --units not added
+        local puID         = pu ---@type unit 
+        local allyID         = ally ---@type unit 
+        if not (PUlist[puID][0] and PUlist[allyID][0]) then --units not added
             return
         elseif IsUnitType(pu, UNIT_TYPE_DEAD) or IsUnitType(ally, UNIT_TYPE_DEAD) then --units dead
             return
         elseif GetUnitTypeId(pu) == 0 or GetUnitTypeId(ally) == 0 then --null units
             return
         end
-        if divide and LoadInteger(PUlist, allyID, 1) > 1 then
-            THealthreat = amount/LoadInteger(PUlist, allyID, 1)
+        if divide and (PUlist[allyID][1] or 0) > 1 then
+            THealthreat = amount/PUlist[allyID][1]
         else
             THealthreat = amount
         end
         TBool = add
         THealer = pu
-        ForGroup(LoadGroupHandle(PUlist, allyID, 0), HealThreatSub)
+        ForGroup(PUlist[allyID][0], HealThreatSub)
     end
 
     local function CampCommand()
         local u      = GetEnumUnit() ---@type unit 
-        local ID         = GetHandleId(u) ---@type integer 
-        local OtherID ---@type integer 
-        local status         = LoadInteger(NPClist, ID, 0) ---@type integer 
+        local ID         = u ---@type unit 
+        local OtherID ---@type unit 
+        local status         = NPClist[ID][0] or 0 ---@type integer 
         local key         = 10 ---@type integer 
         if status == 1 then
-            SaveInteger(NPClist, GetHandleId(u), 0, 2) --set status: returning
+            NPClist[u][0] = 2 --set status: returning
             while true do --remove the entry in the player unit's position list and list group and decrease list group count
-                if HaveSavedHandle(NPClist, ID, key) then
-                    OtherID = GetHandleId(LoadUnitHandle(NPClist, ID, key))
-                    RemoveSavedInteger(PUlist, OtherID, ID)
-                    GroupRemoveUnit(LoadGroupHandle(PUlist, OtherID, 0), u)
-                    SaveInteger(PUlist, OtherID, 1, LoadInteger(PUlist, OtherID, 1)-1)
-                    RemoveSavedHandle(NPClist, ID, key)
-                    RemoveSavedReal(NPClist, ID, key+1)
+                if NPClist[ID][key] then
+                    OtherID = NPClist[ID][key]
+                    PUlist[OtherID][ID] = nil
+                    GroupRemoveUnit(PUlist[OtherID][0], u)
+                    PUlist[OtherID][1] = (PUlist[OtherID][1] or 0)-1
+                    NPClist[ID][key] = nil
+                    NPClist[ID][key+1] = nil
                     key = key+2
                 else --last entry reached
                     break
                 end
             end
-            SaveInteger(NPClist, ID, 5, 0) --also set list length to zero
+            NPClist[ID][5] = 0 --also set list length to zero
             IssueImmediateOrder(u, "stop") --cancels even spellcast with casting time
-            IssuePointOrder(u, "move", LoadReal(NPClist, ID, 1), LoadReal(NPClist, ID, 2))
-            SaveReal(NPClist, ID, 3, TimeToPort)
+            IssuePointOrder(u, "move", NPClist[ID][1] or 0., NPClist[ID][2] or 0.)
+            NPClist[ID][3] = TimeToPort
             SetUnitInvulnerable(u, true)
             if HealUnitsOnReturn then
                 SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_MAX_LIFE))
                 SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MAX_MANA))
             end
         elseif status == 3 then
-            SaveInteger(NPClist, GetHandleId(u), 0, 0) --set status: out of combat
-            SaveReal(NPClist, GetHandleId(u), 3, 0.) --reset incombat and return timer
+            NPClist[u][0] = 0 --set status: out of combat
+            NPClist[u][3] = 0. --reset incombat and return timer
             SetUnitInvulnerable(u, false)
             if HealUnitsOnReturn then
                 SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_MAX_LIFE))
@@ -713,62 +713,62 @@ OnInit("ZTS", function ()
     end
 
     local function CampStatus()
-        if LoadInteger(NPClist, GetHandleId(GetEnumUnit()), 0) ~= 3 then
+        if (NPClist[GetEnumUnit()][0] or 0) ~= 3 then
             TBool = false
         end
     end
 
     local function IssueOrder()
         local npc      = GetEnumUnit() ---@type unit 
-        local npcID         = GetHandleId(npc) ---@type integer 
-        local status         = LoadInteger(NPClist, npcID, 0) ---@type integer 
+        local npcID         = npc ---@type unit 
+        local status         = NPClist[npcID][0] or 0 ---@type integer 
         local i         = 0 ---@type integer 
         local b         = true ---@type boolean 
         local target      = nil ---@type unit 
         if status == 1 then --unit in combat
-            SaveReal(NPClist, npcID, 3, LoadReal(NPClist, npcID, 3) + UpdateIntervall) --increase the combat timer
-            if IsUnitInRangeXY(npc, LoadReal(NPClist, npcID, 1), LoadReal(NPClist, npcID, 2), ReturnRange) and HaveSavedHandle(NPClist, npcID, 10) then
-                target = LoadUnitHandle(NPClist, npcID, 10)
-                if IsUnitInRangeXY(target, LoadReal(NPClist, npcID, 1), LoadReal(NPClist, npcID, 2), OrderReturnRange) then
+            NPClist[npcID][3] = (NPClist[npcID][3] or 0.) + UpdateIntervall --increase the combat timer
+            if IsUnitInRangeXY(npc, (NPClist[npcID][1] or 0.), (NPClist[npcID][2] or 0.), ReturnRange) and NPClist[npcID][10] then
+                target = NPClist[npcID][10]
+                if IsUnitInRangeXY(target, (NPClist[npcID][1] or 0.), (NPClist[npcID][2] or 0.), OrderReturnRange) then
                     if GetUnitCurrentOrder(npc) == 851983 or GetUnitCurrentOrder(npc) == 0 or GetUnitCurrentOrder(npc) == 851971 then --attack order or no order or smart order
                         EventBool = true
                         IssueTargetOrder(npc, "smart", target)
                         EventBool = false
                     end
                 else --target of unit to far away from camp position
-                    ForGroup(LoadGroupHandle(NPClist, npcID, 4), CampCommand) --set camp returning
+                    ForGroup(NPClist[npcID][4], CampCommand) --set camp returning
                 end
             else --unit left return range or killed all player units
-                ForGroup(LoadGroupHandle(NPClist, npcID, 4), CampCommand) --set camp returning
+                ForGroup(NPClist[npcID][4], CampCommand) --set camp returning
             end
         elseif status == 2 then --unit is returning
-            if LoadReal(NPClist, npcID, 3) > 0 then
-                if not IsUnitInRangeXY(npc, LoadReal(NPClist, npcID, 1), LoadReal(NPClist, npcID, 2), 35) then
-                    IssuePointOrder(npc, "move", LoadReal(NPClist, npcID, 1), LoadReal(NPClist, npcID, 2))
-                    SaveReal(NPClist, npcID, 3, LoadReal(NPClist, npcID, 3) - UpdateIntervall)
+            if (NPClist[npcID][3] or 0.) > 0 then
+                if not IsUnitInRangeXY(npc, (NPClist[npcID][1] or 0.), (NPClist[npcID][2] or 0.), 35) then
+                    IssuePointOrder(npc, "move", (NPClist[npcID][1] or 0.), (NPClist[npcID][2] or 0.))
+                    NPClist[npcID][3] = (NPClist[npcID][3] or 0.) - UpdateIntervall
                     SetUnitInvulnerable(npc, true)
                 else --unit within close range to camp position
                     if GetUnitCurrentOrder(npc) == 851986 then --move order
-                        SaveReal(NPClist, npcID, 3, LoadReal(NPClist, npcID, 3) - UpdateIntervall)
+                        NPClist[npcID][3] = (NPClist[npcID][3] or 0.) - UpdateIntervall
                         SetUnitInvulnerable(npc, true)
                     else --Something blocks the exact spot or the unit has arrived
-                        SaveInteger(NPClist, npcID, 0, 3) --set status: returned
+                        NPClist[npcID][0] = 3 --set status: returned
                         TBool = true
-                        ForGroup(LoadGroupHandle(NPClist, npcID, 4), CampStatus)
+                        ForGroup(NPClist[npcID][4], CampStatus)
                         if TBool then --all units in camp have status: returned to camp position
-                            ForGroup(LoadGroupHandle(NPClist, npcID, 4), CampCommand) --set camp ooc
+                            ForGroup(NPClist[npcID][4], CampCommand) --set camp ooc
                         else
                             PauseUnit(npc, true) --make sure it doesn't move or attack when invulnerable
                         end
                     end
                 end
             else --counter expired - perform instant teleport
-                SetUnitPosition(npc, LoadReal(NPClist, npcID, 1), LoadReal(NPClist, npcID, 2))
-                SaveInteger(NPClist, npcID, 0, 3) --set status: returned
+                SetUnitPosition(npc, (NPClist[npcID][1] or 0.), (NPClist[npcID][2] or 0.))
+                NPClist[npcID][0] = 3 --set status: returned
                 TBool = true
-                ForGroup(LoadGroupHandle(NPClist, npcID, 4), CampStatus)
+                ForGroup(NPClist[npcID][4], CampStatus)
                 if TBool then --all units in camp have status: returned to camp position
-                    ForGroup(LoadGroupHandle(NPClist, npcID, 4), CampCommand) --set camp ooc
+                    ForGroup(NPClist[npcID][4], CampCommand) --set camp ooc
                 else
                     PauseUnit(npc, true) --make sure it doesn't move or attack when invulnerable
                 end
@@ -789,10 +789,10 @@ OnInit("ZTS", function ()
 
     ---@param u unit
     local function RemovedUnitFound(u)
-        if HaveSavedInteger(NPClist, GetHandleId(u), 0) then
+        if NPClist[u][0] then
             ZTS_RemoveThreatUnit(u)
         end
-        if HaveSavedHandle(PUlist, GetHandleId(u), 0) then
+        if PUlist[u][0] then
             ZTS_RemovePlayerUnit(u)
         end
     end
@@ -800,10 +800,10 @@ OnInit("ZTS", function ()
     AddHook("RemoveUnit", RemovedUnitFound)
 
     local function OnDeath()
-        if HaveSavedInteger(NPClist, GetHandleId(GetTriggerUnit()), 0) then
+        if NPClist[GetTriggerUnit()][0] then
             ZTS_RemoveThreatUnit(GetTriggerUnit())
         end
-        if HaveSavedHandle(PUlist, GetHandleId(GetTriggerUnit()), 0) then
+        if PUlist[GetTriggerUnit()][0] then
             ZTS_RemovePlayerUnit(GetTriggerUnit())
         end
     end

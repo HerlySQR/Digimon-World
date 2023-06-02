@@ -2,7 +2,7 @@ Debug.beginFile("Megaseadramon\\BossFight")
 OnInit(function ()
     Require "BossFightUtils"
 
-    local boss = gg_unit_O006_0036
+    local boss = gg_unit_O006_0036 ---@type unit
 
     local icePrisonOrder = Orders.frostnova
     local spontaneousStormOrder = Orders.monsoon
@@ -17,7 +17,7 @@ OnInit(function ()
             elseif rad > 30 and rad <= 60 then
                 IssuePointOrderById(boss, spontaneousStormOrder, GetUnitX(u), GetUnitY(u))
             elseif rad > 60 and rad <= 90 then
-                IssuePointOrderById(boss, greatLightningOrder, GetUnitX(u), GetUnitY(u))
+                IssueTargetOrderById(boss, greatLightningOrder, u)
             elseif rad > 90 then
                 IssueImmediateOrderById(boss, coldStormOrder)
             end

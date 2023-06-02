@@ -1,3 +1,4 @@
+Debug.beginFile("Abilities\\Dash")
 OnInit(function ()
     Require "BossFightUtils"
 
@@ -15,7 +16,7 @@ OnInit(function ()
         local affected = Set.create()
         BossIsCasting(caster, true)
         local reached = 0
-        Timed.echo(function ()
+        Timed.echo(INTERVAL, function ()
             local x = GetUnitX(caster)
             local y = GetUnitY(caster)
             SetUnitAnimation(caster, "spell three")
@@ -52,7 +53,8 @@ OnInit(function ()
                 return true
             end
             reached = reached + 50
-        end, INTERVAL)
+        end)
     end)
 
 end)
+Debug.endFile()

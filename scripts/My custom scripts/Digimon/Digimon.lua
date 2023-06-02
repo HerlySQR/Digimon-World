@@ -206,10 +206,9 @@ OnInit("Digimon", function ()
         SetUnitPosition(self.root, x, y)
     end
 
-    ---@param order integer
-    ---@param x? number | unit
-    ---@param y? number
-    ---@return boolean
+    ---@overload fun(self: Digimon, order: integer)
+    ---@overload fun(self: Digimon,order: integer, w: widget)
+    ---@overload fun(self: Digimon,order: integer, x: number, y: number)
     function Digimon:issueOrder(order, x, y)
         if type(x) == "number" and y then
             return IssuePointOrderById(self.root, order, x, y)
@@ -586,27 +585,39 @@ OnInit("Digimon", function ()
     Digimon.issuePointOrderEvent = EventListener.create()
     Digimon.issueOrderEvent = EventListener.create()
 
-    RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER, function ()
-        local d1 = Digimon._instance[GetOrderedUnit()]
-        if d1 then
-            local d2 = Digimon._instance[GetOrderTargetUnit()]
-            if d2 then
-                Digimon.issueTargetOrderEvent:run(d1, GetIssuedOrderId(), d2)
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER)
+        TriggerAddAction(t, function ()
+            local d1 = Digimon._instance[GetOrderedUnit()]
+            if d1 then
+                local d2 = Digimon._instance[GetOrderTargetUnit()]
+                if d2 then
+                    Digimon.issueTargetOrderEvent:run(d1, GetIssuedOrderId(), d2)
+                end
             end
-        end
-    end)
-    RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, function ()
-        local d1 = Digimon._instance[GetOrderedUnit()]
-        if d1 then
-            Digimon.issuePointOrderEvent:run(d1, GetIssuedOrderId(), Vec2.new(GetOrderPointX(), GetOrderPointY()))
-        end
-    end)
-    RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_ORDER, function ()
-        local d1 = Digimon._instance[GetOrderedUnit()]
-        if d1 then
-            Digimon.issueOrderEvent:run(d1, GetIssuedOrderId())
-        end
-    end)
+        end)
+    end
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
+        TriggerAddAction(t, function ()
+            local d1 = Digimon._instance[GetOrderedUnit()]
+            if d1 then
+                Digimon.issuePointOrderEvent:run(d1, GetIssuedOrderId(), Vec2.new(GetOrderPointX(), GetOrderPointY()))
+            end
+        end)
+    end
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+        TriggerAddAction(t, function ()
+            local d1 = Digimon._instance[GetOrderedUnit()]
+            if d1 then
+                Digimon.issueOrderEvent:run(d1, GetIssuedOrderId())
+            end
+        end)
+    end
 
     -- Initialization
 

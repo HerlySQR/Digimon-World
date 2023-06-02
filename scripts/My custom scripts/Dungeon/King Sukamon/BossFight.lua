@@ -2,7 +2,7 @@ Debug.beginFile("King Sukamon\\BossFight")
 OnInit(function ()
     Require "BossFightUtils"
 
-    local boss = gg_unit_O00X_0101
+    local boss = gg_unit_O00X_0101 ---@type unit
     local owner = GetOwningPlayer(boss)
 
     local healingMinionsOrder = Orders.spiritwolf
@@ -24,7 +24,7 @@ OnInit(function ()
         end
     end, function ()
         -- Delay the use of the Healing Minions
-        BlzSetUnitAbilityCooldown(boss, FourCC('A0B8'), 0, 80.)
+        BlzStartUnitAbilityCooldown(boss, FourCC('A0B8'), 80.)
     end)
 end)
 Debug.endFile()

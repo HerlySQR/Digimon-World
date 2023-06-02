@@ -63,6 +63,9 @@ OnInit("Player Data", function ()
     ---@field bankItemCharges integer[]
     ---@field bankItemsMaxStock integer
     ---@field digimons integer[]
+    ---@field strLevels integer[]
+    ---@field agiLevels integer[]
+    ---@field intLevels integer[]
     ---@field isSaved integer[]
     ---@field bankDigimonsMaxStock integer
     ---@field inventories Inventory[]
@@ -123,6 +126,9 @@ OnInit("Player Data", function ()
             bankItemCharges = save and udg_SaveLoadBankItemsCharges or reverse(udg_SaveLoadBankItemsCharges),
             bankItemsMaxStock = udg_SaveLoadBankItemsMaxStock,
             digimons = save and udg_SaveLoadDigimons or reverse(udg_SaveLoadDigimons),
+            strLevels = save and udg_SaveLoadDigimonStrLevels or reverse(udg_SaveLoadDigimonStrLevels),
+            agiLevels = save and udg_SaveLoadDigimonAgiLevels or reverse(udg_SaveLoadDigimonAgiLevels),
+            intLevels = save and udg_SaveLoadDigimonIntLevels or reverse(udg_SaveLoadDigimonIntLevels),
             isSaved = save and udg_SaveLoadIsSaved or reverse(udg_SaveLoadIsSaved),
             bankDigimonsMaxStock = udg_SaveLoadBankDigimonsMaxStock,
             inventories = save and udg_SaveLoadInventories or reverse(udg_SaveLoadInventories),
@@ -139,6 +145,9 @@ OnInit("Player Data", function ()
         udg_SaveLoadBankItems = __jarray(0)
         udg_SaveLoadBankItemsCharges = __jarray(0)
         udg_SaveLoadDigimons = {}
+        udg_SaveLoadDigimonStrLevels = __jarray(0)
+        udg_SaveLoadDigimonAgiLevels = __jarray(0)
+        udg_SaveLoadDigimonIntLevels = __jarray(0)
         udg_SaveLoadIsSaved = __jarray(0)
         udg_SaveLoadBankDigimonsMaxStock = 0
         udg_SaveLoadInventories = {}
@@ -186,8 +195,36 @@ OnInit("Player Data", function ()
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, data.food)
                 SetBackpackItems(p, data.backpackItems, data.backpackItemCharges)
                 SetBankItems(p, data.bankItems, data.bankItemCharges, data.bankItemsMaxStock)
+                SetMaxSavedDigimons(p, data.bankDigimonsMaxStock)
                 for i = 1, #data.digimons do
                     local d = Digimon.create(p, data.digimons[i], 0, 0, bj_UNIT_FACING)
+                    local count1 = 0
+                    Timed.echo(0, function ()
+                        count1 = count1 + 1
+                        if count1 <= data.strLevels[i] then
+                            SelectHeroSkill(d.root, udg_STAMINA_TRAINING)
+                        else
+                            return true
+                        end
+                    end)
+                    local count2 = 0
+                    Timed.echo(0, function ()
+                        count2 = count2 + 1
+                        if count2 <= data.agiLevels[i] then
+                            SelectHeroSkill(d.root, udg_DEXTERITY_TRAINING)
+                        else
+                            return true
+                        end
+                    end)
+                    local count3 = 0
+                    Timed.echo(0, function ()
+                        count3 = count3 + 1
+                        if count3 <= data.intLevels[i] then
+                            SelectHeroSkill(d.root, udg_WISDOM_TRAINING)
+                        else
+                            return true
+                        end
+                    end)
                     data.inventories[i]:useTheItems(d.root)
                     --d:setLevel(math.max(1, data.levels[i])) -- Just in case
                     --d:setExp(d:getExp() + data.experiences[i])
@@ -199,7 +236,6 @@ OnInit("Player Data", function ()
                         SendToBank(p, d)
                     end
                 end
-                SetMaxSavedDigimons(p, data.bankDigimonsMaxStock)
                 if data.completedQuests ~= -1 then
                     SetCompletedQuests(p, data.completedQuests)
                     data.questsIds, data.questsProgresses, data.questsIsCompleted = GetQuestsData(p)
@@ -220,6 +256,9 @@ OnInit("Player Data", function ()
         udg_SaveLoadBankItemsCharges = __jarray(0)
         udg_SaveLoadBankItemsMaxStock = 0
         udg_SaveLoadDigimons = {}
+        udg_SaveLoadDigimonStrLevels = __jarray(0)
+        udg_SaveLoadDigimonAgiLevels = __jarray(0)
+        udg_SaveLoadDigimonIntLevels = __jarray(0)
         udg_SaveLoadIsSaved = __jarray(0)
         udg_SaveLoadBankDigimonsMaxStock = 0
         udg_SaveLoadInventories = {}
@@ -251,9 +290,7 @@ OnInit("Player Data", function ()
         local old
         old = AddHook(func, function (id)
             if not id or id == 0 then
-                print("Trying to get an invalid " .. thing .. ".\nMaybe you have an invalid or corrupted saved file.")
-                print(Debug.traceback())
-                return ""
+                error("Trying to get an invalid " .. thing .. ".\nMaybe you have an invalid or corrupted saved file.", 2)
             end
             return old(id)
         end)
@@ -263,9 +300,7 @@ OnInit("Player Data", function ()
     local old1
     old1 = AddHook("BlzGetAbilityExtendedTooltip", function (id, lvl)
         if not id or id == 0 then
-            print("Trying to get an invalid tooltip.\nMaybe you have an invalid or corrupted saved file.")
-            print(Debug.traceback())
-            return ""
+            error("Trying to get an invalid tooltip.\nMaybe you have an invalid or corrupted saved file.", 2)
         end
         return old1(id, lvl)
     end)

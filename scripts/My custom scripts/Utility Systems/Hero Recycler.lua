@@ -37,6 +37,7 @@ OnInit("HeroRecycler", function ()
     -- unit. You can add more actions to this or you can delete this module if you
     -- don't need it.
     local function HeroRecyclerResets(u)
+        UnitStripHeroLevel(u, GetHeroLevel(u) - 1)
         SetHeroXP(u, 0, false)
         SetUnitScale(u, BlzGetUnitRealField(u, UNIT_RF_SCALING_VALUE), 0., 0.)
         SetUnitVertexColor(u, 255, 255, 255, 255)

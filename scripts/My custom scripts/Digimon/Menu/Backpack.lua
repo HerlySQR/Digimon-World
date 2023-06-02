@@ -386,6 +386,7 @@ OnInit("Backpack", function ()
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
         AssignFrame(Backpack, start) -- 0
+        AddDefaultTooltip(Backpack, "Backpack", "Look your stored consummable items.")
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
         BlzFrameSetAllPoints(BackdropBackpack, Backpack)

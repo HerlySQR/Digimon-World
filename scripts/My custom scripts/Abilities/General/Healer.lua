@@ -1,3 +1,4 @@
+Debug.beginFile("Abilities\\Healer")
 OnInit(function ()
     Require "AbilityUtils"
 
@@ -8,7 +9,9 @@ OnInit(function ()
     local CasterEff = "Abilities\\Spells\\Orc\\Disenchant\\DisenchantSpecialArt.mdl"
     local TargetEff = "Abilities\\Spells\\Human\\Heal\\HealTarget.mdl"
 
-    RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_SPELL_EFFECT, function ()
+    local t = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+    TriggerAddAction(t, function ()
         local caster = GetSpellAbilityUnit()
         if GetUnitAbilityLevel(caster, Spell) > 0 then
             local eff = AddSpecialEffect(CasterEff, GetUnitX(caster), GetUnitY(caster))
@@ -29,3 +32,4 @@ OnInit(function ()
         end
     end)
 end)
+Debug.endFile()

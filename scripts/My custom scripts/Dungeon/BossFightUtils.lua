@@ -1,6 +1,8 @@
 Debug.beginFile("BossFightUtils")
 OnInit("BossFightUtils", function ()
     Require "AbilityUtils"
+    Require "ZTS"
+    Require "GameStatus"
 
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
@@ -31,9 +33,11 @@ OnInit("BossFightUtils", function ()
         assert(_G["gg_rct_" .. name .. "_1"], "The regions of " .. name .. " are not set")
         assert(boss, "The boss is not set")
 
+        ZTS_AddThreatUnit(boss, false)
+
         local owner = GetOwningPlayer(boss)
         local battlefield = {} ---@type rect[]
-        local interval = 2. -- seconds
+        local interval = (GameStatus.get() == GameStatus.ONLINE) and 2. or 5. -- seconds
 
         local initialPosX, initialPosY = GetUnitX(boss), GetUnitY(boss)
 
@@ -93,7 +97,7 @@ OnInit("BossFightUtils", function ()
                 if unitsInTheField:isEmpty() then
                     -- Reset the boss
                     reset()
-                    IssuePointOrderById(boss, Orders.move, initialPosX, initialPosY)
+                    IssuePointOrderById(boss, Orders.smart, initialPosX, initialPosY)
                 else
                     returned = false
                     local u = unitsInTheField:random()
@@ -110,7 +114,7 @@ OnInit("BossFightUtils", function ()
 
                 if not isInBattlefield then
                     reset()
-                    IssuePointOrderById(boss, Orders.move, initialPosX, initialPosY)
+                    IssuePointOrderById(boss, Orders.smart, initialPosX, initialPosY)
 
                     Timed.echo(0.5, 10., function ()
                         for i = 1, numRect do
@@ -131,7 +135,7 @@ OnInit("BossFightUtils", function ()
                 if not reduced then
                     if GetUnitState(boss, UNIT_STATE_LIFE) / GetUnitState(boss, UNIT_STATE_MAX_LIFE) < 0.5 then
                         reduced = true
-                        interval = 1.
+                        interval = (GameStatus.get() == GameStatus.ONLINE) and 1. or 3.
                     end
                 end
             else
@@ -173,6 +177,7 @@ OnInit("BossFightUtils", function ()
             Timed.echo(0.5, function ()
                 current = current + 0.5
                 if current >= interval then
+                    current = 0
                     BossFightActions()
                 end
             end)
@@ -184,7 +189,7 @@ OnInit("BossFightUtils", function ()
             TriggerAddCondition(t, Condition(function () return GetTriggerUnit() == boss end))
             TriggerAddAction(t, function ()
                 local u = GetAttacker()
-                if not unitsInTheField:contains(u) then
+                if IsUnitType(u, UNIT_TYPE_HERO) and u ~= boss and not unitsInTheField:contains(u) then
                     IssueTargetOrderById(u, Orders.attack, u)
                     ErrorMessage("You can't attack the boss from there", GetOwningPlayer(u))
                 end
@@ -197,7 +202,7 @@ OnInit("BossFightUtils", function ()
             TriggerAddCondition(t, Condition(function () return GetSpellTargetUnit() == boss end))
             TriggerAddAction(t, function ()
                 local u = GetSpellAbilityUnit()
-                if not unitsInTheField:contains(u) then
+                if IsUnitType(u, UNIT_TYPE_HERO) and u ~= boss and not unitsInTheField:contains(u) then
                     IssueTargetOrderById(u, Orders.attack, u)
                     ErrorMessage("You can't attack the boss from there", GetOwningPlayer(u))
                 end

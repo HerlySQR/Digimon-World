@@ -28,6 +28,9 @@ OnInit("PressSaveOrLoad", function ()
     local TooltipDigimonIconT = {} ---@type framehandle[]
     local TooltipDigimonItemsT = {} ---@type framehandle[]
     local TooltipDigimonLevelT = {} ---@type framehandle[]
+    local TooltipDigimonStamina = {} ---@type framehandle[] 
+    local TooltipDigimonDexterity = {} ---@type framehandle[] 
+    local TooltipDigimonWisdom = {} ---@type framehandle[] 
     local TooltipUsing = nil ---@type framehandle
     local TooltipSaved = nil ---@type framehandle
     local TooltipBackpack = nil ---@type framehandle
@@ -131,6 +134,9 @@ OnInit("PressSaveOrLoad", function ()
                     BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r" .. s)
                     BlzFrameSetTexture(TooltipDigimonIconT[index], BlzGetAbilityIcon(data.digimons[i]), 0, true)
                     BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level " .. I2S(data.levels[i]) .. "|r")
+                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r" .. data.strLevels[i])
+                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r" .. data.agiLevels[i])
+                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r" .. data.intLevels[i])
                 else
                     local index
                     if currentUsing < MAX_DIGIMONS then
@@ -143,6 +149,9 @@ OnInit("PressSaveOrLoad", function ()
                     BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r")
                     BlzFrameSetTexture(TooltipDigimonIconT[index], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
                     BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level 0|r")
+                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r")
+                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r")
+                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r")
                 end
             end
             BlzFrameSetText(TooltipSaved, "|cff00eeffSaved:|r |cffffff00Max. " .. data.bankDigimonsMaxStock .. "|r")
@@ -425,7 +434,7 @@ OnInit("PressSaveOrLoad", function ()
 
             TooltipDigimonItemsT[i] = BlzCreateFrameByType("TEXT", "name", TooltipDigimonT[i], "", 0)
             BlzFrameSetPoint(TooltipDigimonItemsT[i], FRAMEPOINT_TOPLEFT, TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, 0.045000, -0.0032500)
-            BlzFrameSetPoint(TooltipDigimonItemsT[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.0045000, 0.0000)
+            BlzFrameSetPoint(TooltipDigimonItemsT[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.0045000, 0.010000)
             BlzFrameSetText(TooltipDigimonItemsT[i], "|cff00ffffItems:|r")
             BlzFrameSetEnable(TooltipDigimonItemsT[i], false)
             BlzFrameSetScale(TooltipDigimonItemsT[i], 1.00)
@@ -438,6 +447,30 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetEnable(TooltipDigimonLevelT[i], false)
             BlzFrameSetScale(TooltipDigimonLevelT[i], 1.00)
             BlzFrameSetTextAlignment(TooltipDigimonLevelT[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+
+            TooltipDigimonStamina[i] = BlzCreateFrameByType("TEXT", "name", TooltipDigimonT[i], "", 0)
+            BlzFrameSetPoint(TooltipDigimonStamina[i], FRAMEPOINT_TOPLEFT, TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, 0.045000, -0.045750)
+            BlzFrameSetPoint(TooltipDigimonStamina[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.071500, 0.0000)
+            BlzFrameSetText(TooltipDigimonStamina[i], "")
+            BlzFrameSetEnable(TooltipDigimonStamina[i], false)
+            BlzFrameSetScale(TooltipDigimonStamina[i], 1.00)
+            BlzFrameSetTextAlignment(TooltipDigimonStamina[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+            TooltipDigimonDexterity[i] = BlzCreateFrameByType("TEXT", "name", TooltipDigimonT[i], "", 0)
+            BlzFrameSetPoint(TooltipDigimonDexterity[i], FRAMEPOINT_TOPLEFT, TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, 0.078500, -0.045750)
+            BlzFrameSetPoint(TooltipDigimonDexterity[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.038000, 0.0000)
+            BlzFrameSetText(TooltipDigimonDexterity[i], "")
+            BlzFrameSetEnable(TooltipDigimonDexterity[i], false)
+            BlzFrameSetScale(TooltipDigimonDexterity[i], 1.00)
+            BlzFrameSetTextAlignment(TooltipDigimonDexterity[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+            TooltipDigimonWisdom[i] = BlzCreateFrameByType("TEXT", "name", TooltipDigimonT[i], "", 0)
+            BlzFrameSetPoint(TooltipDigimonWisdom[i], FRAMEPOINT_TOPLEFT, TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, 0.11200, -0.045750)
+            BlzFrameSetPoint(TooltipDigimonWisdom[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.0045000, 0.0000)
+            BlzFrameSetText(TooltipDigimonWisdom[i], "")
+            BlzFrameSetEnable(TooltipDigimonWisdom[i], false)
+            BlzFrameSetScale(TooltipDigimonWisdom[i], 1.00)
+            BlzFrameSetTextAlignment(TooltipDigimonWisdom[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
         end
 
         TooltipUsing = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
