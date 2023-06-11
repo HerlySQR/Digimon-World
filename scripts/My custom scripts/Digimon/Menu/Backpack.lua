@@ -165,7 +165,9 @@ OnInit("Backpack", function ()
             end
             local data = table.remove(PlayerItems[p], i) ---@type ItemData
 
-            SetItemCharges(CreateItem(data.id, d:getPos()), data.charges)
+            local m = CreateItem(data.id, d:getPos())
+            SetItemPlayer(m, p, false)
+            SetItemCharges(m, data.charges)
 
             if p == LocalPlayer then
                 BlzFrameSetText(BackpackText, "Use an item")
@@ -528,6 +530,13 @@ OnInit("Backpack", function ()
         if AllowedItems[GetItemTypeId(m)] then
             local u = GetManipulatingUnit()
             local p = GetOwningPlayer(u)
+
+            if GetPlayerController(GetItemPlayer(m)) == MAP_CONTROL_USER and GetItemPlayer(m) ~= p then
+                UnitRemoveItem(u, m)
+                ErrorMessage("This item belongs to another player", p)
+                return
+            end
+
             local items = PlayerItems[p]
 
             local id = GetItemTypeId(m)

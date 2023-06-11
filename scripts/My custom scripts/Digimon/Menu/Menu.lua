@@ -95,7 +95,6 @@ OnInit("Menu", function ()
         -- Current has access by Name for it (Parent hierachy is a little bit different from V1.31)
         BlzFrameSetParent(BlzGetFrameByName("CommandBarFrame", 0), HideSimpleFrame)
         AddFrameToMenu(HideSimpleFrame)]]
-
     end)
 
 end)

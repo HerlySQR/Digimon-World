@@ -3,6 +3,7 @@ OnInit("Player Data", function ()
     Require "PlayerDigimons"
     Require "AddHook"
     Require "Quests"
+    Require "WorldBounds"
 
     do
         ---@class Inventory
@@ -162,19 +163,21 @@ OnInit("Player Data", function ()
     ---@param p player
     function RestartData(p)
         for i = 0, udg_MAX_DIGIMONS - 1 do
-            pcall(function ()
-                RemoveFromBank(p, i, true)
-            end)
+            pcall(RemoveFromBank, p, i, true)
         end
         for i = 0, udg_MAX_SAVED_DIGIMONS - 1 do
-            pcall(function ()
-                RemoveSavedDigimon(p, i)
-            end)
+            pcall(RemoveSavedDigimon, p, i)
         end
         SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, 0)
         SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, 0)
         SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, 0)
         SetBackpackItems(p, nil)
+        SetBankItems(p)
+        EnumItemsInRect(WorldBounds.rect, nil, function ()
+            if GetItemPlayer(GetEnumItem()) == p then
+                RemoveItem(GetEnumItem())
+            end
+        end)
         ClearDigimons(p)
         SetQuestsData(p)
     end

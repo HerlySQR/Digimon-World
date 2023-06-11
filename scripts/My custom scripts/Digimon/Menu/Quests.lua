@@ -6,7 +6,6 @@ OnInit("Quests", function ()
     Require "ErrorMessage"
     Require "Timed"
     Require "AbilityUtils"
-    local BitSet = Require "BitSet" ---@type BitSet
     Require "Menu"
 
     local QuestButton = nil ---@type framehandle
@@ -28,7 +27,6 @@ OnInit("Quests", function ()
     local PressedQuest = -1
     local QUEST_MARK = "Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl"
     local MAX_QUESTS = udg_MAX_QUESTS
-    local MAX_UNIQUE_QUESTS = udg_MAX_UNIQUE_QUESTS - 1
     local DO_QUEST_AGAIN_DELAY = udg_DO_QUEST_AGAIN_DELAY
 
     ---@class QuestTemplate
@@ -322,55 +320,6 @@ OnInit("Quests", function ()
                 DisplayTextToPlayer(p, 0, 0, "|cffFFCC00QUEST COMPLETED:|r |cff00ff00" .. PlayerQuests[p][id].name .. "|r")
             end
         end
-    end
-
-    ---@param p player
-    ---@param value integer
-    function SetCompletedQuests(p, value)
-        local bitset = BitSet.create(value)
-        for i = 0, MAX_UNIQUE_QUESTS do
-            if QuestTemplates[i] then
-                local alpha
-                if bitset:get(i) then
-                    PlayerQuests[p][i] = {
-                        name = QuestTemplates[i].name,
-                        description = QuestTemplates[i].description,
-                        owner = p,
-                        id = i,
-                        level = QuestTemplates[i].level,
-                        completed = true,
-                        progress = 0
-                    }
-                    alpha = 0
-                else
-                    PlayerQuests[p][i] = nil
-                    alpha = 255
-                end
-                if p == LocalPlayer then
-                    if QuestTemplates[i].questMark then
-                        BlzSetSpecialEffectAlpha(QuestTemplates[i].questMark, alpha)
-                    end
-                end
-            end
-        end
-    end
-
-    ---@version >1.2
-    ---@param bit integer
-    ---@return string
-    function GetCompletedQuestNames(bit)
-        local bitset = BitSet.create(bit)
-        local result = ""
-        for i = 0, MAX_UNIQUE_QUESTS do
-            if bitset:get(i) then
-                local name = QuestTemplates[i].name
-                if name:len() >= 11 then
-                    name = name:sub(1, 11) .. "..."
-                end
-                result = result .. "-" .. name .. "\n"
-            end
-        end
-        return result
     end
 
     ---@param p player

@@ -2,7 +2,6 @@ Debug.beginFile("BossFightUtils")
 OnInit("BossFightUtils", function ()
     Require "AbilityUtils"
     Require "ZTS"
-    Require "GameStatus"
 
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
@@ -25,11 +24,22 @@ OnInit("BossFightUtils", function ()
         return isCasting[caster]
     end
 
+    OnInit.final("BossFightUtils_OnlyOne", function ()
+        Require "PlayerUtils"
+        local count = 0
+        ForForce(FORCE_PLAYING, function ()
+            count = count + 1
+        end)
+        return count == 1
+    end)
+
     ---@param name string
     ---@param boss unit
     ---@param actions fun(u: unit)
     ---@param onStart? function
     function InitBossFight(name, boss, actions, onStart)
+        local onlyOne = Require "BossFightUtils_OnlyOne" ---@type boolean
+
         assert(_G["gg_rct_" .. name .. "_1"], "The regions of " .. name .. " are not set")
         assert(boss, "The boss is not set")
 
@@ -37,7 +47,7 @@ OnInit("BossFightUtils", function ()
 
         local owner = GetOwningPlayer(boss)
         local battlefield = {} ---@type rect[]
-        local interval = (GameStatus.get() == GameStatus.ONLINE) and 2. or 5. -- seconds
+        local interval = onlyOne and 2. or 5. -- seconds
 
         local initialPosX, initialPosY = GetUnitX(boss), GetUnitY(boss)
 
@@ -68,7 +78,7 @@ OnInit("BossFightUtils", function ()
                 SetUnitState(boss, UNIT_STATE_LIFE, GetUnitState(boss, UNIT_STATE_MAX_LIFE))
                 SetUnitState(boss, UNIT_STATE_MANA, GetUnitState(boss, UNIT_STATE_MAX_MANA))
                 UnitResetCooldown(boss)
-                interval = 2.
+                interval = onlyOne and 2. or 5. -- seconds
                 attacking = false
                 reduced = false
                 returned = true
@@ -87,8 +97,9 @@ OnInit("BossFightUtils", function ()
                 -- Check if are units in the battlefield
                 for i = 1, numRect do
                     ForUnitsInRect(battlefield[i], function (u)
-                        if u ~= boss and UnitAlive(u) and IsUnitType(u, UNIT_TYPE_HERO) then
+                        if u ~= boss and UnitAlive(u) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
                             unitsInTheField:addSingle(u)
+                            print(u)
                         end
                     end)
                     isInBattlefield = isInBattlefield or RectContainsUnit(battlefield[i], boss)
@@ -100,7 +111,15 @@ OnInit("BossFightUtils", function ()
                     IssuePointOrderById(boss, Orders.smart, initialPosX, initialPosY)
                 else
                     returned = false
-                    local u = unitsInTheField:random()
+                    local u = nil
+                    local maxThreat = -1
+                    for u2 in unitsInTheField:elements() do
+                        local threat = ZTS_GetThreatUnitAmount(boss, u2)
+                        if threat > maxThreat then
+                            u = u2
+                            maxThreat = threat
+                        end
+                    end
                     if not attacking then
                         attacking = true
                         local x, y = GetUnitX(u), GetUnitY(u)
@@ -135,7 +154,7 @@ OnInit("BossFightUtils", function ()
                 if not reduced then
                     if GetUnitState(boss, UNIT_STATE_LIFE) / GetUnitState(boss, UNIT_STATE_MAX_LIFE) < 0.5 then
                         reduced = true
-                        interval = (GameStatus.get() == GameStatus.ONLINE) and 1. or 3.
+                        interval = onlyOne and 1. or 3.
                     end
                 end
             else

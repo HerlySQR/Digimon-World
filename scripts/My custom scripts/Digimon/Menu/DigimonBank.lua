@@ -331,6 +331,13 @@ OnInit("DigimonBank", function ()
         end
     end
 
+    function Bank:clearItems()
+        for i = #self.savedItems, 1, -1 do
+            RemoveItem(self.savedItems[i])
+            self.savedItems[i] = nil
+        end
+    end
+
     function Bank:resetCaster()
         SetUnitOwner(self.caster, Digimon.PASSIVE, false)
         if self.p == LocalPlayer then
@@ -424,7 +431,10 @@ OnInit("DigimonBank", function ()
 
         if not GetRandomUnitOnRange(GetItemX(target), GetItemY(target), MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
             ErrorMessage("A digimon should be nearby the item", p)
+        elseif GetPlayerController(GetItemPlayer(target)) == MAP_CONTROL_USER and GetItemPlayer(target) ~= p then
+            ErrorMessage("This item belongs to another player", p)
         else
+            SetItemPlayer(target, p, false)
             bank:saveItem(target)
             if p == LocalPlayer then
                 UpdateItems()
@@ -1859,17 +1869,22 @@ OnInit("DigimonBank", function ()
         return items, charges, bank.savedItemsStock
     end
 
+    ---@overload fun(p: player)
     ---@param p player
     ---@param items integer[]
     ---@param charges integer[]
     ---@param stock integer
     function SetBankItems(p, items, charges, stock)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
-        bank.savedItemsStock = stock
-        for i = 1, #items do
-            local m = CreateItem(items[i], WorldBounds.maxX, WorldBounds.maxY)
-            SetItemCharges(m, charges[i])
-            bank:saveItem(m)
+        if items then
+            bank.savedItemsStock = stock
+            for i = 1, #items do
+                local m = CreateItem(items[i], WorldBounds.maxX, WorldBounds.maxY)
+                SetItemCharges(m, charges[i])
+                bank:saveItem(m)
+            end
+        else
+            bank:clearItems()
         end
         if p == LocalPlayer then
             UpdateItems()
