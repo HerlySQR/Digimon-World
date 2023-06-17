@@ -5,6 +5,16 @@
 
 do
     MissileEffect = setmetatable({}, {})
+    ---@class MissileEffect
+    ---@field x number
+    ---@field y number
+    ---@field z number
+    ---@field yaw number
+    ---@field pitch number
+    ---@field roll number
+    ---@field size number
+    ---@field effect effect
+    ---@field private array MissileEffect[]
     local mt = getmetatable(MissileEffect)
     mt.__index = mt
 
@@ -21,11 +31,16 @@ do
         self = nil
     end
 
+    ---@param effect effect
+    ---@param scale number
     function mt:scale(effect, scale)
         self.size = scale
         BlzSetSpecialEffectScale(effect, scale)
     end
 
+    ---@param yaw number
+    ---@param pitch number
+    ---@param roll number
     function mt:orient(yaw, pitch, roll)
         self.yaw   = yaw
         self.pitch = pitch
@@ -42,6 +57,10 @@ do
         end
     end
 
+    ---@param x number
+    ---@param y number
+    ---@param z number
+    ---@return boolean
     function mt:move(x, y, z)
         if not (x > WorldBounds.maxX or x < WorldBounds.minX or y > WorldBounds.maxY or y < WorldBounds.minY) then
             BlzSetSpecialEffectPosition(self.effect, x, y, z)
@@ -55,6 +74,12 @@ do
         return false
     end
     
+    ---@param model string
+    ---@param dx number
+    ---@param dy number
+    ---@param dz number
+    ---@param scale number
+    ---@return effect
     function mt:attach(model, dx, dy, dz, scale)
         local this = {}
         
@@ -76,6 +101,7 @@ do
         return this.effect
     end
     
+    ---@param effect effect
     function mt:detach(effect)
         for i = 1, #self.array do
             local this = self.array[i]
@@ -88,26 +114,37 @@ do
         end
     end
     
+    ---@param red integer
+    ---@param green integer
+    ---@param blue integer
     function mt:setColor(red, green, blue)
         BlzSetSpecialEffectColor(self.effect, red, green, blue)
     end
     
+    ---@param real number
     function mt:timeScale(real)
         BlzSetSpecialEffectTimeScale(self.effect, real)
     end
     
+    ---@param integer integer
     function mt:alpha(integer)
         BlzSetSpecialEffectAlpha(self.effect, integer)
     end
     
+    ---@param integer integer
     function mt:playerColor(integer)
         BlzSetSpecialEffectColorByPlayer(self.effect, Player(integer))
     end
     
+    ---@param integer integer
     function mt:animation(integer)
         BlzPlaySpecialEffect(self.effect, ConvertAnimType(integer))
     end
     
+    ---@param x number
+    ---@param y number
+    ---@param z number
+    ---@return MissileEffect
     function mt:create(x, y, z)
         local this = {}
         setmetatable(this, mt)

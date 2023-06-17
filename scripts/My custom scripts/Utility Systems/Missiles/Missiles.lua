@@ -34,15 +34,22 @@ OnInit("Missiles", function ()
     local location = Location(0., 0.)
     local rect = Rect(0., 0., 0., 0.)
 
+    ---@param x number
+    ---@param y number
+    ---@return number
     local function GetLocZ(x, y)
         MoveLocation(location, x, y)
         return GetLocationZ(location)
     end
     
+    ---@param unit unit
+    ---@return number
     local function GetUnitZ(unit)
         return GetLocZ(GetUnitX(unit), GetUnitY(unit)) + GetUnitFlyHeight(unit)
     end
     
+    ---@param unit unit
+    ---@param z number
     local function SetUnitZ(unit, z)
         SetUnitFlyHeight(unit, z - GetLocZ(GetUnitX(unit), GetUnitY(unit)), 0)
     end
@@ -52,13 +59,15 @@ OnInit("Missiles", function ()
     end
     
     do
-        Pool = setmetatable({}, {})
+        Pool = setmetatable({}, {}) ---@type Pool
+        ---@class Pool
         local mt = getmetatable(Pool)
         mt.__index = mt
         
         local player = Player(PLAYER_NEUTRAL_PASSIVE)
         local group = CreateGroup()
         
+        ---@param unit unit
         function mt:recycle(unit)
             if GetUnitTypeId(unit) == DUMMY then
                 GroupAddUnit(group, unit)
@@ -69,6 +78,11 @@ OnInit("Missiles", function ()
             end
         end
         
+        ---@param x number
+        ---@param y number
+        ---@param z number
+        ---@param face number
+        ---@return unit
         function mt:retrieve(x, y, z, face)
             if BlzGroupGetSize(group) > 0 then
                 bj_lastCreatedUnit = FirstOfGroup(group)
@@ -87,6 +101,8 @@ OnInit("Missiles", function ()
             return bj_lastCreatedUnit
         end
         
+        ---@param unit unit
+        ---@param delay number
         function mt:recycleTimed(unit, delay)
             if GetUnitTypeId(unit) == DUMMY then
                 local timer = CreateTimer()
@@ -113,7 +129,16 @@ OnInit("Missiles", function ()
     end
     
     do
-        Coordinates = setmetatable({}, {})
+        Coordinates = setmetatable({}, {}) ---@type Coordinates
+        ---@class Coordinates
+        ---@field x number
+        ---@field y number
+        ---@field z number
+        ---@field ref Coordinates
+        ---@field square number
+        ---@field distance number
+        ---@field angle number
+        ---@field slope number
         local mt = getmetatable(Coordinates)
         mt.__index = mt
 
@@ -121,6 +146,8 @@ OnInit("Missiles", function ()
             self = nil
         end
 
+        ---@param a Coordinates
+        ---@param b Coordinates
         function mt:math(a, b)
             local dx
             local dy
@@ -152,12 +179,17 @@ OnInit("Missiles", function ()
             end
         end
 
+        ---@param a Coordinates
+        ---@param b Coordinates
         function mt:link(a, b)
             a.ref = b
             b.ref = a
             self:math(a, b)
         end
 
+        ---@param toX number
+        ---@param toY number
+        ---@param toZ number
         function mt:move(toX, toY, toZ)
             self.x = toX
             self.y = toY
@@ -167,6 +199,10 @@ OnInit("Missiles", function ()
             end
         end
 
+        ---@param x number
+        ---@param y number
+        ---@param z number
+        ---@return Coordinates
         function mt:create(x, y, z)
             local c = {}
             setmetatable(c, mt)
@@ -180,7 +216,56 @@ OnInit("Missiles", function ()
     -- -------------------------------------------------------------------------- --
     --                                  Missiles                                  --
     -- -------------------------------------------------------------------------- --
-    Missiles = setmetatable({}, {})
+    Missiles = setmetatable({}, {}) ---@type Missiles
+    ---@class Missiles
+    ---@field launched boolean
+    ---@field collideZ boolean
+    ---@field finished boolean
+    ---@field paused boolean
+    ---@field roll boolean
+    ---@field source unit
+    ---@field target unit
+    ---@field owner player
+    ---@field private dummy unit
+    ---@field open number
+    ---@field height number
+    ---@field veloc number
+    ---@field acceleration number
+    ---@field collision number
+    ---@field damage number
+    ---@field travel number
+    ---@field turn number
+    ---@field data integer
+    ---@field type integer
+    ---@field tileset integer
+    ---@field private pkey integer
+    ---@field private index integer
+    ---@field private Model string
+    ---@field private Duration number
+    ---@field private Scale number
+    ---@field private Speed number
+    ---@field private Arc number
+    ---@field private Curve number
+    ---@field private Vision number
+    ---@field private TimeScale number
+    ---@field private Alpha integer
+    ---@field private playercolor integer
+    ---@field private Animation integer
+    ---@field private origin Coordinates
+    ---@field private impact Coordinates
+    ---@field private effect MissileEffect
+    ---@field onHit fun(u: unit): boolean?
+    ---@field onMissile fun(m: Missiles): boolean?
+    ---@field onDestructable fun(d: destructable): boolean?
+    ---@field onItem fun(itm: item): boolean?
+    ---@field onCliff fun(): boolean?
+    ---@field onTerrain fun(): boolean?
+    ---@field onTileset fun(typ: integer): boolean?
+    ---@field onFinish fun(): boolean?
+    ---@field onBoundaries fun(): boolean?
+    ---@field onPause fun(): boolean?
+    ---@field onResume fun(): boolean?
+    ---@field onRemove function
     local mt = getmetatable(Missiles)
     mt.__index = mt
 
@@ -193,7 +278,7 @@ OnInit("Missiles", function ()
     local pid = -1
     local last = 0
     local dilation = 1
-    local array = {}
+    local array = {} ---@type table<Missiles, table<widget, boolean>>
     local missiles = {}
     local frozen = {}
     local keys = {}
@@ -552,7 +637,8 @@ OnInit("Missiles", function ()
     end
 
 
-    -- -------------------------- Model of the missile -------------------------- --
+    --- -------------------------- Model of the missile -------------------------- --
+    ---@param effect string
     function mt:model(effect)
         DestroyEffect(self.effect.effect)
         self.effect.path = effect
@@ -562,26 +648,30 @@ OnInit("Missiles", function ()
         BlzSetSpecialEffectYaw(self.effect.effect, self.cA)
     end
 
-    -- ----------------------------- Curved movement ---------------------------- --
+    --- ----------------------------- Curved movement ---------------------------- --
+    ---@param value number
     function mt:curve(value)
         self.open = Tan(value * bj_DEGTORAD) * self.origin.distance
         self.Curve = value
     end
 
-    -- ----------------------------- Arced Movement ----------------------------- --
+    --- ----------------------------- Arced Movement ----------------------------- --
+    ---@param value number
     function mt:arc(value)
         self.height = Tan(value * bj_DEGTORAD) * self.origin.distance / 4
         self.Arc = value
     end
 
-    -- ------------------------------ Effect scale ------------------------------ --
+    --- ------------------------------ Effect scale ------------------------------ --
+    ---@param value number
     function mt:scale(value)
         self.effect.size = value
         self.effect:scale(self.effect.effect, value)
         self.Scale = value
     end
 
-    -- ------------------------------ Missile Speed ----------------------------- --
+    --- ------------------------------ Missile Speed ----------------------------- --
+    ---@param value number
     function mt:speed(value)
         self.veloc = value * PERIOD
         self.Speed = value
@@ -598,7 +688,8 @@ OnInit("Missiles", function ()
         end
     end
 
-    -- ------------------------------- Flight Time ------------------------------ --
+    --- ------------------------------- Flight Time ------------------------------ --
+    ---@param value number
     function mt:duration(value)
         self.veloc = RMaxBJ(0.00000001, (self.origin.distance - self.travel) * PERIOD / RMaxBJ(0.00000001, value))
         self.Duration = value
@@ -615,7 +706,8 @@ OnInit("Missiles", function ()
         end
     end
     
-    -- ------------------------------- Sight Range ------------------------------ --
+    --- ------------------------------- Sight Range ------------------------------ --
+    ---@param sightRange number
     function mt:vision(sightRange)
         self.Vision = sightRange
         
@@ -637,31 +729,35 @@ OnInit("Missiles", function ()
         end
     end
 
-    -- ------------------------------- Time Scale ------------------------------- --
+    --- ------------------------------- Time Scale ------------------------------- --
+    ---@param real number
     function mt:timeScale(real)
         self.TimeScale = real
         self.effect:timeScale(real)
     end
 
-    -- ---------------------------------- Alpha --------------------------------- --
+    --- ---------------------------------- Alpha --------------------------------- --
+    ---@param integer integer
     function mt:alpha(integer)
         self.Alpha = integer
         self.effect:alpha(integer)
     end
 
-    -- ------------------------------ Player Color ------------------------------ --
+    --- ------------------------------ Player Color ------------------------------ --
+    ---@param integer integer
     function mt:playerColor(integer)
         self.playercolor = integer
         self.effect:playerColor(integer)
     end
 
-    -- -------------------------------- Animation ------------------------------- --
+    --- -------------------------------- Animation ------------------------------- --
+    ---@param integer integer
     function mt:animation(integer)
         self.Animation = integer
         self.effect:animation(integer)
     end
 
-    -- --------------------------- Bounce and Deflect --------------------------- --
+    --- --------------------------- Bounce and Deflect --------------------------- --
     function mt:bounce()
         self.origin:move(self.x, self.y, self.z - GetLocZ(self.x, self.y))
         
@@ -670,6 +766,9 @@ OnInit("Missiles", function ()
         self.finished = false
     end
 
+    ---@param tx number
+    ---@param ty number
+    ---@param tz number
     function mt:deflect(tx, ty, tz)
         local locZ = GetLocZ(self.x, self.y) 
         
@@ -689,6 +788,7 @@ OnInit("Missiles", function ()
         self.finished = false
     end
     
+    ---@param unit unit
     function mt:deflectTarget(unit)
         self:deflect(GetUnitX(unit), GetUnitY(unit), self.toZ)
         self.target = unit
@@ -699,38 +799,52 @@ OnInit("Missiles", function ()
         array[self] = {}
     end
 
+    ---@param widget widget
     function mt:flush(widget)
         if widget then
             array[self][widget] = nil
         end
     end
 
+    ---@param widget widget
+    ---@return boolean
     function mt:hitted(widget)
         return array[self][widget]
     end
 
-    -- ----------------------- Missile attachment methods ----------------------- --
+    --- ----------------------- Missile attachment methods ----------------------- --
+    ---@param model string
+    ---@param dx number
+    ---@param dy number
+    ---@param dz number
+    ---@param scale number
+    ---@return effect
     function mt:attach(model, dx, dy, dz, scale)
         return self.effect:attach(model, dx, dy, dz, scale)
     end
     
+    ---@param effect effect
     function mt:detach(effect)
         if effect then
             self.effect:detach(effect)
         end
     end
     
-    -- ------------------------------ Missile Pause ----------------------------- --
+    --- ------------------------------ Missile Pause ----------------------------- --
+    ---@param flag boolean
     function mt:pause(flag)
         self:OnResume(flag)
     end
     
-    -- ---------------------------------- Color --------------------------------- --
+    --- ---------------------------------- Color --------------------------------- --
+    ---@param red integer
+    ---@param green integer
+    ---@param blue integer
     function mt:color(red, green, blue)
         self.effect:setColor(red, green, blue)
     end
 
-    -- ------------------------------ Reset members ----------------------------- --
+    --- ------------------------------ Reset members ----------------------------- --
     function mt:reset()
         self.launched = false
         self.collideZ = false
@@ -779,14 +893,14 @@ OnInit("Missiles", function ()
         self.onRemove = nil
     end
     
-    -- -------------------------------- Terminate ------------------------------- --
+    --- -------------------------------- Terminate ------------------------------- --
     function mt:terminate()
         Timed.call(function ()
             self:OnRemove()
         end)
     end
 
-    -- -------------------------- Destroys the missile -------------------------- --
+    --- -------------------------- Destroys the missile -------------------------- --
     function mt:remove(i)
         if self.paused then
             self:OnPause()
@@ -815,7 +929,7 @@ OnInit("Missiles", function ()
         return i - 1
     end
     
-    -- ---------------------------- Missiles movement --------------------------- --
+    --- ---------------------------- Missiles movement --------------------------- --
     function mt:move()
         local i = 0
         local j = 0
@@ -855,7 +969,7 @@ OnInit("Missiles", function ()
         last = i
     end
 
-    -- --------------------------- Launch the Missile --------------------------- --
+    --- --------------------------- Launch the Missile --------------------------- --
     function mt:launch()
         if not self.launched and self.allocated then
             self.launched = true
@@ -877,7 +991,14 @@ OnInit("Missiles", function ()
         end
     end
 
-    -- --------------------------- Main Creator method -------------------------- --
+    --- --------------------------- Main Creator method -------------------------- --
+    ---@param x number
+    ---@param y number
+    ---@param z number
+    ---@param toX number
+    ---@param toY number
+    ---@param toZ number
+    ---@return Missiles
     function mt:create(x, y, z, toX, toY, toZ)
         local this = {}
         setmetatable(this, mt)

@@ -26,13 +26,15 @@ OnInit(function ()
             damageDone = 0
             IssueImmediateOrderById(boss, forestRageOrder)
         end
+    end, function ()
+        damageDone = 0
     end)
 
     do
         local t = CreateTrigger()
         TriggerRegisterVariableEvent(t, "udg_AfterDamageEvent", EQUAL, 1.00)
         TriggerAddAction(t, function ()
-            if udg_DamageEventSource == boss then
+            if udg_DamageEventTarget == boss then
                 damageDone = damageDone + udg_DamageEventAmount
             end
         end)

@@ -47,7 +47,7 @@ OnInit("BossFightUtils", function ()
 
         local owner = GetOwningPlayer(boss)
         local battlefield = {} ---@type rect[]
-        local interval = onlyOne and 2. or 5. -- seconds
+        local interval = onlyOne and 5. or 2. -- seconds
 
         local initialPosX, initialPosY = GetUnitX(boss), GetUnitY(boss)
 
@@ -78,14 +78,20 @@ OnInit("BossFightUtils", function ()
                 SetUnitState(boss, UNIT_STATE_LIFE, GetUnitState(boss, UNIT_STATE_MAX_LIFE))
                 SetUnitState(boss, UNIT_STATE_MANA, GetUnitState(boss, UNIT_STATE_MAX_MANA))
                 UnitResetCooldown(boss)
-                interval = onlyOne and 2. or 5. -- seconds
+                interval = onlyOne and 5. or 2. -- seconds
                 attacking = false
                 reduced = false
                 returned = true
             end
         end
 
-        local function BossFightActions()
+        if onStart then
+            onStart()
+        end
+
+        local current = 0
+        Timed.echo(1., function ()
+            current = current + 1.
             if UnitAlive(boss) then
                 if dead then
                     dead = false
@@ -99,7 +105,6 @@ OnInit("BossFightUtils", function ()
                     ForUnitsInRect(battlefield[i], function (u)
                         if u ~= boss and UnitAlive(u) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
                             unitsInTheField:addSingle(u)
-                            print(u)
                         end
                     end)
                     isInBattlefield = isInBattlefield or RectContainsUnit(battlefield[i], boss)
@@ -110,25 +115,27 @@ OnInit("BossFightUtils", function ()
                     reset()
                     IssuePointOrderById(boss, Orders.smart, initialPosX, initialPosY)
                 else
-                    returned = false
-                    local u = nil
-                    local maxThreat = -1
-                    for u2 in unitsInTheField:elements() do
-                        local threat = ZTS_GetThreatUnitAmount(boss, u2)
-                        if threat > maxThreat then
-                            u = u2
-                            maxThreat = threat
+                    if current >= interval then
+                        returned = false
+                        local u = nil
+                        local maxThreat = -1
+                        for u2 in unitsInTheField:elements() do
+                            local threat = ZTS_GetThreatUnitAmount(boss, u2)
+                            if threat > maxThreat then
+                                u = u2
+                                maxThreat = threat
+                            end
                         end
+                        if not attacking then
+                            attacking = true
+                            local x, y = GetUnitX(u), GetUnitY(u)
+                            Timed.call(2., function ()
+                                IssuePointOrderById(boss, Orders.attack, x, y)
+                            end)
+                        end
+                        -- Spells
+                        actions(u)
                     end
-                    if not attacking then
-                        attacking = true
-                        local x, y = GetUnitX(u), GetUnitY(u)
-                        Timed.call(2., function ()
-                            IssuePointOrderById(boss, Orders.attack, x, y)
-                        end)
-                    end
-                    -- Spells
-                    actions(u)
                 end
 
                 if not isInBattlefield then
@@ -154,7 +161,7 @@ OnInit("BossFightUtils", function ()
                 if not reduced then
                     if GetUnitState(boss, UNIT_STATE_LIFE) / GetUnitState(boss, UNIT_STATE_MAX_LIFE) < 0.5 then
                         reduced = true
-                        interval = onlyOne and 1. or 3.
+                        interval = onlyOne and 3. or 1.
                     end
                 end
             else
@@ -185,21 +192,9 @@ OnInit("BossFightUtils", function ()
                     end)
                 end
             end
-        end
-
-        if onStart then
-            onStart()
-        end
-
-        local current = 0
-        OnInit.final(function ()
-            Timed.echo(0.5, function ()
-                current = current + 0.5
-                if current >= interval then
-                    current = 0
-                    BossFightActions()
-                end
-            end)
+            if current >= interval then
+                current = 0
+            end
         end)
 
         do

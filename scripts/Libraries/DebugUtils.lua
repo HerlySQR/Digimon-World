@@ -637,19 +637,19 @@ do; local _, codeLoc = pcall(error, "", 2) --get line number where DebugUtils be
         --Also overwrites coroutine.create and coroutine.wrap to let stack traces point to the function executed within instead of the function creating the coroutine.
         if settings.USE_TRY_ON_TRIGGERADDACTION then
             local originalTriggerAddAction = TriggerAddAction
-            TriggerAddAction = function(whichTrigger, actionFunc)
+            TriggerAddAction = function(whichTrigger, actionFunc) ---@type fun(whichTrigger: trigger, actionFunc: function)
                 return originalTriggerAddAction(whichTrigger, getTryWrapper(actionFunc))
             end
         end
         if settings.USE_TRY_ON_TIMERSTART then
             local originalTimerStart = TimerStart
-            TimerStart = function(whichTimer, timeout, periodic, handlerFunc)
+            TimerStart = function(whichTimer, timeout, periodic, handlerFunc) ---@type fun(whichTimer: timer, timeout: number, periodic: boolean, handlerFunc: function)
                 originalTimerStart(whichTimer, timeout, periodic, getTryWrapper(handlerFunc))
             end
         end
         if settings.USE_TRY_ON_CONDITION then
             local originalCondition = Condition
-            Condition = function(func)
+            Condition = function(func) ---@type fun(actionFunc: fun(): boolean?)
                 return originalCondition(getTryWrapper(func))
             end
             Filter = Condition
@@ -657,12 +657,12 @@ do; local _, codeLoc = pcall(error, "", 2) --get line number where DebugUtils be
         if settings.USE_TRY_ON_COROUTINES then
             local originalCoroutineCreate = coroutine.create
             ---@diagnostic disable-next-line: duplicate-set-field
-            coroutine.create = function(f)
+            coroutine.create = function(f) ---@type fun(f: async fun(...): ...)
                 return originalCoroutineCreate(getTryWrapper(f))
             end
             local originalCoroutineWrap = coroutine.wrap
             ---@diagnostic disable-next-line: duplicate-set-field
-            coroutine.wrap = function(f)
+            coroutine.wrap = function(f) ---@type fun(f: async fun(...): ...)
                 return originalCoroutineWrap(getTryWrapper(f))
             end
         end

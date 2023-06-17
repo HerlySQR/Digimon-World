@@ -51,16 +51,25 @@ if Debug then Debug.beginFile("MapBounds") end
 
 
 OnInit("WorldBounds", function ()
-    MapBounds = setmetatable({}, {})
-    WorldBounds = setmetatable({}, getmetatable(MapBounds))
 
-    local mt = getmetatable(MapBounds)
+    ---@class Bounds
+    ---@field centerX number
+    ---@field centerY number
+    ---@field minX number
+    ---@field minY number
+    ---@field maxX number
+    ---@field maxY number
+    ---@field rect rect
+    ---@field region region
+    local mt = {}
     mt.__index = mt
 
+    ---@return number
     function mt:getRandomX()
         return GetRandomReal(self.minX, self.maxX)
     end
 
+    ---@return number
     function mt:getRandomY()
         return GetRandomReal(self.minY, self.maxY)
     end
@@ -77,37 +86,49 @@ OnInit("WorldBounds", function ()
         return v
     end
 
+    ---@param x number
+    ---@param margin number?
+    ---@return number
     function mt:getBoundedX(x, margin)
         return GetBoundedValue(self, x, "minX", "maxX", margin)
     end
 
+    ---@param y number
+    ---@param margin number?
+    ---@return number
     function mt:getBoundedY(y, margin)
         return GetBoundedValue(self, y, "minY", "maxY", margin)
     end
 
+    ---@param x number
+    ---@return boolean
     function mt:containsX(x)
         return self:getBoundedX(x) == x
     end
 
+    ---@param y number
+    ---@return boolean
     function mt:containsY(y)
         return self:getBoundedY(y) == y
     end
 
-    local function InitData(bounds)
-        --bounds.region = CreateRegion()
-        bounds.minX = GetRectMinX(bounds.rect)
-        bounds.minY = GetRectMinY(bounds.rect)
-        bounds.maxX = GetRectMaxX(bounds.rect)
-        bounds.maxY = GetRectMaxY(bounds.rect)
+    ---@param rect rect
+    ---@return Bounds
+    local function InitData(rect)
+        local bounds = setmetatable({}, mt)
+        bounds.region = CreateRegion()
+        bounds.rect = rect
+        bounds.minX = GetRectMinX(rect)
+        bounds.minY = GetRectMinY(rect)
+        bounds.maxX = GetRectMaxX(rect)
+        bounds.maxY = GetRectMaxY(rect)
         bounds.centerX = (bounds.minX + bounds.maxX) / 2.00
         bounds.centerY = (bounds.minY + bounds.maxY) / 2.00
-        --RegionAddRect(bounds.region, bounds.rect)
+        RegionAddRect(bounds.region, bounds.rect)
+        return bounds
     end
 
-    MapBounds.rect = bj_mapInitialPlayableArea
-    WorldBounds.rect = GetWorldBounds()
-
-    InitData(MapBounds)
-    InitData(WorldBounds)
+    MapBounds = InitData(bj_mapInitialPlayableArea)
+    WorldBounds = InitData(GetWorldBounds())
 end)
 if Debug then Debug.endFile() end
