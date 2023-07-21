@@ -27,6 +27,7 @@
 ]]--
 
 OnInit("NewBonusUtils", function ()
+    Require "NewBonus"
     -- -------------------------------------------------------------------------- --
     --                                Configuration                               --
     -- -------------------------------------------------------------------------- --
@@ -100,7 +101,7 @@ OnInit("NewBonusUtils", function ()
         this.unit = unit
         this.item = item
         this.amount = AddUnitBonus(unit, type, amount)
-        this.type = NewBonus.linkType
+        this.type = type
         k = k + 1
         items[k] = this
     end
@@ -113,7 +114,7 @@ OnInit("NewBonusUtils", function ()
         this.timed = timed
         this.duration = duration
         this.amount = AddUnitBonus(unit, type, amount)
-        this.type = NewBonus.linkType
+        this.type = type
         key = key + 1
         array[key] = this
         
@@ -130,7 +131,7 @@ OnInit("NewBonusUtils", function ()
         this.timed = timed
         this.buff = buff
         this.amount = AddUnitBonus(unit, type, amount)
-        this.type = NewBonus.linkType
+        this.type = type
         key = key + 1
         array[key] = this
         
@@ -153,7 +154,9 @@ OnInit("NewBonusUtils", function ()
         end
     end
     
-    RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM, function()
+    local t = CreateTrigger()
+    t = TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DROP_ITEM)
+    TriggerAddAction(t, function()
         local item = GetManipulatedItem()
         local i = 1
         local this

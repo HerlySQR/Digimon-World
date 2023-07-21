@@ -61,6 +61,7 @@ OnInit("Hotkeys", function ()
     local frameSelected = -1
     local frameWithKey = {} ---@type table<oskeytype, table<integer, integer>>
     local edits = {} ---@type table<oskeytype, table<integer, integer>>
+    local referencePair = {} ---@type table<integer, {[1]: oskeytype, [2]: integer}>
 
     local HotkeyButton = nil ---@type framehandle
     local BackdropHotkeyButton = nil ---@type framehandle
@@ -149,8 +150,15 @@ OnInit("Hotkeys", function ()
 
     local function HotkeySaveFunc()
         if GetTriggerPlayer() == LocalPlayer then
-            for k, v in pairs(edits) do
-                frameWithKey[k] = v
+            for key, list in pairs(edits) do
+                for meta, id in pairs(list) do
+                    local pair = referencePair[id]
+                    if pair then
+                        frameWithKey[pair[1]][pair[2]] = nil
+                    end
+                    referencePair[id] = {key, meta}
+                end
+                frameWithKey[key] = list
             end
             edits = {}
             BlzFrameSetText(HotkeyMessage, "|cff00FF00Hotkeys saved|r")
@@ -171,7 +179,7 @@ OnInit("Hotkeys", function ()
         local t = nil ---@type trigger
         local start = 0
 
-        HotkeyButton = BlzCreateFrame("IconButtonTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
+        HotkeyButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         BlzFrameSetAbsPoint(HotkeyButton, FRAMEPOINT_TOPLEFT, 0.475000, 0.180000)
         BlzFrameSetAbsPoint(HotkeyButton, FRAMEPOINT_BOTTOMRIGHT, 0.510000, 0.145000)
         t = CreateTrigger()
@@ -388,10 +396,10 @@ OnInit("Hotkeys", function ()
 
     ---@param p player
     function LoadHotkeys(p)
-        local load = GetSyncedData(p, FileIO.Read, SaveFile.getFolder() .. "\\Hotkeys.pld")
-        if load:len() > 1 then
+        local loaded = GetSyncedData(p, FileIO.Read, SaveFile.getFolder() .. "\\Hotkeys.pld")
+        if loaded:len() > 1 then
             local savecode = Savecode.create()
-            if savecode:Load(p, load, 1) then
+            if savecode:Load(p, loaded, 1) then
                 local length1 = savecode:Decode(MAX_KEYS) -- load the length of the key list
                 for _ = 1, length1 do
                     local key = oskeyConverted[savecode:Decode(MAX_KEYS)] -- load the key
@@ -404,6 +412,7 @@ OnInit("Hotkeys", function ()
                         local id  = savecode:Decode(MAX_KEYS) -- load the id
                         if p == LocalPlayer then
                             frameWithKey[key][meta] = id
+                            referencePair[id] = {key, meta}
                         end
                     end
                 end

@@ -1,81 +1,203 @@
-//TESH.scrollpos=12
+//TESH.scrollpos=0
 //TESH.alwaysfold=0
+//############################## ~AbilityEvent~ ##################################//
+//##
+//## Version:       1.0
+//## System:        Axarion
+//## IndexerUtils:  Axarion
+//## AutoIndex:     grim001
+//## AIDS:          Jesus4Lyf
+//## UnitIndexer:   Nestharus
+//##
+//############################### DESCRIPTION ###################################//
+//##
+//## This system allows to track when a unit acquires an ability.
+//## 
+//############################### HOW DOES IT WORK ##############################//
+//## 
+//## To use this system create a struct and implement the AbilityEvent module.
+//## In the structs onInit  method you have to define the ability, for which the
+//## event is executed:
+//##    
+//##        set ability   = YourId 
+//##
+//## If you want all abilities to register use:
+//##
+//##        set ability   = ABILITIES_ALL
+//##
+//## Another way is to create a static constant variable called ability.
+//## 
+//################################# METHODS #####################################//
+//##   
+//##    You can implement these functions into your struct. They are 
+//##    all optional. 
+//##
+//##    - happens when a unit enters which has the ability.
+//##        static method onIndexWithAbility takes unit u returns nothing
+//## 
+//##    - happens when a unit leaves the map with the ability    
+//##        static method onDeindexWithAbility takes unit u returns nothing
+//##
+//##    - happens when the ability is added to the unit
+//##        static method onAddAbility takes unit u, integer id returns nothing
+//##    
+//##    - happens when the ability is removed from the unit
+//##        static method onRemoveAbility takes unit u, integer id returns nothing
+//##
+//##    - happens when the ability is skilled by a hero
+//##        static method onSkillAbility takes unit u, integer id returns nothing
+//##
+//################################################################################//
+
+library AbilityEvent initializer onInit requires IndexerUtils
+
 globals
-    leaderboard udg_HandleBoard
-    group DebugGroup = CreateGroup()
+    // decide yourself if you want to use hooks or UnitAddAbilityEx and 
+    // UnitRemoveAbilityEx instead of the calling UnitAddAbility and 
+    // UnitRemoveAbility. 
+    private constant boolean USE_HOOKS  = true 
+    
+//###################### DON'T TOUCH ANYTHING BELOW! ##############################//    
+    
+    
+    private trigger ADD                 = CreateTrigger()
+    private trigger REM                 = CreateTrigger()
+    private trigger SKILL               = CreateTrigger()
+    private unit    currUnit            = null
+    private integer currId              = 0
+    public  key     ABILITIES_ALL
 endglobals
 
-function HandleCounter_L2I takes location P returns integer
-    return GetHandleId(P)
-endfunction
-
-function HandleCounter_Update takes nothing returns nothing
-        local unit U
-        local integer i = 0
-        local integer j = 1
-        local integer id
-        local location array P
-        local real result=0
-        loop
-                exitwhen i >= 50
-                set i = i + 1
-                set P[i] = Location(0,0)
-                set id = HandleCounter_L2I(P[i])
-                set result = result + (id-0x100000)
-        endloop
-        set result = result/i-i/2
-        loop
-                call RemoveLocation(P[i])
-                set P[i] = null
-                exitwhen i <= 1
-                set i = i - 1
-        endloop
-        
-        call GroupEnumUnitsSelected(DebugGroup, Player(0), null)
-        set U = FirstOfGroup(DebugGroup)
-        call LeaderboardSetItemValue(udg_HandleBoard, 0, R2I(result))
-        call LeaderboardSetItemLabel(udg_HandleBoard, 1, "Combat State")
-        if ZTS_GetCombatState(U) then
-            call LeaderboardSetItemValue(udg_HandleBoard, 1, 1)
+module AbilityEvent
+    static if thistype.onIndexWithAbility.exists then
+        static method onUnitIndex takes unit u returns nothing
+            if GetUnitAbilityLevel(u, .ability) != 0 or ability == ABILITIES_ALL then
+                call onIndexWithAbility(u)
+            endif
+        endmethod
+    endif
+    
+    static if thistype.onDeindexWithAbility.exists then
+        static method onUnitDeindex takes unit u returns nothing
+            if GetUnitAbilityLevel(u, ability) != 0 or ability == ABILITIES_ALL then
+                call onDeindexWithAbility(u)
+            endif
+        endmethod
+    endif
+    
+    static if thistype.onSkillAbility.exists then
+        private static method REGISTER_SKILL takes nothing returns boolean
+            if GetLearnedSkill() == ability or ability == ABILITIES_ALL then
+                call onSkillAbility(GetTriggerUnit(), GetLearnedSkill())
+            endif
+            return false
+        endmethod
+    endif
+    
+    static if thistype.onAddAbility.exists then
+        private static method REGISTER_ADD takes nothing returns boolean
+            if currId == ability or ability == ABILITIES_ALL then
+                call onAddAbility(currUnit, currId)
+            endif
+            return false
+        endmethod
+    endif
+    
+    static if thistype.onRemoveAbility.exists then
+        private static method REGISTER_REM takes nothing returns boolean
+            if currId == ability or ability == ABILITIES_ALL then
+                call onRemoveAbility(currUnit, currId)
+            endif
+            return false
+        endmethod 
+    endif
+    
+    static if thistype.onAddAbility.exists then
+        static if thistype.onRemoveAbility.exists then
+            static if thistype.onSkillAbility.exists then
+                private static method onInit takes nothing returns nothing
+                    call TriggerAddCondition(ADD,   function thistype.REGISTER_ADD)
+                    call TriggerAddCondition(REM,   function thistype.REGISTER_REM)
+                    call TriggerAddCondition(SKILL, function thistype.REGISTER_SKILL)
+                    call TriggerRegisterAnyUnitEventBJ(SKILL, EVENT_PLAYER_HERO_SKILL)
+                endmethod
+            else
+                private static method onInit takes nothing returns nothing
+                    call TriggerAddCondition(ADD,   function thistype.REGISTER_ADD)
+                    call TriggerAddCondition(REM,   function thistype.REGISTER_REM)
+                endmethod
+            endif
+        elseif static if thistype.onSkillAbility.exists then
+            private static method onInit takes nothing returns nothing
+                call TriggerAddCondition(ADD,   function thistype.REGISTER_ADD)
+                call TriggerAddCondition(SKILL, function thistype.REGISTER_SKILL)
+                call TriggerRegisterAnyUnitEventBJ(SKILL, EVENT_PLAYER_HERO_SKILL)
+            endmethod
         else
-            call LeaderboardSetItemValue(udg_HandleBoard, 1, 0)
+            private static method onInit takes nothing returns nothing
+                call TriggerAddCondition(ADD,   function thistype.REGISTER_ADD)
+            endmethod
         endif
-        if GetOwningPlayer(U) == Player(PLAYER_NEUTRAL_AGGRESSIVE) then
-            loop
-                exitwhen j > 7
-                if ZTS_GetThreatSlotUnit(U, j) != null then
-                    call LeaderboardSetItemLabel(udg_HandleBoard, 1+j, "Slot "+I2S(j)+" - "+I2S(GetHandleId(ZTS_GetThreatSlotUnit(U, j)))+":")
-                    call LeaderboardSetItemValue(udg_HandleBoard, 1+j, R2I(ZTS_GetThreatSlotAmount(U, j)))
-                else
-                    call LeaderboardSetItemLabel(udg_HandleBoard, 1+j, "Slot "+I2S(j)+" - "+"<empty>"+":")
-                    call LeaderboardSetItemValue(udg_HandleBoard, 1+j, 0)
-                endif
-                set j = j + 1
-            endloop
+    elseif thistype.onRemoveAbility.exists then
+        static if thistype.onSkillAbility.exists then
+            private static method onInit takes nothing returns nothing
+                call TriggerAddCondition(REM,   function thistype.REGISTER_REM)
+                call TriggerAddCondition(SKILL, function thistype.REGISTER_SKILL)
+                call TriggerRegisterAnyUnitEventBJ(SKILL, EVENT_PLAYER_HERO_SKILL)
+            endmethod
+        else
+            private static method onInit takes nothing returns nothing
+                call TriggerAddCondition(REM,   function thistype.REGISTER_REM)
+            endmethod
         endif
-        set U = null
-endfunction
+    elseif thistype.onSkillAbility.exists then
+        private static method onInit takes nothing returns nothing
+            call TriggerAddCondition(REM,   function thistype.REGISTER_REM)
+            call TriggerAddCondition(SKILL, function thistype.REGISTER_SKILL)
+            call TriggerRegisterAnyUnitEventBJ(SKILL, EVENT_PLAYER_HERO_SKILL)
+        endmethod
+    endif
+    
+    implement IndexerUtils
+endmodule
 
-function HandleCounter_Actions takes nothing returns nothing
-        set udg_HandleBoard = CreateLeaderboard()
-        call LeaderboardSetLabel(udg_HandleBoard, "threat-table for selected:")
-        call PlayerSetLeaderboard(GetLocalPlayer(),udg_HandleBoard)
-        call LeaderboardDisplay(udg_HandleBoard,true)
-        call LeaderboardAddItem(udg_HandleBoard,"(Debug) Handles",0,Player(0))
-        call LeaderboardAddItem(udg_HandleBoard, "Combat Status", 0, Player(1))
-        call LeaderboardAddItem(udg_HandleBoard, "Slot 1", 0, Player(2))
-        call LeaderboardAddItem(udg_HandleBoard, "Slot 2", 0, Player(3))
-        call LeaderboardAddItem(udg_HandleBoard, "Slot 3", 0, Player(4))
-        call LeaderboardAddItem(udg_HandleBoard, "Slot 4", 0, Player(5))
-        call LeaderboardAddItem(udg_HandleBoard, "Slot 5", 0, Player(6))
-        call LeaderboardAddItem(udg_HandleBoard, "Slot 6", 0, Player(7))
-        call LeaderboardAddItem(udg_HandleBoard, "Slot 7", 0, Player(8))
-        call LeaderboardSetSizeByItemCount(udg_HandleBoard,8)
-        call HandleCounter_Update()
-        call TimerStart(GetExpiredTimer(),0.05,true,function HandleCounter_Update)
-endfunction
+static if USE_HOOKS then
+    private function hook_UnitAddAbility takes unit u, integer id returns nothing
+        set currUnit = u
+        set currId   = id
+        call TriggerEvaluate(ADD)
+        set currUnit = null
+        set currId   = 0
+    endfunction
 
-//===========================================================================
-function InitTrig_Debug_Board takes nothing returns nothing
-        call TimerStart(CreateTimer(),0,false,function HandleCounter_Actions)
-endfunction
+    private function hook_UnitRemoveAbility takes unit u, integer id returns nothing
+        set currUnit = u
+        set currId   = id
+        call TriggerEvaluate(REM)
+        set currUnit = null
+        set currId   = 0
+    endfunction
+
+    hook UnitAddAbility hook_UnitAddAbility
+    hook UnitRemoveAbility hook_UnitRemoveAbility
+else
+    function UnitAddAbilityEx takes unit u, integer id returns nothing
+        call UnitAddAbility(u, id)
+        set currUnit = u
+        set currId   = id
+        call TriggerEvaluate(ADD)
+        set currUnit = null
+        set currId   = 0
+    endfunction
+    
+    function UnitRemoveAbilityEx takes unit u, integer id returns nothing
+        call UnitRemoveAbility(u, id)
+        set currUnit = u
+        set currId   = id
+        call TriggerEvaluate(REM)
+        set currUnit = null
+        set currId   = 0
+    endfunction
+endif
+
+endlibrary

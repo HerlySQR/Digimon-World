@@ -58,16 +58,26 @@ OnInit("PreciseWait", function(require) --https://www.hiveworkshop.com/threads/t
     
     local oldAdd
     oldAdd = hook("TriggerAddAction", function(trig, func)
-
         --Return a function that will actually be added as the triggeraction, which itself wraps the actual function in a coroutine.
         return oldAdd(trig, function() coroutine.resume(coroutine.create(func)) end)
     end, _ACTION_PRIORITY)
     
     local oldTimer
     oldTimer = hook("TimerStart", function(whichTimer, timeout, periodic, handlerFunc)
-
         --Return a function that will actually be added as the triggeraction, which itself wraps the actual function in a coroutine.
         return oldTimer(whichTimer, timeout, periodic, function() coroutine.resume(coroutine.create(handlerFunc)) end)
+    end, _ACTION_PRIORITY)
+    
+    local oldForForce
+    oldForForce = hook("ForForce", function(whatForce, handlerFunc)
+        --Return a function that will actually be added as the triggeraction, which itself wraps the actual function in a coroutine.
+        oldForForce(whatForce, function() coroutine.resume(coroutine.create(handlerFunc)) end)
+    end, _ACTION_PRIORITY)
+    
+    local oldForGroup
+    oldForGroup = hook("ForGroup", function(whatGroup, handlerFunc)
+        --Return a function that will actually be added as the triggeraction, which itself wraps the actual function in a coroutine.
+        oldForGroup(whatGroup, function() coroutine.resume(coroutine.create(handlerFunc)) end)
     end, _ACTION_PRIORITY)
     
 end)

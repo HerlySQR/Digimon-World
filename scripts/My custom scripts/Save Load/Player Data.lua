@@ -239,12 +239,7 @@ OnInit("Player Data", function ()
                         SendToBank(p, d)
                     end
                 end
-                if data.completedQuests ~= -1 then
-                    SetCompletedQuests(p, data.completedQuests)
-                    data.questsIds, data.questsProgresses, data.questsIsCompleted = GetQuestsData(p)
-                else
-                    SetQuestsData(p, data.questsIds, data.questsProgresses, data.questsIsCompleted)
-                end
+                SetQuestsData(p, data.questsIds, data.questsProgresses, data.questsIsCompleted)
             end
         end
     end

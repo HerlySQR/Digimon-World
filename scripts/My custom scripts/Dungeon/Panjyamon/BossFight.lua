@@ -52,8 +52,10 @@ OnInit(function ()
     end
 
     Timed.echo(0.5, function ()
-        for j = 1, #battlefield do
-            ForUnitsInRect(battlefield[j], CheckEnemies)
+        if UnitAlive(boss) then
+            for j = 1, #battlefield do
+                ForUnitsInRect(battlefield[j], CheckEnemies)
+            end
         end
     end)
 end)

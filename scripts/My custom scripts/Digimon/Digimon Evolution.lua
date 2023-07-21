@@ -39,7 +39,7 @@ OnInit("DigimonEvolution", function ()
             return
         end
         set:addSingle(toEvolve)
-        if set:size() == 1 then
+        if not evolve:hasAbility(EvolveAbil) then
             evolve:removeAbility(EvolveAbilDis)
             evolve:addAbility(EvolveAbil)
         end

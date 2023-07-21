@@ -7,7 +7,7 @@ OnInit(function ()
     local RANGE = 1000.
     local AREA = 128.
     local CASTER_MODEL = "war3mapImported\\Drimogemon.mdl"
-    local INTERVAL = 0.03125
+    local INTERVAL = 0.02
     local Z_DIFF = INTERVAL * 160.
     local PITCH_DIFF = (math.pi/4) * INTERVAL
 
@@ -116,7 +116,7 @@ OnInit(function ()
                     DestroyEffect(eff)
 
                     ShowUnitShow(caster)
-                    Timed.call(5., function () BossIsCasting(caster, false) end)
+                    BossIsCasting(caster, false)
                 end)
             end)
         end)

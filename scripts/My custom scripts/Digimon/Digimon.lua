@@ -567,7 +567,6 @@ OnInit("Digimon", function ()
     local delay = 0.5
 
     Digimon.selectionEvent:register(function (p, d)
-        xpcall(function ()
         clicks[d] = clicks[d] + 1
         Timed.call(delay, function ()
             clicks[d] = math.max(clicks[d] - 1, 0)
@@ -576,7 +575,6 @@ OnInit("Digimon", function ()
             clicks[d] = 0
             Digimon.doubleclickEvent:run(p, d)
         end
-        end, print)
     end)
 
     -- Order events

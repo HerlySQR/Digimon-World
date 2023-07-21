@@ -40,7 +40,7 @@ OnInit(function ()
             if contains and IsTerrainWalkable(checkX, checkY) then
                 toX, toY = checkX, checkY
                 break
-            end 
+            end
         end
 
         if not toX then

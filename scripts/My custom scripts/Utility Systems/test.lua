@@ -1,9 +1,3 @@
-OnInit(function ()
-
-    Timed.echo(1., function ()
-        print("Sí")
-        for i = 0, 1 do
-            BlzFrameSetVisible(BlzGetFrameByName("AllianceSlot", i), false)
-        end
-    end)
-end)
+xpcall(function ()
+    for k, v in pairs(os.date("*t")) do print(k, v) end
+end, print)

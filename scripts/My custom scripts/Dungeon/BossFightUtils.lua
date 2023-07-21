@@ -37,7 +37,8 @@ OnInit("BossFightUtils", function ()
     ---@param boss unit
     ---@param actions fun(u: unit)
     ---@param onStart? function
-    function InitBossFight(name, boss, actions, onStart)
+    ---@param onReset? function
+    function InitBossFight(name, boss, actions, onStart, onReset)
         local onlyOne = Require "BossFightUtils_OnlyOne" ---@type boolean
 
         assert(_G["gg_rct_" .. name .. "_1"], "The regions of " .. name .. " are not set")
@@ -82,6 +83,9 @@ OnInit("BossFightUtils", function ()
                 attacking = false
                 reduced = false
                 returned = true
+                if onReset then
+                    onReset()
+                end
             end
         end
 
@@ -185,6 +189,9 @@ OnInit("BossFightUtils", function ()
                         SetUnitOwner(boss, owner, true)
                         ReviveHero(boss, initialPosX, initialPosY, true)
                         ShowUnit(boss, true)
+
+                        returned = false
+                        reset()
 
                         if onStart then
                             onStart()

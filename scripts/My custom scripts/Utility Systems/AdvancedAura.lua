@@ -1,0 +1,74 @@
+if Debug then Debug.beginFile("AdvancedAura") end
+--############################## ~AdvancedAura~ ######################################--
+--##
+--## Based on Axarion's AdvancedAura 1.0 https://www.hiveworkshop.com/threads/advancedaura.179937/
+--##
+--############################### DESCRIPTION ###################################--
+--##
+--## This System allows to  create  custom auras. It was  made, because ability
+--## only auras arent very flexible and have bad filters. Also normal auras are 
+--## limited to specific bonuses.
+--##
+--############################### HOW DOES IT WORK ##############################--
+--## 
+--## To use this system create an instance and set the fields and methods.
+--## In the onInit method you have to define the ability for the aura and  
+--## the buffs ability if you use UnitAuraBuff. When a unit acquires the ability the 
+--## aura will be added automatically so you don't have to do it yourself. To define 
+--## the ability just use:
+--##    
+--##        .abilityId = FourCC('AURA')
+--##
+--## The aura will be paused if the unit is a hero and it dies. If a unit leaves 
+--## the map the aura will be removed, so you don't have to worry about leaking
+--## instances.
+--## 
+--################################# METHODS #####################################--
+--##   
+--##    You can implement these functions into your instance. They are 
+--##    all optional. 
+--##
+--##    - happens when a new aura is created (define the bonuses here)
+--##        auraInit()
+--## 
+--##    - happens when a unit enters the aura     
+--##        onAffect(unit u)
+--##
+--##    - happens when a unit leaves the aura   
+--##        onUnaffect(u)
+--##    
+--##    - happens when a unit stayed in the aura
+--##        onLoop(u)
+--##
+--##    - checks if the unit is a valid target for the aura
+--##        onFilter(u) returns boolean
+--##
+--##    - happens when the aura leveled up (increase the bonuses here)
+--##        onLevelUp()
+--##
+--##    - define the AoE here
+--##        getAuraAoE() returns real
+--##
+--################################# API & Variables ##############################--
+--##
+--##    - the unit owning the aura:
+--##        .owner
+--##
+--##    - the level of the aura:
+--##        .level
+--##
+--##    - the aura ability
+--##        .abilityId
+--##
+--##    - the auras group with all currently affected units
+--##        .InstanceGroup
+OnInit("AdvanceAura", function ()
+    
+    ---@class AdvanceAura
+    ---@field instanceGroup group
+    ---@field index integer
+    ---@field level integer
+    ---@field pause boolean
+    ---@field affectedCount integer
+end)
+if Debug then Debug.endFile() end

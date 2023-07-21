@@ -5,6 +5,7 @@ OnInit("AbilityUtils", function ()
     Require "Missiles"
     Require "Knockback"
     local MCT = Require "MCT" ---@type MCT
+    Require "NewBonus"
 
     LOCUST_ID = FourCC('Aloc')
     CROW_FORM_ID = FourCC('Arav')
@@ -64,7 +65,7 @@ OnInit("AbilityUtils", function ()
         local base = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
         local dice = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_NUMBER_OF_DICE, 0)
         local side = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_SIDES_PER_DIE, 0)
-        return base + (dice * (side + 1)) / 2
+        return base + (dice * (side + 1)) / 2 + GetUnitBonus(caster, BONUS_DAMAGE)
     end
 
     ---Returns the distance between the given coords
@@ -166,6 +167,43 @@ OnInit("AbilityUtils", function ()
         PauseUnit(u, true)
         IssueImmediateOrderById(u, Orders.stop)
         PauseUnit(u, false)
+    end
+
+    ---@param u unit
+    ---@return number
+    function GetUnitHPRatio(u)
+        return GetUnitState(u, UNIT_STATE_LIFE) / GetUnitState(u, UNIT_STATE_MAX_LIFE)
+    end
+
+    ---Linear interpolation
+    ---@param n1 number
+    ---@param alpha number
+    ---@param n2 number
+    ---@return number
+    function Lerp(n1, alpha, n2)
+        return n1 * (1 - alpha) + (n2 * alpha)
+    end
+
+    ---Return if all the units in the group are alive
+    ---@param g group
+    ---@return boolean
+    function GroupAlive(g)
+        local isAlive = true
+        ForGroup(g, function ()
+            isAlive = isAlive and UnitAlive(GetEnumUnit())
+        end)
+        return isAlive
+    end
+
+    ---Return if all the units in the group are dead
+    ---@param g group
+    ---@return boolean
+    function GroupDead(g)
+        local dead = true
+        ForGroup(g, function ()
+            dead = dead and not UnitAlive(GetEnumUnit())
+        end)
+        return dead
     end
 
 end)

@@ -8,6 +8,9 @@ OnInit("Quests", function ()
     Require "AbilityUtils"
     Require "Menu"
 
+    local NoRepeat = {} ---@type table<player, table<trigger, boolean>>
+    local QuestTrigger = nil ---@type trigger
+
     local QuestButton = nil ---@type framehandle
     local BackdropQuestButton = nil ---@type framehandle
     local QuestButtonSprite = nil ---@type framehandle
@@ -203,10 +206,11 @@ OnInit("Quests", function ()
 
     FrameLoaderAdd(InitFrames)
 
-    Timed.call(function ()
-        ForForce(bj_FORCE_ALL_PLAYERS, function ()
-            PlayerQuests[GetEnumPlayer()] = {}
-        end)
+    OnInit.final(function ()
+        for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
+            PlayerQuests[Player(i)] = {}
+            NoRepeat[Player(i)] = __jarray(false)
+        end
     end)
 
     ---@param p player
@@ -453,6 +457,31 @@ OnInit("Quests", function ()
         if udg_QuestPlayer == LocalPlayer then
             UpdateMenu()
         end
+    end)
+    GlobalRemap("udg_QuestWait", nil, function (value)
+        local oldPlayer = udg_QuestPlayer
+        local oldId = udg_QuestId
+        local oldTrigger = GetTriggeringTrigger() or QuestTrigger
+        PolledWait(value)
+        udg_QuestPlayer = oldPlayer
+        udg_QuestId = oldId
+        QuestTrigger = oldTrigger
+    end)
+    GlobalRemap("udg_QuestNoRepeat", nil, function (value)
+        local trig = GetTriggeringTrigger() or QuestTrigger
+        if value then
+            if not NoRepeat[udg_QuestPlayer][trig] then
+                NoRepeat[udg_QuestPlayer][trig] = true
+            else
+                coroutine.yield()
+            end
+        else
+            NoRepeat[udg_QuestPlayer][trig] = false
+        end
+    end)
+    DestroyForce(udg_QuestForce)
+    GlobalRemap("udg_QuestForce", function ()
+        return bj_FORCE_PLAYER[GetPlayerId(udg_QuestPlayer)]
     end)
 
 end)

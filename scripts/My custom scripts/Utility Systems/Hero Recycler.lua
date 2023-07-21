@@ -42,6 +42,7 @@ OnInit("HeroRecycler", function ()
         SetUnitScale(u, BlzGetUnitRealField(u, UNIT_RF_SCALING_VALUE), 0., 0.)
         SetUnitVertexColor(u, 255, 255, 255, 255)
         SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
+        SetUnitInvulnerable(u, false)
     end
 
     -- END OF CONFIGURATION

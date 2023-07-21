@@ -12,7 +12,7 @@ OnInit("Color", function ()
         return string.format("\x2502x", num)
     end
 
-    ---Converts an string of the format AARRGGBB to a integer or a failure
+    ---Converts a string of the format AARRGGBB to an integer or a failure
     ---@param s string
     ---@return integer
     function Str2Hex(s)
@@ -22,12 +22,26 @@ OnInit("Color", function ()
         return tonumber(s, 16)
     end
 
+    ---@param val number
+    ---@param min number
+    ---@param max number
+    ---@return number
+    local function clamp(val, min, max)
+        if val < min then
+            return min
+        elseif val > max then
+            return max
+        end
+        return val
+    end
+
     ---@param i1 integer
-    ---@param alpha number
     ---@param i2 integer
+    ---@param alpha number
     ---@return integer
-    local function lerp(i1, alpha, i2)
-        return math.floor(i1 * (1 - alpha) + (i2 * alpha))
+    local function lerp(i1, i2, alpha)
+        alpha = clamp(alpha, 0, 1)
+        return math.floor(i1 * (1 - alpha) + i2 * alpha)
     end
 
     ---@class Color
@@ -52,24 +66,29 @@ OnInit("Color", function ()
 
         if not g then
             local col = r
-            if col > 0x1000000 then
+            if col < 0 then
+                col = -(-col + 0x80000000)
+                a = 0x80 + col // 0x1000000
+                col = col - (a - 0x80) * 0x1000000
+            elseif col < 0x1000000 then
+                a = 0xFF
+            else
                 a = col // 0x1000000
                 col = col - a * 0x1000000
-            else
-                a = 0xff
             end
 
             r = col // 0x10000
-            col = col-r * 0x10000
+            col = col - r * 0x10000
             g = col // 0x100
-            b = col-g * 0x100
+            b = col - g * 0x100
         else
             a = a or 0xff
-            assert(a >= 0x00 and a <= 0xff, "Parameter alpha is out of bounds")
-            assert(r >= 0x00 and r <= 0xff, "Parameter red is out of bounds")
-            assert(g >= 0x00 and g <= 0xff, "Parameter green is out of bounds")
-            assert(b >= 0x00 and b <= 0xff, "Parameter red is out of bounds")
         end
+
+        assert(a >= 0x00 and a <= 0xff, "Parameter alpha is out of the bounds [0, 255] got " .. a)
+        assert(r >= 0x00 and r <= 0xff, "Parameter red is out of the bounds [0, 255] got " .. r)
+        assert(g >= 0x00 and g <= 0xff, "Parameter green is out of the bounds [0, 255] got " .. g)
+        assert(b >= 0x00 and b <= 0xff, "Parameter blue is out of the bounds [0, 255] got " .. b)
 
         return setmetatable({red = r, green = g, blue = b, alpha = a}, Color)
     end
@@ -91,7 +110,17 @@ OnInit("Color", function ()
     ---@param smoothness? number [0, 1] Default 0.5
     ---@return Color
     function Color:lerp(other, smoothness)
-        return Color.new(lerp(self:toHex(), smoothness or 0.5, other:toHex()))
+        smoothness = smoothness or 0.5
+        return Color.new(
+            lerp(self.red, other.red, smoothness),
+            lerp(self.green, other.green, smoothness),
+            lerp(self.blue, other.blue, smoothness),
+            lerp(self.alpha, other.alpha, smoothness)
+        )
+    end
+
+    function Color:__tostring()
+        return ("Color(red: \x25q, green: \x25q, blue: \x25q, alpha: \x25q)"):format(self.red, self.green, self.blue, self.alpha)
     end
 
     Color[0] = Color.new(0xFF0303) -- red

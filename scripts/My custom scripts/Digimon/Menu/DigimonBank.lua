@@ -449,7 +449,7 @@ OnInit("DigimonBank", function ()
         local bank = Bank[GetPlayerId(LocalPlayer)] ---@type Bank
         for i = 0, MAX_STOCK - 1 do
             local d = bank.stocked[i] ---@type Digimon
-            if d and cooldowns[d] >= 0 then
+            if d and cooldowns[d] > 0 then
                 BlzFrameSetText(DigimonTCooldownT[i], tostring(math.floor(cooldowns[d])))
                 BlzFrameSetText(UsingTCooldownT[i], tostring(math.floor(cooldowns[d])))
             else

@@ -228,8 +228,6 @@ do
             end
         end
         local function declareName(name, initialValue)
-            assert(type(name)=="string", Debug.traceback())
-            assert(library.moduleValueMatrix[name]==nil, Debug.traceback())
             library.moduleValueMatrix[name] = initialValue and {true,n=1}
         end
         function library:create(name, userFunc)

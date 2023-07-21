@@ -20,11 +20,13 @@ OnInit("DummyCaster", function ()
     }
 
     local Dummies = {}
+    local Recycled = __jarray(false)
     local Abilities = __jarray(0)
     local Neutral = Player(PLAYER_NEUTRAL_PASSIVE)
 
     local function GetDummy(player, x, y, angle)
         local dummy = table.remove(Dummies)
+
         if not dummy then
             dummy = CreateUnit(player, DummyID, x, y, angle)
         else
@@ -33,10 +35,18 @@ OnInit("DummyCaster", function ()
             SetUnitPosition(dummy, x, y)
             BlzSetUnitFacingEx(dummy, angle)
         end
+
+        Recycled[dummy] = false
         return dummy
     end
 
     local function RefreshDummy(dummy)
+        if Recycled[dummy] then
+            return
+        end
+
+        Recycled[dummy] = true
+
         if #Dummies == MAX_DUMMIES then
             RemoveUnit(dummy)
         else
@@ -81,10 +91,12 @@ OnInit("DummyCaster", function ()
         else
             error("Invalid target-type", 2)
         end
+
         local dummy = GetDummy(owner, x, y, angle)
         UnitAddAbility(dummy, abilId)
         SetUnitAbilityLevel(dummy, abilId, level)
         Abilities[dummy] = abilId
+
         local success = false
         if castType == CastType.IMMEDIATE then
             success = IssueImmediateOrderById(dummy, orderId)
@@ -93,23 +105,21 @@ OnInit("DummyCaster", function ()
         elseif castType == CastType.TARGET then
             success = IssueTargetOrderById(dummy, orderId, tx)
         end
+
         if not success then
-            Timed.call(1., function ()
-                RefreshDummy(dummy)
+            RefreshDummy(dummy)
+        else
+            Timed.echo(0.02, function ()
+                if GetUnitCurrentOrder(dummy) ~= orderId then
+                    Timed.call(1., function ()
+                        RefreshDummy(dummy)
+                    end)
+                    return true
+                end
             end)
         end
+
         return success
     end
-
-    local t = CreateTrigger()
-    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
-    TriggerAddAction(t, function ()
-        if GetUnitTypeId(GetSpellAbilityUnit()) == DummyID then
-            local u = GetSpellAbilityUnit()
-            Timed.call(1., function ()
-                RefreshDummy(u)
-            end)
-        end
-    end)
 end)
 if Debug then Debug.endFile() end
