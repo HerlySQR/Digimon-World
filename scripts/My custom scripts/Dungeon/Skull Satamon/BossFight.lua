@@ -9,11 +9,12 @@ OnInit(function ()
     local VILEMON_EFFECT = "Abilities\\Spells\\Undead\\AnimateDead\\AnimateDeadTarget.mdl"
     local LIGHTNING_MODEL = "HWPB"
     local BOSS_EFFECT = "Abilities\\Spells\\Undead\\DeathPact\\DeathPactTarget.mdl"
+    local THUNDERCLAP = FourCC('A0DW')
+    local FIRE_PILLAR = FourCC('A0DY')
 
     local boss = gg_unit_O03B_0069 ---@type unit
     local originalSize = BlzGetUnitRealField(boss, UNIT_RF_SCALING_VALUE)
     local increasedSize = originalSize * 1.25
-    local owner = GetOwningPlayer(boss)
     local pillarPos = {GetRectCenter(gg_rct_SkullSatamonPilar1), GetRectCenter(gg_rct_SkullSatamonPilar2)}
     local pillar = {CreateUnitAtLoc(Digimon.VILLAIN, PILLAR, pillarPos[1], bj_UNIT_FACING), CreateUnitAtLoc(Digimon.VILLAIN, PILLAR, pillarPos[2], bj_UNIT_FACING)}
     local phase = {false, false}
@@ -21,9 +22,7 @@ OnInit(function ()
     local minions = {2, 4}
     local metamorphosis = false
     local white = Color.new(0xFFFFFFFF)
-    local gray = Color.new(0xFF66666666)
-    print(white)
-    print(gray)
+    local gray = Color.new(0xFF666666)
 
     ---@param i integer
     local function restartPilar(i)
@@ -92,23 +91,12 @@ OnInit(function ()
         end)
     end
 
-    local sonicWaveOrder = Orders.shockwave
-    local summonGekomonOrder = Orders.spiritwolf
-    local summonOtamamonOrder = Orders.summonwareagle
-    local bigLeapOrder = Orders.stomp
+    local jailOrder = Orders.ensnare
+    local firePillarOrder = Orders.impale
 
     InitBossFight("SkullSatamon", boss, function (u)
-        if math.random(0, 100) <= 50 then
-            IssueTargetOrderById(boss, sonicWaveOrder, u)
-        elseif math.random(0, 100) <= 70 then
-            IssueImmediateOrderById(boss, summonGekomonOrder)
-        elseif math.random(0, 100) <= 30 then
-            IssueImmediateOrderById(boss, summonOtamamonOrder)
-        elseif math.random(0, 100) <= 50 then
-            local x, y = GetConcentration(GetUnitX(boss), GetUnitY(boss), 600., owner, 300.)
-            if x then
-                IssuePointOrderById(boss, bigLeapOrder, x, y)
-            end
+        if math.random(0, 100) <= 10 then
+            IssueTargetOrderById(boss, jailOrder, u)
         end
 
         if not phase[1] then
@@ -124,25 +112,31 @@ OnInit(function ()
         if not metamorphosis then
             if not UnitAlive(pillar[1]) and not UnitAlive(pillar[2]) then
                 metamorphosis = true
+                SetUnitAbilityLevel(boss, THUNDERCLAP, 2)
+                UnitAddAbility(boss, FIRE_PILLAR)
                 BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, false)
                 BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, true)
                 local current = 0
                 Timed.echo(0.02, 1., function ()
-                    print(white:lerp(gray, current))
                     SetUnitVertexColor(boss, white:lerp(gray, current))
                     SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
                     current = current + 0.02
                 end)
             end
+        else
+            if math.random(0, 100) <= 50 then
+                IssuePointOrderById(boss, firePillarOrder, GetUnitX(u), GetUnitY(u))
+            end
         end
     end, nil, function ()
         if metamorphosis then
             metamorphosis = false
+            SetUnitAbilityLevel(boss, THUNDERCLAP, 1)
+            UnitRemoveAbility(boss, FIRE_PILLAR)
             BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, true)
             BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
             local current = 0
             Timed.echo(0.02, 1., function ()
-                print(gray:lerp(white, current))
                 SetUnitVertexColor(boss, gray:lerp(white, current))
                 SetUnitScale(boss, Lerp(increasedSize, current, originalSize), 0., 0.)
                 current = current + 0.02
