@@ -6,6 +6,7 @@ OnInit("DigimonBank", function ()
 
     local MAX_STOCK = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
+    local MAX_USED = udg_MAX_USED_DIGIMONS
     local MIN_SAVED_ITEMS = udg_MIN_SAVED_ITEMS
     local MAX_SAVED_ITEMS = udg_MAX_SAVED_ITEMS
     local NEW_ITEM_SLOT_COST_BITS = 1500
@@ -151,7 +152,7 @@ OnInit("DigimonBank", function ()
         if self.pressed == -1 then
             return false
         end
-        return GetDigimonCooldown(self.stocked[self.pressed]) <= 0 and self:used() < 3
+        return GetDigimonCooldown(self.stocked[self.pressed]) <= 0 and self:used() < MAX_USED
     end
 
     ---@return Digimon[]
@@ -1537,6 +1538,7 @@ OnInit("DigimonBank", function ()
         for i = 0, MAX_STOCK - 1 do
             if not bank.stocked[i] then
                 bank.stocked[i] = d
+                d.owner = p
                 d:setOwner(Digimon.PASSIVE)
                 d:hideInTheCorner()
                 if bank.main == d then
@@ -1604,6 +1606,7 @@ OnInit("DigimonBank", function ()
         local d = bank.stocked[index] ---@type Digimon
         if d then
             bank.stocked[index] = nil
+            d.owner = nil
             ReleaseDigimon(d:getOwner(), d)
             d:setOwner(Digimon.PASSIVE)
             if bank.inUse[index] then
@@ -1849,6 +1852,7 @@ OnInit("DigimonBank", function ()
         local d = bank.saved[index] ---@type Digimon
         if d then
             bank.saved[index] = nil
+            d.owner = nil
             d:destroy()
         end
         if p == LocalPlayer then
@@ -1890,6 +1894,47 @@ OnInit("DigimonBank", function ()
             UpdateItems()
         end
     end
+
+    ---@param p player
+    function PlayerIsStucked(p)
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
+        for i = 0, MAX_STOCK - 1 do
+            if bank:avaible(i) and bank:isAlive(i) then
+                return false
+            end
+        end
+        local stucked = true
+        for _, d in ipairs(bank:getUsedDigimons()) do
+            stucked = stucked and d:isPaused()
+        end
+        return stucked
+    end
+    
+    ---For debug
+    ---@param p any
+    ---@param u any
+    local function AddToBank(p, u)
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
+        local d = Digimon.getInstance(u)
+        for i = 0, MAX_STOCK - 1 do
+            if not bank.stocked[i] then
+                bank.stocked[i] = d
+                bank.inUse[i] = d
+                d.owner = p
+                if bank.main == d then
+                    bank:searchMain()
+                end
+                break
+            end
+        end
+        if p == LocalPlayer then
+            UpdateMenu()
+        end
+    end
+
+    GlobalRemap("udg_AddToBank", nil, function (value)
+        AddToBank(Player(0), value)
+    end)
 
 end)
 Debug.endFile()

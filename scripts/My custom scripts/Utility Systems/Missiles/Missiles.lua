@@ -261,6 +261,7 @@ OnInit("Missiles", function ()
     ---@field onCliff fun(): boolean?
     ---@field onTerrain fun(): boolean?
     ---@field onTileset fun(typ: integer): boolean?
+    ---@field onPeriod fun(): boolean?
     ---@field onFinish fun(): boolean?
     ---@field onBoundaries fun(): boolean?
     ---@field onPause fun(): boolean?
@@ -842,6 +843,12 @@ OnInit("Missiles", function ()
     ---@param blue integer
     function mt:color(red, green, blue)
         self.effect:setColor(red, green, blue)
+    end
+    
+    --- ---------------------------------- Facing --------------------------------- --
+    ---@return number
+    function mt:getYaw()
+        return self.cA
     end
 
     --- ------------------------------ Reset members ----------------------------- --

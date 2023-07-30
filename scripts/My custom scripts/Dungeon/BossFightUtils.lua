@@ -6,6 +6,7 @@ OnInit("BossFightUtils", function ()
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
     local LocalPlayer = GetLocalPlayer()
+    local ignored = {} ---@type table<unit, table<unit, boolean>>
 
     ---Don't cast timed duration spells when other timed duration spell is casted
     ---@param caster unit
@@ -24,6 +25,13 @@ OnInit("BossFightUtils", function ()
         return isCasting[caster]
     end
 
+    ---@param boss unit
+    ---@param u unit
+    ---@param flag boolean
+    function BossIgnoreUnit(boss, u, flag)
+        ignored[boss][u] = flag
+    end
+
     OnInit.final("BossFightUtils_OnlyOne", function ()
         Require "PlayerUtils"
         local count = 0
@@ -35,7 +43,7 @@ OnInit("BossFightUtils", function ()
 
     ---@param name string
     ---@param boss unit
-    ---@param actions fun(u: unit)
+    ---@param actions fun(u: unit, unitsInTheField?: Set)
     ---@param onStart? function
     ---@param onReset? function
     function InitBossFight(name, boss, actions, onStart, onReset)
@@ -45,6 +53,7 @@ OnInit("BossFightUtils", function ()
         assert(boss, "The boss is not set")
 
         ZTS_AddThreatUnit(boss, false)
+        ignored[boss] = __jarray(false)
 
         local owner = GetOwningPlayer(boss)
         local battlefield = {} ---@type rect[]
@@ -86,6 +95,7 @@ OnInit("BossFightUtils", function ()
                 if onReset then
                     onReset()
                 end
+                ignored[boss] = __jarray(false)
             end
         end
 
@@ -124,13 +134,15 @@ OnInit("BossFightUtils", function ()
                         local u = nil
                         local maxThreat = -1
                         for u2 in unitsInTheField:elements() do
-                            local threat = ZTS_GetThreatUnitAmount(boss, u2)
-                            if threat > maxThreat then
-                                u = u2
-                                maxThreat = threat
+                            if not ignored[boss][u2] then
+                                local threat = ZTS_GetThreatUnitAmount(boss, u2)
+                                if threat > maxThreat then
+                                    u = u2
+                                    maxThreat = threat
+                                end
                             end
                         end
-                        if not attacking then
+                        if not attacking and u then
                             attacking = true
                             local x, y = GetUnitX(u), GetUnitY(u)
                             Timed.call(2., function ()
@@ -138,7 +150,7 @@ OnInit("BossFightUtils", function ()
                             end)
                         end
                         -- Spells
-                        actions(u)
+                        actions(u, unitsInTheField)
                     end
                 end
 

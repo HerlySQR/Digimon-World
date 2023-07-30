@@ -7,6 +7,7 @@ OnInit(function ()
     local VILEMON = FourCC('O034')
     local PILAR_EFFECT = "Abilities\\Spells\\Undead\\DarkRitual\\DarkRitualCaster.mdl"
     local VILEMON_EFFECT = "Abilities\\Spells\\Undead\\AnimateDead\\AnimateDeadTarget.mdl"
+    local RESTORE_EFFECT = "Objects\\Spawnmodels\\Undead\\UDeathMedium\\UDeath.mdl"
     local LIGHTNING_MODEL = "HWPB"
     local BOSS_EFFECT = "Abilities\\Spells\\Undead\\DeathPact\\DeathPactTarget.mdl"
     local THUNDERCLAP = FourCC('A0DW')
@@ -33,6 +34,7 @@ OnInit(function ()
         else
             pillar[i] = CreateUnitAtLoc(Digimon.VILLAIN, PILLAR, pillarPos[i], bj_UNIT_FACING)
         end
+        DestroyEffect(AddSpecialEffectLoc(RESTORE_EFFECT, pillarPos[i]))
     end
 
     ---@param i integer

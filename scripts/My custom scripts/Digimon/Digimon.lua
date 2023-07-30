@@ -47,6 +47,7 @@ OnInit("Digimon", function ()
 
     ---@class Digimon
     ---@field root unit
+    ---@field owner player
     ---@field rank Rank
     ---@field rarity Rarity
     ---@field environment Environment
@@ -242,6 +243,11 @@ OnInit("Digimon", function ()
 
     function Digimon:unpause()
         PauseUnit(self.root, false)
+    end
+
+    ---@return boolean
+    function Digimon:isPaused()
+        return IsUnitPaused(self.root)
     end
 
     ---@param u unit

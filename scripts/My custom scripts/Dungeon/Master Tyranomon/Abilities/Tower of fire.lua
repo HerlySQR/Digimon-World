@@ -9,7 +9,7 @@ OnInit(function ()
     local DAMAGE = 5.
     local DURATION = 3.
 
-    local towerOfFireOrder = Orders.flamestrike
+    local towerOfFireOrder = Orders.roar
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
@@ -28,7 +28,10 @@ OnInit(function ()
                     Damage.apply(caster, u, DAMAGE, true, false, udg_Fire, DAMAGE_TYPE_LIGHTNING, WEAPON_TYPE_WHOKNOWS)
                 end
             end)
-            return GetUnitCurrentOrder(caster) ~= towerOfFireOrder
+            if GetUnitCurrentOrder(caster) ~= towerOfFireOrder then
+                DestroyEffect(fire)
+                return true
+            end
         end, function ()
             DestroyEffect(fire)
         end)

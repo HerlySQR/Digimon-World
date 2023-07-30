@@ -56,10 +56,13 @@ OnInit("Knockback", function ()
     ---@param direction number
     ---@param distance number
     ---@param speed number
-    ---@param effect1 string
-    ---@param effect2 string
+    ---@param effect1 string | nil
+    ---@param effect2 string | nil
     ---@param destroyTrees? boolean
     function Knockback(target, direction, distance, speed, effect1, effect2, destroyTrees)
+        if IsUnitType(target, UNIT_TYPE_GIANT) or IsUnitType(target, UNIT_TYPE_STRUCTURE) then
+            return
+        end
         local new = All:insert()
         Knockbacked[target] = Knockbacked[target] + 1
 
