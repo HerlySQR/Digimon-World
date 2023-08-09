@@ -18,7 +18,7 @@ OnInit(function ()
         elseif math.random(0, 100) <= 30 then
             IssueImmediateOrderById(boss, summonOtamamonOrder)
         elseif math.random(0, 100) <= 50 then
-            local x, y = GetConcentration(GetUnitX(boss), GetUnitY(boss), 600., owner, 300.)
+            local x, y = GetConcentration(GetUnitX(boss), GetUnitY(boss), 600., owner, 300., true, false)
             if x then
                 IssuePointOrderById(boss, bigLeapOrder, x, y)
             end

@@ -2703,3 +2703,5 @@ i = i + 1
 end
 udg_SaveLoadBankItemsMaxStock = 0
 end
+
+InitGlobals()

@@ -1,35 +1,66 @@
 OnInit(function ()
-    Require "LinkedList"
-
     local INTERVAL = 15.
 
-    local All = LinkedList.create()
-    local Reference = {}
+    ---@class RectInfo
+    ---@field rect rect
+    ---@field amount integer
+    ---@field parent ItemSpawnInfo
 
+    ---@class ItemSpawnInfo
+    ---@field rectInfos RectInfo[]
+    ---@field types integer[]
+    ---@field maxItems integer
+    ---@field count integer
+
+    local All = {} ---@type ItemSpawnInfo[]
+    local Reference = {} ---@type table<item, RectInfo>
+
+    ---@param rects rect[]
+    ---@param types integer[]
+    ---@param maxItems integer
+    ---@return ItemSpawnInfo
     local function Create(rects, types, maxItems)
+        local rectInfos = {}
+
         local new = {
-            rects = rects,
             types = types,
             maxItems = maxItems,
             count = 0
         }
 
-        All:insert(new)
+        for i = 1, #rects do
+            rectInfos[i] = {
+                rect = rects[i],
+                amount = 0,
+                parent = new
+            }
+        end
+
+        new.rectInfos = rectInfos
+
+        table.insert(All, new)
 
         return new
     end
 
     local function Update()
-        for node in All:loop() do
-            local itemSpawn = node.value
-            for _, where in ipairs(itemSpawn.rects) do
+        for _, itemSpawn in ipairs(All) do
+            for _, where in ipairs(itemSpawn.rectInfos) do
                 -- Only create an item if didn't surpassed their max
                 if itemSpawn.count < itemSpawn.maxItems then
                     -- Create an item in a random position of the rect
-                    local m = CreateItem(itemSpawn.types[math.random(#itemSpawn.types)], GetRandomReal(GetRectMinX(where), GetRectMaxX(where)), GetRandomReal(GetRectMinY(where), GetRectMaxY(where)))
-                    Reference[m] = itemSpawn
+                    local m = CreateItem(itemSpawn.types[math.random(#itemSpawn.types)], GetRandomReal(GetRectMinX(where.rect), GetRectMaxX(where.rect)), GetRandomReal(GetRectMinY(where.rect), GetRectMaxY(where.rect)))
+                    Reference[m] = where
                     itemSpawn.count = itemSpawn.count + 1
+                    where.amount = where.amount + 1
+                else
+                    break
                 end
+            end
+            if itemSpawn.maxItems - itemSpawn.count < #itemSpawn.rectInfos then
+                table.sort(itemSpawn.rectInfos, function (a, b)
+                    return a.amount < b.amount
+                end)
             end
         end
     end
@@ -48,7 +79,8 @@ OnInit(function ()
         local this = Reference[m]
         if this then
             Reference[m] = nil
-            this.count = this.count - 1
+            this.parent.count = this.parent.count - 1
+            this.amount = this.amount - 1
         end
     end)
     -- Start update

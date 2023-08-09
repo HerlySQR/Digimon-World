@@ -135,12 +135,20 @@ OnInit("AbilityUtils", function ()
     ---@param range number
     ---@param owner player
     ---@param area number
+    ---@param countEnemy boolean
+    ---@param countAlly boolean
     ---@return nil | number posX, number posY
-    function GetConcentration(x, y, range, owner, area)
+    function GetConcentration(x, y, range, owner, area, countEnemy, countAlly)
         local xVals, yVals = {}, {} ---@type number[]
 
         ForUnitsInRange(x, y, range, function (u)
-            if UnitAlive(u) and IsUnitEnemy(u, owner) and not BlzIsUnitInvulnerable(u) then
+            if UnitAlive(u) and not BlzIsUnitInvulnerable(u) then
+                if countEnemy and not IsUnitEnemy(u, owner) then
+                    return
+                end
+                if countAlly and not IsUnitAlly(u, owner) then
+                    return
+                end
                 table.insert(xVals, GetUnitX(u))
                 table.insert(yVals, GetUnitY(u))
             end
@@ -151,7 +159,13 @@ OnInit("AbilityUtils", function ()
 
             local count = 0
             ForUnitsInRange(posX, posY, area, function (u)
-                if UnitAlive(u) and IsUnitEnemy(u, owner) and not BlzIsUnitInvulnerable(u) then
+                if UnitAlive(u) and not BlzIsUnitInvulnerable(u) then
+                    if countEnemy and not IsUnitEnemy(u, owner) then
+                        return
+                    end
+                    if countAlly and not IsUnitAlly(u, owner) then
+                        return
+                    end
                     count = count + 1
                 end
             end)

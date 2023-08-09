@@ -8,14 +8,24 @@ OnInit(function ()
     local healingMinionsOrder = Orders.spiritwolf
     local totemOrder = Orders.healingward
     local missileOrder = Orders.firebolt
+    local PoopChaosOrder = Orders.blackarrow
 
     InitBossFight("KingSukamon", boss, function (u)
         if not BossStillCasting(boss) then
+
+            local rad = math.random(0, 100)
+
             if not IssueTargetOrderById(boss, missileOrder, u) then
-                if math.random(0, 100) <= 50 then
+                if rad <= 30 then
                     IssueImmediateOrderById(boss, healingMinionsOrder)
-                elseif math.random(0, 100) <= 50 then
-                    local x, y = GetConcentration(GetUnitX(boss), GetUnitY(boss), 600., owner, 300.)
+
+
+                elseif rad > 30 and rad <= 70 then
+                    IssuePointOrderById(boss, PoopChaosOrder, GetUnitX(u), GetUnitY(u))
+
+
+                elseif rad > 70 then
+                    local x, y = GetConcentration(GetUnitX(boss), GetUnitY(boss), 600., owner, 300., true, false)
                     if x then
                         IssuePointOrderById(boss, totemOrder, x, y)
                     end
