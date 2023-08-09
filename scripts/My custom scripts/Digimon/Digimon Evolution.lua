@@ -6,6 +6,8 @@ OnInit("DigimonEvolution", function ()
     Require "PlayerUtils"
     Require "PlayerDigimons"
 
+    local MULTICOLOR_DIGIVICE = udg_MULTICOLOR_DIGIVICE ---@type integer
+
     local EvolveDialog = {} ---@type table<player, dialog>
     local EvolveClicked = __jarray(-1) ---@type table<player, integer>
     local EvolveOption = {} ---@type table<player, button>[]
@@ -81,7 +83,7 @@ OnInit("DigimonEvolution", function ()
                         end
                         -- Check stone
                         if cond.stone then
-                            canEvolve = canEvolve and UnitHasItemOfTypeBJ(d.root, cond.stone)
+                            canEvolve = canEvolve and (UnitHasItemOfTypeBJ(d.root, cond.stone) or UnitHasItemOfTypeBJ(d.root, MULTICOLOR_DIGIVICE))
                         end
                         -- Check day/night
                         if cond.onlyDay then

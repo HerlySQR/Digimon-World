@@ -652,7 +652,10 @@ do; local _, codeLoc = pcall(error, "", 2) --get line number where DebugUtils be
             Condition = function(func) ---@type fun(actionFunc: fun(): boolean?)
                 return originalCondition(getTryWrapper(func))
             end
-            Filter = Condition
+            local originalFilter = Filter
+            Filter = function(func) ---@type fun(actionFunc: fun(): boolean?)
+                return originalFilter(getTryWrapper(func))
+            end
         end
         if settings.USE_TRY_ON_COROUTINES then
             local originalCoroutineCreate = coroutine.create

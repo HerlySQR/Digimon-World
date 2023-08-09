@@ -16,6 +16,7 @@ OnInit(function ()
     local boss = gg_unit_O03B_0069 ---@type unit
     local originalSize = BlzGetUnitRealField(boss, UNIT_RF_SCALING_VALUE)
     local increasedSize = originalSize * 1.25
+    local originalTargetsAllowed = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0)
     local pillarPos = {GetRectCenter(gg_rct_SkullSatamonPilar1), GetRectCenter(gg_rct_SkullSatamonPilar2)}
     local pillar = {CreateUnitAtLoc(Digimon.VILLAIN, PILLAR, pillarPos[1], bj_UNIT_FACING), CreateUnitAtLoc(Digimon.VILLAIN, PILLAR, pillarPos[2], bj_UNIT_FACING)}
     local phase = {false, false}
@@ -116,7 +117,7 @@ OnInit(function ()
                 metamorphosis = true
                 SetUnitAbilityLevel(boss, THUNDERCLAP, 2)
                 UnitAddAbility(boss, FIRE_PILLAR)
-                BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, false)
+                BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, 33554432)
                 BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, true)
                 local current = 0
                 Timed.echo(0.02, 1., function ()
@@ -135,7 +136,7 @@ OnInit(function ()
             metamorphosis = false
             SetUnitAbilityLevel(boss, THUNDERCLAP, 1)
             UnitRemoveAbility(boss, FIRE_PILLAR)
-            BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, true)
+            BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, originalTargetsAllowed)
             BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
             local current = 0
             Timed.echo(0.02, 1., function ()

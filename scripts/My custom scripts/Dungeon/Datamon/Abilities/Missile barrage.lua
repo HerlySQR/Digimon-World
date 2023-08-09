@@ -5,14 +5,11 @@ OnInit(function ()
 
     local SPELL = FourCC('A0E0')
     local DELAY = 2.5
-    local DAMAGE_PER_SHOT = 32.
+    local DAMAGE_PER_SHOT = {32., 320.}
     local MAX_SHOTS = 12
     local AREA = 175.
     local MISSILE_MODEL = "Abilities\\Weapons\\GyroCopter\\GyroCopterMissile.mdl"
     local INTERVAL = 0.03125
-
-    RegisterSpellEffectEvent(SPELL, function ()
-    end)
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
@@ -60,14 +57,14 @@ OnInit(function ()
                     local missile = Missiles:create(cx, cy, 25, tx, ty, 0)
                     missile.source = caster
                     missile.owner = owner
-                    missile.damage = DAMAGE_PER_SHOT
+                    missile.damage = DAMAGE_PER_SHOT[GetUnitAbilityLevel(caster, SPELL)]
                     missile:model(MISSILE_MODEL)
                     missile:speed(900.)
                     missile:arc(60.)
                     missile.onFinish = function ()
                         ForUnitsInRange(missile.x, missile.y, 128., function (u)
                             if IsUnitEnemy(u, missile.owner) then
-                                Damage.apply(caster, u, DAMAGE_PER_SHOT, true, false, udg_Water, DAMAGE_TYPE_COLD, WEAPON_TYPE_WHOKNOWS)
+                                Damage.apply(caster, u, missile.damage, true, false, udg_Water, DAMAGE_TYPE_COLD, WEAPON_TYPE_WHOKNOWS)
                             end
                         end)
                     end

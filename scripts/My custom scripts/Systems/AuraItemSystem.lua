@@ -1,5 +1,5 @@
 if Debug then Debug.beginFile("AuraItemSystem") end
-OnInit("AuraItemSystem", function ()
+OnInit.main("AuraItemSystem", function ()
 
     local Requirements = {} ---@type table<integer, {[1]: integer[] , [2]: integer}>
 
