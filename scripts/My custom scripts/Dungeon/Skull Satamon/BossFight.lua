@@ -17,6 +17,7 @@ OnInit(function ()
     local originalSize = BlzGetUnitRealField(boss, UNIT_RF_SCALING_VALUE)
     local increasedSize = originalSize * 1.25
     local originalTargetsAllowed = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0)
+    local originalBaseDamage = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
     local pillarPos = {GetRectCenter(gg_rct_SkullSatamonPilar1), GetRectCenter(gg_rct_SkullSatamonPilar2)}
     local pillar = {CreateUnitAtLoc(Digimon.VILLAIN, PILLAR, pillarPos[1], bj_UNIT_FACING), CreateUnitAtLoc(Digimon.VILLAIN, PILLAR, pillarPos[2], bj_UNIT_FACING)}
     local phase = {false, false}
@@ -46,7 +47,6 @@ OnInit(function ()
         SetUnitInvulnerable(pillar[i], false)
         DestroyEffect(AddSpecialEffect(PILAR_EFFECT, GetUnitX(pillar[i]), GetUnitY(pillar[i])))
         SetUnitInvulnerable(boss, true)
-        PauseUnit(boss, true)
 
         local needToKill = CreateGroup()
         GroupAddUnit(needToKill, pillar[i])
@@ -77,7 +77,6 @@ OnInit(function ()
         Timed.echo(1., function ()
             if GroupDead(needToKill) then
                 SetUnitInvulnerable(boss, false)
-                PauseUnit(boss, false)
                 DestroyGroup(needToKill)
                 return true
             end
@@ -119,6 +118,8 @@ OnInit(function ()
                 UnitAddAbility(boss, FIRE_PILLAR)
                 BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, 33554432)
                 BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, true)
+                originalBaseDamage = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
+                BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, originalBaseDamage)
                 local current = 0
                 Timed.echo(0.02, 1., function ()
                     SetUnitVertexColor(boss, white:lerp(gray, current))
@@ -138,6 +139,7 @@ OnInit(function ()
             UnitRemoveAbility(boss, FIRE_PILLAR)
             BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, originalTargetsAllowed)
             BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
+            BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, originalBaseDamage)
             local current = 0
             Timed.echo(0.02, 1., function ()
                 SetUnitVertexColor(boss, gray:lerp(white, current))
@@ -150,7 +152,6 @@ OnInit(function ()
         restartPilar(2)
 
         SetUnitInvulnerable(boss, false)
-        PauseUnit(boss, false)
     end)
 end)
 Debug.endFile()
