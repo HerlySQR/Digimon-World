@@ -5,9 +5,11 @@ OnInit("SpellAISystem", function ()
     Require "UnitEnterEvent"
     Require "AddHook"
     Require "PlayerUtils"
+    Require "Set"
+    Require "SyncedTable"
 
     local SpellAIs = {} ---@type table<integer, fun(u: unit):boolean>
-    local UnitSpellAIs = {} ---@type table<unit, (fun(u: unit):boolean)[]>
+    local UnitSpellAIs = SyncedTable.create() ---@type table<unit, Set>
 
     ---@param range number
     ---@return number
@@ -16,27 +18,14 @@ OnInit("SpellAISystem", function ()
         return (2/r + r)*100
     end
 
-    local noRun = false
-
-    local castTrigger = CreateTrigger()
-    TriggerRegisterAnyUnitEventBJ(castTrigger, EVENT_PLAYER_UNIT_ISSUED_ORDER)
-    TriggerRegisterAnyUnitEventBJ(castTrigger, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-    TriggerRegisterAnyUnitEventBJ(castTrigger, EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER)
-    TriggerRegisterAnyUnitEventBJ(castTrigger, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
-    TriggerAddAction(castTrigger, function ()
-        if noRun then
-            return
-        end
-
-        local u = GetOrderedUnit()
-        Timed.call(1., function ()
-            if UnitSpellAIs[u] and not IsUnitPaused(u) and not IsUnitHidden(u) then
-                noRun = true
-                UnitSpellAIs[u][math.random(1, #UnitSpellAIs[u])](u)
-                noRun = false
+    Timed.echo(1., function ()
+        for creep, set in pairs(UnitSpellAIs) do
+            if ZTS_GetCombatState(creep) and not IsUnitPaused(creep) and not IsUnitHidden(creep) then
+                set:random()(creep)
             end
-        end)
+        end
     end)
+
 
     ---@param u unit
     ---@param spell integer
@@ -44,26 +33,22 @@ OnInit("SpellAISystem", function ()
         if IsPlayerInForce(GetOwningPlayer(u), FORCE_PLAYING) then
             return
         end
-        local list = UnitSpellAIs[u]
-        if not list then
-            list = {}
-            UnitSpellAIs[u] = list
+        local set = UnitSpellAIs[u]
+        if not set then
+            set = Set.create()
+            UnitSpellAIs[u] = set
             ZTS_AddThreatUnit(u, false)
         end
-        table.insert(list, SpellAIs[spell])
+        set:addSingle(SpellAIs[spell])
     end
 
     local function removeSpell(u, spell)
-        local list = UnitSpellAIs[u]
-        if not list then
+        local set = UnitSpellAIs[u]
+        if not set or not set:contains(SpellAIs[spell]) then
             return
         end
-        for i = #list, 1, -1 do
-            if list[i] == SpellAIs[spell] then
-                table.remove(list, i)
-            end
-        end
-        if #list == 0 then
+        set:removeSingle(SpellAIs[spell])
+        if set:isEmpty() then
             UnitSpellAIs[u] = nil
             ZTS_RemoveThreatUnit(u)
         end
@@ -113,12 +98,15 @@ OnInit("SpellAISystem", function ()
                     return IssueTargetOrderById(u, order, target)
                 end
             elseif hasPointTarget then
-                if area > 0 then
-                    area = 200.
-                end
+                area = area > 0 and area or 200.
                 local x, y = GetConcentration(GetUnitX(u), GetUnitY(u), range, GetOwningPlayer(u), area, enemyTarget, allyTarget)
                 if x then
                     return IssuePointOrderById(u, order, x, y)
+                else
+                    local random = GetRandomUnitOnRange(GetUnitX(u), GetUnitY(u), range, function (u2)
+                        return ((enemyTarget and IsUnitEnemy(u, GetOwningPlayer(u2))) or (allyTarget and IsUnitAlly(u, GetOwningPlayer(u2))))
+                    end)
+                    return IssuePointOrderById(u, order, GetUnitX(random), GetUnitY(random))
                 end
             elseif hasNoTarget then
                 local count = 0
@@ -131,7 +119,7 @@ OnInit("SpellAISystem", function ()
                     end
                     count = count + 1
                 end)
-                if count >= 2 then
+                if count >= 1 then
                     return IssueImmediateOrderById(u, order)
                 end
             end
@@ -165,6 +153,18 @@ OnInit("SpellAISystem", function ()
                 removeSpell(u, spell)
             end
             return oldUnitRemoveAbility(u, id)
+        end)
+
+        local oldSetUnitOwner
+        oldSetUnitOwner = AddHook("SetUnitOwner", function (whichUnit, whichPlayer, changeColor)
+            if GetUnitAbilityLevel(whichUnit, spell) > 0 then
+                if IsPlayerInForce(whichPlayer, FORCE_PLAYING) then
+                    removeSpell(whichUnit, spell)
+                else
+                    insertSpell(whichUnit, spell)
+                end
+            end
+            oldSetUnitOwner(whichUnit, whichPlayer, changeColor)
         end)
     end
 

@@ -8,6 +8,42 @@ OnInit(function ()
     Require "Timed"
     Require "DigimonBank"
     Require "ErrorMessage"
+    Require "NewBonus"
+    Require "AddHook"
+
+    local LocalPlayer = GetLocalPlayer()
+    local MAX_ARENAS = 4
+    local MAX_FIGHTERS = 2
+    local MAX_DIGIMONS = udg_MAX_DIGIMONS
+    local MAX_RANK = 99
+    local RANK_UPGRADE = FourCC('R005')
+    local RANK_PRIZES =
+    { ---@type {equips: integer?, damage: integer?, defense: number?, health: integer?, energy: integer?}[]
+        [1] =   {equips = nil,    damage = 1,     defense = nil,      health = nil,   energy = nil},
+        [2] =   {equips = nil,    damage = 1,     defense = 0.5,      health = nil,   energy = nil},
+        [3] =   {equips = 2,      damage = 1,     defense = 0.5,      health = 10,    energy = nil},
+        [4] =   {equips = nil,    damage = 2,     defense = 0.5,      health = 10,    energy = 5},
+        [5] =   {equips = nil,    damage = 2,     defense = 0.5,      health = 10,    energy = 5},
+        [6] =   {equips = nil,    damage = 2,     defense = 0.5,      health = 10,    energy = 5},
+        [7] =   {equips = 2,      damage = 2,     defense = 0.5,      health = 10,    energy = 5},
+        [8] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
+        [9] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
+        [10] =  {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
+        [11] =  {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
+        [12] =  {equips = 2,      damage = 3,     defense = 1.5,      health = 20,    energy = 10},
+        [13] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
+        [14] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
+        [15] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
+        [16] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
+        [17] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
+        [18] =  {equips = 2,      damage = 4,     defense = 2,        health = 30,    energy = 15},
+        [19] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
+        [21] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
+        [22] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
+        [23] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
+        [24] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
+        [25] =  {equips = 3,      damage = 6,     defense = 3,        health = 50,    energy = 25}
+    }
 
     local GymMenu = nil ---@type framehandle
     local Select = nil ---@type framehandle
@@ -23,13 +59,6 @@ OnInit(function ()
     local PlayerDigimonSelected = {} ---@type framehandle[][]
     local PlayerDigimonBanned = {} ---@type framehandle[][]
     local FIGHT = nil ---@type framehandle
-
-    local LocalPlayer = GetLocalPlayer()
-    local MAX_ARENAS = 4
-    local MAX_FIGHTERS = 2
-    local MAX_DIGIMONS = udg_MAX_DIGIMONS
-    local MAX_RANK = 99
-    local RANK_UPGRADE = FourCC('R005')
 
     local DigimonTypes = {} ---@type integer[][]
     for i = 0, MAX_RANK do
@@ -243,10 +272,6 @@ OnInit(function ()
             if self:localPlayerCond() then
                 DisplayTextToPlayer(LocalPlayer, 0, 0, "The winner is " .. User[winner.p]:getNameColored() .. ".")
             end
-            if loser.p == Digimon.NEUTRAL then
-                SetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED, GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED) + 1)
-                SetPlayerTechResearched(winner.p, RANK_UPGRADE, GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED))
-            end
         end
 
         if self:localPlayerCond() then
@@ -270,6 +295,10 @@ OnInit(function ()
                 end
             end
             Timed.call(4., function ()
+                if loser.p == Digimon.NEUTRAL then
+                    SetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED, GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED) + 1)
+                    SetPlayerTechResearched(winner.p, RANK_UPGRADE, GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED))
+                end
                 local notNeutral = true
                 for i = 1, MAX_FIGHTERS do
                     local info = self.pi[i]
@@ -283,6 +312,29 @@ OnInit(function ()
                                 SetSpawnPoint(info.p, GetRectCenterX(LOBBY), GetRectCenterY(LOBBY))
                                 SummonDigimon(info.p, j)
                                 break
+                            end
+                        end
+                        if winner == info and loser.p == Digimon.NEUTRAL then
+                            local prizes = RANK_PRIZES[GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED)]
+                            local message = "\nFor winning all your digimons will gain: \n"
+                            if prizes.damage then
+                                message = message .. "» " .. prizes.damage .. " damage attack\n"
+                            end
+                            if prizes.defense then
+                                message = message .. "» " .. prizes.defense .. " defense\n"
+                            end
+                            if prizes.health then
+                                message = message .. "» " .. prizes.health .. " health\n"
+                            end
+                            if prizes.energy then
+                                message = message .. "» " .. prizes.energy .. " energy"
+                            end
+                            if prizes.equips then
+                                message = message .. "\nAnd also " .. prizes.equips .. " items unlocked in the shop."
+                            end
+                            DisplayTextToPlayer(winner.p, 0, 0, message)
+                            if winner.p == LocalPlayer then
+                                StartSound(bj_questItemAcquiredSound)
                             end
                         end
                     else
@@ -302,6 +354,73 @@ OnInit(function ()
             end)
         end)
     end
+
+    local oldSetUnitOwner
+    oldSetUnitOwner = AddHook("SetUnitOwner", function (whichUnit, whichPlayer, changeColor)
+        local prevOwner = GetOwningPlayer(whichUnit)
+
+        oldSetUnitOwner(whichUnit, whichPlayer, changeColor)
+
+        local oldRank = IsPlayerInForce(prevOwner, FORCE_PLAYING) and GetPlayerState(prevOwner, PLAYER_STATE_RESOURCE_FOOD_USED) or 0
+        local newRank = IsPlayerInForce(whichPlayer, FORCE_PLAYING) and GetPlayerState(whichPlayer, PLAYER_STATE_RESOURCE_FOOD_USED) or 0
+
+        if oldRank > 0 then
+            local prizes = RANK_PRIZES[oldRank]
+            if prizes.damage then
+                AddUnitBonus(whichUnit, BONUS_DAMAGE, -prizes.damage)
+            end
+            if prizes.defense then
+                AddUnitBonus(whichUnit, BONUS_ARMOR, -prizes.defense)
+            end
+            if prizes.health then
+                AddUnitBonus(whichUnit, BONUS_HEALTH, -prizes.health)
+            end
+            if prizes.energy then
+                AddUnitBonus(whichUnit, BONUS_MANA, -prizes.energy)
+            end
+        end
+        if newRank > 0 then
+            local prizes = RANK_PRIZES[newRank]
+            if prizes.damage then
+                AddUnitBonus(whichUnit, BONUS_DAMAGE, prizes.damage)
+            end
+            if prizes.defense then
+                AddUnitBonus(whichUnit, BONUS_ARMOR, prizes.defense)
+            end
+            if prizes.health then
+                AddUnitBonus(whichUnit, BONUS_HEALTH, prizes.health)
+            end
+            if prizes.energy then
+                AddUnitBonus(whichUnit, BONUS_MANA, prizes.energy)
+            end
+        end
+    end)
+
+    local oldCreateUnit
+    oldCreateUnit = AddHook("CreateUnit", function (owningPlayer, unitid, x, y, face)
+        local u = oldCreateUnit(owningPlayer, unitid, x, y, face)
+
+        if u then
+            local rank = IsPlayerInForce(owningPlayer, FORCE_PLAYING) and GetPlayerState(owningPlayer, PLAYER_STATE_RESOURCE_FOOD_USED) or 0
+            if rank > 0 then
+                local prizes = RANK_PRIZES[rank]
+                if prizes.damage then
+                    AddUnitBonus(u, BONUS_DAMAGE, prizes.damage)
+                end
+                if prizes.defense then
+                    AddUnitBonus(u, BONUS_ARMOR, prizes.defense)
+                end
+                if prizes.health then
+                    AddUnitBonus(u, BONUS_HEALTH, prizes.health)
+                end
+                if prizes.energy then
+                    AddUnitBonus(u, BONUS_MANA, prizes.energy)
+                end
+            end
+        end
+
+        return u
+    end)
 
     local FightInfos = {} ---@type FightInfo[]
 
@@ -324,6 +443,8 @@ OnInit(function ()
 
             for j = 1, MAX_FIGHTERS do
                 fight.pi[j] = {
+                    p = nil,
+                    aliveDigimons = 0,
                     index = j,
                     selectedDigimons = Set.create(),
                     bannedDigimons = Set.create(),

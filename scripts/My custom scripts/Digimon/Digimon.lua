@@ -96,6 +96,12 @@ OnInit("Digimon", function ()
         return GetUnitAbilityLevel(self.root, id) > 0
     end
 
+    ---@param id integer
+    ---@return integer
+    function Digimon:setAbilityLevel(id, level)
+        return SetUnitAbilityLevel(self.root, id, level)
+    end
+
     ---@return player
     function Digimon:getOwner()
         return GetOwningPlayer(self.root)
@@ -388,11 +394,14 @@ OnInit("Digimon", function ()
 
     -- Evolution
 
+    Digimon.preEvolutionEvent = EventListener.create()
     Digimon.evolutionEvent = EventListener.create()
 
     ---Evolves the digimon
     ---@param evolveForm integer
     function Digimon:evolveTo(evolveForm)
+        Digimon.preEvolutionEvent:run(self)
+
         local old = self.root
         local oldLvl = self:getLevel()
         local oldExp = self:getExp()
@@ -619,6 +628,20 @@ OnInit("Digimon", function ()
             local d1 = Digimon._instance[GetOrderedUnit()]
             if d1 then
                 Digimon.issueOrderEvent:run(d1, GetIssuedOrderId())
+            end
+        end)
+    end
+
+    -- Change owner event
+
+    Digimon.changeOwnerEvent = EventListener.create()
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_CHANGE_OWNER)
+        TriggerAddAction(t, function ()
+            local d = Digimon._instance[GetChangingUnit()]
+            if d then
+                Digimon.changeOwnerEvent:run(d, d:getOwner(), GetChangingUnitPrevOwner())
             end
         end)
     end

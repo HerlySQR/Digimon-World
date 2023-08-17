@@ -478,7 +478,7 @@ OnInit("ZTS", function ()
         else
             pu = GetOrderTargetUnit()
         end
-        if IsUnitEnemy(pu, GetOwningPlayer(npc)) then
+        if pu and IsUnitEnemy(pu, GetOwningPlayer(npc)) then
             if (NPClist[npc][0] or 0) == 0 then --pull out of combat units only
                 ZTS_ModifyThreat(pu, npc, 0, true)
             end

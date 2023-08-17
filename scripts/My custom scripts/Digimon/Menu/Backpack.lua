@@ -108,6 +108,8 @@ OnInit("Backpack", function ()
 
             BlzFrameSetVisible(BackpackItemT[i], true)
         end
+
+        UpdateCooldowns()
     end
 
     local function BackpackFunc()

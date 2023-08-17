@@ -221,6 +221,14 @@ OnInit("DigimonBank", function ()
             end
         end
         self.main = nil
+        self.spawnPoint.x = GetRectCenterX(gg_rct_Player_1_Spawn)
+        self.spawnPoint.y = GetRectCenterY(gg_rct_Player_1_Spawn)
+
+        for i = 0, MAX_STOCK - 1 do
+            if self.stocked[i] then
+                self.stocked[i].environment = Environment.initial
+            end
+        end
         return false
     end
 
@@ -573,6 +581,7 @@ OnInit("DigimonBank", function ()
             BlzFrameSetPoint(SavedTooltip[i], FRAMEPOINT_TOPLEFT, SavedTooltipText[i], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
             BlzFrameSetPoint(SavedTooltip[i], FRAMEPOINT_BOTTOMRIGHT, SavedTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
         end
+        UpdateCooldowns()
     end
 
     local function ExitSaveFunc()
@@ -636,6 +645,7 @@ OnInit("DigimonBank", function ()
             BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, DigimonTTooltipText[i], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
             BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, DigimonTTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
         end
+        UpdateCooldowns()
     end
 
     -- When the digimon evolves
@@ -1764,7 +1774,12 @@ OnInit("DigimonBank", function ()
     ---@param flag boolean
     function ShowBank(p, flag)
         if p == LocalPlayer then
-            BlzFrameSetVisible(SummonADigimon, flag)
+            if flag then
+                BlzFrameSetVisible(SummonADigimon, true)
+            else
+                BlzFrameSetVisible(SummonADigimon, false)
+                BlzFrameSetVisible(StockedDigimonsMenu, false)
+            end
         end
     end
 
