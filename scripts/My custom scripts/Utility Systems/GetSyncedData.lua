@@ -11,6 +11,7 @@ OnInit("GetSyncedData", function ()
     local callbacks = LinkedList.create()
     local actString = ""
     local actThread = nil ---@type thread
+    local areWaiting = {} ---@type table<thread, thread[]>
 
     local function CallFirst()
         actThread = callbacks:getNext().value()
@@ -58,7 +59,7 @@ OnInit("GetSyncedData", function ()
             if p == LocalPlayer then
                 local result = {}
                 for i = 1, #func, 2 do
-                    table.insert(result, func[i](table.unpack(func[i+1])))
+                    table.insert(result, func[i](func[i+1] and table.unpack(func[i+1])))
                 end
                 data = Obj2Str(result)
             end
@@ -88,6 +89,23 @@ OnInit("GetSyncedData", function ()
         return value
     end
 
+    ---Yields the thread until last sync called from `GetSyncedData` ends.
+    ---
+    ---It does nothing if there isn't a queued sync from `GetSyncedData` or is the thread that function yielded or is yielded for another reason.
+    function WaitLastSync()
+        if actThread then
+            local thr = coroutine.running()
+            if actThread == thr or coroutine.status(thr) == "suspended" then
+                return
+            end
+            if not areWaiting[actThread] then
+                areWaiting[actThread] = {}
+            end
+            table.insert(areWaiting[actThread], thr)
+            coroutine.yield(thr)
+        end
+    end
+
     local t = CreateTrigger()
     for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
         BlzTriggerRegisterPlayerSyncEvent(t, Player(i), PREFIX, false)
@@ -97,10 +115,18 @@ OnInit("GetSyncedData", function ()
         actString = actString .. BlzGetTriggerSyncData()
         if BlzGetTriggerSyncPrefix() == END_PREFIX then
             coroutine.resume(actThread, pcall(Str2Obj, actString))
+            if areWaiting[actThread] then
+                for _, thr in ipairs(areWaiting[actThread]) do
+                    coroutine.resume(thr)
+                end
+                areWaiting[actThread] = nil
+            end
             actString = ""
             callbacks:getNext():remove()
             if callbacks.n > 0 then
                 CallFirst()
+            else
+                actThread = nil
             end
         end
     end)

@@ -4,6 +4,20 @@ OnInit("Player Data", function ()
     Require "AddHook"
     Require "Quests"
     Require "WorldBounds"
+    Require "EventListener"
+
+    local restartListener = EventListener.create()
+    local loadListener = EventListener.create()
+
+    ---@param func fun(p: player)
+    function OnRestart(func)
+        restartListener:register(func)
+    end
+
+    ---@param func fun(p: player)
+    function OnLoad(func)
+        loadListener:register(func)
+    end
 
     do
         ---@class Inventory
@@ -76,6 +90,7 @@ OnInit("Player Data", function ()
     ---@field questsProgresses integer[]
     ---@field questsIsCompleted boolean[]
     ---@field completedQuests integer
+    ---@field date osdate
     PlayerDatas = {} ---@type table<player, PlayerData[]>
 
     for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
@@ -138,25 +153,13 @@ OnInit("Player Data", function ()
             questsIds = save and udg_SaveLoadQuestIds or reverse(udg_SaveLoadQuestIds),
             questsProgresses = save and udg_SaveLoadQuestProgresses or reverse(udg_SaveLoadQuestProgresses),
             questsIsCompleted = save and udg_SaveLoadQuestIsCompleted or reverse(udg_SaveLoadQuestIsCompleted),
-            completedQuests = udg_SaveLoadCompletedQuests
+            completedQuests = udg_SaveLoadCompletedQuests,
+            date = {sec = udg_SaveLoadSec, min = udg_SaveLoadMin, hour = udg_SaveLoadHour, day = udg_SaveLoadDay,
+                month = udg_SaveLoadMonth, year = udg_SaveLoadYear, wday = udg_SaveLoadWDay, yday = udg_SaveLoadYDay,
+                isdst = udg_SaveLoadIsDst}
         }
 
-        udg_SaveLoadBackpackItems = __jarray(0)
-        udg_SaveLoadBackpackItemCharges = __jarray(0)
-        udg_SaveLoadBankItems = __jarray(0)
-        udg_SaveLoadBankItemsCharges = __jarray(0)
-        udg_SaveLoadDigimons = {}
-        udg_SaveLoadDigimonStrLevels = __jarray(0)
-        udg_SaveLoadDigimonAgiLevels = __jarray(0)
-        udg_SaveLoadDigimonIntLevels = __jarray(0)
-        udg_SaveLoadIsSaved = __jarray(0)
-        udg_SaveLoadBankDigimonsMaxStock = 0
-        udg_SaveLoadInventories = {}
-        udg_SaveLoadLevels = __jarray(0)
-        udg_SaveLoadExps = __jarray(0)
-        udg_SaveLoadQuestIds = __jarray(0)
-        udg_SaveLoadQuestProgresses = __jarray(0)
-        udg_SaveLoadQuestIsCompleted = __jarray(false)
+        ClearSaveLoadData()
     end
 
     ---Clears all the data of the player
@@ -180,6 +183,8 @@ OnInit("Player Data", function ()
         end)
         ClearDigimons(p)
         SetQuestsData(p)
+
+        restartListener:run(p)
     end
 
     ---After store the data use this function from the slot to use them
@@ -240,6 +245,8 @@ OnInit("Player Data", function ()
                     end
                 end
                 SetQuestsData(p, data.questsIds, data.questsProgresses, data.questsIsCompleted)
+
+                loadListener:run(p)
             end
         end
     end
@@ -266,6 +273,15 @@ OnInit("Player Data", function ()
         udg_SaveLoadQuestIds = __jarray(0)
         udg_SaveLoadQuestProgresses = __jarray(0)
         udg_SaveLoadQuestIsCompleted = __jarray(false)
+        udg_SaveLoadSec = 0
+        udg_SaveLoadMin = 0
+        udg_SaveLoadHour = 0
+        udg_SaveLoadDay = 0
+        udg_SaveLoadMonth = 0
+        udg_SaveLoadYear = 0
+        udg_SaveLoadWDay = 0
+        udg_SaveLoadYDay = 0
+        udg_SaveLoadIsDst = false
     end
 
     ---I prefered create my own level XP function

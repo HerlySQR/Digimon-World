@@ -1779,6 +1779,7 @@ OnInit("DigimonBank", function ()
             else
                 BlzFrameSetVisible(SummonADigimon, false)
                 BlzFrameSetVisible(StockedDigimonsMenu, false)
+                RemoveButtonFromEscStack(SummonADigimon)
             end
         end
     end

@@ -10,6 +10,7 @@ OnInit(function ()
     Require "ErrorMessage"
     Require "NewBonus"
     Require "AddHook"
+    Require "Player Data"
 
     local LocalPlayer = GetLocalPlayer()
     local MAX_ARENAS = 4
@@ -17,6 +18,7 @@ OnInit(function ()
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
     local MAX_RANK = 99
     local RANK_UPGRADE = FourCC('R005')
+    local RANK_BONUS = FourCC('A0E5')
     local RANK_PRIZES =
     { ---@type {equips: integer?, damage: integer?, defense: number?, health: integer?, energy: integer?}[]
         [1] =   {equips = nil,    damage = 1,     defense = nil,      health = nil,   energy = nil},
@@ -316,18 +318,18 @@ OnInit(function ()
                         end
                         if winner == info and loser.p == Digimon.NEUTRAL then
                             local prizes = RANK_PRIZES[GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED)]
-                            local message = "\nFor winning all your digimons will gain: \n"
+                            local message = "\nFor winning all your digimons will gain:"
                             if prizes.damage then
-                                message = message .. "» " .. prizes.damage .. " damage attack\n"
+                                message = message .. "\n» " .. prizes.damage .. " damage attack"
                             end
                             if prizes.defense then
-                                message = message .. "» " .. prizes.defense .. " defense\n"
+                                message = message .. "\n» " .. prizes.defense .. " defense"
                             end
                             if prizes.health then
-                                message = message .. "» " .. prizes.health .. " health\n"
+                                message = message .. "\n» " .. prizes.health .. " health"
                             end
                             if prizes.energy then
-                                message = message .. "» " .. prizes.energy .. " energy"
+                                message = message .. "\n» " .. prizes.energy .. " energy"
                             end
                             if prizes.equips then
                                 message = message .. "\nAnd also " .. prizes.equips .. " items unlocked in the shop."
@@ -370,7 +372,7 @@ OnInit(function ()
                 AddUnitBonus(whichUnit, BONUS_DAMAGE, -prizes.damage)
             end
             if prizes.defense then
-                AddUnitBonus(whichUnit, BONUS_ARMOR, -prizes.defense)
+                BlzSetAbilityRealLevelField(BlzGetUnitAbility(whichUnit, RANK_BONUS), ABILITY_RLF_ARMOR_BONUS_HAD1, 0, prizes.defense)
             end
             if prizes.health then
                 AddUnitBonus(whichUnit, BONUS_HEALTH, -prizes.health)
@@ -378,14 +380,23 @@ OnInit(function ()
             if prizes.energy then
                 AddUnitBonus(whichUnit, BONUS_MANA, -prizes.energy)
             end
+        else
+            UnitRemoveAbility(whichUnit, RANK_BONUS)
         end
         if newRank > 0 then
+            if GetUnitAbilityLevel(whichUnit, RANK_BONUS) == 0 then
+                UnitAddAbility(whichUnit, RANK_BONUS)
+                BlzUnitHideAbility(whichUnit, RANK_BONUS, true)
+            end
+
             local prizes = RANK_PRIZES[newRank]
             if prizes.damage then
                 AddUnitBonus(whichUnit, BONUS_DAMAGE, prizes.damage)
             end
             if prizes.defense then
-                AddUnitBonus(whichUnit, BONUS_ARMOR, prizes.defense)
+                BlzSetAbilityRealLevelField(BlzGetUnitAbility(whichUnit, RANK_BONUS), ABILITY_RLF_ARMOR_BONUS_HAD1, 0, prizes.defense)
+                SetUnitAbilityLevel(whichUnit, RANK_BONUS, 2)
+                SetUnitAbilityLevel(whichUnit, RANK_BONUS, 1)
             end
             if prizes.health then
                 AddUnitBonus(whichUnit, BONUS_HEALTH, prizes.health)
@@ -403,12 +414,17 @@ OnInit(function ()
         if u then
             local rank = IsPlayerInForce(owningPlayer, FORCE_PLAYING) and GetPlayerState(owningPlayer, PLAYER_STATE_RESOURCE_FOOD_USED) or 0
             if rank > 0 then
+                UnitAddAbility(u, RANK_BONUS)
+                BlzUnitHideAbility(u, RANK_BONUS, true)
+
                 local prizes = RANK_PRIZES[rank]
                 if prizes.damage then
                     AddUnitBonus(u, BONUS_DAMAGE, prizes.damage)
                 end
                 if prizes.defense then
-                    AddUnitBonus(u, BONUS_ARMOR, prizes.defense)
+                    BlzSetAbilityRealLevelField(BlzGetUnitAbility(u, RANK_BONUS), ABILITY_RLF_ARMOR_BONUS_HAD1, 0, prizes.defense)
+                    SetUnitAbilityLevel(u, RANK_BONUS, 2)
+                    SetUnitAbilityLevel(u, RANK_BONUS, 1)
                 end
                 if prizes.health then
                     AddUnitBonus(u, BONUS_HEALTH, prizes.health)
@@ -420,6 +436,14 @@ OnInit(function ()
         end
 
         return u
+    end)
+
+    OnRestart(function (p)
+        BlzDecPlayerTechResearched(p, RANK_UPGRADE, GetPlayerTechCount(p, RANK_UPGRADE, true))
+    end)
+
+    OnLoad(function (p)
+        BlzDecPlayerTechResearched(p, RANK_UPGRADE, GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED))
     end)
 
     local FightInfos = {} ---@type FightInfo[]

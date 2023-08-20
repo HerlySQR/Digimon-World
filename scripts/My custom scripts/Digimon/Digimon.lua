@@ -7,8 +7,14 @@ OnInit("Digimon", function ()
     Require "Environment"
     Require "Vec2"
     Require "GlobalRemap"
+    Require "NewBonus"
+    Require "PlayerUtils"
 
     local LocalPlayer = GetLocalPlayer() ---@type player
+
+    local STAMINA_TRAINING = FourCC('A0CU')
+    local DEXTERITY_TRAINING = FourCC('A0CT')
+    local WISDOM_TRAINING = FourCC('A0CV')
 
     ---@enum Rank
     Rank = {
@@ -54,6 +60,9 @@ OnInit("Digimon", function ()
     ---@field onCombat boolean
     ---@field isSummon boolean
     ---@field saved boolean
+    ---@field IVsta integer
+    ---@field IVdex integer
+    ---@field IVwis integer
     Digimon = {
         _instance = {} ---@type table<unit, Digimon>
     }
@@ -97,9 +106,16 @@ OnInit("Digimon", function ()
     end
 
     ---@param id integer
+    ---@param level integer
     ---@return integer
     function Digimon:setAbilityLevel(id, level)
         return SetUnitAbilityLevel(self.root, id, level)
+    end
+
+    ---@param id integer
+    ---@return integer
+    function Digimon:getAbilityLevel(id)
+        return GetUnitAbilityLevel(self.root, id)
     end
 
     ---@return player
@@ -256,6 +272,23 @@ OnInit("Digimon", function ()
         return IsUnitPaused(self.root)
     end
 
+    ---@param sta integer
+    ---@param dex integer
+    ---@param wis integer
+    function Digimon:setIV(sta, dex, wis)
+        AddUnitBonus(self.root, BONUS_STRENGTH, -self.IVsta)
+        AddUnitBonus(self.root, BONUS_AGILITY, -self.IVdex)
+        AddUnitBonus(self.root, BONUS_INTELLIGENCE, -self.IVwis)
+
+        AddUnitBonus(self.root, BONUS_STRENGTH, sta)
+        AddUnitBonus(self.root, BONUS_AGILITY, dex)
+        AddUnitBonus(self.root, BONUS_INTELLIGENCE, wis)
+
+        self.IVsta = sta
+        self.IVdex = dex
+        self.IVwis = wis
+    end
+
     ---@param u unit
     ---@return Digimon
     function Digimon.getInstance(u)
@@ -304,6 +337,7 @@ OnInit("Digimon", function ()
             self = setmetatable({}, Digimon)
 
             self.root = u
+            self.owner = GetOwningPlayer(u)
 
             local check = GetToken(GetUnitName(u))
 
@@ -325,6 +359,16 @@ OnInit("Digimon", function ()
             self.saved = false
 
             Digimon._instance[u] = self
+
+            self.IVsta = 0
+            self.IVdex = 0
+            self.IVwis = 0
+
+            if IsPlayerInForce(self.owner, FORCE_PLAYING) or self.owner == Digimon.VILLAIN then
+                self:setIV(15, 15, 15)
+            else
+                self:setIV(math.random(15), math.random(15), math.random(15))
+            end
         end
 
         Digimon.createEvent:run(self)
@@ -338,6 +382,11 @@ OnInit("Digimon", function ()
 
     function Digimon:destroy()
         Digimon.destroyEvent:run(self)
+
+        self:setIV(0, 0, 0)
+        self:setAbilityLevel(STAMINA_TRAINING, 0)
+        self:setAbilityLevel(DEXTERITY_TRAINING, 0)
+        self:setAbilityLevel(WISDOM_TRAINING, 0)
 
         RecycleHero(self.root)
         Digimon._instance[self.root] = nil
@@ -410,6 +459,14 @@ OnInit("Digimon", function ()
         local select = IsUnitSelected(old, LocalPlayer)
         local invul = BlzIsUnitInvulnerable(old)
         local items = {}
+        local oldSta = self:getAbilityLevel(STAMINA_TRAINING)
+        local oldDex = self:getAbilityLevel(DEXTERITY_TRAINING)
+        local oldWis = self:getAbilityLevel(WISDOM_TRAINING)
+        local oldIVSta, oldIVDex, oldIVWis = self.IVsta, self.IVdex, self.IVwis
+
+        self:setAbilityLevel(STAMINA_TRAINING, 0)
+        self:setAbilityLevel(DEXTERITY_TRAINING, 0)
+        self:setAbilityLevel(WISDOM_TRAINING, 0)
 
         for i = 0, 5 do
             items[i] = UnitItemInSlot(old, i)
@@ -468,6 +525,18 @@ OnInit("Digimon", function ()
 
         self:setLevel(oldLvl) -- This could run the level up event
         self:setExp(oldExp) -- This could run the level up event
+
+        for _ = 1, oldSta do
+            SelectHeroSkill(self.root, STAMINA_TRAINING)
+        end
+        for _ = 1, oldDex do
+            SelectHeroSkill(self.root, DEXTERITY_TRAINING)
+        end
+        for _ = 1, oldWis do
+            SelectHeroSkill(self.root, WISDOM_TRAINING)
+        end
+
+        self:setIV(oldIVSta, oldIVDex, oldIVWis)
 
         Digimon.evolutionEvent:run(self)
     end

@@ -2,6 +2,7 @@ if Debug then Debug.beginFile("Obj2Str") end
 OnInit("Obj2Str", function ()
     Require "Wc3Type" -- https://www.hiveworkshop.com/threads/debug-utils-ingame-console-etc.330758/
 
+    local MAX_DEPTH = 99
     local h = InitHashtable()
 
     ---I do it in this way, because I can't get a general conversion to all this types
@@ -34,6 +35,32 @@ OnInit("Obj2Str", function ()
         framehandle = "Frame"
     }
 
+    setmetatable(Names, {
+        __index = function (t, k)
+            error("Invalid string id: " .. k, 2)
+        end
+    })
+
+    ---@param t table
+    ---@param depth integer
+    ---@return string
+    local function Tab2Str(t, depth)
+        if depth == MAX_DEPTH then
+            error("Obj2Str surpassed the recursion limit of " .. MAX_DEPTH)
+        end
+
+        local result = ""
+        for k, v in pairs(t) do
+            result = result
+                .. ",("
+                .. ((type(k) == "table") and Tab2Str(k, depth + 1) or Obj2Str(k))
+                .. ","
+                .. ((type(v) == "table") and Tab2Str(v, depth + 1) or Obj2Str(v))
+                .. ")"
+        end
+        return "table: {" .. result:sub(2) .. "}"
+    end
+
     ---Converts an object to a string id
     ---@param o any
     ---@return string
@@ -48,18 +75,14 @@ OnInit("Obj2Str", function ()
         elseif typ == "string" then
             return "string: " .. o
         elseif typ == "table" then
-            local result = ""
-            for i = 1, #o do
-                result = result .. "," .. Obj2Str(o[i])
-            end
-            return "table: {" .. result:sub(2) .. "}"
+            return Tab2Str(o, 0)
         elseif typ == "userdata" then
             return Wc3Type(o) .. ": " .. GetHandleId(o)
         end
         error("Invalid object type", 2)
     end
 
-    ---Converts an string id to object
+    ---Converts a string id to object (a copy in case of a lua table)
     ---@param s string
     ---@return any
     function Str2Obj(s)
@@ -84,22 +107,35 @@ OnInit("Obj2Str", function ()
         elseif typ == "table" then
             local result = {}
             value = value:sub(2, value:len() - 1) -- Remove the brackets
-            while true do
-                local colon = value:find(":")
-
-                if not colon then break end
-
-                if value:sub(1, colon - 1) ~= "table" then -- Check the type of the object
-                    local comma = value:find(",", colon) or (value:len() + 1)
-                    table.insert(result, Str2Obj(value:sub(1, comma - 1)))
-                    value = value:sub(comma + 1)
-                else
-                    -- If the value is a table then check how many is extended
+            while value:find(":") do
+                -- Get the (key,value) pair
+                local parentesis = 0
+                -- Search the start and end parentesis of the pair, in case the table store more tables
+                local count = 0
+                for i = 1, value:len() do
+                    local char = value:sub(i, i)
+                    if char == "(" then
+                        count = count + 1
+                    elseif char == ")" then
+                        count = count - 1
+                    end
+                    if count == 0 then
+                        parentesis = i
+                        break
+                    end
+                end
+                if count ~= 0 then
+                    error("Unable to convert this \"table\"", 2)
+                end
+                local pair = value:sub(2, parentesis - 1)
+                local colon = pair:find(":")
+                local comma
+                if pair:sub(1, colon - 1) == "table" then
+                    -- The key is a table, so let's find the end of it
                     local bracket = 0
-                    -- Search the start and end brackets of the table, in case the table store more tables
-                    local count = 0
-                    for i = 1, value:len() do
-                        local char = value:sub(i, i)
+                    count = 0
+                    for i = colon + 2, pair:len() do
+                        local char = pair:sub(i, i)
                         if char == "{" then
                             count = count + 1
                         elseif char == "}" then
@@ -113,17 +149,18 @@ OnInit("Obj2Str", function ()
                     if count ~= 0 then
                         error("Unable to convert this \"table\"", 2)
                     end
-                    table.insert(result, Str2Obj(value:sub(1, bracket)))
-                    value = value:sub(bracket + 2)
+                    comma = bracket + 1
+                else
+                    comma = pair:find(",")
                 end
+
+                result[Str2Obj(pair:sub(1, comma - 1))] = Str2Obj(pair:sub(comma + 1, pair:len()))
+
+                value = value:sub(parentesis + 2)
             end
             return result
         else
             local func = _G["Load" .. Names[typ] .. "Handle"]
-
-            if not func then
-                error("Invalid string id", 2)
-            end
 
             SaveFogStateHandle(h, 0, 0, ConvertFogState(tonumber(value)))
             return func(h, 0, 0)

@@ -5,6 +5,7 @@ OnInit("PressSaveOrLoad", function ()
     Require "Menu"
     Require "GameStatus"
     local FrameList = Require "FrameList" ---@type FrameList
+    Require "GetSyncedData"
 
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
@@ -21,6 +22,7 @@ OnInit("PressSaveOrLoad", function ()
     local SaveSlotT = {} ---@type framehandle[]
     local Information = nil ---@type framehandle
     local TooltipName = nil ---@type framehandle
+    local TooltipDate = nil ---@type framehandle
     local TooltipGold = nil ---@type framehandle
     local TooltipLumber = nil ---@type framehandle
     local TooltipFood = nil ---@type framehandle
@@ -103,6 +105,7 @@ OnInit("PressSaveOrLoad", function ()
 
         if data then
             BlzFrameSetText(TooltipName, "|cffff6600Information|r")
+            BlzFrameSetText(TooltipDate, os.date("\x25c", os.time(data.date)))
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. data.gold)
             BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal: |r" .. data.lumber)
             BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank: |r" .. data.food)
@@ -191,6 +194,7 @@ OnInit("PressSaveOrLoad", function ()
             end
         else
             BlzFrameSetText(TooltipName, "|cffff6600Empty|r")
+            BlzFrameSetText(TooltipDate, "Date")
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits:|r")
             BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal:|r")
             BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank:|r")
@@ -256,10 +260,12 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     local function AbsoluteSaveFunc()
-        udg_SaveLoadEvent_Player = GetTriggerPlayer()
+        local p = GetTriggerPlayer()
+        udg_SaveLoadEvent_Player = p
         udg_SaveLoadSlot = Pressed[udg_SaveLoadEvent_Player]
         TriggerExecute(gg_trg_Save_GUI)
-        if udg_SaveLoadEvent_Player == LocalPlayer then
+        WaitLastSync()
+        if p == LocalPlayer then
             UpdateMenu()
             UpdateInformation()
         end
@@ -366,6 +372,14 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetEnable(TooltipName, false)
         BlzFrameSetScale(TooltipName, 1.00)
         BlzFrameSetTextAlignment(TooltipName, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+        TooltipDate = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
+        BlzFrameSetPoint(TooltipDate, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.25000, -0.010000)
+        BlzFrameSetPoint(TooltipDate, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.49000)
+        BlzFrameSetText(TooltipDate, "Date")
+        BlzFrameSetEnable(TooltipDate, false)
+        BlzFrameSetScale(TooltipDate, 1.00)
+        BlzFrameSetTextAlignment(TooltipDate, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_RIGHT)
 
         TooltipGold = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipGold, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)

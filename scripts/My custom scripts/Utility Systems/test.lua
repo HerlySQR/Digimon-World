@@ -1,19 +1,22 @@
+Debug.beginFile("test table")
 OnInit(function ()
-    local AdvanceAura = Require "AdvancedAura" ---@type AdvancedAura
+    Require "GetSyncedData"
 
-    local NewAura = AdvanceAura.create(FourCC('A000'))
-
-    NewAura.OWNER_SFX = "Abilities\\Spells\\Orc\\WarDrums\\DrumsCasterHeal.mdl"
-    NewAura.BUFF = FourCC('A001')
-
-    function NewAura:auraInit()
-        self:setBonus(BONUS_DAMAGE, 3)
+    local function GetTable()
+        return {
+            true,
+            [{1}] = "asas",
+            tab = {0},
+            [{"a5"}] = {"a6", "a7"},
+            point = Location(0, 0)
+        }
     end
 
-    function NewAura:onFilter(u)
-        return IsUnitAlly(self.owner, GetOwningPlayer(u))
-    end
-
-    OnUnitEnter(print)
+    local t = CreateTrigger()
+    TriggerRegisterPlayerChatEvent(t, Player(0), "-table", true)
+    TriggerAddAction(t, function ()
+        print(Obj2Str(GetSyncedData(Player(0), GetTable)))
+    end)
 
 end)
+Debug.endFile()
