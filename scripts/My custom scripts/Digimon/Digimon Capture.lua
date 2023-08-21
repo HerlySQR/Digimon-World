@@ -36,6 +36,7 @@ OnInit("Digimon Capture", function ()
                     else
                         StoreDigimon(p, dTarget)
                     end
+                    DisplayTextToPlayer(p, 0, 0, "You got it!")
                     DestroyEffectTimed(AddSpecialEffect("Abilities\\Spells\\Undead\\DarkRitual\\DarkRitualCaster.mdl", GetUnitX(target), GetUnitY(target)), 2.00)
                     Digimon.capturedEvent:run({caster = Digimon.getInstance(caster), target = dTarget})
                 else

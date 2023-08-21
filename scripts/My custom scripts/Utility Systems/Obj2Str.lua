@@ -5,7 +5,7 @@ OnInit("Obj2Str", function ()
     local MAX_DEPTH = 99
     local h = InitHashtable()
 
-    ---I do it in this way, because I can't get a general conversion to all this types
+    ---I do it in this way, because I can't get a general conversion to all these types
     local Names = {
         player = "Player",
         unit = "Unit",

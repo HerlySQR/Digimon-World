@@ -81,6 +81,9 @@ OnInit("Player Data", function ()
     ---@field strLevels integer[]
     ---@field agiLevels integer[]
     ---@field intLevels integer[]
+    ---@field IVsta integer[]
+    ---@field IVdex integer[]
+    ---@field IVwis integer[]
     ---@field isSaved integer[]
     ---@field bankDigimonsMaxStock integer
     ---@field inventories Inventory[]
@@ -145,6 +148,9 @@ OnInit("Player Data", function ()
             strLevels = save and udg_SaveLoadDigimonStrLevels or reverse(udg_SaveLoadDigimonStrLevels),
             agiLevels = save and udg_SaveLoadDigimonAgiLevels or reverse(udg_SaveLoadDigimonAgiLevels),
             intLevels = save and udg_SaveLoadDigimonIntLevels or reverse(udg_SaveLoadDigimonIntLevels),
+            IVsta = save and udg_SaveLoadDigimonIVSta or reverse(udg_SaveLoadDigimonIVSta),
+            IVdex = save and udg_SaveLoadDigimonIVDex or reverse(udg_SaveLoadDigimonIVDex),
+            IVwis = save and udg_SaveLoadDigimonIVWis or reverse(udg_SaveLoadDigimonIVWis),
             isSaved = save and udg_SaveLoadIsSaved or reverse(udg_SaveLoadIsSaved),
             bankDigimonsMaxStock = udg_SaveLoadBankDigimonsMaxStock,
             inventories = save and udg_SaveLoadInventories or reverse(udg_SaveLoadInventories),
@@ -233,6 +239,7 @@ OnInit("Player Data", function ()
                             return true
                         end
                     end)
+                    d:setIV(data.IVsta[i], data.IVdex[i], data.IVwis[i])
                     data.inventories[i]:useTheItems(d.root)
                     --d:setLevel(math.max(1, data.levels[i])) -- Just in case
                     --d:setExp(d:getExp() + data.experiences[i])
@@ -264,6 +271,9 @@ OnInit("Player Data", function ()
         udg_SaveLoadDigimonStrLevels = __jarray(0)
         udg_SaveLoadDigimonAgiLevels = __jarray(0)
         udg_SaveLoadDigimonIntLevels = __jarray(0)
+        udg_SaveLoadDigimonIVSta = __jarray(0)
+        udg_SaveLoadDigimonIVDex = __jarray(0)
+        udg_SaveLoadDigimonIVWis = __jarray(0)
         udg_SaveLoadIsSaved = __jarray(0)
         udg_SaveLoadBankDigimonsMaxStock = 0
         udg_SaveLoadInventories = {}
