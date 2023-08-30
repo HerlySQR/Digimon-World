@@ -156,9 +156,9 @@ OnInit("DigimonEvolution", function ()
             local j = 0
             for v in set:elements() do
                 j = j + 1
-                local u2 = GetRecycledHero(Digimon.PASSIVE, v, 0, 0, 0)
+                local u2 = CreateUnit(Digimon.PASSIVE, v, 0, 0, 0)
                 EvolveOption[p][j] = DialogAddButton(EvolveDialog[p], GetHeroProperName(u2), 0)
-                RecycleHero(u2)
+                RemoveUnit(u2)
             end
         end
         DialogAddButton(EvolveDialog[p], "Cancel", 0)
@@ -168,7 +168,9 @@ OnInit("DigimonEvolution", function ()
 
     -- Add the evolution ability to the new digimon
     Digimon.createEvent:register(function (new)
-        new:addAbility(EvolveAbilDis)
+        if new:getOwner() ~= Digimon.CITY and new:getOwner() ~= Digimon.PASSIVE then
+            new:addAbility(EvolveAbilDis)
+        end
     end)
 
     -- Remove the evolution ability to destroyed digimon

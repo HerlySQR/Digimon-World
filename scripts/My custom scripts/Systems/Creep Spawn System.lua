@@ -370,13 +370,13 @@ OnInit(function ()
     Digimon.capturedEvent:register(function (info)
         local target = info.target ---@type Creep
         target.captured = true
-        if target.rd and target.rd.isDungeon then
-            ZTS_RemoveThreatUnit(target.root)
-        end
+        ZTS_RemoveThreatUnit(target.root)
         ZTS_AddPlayerUnit(target.root)
     end)
     Digimon.killEvent:register(function (info)
-        info.target.captured = true
+        local target = info.target ---@type Creep
+        ZTS_RemoveThreatUnit(target.root)
+        target.captured = true
     end)
 
     Digimon.postDamageEvent:register(function (info)

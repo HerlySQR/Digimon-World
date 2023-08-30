@@ -1,6 +1,13 @@
+Debug.beginFile("FoodBonus")
 OnInit(function ()
     Require "NewBonus"
     Require "Timed"
+    Require "MDTable"
+    Require "Digimon"
+
+    local DURATION = udg_FOOD_BUFF_DURATION
+
+    local elapsedTime = MDTable.create(2, 0) ---@type table<Digimon, table<integer, number>>
 
     ---@class BonusInfo
     ---@field isDrink boolean
@@ -26,7 +33,7 @@ OnInit(function ()
     local bonuses = {} ---@type table<integer, BonusInfo>
 
     ---@class ActualBuffData
-    ---@field buff integer
+    ---@field bonusInfo BonusInfo
     ---@field removeBuff function
     ---@field removeTimer function
 
@@ -61,56 +68,86 @@ OnInit(function ()
     TriggerAddAction(t, function ()
         local info = bonuses[GetItemTypeId(GetManipulatedItem())]
         if info then
-            local u = GetManipulatingUnit()
+            local d = Digimon.getInstance(GetManipulatingUnit())
 
-            local function removeBuff()
-                for i = 1, #info.bonusType do
-                    AddUnitBonus(u, info.bonusType[i], -info.amount[i])
+            if elapsedTime[d][info.buff] <= 0 then
+                d:addAbility(info.buff)
+                local function removeBuff()
+                    for i = 1, #info.bonusType do
+                        AddUnitBonus(d.root, info.bonusType[i], -info.amount[i])
+                    end
+                    if info.isDrink then
+                        actualBuffDrink[d] = nil
+                    else
+                        actualBuffFood[d] = nil
+                    end
+                    d:removeAbility(info.buff)
                 end
+
+                local removeTimer = Timed.echo(0.2, function ()
+                    elapsedTime[d][info.buff] = elapsedTime[d][info.buff] - 0.2
+                    if elapsedTime[d][info.buff] <= 0 then
+                        removeBuff()
+                        return true
+                    end
+                end)
+
                 if info.isDrink then
-                    actualBuffDrink[u] = nil
+                    if actualBuffDrink[d] then
+                        actualBuffDrink[d].removeTimer()
+                        actualBuffDrink[d].removeBuff()
+                    end
+                    actualBuffDrink[d] = {
+                        bonusInfo = info,
+                        removeBuff = removeBuff,
+                        removeTimer = removeTimer
+                    }
                 else
-                    actualBuffFood[u] = nil
+                    if actualBuffFood[d] then
+                        actualBuffFood[d].removeTimer()
+                        actualBuffFood[d].removeBuff()
+                    end
+                    actualBuffFood[d] = {
+                        bonusInfo = info,
+                        removeBuff = removeBuff,
+                        removeTimer = removeTimer
+                    }
+                end
+
+                for i = 1, #info.bonusType do
+                    AddUnitBonus(d.root, info.bonusType[i], info.amount[i])
                 end
             end
+            elapsedTime[d][info.buff] = DURATION
+        end
+    end)
 
-            local removeTimer = Timed.echo(0.2, function ()
-                if not UnitHasBuffBJ(u, info.buff) then
-                    removeBuff()
-                    return true
-                end
-            end)
+    Digimon.evolutionEvent:register(function (d, old)
+        if actualBuffDrink[d] then
+            local info = actualBuffDrink[d].bonusInfo
 
-            if info.isDrink then
-                if actualBuffDrink[u] then
-                    if info.buff ~= actualBuffDrink[u].buff then
-                        UnitRemoveBuffBJ(actualBuffDrink[u].buff, u)
-                    end
-                    actualBuffDrink[u].removeTimer()
-                    actualBuffDrink[u].removeBuff()
-                end
-                actualBuffDrink[u] = {
-                    buff = info.buff,
-                    removeBuff = removeBuff,
-                    removeTimer = removeTimer
-                }
-            else
-                if actualBuffFood[u] then
-                    if info.buff ~= actualBuffFood[u].buff then
-                        UnitRemoveBuffBJ(actualBuffFood[u].buff, u)
-                    end
-                    actualBuffFood[u].removeTimer()
-                    actualBuffFood[u].removeBuff()
-                end
-                actualBuffFood[u] = {
-                    buff = info.buff,
-                    removeBuff = removeBuff,
-                    removeTimer = removeTimer
-                }
-            end
-
+            UnitRemoveAbility(old, info.buff)
             for i = 1, #info.bonusType do
-                AddUnitBonus(u, info.bonusType[i], info.amount[i])
+                AddUnitBonus(old, info.bonusType[i], -info.amount[i])
+            end
+
+            d:addAbility(info.buff)
+            for i = 1, #info.bonusType do
+                AddUnitBonus(d.root, info.bonusType[i], info.amount[i])
+            end
+        end
+
+        if actualBuffFood[d] then
+            local info = actualBuffFood[d].bonusInfo
+
+            UnitRemoveAbility(old, info.buff)
+            for i = 1, #info.bonusType do
+                AddUnitBonus(old, info.bonusType[i], -info.amount[i])
+            end
+
+            d:addAbility(info.buff)
+            for i = 1, #info.bonusType do
+                AddUnitBonus(d.root, info.bonusType[i], info.amount[i])
             end
         end
     end)
@@ -136,3 +173,4 @@ OnInit(function ()
         end)
     end)
 end)
+Debug.endFile()

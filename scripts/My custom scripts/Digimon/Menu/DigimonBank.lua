@@ -1227,7 +1227,7 @@ OnInit("DigimonBank", function ()
 
         BackdropSaveItem = BlzCreateFrameByType("BACKDROP", "BackdropSaveItem", SaveItem, "", 0)
         BlzFrameSetAllPoints(BackdropSaveItem, SaveItem)
-        BlzFrameSetTexture(BackdropSaveItem, "ReplaceableTextures\\CommandButtons\\BTNDustOfAppearance.blp", 0, true)
+        BlzFrameSetTexture(BackdropSaveItem, "ReplaceableTextures\\CommandButtons\\BTNBankIcon.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SaveItem, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, SaveItemFunc)
@@ -1925,7 +1925,7 @@ OnInit("DigimonBank", function ()
         end
         return stucked
     end
-    
+
     ---For debug
     ---@param p any
     ---@param u any

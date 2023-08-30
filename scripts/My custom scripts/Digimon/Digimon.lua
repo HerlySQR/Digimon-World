@@ -1,6 +1,5 @@
 Debug.beginFile("Digimon")
 OnInit("Digimon", function ()
-    Require "HeroRecycler"
     Require "UnitEnum"
     Require "EventListener"
     Require "Damage"
@@ -78,7 +77,7 @@ OnInit("Digimon", function ()
     ---@param facing number
     ---@return Digimon
     function Digimon.create(p, id, x, y, facing)
-        return Digimon.add(GetRecycledHero(p, id, x, y, facing))
+        return Digimon.add(CreateUnit(p, id, x, y, facing))
     end
 
     local rarities = __jarray(Rarity.COMMON) ---@type table<integer, Rarity>
@@ -383,12 +382,7 @@ OnInit("Digimon", function ()
     function Digimon:destroy()
         Digimon.destroyEvent:run(self)
 
-        self:setIV(0, 0, 0)
-        self:setAbilityLevel(STAMINA_TRAINING, 0)
-        self:setAbilityLevel(DEXTERITY_TRAINING, 0)
-        self:setAbilityLevel(WISDOM_TRAINING, 0)
-
-        RecycleHero(self.root)
+        RemoveUnit(self.root)
         Digimon._instance[self.root] = nil
     end
 
@@ -463,10 +457,7 @@ OnInit("Digimon", function ()
         local oldDex = self:getAbilityLevel(DEXTERITY_TRAINING)
         local oldWis = self:getAbilityLevel(WISDOM_TRAINING)
         local oldIVSta, oldIVDex, oldIVWis = self.IVsta, self.IVdex, self.IVwis
-
-        self:setAbilityLevel(STAMINA_TRAINING, 0)
-        self:setAbilityLevel(DEXTERITY_TRAINING, 0)
-        self:setAbilityLevel(WISDOM_TRAINING, 0)
+        self.IVsta, self.IVdex, self.IVwis = 0, 0, 0
 
         for i = 0, 5 do
             items[i] = UnitItemInSlot(old, i)
@@ -476,7 +467,7 @@ OnInit("Digimon", function ()
         end
 
         ShowUnitHide(old)
-        self.root = GetRecycledHero(GetOwningPlayer(old), evolveForm, GetUnitX(old), GetUnitY(old), GetUnitFacing(old))
+        self.root = CreateUnit(GetOwningPlayer(old), evolveForm, GetUnitX(old), GetUnitY(old), GetUnitFacing(old))
 
         Digimon._instance[old] = nil
         Digimon._instance[self.root] = self
@@ -518,10 +509,9 @@ OnInit("Digimon", function ()
             SetUnitInvulnerable(self.root, true)
         end
 
-        UnitRemoveAbility(old, EvolveAbil)
         UnitAddAbility(self.root, EvolveAbilDis)
 
-        RecycleHero(old)
+        RemoveUnit(old)
 
         self:setLevel(oldLvl) -- This could run the level up event
         self:setExp(oldExp) -- This could run the level up event
@@ -538,7 +528,7 @@ OnInit("Digimon", function ()
 
         self:setIV(oldIVSta, oldIVDex, oldIVWis)
 
-        Digimon.evolutionEvent:run(self)
+        Digimon.evolutionEvent:run(self, old)
     end
 
     -- Pre-damage
@@ -720,6 +710,7 @@ OnInit("Digimon", function ()
     Digimon.NEUTRAL = Player(12)
     Digimon.PASSIVE = Player(PLAYER_NEUTRAL_PASSIVE)
     Digimon.VILLAIN = Player(13)
+    Digimon.CITY = Player(14)
 
     ---@param p player
     ---@return boolean
@@ -742,10 +733,12 @@ OnInit("Digimon", function ()
         FourCC('n00A') -- Digispirit
     )
     -- Add the current digimons in the map
-    ForUnitsInRect(bj_mapInitialPlayableArea, function (u)
-        if not exclude:contains(GetUnitTypeId(u)) then
-            Digimon.add(u)
-        end
+    OnInit.final(function ()
+        ForUnitsInRect(MapBounds.rect, function (u)
+            if not exclude:contains(GetUnitTypeId(u)) then
+                Digimon.add(u)
+            end
+        end)
     end)
 
     -- Change the environment when double-click a Digimon

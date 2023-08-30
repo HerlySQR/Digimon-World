@@ -2,6 +2,7 @@ Debug.beginFile("Skull Satamon\\Abilities\\Jail")
 OnInit(function ()
     Require "BossFightUtils"
     Require "DigimonBank"
+    Require "PlayerUtils"
 
     local SPELL = FourCC('A0DX')
     local MISSILE_MODEL = "Abilities\\Spells\\Undead\\DarkSummoning\\DarkSummonMissile.mdl"
@@ -52,11 +53,17 @@ OnInit(function ()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_CHANGE_OWNER)
         TriggerAddAction(t, function ()
             local u = GetTriggerUnit()
+            local stop = true
             for i = 1, #jails do
                 if prisoner[i] == u then
                     restartJail(i)
-                    return
+                    stop = false
+                    break
                 end
+            end
+
+            if stop then
+                return
             end
 
             if Digimon.getInstance(u) then

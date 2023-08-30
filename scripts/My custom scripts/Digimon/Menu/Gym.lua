@@ -24,10 +24,10 @@ OnInit(function ()
         [1] =   {equips = nil,    damage = 1,     defense = nil,      health = nil,   energy = nil},
         [2] =   {equips = nil,    damage = 1,     defense = 0.5,      health = nil,   energy = nil},
         [3] =   {equips = 2,      damage = 1,     defense = 0.5,      health = 10,    energy = nil},
-        [4] =   {equips = nil,    damage = 2,     defense = 0.5,      health = 10,    energy = 5},
-        [5] =   {equips = nil,    damage = 2,     defense = 0.5,      health = 10,    energy = 5},
-        [6] =   {equips = nil,    damage = 2,     defense = 0.5,      health = 10,    energy = 5},
-        [7] =   {equips = 2,      damage = 2,     defense = 0.5,      health = 10,    energy = 5},
+        [4] =   {equips = nil,    damage = 2,     defense = 1,        health = 10,    energy = 5},
+        [5] =   {equips = nil,    damage = 2,     defense = 1,        health = 10,    energy = 5},
+        [6] =   {equips = nil,    damage = 2,     defense = 1,        health = 10,    energy = 5},
+        [7] =   {equips = 2,      damage = 2,     defense = 1,        health = 10,    energy = 5},
         [8] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
         [9] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
         [10] =  {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
@@ -183,6 +183,7 @@ OnInit(function ()
                         d:setLevel(self.level)
                         d:pause()
                         table.insert(paused, d)
+                        d:setIV(15, 15, 15)
                     end
                 end
             else

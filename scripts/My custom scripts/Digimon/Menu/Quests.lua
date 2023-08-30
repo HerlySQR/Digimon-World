@@ -7,9 +7,11 @@ OnInit("Quests", function ()
     Require "Timed"
     Require "AbilityUtils"
     Require "Menu"
+    Require "SyncedTable"
+    Require "AddHook"
 
     local NoRepeat = {} ---@type table<player, table<trigger, boolean>>
-    local QuestTrigger = nil ---@type trigger
+    local QuestTrigger = SyncedTable.create() ---@type table<thread, trigger>
 
     local QuestButton = nil ---@type framehandle
     local BackdropQuestButton = nil ---@type framehandle
@@ -38,8 +40,8 @@ OnInit("Quests", function ()
     ---@field level integer
     ---@field onlyOnce boolean
     ---@field maxProgress integer
-    ---@field questMark effect
-    ---@field counter texttag
+    ---@field questMark effect?
+    ---@field counter texttag?
 
     local QuestTemplates = {} ---@type table<integer, QuestTemplate>
 
@@ -272,9 +274,9 @@ OnInit("Quests", function ()
         if petitioner then
             local questMark = AddSpecialEffect(QUEST_MARK, GetUnitX(petitioner), GetUnitY(petitioner))
             if not onlyOnce then
-                BlzSetSpecialEffectColor(questMark, 100, 100, 255)
+                BlzSetSpecialEffectColor(questMark, 50, 255, 50)
             end
-            BlzSetSpecialEffectZ(questMark, GetUnitZ(petitioner, true) + 50)
+            BlzSetSpecialEffectZ(questMark, GetUnitZ(petitioner, true) + 175)
             QuestTemplates[id].questMark = questMark
             QuestTemplates[id].counter = CreateTextTagUnitBJ("", petitioner, 50., 10., 100., 100., 100., 0.)
         end
@@ -435,6 +437,82 @@ OnInit("Quests", function ()
         end)
     end)
 
+    local questPlayer = SyncedTable.create() ---@type table<thread, player>
+    local lastQuestPlayer = nil ---@type player
+    local questId = SyncedTable.create() ---@type table<thread, integer>
+    local lastQuestId = nil ---@type integer
+
+    GlobalRemap("udg_QuestPlayer", function ()
+        local thr = coroutine.running()
+        if not thr then
+            return nil
+        end
+        if not questPlayer[thr] then
+            questPlayer[thr] = lastQuestPlayer
+        end
+        return questPlayer[thr]
+    end, function (value)
+        local thr = coroutine.running()
+        if not thr then
+            return
+        end
+        questPlayer[thr] = value
+        lastQuestPlayer = value
+    end)
+
+    GlobalRemap("udg_QuestId", function ()
+        local thr = coroutine.running()
+        if not thr then
+            return 0
+        end
+        if not questId[thr] then
+            questId[thr] = lastQuestId
+        end
+        return questId[thr]
+    end, function (value)
+        local thr = coroutine.running()
+        if not thr then
+            return
+        end
+        questId[thr] = value
+        lastQuestId = value
+    end)
+
+    OnInit.final(function ()
+        ---@param func string
+        local function hook(func)
+            local oldFunc
+            oldFunc = AddHook(func, function (...)
+                lastQuestPlayer = udg_QuestPlayer
+                lastQuestId = udg_QuestId
+                return oldFunc(...)
+            end)
+        end
+
+        hook("ForForce")
+        hook("ForGroup")
+        hook("TriggerEvaluate")
+        hook("TriggerExecute")
+    end)
+
+    Timed.echo(60., function ()
+        for k, _ in pairs(questPlayer) do
+            if coroutine.status(k) == "dead" then
+                questPlayer[k] = nil
+            end
+        end
+        for k, _ in pairs(questId) do
+            if coroutine.status(k) == "dead" then
+                questPlayer[k] = nil
+            end
+        end
+        for k, _ in pairs(QuestTrigger) do
+            if coroutine.status(k) == "dead" then
+                QuestTrigger[k] = nil
+            end
+        end
+    end)
+
     GlobalRemap("udg_PlayerIsOnQuest", function ()
         if not udg_QuestPlayer or not PlayerQuests[udg_QuestPlayer] then
             return false
@@ -458,17 +536,12 @@ OnInit("Quests", function ()
             UpdateMenu()
         end
     end)
-    GlobalRemap("udg_QuestWait", nil, function (value)
-        local oldPlayer = udg_QuestPlayer
-        local oldId = udg_QuestId
-        local oldTrigger = GetTriggeringTrigger() or QuestTrigger
-        PolledWait(value)
-        udg_QuestPlayer = oldPlayer
-        udg_QuestId = oldId
-        QuestTrigger = oldTrigger
-    end)
     GlobalRemap("udg_QuestNoRepeat", nil, function (value)
-        local trig = GetTriggeringTrigger() or QuestTrigger
+        local trig = QuestTrigger[coroutine.running()]
+        if not trig then
+            trig = GetTriggeringTrigger()
+            QuestTrigger[coroutine.running()] = trig
+        end
         if value then
             if not NoRepeat[udg_QuestPlayer][trig] then
                 NoRepeat[udg_QuestPlayer][trig] = true
