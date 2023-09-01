@@ -105,6 +105,7 @@ OnInit("PressSaveOrLoad", function ()
 
         if data then
             BlzFrameSetText(TooltipName, "|cffff6600Information|r")
+            Debug.log(table.tostring(data.date))
             BlzFrameSetText(TooltipDate, os.date("\x25c", os.time(data.date)))
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. data.gold)
             BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal: |r" .. data.lumber)

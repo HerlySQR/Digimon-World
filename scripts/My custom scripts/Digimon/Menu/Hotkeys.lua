@@ -75,10 +75,15 @@ OnInit("Hotkeys", function ()
     local HotkeyBackpackSubMenuText = nil ---@type framehandle
     local HotkeyBackpackSubMenuDiscard = nil ---@type framehandle
     local HotkeyBackpackSubMenuDrop = nil ---@type framehandle
-    local HotkeyBackpackSubMenuItem = {} ---@type framehandle
-    local BackdropHotkeyBackpackSubMenuItem = {} ---@type framehandle
+    local HotkeyBackpackSubMenuItem = {} ---@type framehandle[]
+    local BackdropHotkeyBackpackSubMenuItem = {} ---@type framehandle[]
     local HotkeyBackpackSubMenuButton = nil ---@type framehandle
     local BackdropHotkeyBackpackSubMenuButton = nil ---@type framehandle
+    local HotkeyYourDigimons = nil ---@type framehandle
+    local HotkeyYourDigimonsSubMenu = nil ---@type framehandle
+    local HotkeyYourDigimonsSubMenuBackdrop = nil ---@type framehandle
+    local HotkeyYourDigimonsSubMenuButton = nil ---@type framehandle
+    local BackdropHotkeyYourDigimonsSubMenuButton = nil ---@type framehandle
 
     local visibleMenu = nil ---@type framehandle
 
@@ -135,6 +140,14 @@ OnInit("Hotkeys", function ()
         end
     end
 
+    local function HotkeyYourDigimonsFunc()
+        if GetTriggerPlayer() == LocalPlayer then
+            BlzFrameSetVisible(visibleMenu, false)
+            BlzFrameSetVisible(HotkeyYourDigimonsSubMenu, true)
+            visibleMenu = HotkeyYourDigimonsSubMenu
+        end
+    end
+
     local function HotkeyExitFunc()
         if GetTriggerPlayer() == LocalPlayer then
             BlzFrameSetVisible(HotkeyMenu, false)
@@ -177,7 +190,6 @@ OnInit("Hotkeys", function ()
 
     local function InitFrames()
         local t = nil ---@type trigger
-        local start = 0
 
         HotkeyButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         BlzFrameSetAbsPoint(HotkeyButton, FRAMEPOINT_TOPLEFT, 0.475000, 0.180000)
@@ -199,26 +211,28 @@ OnInit("Hotkeys", function ()
         BlzFrameSetVisible(HotkeyMenu, false)
 
         HotkeyMessage = BlzCreateFrameByType("TEXT", "name", HotkeyMenu, "", 0)
+        BlzFrameSetScale(HotkeyMessage, 1.00)
         BlzFrameSetPoint(HotkeyMessage, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.23000, -0.020000)
         BlzFrameSetPoint(HotkeyMessage, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.29000)
         BlzFrameSetText(HotkeyMessage, "")
-        BlzFrameSetScale(HotkeyMessage, 1.00)
         BlzFrameSetTextAlignment(HotkeyMessage, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        -- Backpack
+
+        HotkeyBackpack = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
+        BlzFrameSetScale(HotkeyBackpack, 1.)
+        BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.080000)
+        BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.22000)
+        BlzFrameSetText(HotkeyBackpack, "|cffFCD20DBackpack|r")
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, HotkeyBackpack, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, HotkeyBackpackFunc)
 
         HotkeyBackpackSubMenu = BlzCreateFrameByType("BACKDROP", "BACKDROP", HotkeyMenu, "", 1)
         BlzFrameSetPoint(HotkeyBackpackSubMenu, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.23000, -0.030000)
         BlzFrameSetPoint(HotkeyBackpackSubMenu, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.050000)
         BlzFrameSetTexture(HotkeyBackpackSubMenu, "war3mapImported\\EmptyBTN.blp", 0, true)
         BlzFrameSetVisible(HotkeyBackpackSubMenu, false)
-
-        HotkeyBackpack = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
-        BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.040000)
-        BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.26000)
-        BlzFrameSetText(HotkeyBackpack, "|cffFCD20DBackpack|r")
-        BlzFrameSetScale(HotkeyBackpack, 1.)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, HotkeyBackpack, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, HotkeyBackpackFunc)
 
         HotkeyBackpackSubMenuBackdrop = BlzCreateFrame("QuestButtonBaseTemplate", HotkeyBackpackSubMenu, 0, 0)
         BlzFrameSetPoint(HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenu, FRAMEPOINT_TOPLEFT, 0.11000, -0.020000)
@@ -227,35 +241,35 @@ OnInit("Hotkeys", function ()
         HotkeyBackpackSubMenuButton = BlzCreateFrame("IconButtonTemplate", HotkeyBackpackSubMenu, 0, 0)
         BlzFrameSetPoint(HotkeyBackpackSubMenuButton, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.10000)
         BlzFrameSetPoint(HotkeyBackpackSubMenuButton, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenu, FRAMEPOINT_BOTTOMRIGHT, -0.18000, 0.11000)
-        AsingHotkey(HotkeyBackpackSubMenuButton, start) -- 0
+        AsingHotkey(HotkeyBackpackSubMenuButton, 0)
 
         BackdropHotkeyBackpackSubMenuButton = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyBackpackSubMenuButton", HotkeyBackpackSubMenuButton, "", 0)
         BlzFrameSetAllPoints(BackdropHotkeyBackpackSubMenuButton, HotkeyBackpackSubMenuButton)
         BlzFrameSetTexture(BackdropHotkeyBackpackSubMenuButton, "ReplaceableTextures\\CommandButtons\\BTNBackpackIcon.blp", 0, true)
 
         HotkeyBackpackSubMenuText = BlzCreateFrameByType("TEXT", "name", HotkeyBackpackSubMenuBackdrop, "", 0)
+        BlzFrameSetScale(HotkeyBackpackSubMenuText, 1.00)
         BlzFrameSetPoint(HotkeyBackpackSubMenuText, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.0050000)
         BlzFrameSetPoint(HotkeyBackpackSubMenuText, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.12000)
         BlzFrameSetText(HotkeyBackpackSubMenuText, "Use an item for the focused digimon")
         BlzFrameSetEnable(HotkeyBackpackSubMenuText, false)
-        BlzFrameSetScale(HotkeyBackpackSubMenuText, 1.00)
         BlzFrameSetTextAlignment(HotkeyBackpackSubMenuText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         HotkeyBackpackSubMenuDiscard = BlzCreateFrame("ScriptDialogButton", HotkeyBackpackSubMenuBackdrop, 0, 0)
+        BlzFrameSetScale(HotkeyBackpackSubMenuDiscard, 0.858)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDiscard, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.090000, -0.19245)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDiscard, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0025500)
         BlzFrameSetText(HotkeyBackpackSubMenuDiscard, "|cffFCD20DDiscard|r")
-        BlzFrameSetScale(HotkeyBackpackSubMenuDiscard, 0.858)
-        start = start + 1
-        AsingHotkey(HotkeyBackpackSubMenuDiscard, start) -- 1
+
+        AsingHotkey(HotkeyBackpackSubMenuDiscard, 1)
 
         HotkeyBackpackSubMenuDrop = BlzCreateFrame("ScriptDialogButton", HotkeyBackpackSubMenuBackdrop, 0, 0)
+        BlzFrameSetScale(HotkeyBackpackSubMenuDrop, 0.858)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDrop, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.19245)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDrop, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.090000, 0.0025500)
         BlzFrameSetText(HotkeyBackpackSubMenuDrop, "|cffFCD20DDrop|r")
-        BlzFrameSetScale(HotkeyBackpackSubMenuDrop, 0.858)
-        start = start + 1
-        AsingHotkey(HotkeyBackpackSubMenuDrop, start) -- 2
+
+        AsingHotkey(HotkeyBackpackSubMenuDrop, 2)
 
         local x, y = {}, {}
         local stepSize = 0.03
@@ -274,6 +288,7 @@ OnInit("Hotkeys", function ()
             startY = startY - stepSize
         end
 
+        local indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}
         for i = 1, udg_MAX_ITEMS do
             HotkeyBackpackSubMenuItem[i] = BlzCreateFrame("IconButtonTemplate", HotkeyBackpackSubMenuBackdrop, 0, 0)
             BlzFrameSetPoint(HotkeyBackpackSubMenuItem[i], FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, x[i], y[i])
@@ -284,24 +299,58 @@ OnInit("Hotkeys", function ()
             BlzFrameSetTexture(BackdropHotkeyBackpackSubMenuItem[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
             t = CreateTrigger()
             BlzTriggerRegisterFrameEvent(t, HotkeyBackpackSubMenuItem[i], FRAMEEVENT_CONTROL_CLICK)
-            start = start + 1
-            AsingHotkey(HotkeyBackpackSubMenuItem[i], start) -- start in 3 and end in 19
+            AsingHotkey(HotkeyBackpackSubMenuItem[i], indexes[i]) -- start in 3 and end in 19
         end
 
+        -- Your digimons
+
+        HotkeyYourDigimons = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
+        BlzFrameSetScale(HotkeyYourDigimons, 1.29)
+        BlzFrameSetPoint(HotkeyYourDigimons, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.040000)
+        BlzFrameSetPoint(HotkeyYourDigimons, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.26000)
+        BlzFrameSetText(HotkeyYourDigimons, "|cffFCD20DYour digimons|r")
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, HotkeyYourDigimons, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, HotkeyYourDigimonsFunc)
+
+        HotkeyYourDigimonsSubMenu = BlzCreateFrameByType("BACKDROP", "BACKDROP", HotkeyMenu, "", 1)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.23000, -0.030000)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenu, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.050000)
+        BlzFrameSetTexture(HotkeyYourDigimonsSubMenu, "war3mapImported\\EmptyBTN.blp", 0, true)
+        BlzFrameSetVisible(HotkeyYourDigimonsSubMenu, false)
+
+        HotkeyYourDigimonsSubMenuBackdrop = BlzCreateFrame("EscMenuBackdrop", HotkeyYourDigimonsSubMenu, 0, 0)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, 0.10000, -0.063000)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_BOTTOMRIGHT, 0.016000, 0.045000)
+
+        HotkeyYourDigimonsSubMenuButton = BlzCreateFrame("IconButtonTemplate", HotkeyYourDigimonsSubMenu, 0, 0)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuButton, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, 0.020000, -0.10000)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuButton, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_BOTTOMRIGHT, -0.19000, 0.11000)
+
+        BackdropHotkeyYourDigimonsSubMenuButton = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyYourDigimonsSubMenuButton", HotkeyYourDigimonsSubMenuButton, "", 0)
+        BlzFrameSetAllPoints(BackdropHotkeyYourDigimonsSubMenuButton, HotkeyYourDigimonsSubMenuButton)
+        BlzFrameSetTexture(BackdropHotkeyYourDigimonsSubMenuButton, "CustomFrame.png", 0, true)
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, HotkeyYourDigimonsSubMenuButton, FRAMEEVENT_CONTROL_CLICK)
+        --TriggerAddAction(t, REFORGEDUIMAKER.HotkeyYourDigimonsSubMenuButtonFunc)
+
+        BlzFrameSetScale(HotkeyYourDigimonsSubMenuBackdrop, 0.8)
+
+
         HotkeyExit = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
+        BlzFrameSetScale(HotkeyExit, 1.00)
         BlzFrameSetPoint(HotkeyExit, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.34000, -0.30000)
         BlzFrameSetPoint(HotkeyExit, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.010000)
         BlzFrameSetText(HotkeyExit, "|cffFCD20DExit|r")
-        BlzFrameSetScale(HotkeyExit, 1.00)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, HotkeyExit, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, HotkeyExitFunc)
 
         HotkeySave = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
+        BlzFrameSetScale(HotkeySave, 1.00)
         BlzFrameSetPoint(HotkeySave, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.10000, -0.30000)
         BlzFrameSetPoint(HotkeySave, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.34000, 0.010000)
         BlzFrameSetText(HotkeySave, "|cffFCD20DSave|r")
-        BlzFrameSetScale(HotkeySave, 1.00)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, HotkeySave, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, HotkeySaveFunc)
@@ -355,6 +404,8 @@ OnInit("Hotkeys", function ()
         end)
 
         ForForce(FORCE_PLAYING, function ()
+            print(1)
+            print(GetEnumPlayer())
             LoadHotkeys(GetEnumPlayer())
         end)
     end)
@@ -396,7 +447,10 @@ OnInit("Hotkeys", function ()
 
     ---@param p player
     function LoadHotkeys(p)
+        print(FileIO.Read)
         local loaded = GetSyncedData(p, FileIO.Read, SaveFile.getFolder() .. "\\Hotkeys.pld")
+        print(SaveFile.getFolder())
+        print(loaded)
         if loaded:len() > 1 then
             local savecode = Savecode.create()
             if savecode:Load(p, loaded, 1) then

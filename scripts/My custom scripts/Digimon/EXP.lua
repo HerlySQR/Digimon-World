@@ -30,7 +30,7 @@ OnInit(function ()
         local killer = info.killer
         local dead = info.target
         local owner = Wc3Type(killer) == "unit" and GetOwningPlayer(killer) or killer:getOwner()
-        if owner ~= Digimon.NEUTRAL and IsPlayerEnemy(owner, dead:getOwner()) then
+        if IsPlayerInForce(owner, FORCE_PLAYING) and IsPlayerEnemy(owner, dead:getOwner()) then
             Digimon.enumInRange(dead:getX(), dead:getY(), AREA, function (picked)
                 local diff = math.abs(picked:getLevel() - dead:getLevel())
                 if IsPlayerAlly(owner, picked:getOwner()) and diff <= 5 then

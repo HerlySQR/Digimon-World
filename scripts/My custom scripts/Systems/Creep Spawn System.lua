@@ -4,7 +4,6 @@ OnInit(function ()
     Require "LinkedList"
     Require "Set"
     Require "AbilityUtils"
-    Require "Vec2"
     Require "SyncedTable"
     Require "Digimon Capture"
     Require "ZTS"
@@ -31,12 +30,12 @@ OnInit(function ()
     ---@field captured boolean
     ---@field reduced boolean
     ---@field returning boolean
-    ---@field spawnpoint Vec2
+    ---@field spawnpoint {x: number, y: number}
     ---@field rd RegionData
 
     ---@class RegionData
     ---@field rectID table
-    ---@field spawnpoint Vec2
+    ---@field spawnpoint {x: number, y: number}
     ---@field types unitpool
     ---@field inDay boolean
     ---@field inNight boolean
@@ -49,10 +48,10 @@ OnInit(function ()
     ---@field creeps Creep[]
     ---@field neighbourhood Set
     ---@field sameRegion Set
-    ---@field checked boolean
+    ---@field someoneClose boolean
 
     ---@param pool unitpool
-    ---@param pos Vec2
+    ---@param pos {x: number, y: number}
     ---@return Creep
     local function CreateCreep(pool, pos)
         local creep = Digimon.add(PlaceRandomUnit(pool, Digimon.NEUTRAL, pos.x, pos.y, bj_UNIT_FACING)) ---@type Creep
@@ -134,7 +133,7 @@ OnInit(function ()
         local x, y = GetRectCenterX(re), GetRectCenterY(re)
         local this = { ---@type RegionData
             rectID = re,
-            spawnpoint = Vec2.new(x, y),
+            spawnpoint = {x = x, y = y},
             types = GenerateCreepPool(types),
             inDay = inDay,
             inNight = inNight,
@@ -147,7 +146,8 @@ OnInit(function ()
             waitToSpawn = 0.,
             creeps = {},
             neighbourhood = Set.create(),
-            sameRegion = Set.create()
+            sameRegion = Set.create(),
+            someoneClose = false
         }
 
         All:insert(this)
@@ -304,7 +304,7 @@ OnInit(function ()
                         end
                     else
                         if not regionData.isDungeon then
-                            local distance = creep.spawnpoint:dist(creep:getPos())
+                            local distance = DistanceBetweenCoords(creep.spawnpoint.x, creep.spawnpoint.y, creep:getPos())
                             if distance > RANGE_RETURN then
                                 creep:issueOrder(Orders.smart, creep.spawnpoint.x, creep.spawnpoint.y)
                                 creep.returning = true
@@ -375,8 +375,10 @@ OnInit(function ()
     end)
     Digimon.killEvent:register(function (info)
         local target = info.target ---@type Creep
-        ZTS_RemoveThreatUnit(target.root)
-        target.captured = true
+        if target.rd then
+            ZTS_RemoveThreatUnit(target.root)
+            target.captured = true
+        end
     end)
 
     Digimon.postDamageEvent:register(function (info)

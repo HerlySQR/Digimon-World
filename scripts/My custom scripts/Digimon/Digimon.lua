@@ -4,7 +4,6 @@ OnInit("Digimon", function ()
     Require "EventListener"
     Require "Damage"
     Require "Environment"
-    Require "Vec2"
     Require "GlobalRemap"
     Require "NewBonus"
     Require "PlayerUtils"
@@ -676,7 +675,7 @@ OnInit("Digimon", function ()
         TriggerAddAction(t, function ()
             local d1 = Digimon._instance[GetOrderedUnit()]
             if d1 then
-                Digimon.issuePointOrderEvent:run(d1, GetIssuedOrderId(), Vec2.new(GetOrderPointX(), GetOrderPointY()))
+                Digimon.issuePointOrderEvent:run(d1, GetIssuedOrderId(), GetOrderPointX(), GetOrderPointY())
             end
         end)
     end

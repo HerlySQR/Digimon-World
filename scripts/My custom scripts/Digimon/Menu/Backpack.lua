@@ -382,14 +382,13 @@ OnInit("Backpack", function ()
 
     local function InitFrames()
         local t = nil ---@type trigger
-        local start = 0
 
         Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.555000, 0.180000)
         BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.590000, 0.145000)
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
-        AssignFrame(Backpack, start) -- 0
+        AssignFrame(Backpack, 0) -- 0
         AddDefaultTooltip(Backpack, "Backpack", "Look your stored consummable items.")
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
@@ -427,8 +426,7 @@ OnInit("Backpack", function ()
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, BackpackDiscard, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BackpackDiscardFunc)
-        start = start + 1
-        AssignFrame(BackpackDiscard, start) -- 1
+        AssignFrame(BackpackDiscard, 1)
 
         BackpackDrop = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
         BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.14245)
@@ -438,8 +436,7 @@ OnInit("Backpack", function ()
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, BackpackDrop, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BackpackDropFunc)
-        start = start + 1
-        AssignFrame(BackpackDrop, start) -- 2
+        AssignFrame(BackpackDrop, 2)
 
         BackpackItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", BackpackMenu, "", 1)
         BlzFrameSetPoint(BackpackItems, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)
@@ -463,13 +460,13 @@ OnInit("Backpack", function ()
             startY = startY - stepSize
         end
 
+        local indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}
         for i = 1, MAX_ITEMS do
             BackpackItemT[i] = BlzCreateFrame("IconButtonTemplate", BackpackItems, 0, 0)
             BlzFrameSetPoint(BackpackItemT[i], FRAMEPOINT_TOPLEFT, BackpackItems, FRAMEPOINT_TOPLEFT, x[i], y[i])
             BlzFrameSetSize(BackpackItemT[i], stepSize, stepSize)
             BlzFrameSetVisible(BackpackItemT[i], false)
-            start = start + 1
-            AssignFrame(BackpackItemT[i], start) -- start in 3 and end in 19
+            AssignFrame(BackpackItemT[i], indexes[i])
 
             BackdropBackpackItemT[i] = BlzCreateFrameByType("BACKDROP", "BackdropBackpackItemT[" .. i .. "]", BackpackItemT[i], "", 0)
             BlzFrameSetAllPoints(BackdropBackpackItemT[i], BackpackItemT[i])

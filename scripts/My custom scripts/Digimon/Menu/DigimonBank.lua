@@ -90,7 +90,7 @@ OnInit("DigimonBank", function ()
     ---@field wantDigimonSlot boolean
     ---@field p player
     ---@field main Digimon
-    ---@field spawnPoint Vec2
+    ---@field spawnPoint {x: number, y: number}
     ---@field allDead boolean
     ---@field savedItems item[]
     ---@field savedItemsStock integer
@@ -1741,6 +1741,8 @@ OnInit("DigimonBank", function ()
                     ReviveHero(dead.root, dead:getX(), dead:getY(), false)
                     SetUnitLifePercentBJ(dead.root, 5)
                     if bank.allDead then
+                        bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
+                        bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
                         for i = 0, MAX_STOCK - 1 do
                             if bank.stocked[i] then
                                 bank.stocked[i].environment = Environment.hospital

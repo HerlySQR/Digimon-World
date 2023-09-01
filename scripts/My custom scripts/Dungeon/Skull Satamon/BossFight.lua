@@ -51,12 +51,14 @@ OnInit(function ()
         local needToKill = CreateGroup()
         GroupAddUnit(needToKill, pillar[i])
         local x, y = GetUnitX(boss), GetUnitY(boss)
-        local vilemons = {}
+        local vilemons = {} ---@type Digimon[]
 
         for j = 1, minions[i] do
             local angle = 2*math.pi * math.random()
             local dist = 100 + 100 * math.random()
             vilemons[j] = Digimon.create(Digimon.VILLAIN, VILEMON, x + dist * math.cos(angle), y + dist * math.sin(angle), bj_UNIT_FACING)
+            vilemons[j].isSummon = true
+            vilemons[j]:setLevel(GetHeroLevel(boss))
             DestroyEffect(AddSpecialEffect(VILEMON_EFFECT, vilemons[j]:getPos()))
             GroupAddUnit(needToKill, vilemons[j].root)
         end

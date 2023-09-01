@@ -1,20 +1,19 @@
 if Debug then Debug.beginFile("GetSyncedData") end
 OnInit("GetSyncedData", function ()
-    Require "LinkedList" -- https://www.hiveworkshop.com/threads/definitive-doubly-linked-list.339392/
     Require "Obj2Str" -- https://www.hiveworkshop.com/pastebin/65b5fc46fc82087ba24609b14f2dc4ff.25120
 
-    local PREFIX = "SYNC"
-    local END_PREFIX = "END_SYNC"
+    local PREFIX = "GetSyncedData__SYNC"
+    local END_PREFIX = "GetSyncedData__END_SYNC"
     local BLOCK_LENGHT = 246
 
     local LocalPlayer = GetLocalPlayer()
-    local callbacks = LinkedList.create()
+    local callbacks = {} ---@type (fun(): thread)[]
     local actString = ""
     local actThread = nil ---@type thread
     local areWaiting = {} ---@type table<thread, thread[]>
 
     local function CallFirst()
-        actThread = callbacks:getNext().value()
+        actThread = callbacks[1]()
     end
 
     ---@param s string
@@ -69,14 +68,14 @@ OnInit("GetSyncedData", function ()
 
         local t = coroutine.running()
 
-        callbacks:insert(function ()
+        table.insert(callbacks, 1, function ()
             if p == LocalPlayer then
                 Sync(data)
             end
             return t
         end)
 
-        if callbacks.n == 1 then
+        if #callbacks == 1 then
             CallFirst()
         end
 
@@ -114,18 +113,23 @@ OnInit("GetSyncedData", function ()
     TriggerAddAction(t, function ()
         actString = actString .. BlzGetTriggerSyncData()
         if BlzGetTriggerSyncPrefix() == END_PREFIX then
+            table.remove(callbacks, 1)
+            if #callbacks > 0 then
+                CallFirst()
+            end
+
             coroutine.resume(actThread, pcall(Str2Obj, actString))
+
             if areWaiting[actThread] then
                 for _, thr in ipairs(areWaiting[actThread]) do
                     coroutine.resume(thr)
                 end
                 areWaiting[actThread] = nil
             end
+
             actString = ""
-            callbacks:getNext():remove()
-            if callbacks.n > 0 then
-                CallFirst()
-            else
+
+            if #callbacks == 0 then
                 actThread = nil
             end
         end
