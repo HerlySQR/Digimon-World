@@ -203,8 +203,6 @@ OnInit("DigimonEvolution", function ()
             if not toEvolve then
                 return
             end
-
-            ClearPossibleEvolutions(evolve)
             local time = evolve.onCombat and 2. or 4.
             local u = evolve.root
 
@@ -216,8 +214,8 @@ OnInit("DigimonEvolution", function ()
                 BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_BLUE),
                 127)
 
-            local s = CreateSound("war3mapImported\\Evolution_1", false, true, true, 10, 10, "DefaultEAXON")
-            SetSoundVolume(s, 127)
+            local s = CreateSound("war3mapImported\\Evolution-1st.mp3", false, true, true, 10, 10, "CombatSoundsEAX")
+            SetSoundPosition(s, GetUnitX(u), GetUnitY(u), 0)
             StartSound(s)
             KillSoundWhenDone(s)
 
@@ -236,6 +234,7 @@ OnInit("DigimonEvolution", function ()
             cur:AddEnd(function ()
                 SetUnitInvulnerable(u, false)
                 PauseUnit(u, false)
+                ClearPossibleEvolutions(evolve)
             end)
             cur:Start()
         end)
@@ -243,11 +242,10 @@ OnInit("DigimonEvolution", function ()
 
     -- Preload sound
     OnInit.map(function ()
-        SetSoundVolume(gg_snd_Evolution_1, 0)
-        StartSound(gg_snd_Evolution_1)
-        Timed.call(GetSoundDurationBJ(gg_snd_Evolution_1), function ()
-            SetSoundVolume(gg_snd_Evolution_1, 127)
-        end)
+        local s = CreateSound("war3mapImported\\Evolution-1st.mp3", false, false, false, 10, 10, "CombatSoundsEAX")
+        SetSoundVolume(s, 0)
+        StartSound(s)
+        KillSoundWhenDone(s)
     end)
 
     -- For GUI

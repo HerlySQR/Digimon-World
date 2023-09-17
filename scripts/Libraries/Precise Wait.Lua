@@ -65,7 +65,7 @@ OnInit("PreciseWait", function(require) --https://www.hiveworkshop.com/threads/t
     local oldTimer
     oldTimer = hook("TimerStart", function(whichTimer, timeout, periodic, handlerFunc)
         --Return a function that will actually be added as the triggeraction, which itself wraps the actual function in a coroutine.
-        return oldTimer(whichTimer, timeout, periodic, function() coroutine.resume(coroutine.create(handlerFunc)) end)
+        return oldTimer(whichTimer, timeout, periodic, handlerFunc and function() coroutine.resume(coroutine.create(handlerFunc)) end)
     end, _ACTION_PRIORITY)
     
     local oldForForce

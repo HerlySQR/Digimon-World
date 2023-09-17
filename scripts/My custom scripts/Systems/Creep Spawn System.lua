@@ -17,8 +17,6 @@ OnInit(function ()
     local DELAY_DEATH           ---@type number
     local RANGE_LEVEL_1         ---@type number
     local RANGE_LEVEL_2         ---@type number
-    local RANGE_RETURN          ---@type number
-    local RANGE_IN_HOME         ---@type number
     local NEIGHBOURHOOD         ---@type number
     local INTERVAL              ---@type number
     local CHANCE_UNCOMMON       ---@type integer
@@ -254,9 +252,6 @@ OnInit(function ()
                     local r = GetFreeNeighbour(regionData, math.min(CREEPS_PER_REGION, CREEPS_PER_PLAYER * PlayersInRegion:size())) -- If don't have neighbours, then just use the same region
                     if r then
                         local creep = CreateCreep(r.types, r.spawnpoint)
-                        if regionData.isDungeon then
-                            ZTS_AddThreatUnit(creep.root, true)
-                        end
                         creep:setLevel(GetProccessedLevel(lvl, r.minLevel, r.maxLevel))
                         creep.rd = regionData
                         for r2 in r.sameRegion:elements() do
@@ -292,26 +287,12 @@ OnInit(function ()
                     if creep.captured or creep.remaining <= 0. then
                         if creep.remaining <= 0. then
                             regionData.delay = DELAY_NORMAL
-                            if regionData.isDungeon then
-                                ZTS_RemoveThreatUnit(creep.root)
-                            end
                             creep:destroy()
                         elseif creep.captured  then
                             regionData.delay = DELAY_DEATH
                         end
                         for r2 in regionData.sameRegion:elements() do
                             table.remove(r2.creeps, i)
-                        end
-                    else
-                        if not regionData.isDungeon then
-                            local distance = DistanceBetweenCoords(creep.spawnpoint.x, creep.spawnpoint.y, creep:getPos())
-                            if distance > RANGE_RETURN then
-                                creep:issueOrder(Orders.smart, creep.spawnpoint.x, creep.spawnpoint.y)
-                                creep.returning = true
-                            end
-                            if distance <= RANGE_IN_HOME then
-                                creep.returning = false
-                            end
                         end
                     end
                 end
@@ -332,8 +313,6 @@ OnInit(function ()
         DELAY_DEATH = udg_DELAY_DEATH
         RANGE_LEVEL_1 = udg_RANGE_LEVEL_1
         RANGE_LEVEL_2 = udg_RANGE_LEVEL_2
-        RANGE_RETURN = udg_RANGE_RETURN
-        RANGE_IN_HOME = udg_RANGE_IN_HOME
         INTERVAL = udg_UPDATE_INTERVAL
         NEIGHBOURHOOD = udg_NEIGHBOURHOOD
         CHANCE_UNCOMMON = udg_CHANCE_UNCOMMON
@@ -378,13 +357,6 @@ OnInit(function ()
         if target.rd then
             ZTS_RemoveThreatUnit(target.root)
             target.captured = true
-        end
-    end)
-
-    Digimon.postDamageEvent:register(function (info)
-        local creep = info.target ---@type Creep
-        if creep.returning then
-            creep:issueOrder(Orders.smart, creep.spawnpoint.x, creep.spawnpoint.y)
         end
     end)
 

@@ -24,27 +24,28 @@ OnInit(function ()
         [1] =   {equips = nil,    damage = 1,     defense = nil,      health = nil,   energy = nil},
         [2] =   {equips = nil,    damage = 1,     defense = 0.5,      health = nil,   energy = nil},
         [3] =   {equips = 2,      damage = 1,     defense = 0.5,      health = 10,    energy = nil},
-        [4] =   {equips = nil,    damage = 2,     defense = 1,        health = 10,    energy = 5},
-        [5] =   {equips = nil,    damage = 2,     defense = 1,        health = 10,    energy = 5},
-        [6] =   {equips = nil,    damage = 2,     defense = 1,        health = 10,    energy = 5},
-        [7] =   {equips = 2,      damage = 2,     defense = 1,        health = 10,    energy = 5},
-        [8] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
-        [9] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
-        [10] =  {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
-        [11] =  {equips = nil,    damage = 3,     defense = 1.5,      health = 20,    energy = 10},
-        [12] =  {equips = 2,      damage = 3,     defense = 1.5,      health = 20,    energy = 10},
-        [13] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
-        [14] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
-        [15] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
-        [16] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
-        [17] =  {equips = nil,    damage = 4,     defense = 2,        health = 30,    energy = 15},
-        [18] =  {equips = 2,      damage = 4,     defense = 2,        health = 30,    energy = 15},
-        [19] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
-        [21] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
-        [22] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
-        [23] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
-        [24] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 40,    energy = 20},
-        [25] =  {equips = 3,      damage = 6,     defense = 3,        health = 50,    energy = 25}
+        [4] =   {equips = nil,    damage = 1,     defense = 0.5,      health = 10,    energy = 5},
+        [5] =   {equips = nil,    damage = 2,     defense = 1,        health = 20,    energy = 10},
+        [6] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 30,    energy = 15},
+        [7] =   {equips = 2,      damage = 3,     defense = 1.5,      health = 30,    energy = 15},
+        [8] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 30,    energy = 15},
+        [9] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 30,    energy = 15},
+        [10] =  {equips = nil,    damage = 4,     defense = 2,        health = 40,    energy = 20},
+        [11] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 50,    energy = 25},
+        [12] =  {equips = 2,      damage = 5,     defense = 2.5,      health = 50,    energy = 25},
+        [13] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 50,    energy = 25},
+        [14] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 50,    energy = 25},
+        [15] =  {equips = nil,    damage = 6,     defense = 3,        health = 60,    energy = 30},
+        [16] =  {equips = nil,    damage = 7,     defense = 3.5,      health = 70,    energy = 35},
+        [17] =  {equips = nil,    damage = 7,     defense = 3.5,      health = 70,    energy = 35},
+        [18] =  {equips = 2,      damage = 7,     defense = 3.5,      health = 70,    energy = 35},
+        [19] =  {equips = nil,    damage = 7,     defense = 3.5,      health = 70,    energy = 35},
+        [20] =  {equips = nil,    damage = 8,     defense = 4,        health = 80,    energy = 40},
+        [21] =  {equips = nil,    damage = 9,     defense = 4.5,      health = 90,    energy = 45},
+        [22] =  {equips = nil,    damage = 9,     defense = 4.5,      health = 90,    energy = 45},
+        [23] =  {equips = nil,    damage = 9,     defense = 4.5,      health = 90,    energy = 45},
+        [24] =  {equips = nil,    damage = 9,     defense = 4.5,      health = 90,    energy = 45},
+        [25] =  {equips = 3,      damage = 10,     defense = 5,       health = 100,   energy = 50}
     }
 
     local GymMenu = nil ---@type framehandle
@@ -169,13 +170,13 @@ OnInit(function ()
         local paused = {} ---@type Digimon[]
         for i = 1, MAX_FIGHTERS do
             local info = self.pi[i]
-            if info.p == Digimon.NEUTRAL then
+            if info.p == Digimon.VILLAIN then
                 local list = DigimonTypes[self.rank]
                 self.level = list[#list]
                 for j = 1, 3 do
                     if list[j] then
                         local angle = math.pi*(j/4 + (i-1))
-                        local d = Digimon.create(Digimon.NEUTRAL, list[j],
+                        local d = Digimon.create(Digimon.VILLAIN, list[j],
                         centerX + 500*math.cos(angle), centerY + 500*math.sin(angle),
                         90 + 180*i)
                         DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", d:getPos()))
@@ -290,7 +291,7 @@ OnInit(function ()
                     if not d:isHidden() then
                         DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", d:getPos()))
                     end
-                    if info.p ~= Digimon.NEUTRAL then
+                    if info.p ~= Digimon.VILLAIN then
                         StoreToBank(info.p, d, true)
                     else
                         d:destroy()
@@ -298,14 +299,16 @@ OnInit(function ()
                 end
             end
             Timed.call(4., function ()
-                if loser.p == Digimon.NEUTRAL then
+                local reachedMax = false
+                if loser.p == Digimon.VILLAIN then
+                    reachedMax = GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED) >= udg_MAX_RANK
                     SetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED, GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED) + 1)
                     SetPlayerTechResearched(winner.p, RANK_UPGRADE, GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED))
                 end
                 local notNeutral = true
                 for i = 1, MAX_FIGHTERS do
                     local info = self.pi[i]
-                    if info.p ~= Digimon.NEUTRAL then
+                    if info.p ~= Digimon.VILLAIN then
                         ResumeRevive(info.p)
                         for j = 0, MAX_DIGIMONS - 1 do
                             local d = GetBankDigimon(info.p, j)
@@ -317,7 +320,7 @@ OnInit(function ()
                                 break
                             end
                         end
-                        if winner == info and loser.p == Digimon.NEUTRAL then
+                        if winner == info and loser.p == Digimon.VILLAIN and not reachedMax then
                             local prizes = RANK_PRIZES[GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED)]
                             local message = "\nFor winning all your digimons will gain:"
                             if prizes.damage then
@@ -336,6 +339,9 @@ OnInit(function ()
                                 message = message .. "\nAnd also " .. prizes.equips .. " items unlocked in the shop."
                             end
                             DisplayTextToPlayer(winner.p, 0, 0, message)
+                            if GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED) >= udg_MAX_RANK then
+                                DisplayTextToPlayer(winner.p, 0, 0, "\nYou reached the max rank, congratulations!")
+                            end
                             if winner.p == LocalPlayer then
                                 StartSound(bj_questItemAcquiredSound)
                             end
@@ -408,36 +414,33 @@ OnInit(function ()
         end
     end)
 
-    local oldCreateUnit
-    oldCreateUnit = AddHook("CreateUnit", function (owningPlayer, unitid, x, y, face)
-        local u = oldCreateUnit(owningPlayer, unitid, x, y, face)
+    ---@param d Digimon
+    local function assign(d)
+        local rank = IsPlayerInForce(d:getOwner(), FORCE_PLAYING) and GetPlayerState(d:getOwner(), PLAYER_STATE_RESOURCE_FOOD_USED) or 0
+        if rank > 0 then
+            UnitAddAbility(d.root, RANK_BONUS)
+            BlzUnitHideAbility(d.root, RANK_BONUS, true)
 
-        if u then
-            local rank = IsPlayerInForce(owningPlayer, FORCE_PLAYING) and GetPlayerState(owningPlayer, PLAYER_STATE_RESOURCE_FOOD_USED) or 0
-            if rank > 0 then
-                UnitAddAbility(u, RANK_BONUS)
-                BlzUnitHideAbility(u, RANK_BONUS, true)
-
-                local prizes = RANK_PRIZES[rank]
-                if prizes.damage then
-                    AddUnitBonus(u, BONUS_DAMAGE, prizes.damage)
-                end
-                if prizes.defense then
-                    BlzSetAbilityRealLevelField(BlzGetUnitAbility(u, RANK_BONUS), ABILITY_RLF_ARMOR_BONUS_HAD1, 0, prizes.defense)
-                    SetUnitAbilityLevel(u, RANK_BONUS, 2)
-                    SetUnitAbilityLevel(u, RANK_BONUS, 1)
-                end
-                if prizes.health then
-                    AddUnitBonus(u, BONUS_HEALTH, prizes.health)
-                end
-                if prizes.energy then
-                    AddUnitBonus(u, BONUS_MANA, prizes.energy)
-                end
+            local prizes = RANK_PRIZES[rank]
+            if prizes.damage then
+                AddUnitBonus(d.root, BONUS_DAMAGE, prizes.damage)
+            end
+            if prizes.defense then
+                BlzSetAbilityRealLevelField(BlzGetUnitAbility(d.root, RANK_BONUS), ABILITY_RLF_ARMOR_BONUS_HAD1, 0, prizes.defense)
+                SetUnitAbilityLevel(d.root, RANK_BONUS, 2)
+                SetUnitAbilityLevel(d.root, RANK_BONUS, 1)
+            end
+            if prizes.health then
+                AddUnitBonus(d.root, BONUS_HEALTH, prizes.health)
+            end
+            if prizes.energy then
+                AddUnitBonus(d.root, BONUS_MANA, prizes.energy)
             end
         end
+    end
 
-        return u
-    end)
+    Digimon.createEvent:register(assign)
+    Digimon.evolutionEvent:register(assign)
 
     OnRestart(function (p)
         BlzDecPlayerTechResearched(p, RANK_UPGRADE, GetPlayerTechCount(p, RANK_UPGRADE, true))
@@ -531,12 +534,12 @@ OnInit(function ()
         if info1.p == LocalPlayer then
             local i = info1.clicked
             if info1.clickedGroup == 1 then
-                BlzFrameSetEnable(Select, not info1.bannedDigimons:contains(i) and info1.aliveDigimons > 3)
+                BlzFrameSetEnable(Select, not info1.bannedDigimons:contains(i) and info1.aliveDigimons > 3 and (info1.selectedDigimons:contains(i) or info1.availableSelects > 0))
                 BlzFrameSetEnable(Ban, false)
                 BlzFrameSetText(Select, "|cffFCD20D" .. (info1.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
             elseif info1.clickedGroup == 2 then
                 BlzFrameSetEnable(Select, false)
-                BlzFrameSetEnable(Ban, not info2.selectedDigimons:contains(i) and info2.aliveDigimons > 3)
+                BlzFrameSetEnable(Ban, not info2.selectedDigimons:contains(i) and info2.aliveDigimons > 3 and (info2.bannedDigimons:contains(i) or info1.availableBans > 0))
                 BlzFrameSetText(Ban, "|cffFCD20D" .. (info2.bannedDigimons:contains(i) and "Unban" or "Ban") .. "|r")
             end
             BlzFrameSetEnable(Ready, info1.availableSelects == 0)
@@ -544,12 +547,12 @@ OnInit(function ()
         elseif info2.p == LocalPlayer then
             local i = info2.clicked
             if info2.clickedGroup == 2 then
-                BlzFrameSetEnable(Select, not info2.bannedDigimons:contains(i) and info2.aliveDigimons > 3)
+                BlzFrameSetEnable(Select, not info2.bannedDigimons:contains(i) and info2.aliveDigimons > 3 and (info2.selectedDigimons:contains(i) or info2.availableSelects == 0))
                 BlzFrameSetEnable(Ban, false)
                 BlzFrameSetText(Select, "|cffFCD20D" .. (info2.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
             elseif info2.clickedGroup == 1 then
                 BlzFrameSetEnable(Select, false)
-                BlzFrameSetEnable(Ban, not info1.selectedDigimons:contains(i) and info1.aliveDigimons > 3)
+                BlzFrameSetEnable(Ban, not info1.selectedDigimons:contains(i) and info1.aliveDigimons > 3 and (info1.bannedDigimons:contains(i) or info2.availableBans > 0))
                 BlzFrameSetText(Ban, "|cffFCD20D" .. (info1.bannedDigimons:contains(i) and "Unban" or "Ban") .. "|r")
             end
             BlzFrameSetEnable(Ready, info2.availableSelects == 0)
@@ -867,7 +870,7 @@ OnInit(function ()
     local function StartFight(p1, p2, arena)
         ShowBank(p1, false)
         ShowBank(p2, false)
-        if p2 ~= Digimon.NEUTRAL then
+        if p2 ~= Digimon.VILLAIN then
             DisplayTextToForce(WannaPvP, User[p1]:getNameColored() .. " and " .. User[p2]:getNameColored() .. " will fight.")
             PlayerSelected[p1] = nil
             PlayerSelected[p2] = nil
@@ -1040,7 +1043,7 @@ OnInit(function ()
             end
 
             info = fight.pi[2]
-            info.p = Digimon.NEUTRAL
+            info.p = Digimon.VILLAIN
             info.aliveDigimons = 0
             info.availableSelects = 0
             info.availableBans = 0
@@ -1174,7 +1177,7 @@ OnInit(function ()
                 DisplayTextToPlayer(p, 0, 0, "All the arenas are being used, you have to wait until they are free.")
                 return
             end
-            StartFight(p, Digimon.NEUTRAL, i)
+            StartFight(p, Digimon.VILLAIN, i)
         end)
     end
 

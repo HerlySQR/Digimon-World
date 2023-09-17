@@ -7,14 +7,11 @@ OnInit("GetSyncedData", function ()
     local BLOCK_LENGHT = 246
 
     local LocalPlayer = GetLocalPlayer()
-    local callbacks = {} ---@type (fun(): thread)[]
+    local callbacks = {} ---@type (fun(noSync: boolean?): thread)[]
     local actString = ""
     local actThread = nil ---@type thread
     local areWaiting = {} ---@type table<thread, thread[]>
-
-    local function CallFirst()
-        actThread = callbacks[1]()
-    end
+    local areSyncs = false
 
     ---@param s string
     local function Sync(s)
@@ -68,17 +65,18 @@ OnInit("GetSyncedData", function ()
 
         local t = coroutine.running()
 
-        table.insert(callbacks, 1, function ()
-            if p == LocalPlayer then
+        table.insert(callbacks, function (noSync)
+            if not noSync and p == LocalPlayer then
                 Sync(data)
             end
             return t
         end)
 
         if #callbacks == 1 then
-            CallFirst()
+            actThread = callbacks[1]()
         end
 
+        areSyncs = true
         local success, value = coroutine.yield() ---@type boolean, T | table
 
         if not success then
@@ -92,15 +90,16 @@ OnInit("GetSyncedData", function ()
     ---
     ---It does nothing if there isn't a queued sync from `GetSyncedData` or is the thread that function yielded or is yielded for another reason.
     function WaitLastSync()
-        if actThread then
+        if areSyncs then
             local thr = coroutine.running()
-            if actThread == thr or coroutine.status(thr) == "suspended" then
+            local last = callbacks[#callbacks](true)
+            if last == thr or coroutine.status(thr) == "suspended" then
                 return
             end
-            if not areWaiting[actThread] then
-                areWaiting[actThread] = {}
+            if not areWaiting[last] then
+                areWaiting[last] = {}
             end
-            table.insert(areWaiting[actThread], thr)
+            table.insert(areWaiting[last], thr)
             coroutine.yield(thr)
         end
     end
@@ -114,8 +113,12 @@ OnInit("GetSyncedData", function ()
         actString = actString .. BlzGetTriggerSyncData()
         if BlzGetTriggerSyncPrefix() == END_PREFIX then
             table.remove(callbacks, 1)
+
+            local thre = nil
             if #callbacks > 0 then
-                CallFirst()
+                thre = callbacks[1]()
+            else
+                areSyncs = false
             end
 
             coroutine.resume(actThread, pcall(Str2Obj, actString))
@@ -127,11 +130,8 @@ OnInit("GetSyncedData", function ()
                 areWaiting[actThread] = nil
             end
 
+            actThread = thre or actThread -- Is nil if there are no more callbacks
             actString = ""
-
-            if #callbacks == 0 then
-                actThread = nil
-            end
         end
     end)
 end)

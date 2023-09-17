@@ -404,8 +404,6 @@ OnInit("Hotkeys", function ()
         end)
 
         ForForce(FORCE_PLAYING, function ()
-            print(1)
-            print(GetEnumPlayer())
             LoadHotkeys(GetEnumPlayer())
         end)
     end)
@@ -447,10 +445,7 @@ OnInit("Hotkeys", function ()
 
     ---@param p player
     function LoadHotkeys(p)
-        print(FileIO.Read)
         local loaded = GetSyncedData(p, FileIO.Read, SaveFile.getFolder() .. "\\Hotkeys.pld")
-        print(SaveFile.getFolder())
-        print(loaded)
         if loaded:len() > 1 then
             local savecode = Savecode.create()
             if savecode:Load(p, loaded, 1) then
