@@ -2,6 +2,7 @@ Debug.beginFile("Datamon\\BossFight")
 OnInit(function ()
     Require "BossFightUtils"
     Require "SyncedTable"
+    Require "Set"
     local Color = Require "Color" ---@type Color
 
     local GENERATOR = FourCC('n01U')
@@ -26,7 +27,7 @@ OnInit(function ()
     local generators = {gg_unit_n01U_0110, gg_unit_n01U_0112, gg_unit_n01U_0114, gg_unit_n01U_0113} ---@type unit[]
     local generatorsPos = {} ---@type location[]
     local generatorRect = gg_rct_Datamon_Generators ---@type rect
-    local generatorUnits = SyncedTable.create()
+    local generatorUnits = Set.create()
     local returnPlace = gg_rct_Datamon_Return ---@type rect
     local canTrap = true
     local secondPhase = false
@@ -78,7 +79,7 @@ OnInit(function ()
 
     ---@return boolean
     local function allGeneratorUnitsDead()
-        for _, u in pairs(generatorUnits) do
+        for u in generatorUnits:elements() do
             if UnitAlive(u) then
                 return false
             end
@@ -88,7 +89,7 @@ OnInit(function ()
 
     Timed.echo(1., function ()
         if not allGeneratorsDead() then
-            for _, u in pairs(generatorUnits) do
+            for u in generatorUnits:elements() do
                 Damage.apply(boss, u, ELECTRIC_TRAP_DAMAGE, false, false, udg_Machine, DAMAGE_TYPE_LIGHTNING, WEAPON_TYPE_WHOKNOWS)
                 DestroyEffect(AddSpecialEffectTarget(ELECTRIC_TRAP_EFFECT, u, "origin"))
             end
@@ -104,17 +105,16 @@ OnInit(function ()
         TriggerAddAction(t, function ()
             if not canTrap and (GetDyingUnit() == boss or (RectContainsUnit(generatorRect, GetDyingUnit()) and (allGeneratorUnitsDead() or allGeneratorsDead()))) then
                 Timed.call(2., function ()
-                    for _, u2 in pairs(generatorUnits) do
+                    for u2 in generatorUnits:elements() do
                         if UnitAlive(u2) then
                             DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT, GetUnitX(u2), GetUnitY(u2)))
                             local l = GetRandomLocInRect(returnPlace)
                             SetUnitPositionLoc(u2, l)
                             DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
                             RemoveLocation(l)
-                            BossIgnoreUnit(boss, u2, false)
                         end
                     end
-                    generatorUnits = SyncedTable.create()
+                    generatorUnits:clear()
                     Timed.call(4., function ()
                         restartGenerators()
                         canTrap = true
@@ -126,28 +126,26 @@ OnInit(function ()
 
     do
         local t = CreateTrigger()
+        TriggerRegisterEnterRectSimple(t, generatorRect)
+        TriggerAddAction(t, function ()
+            local u = GetEnteringUnit()
+            generatorUnits:addSingle(u)
+            BossIgnoreUnit(boss, u, true)
+        end)
+    end
+
+    do
+        local t = CreateTrigger()
         TriggerRegisterLeaveRectSimple(t, generatorRect)
         TriggerAddAction(t, function ()
-            if not canTrap then
-                local u = GetLeavingUnit()
-                local empty, found = true, false
-                for k, v in pairs(generatorUnits) do
-                    if v == u then
-                        generatorUnits[k] = nil
-                        found = true
-                    else
-                        empty = false
-                    end
-                    if found and not empty then
-                        break
-                    end
-                end
-                if empty then
-                    Timed.call(2., function ()
-                        restartGenerators()
-                        canTrap = true
-                    end)
-                end
+            local u = GetLeavingUnit()
+            generatorUnits:removeSingle(u)
+            BossIgnoreUnit(boss, u, false)
+            if generatorUnits:isEmpty() and not canTrap then
+                Timed.call(2., function ()
+                    restartGenerators()
+                    canTrap = true
+                end)
             end
         end)
     end
@@ -167,18 +165,18 @@ OnInit(function ()
             if cooldown <= 0 then
                 cooldown = ELECTRIC_TRAP_TICKS_CD
                 canTrap = false
+                local list = SyncedTable.create()
                 for u2 in unitsInTheField:elements() do
-                    if not generatorUnits[GetOwningPlayer(u2)] then
-                        generatorUnits[GetOwningPlayer(u2)] = u2
+                    if not list[GetOwningPlayer(u2)] then
+                        list[GetOwningPlayer(u2)] = u2
                     end
                 end
-                for _, u2 in pairs(generatorUnits) do
+                for _, u2 in pairs(list) do
                     DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT, GetUnitX(u2), GetUnitY(u2)))
                     local l = GetRandomLocInRect(generatorRect)
                     SetUnitPositionLoc(u2, l)
                     DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
                     RemoveLocation(l)
-                    BossIgnoreUnit(boss, u2, true)
                 end
                 if not BossStillCasting(boss) then
                     IssuePointOrderById(boss, Orders.attack, GetUnitX(boss), GetUnitY(boss))

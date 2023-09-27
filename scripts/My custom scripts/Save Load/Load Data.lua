@@ -21,7 +21,7 @@ OnInit(function ()
 
         WaitPlayers = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
         BlzFrameSetAbsPoint(WaitPlayers, FRAMEPOINT_TOPLEFT, 0.250000, 0.530000)
-        BlzFrameSetAbsPoint(WaitPlayers, FRAMEPOINT_BOTTOMRIGHT, 0.540000, 0.48000 - 0.03 * User.AmountPlaying)
+        BlzFrameSetAbsPoint(WaitPlayers, FRAMEPOINT_BOTTOMRIGHT, 0.540000, 0.48000 - 0.02 * User.AmountPlaying -0.01)
         BlzFrameSetVisible(WaitPlayers, false)
 
         WaitPlayersText = BlzCreateFrameByType("TEXT", "name", WaitPlayers, "", 0)

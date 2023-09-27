@@ -1,6 +1,7 @@
 OnInit(function ()
     Require "Digimon"
     Require "DigimonBank"
+    Require "GameStatus"
 
     local LocalPlayer = GetLocalPlayer() ---@type player
 
@@ -22,6 +23,11 @@ OnInit(function ()
         TriggerAddAction(t, function ()
             local u = GetEnteringUnit()
             local p = GetOwningPlayer(u)
+
+            if not IsPlayerInGame(p) then
+                return
+            end
+
             SetUnitPosition(u, enterX, enterY)
             local d = Digimon.getInstance(u)
             if d then
@@ -51,6 +57,11 @@ OnInit(function ()
             TriggerAddAction(t, function ()
                 local u = GetEnteringUnit()
                 local p = GetOwningPlayer(u)
+
+                if not IsPlayerInGame(p) then
+                    return
+                end
+
                 SetUnitPosition(u, leaveX, leaveY)
                 local d = Digimon.getInstance(u)
                 if d then

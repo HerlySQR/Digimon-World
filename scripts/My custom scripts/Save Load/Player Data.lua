@@ -286,11 +286,11 @@ OnInit("Player Data", function ()
         udg_SaveLoadSec = 0
         udg_SaveLoadMin = 0
         udg_SaveLoadHour = 0
-        udg_SaveLoadDay = 0
-        udg_SaveLoadMonth = 0
-        udg_SaveLoadYear = 0
-        udg_SaveLoadWDay = 0
-        udg_SaveLoadYDay = 0
+        udg_SaveLoadDay = 1
+        udg_SaveLoadMonth = 1
+        udg_SaveLoadYear = 1970
+        udg_SaveLoadWDay = 1
+        udg_SaveLoadYDay = 1
         udg_SaveLoadIsDst = false
     end
 

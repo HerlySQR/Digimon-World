@@ -29,6 +29,9 @@ OnInit("BossFightUtils", function ()
     ---@param u unit
     ---@param flag boolean
     function BossIgnoreUnit(boss, u, flag)
+        if flag then
+            ZTS_ModifyThreat(u, boss, 0, false)
+        end
         ignored[boss][u] = flag
     end
 

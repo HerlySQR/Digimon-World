@@ -106,7 +106,9 @@ OnInit("SpellAISystem", function ()
                     local random = GetRandomUnitOnRange(GetUnitX(u), GetUnitY(u), range, function (u2)
                         return ((enemyTarget and IsUnitEnemy(u, GetOwningPlayer(u2))) or (allyTarget and IsUnitAlly(u, GetOwningPlayer(u2))))
                     end)
-                    return IssuePointOrderById(u, order, GetUnitX(random), GetUnitY(random))
+                    if random then
+                        return IssuePointOrderById(u, order, GetUnitX(random), GetUnitY(random))
+                    end
                 end
             elseif hasNoTarget then
                 local count = 0

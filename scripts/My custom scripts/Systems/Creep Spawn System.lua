@@ -60,6 +60,8 @@ OnInit(function ()
         creep.remaining = LIFE_SPAN
         creep.spawnpoint = pos
 
+        ZTS_AddThreatUnit(creep.root, true)
+
         return creep
     end
 

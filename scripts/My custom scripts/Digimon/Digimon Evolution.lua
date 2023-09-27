@@ -181,6 +181,16 @@ OnInit("DigimonEvolution", function ()
 
     -- Evolve Run
 
+    ---@param u unit
+    ---@param alpha integer
+    local function SetUnitAlpha(u, alpha)
+        SetUnitVertexColor(u,
+            BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_RED),
+            BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_GREEN),
+            BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_BLUE),
+            alpha)
+    end
+
     -- Press one of the options
     for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
         local p = Player(i)
@@ -203,32 +213,60 @@ OnInit("DigimonEvolution", function ()
             if not toEvolve then
                 return
             end
-            local time = evolve.onCombat and 2. or 4.
+            local time = evolve.onCombat and 4. or 5.5
             local u = evolve.root
 
             SetUnitInvulnerable(u, true)
             PauseUnit(u, true)
-            SetUnitVertexColor(u,
-                BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_RED),
-                BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_GREEN),
-                BlzGetUnitIntegerField(u, UNIT_IF_TINTING_COLOR_BLUE),
-                127)
 
             local s = CreateSound("war3mapImported\\Evolution-1st.mp3", false, true, true, 10, 10, "CombatSoundsEAX")
             SetSoundPosition(s, GetUnitX(u), GetUnitY(u), 0)
             StartSound(s)
+            SetSoundDuration(s, math.round(time))
             KillSoundWhenDone(s)
+
+            DestroyEffectTimed(AddSpecialEffect("Digievolution1.mdx", GetUnitX(u), GetUnitY(u)), time * 2.)
 
             local cur = Transmission.create(Force(p))
             cur.isSkippable = false
-            cur:AddLine(u, nil, GetHeroProperName(u), nil, "is digievolving into...", Transmission.SET, time, true)
+            cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u) .. " is digievolving into...", Transmission.SET, 1., true)
+            cur:AddActions(time - 2., function ()
+                SetUnitAnimation(u, "stand")
+                local alpha = 255
+                Timed.echo(time/100, time, function ()
+                    alpha = math.max(alpha - 3, 0)
+                    SetUnitAlpha(u, alpha)
+                end)
+                Timed.echo(0.02, time, function ()
+                    BlzSetUnitFacingEx(u, GetUnitFacing(u) + 6.)
+                end)
+            end)
+            cur:AddActions(time, function ()
+                local dummy = CreateUnit(GetOwningPlayer(u), toEvolve, GetUnitX(u), GetUnitY(u), GetUnitFacing(u))
+                UnitAddAbility(dummy, LOCUST_ID)
+                SetUnitPathing(u, false)
+                SetUnitPosition(dummy, GetUnitX(u), GetUnitY(u))
+                SetUnitAnimation(dummy, "stand")
+                SetUnitAlpha(dummy, 0)
+                local alpha = 0
+                Timed.echo(time/100, time, function ()
+                    alpha = math.min(alpha + 3, 255)
+                    SetUnitAlpha(dummy, alpha)
+                end)
+                Timed.echo(0.02, time, function ()
+                    BlzSetUnitFacingEx(dummy, GetUnitFacing(dummy) + 6.)
+                end, function ()
+                    RemoveUnit(dummy)
+                end)
+            end)
             cur:AddActions(function ()
-                DestroyEffectTimed(AddSpecialEffect("Digievolution1.mdx", GetUnitX(u), GetUnitY(u)), time * 2.)
-
+                local x, y = evolve:getPos()
                 evolve:evolveTo(toEvolve) -- Here I added the more important things
                 u = evolve.root -- Have to refresh
-                DestroyEffectTimed(AddSpecialEffectTarget("origin", u, "Digievolution2.mdx"), time * 1.5)
+                SetUnitAlpha(u, 255)
+                SetUnitPosition(u, x, y)
 
+                DestroyEffectTimed(AddSpecialEffect("Digievolution2.mdx", GetUnitX(u), GetUnitY(u)), time * 1.5)
                 cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u), Transmission.SET, time, true)
             end)
             cur:AddEnd(function ()

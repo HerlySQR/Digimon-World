@@ -71,19 +71,8 @@ OnInit("Hotkeys", function ()
     local HotkeyBackpack = nil ---@type framehandle
     local HotkeyExit = nil ---@type framehandle
     local HotkeySave = nil ---@type framehandle
-    local HotkeyBackpackSubMenuBackdrop = nil ---@type framehandle
-    local HotkeyBackpackSubMenuText = nil ---@type framehandle
-    local HotkeyBackpackSubMenuDiscard = nil ---@type framehandle
-    local HotkeyBackpackSubMenuDrop = nil ---@type framehandle
-    local HotkeyBackpackSubMenuItem = {} ---@type framehandle[]
-    local BackdropHotkeyBackpackSubMenuItem = {} ---@type framehandle[]
-    local HotkeyBackpackSubMenuButton = nil ---@type framehandle
-    local BackdropHotkeyBackpackSubMenuButton = nil ---@type framehandle
     local HotkeyYourDigimons = nil ---@type framehandle
     local HotkeyYourDigimonsSubMenu = nil ---@type framehandle
-    local HotkeyYourDigimonsSubMenuBackdrop = nil ---@type framehandle
-    local HotkeyYourDigimonsSubMenuButton = nil ---@type framehandle
-    local BackdropHotkeyYourDigimonsSubMenuButton = nil ---@type framehandle
 
     local visibleMenu = nil ---@type framehandle
 
@@ -220,7 +209,6 @@ OnInit("Hotkeys", function ()
         -- Backpack
 
         HotkeyBackpack = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
-        BlzFrameSetScale(HotkeyBackpack, 1.)
         BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.080000)
         BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.22000)
         BlzFrameSetText(HotkeyBackpack, "|cffFCD20DBackpack|r")
@@ -234,20 +222,20 @@ OnInit("Hotkeys", function ()
         BlzFrameSetTexture(HotkeyBackpackSubMenu, "war3mapImported\\EmptyBTN.blp", 0, true)
         BlzFrameSetVisible(HotkeyBackpackSubMenu, false)
 
-        HotkeyBackpackSubMenuBackdrop = BlzCreateFrame("QuestButtonBaseTemplate", HotkeyBackpackSubMenu, 0, 0)
+        local HotkeyBackpackSubMenuBackdrop = BlzCreateFrame("QuestButtonBaseTemplate", HotkeyBackpackSubMenu, 0, 0)
         BlzFrameSetPoint(HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenu, FRAMEPOINT_TOPLEFT, 0.11000, -0.020000)
         BlzFrameSetPoint(HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.050000)
 
-        HotkeyBackpackSubMenuButton = BlzCreateFrame("IconButtonTemplate", HotkeyBackpackSubMenu, 0, 0)
+        local HotkeyBackpackSubMenuButton = BlzCreateFrame("IconButtonTemplate", HotkeyBackpackSubMenu, 0, 0)
         BlzFrameSetPoint(HotkeyBackpackSubMenuButton, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.10000)
         BlzFrameSetPoint(HotkeyBackpackSubMenuButton, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenu, FRAMEPOINT_BOTTOMRIGHT, -0.18000, 0.11000)
         AsingHotkey(HotkeyBackpackSubMenuButton, 0)
 
-        BackdropHotkeyBackpackSubMenuButton = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyBackpackSubMenuButton", HotkeyBackpackSubMenuButton, "", 0)
+        local BackdropHotkeyBackpackSubMenuButton = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyBackpackSubMenuButton", HotkeyBackpackSubMenuButton, "", 0)
         BlzFrameSetAllPoints(BackdropHotkeyBackpackSubMenuButton, HotkeyBackpackSubMenuButton)
         BlzFrameSetTexture(BackdropHotkeyBackpackSubMenuButton, "ReplaceableTextures\\CommandButtons\\BTNBackpackIcon.blp", 0, true)
 
-        HotkeyBackpackSubMenuText = BlzCreateFrameByType("TEXT", "name", HotkeyBackpackSubMenuBackdrop, "", 0)
+        local HotkeyBackpackSubMenuText = BlzCreateFrameByType("TEXT", "name", HotkeyBackpackSubMenuBackdrop, "", 0)
         BlzFrameSetScale(HotkeyBackpackSubMenuText, 1.00)
         BlzFrameSetPoint(HotkeyBackpackSubMenuText, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.0050000)
         BlzFrameSetPoint(HotkeyBackpackSubMenuText, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.12000)
@@ -255,19 +243,19 @@ OnInit("Hotkeys", function ()
         BlzFrameSetEnable(HotkeyBackpackSubMenuText, false)
         BlzFrameSetTextAlignment(HotkeyBackpackSubMenuText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-        HotkeyBackpackSubMenuDiscard = BlzCreateFrame("ScriptDialogButton", HotkeyBackpackSubMenuBackdrop, 0, 0)
-        BlzFrameSetScale(HotkeyBackpackSubMenuDiscard, 0.858)
+        local HotkeyBackpackSubMenuDiscard = BlzCreateFrame("ScriptDialogButton", HotkeyBackpackSubMenuBackdrop, 0, 0)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDiscard, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.090000, -0.19245)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDiscard, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0025500)
         BlzFrameSetText(HotkeyBackpackSubMenuDiscard, "|cffFCD20DDiscard|r")
+        BlzFrameSetScale(HotkeyBackpackSubMenuDiscard, 0.858)
 
         AsingHotkey(HotkeyBackpackSubMenuDiscard, 1)
 
-        HotkeyBackpackSubMenuDrop = BlzCreateFrame("ScriptDialogButton", HotkeyBackpackSubMenuBackdrop, 0, 0)
-        BlzFrameSetScale(HotkeyBackpackSubMenuDrop, 0.858)
+        local HotkeyBackpackSubMenuDrop = BlzCreateFrame("ScriptDialogButton", HotkeyBackpackSubMenuBackdrop, 0, 0)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDrop, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.19245)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDrop, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.090000, 0.0025500)
         BlzFrameSetText(HotkeyBackpackSubMenuDrop, "|cffFCD20DDrop|r")
+        BlzFrameSetScale(HotkeyBackpackSubMenuDrop, 0.858)
 
         AsingHotkey(HotkeyBackpackSubMenuDrop, 2)
 
@@ -290,22 +278,34 @@ OnInit("Hotkeys", function ()
 
         local indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}
         for i = 1, udg_MAX_ITEMS do
-            HotkeyBackpackSubMenuItem[i] = BlzCreateFrame("IconButtonTemplate", HotkeyBackpackSubMenuBackdrop, 0, 0)
-            BlzFrameSetPoint(HotkeyBackpackSubMenuItem[i], FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, x[i], y[i])
-            BlzFrameSetSize(HotkeyBackpackSubMenuItem[i], stepSize, stepSize)
+            local HotkeyBackpackSubMenuItem = BlzCreateFrame("IconButtonTemplate", HotkeyBackpackSubMenuBackdrop, 0, 0)
+            BlzFrameSetPoint(HotkeyBackpackSubMenuItem, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, x[i], y[i])
+            BlzFrameSetSize(HotkeyBackpackSubMenuItem, stepSize, stepSize)
 
-            BackdropHotkeyBackpackSubMenuItem[i] = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyBackpackSubMenuItem[" .. i .. "]", HotkeyBackpackSubMenuItem[i], "", 0)
-            BlzFrameSetAllPoints(BackdropHotkeyBackpackSubMenuItem[i], HotkeyBackpackSubMenuItem[i])
-            BlzFrameSetTexture(BackdropHotkeyBackpackSubMenuItem[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
-            t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, HotkeyBackpackSubMenuItem[i], FRAMEEVENT_CONTROL_CLICK)
-            AsingHotkey(HotkeyBackpackSubMenuItem[i], indexes[i]) -- start in 3 and end in 19
+            local BackdropHotkeyBackpackSubMenuItem = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyBackpackSubMenuItem[" .. i .. "]", HotkeyBackpackSubMenuItem, "", 0)
+            BlzFrameSetAllPoints(BackdropHotkeyBackpackSubMenuItem, HotkeyBackpackSubMenuItem)
+            BlzFrameSetTexture(BackdropHotkeyBackpackSubMenuItem, "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            AsingHotkey(HotkeyBackpackSubMenuItem, indexes[i]) -- start in 3 and end in 19
         end
 
         -- Your digimons
 
+        local x1 = {}
+        local y1 = {}
+        local x2 = {}
+        local y2 = {}
+
+        for i = 0, 3 do
+            for j = 0, 1 do
+                local index = i + 4 * j
+                x1[index] = 0.022500 + i * 0.045
+                y1[index] = -0.05 - j * 0.045
+                x2[index] = -0.022500 - (3 - i) * 0.045
+                y2[index] = 0.05 + (1 - j) * 0.045
+            end
+        end
+
         HotkeyYourDigimons = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
-        BlzFrameSetScale(HotkeyYourDigimons, 1.29)
         BlzFrameSetPoint(HotkeyYourDigimons, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.040000)
         BlzFrameSetPoint(HotkeyYourDigimons, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.26000)
         BlzFrameSetText(HotkeyYourDigimons, "|cffFCD20DYour digimons|r")
@@ -319,22 +319,91 @@ OnInit("Hotkeys", function ()
         BlzFrameSetTexture(HotkeyYourDigimonsSubMenu, "war3mapImported\\EmptyBTN.blp", 0, true)
         BlzFrameSetVisible(HotkeyYourDigimonsSubMenu, false)
 
-        HotkeyYourDigimonsSubMenuBackdrop = BlzCreateFrame("EscMenuBackdrop", HotkeyYourDigimonsSubMenu, 0, 0)
-        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, 0.10000, -0.063000)
-        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_BOTTOMRIGHT, 0.016000, 0.045000)
+        local HotkeyYourDigimonsSubMenuBackdrop = BlzCreateFrame("EscMenuBackdrop", HotkeyYourDigimonsSubMenu, 0, 0)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, 0.060000, -0.025000)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_BOTTOMRIGHT, 0.020000, 0.045000)
 
-        HotkeyYourDigimonsSubMenuButton = BlzCreateFrame("IconButtonTemplate", HotkeyYourDigimonsSubMenu, 0, 0)
-        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuButton, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, 0.020000, -0.10000)
-        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuButton, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_BOTTOMRIGHT, -0.19000, 0.11000)
+        local HotkeyYourDigimonsSubMenuButton = BlzCreateFrame("IconButtonTemplate", HotkeyYourDigimonsSubMenu, 0, 0)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuButton, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, 0.0050000, -0.10000)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuButton, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_BOTTOMRIGHT, -0.20500, 0.11000)
+        AsingHotkey(HotkeyYourDigimonsSubMenuButton, 20)
 
-        BackdropHotkeyYourDigimonsSubMenuButton = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyYourDigimonsSubMenuButton", HotkeyYourDigimonsSubMenuButton, "", 0)
+        local BackdropHotkeyYourDigimonsSubMenuButton = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyYourDigimonsSubMenuButton", HotkeyYourDigimonsSubMenuButton, "", 0)
         BlzFrameSetAllPoints(BackdropHotkeyYourDigimonsSubMenuButton, HotkeyYourDigimonsSubMenuButton)
-        BlzFrameSetTexture(BackdropHotkeyYourDigimonsSubMenuButton, "CustomFrame.png", 0, true)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, HotkeyYourDigimonsSubMenuButton, FRAMEEVENT_CONTROL_CLICK)
-        --TriggerAddAction(t, REFORGEDUIMAKER.HotkeyYourDigimonsSubMenuButtonFunc)
+        BlzFrameSetTexture(BackdropHotkeyYourDigimonsSubMenuButton, "ReplaceableTextures\\CommandButtons\\BTNDigimonsIcon.blp", 0, true)
 
-        BlzFrameSetScale(HotkeyYourDigimonsSubMenuBackdrop, 0.8)
+        indexes = {[0] = 21, 22, 23, 24, 25, 26, 27, 28}
+
+        for i = 0, 7 do
+            local DigimonT = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop, 0, 0)
+            BlzFrameSetPoint(DigimonT, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, x1[i], y1[i])
+            BlzFrameSetPoint(DigimonT, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, x2[i], y2[i])
+            local BackdropDigimonT = BlzCreateFrameByType("BACKDROP", "HotkeyBackdropDigimonT[" .. i .. "]", DigimonT, "", 1)
+            BlzFrameSetAllPoints(BackdropDigimonT, DigimonT)
+            BlzFrameSetTexture(BackdropDigimonT, "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetLevel(BackdropDigimonT, 1)
+            --BlzFrameSetScale(DigimonT, 0.8)
+            AsingHotkey(DigimonT, indexes[i])
+        end
+
+        local Text = BlzCreateFrameByType("TEXT", "name", HotkeyYourDigimonsSubMenuBackdrop, "", 0)
+        BlzFrameSetPoint(Text, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.050000, -0.020000)
+        BlzFrameSetPoint(Text, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.050000, 0.14000)
+        BlzFrameSetText(Text, "|cffFFCC00Choose a Digimon|r")
+        BlzFrameSetEnable(Text, false)
+        BlzFrameSetTextAlignment(Text, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+        --BlzFrameSetScale(Text, 0.8)
+
+        local Summon = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
+        BlzFrameSetPoint(Summon, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.030000, -0.14500)
+        BlzFrameSetPoint(Summon, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.11000, 0.02000)
+        BlzFrameSetText(Summon, "|cffFCD20DSummon|r")
+        --BlzFrameSetScale(Summon, 0.8)
+        AsingHotkey(Summon, 29)
+
+        local Store = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
+        BlzFrameSetPoint(Store, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.030000, -0.1700)
+        BlzFrameSetPoint(Store, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.11000, -0.00500)
+        BlzFrameSetText(Store, "|cffFCD20DStore|r")
+        --BlzFrameSetScale(Store, 0.8)
+        AsingHotkey(Store, 30)
+
+        local Free = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
+        BlzFrameSetPoint(Free, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.11000, -0.14500)
+        BlzFrameSetPoint(Free, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.02000)
+        BlzFrameSetText(Free, "|cffFCD20DFree|r")
+        AsingHotkey(Free, 31)
+
+        local Warning = BlzCreateFrame("QuestButtonBaseTemplate", Free,0,0)
+        BlzFrameSetPoint(Warning, FRAMEPOINT_TOPLEFT, Free, FRAMEPOINT_TOPLEFT, -0.020000, -0.025000)
+        BlzFrameSetPoint(Warning, FRAMEPOINT_BOTTOMRIGHT, Free, FRAMEPOINT_BOTTOMRIGHT, 0.030000, -0.060000)
+
+        local AreYouSure = BlzCreateFrameByType("TEXT", "name", Warning, "", 0)
+        BlzFrameSetPoint(AreYouSure, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.0050000, -0.0050000)
+        BlzFrameSetPoint(AreYouSure, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.025000)
+        BlzFrameSetText(AreYouSure, "|cffFFCC00Are you sure you wanna free this digimon?|r")
+        --BlzFrameSetScale(AreYouSure, 0.8)
+        BlzFrameSetTextAlignment(AreYouSure, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+
+        local Yes = BlzCreateFrame("ScriptDialogButton", Warning,0,0)
+        BlzFrameSetPoint(Yes, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.010000, -0.035000)
+        BlzFrameSetPoint(Yes, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.070000, 0.0050000)
+        BlzFrameSetText(Yes, "|cffFCD20DYes|r")
+        --BlzFrameSetScale(Yes, 0.8)
+        AsingHotkey(Yes, 32)
+
+        local No = BlzCreateFrame("ScriptDialogButton", Warning,0,0)
+        BlzFrameSetPoint(No, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.070000, -0.035000)
+        BlzFrameSetPoint(No, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0050000)
+        BlzFrameSetText(No, "|cffFCD20DNo|r")
+        --BlzFrameSetScale(No, 0.8)
+        AsingHotkey(No, 33)
+
+        --BlzFrameSetScale(Warning, 0.8)
+
+        --BlzFrameSetScale(Free, 0.8)
+
+        --BlzFrameSetScale(HotkeyYourDigimonsSubMenuBackdrop, 0.8)
 
 
         HotkeyExit = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
@@ -408,11 +477,15 @@ OnInit("Hotkeys", function ()
         end)
     end)
 
+    ---@param frame framehandle
+    ---@param id integer
     function AssignFrame(frame, id)
         frames[id] = frame
         referenceFrame[frame] = id
     end
 
+    ---@param p player
+    ---@param flag boolean
     function ShowHotkeys(p, flag)
         if p == LocalPlayer then
             BlzFrameSetVisible(HotkeyButton, flag)

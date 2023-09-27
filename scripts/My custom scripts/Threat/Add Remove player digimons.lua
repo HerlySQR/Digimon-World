@@ -17,6 +17,8 @@ OnInit(function ()
     Digimon.destroyEvent:register(function (old)
         if GetPlayerController(old:getOwner()) == MAP_CONTROL_USER then
             ZTS_RemovePlayerUnit(old.root)
+        else
+            ZTS_RemoveThreatUnit(old.root)
         end
     end)
 end)

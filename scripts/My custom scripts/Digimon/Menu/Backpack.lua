@@ -524,6 +524,7 @@ OnInit("Backpack", function ()
     -- Store the charged items
     local t = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+    TriggerAddCondition(t, Condition(function () return IsUnitType(GetManipulatingUnit(), UNIT_TYPE_HERO) end))
     TriggerAddAction(t, function ()
         local m = GetManipulatedItem()
         if AllowedItems[GetItemTypeId(m)] then
