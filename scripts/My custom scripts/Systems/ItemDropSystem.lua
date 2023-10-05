@@ -1,5 +1,7 @@
 if Debug then Debug.beginFile("ItemDropSystem") end
 OnInit(function ()
+    Require "Timed"
+
     local instances = {}
 
     ---Makes the creep have a chance of drop an item when it dies.
@@ -18,25 +20,16 @@ OnInit(function ()
         end
 
         if #chances > 0 and #items ~= #chances then
-            error("The number of items don't matches with the number or chances", 2)
-        end
-
-        local sum = 0
-        for i = 1, #chances do
-            sum = sum + chances[i]
-        end
-        if sum > 1 then
-            error("The sum of the chances are bigger than 1", 2)
+            error("The number of items doesn't match with the number or chances", 2)
         end
 
         local new = {
             itempool = CreateItemPool(),
             once = once
         }
-        local max = #items
-        local chance = #chances == 0 and 1/max
+        local chance = #chances == 0 and 1
 
-        for i = 1, max do
+        for i = 1, #items do
             ItemPoolAddItemType(new.itempool, items[i], chance or chances[i])
         end
 
@@ -57,8 +50,10 @@ OnInit(function ()
                 PlaceRandomItem(ins.itempool, GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
 
                 if ins.once then
-                    DestroyItemPool(ins.itempool)
-                    table.remove(list, i)
+                    Timed.call(function ()
+                        DestroyItemPool(ins.itempool)
+                        table.remove(list, i)
+                    end)
                 end
             end
 
@@ -67,6 +62,16 @@ OnInit(function ()
             end
         end
     end)
+
+    ---@param creep any
+    function RerollItemDrop(creep)
+        local list = instances[creep]
+        if list then
+            for i = #list, 1, -1 do
+                PlaceRandomItem(list[i].itempool, GetUnitX(creep), GetUnitY(creep))
+            end
+        end
+    end
 
     -- For GUI
 

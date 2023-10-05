@@ -1,597 +1,268 @@
-//TESH.scrollpos=85
-//TESH.alwaysfold=0
-//############################## ~AdvancedAura~ ######################################//
-//##
-//## Version:       1.0
-//## System:        Axarion
-//## IndexerUtils:  Axarion
-//## AbilityEvent:  Axarion
-//## AutoIndex:     grim001
-//## AIDS:          Jesus4Lyf
-//## UnitIndexer:   Nestharus
-//## TimerUtils:    Vexorian
-//## GroupUtils:    Rising_Dusk
-//##
-//############################### DESCRIPTION ###################################//
-//##
-//## This System allows to  create  custom auras. It was  made, because ability
-//## only auras arent very flexible and have bad filters. Also normal auras are 
-//## limited to specific bonuses.
-//##
-//############################### HOW DOES IT WORK ##############################//
-//## 
-//## To use this system create an array struct and implement the AdvancedAura module.
-//## You can optionally implement AdvancedAuraBuff and AdvancedAuraBonus. 
-//## In the structs onInit  method you have to define the ability  for the  aura and  
-//## the buffs ability if you use UnitAuraBuff. When a unit  acquires the ability the 
-//## aura will be added automatically so you don't have to do it yourself. To  define 
-//## the ability just use:
-//##    
-//##        static constant integer ability = 'AURA'
-//##
-//## The aura will be paused if the unit is a hero and it dies. If a unit leaves 
-//## the map the aura will be removed, so you don't have to worry about leaking
-//## struct instances.
-//## 
-//################################# METHODS #####################################//
-//##   
-//##    You can implement these functions into your UnitAura struct. They are 
-//##    all optional. 
-//##
-//##    - happens when a new aura is created (define the bonuses here)
-//##        method AuraInit takes nothing returns nothing
-//## 
-//##    - happens when a unit enters the aura     
-//##        method onAffect takes unit u returns nothing
-//##
-//##    - happens when a unit leaves the aura   
-//##        method onUnaffect takes unit u returns nothing
-//##    
-//##    - happens when a unit stayed in the aura
-//##        method onLoop takes unit u returns nothing
-//##
-//##    - checks if the unit is a valid target for the aura
-//##        method onFilter takes unit u returns boolean
-//##
-//##    - happens when the aura leveled up (increase the bonuses here)
-//##        method onLevelUp takes nothing returns nothing
-//##
-//##    - define the AoE here
-//##        method GetAuraAoE takes nothing returns real
-//##
-//################################# API & Variables ##############################//
-//##
-//##    - the unit owning the aura:
-//##        .owner
-//##
-//##    - the level of the aura:
-//##        .level
-//##
-//##    - the aura ability
-//##        ability
-//##       
-//##    - the interval of the aura timer:
-//##        INTERVAL
-//##
-//##    - the auras group with all currently affected units
-//##        .InstanceGroup
-//##
-//################################# KNOWN BUGS ###################################//
-//##
-//## AutoIndex:
-//## - when using AutoIndex auras will not be created for preplaced units.
-//##   I don't know why if you know why tell me, please. I think its something 
-//##   with TimerUtils and JassHelper's priorities.
-//## 
-//## AIDS:
-//## - you need to make TimerUtils a requirement for AIDS or it will bug for 
-//##   preplaced units with the ability
-//## 
-//## UnitIndexer
-//## - none found yet, therefore i recommend you to use this indexer.
-//##
-//################################################################################//
-
-native UnitAlive takes unit id returns boolean // may be removed if already declared.
-
-library AdvancedAura requires TimerUtils, GroupUtils, AbilityEvent
-        
-    module AdvancedAura
-        delegate AuraDelegate AuraDefault
-        
-        private static  thistype array   Instances
-        private static  integer          InstancesTotal
-                static  thistype         curr
-                static  real             INTERVAL
-        private static  timer            AuraTimer
-        private         integer          Index
-        readonly        group            InstanceGroup
-        private         unit             InstanceUnit
-        private         integer          Level
-        private         boolean          pause
-        readonly        integer          affectedCount
-        
-        method operator owner takes nothing returns unit
-            return .InstanceUnit
-        endmethod
-        
-        method operator level takes nothing returns integer
-            return .Level
-        endmethod
-        
-        method operator level= takes integer newlevel returns nothing
-            loop
-                exitwhen newlevel == .Level
-                set .Level = .Level + 1
-                call .onLevelUp()
-            endloop
-        endmethod
-        
-        static method operator [] takes unit u returns thistype
-            static if LIBRARY_AIDS then
-                return GetUnitIndex(u)
-            else
-                return GetUnitId(u)
-            endif
-        endmethod
-        
-        static method operator []= takes unit u, thistype this returns nothing
-            set thistype[u] = this
-        endmethod
-        
-        private method affect takes unit u returns nothing
-            set .affectedCount = .affectedCount + 1
-            
-            static if thistype.BUFF_VERIFIER then
-                call .addBuff(u)
-            endif
-            
-            static if thistype.BONUS_VERIFIER then
-                call .addBonuses(u)
-            endif
-            
-            static if thistype.EFFECT_VERIFIER then
-                call .addEffect(u)
-            endif
-            
-            call curr.onAffectUnit(u)
-        endmethod
-        
-        private method unaffect takes unit u returns nothing
-            
-            set .affectedCount = .affectedCount - 1
-            
-            static if thistype.BUFF_VERIFIER then
-                call .removeBuff(u)
-            endif
-            
-            static if thistype.BONUS_VERIFIER then
-                call .removeBonuses(u)
-            endif
-            
-            static if thistype.EFFECT_VERIFIER then
-                call .removeEffect(u)
-            endif
-            
-            call curr.onUnaffectUnit(u)
-        endmethod
-        
-        private static method unaffectenum takes nothing returns nothing
-            local unit u = GetEnumUnit()
-            call curr.unaffect(u)
-            call GroupRemoveUnit(curr.InstanceGroup, u)
-        endmethod
-        
-        private static method GroupEnum takes nothing returns boolean
-            local unit u = GetFilterUnit()
-            local boolean b = curr.onFilter(u)
-            
-            if IsUnitInGroup(u, curr.InstanceGroup) and b then
-                call curr.onLoopUnit(u)
-            elseif b then
-                call curr.affect(u)
-            elseif IsUnitInGroup(u, curr.InstanceGroup) then
-                call curr.unaffect(u)
-            endif
-            
-            call GroupRemoveUnit(curr.InstanceGroup, u)
-            
-            set u = null
-            return b
-        endmethod
-        
-        private static method AuraLoop takes nothing returns nothing
-            local integer i = 0
-            local thistype this
-            loop
-                set this = .Instances[i]
-                set curr = this
-                
-                if .pause == false then
-                    if GetUnitAbilityLevel(.InstanceUnit, ability) == null then
-                        call thistype.removeAura(.InstanceUnit)
-                        set i = i - 1
-                    elseif UnitAlive(.InstanceUnit) == false and IsUnitType(.InstanceUnit, UNIT_TYPE_DEAD) then
-                        if IsUnitType(.InstanceUnit, UNIT_TYPE_HERO) then
-                            set .pause = true
-                            call ForGroup(.InstanceGroup, function thistype.unaffectenum)
-                        else
-                            call thistype.removeAura(.InstanceUnit)
-                            set i = i - 1
-                        endif
-                    elseif UnitAlive(.InstanceUnit) and IsUnitType(.InstanceUnit, UNIT_TYPE_DEAD) == false and .pause then
-                        set .pause = false
-                    else
-                        set .level = GetUnitAbilityLevel(.InstanceUnit, ability)
-                        call GroupEnumUnitsInRange(ENUM_GROUP, GetUnitX(.InstanceUnit), GetUnitY(.InstanceUnit), .GetAuraAoE(), Filter(function thistype.GroupEnum))
-                        
-                        call ForGroup(.InstanceGroup, function thistype.unaffectenum)
-                        call GroupAddGroup(ENUM_GROUP, .InstanceGroup)
-                        call .onLoop()
-                    endif
-                endif
-                
-                set i = i + 1
-                exitwhen i >= .InstancesTotal
-            endloop
-            
-        endmethod
-        
-        private static method removeAura takes unit u returns nothing
-            local thistype this             = thistype[u]
-            if this != 0 then
-                set .InstanceUnit               = null
-                call ReleaseGroup(.InstanceGroup)
-                set .Level                      = 0
-                set .Instances[.Index]          = .Instances[.InstancesTotal]
-                set .Instances[.InstancesTotal] = 0
-                set .InstancesTotal             = .InstancesTotal - 1
-                
-                static if thistype.EFFECT_VERIFIER then
-                    call .removeOwnerEffect()
-                endif
-                
-                if .InstancesTotal <= 0 then
-                    call PauseTimer(thistype.AuraTimer)
-                    call ReleaseTimer(thistype.AuraTimer)
-                endif
-            endif
-        endmethod
-        
-        private static method addAura takes unit u returns nothing
-            local thistype this             = thistype[u]
-            set .InstanceUnit               = u
-            set .InstanceGroup              = NewGroup()
-            set .Level                      = GetUnitAbilityLevel(u, ability)
-            set .pause                      = false
-            
-            static if thistype.EFFECT_VERIFIER then
-                call .addOwnerEffect()
-            endif
-            
-            call .AuraInit()
-            
-            set .Instances[.InstancesTotal] = this
-            set .Index                      = .InstancesTotal
-            
-            if .InstancesTotal == 0 then
-                set thistype.AuraTimer = NewTimer()
-                call TimerStart(thistype.AuraTimer, thistype.INTERVAL ,true, function thistype.AuraLoop)
-            endif
-            set .InstancesTotal = .InstancesTotal + 1
-        endmethod
-        
-        private static method onInit takes nothing returns nothing
-            set .InstancesTotal = 0
-        endmethod 
-            
-        static method onIndexWithAbility takes unit u returns nothing
-            call thistype.addAura(u)
-        endmethod
-    
-        static method onDeindexWithAbility takes unit u returns nothing
-            if thistype[u] != 0 then
-                call thistype.removeAura(u)
-            endif
-        endmethod
-        
-        static method onSkillAbility takes unit u, integer id returns nothing
-            if GetUnitAbilityLevel(u, ability) == 1 then
-                call thistype.addAura(u)
-            endif
-        endmethod
-        
-        static method onAddAbility takes unit u, integer id returns nothing
-            call thistype.addAura(u)
-        endmethod
-        
-        static method onRemoveAbility takes unit u, integer id returns nothing
-            call thistype.removeAura(u)
-        endmethod
-        
-        implement AbilityEvent
-    endmodule
-    
-    struct AuraDelegate
-        method AuraInit takes nothing returns nothing
-        endmethod
-        method onAffectUnit takes unit u returns nothing
-        endmethod
-        method GetAuraAoE takes nothing returns real
-            return 900.
-        endmethod
-        method onUnaffectUnit takes unit u returns nothing
-        endmethod
-        method onLoopUnit takes unit u returns nothing
-        endmethod
-        method onLoop takes nothing returns nothing
-        endmethod
-        method onFilter takes unit u returns boolean
-            return true
-        endmethod
-        method onLevelUp takes nothing returns nothing
-        endmethod
-    endstruct
-
-endlibrary
-
 //TESH.scrollpos=0
 //TESH.alwaysfold=0
-//############################### CREDITS #######################################//
-//##
-//## Version:       1.0
-//## System:        Axarion
-//## IndexerUtils:  Axarion
-//## AbilityEvent:  Axarion
-//## AutoIndex:     grim001
-//## AIDS:          Jesus4Lyf
-//## UnitIndexer:   Nestharus
-//## TimerUtils:    Vexorian
-//## GroupUtils:    Rising_Dusk
-//##
-//############################### DESCRIPTION ###################################//
-//##
-//## This library enables you to add buffs to your aura. 
-//##
-//############################### HOW DOES IT WORK ##############################//
-//## 
-//## Just implement AdvancedAuraBuff before you implement AdvancedAura
-//## and define the BUFF in the onInit method of your struct and your done.
-//## The ability should be a modified Tornado Slow Aura with targets set as
-//## only self and range of 0.01.
-//## Also you should modify the buff/create a new one.
-//## 
-//##            set BUFF = 'Haxx'
-//##
-//################################################################################//
+//***********************************************************
+//*1.Copy this trigger to your map
+//*2.Create a gamecache variable named gamecache
+//*3.Create all the abilitys and units needed in your map as that in this demo
+//*4.Replace the following data, including unitid and abilityid, by that in your map
+//***********************************************************
+//                    *Replaceable Data*
+globals
+    hashtable H
+endglobals
 
-library AdvancedAuraBuff requires AdvancedAura
 
-module AdvancedAuraBuff
-    static integer BUFF
-    private static integer array LOCK
-    static constant boolean BUFF_VERIFIER = true // for checking if the module is implemented.
-    
-    method addBuff takes unit u returns nothing
-        if BUFF != 0 then
-            if LOCK[GetUnitId(u)] == 0 then
-                call UnitAddAbility(u, thistype.BUFF)
-                call UnitMakeAbilityPermanent(u, true, thistype.BUFF)
-            endif    
-            set LOCK[GetUnitId(u)] = LOCK[GetUnitId(u)] + 1
-        endif
-    endmethod
-    
-    method removeBuff takes unit u returns nothing
-        if BUFF != 0 then
-            set LOCK[GetUnitId(u)] = LOCK[GetUnitId(u)] - 1
-            if LOCK[GetUnitId(u)] == 0 then
-                call UnitRemoveAbility(u, thistype.BUFF)
-            endif
-        endif
-    endmethod
-endmodule
-
-endlibrary
-
-//TESH.scrollpos=18
-//TESH.alwaysfold=0
-//############################### CREDITS #######################################//
-//##
-//## Version:       1.0
-//## System:        Axarion
-//## IndexerUtils:  Axarion
-//## AbilityEvent:  Axarion
-//## AutoIndex:     grim001
-//## AIDS:          Jesus4Lyf
-//## UnitIndexer:   Nestharus
-//## TimerUtils:    Vexorian
-//## GroupUtils:    Rising_Dusk
-//##
-//############################### DESCRIPTION ###################################//
-//##
-//## This library enables you to add bonuses to your aura. 
-//##
-//############################### HOW DOES IT WORK ##############################//
-//## 
-//## Just implement AdvancedAuraBonus before you implement AdvancedAura and define 
-//## the bonuses in the AuraInit method of your struct and increase/decrease them 
-//## in the onLevelUp method if you want. (set .AURA_BONUS_DAMAGE = x * .level)
-//## This library requires BonusMod and AbilityPreload to work.
-//##
-//##      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//##      | Aura Bonus Type constants:       | Minimum bonus: | Maximum bonus: |
-//##      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//##      | AURA_BONUS_SIGHT_RANGE           |   -2048        |   +2047        |
-//##      | AURA_BONUS_ATTACK_SPEED          |   -512         |   +511         |
-//##      | AURA_BONUS_ARMOR                 |   -1024        |   +1023        |
-//##      | AURA_BONUS_MANA_REGEN_PERCENT    |   -512%        |   +511%        |
-//##      | AURA_BONUS_LIFE_REGEN            |   -256         |   +255         |
-//##      | AURA_BONUS_DAMAGE                |   -1024        |   +1023        |
-//##      | AURA_BONUS_STRENGTH              |   -256         |   +255         |
-//##      | AURA_BONUS_AGILITY               |   -256         |   +255         |
-//##      | AURA_BONUS_INTELLIGENCE          |   -256         |   +255         |
-//##      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//## 
-//################################################################################//
-
-library AdvancedAuraBonus requires AdvancedAura, BonusMod
-
-module AdvancedAuraBonus
-    static constant boolean BONUS_VERIFIER = true // for checking if the module is implemented.
-    
-    //! runtextmacro AuraBonusCreate("DAMAGE")
-    //! runtextmacro AuraBonusCreate("ARMOR")
-    //! runtextmacro AuraBonusCreate("ATTACK_SPEED")
-    //! runtextmacro AuraBonusCreate("SIGHT_RANGE")
-    //! runtextmacro AuraBonusCreate("LIFE_REGEN")
-    //! runtextmacro AuraBonusCreate("MANA_REGEN_PERCENT")
-    //! runtextmacro AuraBonusCreate("STRENGTH")
-    //! runtextmacro AuraBonusCreate("AGILITY")
-    //! runtextmacro AuraBonusCreate("INTELLIGENCE")
-
-    method addBonuses takes unit u returns nothing
-        //! runtextmacro AuraBonusAdd("DAMAGE", "")
-        //! runtextmacro AuraBonusAdd("ARMOR", "")
-        //! runtextmacro AuraBonusAdd("ATTACK_SPEED", "")
-        //! runtextmacro AuraBonusAdd("SIGHT_RANGE", "")
-        //! runtextmacro AuraBonusAdd("LIFE_REGEN", "")
-        //! runtextmacro AuraBonusAdd("MANA_REGEN_PERCENT", "")
-        //! runtextmacro AuraBonusAddHero("STRENGTH", "")
-        //! runtextmacro AuraBonusAddHero("AGILITY", "")
-        //! runtextmacro AuraBonusAddHero("INTELLIGENCE", "")
-    endmethod
-
-    method removeBonuses takes unit u returns nothing
-        //! runtextmacro AuraBonusAdd("DAMAGE", "-")
-        //! runtextmacro AuraBonusAdd("ARMOR", "-")
-        //! runtextmacro AuraBonusAdd("ATTACK_SPEED", "-")
-        //! runtextmacro AuraBonusAdd("SIGHT_RANGE", "-")
-        //! runtextmacro AuraBonusAdd("LIFE_REGEN", "-")
-        //! runtextmacro AuraBonusAdd("MANA_REGEN_PERCENT", "-")
-        //! runtextmacro AuraBonusAddHero("STRENGTH", "-")
-        //! runtextmacro AuraBonusAddHero("AGILITY", "-")
-        //! runtextmacro AuraBonusAddHero("INTELLIGENCE", "-")
-    endmethod
-endmodule
-
-//! textmacro AuraBonusCreate takes NAME 
-    private integer AURA_BONUS_$NAME$_SAVER
-    
-    private static method $NAME$_UPDATE_REM takes nothing returns nothing
-        local unit u = GetEnumUnit()
-        local thistype this = curr
-        
-        call AddUnitBonus(u, BONUS_$NAME$, -.AURA_BONUS_$NAME$_SAVER)
-        
-        set u = null
-    endmethod
-    
-    private static method $NAME$_UPDATE_ADD takes nothing returns nothing
-        local unit u = GetEnumUnit()
-        local thistype this = curr
-        
-        call AddUnitBonus(u, BONUS_$NAME$, .AURA_BONUS_$NAME$_SAVER)
-        
-        set u = null
-    endmethod
-    
-    method operator AURA_BONUS_$NAME$= takes integer i returns nothing
-        if .AURA_BONUS_$NAME$_SAVER != 0 then
-            call ForGroup(.InstanceGroup, function thistype.$NAME$_UPDATE_REM)
-        endif
-        set .AURA_BONUS_$NAME$_SAVER = i
-        if .AURA_BONUS_$NAME$_SAVER != 0 then
-            call ForGroup(.InstanceGroup, function thistype.$NAME$_UPDATE_ADD)
-        endif
-    endmethod
-    
-    method operator AURA_BONUS_$NAME$ takes nothing returns integer
-        return .AURA_BONUS_$NAME$_SAVER
-    endmethod
-//! endtextmacro
-
-//! textmacro AuraBonusAdd takes NAME, plusorminus
-    if .AURA_BONUS_$NAME$_SAVER != 0 then
-        call AddUnitBonus(u, BONUS_$NAME$, $plusorminus$.AURA_BONUS_$NAME$_SAVER)
+function GetConstant takes integer i returns integer
+    if i==1 then
+        return 'AHfa'    //abilityid of constant 1
+    elseif i==2 then
+        return 'e001'    //unitid of constant 2
+    elseif i==3 then
+        return 'A000'    //abilityid of constant 3
+    elseif i==4 then
+        return 'A001'    //abilityid of constant 4
+    elseif i==5 then
+        return 'ewsp'    //unitid of constant 5
+    elseif i==6 then
+        return 'A003'    //abilityid of constant 6
+    elseif i==7 then
+        return 15        //percent damage increased per level
+    elseif i==8 then
+        return 50        //equal to mana cost per arrow
+    elseif i==9 then
+        return 3         //basic number of targets
+    elseif i==10 then
+        return 1         //number of targets increased each level
     endif
-//! endtextmacro
+    return 0
+endfunction
 
-//! textmacro AuraBonusAddHero takes NAME, plusorminus
-    if IsUnitType(u, UNIT_TYPE_HERO) and .AURA_BONUS_$NAME$_SAVER != 0 then
-        call AddUnitBonus(u, BONUS_$NAME$, $plusorminus$.AURA_BONUS_$NAME$_SAVER)
+function GetHero takes nothing returns unit
+    return gg_unit_H000_0001
+endfunction
+//************************************************************
+
+function GetGameCache takes nothing returns gamecache
+    return udg_gamecache
+endfunction
+
+function H2I takes handle h returns integer
+    return GetHandleId(h)
+endfunction
+
+function SetHandleInt takes handle subject,string name,integer value returns nothing
+    if value==0 then
+        call FlushStoredInteger(GetGameCache(),I2S(H2I(subject)),name)
+    else
+        call StoreInteger(GetGameCache(),I2S(H2I(subject)),name,value)
     endif
-//! endtextmacro
+endfunction
 
-endlibrary
+function SetHandleHandle takes handle subject,string name,handle value returns nothing
+    call SetHandleInt(subject,name,H2I(value))
+endfunction
 
-//TESH.scrollpos=38
-//TESH.alwaysfold=0
-//############################### CREDITS #######################################//
-//##
-//## Version:       1.0
-//## System:        Axarion
-//## IndexerUtils:  Axarion
-//## AbilityEvent:  Axarion
-//## AutoIndex:     grim001
-//## AIDS:          Jesus4Lyf
-//## UnitIndexer:   Nestharus
-//## TimerUtils:    Vexorian
-//## GroupUtils:    Rising_Dusk
-//##
-//############################### DESCRIPTION ###################################//
-//##
-//## This library enables you to add effects to your aura. 
-//##
-//############################### HOW DOES IT WORK ##############################//
-//## 
-//## Just implement AdvancedAuraEffect before you implement AdvancedAura
-//## and define the TARGET_SFX, OWNER_SFX in the onInit method of your struct and your done.
-//##
-//##            set TARGET_SFX      = "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
-//##            set TARGET_ATTACH   = "origin"
-//##            
-//##            set OWNER_SFX       = ""
-//##            set OWNER_ATTACH    = "origin"
-//##
-//################################################################################//
+function GetHandleHandle takes handle subject,string name returns integer
+    return GetStoredInteger(GetGameCache(),I2S(H2I(subject)),name)
+endfunction
 
-library AdvancedAuraEffect requires AdvancedAura
+function GetHandleUnit takes handle subject,string name returns unit
+    call SaveFogStateHandle(H, 0, 0, ConvertFogState(GetHandleHandle(subject,name)))
+    return LoadUnitHandle(H, 0, 0)
+endfunction
 
-module AdvancedAuraEffect 
-            static constant boolean         EFFECT_VERIFIER = true
-    private static          integer array   LOCK
-            static          string          TARGET_SFX      = "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
-            static          string          TARGET_ATTACH   = "origin"
-            static          string          OWNER_SFX
-            static          string          OWNER_ATTACH    = "origin"
-    private static          effect  array   TARGET_EFFECT
-    private                 effect          OWNER_EFFECT
-            
-    method addEffect takes unit u returns nothing
-        if LOCK[GetUnitId(u)] == 0 then
-            set TARGET_EFFECT[GetUnitId(u)] = AddSpecialEffectTarget(TARGET_SFX, u, TARGET_ATTACH)
+function GetHandleTimer takes handle subject,string name returns timer
+    call SaveFogStateHandle(H, 0, 0, ConvertFogState(GetHandleHandle(subject,name)))
+    return LoadTimerHandle(H, 0, 0)
+endfunction
+
+function GetHandleTrigger takes handle subject,string name returns trigger
+    call SaveFogStateHandle(H, 0, 0, ConvertFogState(GetHandleHandle(subject,name)))
+    return LoadTriggerHandle(H, 0, 0)
+endfunction
+
+function GetHandleInt takes handle subject,string name returns integer
+    return GetStoredInteger(GetGameCache(),I2S(H2I(subject)),name)
+endfunction
+
+function FlushHandleLocals takes handle subject returns nothing
+    call FlushStoredMission(GetGameCache(),I2S(H2I(subject)))
+endfunction
+
+function ColdArrowDamage_Conditions takes nothing returns boolean
+    return GetEventDamageSource()==GetHero()
+endfunction
+
+function ColdArrowDamage_Actions takes nothing returns nothing
+    local integer loopindex=1
+    local unit caster=GetTriggerUnit()
+    local unit target=GetHandleUnit(caster,"target")
+    local integer i=GetUnitAbilityLevel(GetHero(),GetConstant(1))
+    if Pow(GetUnitX(target)-GetUnitX(caster),2)+Pow(GetUnitY(target)-GetUnitY(caster),2)>10000 then
+        return  
+    endif
+    if GetHandleInt(caster,"maintarget")==0 then
+        call UnitDamageTarget(caster,target,(1+0.01*GetConstant(7)*i)*GetEventDamage(),true,false,ATTACK_TYPE_HERO,DAMAGE_TYPE_NORMAL,WEAPON_TYPE_WHOKNOWS)
+    else   
+        call UnitDamageTarget(caster,target,0.01*GetConstant(7)*i*GetEventDamage(),true,false,ATTACK_TYPE_HERO,DAMAGE_TYPE_NORMAL,WEAPON_TYPE_WHOKNOWS)
+    endif
+    call SetHandleInt(caster,"timercount",20)
+    set caster=CreateUnit(GetOwningPlayer(caster),GetConstant(2),GetUnitX(target),GetUnitY(target),0)
+    call ShowUnit(caster,false)
+    call UnitApplyTimedLife(caster,0,0.5)
+    call SetUnitAbilityLevel(caster,GetConstant(6),i)
+    call IssueTargetOrder(caster,"coldarrowstarg",target)
+    set caster=null
+    set target=null
+endfunction
+
+function SetCasterPosition takes nothing returns nothing
+    local timer t=GetExpiredTimer()
+    local unit caster=GetHandleUnit(t,"caster")
+    local unit target=GetHandleUnit(caster,"target")
+    local integer timercount=GetHandleInt(caster,"timercount")
+    call IssuePointOrder(caster,"smart",GetUnitX(target),GetUnitY(target))  
+    call SetHandleInt(caster,"timercount",timercount+1)
+    if timercount>=24 or GetUnitState(target,UNIT_STATE_LIFE)<=0 then
+        call FlushHandleLocals(caster)
+        call DestroyTrigger(GetHandleTrigger(t,"trigger"))
+        call RemoveUnit(caster)
+        call FlushHandleLocals(t)
+        call PauseTimer(t)
+        call DestroyTimer(t)
+    endif
+    set t=null
+    set caster=null
+    set target=null
+endfunction
+
+function UnitTypeFilter takes unit u returns boolean
+    return IsUnitEnemy(u,GetOwningPlayer(GetTriggerUnit())) and IsUnitType(u,UNIT_TYPE_MAGIC_IMMUNE)==false and IsUnitType(u,UNIT_TYPE_STRUCTURE)==false
+endfunction
+
+function Filter_Conditions takes nothing returns boolean
+    return GetUnitState(GetFilterUnit(),UNIT_STATE_LIFE)>0 and UnitTypeFilter(GetFilterUnit())
+endfunction
+
+function CreateCasters takes unit trigunit,unit targetunit returns nothing
+    local integer loopindex=1
+    local integer loopend=GetConstant(9)+GetConstant(10)*GetUnitAbilityLevel(GetHero(),GetConstant(1))-1
+    local unit caster
+    local unit pickedunit
+    local timer t
+    local trigger trig
+    local group g=CreateGroup()
+    local boolexpr filter=Condition(function Filter_Conditions)
+    call GroupEnumUnitsInRange(g,GetUnitX(trigunit),GetUnitY(trigunit),700,filter)
+    call DestroyBoolExpr(filter)
+    set filter=null
+    set pickedunit=targetunit
+    loop
+        set caster=CreateUnit(GetOwningPlayer(trigunit),GetConstant(5),GetUnitX(pickedunit),GetUnitY(pickedunit),0)
+        call SetUnitFlyHeight(caster,GetUnitFlyHeight(pickedunit),0)
+        call SetHandleHandle(caster,"target",pickedunit)
+        if loopindex==1 then
+            call SetHandleInt(caster,"maintarget",1)        
         endif
-        set LOCK[GetUnitId(u)] = LOCK[GetUnitId(u)] + 1
-    endmethod
-    
-    method removeEffect takes unit u returns nothing
-        set LOCK[GetUnitId(u)] = LOCK[GetUnitId(u)] - 1
-        if LOCK[GetUnitId(u)] == 0 then
-            call DestroyEffect(TARGET_EFFECT[GetUnitId(u)])
-            set TARGET_EFFECT[GetUnitId(u)] = null
-        endif
-    endmethod
-    
-    method addOwnerEffect takes nothing returns nothing
-        set .OWNER_EFFECT = AddSpecialEffectTarget(OWNER_SFX, .owner, OWNER_ATTACH)
-    endmethod
-    
-    method removeOwnerEffect takes nothing returns nothing
-        call DestroyEffect(.OWNER_EFFECT)
-        set .OWNER_EFFECT = null
-    endmethod
-    
-endmodule
+        call UnitRemoveType(GetHandleUnit(trigunit,"caster"+I2S(loopindex)),UNIT_TYPE_MECHANICAL)
+        call SetHandleHandle(trigunit,"caster"+I2S(loopindex),caster)
+        set t=CreateTimer()
+        call SetHandleHandle(t,"caster",caster)
+        call TimerStart(t,0.15,true,function SetCasterPosition)
+        set trig=CreateTrigger()
+        call TriggerRegisterUnitEvent(trig,caster,EVENT_UNIT_DAMAGED)
+        call TriggerAddCondition(trig,Condition(function ColdArrowDamage_Conditions))
+        call TriggerAddAction(trig,function ColdArrowDamage_Actions)
+        call SetHandleHandle(t,"trigger",trig)
+        call GroupRemoveUnit(g,pickedunit)
+        set pickedunit=FirstOfGroup(g)
+        exitwhen loopindex==loopend or pickedunit==null
+        set loopindex=loopindex+1  
+    endloop
+    call DestroyGroup(g)
+    set caster=null
+    set pickedunit=null
+    set t=null
+    set trig=null
+    set g=null
+endfunction
 
-endlibrary
+function ManualCast_Conditions takes nothing returns boolean
+    return GetSpellAbilityId()==GetConstant(1)
+endfunction
+
+function ManualCast_Actions takes nothing returns nothing
+    local unit trigunit=GetTriggerUnit()
+    call SetPlayerAbilityAvailable(GetOwningPlayer(trigunit),GetConstant(3),true)
+    call CreateCasters(trigunit,GetSpellTargetUnit())
+    call SetHandleHandle(trigunit,"target",GetSpellTargetUnit())
+    set trigunit=null
+endfunction
+
+function AutoCast_Actions takes nothing returns nothing
+    local unit trigunit=GetTriggerUnit()
+    local player p=GetOwningPlayer(trigunit)
+    if GetHandleInt(trigunit,"ColdArrowOn")==1 and UnitTypeFilter(GetEventTargetUnit()) then
+        if GetUnitState(trigunit,UNIT_STATE_MANA)>=I2R(GetConstant(8)) then
+            call SetPlayerAbilityAvailable(p,GetConstant(3),true)
+        else
+            call SetPlayerAbilityAvailable(p,GetConstant(3),false)
+        endif
+        call CreateCasters(trigunit,GetEventTargetUnit())
+    else
+        call SetPlayerAbilityAvailable(p,GetConstant(3),false)
+    endif
+    call SetHandleHandle(trigunit,"target",GetEventTargetUnit())
+    set trigunit=null
+    set p=null
+endfunction
+
+function ColdArrowSwitch_Conditions takes nothing returns boolean
+    return GetIssuedOrderId()==OrderId("flamingarrows") or GetIssuedOrderId()==OrderId("unflamingarrows")
+endfunction
+
+function ColdArrowSwitch_Actions takes nothing returns nothing
+    local unit trigunit=GetTriggerUnit()
+    local player p=GetOwningPlayer(trigunit)
+    if GetIssuedOrderId()==OrderId("flamingarrows") then
+        call SetHandleInt(trigunit,"ColdArrowOn",1)
+        if GetUnitState(trigunit,UNIT_STATE_MANA)>=I2R(GetConstant(8)) and UnitTypeFilter(GetHandleUnit(trigunit,"target")) then
+            call SetPlayerAbilityAvailable(p,GetConstant(3),true)
+            call CreateCasters(trigunit,GetHandleUnit(trigunit,"target"))
+        endif
+    else
+        call SetPlayerAbilityAvailable(p,GetConstant(3),false)
+        call SetHandleInt(trigunit,"ColdArrowOn",0)
+    endif
+    set trigunit=null
+    set p=null
+endfunction
+
+function ManaUseUp_Actions takes nothing returns nothing
+    local unit trigunit=GetTriggerUnit()
+    if GetHandleInt(trigunit,"ColdArrowOn")==1 and UnitTypeFilter(GetHandleUnit(trigunit,"target")) then
+        call SetPlayerAbilityAvailable(GetOwningPlayer(trigunit),GetConstant(3),true)
+    endif
+    set trigunit=null
+endfunction
+
+function InitTrig_MultiColdArrow takes nothing returns nothing
+    set H = InitHashtable()
+    set udg_gamecache=InitGameCache("GameCache.w3v")
+    call SetPlayerAbilityAvailable(GetOwningPlayer(GetHero()),GetConstant(3),false)
+    call SetPlayerAbilityAvailable(GetOwningPlayer(GetHero()),GetConstant(4),false)
+    set gg_trg_MultiColdArrow=CreateTrigger()
+    call TriggerRegisterUnitEvent(gg_trg_MultiColdArrow,GetHero(),EVENT_UNIT_ISSUED_ORDER)
+    call TriggerAddCondition(gg_trg_MultiColdArrow,Condition(function ColdArrowSwitch_Conditions))
+    call TriggerAddAction(gg_trg_MultiColdArrow,function ColdArrowSwitch_Actions)
+    set gg_trg_MultiColdArrow=CreateTrigger()
+    call TriggerRegisterUnitManaEvent(gg_trg_MultiColdArrow,GetHero(),GREATER_THAN_OR_EQUAL,I2R(GetConstant(8)))
+    call TriggerAddAction(gg_trg_MultiColdArrow,function ManaUseUp_Actions)
+    set gg_trg_MultiColdArrow=CreateTrigger()
+    call TriggerRegisterUnitEvent(gg_trg_MultiColdArrow,GetHero(),EVENT_UNIT_SPELL_CAST)
+    call TriggerAddCondition(gg_trg_MultiColdArrow,Condition(function ManualCast_Conditions))
+    call TriggerAddAction(gg_trg_MultiColdArrow,function ManualCast_Actions)
+    set gg_trg_MultiColdArrow=CreateTrigger()
+    call TriggerRegisterUnitEvent(gg_trg_MultiColdArrow,GetHero(),EVENT_UNIT_TARGET_IN_RANGE)
+    call TriggerAddAction(gg_trg_MultiColdArrow,function AutoCast_Actions)
+endfunction

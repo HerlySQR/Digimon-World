@@ -135,6 +135,7 @@ OnInit("Shield", function ()
                     --local shield = shield ---@type Shield
                     if not shield.onDamaged or not shield:onDamaged(udg_DamageEventSource, udg_DamageEventAmount) then
                         shield.health = shield.health - udg_DamageEventAmount
+                        ConditionalTriggerExecute(gg_trg_Display_Critical_or_Normal)
                         if shield.health <= 0 then
                             shield:destroy()
                             udg_DamageEventAmount = -shield.health

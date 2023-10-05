@@ -82,7 +82,7 @@ OnInit("DigimonBank", function ()
     local SELL_ITEM = FourCC('A0F4')
     local ITEM_BANK_CASTER = FourCC('n01P')
     local ITEM_BANK_SELLER = FourCC('n01Y')
-    local ITEM_BANK_BUYER = FourCC('n01Z')
+    local ITEM_BANK_BUYER = FourCC('n026')
 
     local MinRange = 300.
 
@@ -184,6 +184,10 @@ OnInit("DigimonBank", function ()
         end
 
         if self.stocked[self.pressed].onCombat then
+            return false
+        end
+
+        if IsUnitPaused(self.stocked[self.pressed].root) then
             return false
         end
 
@@ -716,9 +720,13 @@ OnInit("DigimonBank", function ()
             BlzFrameSetEnable(SellItem, false)
             SelectUnitSingle(bank.caster)
         end
-        Timed.call(0.04, function ()
-            if IsUnitSelected(bank.caster, p) and p == LocalPlayer then
-                ForceUIKey(key)
+        Timed.echo(0.01, 1., function ()
+            SyncSelections()
+            if IsUnitSelected(bank.caster, p) then
+                if p == LocalPlayer then
+                    ForceUIKey(key)
+                end
+                return true
             end
         end)
         bank.usingCaster = true
@@ -1582,7 +1590,7 @@ OnInit("DigimonBank", function ()
 
         BackdropSellItem = BlzCreateFrameByType("BACKDROP", "BackdropSellItem", SellItem, "", 0)
         BlzFrameSetAllPoints(BackdropSellItem, SellItem)
-        BlzFrameSetTexture(BackdropSellItem, "ReplaceableTextures\\CommandButtons\\BTNLGExchange.blp", 0, true)
+        BlzFrameSetTexture(BackdropSellItem, "ReplaceableTextures\\CommandButtons\\BTNSellIcon.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SellItem, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, function () UseCaster("W") end)
