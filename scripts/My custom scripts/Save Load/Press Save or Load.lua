@@ -6,6 +6,7 @@ OnInit("PressSaveOrLoad", function ()
     Require "GameStatus"
     local FrameList = Require "FrameList" ---@type FrameList
     Require "GetSyncedData"
+    Require "Cosmetic"
 
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
@@ -105,7 +106,6 @@ OnInit("PressSaveOrLoad", function ()
 
         if data then
             BlzFrameSetText(TooltipName, "|cffff6600Information|r")
-            Debug.log(table.tostring(data.date))
             BlzFrameSetText(TooltipDate, os.date("\x25c", os.time(data.date)))
             BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. data.gold)
             BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal: |r" .. data.lumber)
@@ -265,6 +265,7 @@ OnInit("PressSaveOrLoad", function ()
         udg_SaveLoadEvent_Player = p
         udg_SaveLoadSlot = Pressed[udg_SaveLoadEvent_Player]
         TriggerExecute(gg_trg_Save_GUI)
+        SaveCosmetics(p, udg_SaveLoadSlot)
         WaitLastSync()
         if p == LocalPlayer then
             UpdateMenu()
@@ -273,8 +274,9 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     local function AbsoluteLoadFunc()
+        local p = GetTriggerPlayer()
         TriggerExecute(gg_trg_Absolute_Load)
-        UseData(GetTriggerPlayer(), Pressed[GetTriggerPlayer()])
+        UseData(p, Pressed[p])
         ExitFunc()
     end
 

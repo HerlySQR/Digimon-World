@@ -27,6 +27,8 @@ OnInit("Backpack", function ()
     local BackpackItemTooltip = {} ---@type framehandle[]
     local BackpackItemTooltipText = {} ---@type framehandle[]
 
+    local DUMMY_CASTER = FourCC('n01B')
+
     ---@class ItemData
     ---@field id integer
     ---@field spell integer
@@ -37,19 +39,38 @@ OnInit("Backpack", function ()
     ---@field slot integer
     ---@field stopped boolean
 
-    local dummyCaster = FourCC('n01B')
-    local dummyCasters = {} ---@type table<player, unit>
-    local usingDummyCaster = __jarray(false) ---@type table<player, boolean>
-    local selectedUnits = {} ---@type table<player, group>
-    local itemDatas = {} ---@type table<unit, ItemData>
-    local cooldowns = __jarray(0) ---@type table<integer, number>
+    ---@class Backpack
+    ---@field owner player
+    ---@field caster unit
+    ---@field usingCaster boolean
+    ---@field selectedUnits group
+    ---@field items ItemData[]
+    ---@field actualItemData ItemData
+    ---@field cooldowns table<integer, number>
+    ---@field discardMode boolean
+    ---@field dropMode boolean
 
-    local PlayerItems = {} ---@type table<player, ItemData[]>
+    local Backpacks = {} ---@type table<player, Backpack>
+
+    OnInit.final(function ()
+        ForForce(bj_FORCE_ALL_PLAYERS, function ()
+            Backpacks[GetEnumPlayer()] = {
+                owner = GetEnumPlayer(),
+                caster = CreateUnit(Digimon.PASSIVE, DUMMY_CASTER, WorldBounds.maxX, WorldBounds.maxY, 0),
+                usingCaster = false,
+                items = {},
+                actualItemData = nil,
+                selectedUnits = CreateGroup(),
+                cooldowns = __jarray(0),
+                discardMode = false,
+                dropMode = false
+            }
+        end)
+    end)
+
     local MinRange = 700. ---The minimun range a player's digimon should be to the target to cast the spell
     local MAX_STACK = udg_MAX_STACK ---The maximun number of items that you can have in every slot
     local MAX_ITEMS = udg_MAX_ITEMS
-    local DiscardMode = __jarray(false) ---@type table<player, boolean>
-    local DropMode = __jarray(false) ---@type table<player, boolean>
 
     local AllowedItems = {}
 
@@ -77,12 +98,12 @@ OnInit("Backpack", function ()
     end
 
     local function UpdateCooldowns()
-        local items = PlayerItems[LocalPlayer]
+        local backpack = Backpacks[LocalPlayer]
 
-        for i, itemData in ipairs(items) do
-            if cooldowns[itemData.id] > 0 then
+        for i, itemData in ipairs(backpack.items) do
+            if backpack.cooldowns[itemData.id] > 0 then
                 BlzFrameSetVisible(BackpackItemCooldownT[i], true)
-                BlzFrameSetText(BackpackItemCooldownT[i], tostring(cooldowns[itemData.id]))
+                BlzFrameSetText(BackpackItemCooldownT[i], tostring(backpack.cooldowns[itemData.id]))
             else
                 BlzFrameSetVisible(BackpackItemCooldownT[i], false)
             end
@@ -91,14 +112,15 @@ OnInit("Backpack", function ()
 
     ---Always use this function in a `if player == GetLocalPlayer() then` block
     local function UpdateMenu()
-        local items = PlayerItems[LocalPlayer]
+        local backpack = Backpacks[LocalPlayer]
+
         for i = 1, MAX_ITEMS do
             BlzFrameSetVisible(BackpackItemT[i], false)
         end
 
-        for i, itemData in ipairs(items) do
+        for i, itemData in ipairs(backpack.items) do
             BlzFrameSetTexture(BackdropBackpackItemT[i], BlzGetAbilityIcon(itemData.id), 0, true)
-            BlzFrameSetText(BackPackItemCharges[i], I2S(itemData.charges))
+            BlzFrameSetText(BackPackItemCharges[i], tostring(itemData.charges))
 
             BlzFrameSetText(BackpackItemTooltipText[i], itemData.description)
             BlzFrameSetSize(BackpackItemTooltipText[i], 0.15, 0)
@@ -114,7 +136,7 @@ OnInit("Backpack", function ()
 
     local function BackpackFunc()
         local p = GetTriggerPlayer()
-        DiscardMode[p] = false
+        Backpacks[p].discardMode = false
         if p == LocalPlayer then
             -- To unfocus the button
             BlzFrameSetEnable(Backpack, false)
@@ -132,25 +154,18 @@ OnInit("Backpack", function ()
         end
     end
 
-    OnInit.final(function ()
-        ForForce(bj_FORCE_ALL_PLAYERS, function ()
-            local p = GetEnumPlayer()
-            dummyCasters[p] = CreateUnit(Digimon.PASSIVE, dummyCaster, WorldBounds.maxX, WorldBounds.maxY, 0)
-            selectedUnits[p] = CreateGroup()
-        end)
-    end)
-
     local function UseItem(i)
         local p = GetTriggerPlayer()
-        if DiscardMode[p] then
-            DiscardMode[p] = false
-            table.remove(PlayerItems[p], i)
+        local backpack = Backpacks[p]
+        if backpack.discardMode then
+            backpack.discardMode = false
+            table.remove(backpack.items, i)
             if p == LocalPlayer then
                 BlzFrameSetText(BackpackText, "Use an item")
                 UpdateMenu()
             end
-        elseif DropMode[p] then
-            DropMode[p] = false
+        elseif backpack.dropMode then
+            backpack.dropMode = false
             local d = GetMainDigimon(p)
             if not d then
                 if p == LocalPlayer then
@@ -165,7 +180,7 @@ OnInit("Backpack", function ()
                 end)
                 return
             end
-            local data = table.remove(PlayerItems[p], i) ---@type ItemData
+            local data = table.remove(backpack.items, i) ---@type ItemData
 
             local m = CreateItem(data.id, d:getPos())
             SetItemPlayer(m, p, false)
@@ -176,8 +191,8 @@ OnInit("Backpack", function ()
                 UpdateMenu()
             end
         else
-            local itemData = PlayerItems[p][i]
-            if cooldowns[itemData.id] > 0 then
+            local itemData = backpack.items[i]
+            if backpack.cooldowns[itemData.id] > 0 then
                 if p == LocalPlayer then
                     BlzFrameSetText(BackpackText, "|cffffcc00Item is on cooldown|r")
                 end
@@ -190,12 +205,12 @@ OnInit("Backpack", function ()
                 end)
                 return
             end
-            local caster = dummyCasters[p]
+            local caster = backpack.caster
             SetUnitOwner(caster, p, false)
             SyncSelections()
-            GroupEnumUnitsSelected(selectedUnits[p], p)
+            GroupEnumUnitsSelected(backpack.selectedUnits, p)
             UnitAddAbility(caster, itemData.spell)
-            itemDatas[caster] = itemData
+            backpack.actualItemData = itemData
 
             if p == LocalPlayer then
                 SelectUnitSingle(caster)
@@ -205,7 +220,7 @@ OnInit("Backpack", function ()
                     ForceUIKey("Q")
                 end
             end)
-            usingDummyCaster[p] = true
+            backpack.usingCaster = true
 
             if p == LocalPlayer then
                 for j = 1, MAX_ITEMS do
@@ -218,11 +233,11 @@ OnInit("Backpack", function ()
         end
     end
 
-    ---@param p player
-    local function BackpackDummyCastEnd(p)
-        UnitRemoveAbility(dummyCasters[p], itemDatas[dummyCasters[p]].spell)
-        SetUnitOwner(dummyCasters[p], Digimon.PASSIVE, false)
-        if p == LocalPlayer then
+    ---@param backpack Backpack
+    local function BackpackDummyCastEnd(backpack)
+        UnitRemoveAbility(backpack.caster, backpack.actualItemData.spell)
+        SetUnitOwner(backpack.caster, Digimon.PASSIVE, false)
+        if backpack.owner == LocalPlayer then
             for i = 1, MAX_ITEMS do
                 BlzFrameSetEnable(BackpackItemT[i], true)
             end
@@ -230,15 +245,15 @@ OnInit("Backpack", function ()
             BlzFrameSetEnable(BackpackDrop, true)
             ClearSelection()
         end
-        ForGroup(selectedUnits[p], function ()
-            if p == LocalPlayer then
+        ForGroup(backpack.selectedUnits, function ()
+            if backpack.owner == LocalPlayer then
                 SelectUnit(GetEnumUnit(), true)
             end
         end)
-        GroupClear(selectedUnits[p])
-        usingDummyCaster[p] = false
+        GroupClear(backpack.selectedUnits)
+        backpack.usingCaster = false
 
-        if p == LocalPlayer then
+        if backpack.owner == LocalPlayer then
             BlzFrameSetText(BackpackText, "Use an item")
         end
     end
@@ -247,13 +262,13 @@ OnInit("Backpack", function ()
     TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_CAST)
     TriggerAddAction(trig, function ()
         local caster = GetSpellAbilityUnit()
-        local itemData = itemDatas[caster]
+        local p = GetOwningPlayer(caster)
+        local itemData = Backpacks[p].actualItemData
 
         if itemData and itemData.spell == GetSpellAbilityId() then
 
             itemData.stopped = true -- This will set to false if is casts
 
-            local p = GetOwningPlayer(caster)
             local target = GetSpellTargetUnit()
             local x = target and GetUnitX(target) or GetSpellTargetX()
             local y = target and GetUnitY(target) or GetSpellTargetY()
@@ -268,8 +283,7 @@ OnInit("Backpack", function ()
     trig = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
     TriggerAddAction(trig, function ()
-        local caster = GetSpellAbilityUnit()
-        local itemData = itemDatas[caster]
+        local itemData = Backpacks[GetOwningPlayer(GetSpellAbilityUnit())].actualItemData
 
         if itemData and itemData.spell == GetSpellAbilityId() then
             itemData.stopped = false
@@ -280,32 +294,33 @@ OnInit("Backpack", function ()
     TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
     TriggerAddAction(trig, function ()
         local caster = GetSpellAbilityUnit()
-        local itemData = itemDatas[caster]
+        local p = GetOwningPlayer(caster)
+        local backpack = Backpacks[p]
+        local itemData = backpack.actualItemData
 
         if itemData and itemData.spell == GetSpellAbilityId() then
-            local p = GetOwningPlayer(caster)
             local i = itemData.slot
 
             if not itemData.stopped then
                 itemData.charges = itemData.charges - 1
 
                 if itemData.charges <= 0 then
-                    table.remove(PlayerItems[p], i)
-                    for newSlot, otherData in ipairs(PlayerItems[p]) do
+                    table.remove(backpack.items, i)
+                    for newSlot, otherData in ipairs(backpack.items) do
                         otherData.slot = newSlot
                     end
                 else
                     if itemData.spellCooldown > 0 then
-                        cooldowns[itemData.id] = itemData.spellCooldown
+                        backpack.cooldowns[itemData.id] = itemData.spellCooldown
                         if p == LocalPlayer then
                             UpdateCooldowns()
                         end
                         Timed.echo(1., function ()
-                            cooldowns[itemData.id] = cooldowns[itemData.id] - 1
+                            backpack.cooldowns[itemData.id] = backpack.cooldowns[itemData.id] - 1
                             if p == LocalPlayer then
                                 UpdateCooldowns()
                             end
-                            if cooldowns[itemData.id] <= 0 then
+                            if backpack.cooldowns[itemData.id] <= 0 then
                                 return true
                             end
                         end)
@@ -319,7 +334,7 @@ OnInit("Backpack", function ()
                 UpdateMenu()
             end
 
-            BackpackDummyCastEnd(p)
+            BackpackDummyCastEnd(backpack)
         end
     end)
 
@@ -331,9 +346,9 @@ OnInit("Backpack", function ()
         end)
         TriggerAddAction(trig, function ()
             if GetTriggerEventId() ~= EVENT_PLAYER_MOUSE_DOWN or BlzGetTriggerPlayerMouseButton() == MOUSE_BUTTON_TYPE_RIGHT then
-                local p = GetTriggerPlayer()
-                if usingDummyCaster[p] then
-                    BackpackDummyCastEnd(p)
+                local backpack = Backpacks[GetTriggerPlayer()]
+                if backpack.usingCaster then
+                    BackpackDummyCastEnd(backpack)
                 end
             end
         end)
@@ -343,22 +358,23 @@ OnInit("Backpack", function ()
             TriggerRegisterPlayerUnitEvent(trig, GetEnumPlayer(), EVENT_PLAYER_UNIT_DESELECTED)
         end)
         TriggerAddAction(trig, function ()
-            local p = GetTriggerPlayer()
-            if GetTriggerUnit() == dummyCasters[p] then
-                BackpackDummyCastEnd(p)
+            local backpack = Backpacks[GetTriggerPlayer()]
+            if GetTriggerUnit() == backpack.caster then
+                BackpackDummyCastEnd(backpack)
             end
         end)
     end)
 
     local function BackpackDiscardFunc()
         local p = GetTriggerPlayer()
-        if not DiscardMode[p] then
-            DiscardMode[p] = true
+        local backpack = Backpacks[GetTriggerPlayer()]
+        if not backpack.discardMode then
+            backpack.discardMode = true
             if p == LocalPlayer then
                 BlzFrameSetText(BackpackText, "|cffffcc00Select to discard an item.|r Press again to cancel")
             end
         else
-            DiscardMode[p] = false
+            backpack.discardMode = false
             if p == LocalPlayer then
                 BlzFrameSetText(BackpackText, "Use an item")
             end
@@ -367,13 +383,14 @@ OnInit("Backpack", function ()
 
     local function BackpackDropFunc()
         local p = GetTriggerPlayer()
-        if not DropMode[p] then
-            DropMode[p] = true
+        local backpack = Backpacks[GetTriggerPlayer()]
+        if not backpack.dropMode then
+            backpack.dropMode = true
             if p == LocalPlayer then
                 BlzFrameSetText(BackpackText, "|cffffcc00Select to drop an item.|r Press again to cancel")
             end
         else
-            DropMode[p] = false
+            backpack.dropMode = false
             if p == LocalPlayer then
                 BlzFrameSetText(BackpackText, "Use an item")
             end
@@ -515,10 +532,6 @@ OnInit("Backpack", function ()
 
     local gotItem = __jarray(false) ---@type table<player, boolean>
 
-    for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
-        PlayerItems[Player(i)] = {}
-    end
-
     FrameLoaderAdd(InitFrames)
 
     -- Store the charged items
@@ -537,7 +550,7 @@ OnInit("Backpack", function ()
                 return
             end
 
-            local items = PlayerItems[p]
+            local items = Backpacks[p].items
 
             local id = GetItemTypeId(m)
             local itemData ---@type ItemData
@@ -590,16 +603,16 @@ OnInit("Backpack", function ()
         if AllowedItems[GetItemTypeId(m)] and GetIssuedOrderId() == Orders.smart then
             local u = GetOrderedUnit()
             local p = GetOwningPlayer(u)
-            local items = PlayerItems[p]
+            local backpack = Backpacks[p]
 
-            if #items < MAX_ITEMS then
+            if #backpack.items < MAX_ITEMS then
                 return
             end
 
             local id = GetItemTypeId(m)
             local itemData ---@type ItemData
 
-            for _, v in ipairs(items) do
+            for _, v in ipairs(backpack.items) do
                 if v.id == id and v.charges < MAX_STACK then
                     itemData = v
                     break
@@ -646,15 +659,16 @@ OnInit("Backpack", function ()
     ---@param p any
     ---@return ItemData[]
     function GetBackpackItems(p)
-        return PlayerItems[p]
+        return Backpacks[p].items
     end
 
     ---@param p any
     ---@param items integer[] | nil
     ---@param charges? integer[]
     function SetBackpackItems(p, items, charges)
+        local backpack = Backpacks[p]
         if not items then
-            PlayerItems[p] = {}
+            backpack.items = {}
             return
         end
 
@@ -668,9 +682,9 @@ OnInit("Backpack", function ()
             end
         end
         for i = 1, #items do
-            PlayerItems[p][i] = CreateItemData(items[i])
+            backpack.items[i] = CreateItemData(items[i])
             if charges then
-                PlayerItems[p][i].charges = charges[i]
+                backpack.items[i].charges = charges[i]
             end
         end
         if p == LocalPlayer then

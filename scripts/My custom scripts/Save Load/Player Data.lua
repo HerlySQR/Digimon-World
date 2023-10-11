@@ -5,6 +5,7 @@ OnInit("Player Data", function ()
     Require "Quests"
     Require "WorldBounds"
     Require "EventListener"
+    Require "Cosmetic"
 
     local restartListener = EventListener.create()
     local loadListener = EventListener.create()
@@ -94,6 +95,8 @@ OnInit("Player Data", function ()
     ---@field questsIsCompleted boolean[]
     ---@field completedQuests integer
     ---@field date osdate
+    ---@field unlockedCosmetics table<integer, boolean>
+
     PlayerDatas = {} ---@type table<player, PlayerData[]>
 
     for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
@@ -162,7 +165,8 @@ OnInit("Player Data", function ()
             completedQuests = udg_SaveLoadCompletedQuests,
             date = {sec = udg_SaveLoadSec, min = udg_SaveLoadMin, hour = udg_SaveLoadHour, day = udg_SaveLoadDay,
                 month = udg_SaveLoadMonth, year = udg_SaveLoadYear, wday = udg_SaveLoadWDay, yday = udg_SaveLoadYDay,
-                isdst = udg_SaveLoadIsDst}
+                isdst = udg_SaveLoadIsDst},
+            unlockedCosmetics = LoadCosmetics(p, slot)
         }
 
         ClearSaveLoadData()
@@ -189,6 +193,7 @@ OnInit("Player Data", function ()
         end)
         ClearDigimons(p)
         SetQuestsData(p)
+        SetUnlockedCosmetics(p)
 
         restartListener:run(p)
     end
@@ -252,6 +257,7 @@ OnInit("Player Data", function ()
                     end
                 end
                 SetQuestsData(p, data.questsIds, data.questsProgresses, data.questsIsCompleted)
+                SetUnlockedCosmetics(p, data.unlockedCosmetics)
 
                 loadListener:run(p)
             end

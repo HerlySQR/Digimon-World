@@ -15,6 +15,8 @@ OnInit("DigimonBank", function ()
     local NEW_DIGIMON_SLOT_COST_BITS = 3500
     local NEW_DIGIMON_SLOT_COST_CRYSTALS = 4
 
+    local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
+
     -- Bank
     local SummonADigimon = nil ---@type framehandle
     local BackdropSummonADigimon = nil ---@type framehandle
@@ -1138,7 +1140,7 @@ OnInit("DigimonBank", function ()
             end
         end
 
-        SummonADigimon = BlzCreateFrame("IconButtonTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
+        SummonADigimon = BlzCreateFrame("IconButtonTemplate", OriginFrame,0,0)
         BlzFrameSetAbsPoint(SummonADigimon, FRAMEPOINT_TOPLEFT, 0.220000, 0.180000)
         BlzFrameSetAbsPoint(SummonADigimon, FRAMEPOINT_BOTTOMRIGHT, 0.255000, 0.145000)
         AddDefaultTooltip(SummonADigimon, "Your digimons", "Look your stored digimons.")
@@ -1154,7 +1156,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetVisible(SummonADigimon, false)
         AddFrameToMenu(SummonADigimon)
 
-        StockedDigimonsMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
+        StockedDigimonsMenu = BlzCreateFrame("EscMenuBackdrop", OriginFrame,0,0)
         BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.00000, 0.340000)
         BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, 0.220000, 0.150000)
         BlzFrameSetVisible(StockedDigimonsMenu, false)
@@ -1308,7 +1310,7 @@ OnInit("DigimonBank", function ()
         BlzTriggerRegisterFrameEvent(t, SaveItem, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, function () UseCaster("Q") end)
 
-        SavedDigimons = BlzCreateFrame("EscMenuBackdrop", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
+        SavedDigimons = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.230000, 0.510000)
         BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, 0.570000, 0.180000)
         BlzFrameSetVisible(SavedDigimons, false)
@@ -1469,7 +1471,7 @@ OnInit("DigimonBank", function ()
 
         -- Item
 
-        ItemMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
+        ItemMenu = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(ItemMenu, FRAMEPOINT_TOPLEFT, 0.240000, 0.500000)
         BlzFrameSetAbsPoint(ItemMenu, FRAMEPOINT_BOTTOMRIGHT, 0.540000, 0.200000)
         BlzFrameSetVisible(ItemMenu, false)
@@ -1552,7 +1554,7 @@ OnInit("DigimonBank", function ()
         end
 
 
-        BuySlotMenu = BlzCreateFrame("QuestButtonBaseTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
+        BuySlotMenu = BlzCreateFrame("QuestButtonBaseTemplate", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(BuySlotMenu, FRAMEPOINT_TOPLEFT, 0.300000, 0.420000)
         BlzFrameSetAbsPoint(BuySlotMenu, FRAMEPOINT_BOTTOMRIGHT, 0.480000, 0.300000)
         BlzFrameSetVisible(BuySlotMenu, false)
