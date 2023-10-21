@@ -140,7 +140,7 @@ OnInit("FrameList", function ()
     ---@param frame framehandle
     function FrameList:add(frame)
         table.insert(self.Content, frame)
-        --BlzFrameSetParent(frame, self.Frame)
+        BlzFrameSetParent(frame, self.Frame)
         BlzFrameSetMinMaxValue(self.Slider, 1, #self.Content)
         BlzFrameSetValue(frame, 1)
         self:setContentPoints()

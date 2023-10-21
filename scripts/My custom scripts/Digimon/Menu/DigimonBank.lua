@@ -1681,8 +1681,7 @@ OnInit("DigimonBank", function ()
             if not bank.main then
                 bank.main = d
                 d:showFromTheCorner(bank.spawnPoint.x, bank.spawnPoint.y)
-                d.environment:apply(p, false)
-                if p == LocalPlayer then
+                if d.environment:apply(p, false) and p == LocalPlayer then
                     PanCameraToTimed(bank.spawnPoint.x, bank.spawnPoint.y, 0)
                 end
             else

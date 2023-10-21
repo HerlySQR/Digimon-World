@@ -55,11 +55,22 @@ OnInit("Environment", function ()
     end
 
     local Environments = {} ---@type table<player, Environment>
+    local locked = {} ---@type table<player, boolean>
+    local prevEnv = {} ---@type table<player, Environment>
 
     ---@param p player
     ---@return Environment
     function GetPlayerEnviroment(p)
         return Environments[p]
+    end
+
+    ---@param p player
+    ---@param flag boolean
+    function LockEnvironment(p, flag)
+        locked[p] = flag
+        if not flag then
+            prevEnv[p]:apply(p)
+        end
     end
 
     local InTranssition = __jarray(false) ---@type table<player, boolean>
@@ -86,12 +97,17 @@ OnInit("Environment", function ()
     ---@param env Environment|string
     ---@param p player
     ---@param fade? boolean
+    ---@return boolean success
     function Environment.apply(env, p, fade)
         if type(env) == "string" then
             env = used[env]
         end
         if Environments[p] == env then
-            return
+            return false
+        end
+        prevEnv[p] = env
+        if locked[p] then
+            return false
         end
         if fade then
             if p == LocalPlayer then
@@ -117,6 +133,8 @@ OnInit("Environment", function ()
         end)
 
         Environments[p] = env
+
+        return true
     end
 
     ---@param texture string
@@ -167,6 +185,7 @@ OnInit("Environment", function ()
     Environment.hospital = nil ---@type Environment
     Environment.gymLobby = nil ---@type Environment
     Environment.gymArena = {} ---@type Environment[]
+    Environment.cosmeticModel = nil ---@type Environment
 
 end)
 Debug.endFile()

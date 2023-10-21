@@ -12,9 +12,8 @@ OnInit(function ()
             local d = Digimon.getInstance(GetManipulatingUnit())
             d:hide()
             d:setLoc(receiver)
-            Environment.get(envName):apply(d:getOwner(), true)
             d.environment = Environment.get(envName)
-            if d:getOwner() == GetLocalPlayer() then
+            if Environment.apply(envName, d:getOwner(), true) and  d:getOwner() == GetLocalPlayer() then
                 PanCameraToTimed(d:getX(), d:getY(), 0)
             end
             Timed.call(0.25, function ()

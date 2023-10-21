@@ -5,32 +5,32 @@ OnInit(function ()
     local instances = {}
 
     ---Makes the creep have a chance of drop an item when it dies.
-    ---If the chances is an empty table, then it will be assume that
-    ---all the items will have the same chance.
+    ---If the weights is an empty table, then it will be assume that
+    ---all the items will have the same weight.
     ---
     ---The optional boolean is to make the creep don't drop items again
     ---in case you wanna resurrect it
     ---@param creep unit
     ---@param items integer[]
-    ---@param chances number[]
+    ---@param weights number[]
     ---@param once? boolean
-    function AddItemDrop(creep, items, chances, once)
+    function AddItemDrop(creep, items, weights, once)
         if #items == 0 then
             error("You didn't add items", 2)
         end
 
-        if #chances > 0 and #items ~= #chances then
-            error("The number of items doesn't match with the number or chances", 2)
+        if #weights > 0 and #items ~= #weights then
+            error("The number of items doesn't match with the number or weights", 2)
         end
 
         local new = {
             itempool = CreateItemPool(),
             once = once
         }
-        local chance = #chances == 0 and 1
+        local weight = #weights == 0 and 1
 
         for i = 1, #items do
-            ItemPoolAddItemType(new.itempool, items[i], chance or chances[i])
+            ItemPoolAddItemType(new.itempool, items[i], weight or weights[i])
         end
 
         if not instances[creep] then
@@ -79,10 +79,10 @@ OnInit(function ()
 
     udg_ItemDropAdd = CreateTrigger()
     TriggerAddAction(udg_ItemDropAdd, function ()
-        AddItemDrop(udg_ItemDropCreep, udg_ItemDropTypes, udg_ItemDropChances, udg_ItemDropOnce)
+        AddItemDrop(udg_ItemDropCreep, udg_ItemDropTypes, udg_ItemDropWeights, udg_ItemDropOnce)
         udg_ItemDropCreep = nil
         udg_ItemDropTypes = __jarray(0)
-        udg_ItemDropChances = __jarray(0)
+        udg_ItemDropWeights = __jarray(0)
         udg_ItemDropOnce = nil
     end)
 

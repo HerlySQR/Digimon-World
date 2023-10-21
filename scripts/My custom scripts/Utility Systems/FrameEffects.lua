@@ -13,8 +13,8 @@ OnInit("FrameEffects", function ()
         whatPlayer = whatPlayer or GetLocalPlayer()
 
         pcall(function ()
-            Fades[frame]()
             BlzFrameSetAlpha(frame, 255)
+            Fades[frame]()
         end)
 
         local steps = math.floor(duration / INTERVAL)
@@ -45,8 +45,8 @@ OnInit("FrameEffects", function ()
         whatPlayer = whatPlayer or GetLocalPlayer()
 
         pcall(function ()
-            Fades[frame]()
             BlzFrameSetAlpha(frame, 0)
+            Fades[frame]()
         end)
 
         local steps = math.floor(duration / INTERVAL)
@@ -57,7 +57,7 @@ OnInit("FrameEffects", function ()
             BlzFrameSetVisible(frame, true)
         end
 
-        Fades[frame] = Timed.echo(function ()
+        Fades[frame] = Timed.echo(INTERVAL, function ()
             steps = steps - 1
             alpha = alpha + stepSize
             if steps > 0 then
@@ -68,7 +68,7 @@ OnInit("FrameEffects", function ()
             else
                 return true
             end
-        end, INTERVAL)
+        end)
     end
 end)
 if Debug then Debug.endFile() end

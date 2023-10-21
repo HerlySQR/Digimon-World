@@ -96,6 +96,7 @@ OnInit("Player Data", function ()
     ---@field completedQuests integer
     ---@field date osdate
     ---@field unlockedCosmetics table<integer, boolean>
+    ---@field usedCosmetic integer
 
     PlayerDatas = {} ---@type table<player, PlayerData[]>
 
@@ -138,6 +139,7 @@ OnInit("Player Data", function ()
     ---@param save? boolean
     function StoreData(p, slot, save)
         -- This overwrites the slot if was previously set
+        local l, u = LoadCosmetics(p, slot)
         PlayerDatas[p][slot] = {
             gold = udg_SaveLoadGold,
             lumber = udg_SaveLoadLumber,
@@ -166,7 +168,8 @@ OnInit("Player Data", function ()
             date = {sec = udg_SaveLoadSec, min = udg_SaveLoadMin, hour = udg_SaveLoadHour, day = udg_SaveLoadDay,
                 month = udg_SaveLoadMonth, year = udg_SaveLoadYear, wday = udg_SaveLoadWDay, yday = udg_SaveLoadYDay,
                 isdst = udg_SaveLoadIsDst},
-            unlockedCosmetics = LoadCosmetics(p, slot)
+            unlockedCosmetics = l,
+            usedCosmetic = u
         }
 
         ClearSaveLoadData()
@@ -258,6 +261,7 @@ OnInit("Player Data", function ()
                 end
                 SetQuestsData(p, data.questsIds, data.questsProgresses, data.questsIsCompleted)
                 SetUnlockedCosmetics(p, data.unlockedCosmetics)
+                ApplyCosmetic(p, data.usedCosmetic)
 
                 loadListener:run(p)
             end

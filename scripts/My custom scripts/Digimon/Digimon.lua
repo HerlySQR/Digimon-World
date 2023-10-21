@@ -744,8 +744,7 @@ OnInit("Digimon", function ()
     -- Change the environment when double-click a Digimon
     Digimon.doubleclickEvent:register(function (p, d)
         if d:getOwner() == p and  d.environment ~= GetPlayerEnviroment(p) then
-            d.environment:apply(p)
-            if p == LocalPlayer then
+            if d.environment:apply(p) and p == LocalPlayer then
                 PanCameraToTimed(d:getX(), d:getY(), 0)
             end
         end

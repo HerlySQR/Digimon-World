@@ -22,6 +22,7 @@ OnInit(function ()
     local CHANCE_UNCOMMON       ---@type integer
     local CHANCE_RARE           ---@type integer
     local CHANCE_LEGENDARY      ---@type integer
+    local ITEM_DROP_CHANCE      ---@type integer
 
     ---@class Creep : Digimon
     ---@field remaining number
@@ -39,7 +40,6 @@ OnInit(function ()
     ---@field inNight boolean
     ---@field minLevel integer
     ---@field maxLevel integer
-    ---@field isDungeon boolean
     ---@field inregion boolean
     ---@field delay number
     ---@field waitToSpawn number
@@ -47,6 +47,7 @@ OnInit(function ()
     ---@field neighbourhood Set
     ---@field sameRegion Set
     ---@field someoneClose boolean
+    ---@field itemTable integer[]
 
     ---@param pool unitpool
     ---@param pos {x: number, y: number}
@@ -126,9 +127,9 @@ OnInit(function ()
     ---@param inNight boolean
     ---@param minLevel integer
     ---@param maxLevel integer
-    ---@param isDungeon boolean
+    ---@param itemTable integer[]
     ---@return RegionData
-    local function Create(re, types, inDay, inNight, minLevel, maxLevel, isDungeon)
+    local function Create(re, types, inDay, inNight, minLevel, maxLevel, itemTable)
         assert(re, "You are trying to create an spawn in a nil region")
         local x, y = GetRectCenterX(re), GetRectCenterY(re)
         local this = { ---@type RegionData
@@ -139,7 +140,7 @@ OnInit(function ()
             inNight = inNight,
             minLevel = minLevel,
             maxLevel = maxLevel,
-            isDungeon = isDungeon,
+            itemTable = itemTable,
 
             inregion = false,
             delay = 0.,
@@ -320,6 +321,7 @@ OnInit(function ()
         CHANCE_UNCOMMON = udg_CHANCE_UNCOMMON
         CHANCE_RARE = udg_CHANCE_RARE
         CHANCE_LEGENDARY = udg_CHANCE_LEGENDARY
+        ITEM_DROP_CHANCE = udg_ITEM_DROP_CHANCE
 
         -- Clear
         udg_CREEPS_PER_PLAYER = nil
@@ -338,6 +340,7 @@ OnInit(function ()
         udg_CHANCE_UNCOMMON = nil
         udg_CHANCE_RARE = nil
         udg_CHANCE_LEGENDARY = nil
+        udg_ITEM_DROP_CHANCE = nil
 
         TriggerClearActions(gg_trg_Creep_Spawn_System_Config)
         DestroyTrigger(gg_trg_Creep_Spawn_System_Config)
@@ -356,9 +359,19 @@ OnInit(function ()
     end)
     Digimon.killEvent:register(function (info)
         local target = info.target ---@type Creep
+        print(1)
         if target.rd then
+            print(2)
             ZTS_RemoveThreatUnit(target.root)
             target.captured = true
+            local itm = target.rd.itemTable[math.random(#target.rd.itemTable)]
+            if itm then
+                print(3)
+                if math.random(100) <= ITEM_DROP_CHANCE then
+                    print(4)
+                    CreateItem(itm, target:getPos())
+                end
+            end
         end
     end)
 
@@ -372,14 +385,14 @@ OnInit(function ()
             udg_CreepSpawnInNight,
             udg_CreepSpawnMinLevel,
             udg_CreepSpawnMaxLevel,
-            udg_CreepSpawnIsDungeon)
+            udg_CreepSpawnItemTable)
         udg_CreepSpawnRegion = nil
         udg_CreepSpawnTypes = __jarray(0)
         udg_CreepSpawnInDay = true
         udg_CreepSpawnInNight = true
         udg_CreepSpawnMinLevel = 1
         udg_CreepSpawnMaxLevel = 1
-        udg_CreepSpawnIsDungeon = false
+        udg_CreepSpawnItemTable = __jarray(0)
     end)
 end)
 Debug.endFile()

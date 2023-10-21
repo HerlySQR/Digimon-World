@@ -85,7 +85,7 @@ OnInit("Quests", function ()
                     progress = progress .. " |cff00ff00" .. q.progress .. "/" .. max .. "|r"
                 end
             end
-            BlzFrameSetText(QuestOptionText[i], "|cffFFCC00" .. q.name .. "|r - Level " .. q.level .. "\n" .. progress)
+            BlzFrameSetText(QuestOptionText[i], "|cffFFCC00" .. q.name .. "|r" .. (q.level > 0 and (" - Level " .. q.level) or "") .. "\n" .. progress)
         end
     end
 
@@ -136,14 +136,14 @@ OnInit("Quests", function ()
         BlzFrameSetVisible(QuestButtonSprite, false)
 
         QuestMenu = BlzCreateFrame("QuestButtonBaseTemplate", Origin, 0, 0)
-        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_TOPLEFT, 0.740000, 0.440000)
-        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_BOTTOMRIGHT, 0.930000, 0.200000)
+        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_TOPLEFT, 0.690000, 0.440000)
+        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_BOTTOMRIGHT, 0.880000, 0.200000)
         BlzFrameSetVisible(QuestMenu, false)
         AddFrameToMenu(QuestMenu)
 
         QuestInformation = BlzCreateFrame("CheckListBox", QuestMenu, 0, 0)
-        BlzFrameSetAbsPoint(QuestInformation, FRAMEPOINT_TOPLEFT, 0.550000, 0.440000)
-        BlzFrameSetAbsPoint(QuestInformation, FRAMEPOINT_BOTTOMRIGHT, 0.740000, 0.200000)
+        BlzFrameSetPoint(QuestInformation, FRAMEPOINT_TOPLEFT, QuestMenu, FRAMEPOINT_TOPLEFT, -0.19000, 0.00000)
+        BlzFrameSetPoint(QuestInformation, FRAMEPOINT_BOTTOMRIGHT, QuestMenu, FRAMEPOINT_BOTTOMLEFT, 0.00000, 0.00000)
         BlzFrameSetVisible(QuestInformation, false)
 
         QuestText = BlzCreateFrameByType("TEXT", "name", QuestMenu, "", 0)

@@ -40,8 +40,7 @@ OnInit(function ()
                 end
             end
 
-            innerEnv:apply(p, true)
-            if p == LocalPlayer then
+            if innerEnv:apply(p, true) and p == LocalPlayer then
                 PanCameraToTimed(enterX, enterY, 0)
             end
         end)
@@ -74,8 +73,7 @@ OnInit(function ()
                     end
                 end
 
-                outerEnv:apply(p, true)
-                if p == LocalPlayer then
+                if outerEnv:apply(p, true) and p == LocalPlayer then
                     PanCameraToTimed(leaveX, leaveY, 0)
                 end
             end)

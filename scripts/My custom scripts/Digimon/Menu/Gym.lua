@@ -203,11 +203,10 @@ OnInit(function ()
                     d:pause()
                     table.insert(paused, d)
                 end
-                self.env:apply(info.p, true)
+                if self.env:apply(info.p, true) and info.p == LocalPlayer then
+                    PanCameraToTimed(GetRectCenterX(self.arena), GetRectCenterY(self.arena), 0)
+                end
             end
-        end
-        if self:localPlayerCond() then
-            PanCameraToTimed(GetRectCenterX(self.arena), GetRectCenterY(self.arena), 0)
         end
         Timed.call(function ()
             if self:localPlayerCond() then
