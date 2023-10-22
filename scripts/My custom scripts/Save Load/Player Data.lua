@@ -139,7 +139,6 @@ OnInit("Player Data", function ()
     ---@param save? boolean
     function StoreData(p, slot, save)
         -- This overwrites the slot if was previously set
-        local l, u = LoadCosmetics(p, slot)
         PlayerDatas[p][slot] = {
             gold = udg_SaveLoadGold,
             lumber = udg_SaveLoadLumber,
@@ -168,8 +167,8 @@ OnInit("Player Data", function ()
             date = {sec = udg_SaveLoadSec, min = udg_SaveLoadMin, hour = udg_SaveLoadHour, day = udg_SaveLoadDay,
                 month = udg_SaveLoadMonth, year = udg_SaveLoadYear, wday = udg_SaveLoadWDay, yday = udg_SaveLoadYDay,
                 isdst = udg_SaveLoadIsDst},
-            unlockedCosmetics = l,
-            usedCosmetic = u
+            unlockedCosmetics = udg_SaveLoadUnlockedCosmetics,
+            usedCosmetic = udg_SaveLoadUsedCosmetic
         }
 
         ClearSaveLoadData()
@@ -302,6 +301,8 @@ OnInit("Player Data", function ()
         udg_SaveLoadWDay = 1
         udg_SaveLoadYDay = 1
         udg_SaveLoadIsDst = false
+        udg_SaveLoadUnlockedCosmetics = __jarray(false)
+        udg_SaveLoadUsedCosmetic = 1
     end
 
     ---I prefered create my own level XP function

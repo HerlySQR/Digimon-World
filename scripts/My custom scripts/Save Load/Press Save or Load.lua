@@ -264,7 +264,6 @@ OnInit("PressSaveOrLoad", function ()
         local p = GetTriggerPlayer()
         udg_SaveLoadEvent_Player = p
         udg_SaveLoadSlot = Pressed[udg_SaveLoadEvent_Player]
-        SaveCosmetics(p, udg_SaveLoadSlot)
         TriggerExecute(gg_trg_Save_GUI)
         WaitLastSync()
         if p == LocalPlayer then

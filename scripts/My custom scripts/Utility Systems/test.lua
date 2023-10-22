@@ -1,13 +1,27 @@
 OnInit(function ()
-    Require "Timed"
-    Require "PlayerUtils"
 
-    Timed.echo(5., function ()
-        ForForce(FORCE_PLAYING, function ()
-            print(User[GetEnumPlayer()]:getNameColored() .. "'s digimons: ")
-            for _, d in ipairs(GetAllDigimons(GetEnumPlayer())) do
-                print(GetHeroProperName(d.root))
-            end
+    local THR, thr1, thr2, thr3
+
+    thr1 = coroutine.create(function ()
+        print(1, coroutine.status(THR))
+        TimerStart(CreateTimer(), 0, false, function ()
+            coroutine.resume(THR)
         end)
+        coroutine.yield()
+        coroutine.resume(thr2)
     end)
+    thr2 = coroutine.create(function ()
+        print(2)
+    end)
+    thr3 = coroutine.create(function ()
+        print(3)
+        coroutine.resume(thr1)
+    end)
+
+    coroutine.wrap(function ()
+        THR = coroutine.running()
+        coroutine.resume(thr1)
+        coroutine.yield()
+        coroutine.resume(thr3)
+    end)()
 end)

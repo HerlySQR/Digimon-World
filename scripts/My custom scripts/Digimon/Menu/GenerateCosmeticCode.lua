@@ -8,8 +8,6 @@ OnInit("GenerateCosmeticCode", function ()
     ---@param p player
     ---@param password string
     function GenerateKeyToCosmetic(p, password)
-        assert(LockedCosmetics[password], "There is no cosmetic with the password " .. password)
-
         local savecode = Savecode.create()
 
         for i = 1, password:len() do
@@ -21,8 +19,13 @@ OnInit("GenerateCosmeticCode", function ()
         savecode:destroy()
 
         if p == GetLocalPlayer() then
-            FileIO.Write("DigimonWorldCode.pld", "unlock " .. key)
-            print(colorize(key))
+            FileIO.Write("DigimonWorldCode.pld", "\n\n"
+                      .. "\tThe player " .. GetPlayerName(p) .. " should use the command:\n"
+                      .. "\t\t-unlock " .. key .. "\n"
+                      .. "\tTo unlock a cosmetic.\n\n")
+            print("The player " .. GetPlayerName(p) .. " should use the command:\n"
+               .. "\t-unlock " .. colorize(key) .. "\n"
+               .. "To unlock a cosmetic.")
         end
     end
 end)

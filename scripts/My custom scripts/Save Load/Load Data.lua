@@ -75,7 +75,7 @@ OnInit(function ()
         end
 
         -- To make sure that I can yield this thread
-        coroutine.resume(coroutine.create(function ()
+        coroutine.wrap(function ()
             for i = 0, n do
                 local user = users[i]
                 local p = user.handle
@@ -91,7 +91,11 @@ OnInit(function ()
                         if savecode:Load(p, s, 1) then
                             udg_SaveCount = 0
                             udg_SaveTempInt = savecode
+                            udg_SaveLoadSlot = slot
+                            udg_SaveLoadEvent_Player = p
                             TriggerExecute(gg_trg_Load_Actions)
+                            THIS_THREAD = coroutine.running()
+                            coroutine.yield()
 
                             if udg_SaveCodeLegacy then
                                 udg_SaveCodeLegacy = false
@@ -132,7 +136,7 @@ OnInit(function ()
             BlzFrameSetSize(BlzGetFrameByName("ConsoleUIBackdrop",0), 0, DefaultHeight)
             BlzFrameSetVisible(WaitPlayers, false)
             EnableUserControl(true)
-        end))
+        end)()
     end)
 
 end)

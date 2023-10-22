@@ -50,6 +50,7 @@ OnInit("Cosmetic", function ()
     local clickedEffect = __jarray(-1)
     local usedCosmetic = {} ---@type table<player, Cosmetic>
     local lastEffect = {} ---@type table<player, effect>
+    local selectedUnits = {} ---@type table<player, group>
 
     local prevCamera = {} ---@type{targetX: number, targetY: number, targetZ: number, eyeX: number, eyeY: number, eyeZ: number, targetDistance: number, farZ: number, angleOfAttack: number, fieldOfView: number, roll: number, rotation: number, zOffset: number, nearZ: number, localPitch: number, localYaw: number, localRoll: number}
     local inMenu = false
@@ -58,6 +59,7 @@ OnInit("Cosmetic", function ()
         ForForce(FORCE_PLAYING, function ()
             UnlockedCosmetics[GetEnumPlayer()] = setmetatable({}, {__index = toUnlock})
             usedCosmetic[GetEnumPlayer()] = Cosmetics[1]
+            selectedUnits[GetEnumPlayer()] = CreateGroup()
         end)
     end)
 
@@ -87,17 +89,7 @@ OnInit("Cosmetic", function ()
     local function CosmeticOpenFunc()
         local p = GetTriggerPlayer()
 
-        local oldEnv = GetPlayerEnviroment(p)
-        Environment.cosmeticModel:apply(p)
-        LockEnvironment(p, true)
-        oldEnv:apply(p)
-
-        UnitShareVision(model, p, true)
-
         if p == LocalPlayer then
-            BlzFrameSetVisible(CosmeticMenu, true)
-            BlzFrameSetEnable(CosmeticOpen, false)
-
             prevCamera.targetX = GetCameraTargetPositionX()
             prevCamera.targetY = GetCameraTargetPositionY()
             prevCamera.targetZ = GetCameraTargetPositionZ()
@@ -107,6 +99,22 @@ OnInit("Cosmetic", function ()
             --prevCamera.fieldOfView = GetCameraField(CAMERA_FIELD_FIELD_OF_VIEW)
             prevCamera.zOffset = GetCameraField(CAMERA_FIELD_ZOFFSET)
             prevCamera.nearZ = GetCameraField(CAMERA_FIELD_NEARZ)
+        end
+
+        local oldEnv = GetPlayerEnviroment(p)
+        Environment.cosmeticModel:apply(p)
+        LockEnvironment(p, true)
+        oldEnv:apply(p)
+
+        UnitShareVision(model, p, true)
+
+        SyncSelections()
+        GroupEnumUnitsSelected(selectedUnits[p], p)
+
+        if p == LocalPlayer then
+            HideMenu(true)
+            BlzFrameSetVisible(CosmeticMenu, true)
+            BlzFrameSetEnable(CosmeticOpen, false)
 
             SetCameraTargetController(model, 0, 150, false)
 
@@ -151,7 +159,15 @@ OnInit("Cosmetic", function ()
 
         UnitShareVision(model, p, false)
 
+        ForGroup(selectedUnits[p], function ()
+            if p == LocalPlayer then
+                SelectUnit(GetEnumUnit(), true)
+            end
+        end)
+        GroupClear(selectedUnits[p])
+
         if p == LocalPlayer then
+            ShowMenu(true)
             BlzFrameSetVisible(CosmeticMenu, false)
 
             ResetToGameCamera(0)
@@ -325,11 +341,14 @@ OnInit("Cosmetic", function ()
 
     ---@param p player
     ---@param slot integer
+    ---@return table<integer, boolean>, integer
     function SaveCosmetics(p, slot)
         local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\Slot_" .. slot .. ".pld"
         local savecode = Savecode.create()
         local amount = 0
+        local list = __jarray(false)
         for id, v in pairs(UnlockedCosmetics[p]) do
+            list[id] = v
             if v then
                 savecode:Encode(id, udg_MAX_COSMETICS) -- Save the id of the cosmetics
                 amount = amount + 1
@@ -337,7 +356,7 @@ OnInit("Cosmetic", function ()
         end
         savecode:Encode(amount, udg_MAX_COSMETICS) -- Save the amount of cosmetics
 
-        savecode:Encode(usedCosmetic[p] and usedCosmetic[p].id or 0, udg_MAX_COSMETICS) -- Save the used cosmetic
+        savecode:Encode(usedCosmetic[p] and usedCosmetic[p].id or 1, udg_MAX_COSMETICS) -- Save the used cosmetic
 
         local s = savecode:Save(p, 1)
 
@@ -346,15 +365,17 @@ OnInit("Cosmetic", function ()
         end
 
         savecode:destroy()
+
+        return list, usedCosmetic[p] and usedCosmetic[p].id or 1
     end
 
     ---@param p player
     ---@param slot integer
     ---@return table<integer, boolean>, integer
     function LoadCosmetics(p, slot)
-        local list = {}
+        local list = __jarray(false)
         local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\Slot_" .. slot .. ".pld"
-        local id = 0
+        local id = 1
         local savecode = Savecode.create()
         if savecode:Load(p, GetSyncedData(p, FileIO.Read, path), 1) then
             id = savecode:Decode(udg_MAX_COSMETICS) -- Load the used cosmetic
@@ -376,12 +397,18 @@ OnInit("Cosmetic", function ()
     ---@param p player
     ---@param list? table<integer, boolean>
     function SetUnlockedCosmetics(p, list)
-        UnlockedCosmetics[p] = setmetatable(list or {}, {__index = toUnlock})
-        if list and p == LocalPlayer then
-            for id, _ in pairs(list) do
-                BlzFrameSetVisible(Cosmetics[id].lockFrame, false)
-                BlzFrameSetVisible(Cosmetics[id].button, true)
+        UnlockedCosmetics[p] = setmetatable(list or __jarray(false), {__index = toUnlock})
+        if list then
+            if p == LocalPlayer then
+                for id, v in pairs(list) do
+                    if v and Cosmetics[id].lockFrame then
+                        BlzFrameSetVisible(Cosmetics[id].lockFrame, false)
+                        BlzFrameSetVisible(Cosmetics[id].button, true)
+                    end
+                end
             end
+        else
+            usedCosmetic[p] = Cosmetics[1]
         end
     end
 
@@ -480,27 +507,6 @@ OnInit("Cosmetic", function ()
         end
 
         DisplayTextToPlayer(p, 0, 0, "Cosmetic unlocked successfully.")
-    end
-
-    ---@param p player
-    ---@param password string
-    function GenerateKeyToCosmetic(p, password)
-        assert(LockedCosmetics[password], "There is no cosmetic with the password " .. password)
-
-        local savecode = Savecode.create()
-
-        for i = 1, password:len() do
-            savecode:Encode(password:byte(i), 256)
-        end
-        savecode:Encode(password:len(), MAX_LENGTH_PASSWORD)
-
-        local key = savecode:Save(p, 2)
-        savecode:destroy()
-
-        if p == GetLocalPlayer() then
-            FileIO.Write("DigimonWorldCode.pld", "unlock " .. key)
-            print(colorize(key))
-        end
     end
 
     ---@param p player
