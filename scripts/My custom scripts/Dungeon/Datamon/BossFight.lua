@@ -47,9 +47,6 @@ OnInit(function ()
     end
 
     local function restartGenerators()
-        if canTrap then
-            return
-        end
         for i = 1, #generators do
             local showEff = false
             if UnitAlive(generators[i]) then
@@ -129,8 +126,10 @@ OnInit(function ()
         TriggerRegisterEnterRectSimple(t, generatorRect)
         TriggerAddAction(t, function ()
             local u = GetEnteringUnit()
-            generatorUnits:addSingle(u)
-            BossIgnoreUnit(boss, u, true)
+            if GetUnitTypeId(u) ~= GENERATOR then
+                generatorUnits:addSingle(u)
+                BossIgnoreUnit(boss, u, true)
+            end
         end)
     end
 
@@ -163,6 +162,7 @@ OnInit(function ()
         if canTrap then
             cooldown = cooldown - 1
             if cooldown <= 0 then
+                restartGenerators()
                 cooldown = ELECTRIC_TRAP_TICKS_CD
                 canTrap = false
                 local list = SyncedTable.create()
@@ -177,6 +177,9 @@ OnInit(function ()
                     SetUnitPositionLoc(u2, l)
                     DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
                     RemoveLocation(l)
+                    if u == u2 then
+                        IssuePointOrderById(boss, Orders.attack, GetUnitX(boss), GetUnitY(boss))
+                    end
                 end
                 if not BossStillCasting(boss) then
                     IssuePointOrderById(boss, Orders.attack, GetUnitX(boss), GetUnitY(boss))

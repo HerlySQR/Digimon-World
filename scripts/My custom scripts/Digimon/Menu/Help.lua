@@ -36,7 +36,7 @@ OnInit("Help", function ()
 
         BackdropHelpButton = BlzCreateFrameByType("BACKDROP", "BackdropHelpButton", HelpButton, "", 0)
         BlzFrameSetAllPoints(BackdropHelpButton, HelpButton)
-        BlzFrameSetTexture(BackdropHelpButton, "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp", 0, true)
+        BlzFrameSetTexture(BackdropHelpButton, "ReplaceableTextures\\CommandButtons\\BTNHelpIcon.blp", 0, true)
 
         HelpImage = BlzCreateFrameByType("BACKDROP", "HelpImage", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
         BlzFrameSetAllPoints(HelpImage, BlzGetOriginFrame(ORIGIN_FRAME_WORLD_FRAME, 0))

@@ -359,16 +359,12 @@ OnInit(function ()
     end)
     Digimon.killEvent:register(function (info)
         local target = info.target ---@type Creep
-        print(1)
         if target.rd then
-            print(2)
             ZTS_RemoveThreatUnit(target.root)
             target.captured = true
             local itm = target.rd.itemTable[math.random(#target.rd.itemTable)]
             if itm then
-                print(3)
                 if math.random(100) <= ITEM_DROP_CHANCE then
-                    print(4)
                     CreateItem(itm, target:getPos())
                 end
             end

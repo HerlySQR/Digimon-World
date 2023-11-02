@@ -24,10 +24,20 @@ OnInit("Cosmetic", function ()
     local CosmeticEffects = nil ---@type framehandle
     local CosmeticList = nil ---@type FrameList
 
+    local CosmeticUnlock = nil ---@type framehandle
+    local CosmeticUnlockText = nil ---@type framehandle
+    local CosmeticUnlockCode = nil ---@type framehandle
+    local CosmeticUnlockYes = nil ---@type framehandle
+
     local actualRow = MAX_EFFECT_PER_ROW
     local actualContainer = nil ---@type framehandle
     local camera = gg_cam_CosmeticModel ---@type camerasetup
     local model = CreateUnit(Digimon.PASSIVE, NO_SKIN, GetRectCenterX(gg_rct_CosmeticModel), GetRectCenterY(gg_rct_CosmeticModel), 0)
+    local glow = AddSpecialEffect("war3mapImported\\GeneralHeroGlow.mdx", GetRectCenterX(gg_rct_CosmeticModel), GetRectCenterY(gg_rct_CosmeticModel))
+    BlzSetSpecialEffectColorByPlayer(glow, Player(GetHandleId(PLAYER_COLOR_SNOW)))
+    BlzSetSpecialEffectScale(glow, 2.)
+    BlzSetSpecialEffectHeight(glow, BlzGetLocalSpecialEffectZ(glow) - 30.)
+    BlzSetSpecialEffectAlpha(glow, 200)
 
     ---@class Cosmetic
     ---@field id integer
@@ -51,6 +61,7 @@ OnInit("Cosmetic", function ()
     local usedCosmetic = {} ---@type table<player, Cosmetic>
     local lastEffect = {} ---@type table<player, effect>
     local selectedUnits = {} ---@type table<player, group>
+    local inputCode = __jarray("") ---@type table<player, string>
 
     local prevCamera = {} ---@type{targetX: number, targetY: number, targetZ: number, eyeX: number, eyeY: number, eyeZ: number, targetDistance: number, farZ: number, angleOfAttack: number, fieldOfView: number, roll: number, rotation: number, zOffset: number, nearZ: number, localPitch: number, localYaw: number, localRoll: number}
     local inMenu = false
@@ -187,7 +198,37 @@ OnInit("Cosmetic", function ()
             BlzSetUnitSkin(model, NO_SKIN)
 
             RemoveButtonFromEscStack(CosmeticExit)
+
+            BlzFrameSetText(CosmeticUnlockText, "|cffFFCC00Enter a code to unlock a cosmetic|r")
+            BlzFrameSetText(CosmeticUnlockCode, "")
         end
+    end
+
+    local function CosmeticUnlockCodeFunc()
+        inputCode[GetTriggerPlayer()] = BlzGetTriggerFrameText()
+    end
+
+    local function CosmeticUnlockYesFunc()
+        local p = GetTriggerPlayer()
+        UnlockCosmetic(p, inputCode[p])
+        if p == LocalPlayer then
+            BlzFrameSetText(CosmeticUnlockCode, "")
+        end
+    end
+
+    ---@param p player
+    ---@param msg string
+    local function EditUnlockMessage(p, msg)
+        if p == LocalPlayer then
+            BlzFrameSetText(CosmeticUnlockText, msg)
+        end
+        Timed.call(3., function ()
+            if p == LocalPlayer then
+                if BlzFrameGetText(CosmeticUnlockText) == msg then
+                    BlzFrameSetText(CosmeticUnlockText, "|cffFFCC00Enter a code to unlock a cosmetic|r")
+                end
+            end
+        end)
     end
 
     local function InitFrames()
@@ -202,7 +243,7 @@ OnInit("Cosmetic", function ()
 
         BackdropCosmeticOpen = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticOpen", CosmeticOpen, "", 0)
         BlzFrameSetAllPoints(BackdropCosmeticOpen, CosmeticOpen)
-        BlzFrameSetTexture(BackdropCosmeticOpen, "ReplaceableTextures\\CommandButtons\\BTNMerchant.blp", 0, true)
+        BlzFrameSetTexture(BackdropCosmeticOpen, "ReplaceableTextures\\CommandButtons\\BTNCosmeticsIcon.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, CosmeticOpen, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, CosmeticOpenFunc)
@@ -248,6 +289,36 @@ OnInit("Cosmetic", function ()
         BlzFrameSetPoint(CosmeticList.Frame, FRAMEPOINT_TOPLEFT, CosmeticEffects, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
         BlzFrameSetPoint(CosmeticList.Frame, FRAMEPOINT_TOPRIGHT, CosmeticEffects, FRAMEPOINT_TOPRIGHT, 0.0060000, 0.000000)
         CosmeticList:setSize(BlzFrameGetWidth(CosmeticList.Frame), BlzFrameGetHeight(CosmeticList.Frame) + 0.05)
+
+        CosmeticUnlock = BlzCreateFrame("EscMenuBackdrop", CosmeticMenu, 0, 0)
+        BlzFrameSetAbsPoint(CosmeticUnlock, FRAMEPOINT_TOPLEFT, 0.500000, 0.210000)
+        BlzFrameSetAbsPoint(CosmeticUnlock, FRAMEPOINT_BOTTOMRIGHT, 0.770000, 0.140000)
+
+        CosmeticUnlockText = BlzCreateFrameByType("TEXT", "name", CosmeticUnlock, "", 0)
+        BlzFrameSetPoint(CosmeticUnlockText, FRAMEPOINT_TOPLEFT, CosmeticUnlock, FRAMEPOINT_TOPLEFT, 0.020000, -0.015000)
+        BlzFrameSetPoint(CosmeticUnlockText, FRAMEPOINT_BOTTOMRIGHT, CosmeticUnlock, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.035000)
+        BlzFrameSetText(CosmeticUnlockText, "|cffFFCC00Enter a code to unlock a cosmetic|r")
+        BlzFrameSetEnable(CosmeticUnlockText, false)
+        BlzFrameSetScale(CosmeticUnlockText, 1.00)
+        BlzFrameSetTextAlignment(CosmeticUnlockText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        CosmeticUnlockCode = BlzCreateFrame("EscMenuEditBoxTemplate", CosmeticUnlock, 0, 0)
+        BlzFrameSetPoint(CosmeticUnlockCode, FRAMEPOINT_TOPLEFT, CosmeticUnlock, FRAMEPOINT_TOPLEFT, 0.020000, -0.030000)
+        BlzFrameSetPoint(CosmeticUnlockCode, FRAMEPOINT_BOTTOMRIGHT, CosmeticUnlock, FRAMEPOINT_BOTTOMRIGHT, -0.050000, 0.010000)
+        BlzFrameSetText(CosmeticUnlockCode, "")
+        BlzFrameSetTextSizeLimit(CosmeticUnlockCode, MAX_LENGTH_PASSWORD*4)
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, CosmeticUnlockCode, FRAMEEVENT_EDITBOX_TEXT_CHANGED)
+        TriggerAddAction(t, CosmeticUnlockCodeFunc)
+
+        CosmeticUnlockYes = BlzCreateFrame("ScriptDialogButton", CosmeticUnlock, 0, 0)
+        BlzFrameSetScale(CosmeticUnlockYes, 0.8)
+        BlzFrameSetPoint(CosmeticUnlockYes, FRAMEPOINT_TOPLEFT, CosmeticUnlock, FRAMEPOINT_TOPLEFT, 0.22000, -0.030000)
+        BlzFrameSetPoint(CosmeticUnlockYes, FRAMEPOINT_BOTTOMRIGHT, CosmeticUnlock, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.010000)
+        BlzFrameSetText(CosmeticUnlockYes, "|cffFCD20DYes|r")
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, CosmeticUnlockYes, FRAMEEVENT_CONTROL_CLICK) 
+        TriggerAddAction(t, CosmeticUnlockYesFunc) 
     end
 
     FrameLoaderAdd(InitFrames)
@@ -285,56 +356,60 @@ OnInit("Cosmetic", function ()
 
         if actualRow >= MAX_EFFECT_PER_ROW then
             actualRow = 0
-            actualContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", CosmeticEffects, "", 1)
-            BlzFrameSetPoint(actualContainer, FRAMEPOINT_TOPLEFT, CosmeticEffects, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
-            BlzFrameSetSize(actualContainer, 0.23000, 0.05750)
-            BlzFrameSetTexture(actualContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+            FrameLoaderAdd(function ()
+                actualContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", CosmeticEffects, "", 1)
+                BlzFrameSetPoint(actualContainer, FRAMEPOINT_TOPLEFT, CosmeticEffects, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+                BlzFrameSetSize(actualContainer, 0.23000, 0.05750)
+                BlzFrameSetTexture(actualContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+            end)
         end
 
-        local button = BlzCreateFrame("IconButtonTemplate", actualContainer, 0, 0)
-        BlzFrameSetPoint(button, FRAMEPOINT_TOPLEFT, actualContainer, FRAMEPOINT_TOPLEFT, 0.06 * actualRow, 0.0000)
-        BlzFrameSetPoint(button, FRAMEPOINT_BOTTOMRIGHT, actualContainer, FRAMEPOINT_BOTTOMRIGHT, -0.18000 + 0.06 * actualRow, 0.0075000)
-        Cosmetics[id].button = button
+        FrameLoaderAdd(function ()
+            local button = BlzCreateFrame("IconButtonTemplate", actualContainer, 0, 0)
+            BlzFrameSetPoint(button, FRAMEPOINT_TOPLEFT, actualContainer, FRAMEPOINT_TOPLEFT, 0.06 * actualRow, 0.0000)
+            BlzFrameSetPoint(button, FRAMEPOINT_BOTTOMRIGHT, actualContainer, FRAMEPOINT_BOTTOMRIGHT, -0.18000 + 0.06 * actualRow, 0.0075000)
+            Cosmetics[id].button = button
 
-        local backdrop = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticEffect[" .. id .. "]", button, "", 0)
-        BlzFrameSetAllPoints(backdrop, button)
-        BlzFrameSetTexture(backdrop, icon, 0, true)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, button, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, function () CosmeticActions(id) end)
+            local backdrop = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticEffect[" .. id .. "]", button, "", 0)
+            BlzFrameSetAllPoints(backdrop, button)
+            BlzFrameSetTexture(backdrop, icon, 0, true)
+            local t = CreateTrigger()
+            BlzTriggerRegisterFrameEvent(t, button, FRAMEEVENT_CONTROL_CLICK)
+            TriggerAddAction(t, function () CosmeticActions(id) end)
 
-        if unlockDesc then
-            local lockButton = BlzCreateFrame("IconButtonTemplate", actualContainer, 0, 0)
-            BlzFrameSetAllPoints(lockButton, button)
-            BlzFrameSetEnable(lockButton, false)
+            if unlockDesc then
+                local lockButton = BlzCreateFrame("IconButtonTemplate", actualContainer, 0, 0)
+                BlzFrameSetAllPoints(lockButton, button)
+                BlzFrameSetEnable(lockButton, false)
 
-            local lockFrame = BlzCreateFrameByType("BACKDROP", "BackdropLockCosmeticEffect[" .. id .. "]", lockButton, "", 0)
-            BlzFrameSetAllPoints(lockFrame, button)
-            BlzFrameSetTexture(lockFrame, "ReplaceableTextures\\CommandButtons\\BTNLock.blp", 0, true)
+                local lockFrame = BlzCreateFrameByType("BACKDROP", "BackdropLockCosmeticEffect[" .. id .. "]", lockButton, "", 0)
+                BlzFrameSetAllPoints(lockFrame, button)
+                BlzFrameSetTexture(lockFrame, "ReplaceableTextures\\CommandButtons\\BTNLock.blp", 0, true)
 
-            local tooltip = BlzCreateFrame("QuestButtonBaseTemplate", lockButton, 0, 0)
+                local tooltip = BlzCreateFrame("QuestButtonBaseTemplate", lockButton, 0, 0)
 
-            local tooltipText = BlzCreateFrameByType("TEXT", "name", tooltip, "", 0)
-            BlzFrameSetPoint(tooltipText, FRAMEPOINT_BOTTOMLEFT, lockButton, FRAMEPOINT_CENTER, 0.0000, 0.0000)
-            BlzFrameSetEnable(tooltipText, false)
-            BlzFrameSetScale(tooltipText, 1.00)
-            BlzFrameSetTextAlignment(tooltipText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+                local tooltipText = BlzCreateFrameByType("TEXT", "name", tooltip, "", 0)
+                BlzFrameSetPoint(tooltipText, FRAMEPOINT_BOTTOMLEFT, lockButton, FRAMEPOINT_CENTER, 0.0000, 0.0000)
+                BlzFrameSetEnable(tooltipText, false)
+                BlzFrameSetScale(tooltipText, 1.00)
+                BlzFrameSetTextAlignment(tooltipText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-            BlzFrameSetText(tooltipText, unlockDesc)
-            BlzFrameSetSize(tooltipText, 0.15, 0)
-            BlzFrameSetPoint(tooltip, FRAMEPOINT_TOPLEFT, tooltipText, FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
-            BlzFrameSetPoint(tooltip, FRAMEPOINT_BOTTOMRIGHT, tooltipText, FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
+                BlzFrameSetText(tooltipText, unlockDesc)
+                BlzFrameSetSize(tooltipText, 0.15, 0)
+                BlzFrameSetPoint(tooltip, FRAMEPOINT_TOPLEFT, tooltipText, FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
+                BlzFrameSetPoint(tooltip, FRAMEPOINT_BOTTOMRIGHT, tooltipText, FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
 
-            BlzFrameSetTooltip(lockButton, tooltip)
+                BlzFrameSetTooltip(lockButton, tooltip)
 
-            BlzFrameSetVisible(button, false)
+                BlzFrameSetVisible(button, false)
 
-            Cosmetics[id].lockFrame = lockButton
-        end
+                Cosmetics[id].lockFrame = lockButton
+            end
 
-        if actualRow == 0 then
-            CosmeticList:add(actualContainer)
-        end
+            if actualRow == 0 then
+                CosmeticList:add(actualContainer)
+            end
+        end)
 
         actualRow = actualRow + 1
     end
@@ -474,7 +549,7 @@ OnInit("Cosmetic", function ()
         local savecode = Savecode.create()
 
         if not savecode:Load(p, key, 2) then
-            DisplayTextToPlayer(p, 0, 0, "Your passed an invalid code (can't be loaded).")
+            EditUnlockMessage(p, "|cffff0000Your passed an invalid code (can't be loaded).|r")
             savecode:destroy()
             return
         end
@@ -490,12 +565,12 @@ OnInit("Cosmetic", function ()
         local id = LockedCosmetics[password]
 
         if not id then
-            DisplayTextToPlayer(p, 0, 0, "Your passed an invalid code (this code doesn't work).")
+            EditUnlockMessage(p, "|cffff0000Your passed an invalid code (this code doesn't work).|r")
             return
         end
 
         if UnlockedCosmetics[p][id] then
-            DisplayTextToPlayer(p, 0, 0, "You already unlocked this cosmetic.")
+            EditUnlockMessage(p, "|cff00ffccYou already unlocked this cosmetic.|r")
             return
         end
 
@@ -506,7 +581,7 @@ OnInit("Cosmetic", function ()
             BlzFrameSetVisible(Cosmetics[id].button, true)
         end
 
-        DisplayTextToPlayer(p, 0, 0, "Cosmetic unlocked successfully.")
+        EditUnlockMessage(p, "|cff00ff00Cosmetic unlocked successfully.|r")
     end
 
     ---@param p player

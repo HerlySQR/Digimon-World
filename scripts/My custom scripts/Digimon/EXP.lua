@@ -26,6 +26,24 @@ OnInit(function ()
 
     local LocalPlayer = GetLocalPlayer()
 
+    Digimon.expEvent = EventListener.create()
+
+    ---@param d Digimon
+    ---@param exp integer
+    function AddExp(d, exp)
+        local data = {receiver = d, exp = exp}
+
+        Digimon.expEvent:run(data)
+
+        local tt = CreateTextTagUnitBJ("+" .. data.exp .. " exp", data.receiver.root, ZOFSSET, SIZE, COLOR_R, COLOR_G, COLOR_B, 0.)
+        SetTextTagVelocityBJ(tt, 64, 90)
+        SetTextTagPermanent(tt, false)
+        SetTextTagLifespan(tt, 1.00)
+        SetTextTagFadepoint(tt, 0.50)
+        SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, data.receiver:getOwner()))
+        data.receiver:setExp(data.receiver:getExp() + data.exp)
+    end
+
     Digimon.killEvent:register(function (info)
         local killer = info.killer
         local dead = info.target
@@ -34,14 +52,7 @@ OnInit(function ()
             Digimon.enumInRange(dead:getX(), dead:getY(), AREA, function (picked)
                 local diff = math.abs(picked:getLevel() - dead:getLevel())
                 if IsPlayerAlly(owner, picked:getOwner()) and diff <= 5 then
-                    local XP = ConvertEXP(dead:getLevel(), diff)
-                    picked:setExp(picked:getExp() + XP)
-                    local tt = CreateTextTagUnitBJ("+" .. XP .. " exp", picked.root, ZOFSSET, SIZE, COLOR_R, COLOR_G, COLOR_B, 0.)
-                    SetTextTagVelocityBJ(tt, 64, 90)
-                    SetTextTagPermanent(tt, false)
-                    SetTextTagLifespan(tt, 1.00)
-                    SetTextTagFadepoint(tt, 0.50)
-                    SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, owner))
+                    AddExp(picked, ConvertEXP(dead:getLevel(), diff))
                 end
             end)
         end

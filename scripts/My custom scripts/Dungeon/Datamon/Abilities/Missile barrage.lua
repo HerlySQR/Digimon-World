@@ -14,8 +14,6 @@ OnInit(function ()
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
         local owner = GetOwningPlayer(caster)
-        local cx = GetUnitX(caster)
-        local cy = GetUnitY(caster)
         local x = GetSpellTargetX()
         local y = GetSpellTargetY()
 
@@ -54,7 +52,7 @@ OnInit(function ()
                     local dist = AREA * math.random()
                     local tx = x + dist * math.cos(angle)
                     local ty = y + dist * math.sin(angle)
-                    local missile = Missiles:create(cx, cy, 25, tx, ty, 0)
+                    local missile = Missiles:create(GetUnitX(caster), GetUnitY(caster), 25, tx, ty, 0)
                     missile.source = caster
                     missile.owner = owner
                     missile.damage = DAMAGE_PER_SHOT[GetUnitAbilityLevel(caster, SPELL)]

@@ -46,7 +46,7 @@ OnInit("BossFightUtils", function ()
 
     ---@param name string
     ---@param boss unit
-    ---@param actions fun(u: unit, unitsInTheField?: Set)
+    ---@param actions fun(u?: unit, unitsInTheField?: Set)
     ---@param onStart? function
     ---@param onReset? function
     function InitBossFight(name, boss, actions, onStart, onReset)
@@ -60,6 +60,7 @@ OnInit("BossFightUtils", function ()
 
         local owner = GetOwningPlayer(boss)
         local battlefield = {} ---@type rect[]
+        local points = {} ---@type rect[]
         local interval = onlyOne and 5. or 2. -- seconds
 
         local initialPosX, initialPosY = GetUnitX(boss), GetUnitY(boss)

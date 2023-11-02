@@ -220,5 +220,53 @@ OnInit("AbilityUtils", function ()
         return dead
     end
 
+    ---@param num number
+    ---@return number
+    local function roundUp(num)
+        local remainder = ModuloReal(math.abs(num), bj_CELLWIDTH)
+        if remainder == 0. then
+            return num
+        end
+
+        if num < 0 then
+            return -(math.abs(num) - remainder);
+        else
+            return num + bj_CELLWIDTH - remainder;
+        end
+    end
+
+    ---@param centerX number
+    ---@param centerY number
+    ---@param range number
+    ---@param callback fun(x: number, y: number)
+    function ForEachCellInRange(centerX, centerY, range, callback)
+        centerX = roundUp(centerX)
+        centerY = roundUp(centerY)
+
+        -- Iterate over the center
+        callback(centerX, centerY)
+
+        local n = math.ceil(range / bj_CELLWIDTH)
+
+        for i = 1, n do
+            -- Iterate over the axis
+            local xOffset = i * bj_CELLWIDTH
+            callback(centerX + xOffset, centerY)
+            callback(centerX, centerY + xOffset)
+            callback(centerX - xOffset, centerY)
+            callback(centerX, centerY - xOffset)
+            -- Iterate over each quadrant
+            for j = 1, n do
+                local yOffset = j * bj_CELLWIDTH
+                if DistanceBetweenCoords(centerX, centerY, centerX + xOffset, centerY + yOffset) <= range then
+                    callback(centerX + xOffset, centerY + yOffset)
+                    callback(centerX + xOffset, centerY - yOffset)
+                    callback(centerX - xOffset, centerY + yOffset)
+                    callback(centerX - xOffset, centerY - yOffset)
+                end
+            end
+        end
+    end
+
 end)
 Debug.endFile()
