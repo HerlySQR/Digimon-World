@@ -7,6 +7,13 @@ OnInit("BossFightUtils", function ()
     local isCasting = {} ---@type boolean[]
     local LocalPlayer = GetLocalPlayer()
     local ignored = {} ---@type table<unit, table<unit, boolean>>
+    local battlefield = {} ---@type table<unit, rect[]>
+
+    local DASH_EFFECT = "war3mapImported\\Valiant Charge Royal.mdx"
+    local TELEPORT_CASTER_EFFECT = "war3mapImported\\Blink Purple Caster.mdx"
+    local TELEPORT_TARGET_EFFECT = "war3mapImported\\Blink Purple Target.mdx"
+    local UNDERGOUND_EFFECT = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
+    local UNDERGROUND_MODEL = FourCC('')
 
     ---Don't cast timed duration spells when other timed duration spell is casted
     ---@param caster unit
@@ -35,6 +42,156 @@ OnInit("BossFightUtils", function ()
         ignored[boss][u] = flag
     end
 
+    ---@param boss unit
+    ---@return number x, number y
+    local function GetRandomPointInBattlefield(boss)
+        local r = battlefield[boss][math.random(#battlefield[boss])]
+        return GetRandomReal(GetRectMinX(r), GetRectMaxX(r)), GetRandomReal(GetRectMinY(r), GetRectMaxY(r))
+    end
+
+    ---@alias BossMoveType
+    ---| 0 # Dash
+    ---| 1 # Teleport
+    ---| 2 # Underground
+    ---| 3 # Jump
+
+    ---@param a number
+    ---@param b number
+    ---@param greater boolean
+    ---@return boolean
+    local function compare(a, b, greater)
+        if greater then
+            return a >= b
+        else
+            return a <= b
+        end
+    end
+
+    ---@param boss unit
+    ---@param typ BossMoveType
+    ---@param speed number
+    ---@param dmg number
+    ---@param offensive boolean
+    function BossMove(boss, typ, speed, dmg, offensive)
+        isCasting[boss] = true
+
+        local xTarget, yTarget
+        speed = speed * 0.02
+
+        local checkAmount
+        ForEachCellInRange(GetUnitX(boss), GetUnitY(boss), 640, function (x, y)
+            for i = 1, #battlefield[boss] do
+                if RectContainsCoords(battlefield[boss][i], x, y) and IsTerrainWalkable(x, y) then
+                    local checkUnits = 0
+                    ForUnitsInRange(x, y, 256, function (u)
+                        if IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                            checkUnits = checkUnits + 1
+                        end
+                    end)
+                    if not checkAmount or compare(checkUnits, checkAmount, offensive) then
+                        checkAmount = checkUnits
+                        xTarget, yTarget = x, y
+                    end
+                end
+            end
+        end)
+
+        local angle = math.atan(yTarget - GetUnitY(boss), xTarget - GetUnitX(boss))
+        SetUnitFacing(boss, math.deg(angle))
+        local att = ConvertAttackType(BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE, 0))
+
+        if typ == 0 then
+            local eff = AddSpecialEffectTarget(DASH_EFFECT, boss, "origin")
+            local affected = CreateGroup()
+            local finish = Timed.echo(0.1, function ()
+                ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
+                    if not IsUnitInGroup(u, affected) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                        GroupAddUnit(affected, u)
+                        Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
+                    end
+                end)
+            end)
+            Jump(boss, xTarget, yTarget, speed, 0, nil, nil, function ()
+                finish()
+                DestroyGroup(affected)
+                DestroyEffect(eff)
+                isCasting[boss] = false
+            end)
+        elseif typ == 1 then
+            local affected = CreateGroup()
+            local fun = function (u)
+                if not IsUnitInGroup(u, affected) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                    GroupAddUnit(affected, u)
+                    Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
+                end
+            end
+
+            DestroyEffect(AddSpecialEffect(TELEPORT_TARGET_EFFECT, xTarget, yTarget))
+            ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, fun)
+
+            DestroyEffect(AddSpecialEffect(TELEPORT_CASTER_EFFECT, GetUnitX(boss), GetUnitY(boss)))
+            ForUnitsInRange(xTarget, yTarget, 256, fun)
+
+            DestroyGroup(affected)
+
+            isCasting[boss] = false
+        elseif typ == 2 then
+            SetUnitInvulnerable(boss, true)
+            local wasEnabled1 = BlzGetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0)
+            local wasEnabled2 = BlzGetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1)
+            BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, false)
+            BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
+
+            local collision = BlzGetUnitCollisionSize(boss)
+            local crater = TerrainDeformCrater(GetUnitX(boss), GetUnitY(boss), collision*1.5, collision, 3000, false)
+            Timed.call(3., function ()
+                BlzSetUnitSkin(boss, UNDERGROUND_MODEL)
+                TerrainDeformStop(crater, 3000)
+            end)
+            local stopEffect = Timed.echo(0.5, function ()
+                DestroyEffect(AddSpecialEffect(UNDERGOUND_EFFECT, GetUnitX(boss), GetUnitY(boss)))
+            end)
+            Timed.echo(1., function ()
+                if math.random(1, 4) == 1 then
+                    IssuePointOrderById(boss, Orders.smart, GetRandomPointInBattlefield(boss))
+                end
+                if math.random(1, 5) == 1 then
+                    ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
+                        if IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                            Damage.apply(boss, u, dmg, false, false, udg_Nature, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
+                        end
+                    end)
+                end
+                if DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), xTarget, yTarget) <= collision then
+                    IssueImmediateOrderById(boss, Orders.stop)
+                    crater = TerrainDeformCrater(GetUnitX(boss), GetUnitY(boss), collision*1.5, collision, 3000, false)
+                    Timed.call(3., function ()
+                        BlzSetUnitSkin(boss, GetUnitTypeId(boss))
+                        TerrainDeformStop(crater, 3000)
+                        stopEffect()
+                        SetUnitInvulnerable(boss, false)
+                        BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, wasEnabled1)
+                        BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, wasEnabled2)
+                        isCasting[boss] = false
+                    end)
+                    return true
+                end
+            end)
+        elseif typ == 3 then
+            local oldMove = BlzGetUnitMovementType(boss)
+            BlzSetUnitMovementType(boss, 2)
+            Jump(boss, xTarget, yTarget, speed, 400, nil, nil, function ()
+                BlzSetUnitMovementType(boss, oldMove)
+                ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
+                    if IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                        Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
+                    end
+                end)
+                isCasting[boss] = false
+            end)
+        end
+    end
+
     OnInit.final("BossFightUtils_OnlyOne", function ()
         Require "PlayerUtils"
         local count = 0
@@ -59,9 +216,8 @@ OnInit("BossFightUtils", function ()
         ignored[boss] = __jarray(false)
 
         local owner = GetOwningPlayer(boss)
-        local battlefield = {} ---@type rect[]
-        local points = {} ---@type rect[]
         local interval = onlyOne and 5. or 2. -- seconds
+        battlefield[boss] = {}
 
         local initialPosX, initialPosY = GetUnitX(boss), GetUnitY(boss)
 
@@ -73,7 +229,7 @@ OnInit("BossFightUtils", function ()
         while true do
             local r = rawget(_G, "gg_rct_" .. name .. "_" .. numRect) -- To not display the error message
             if r then
-                battlefield[numRect] = r
+                battlefield[boss][numRect] = r
             else
                 break
             end
@@ -120,12 +276,12 @@ OnInit("BossFightUtils", function ()
                 local isInBattlefield = false
                 -- Check if are units in the battlefield
                 for i = 1, numRect do
-                    ForUnitsInRect(battlefield[i], function (u)
+                    ForUnitsInRect(battlefield[boss][i], function (u)
                         if u ~= boss and UnitAlive(u) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
                             unitsInTheField:addSingle(u)
                         end
                     end)
-                    isInBattlefield = isInBattlefield or RectContainsUnit(battlefield[i], boss)
+                    isInBattlefield = isInBattlefield or RectContainsUnit(battlefield[boss][i], boss)
                 end
 
                 if unitsInTheField:isEmpty() then
@@ -164,7 +320,7 @@ OnInit("BossFightUtils", function ()
 
                     Timed.echo(0.5, 10., function ()
                         for i = 1, numRect do
-                            isInBattlefield = RectContainsUnit(battlefield[i], boss)
+                            isInBattlefield = RectContainsUnit(battlefield[boss][i], boss)
                             if isInBattlefield then
                                 return true
                             end

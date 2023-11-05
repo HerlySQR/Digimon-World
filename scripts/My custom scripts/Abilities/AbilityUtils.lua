@@ -238,31 +238,31 @@ OnInit("AbilityUtils", function ()
     ---@param centerX number
     ---@param centerY number
     ---@param range number
-    ---@param callback fun(x: number, y: number)
+    ---@param callback fun(x: number, y: number): boolean?
     function ForEachCellInRange(centerX, centerY, range, callback)
         centerX = roundUp(centerX)
         centerY = roundUp(centerY)
 
         -- Iterate over the center
-        callback(centerX, centerY)
+        if callback(centerX, centerY) then return end
 
         local n = math.ceil(range / bj_CELLWIDTH)
 
         for i = 1, n do
             -- Iterate over the axis
             local xOffset = i * bj_CELLWIDTH
-            callback(centerX + xOffset, centerY)
-            callback(centerX, centerY + xOffset)
-            callback(centerX - xOffset, centerY)
-            callback(centerX, centerY - xOffset)
+            if callback(centerX + xOffset, centerY) then return end
+            if callback(centerX, centerY + xOffset) then return end
+            if callback(centerX - xOffset, centerY) then return end
+            if callback(centerX, centerY - xOffset) then return end
             -- Iterate over each quadrant
             for j = 1, n do
                 local yOffset = j * bj_CELLWIDTH
                 if DistanceBetweenCoords(centerX, centerY, centerX + xOffset, centerY + yOffset) <= range then
-                    callback(centerX + xOffset, centerY + yOffset)
-                    callback(centerX + xOffset, centerY - yOffset)
-                    callback(centerX - xOffset, centerY + yOffset)
-                    callback(centerX - xOffset, centerY - yOffset)
+                    if callback(centerX + xOffset, centerY + yOffset) then return end
+                    if callback(centerX + xOffset, centerY - yOffset) then return end
+                    if callback(centerX - xOffset, centerY + yOffset) then return end
+                    if callback(centerX - xOffset, centerY - yOffset) then return end
                 end
             end
         end

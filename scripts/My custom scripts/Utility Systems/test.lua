@@ -1,78 +1,77 @@
 Debug.beginFile("Test")
 OnInit(function ()
+    Require "Pathfinder"
 
-    ---Returns the distance between the given coords
-    ---@param x1 number
-    ---@param y1 number
-    ---@param x2 number
-    ---@param y2 number
-    ---@return number
-    function DistanceBetweenCoords(x1, y1, x2, y2)
-        return math.sqrt((x1 - x2)^2 + (y1 - y2)^2)
-    end
+    local MAX_RANGE = 100.
+    local DUMMY_ITEM = CreateItem(FourCC('wolg'), 0, 0)
+    SetItemVisible(DUMMY_ITEM, false)
+    local SEARCH_RECT = Rect(0, 0, 128, 128)
+    local hiddenItems = {} ---@type item[]
 
-    ---@param num number
-    ---@return number
-    local function roundUp(num)
-        local remainder = ModuloReal(math.abs(num), bj_CELLWIDTH)
-        if remainder == 0. then
-            return num
-        end
-
-        if num < 0 then
-            return -(math.abs(num) - remainder);
-        else
-            return num + bj_CELLWIDTH - remainder;
-        end
-    end
-
-    ---@param centerX number
-    ---@param centerY number
-    ---@param range number
-    ---@param callback fun(x: number, y: number)
-    function ForEachCellInRange(centerX, centerY, range, callback)
-        centerX = roundUp(centerX)
-        centerY = roundUp(centerY)
-
-        -- Iterate over the center
-        callback(centerX, centerY)
-
-        local n = math.ceil(range / bj_CELLWIDTH)
-
-        for i = 1, n do
-            -- Iterate over the axis
-            local xOffset = i * bj_CELLWIDTH
-            callback(centerX + xOffset, centerY)
-            callback(centerX, centerY + xOffset)
-            callback(centerX - xOffset, centerY)
-            callback(centerX, centerY - xOffset)
-            -- Iterate over each quadrant
-            for j = 1, n do
-                local yOffset = j * bj_CELLWIDTH
-                if DistanceBetweenCoords(centerX, centerY, centerX + xOffset, centerY + yOffset) <= range then
-                    callback(centerX + xOffset, centerY + yOffset)
-                    callback(centerX + xOffset, centerY - yOffset)
-                    callback(centerX - xOffset, centerY + yOffset)
-                    callback(centerX - xOffset, centerY - yOffset)
-                end
+    ---@param x number
+    ---@param y number
+    ---@return boolean
+    function IsTerrainWalkable(x, y)
+        -- Hide any items in the area to avoid conflicts with our item
+        MoveRectTo(SEARCH_RECT, x, y)
+        EnumItemsInRect(SEARCH_RECT, nil, function ()
+            if IsItemVisible(GetEnumItem()) then
+                table.insert(hiddenItems, GetEnumItem())
+                SetItemVisible(GetEnumItem(), false)
             end
+        end)
+
+        -- Try to move the test item and get its coords
+        SetItemPosition(DUMMY_ITEM, x, y) -- Unhides the item
+        local tempX, tempY = GetItemX(DUMMY_ITEM), GetItemY(DUMMY_ITEM)
+        SetItemVisible(DUMMY_ITEM, false) -- Hide it again
+
+        -- Unhide any items hidden at the start
+        for i = 1, #hiddenItems do
+            SetItemVisible(hiddenItems[i], true)
         end
+        hiddenItems = {}
+
+        return (x - tempX)^2 + (y - tempY)^2 <= MAX_RANGE and not IsTerrainPathable(x, y, PATHING_TYPE_WALKABILITY)
     end
+
+    local firstX, firstY = 0, 0
 
     local t = CreateTrigger()
-    TriggerRegisterPlayerChatEvent(t, Player(0), "g", true)
+    TriggerRegisterPlayerEvent(t, Player(0), EVENT_PLAYER_MOUSE_DOWN)
     TriggerAddAction(t, function ()
-        ForEachCellInRange(GetUnitX(gg_unit_hpea_0000), GetUnitY(gg_unit_hpea_0000), 512, function (x, y)
-            SetTerrainType(x, y, FourCC("Lgrs"), -1, 1, 0)
+        local mx = BlzGetTriggerPlayerMouseX()
+        local my = BlzGetTriggerPlayerMouseY()
+        local eff = AddSpecialEffect("Abilities\\Weapons\\VengeanceMissile\\VengeanceMissile.mdl", mx, my)
+        Timed.call(5., function ()
+            DestroyEffect(eff)
         end)
-    end)
 
-    t = CreateTrigger()
-    TriggerRegisterPlayerChatEvent(t, Player(0), "s", true)
-    TriggerAddAction(t, function ()
-        ForEachCellInRange(GetUnitX(gg_unit_hpea_0000), GetUnitY(gg_unit_hpea_0000), 512, function (x, y)
-            CreateUnit(Player(0), FourCC('hpea'), x, y, math.random(0, 360))
-        end)
+        if firstX == 0 and firstY == 0 then
+            firstX, firstY = mx, my
+        else
+            local finder = Pathfinder.create(firstX, firstY, mx, my)
+            finder.stepDelay = 0.02
+            finder.outputPath = true
+            finder.debug = true
+            finder:setCond(IsTerrainWalkable)
+
+            finder:search(function (success, path)
+                if success then
+                    print("Path found. Nodes = " .. #path)
+                    for i = 1, #path - 1 do
+                        local ln = AddLightning("CLPB", false, path[i].posX, path[i].posY, path[i+1].posX, path[i+1].posY)
+                        Timed.call(10., function ()
+                            DestroyLightning(ln)
+                        end)
+                    end
+                end
+            end)
+
+            firstX, firstY = 0, 0
+        end
     end)
+    FogEnable(false)
+    FogMaskEnable(false)
 end)
 Debug.endFile()
