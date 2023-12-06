@@ -156,8 +156,11 @@ OnInit(function ()
                 IssuePointOrderById(boss, missileBarrageOrder, GetUnitX(u), GetUnitY(u))
             elseif chance > 30 and chance <= 80 then
                 IssueTargetOrderById(boss, hommingMissileOrder, u)
+            elseif not secondPhase or metamorphosis then
+                BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)
             end
         end
+
 
         if canTrap then
             cooldown = cooldown - 1
@@ -188,6 +191,9 @@ OnInit(function ()
         end
 
         if not secondPhase then
+            if BossStillCasting(boss) then
+                return
+            end
             if GetUnitHPRatio(boss) <= 0.4 then
                 secondPhase = true
 
@@ -250,6 +256,9 @@ OnInit(function ()
         end
 
         if not metamorphosis then
+            if BossStillCasting(boss) then
+                return
+            end
             if goMetamorphosis then
                 metamorphosis = true
                 SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 2)

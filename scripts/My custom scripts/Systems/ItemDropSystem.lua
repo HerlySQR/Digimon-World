@@ -2,7 +2,7 @@ if Debug then Debug.beginFile("ItemDropSystem") end
 OnInit(function ()
     Require "Timed"
 
-    local instances = {}
+    local instances = {} ---@type table<unit, {itempool: itempool, once: boolean}[]>
 
     ---Makes the creep have a chance of drop an item when it dies.
     ---If the weights is an empty table, then it will be assume that

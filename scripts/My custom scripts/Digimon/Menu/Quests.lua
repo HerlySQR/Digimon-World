@@ -37,11 +37,14 @@ OnInit("Quests", function ()
     ---@class QuestTemplate
     ---@field name string
     ---@field description string
+    ---@field id integer
     ---@field level integer
     ---@field onlyOnce boolean
     ---@field maxProgress integer
     ---@field questMark effect?
     ---@field counter texttag?
+    ---@field isRequirement boolean
+    ---@field requirements QuestTemplate[]?
 
     local QuestTemplates = {} ---@type table<integer, QuestTemplate>
 
@@ -62,7 +65,19 @@ OnInit("Quests", function ()
         else
             local quest = PlayerQuests[LocalPlayer][PressedQuest]
             BlzFrameSetText(QuestInformationName, "|cffFFCC00" .. quest.name .. "|r")
-            BlzFrameSetText(QuestInformationDescription, quest.description)
+
+            local description = quest.description
+            if QuestTemplates[quest.id].requirements then
+                for _, req in ipairs(QuestTemplates[quest.id].requirements) do
+                    description = description
+                                    .. "\n |cff" .. (PlayerQuests[LocalPlayer][req.id].completed and "888888" or "ffffff") .. "- "
+                                    .. req.description
+                                    .. (QuestTemplates[req.id].maxProgress > 1 and ("(" .. PlayerQuests[LocalPlayer][req.id].progress .. "/" .. QuestTemplates[req.id].maxProgress .. ")") or "")
+                                    .. "|r"
+                end
+            end
+            BlzFrameSetText(QuestInformationDescription, description)
+
             local max = QuestTemplates[quest.id].maxProgress
             if max > 1 then
                 BlzFrameSetVisible(QuestInformationProgress, true)
@@ -215,9 +230,17 @@ OnInit("Quests", function ()
         end
     end)
 
+    local setRequirements = false
+    local setRequirementsToQuestId = -1
+    local lastRequirements = {} ---@type QuestTemplate[]
+    local savedFields
+
     ---@param p player
     ---@param id integer
     local function AddQuest(p, id)
+        if QuestTemplates[id].isRequirement then
+            error("You can't manually add a requirement to a player, id: " .. id)
+        end
         if PlayerQuests[p][id] then
             if PlayerQuests[p][id].completed then
                 ErrorMessage("You already completed this quest.", p)
@@ -235,6 +258,19 @@ OnInit("Quests", function ()
             completed = false,
             progress = 0
         }
+        if QuestTemplates[id].requirements then
+            for _, v in ipairs(QuestTemplates[id].requirements) do
+                PlayerQuests[p][v.id] = {
+                    name = v.name,
+                    description = v.description,
+                    owner = p,
+                    id = v.id,
+                    level = v.level,
+                    completed = false,
+                    progress = 0
+                }
+            end
+        end
         if p == LocalPlayer then
             QuestList:add(QuestOptionT[id])
             BlzPlaySpecialEffect(QuestTemplates[id].questMark, ANIM_TYPE_DEATH)
@@ -267,10 +303,13 @@ OnInit("Quests", function ()
     ---@param maxProgress integer
     ---@param petitioner unit
     local function DefineQuestTemplate(name, description, id, level, onlyOnce, maxProgress, petitioner)
+        if id == -1 then
+            error("The quest id wasn't set.")
+        end
         if QuestTemplates[id] then
             error("You are repiting a quest id: " .. QuestTemplates[id].name .. " and " .. name)
         end
-        QuestTemplates[id] = {name = name, description = description, level = level, onlyOnce = onlyOnce, maxProgress = maxProgress}
+        QuestTemplates[id] = {name = name, description = description, level = level, id = id, onlyOnce = onlyOnce, maxProgress = maxProgress}
         if petitioner then
             local questMark = AddSpecialEffect(QUEST_MARK, GetUnitX(petitioner), GetUnitY(petitioner))
             if not onlyOnce then
@@ -279,6 +318,18 @@ OnInit("Quests", function ()
             BlzSetSpecialEffectZ(questMark, GetUnitZ(petitioner, true) + 175)
             QuestTemplates[id].questMark = questMark
             QuestTemplates[id].counter = CreateTextTagUnitBJ("", petitioner, 50., 10., 100., 100., 100., 0.)
+        end
+        if setRequirements then
+            QuestTemplates[id].isRequirement = true
+            table.insert(lastRequirements, QuestTemplates[id])
+        else
+            QuestTemplates[id].isRequirement = false
+            if setRequirementsToQuestId ~= -1 then
+                QuestTemplates[setRequirementsToQuestId].requirements = lastRequirements
+
+                lastRequirements = {}
+                setRequirementsToQuestId = -1
+            end
         end
     end
 
@@ -318,13 +369,15 @@ OnInit("Quests", function ()
         end
         PlayerQuests[p][id].completed = true
         if p == LocalPlayer then
-            QuestList:remove(QuestOptionT[id])
-            PressedQuest = -1
-            UpdateMenu()
-            StartSound(bj_questCompletedSound)
-            if not BlzFrameIsVisible(QuestMenu) then
-                DisplayTextToPlayer(p, 0, 0, "|cffFFCC00QUEST COMPLETED:|r |cff00ff00" .. PlayerQuests[p][id].name .. "|r")
+            if not QuestTemplates[id].isRequirement then
+                QuestList:remove(QuestOptionT[id])
+                PressedQuest = -1
+                StartSound(bj_questCompletedSound)
+                if not BlzFrameIsVisible(QuestMenu) then
+                    DisplayTextToPlayer(p, 0, 0, "|cffFFCC00QUEST COMPLETED:|r |cff00ff00" .. PlayerQuests[p][id].name .. "|r")
+                end
             end
+            UpdateMenu()
         end
     end
 
@@ -372,10 +425,12 @@ OnInit("Quests", function ()
                         progress = progresses[i]
                     }
                     if p == LocalPlayer then
-                        if isCompleted[i] then
-                            QuestList:remove(QuestOptionT[id])
-                        else
-                            QuestList:add(QuestOptionT[id])
+                        if not QuestTemplates[id].isRequirement then
+                            if isCompleted[i] then
+                                QuestList:remove(QuestOptionT[id])
+                            else
+                                QuestList:add(QuestOptionT[id])
+                            end
                         end
                         if QuestTemplates[id].questMark then
                             BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
@@ -420,7 +475,7 @@ OnInit("Quests", function ()
             DefineQuestTemplate(udg_QuestName, udg_QuestDescription, udg_QuestId, udg_QuestLevel, udg_QuestOnlyOnce, udg_QuestMaxProgress, udg_QuestPetitioner)
             udg_QuestName = ""
             udg_QuestDescription = ""
-            udg_QuestId = 0
+            udg_QuestId = -1
             udg_QuestLevel = 0
             udg_QuestOnlyOnce = false
             udg_QuestMaxProgress = 1
@@ -555,6 +610,28 @@ OnInit("Quests", function ()
     DestroyForce(udg_QuestForce)
     GlobalRemap("udg_QuestForce", function ()
         return bj_FORCE_PLAYER[GetPlayerId(udg_QuestPlayer)]
+    end)
+    GlobalRemap("udg_QuestSetRequirements", nil, function (value)
+        if value then
+            if setRequirements then
+                error("You can't set to true to \"QuestSetRequirements\" 2 times in a row")
+            end
+            setRequirements = true
+            setRequirementsToQuestId = udg_QuestId
+            savedFields = {udg_QuestName, udg_QuestDescription, udg_QuestLevel, udg_QuestOnlyOnce, udg_QuestMaxProgress, udg_QuestPetitioner}
+        else
+            if not setRequirements then
+                error("You can't set to false to \"QuestSetRequirements\" 2 times in a row")
+            end
+            setRequirements = false
+            udg_QuestName = savedFields[1]
+            udg_QuestDescription = savedFields[2]
+            udg_QuestId = setRequirementsToQuestId
+            udg_QuestLevel = savedFields[3]
+            udg_QuestOnlyOnce = savedFields[4]
+            udg_QuestMaxProgress = savedFields[5]
+            udg_QuestPetitioner = savedFields[6]
+        end
     end)
 
 end)

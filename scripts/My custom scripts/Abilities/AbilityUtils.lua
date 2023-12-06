@@ -103,6 +103,7 @@ OnInit("AbilityUtils", function ()
         EnumItemsInRect(SEARCH_RECT, nil, function ()
             if IsItemVisible(GetEnumItem()) then
                 table.insert(hiddenItems, GetEnumItem())
+                SetItemVisible(GetEnumItem(), false)
             end
         end)
 

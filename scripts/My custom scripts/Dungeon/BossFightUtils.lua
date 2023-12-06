@@ -2,6 +2,7 @@ Debug.beginFile("BossFightUtils")
 OnInit("BossFightUtils", function ()
     Require "AbilityUtils"
     Require "ZTS"
+    Require "Pathfinder"
 
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
@@ -13,7 +14,6 @@ OnInit("BossFightUtils", function ()
     local TELEPORT_CASTER_EFFECT = "war3mapImported\\Blink Purple Caster.mdx"
     local TELEPORT_TARGET_EFFECT = "war3mapImported\\Blink Purple Target.mdx"
     local UNDERGOUND_EFFECT = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
-    local UNDERGROUND_MODEL = FourCC('')
 
     ---Don't cast timed duration spells when other timed duration spell is casted
     ---@param caster unit
@@ -43,10 +43,28 @@ OnInit("BossFightUtils", function ()
     end
 
     ---@param boss unit
+    ---@param x number
+    ---@param y number
+    ---@return boolean
+    local function IsPointInBattlefield(boss, x, y)
+        for i = 1, #battlefield[boss] do
+            if RectContainsCoords(battlefield[boss][i], x, y) then
+                return true
+            end
+        end
+        return false
+    end
+
+    ---@param boss unit
     ---@return number x, number y
     local function GetRandomPointInBattlefield(boss)
         local r = battlefield[boss][math.random(#battlefield[boss])]
         return GetRandomReal(GetRectMinX(r), GetRectMaxX(r)), GetRandomReal(GetRectMinY(r), GetRectMaxY(r))
+    end
+
+    local function UnitCanAttack(u)
+        return BlzGetUnitWeaponBooleanField(u, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0) or
+               BlzGetUnitWeaponBooleanField(u, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1)
     end
 
     ---@alias BossMoveType
@@ -76,7 +94,6 @@ OnInit("BossFightUtils", function ()
         isCasting[boss] = true
 
         local xTarget, yTarget
-        speed = speed * 0.02
 
         local checkAmount
         ForEachCellInRange(GetUnitX(boss), GetUnitY(boss), 640, function (x, y)
@@ -96,100 +113,133 @@ OnInit("BossFightUtils", function ()
             end
         end)
 
-        local angle = math.atan(yTarget - GetUnitY(boss), xTarget - GetUnitX(boss))
-        SetUnitFacing(boss, math.deg(angle))
-        local att = ConvertAttackType(BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE, 0))
+        local finder = Pathfinder.create(xTarget, yTarget, GetUnitX(boss), GetUnitY(boss))
+        finder.outputPath = false
+        finder.stepDelay = 0.04
+        finder:setCond(function (x, y)
+            return IsTerrainWalkable(x, y) and IsPointInBattlefield(boss, x, y)
+        end)
+        finder:search(function (sucess, _)
+            if sucess then
+                local angle = math.atan(yTarget - GetUnitY(boss), xTarget - GetUnitX(boss))
+                SetUnitFacing(boss, math.deg(angle))
+                local att = ConvertAttackType(BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE, 0))
 
-        if typ == 0 then
-            local eff = AddSpecialEffectTarget(DASH_EFFECT, boss, "origin")
-            local affected = CreateGroup()
-            local finish = Timed.echo(0.1, function ()
-                ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
-                    if not IsUnitInGroup(u, affected) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
-                        GroupAddUnit(affected, u)
-                        Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
-                    end
-                end)
-            end)
-            Jump(boss, xTarget, yTarget, speed, 0, nil, nil, function ()
-                finish()
-                DestroyGroup(affected)
-                DestroyEffect(eff)
-                isCasting[boss] = false
-            end)
-        elseif typ == 1 then
-            local affected = CreateGroup()
-            local fun = function (u)
-                if not IsUnitInGroup(u, affected) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
-                    GroupAddUnit(affected, u)
-                    Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
-                end
-            end
-
-            DestroyEffect(AddSpecialEffect(TELEPORT_TARGET_EFFECT, xTarget, yTarget))
-            ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, fun)
-
-            DestroyEffect(AddSpecialEffect(TELEPORT_CASTER_EFFECT, GetUnitX(boss), GetUnitY(boss)))
-            ForUnitsInRange(xTarget, yTarget, 256, fun)
-
-            DestroyGroup(affected)
-
-            isCasting[boss] = false
-        elseif typ == 2 then
-            SetUnitInvulnerable(boss, true)
-            local wasEnabled1 = BlzGetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0)
-            local wasEnabled2 = BlzGetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1)
-            BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, false)
-            BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
-
-            local collision = BlzGetUnitCollisionSize(boss)
-            local crater = TerrainDeformCrater(GetUnitX(boss), GetUnitY(boss), collision*1.5, collision, 3000, false)
-            Timed.call(3., function ()
-                BlzSetUnitSkin(boss, UNDERGROUND_MODEL)
-                TerrainDeformStop(crater, 3000)
-            end)
-            local stopEffect = Timed.echo(0.5, function ()
-                DestroyEffect(AddSpecialEffect(UNDERGOUND_EFFECT, GetUnitX(boss), GetUnitY(boss)))
-            end)
-            Timed.echo(1., function ()
-                if math.random(1, 4) == 1 then
-                    IssuePointOrderById(boss, Orders.smart, GetRandomPointInBattlefield(boss))
-                end
-                if math.random(1, 5) == 1 then
-                    ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
-                        if IsUnitEnemy(boss, GetOwningPlayer(u)) then
-                            Damage.apply(boss, u, dmg, false, false, udg_Nature, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
-                        end
+                if typ == 0 then
+                    local eff = AddSpecialEffectTarget(DASH_EFFECT, boss, "origin")
+                    local affected = CreateGroup()
+                    local finish = Timed.echo(0.1, function ()
+                        ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
+                            if not IsUnitInGroup(u, affected) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                                GroupAddUnit(affected, u)
+                                Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
+                            end
+                        end)
                     end)
-                end
-                if DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), xTarget, yTarget) <= collision then
-                    IssueImmediateOrderById(boss, Orders.stop)
-                    crater = TerrainDeformCrater(GetUnitX(boss), GetUnitY(boss), collision*1.5, collision, 3000, false)
-                    Timed.call(3., function ()
-                        BlzSetUnitSkin(boss, GetUnitTypeId(boss))
-                        TerrainDeformStop(crater, 3000)
-                        stopEffect()
-                        SetUnitInvulnerable(boss, false)
-                        BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, wasEnabled1)
-                        BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, wasEnabled2)
+                    Jump(boss, xTarget, yTarget, speed, 0, nil, nil, function ()
+                        finish()
+                        DestroyGroup(affected)
+                        DestroyEffect(eff)
                         isCasting[boss] = false
                     end)
-                    return true
-                end
-            end)
-        elseif typ == 3 then
-            local oldMove = BlzGetUnitMovementType(boss)
-            BlzSetUnitMovementType(boss, 2)
-            Jump(boss, xTarget, yTarget, speed, 400, nil, nil, function ()
-                BlzSetUnitMovementType(boss, oldMove)
-                ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
-                    if IsUnitEnemy(boss, GetOwningPlayer(u)) then
-                        Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
+                elseif typ == 1 then
+                    local affected = CreateGroup()
+                    local fun = function (u)
+                        if not IsUnitInGroup(u, affected) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                            GroupAddUnit(affected, u)
+                            Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
+                        end
                     end
-                end)
-                isCasting[boss] = false
-            end)
-        end
+
+                    DestroyEffect(AddSpecialEffect(TELEPORT_TARGET_EFFECT, xTarget, yTarget))
+                    ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, fun)
+
+                    DestroyEffect(AddSpecialEffect(TELEPORT_CASTER_EFFECT, GetUnitX(boss), GetUnitY(boss)))
+                    ForUnitsInRange(xTarget, yTarget, 256, fun)
+
+                    SetUnitPosition(boss, xTarget, yTarget)
+
+                    DestroyGroup(affected)
+
+                    isCasting[boss] = false
+                elseif typ == 2 then
+                    local wasEnabled1 = BlzGetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0)
+                    local wasEnabled2 = BlzGetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1)
+                    BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, false)
+                    BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
+
+                    local stopEffect = Timed.echo(0.5, function ()
+                        DestroyEffect(AddSpecialEffect(UNDERGOUND_EFFECT, GetUnitX(boss), GetUnitY(boss)))
+                    end)
+
+                    local collision = BlzGetUnitCollisionSize(boss)
+                    local crater = TerrainDeformCrater(GetUnitX(boss), GetUnitY(boss), collision*2.5, collision, 3000, false)
+                    Timed.call(3., function ()
+                        SetUnitInvulnerable(boss, true)
+                        SetUnitPathing(boss, false)
+                        TerrainDeformStop(crater, 3000)
+                        ShowUnitHide(boss)
+
+                        local n = 6
+                        local m = 0
+                        Timed.echo(0.5, function ()
+                            if math.random(1, n) == 1 or m >= 10 then
+                                n = 1
+                                IssuePointOrderById(boss, Orders.smart, xTarget, yTarget)
+                            else
+                                m = m + 1
+                                local newX, newY = GetRandomPointInBattlefield(boss)
+                                local finder2 = Pathfinder.create(newX, newY, GetUnitX(boss), GetUnitY(boss))
+                                finder2.outputPath = false
+                                finder2.stepDelay = 0.04
+                                finder2:setCond(function (x, y)
+                                    return IsTerrainWalkable(x, y) and IsPointInBattlefield(boss, x, y)
+                                end)
+                                finder2:search(function (sucess2, _)
+                                    if sucess2 then
+                                        IssuePointOrderById(boss, Orders.smart, newX, newY)
+                                    end
+                                end)
+                            end
+                            if math.random(1, 3) == 1 then
+                                ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
+                                    if IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                                        Damage.apply(boss, u, dmg, false, false, udg_Nature, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
+                                    end
+                                end)
+                            end
+                            if DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), xTarget, yTarget) <= collision then
+                                IssueImmediateOrderById(boss, Orders.stop)
+                                crater = TerrainDeformCrater(GetUnitX(boss), GetUnitY(boss), collision*2.5, collision, 3000, false)
+                                Timed.call(3., function ()
+                                    TerrainDeformStop(crater, 3000)
+                                    stopEffect()
+                                    SetUnitPathing(boss, true)
+                                    SetUnitInvulnerable(boss, false)
+                                    ShowUnitShow(boss)
+                                    BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, wasEnabled1)
+                                    BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, wasEnabled2)
+                                    isCasting[boss] = false
+                                end)
+                                return true
+                            end
+                        end)
+                    end)
+                elseif typ == 3 then
+                    local oldMove = BlzGetUnitMovementType(boss)
+                    BlzSetUnitMovementType(boss, 2)
+                    Jump(boss, xTarget, yTarget, speed, 50, nil, nil, function ()
+                        BlzSetUnitMovementType(boss, oldMove)
+                        ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
+                            if IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                                Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
+                            end
+                        end)
+                        isCasting[boss] = false
+                    end)
+                end
+            end
+        end)
     end
 
     OnInit.final("BossFightUtils_OnlyOne", function ()
@@ -306,7 +356,9 @@ OnInit("BossFightUtils", function ()
                             attacking = true
                             local x, y = GetUnitX(u), GetUnitY(u)
                             Timed.call(2., function ()
-                                IssuePointOrderById(boss, Orders.attack, x, y)
+                                if UnitCanAttack(boss) then
+                                    IssuePointOrderById(boss, Orders.attack, x, y)
+                                end
                             end)
                         end
                         -- Spells

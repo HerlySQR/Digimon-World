@@ -4,6 +4,8 @@ OnInit("Pathfinder", function ()
     Require "PairingHeap"
     Require "Maths"
 
+    -- Based on Frotty's AstarJPS
+
     local GRID_SIZE = 64.
 
     ---@param x1 number
