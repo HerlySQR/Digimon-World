@@ -91,16 +91,18 @@ OnInit("Quests", function ()
             end
         end
         for i, q in pairs(PlayerQuests[LocalPlayer]) do
-            local progress = "In progress"
-            local max = QuestTemplates[q.id].maxProgress
-            if max > 1 then
-                if q.progress < max then
-                    progress = progress .. " " .. q.progress .. "/" .. max
-                else
-                    progress = progress .. " |cff00ff00" .. q.progress .. "/" .. max .. "|r"
+            if not QuestTemplates[i].isRequirement then
+                local progress = "In progress"
+                local max = QuestTemplates[q.id].maxProgress
+                if max > 1 then
+                    if q.progress < max then
+                        progress = progress .. " " .. q.progress .. "/" .. max
+                    else
+                        progress = progress .. " |cff00ff00" .. q.progress .. "/" .. max .. "|r"
+                    end
                 end
+                BlzFrameSetText(QuestOptionText[i], "|cffFFCC00" .. q.name .. "|r" .. (q.level > 0 and (" - Level " .. q.level) or "") .. "\n" .. progress)
             end
-            BlzFrameSetText(QuestOptionText[i], "|cffFFCC00" .. q.name .. "|r" .. (q.level > 0 and (" - Level " .. q.level) or "") .. "\n" .. progress)
         end
     end
 
@@ -201,6 +203,7 @@ OnInit("Quests", function ()
             BlzFrameSetSize(QuestOptionT[i], 0.15300, 0.04000)
             BlzFrameSetText(QuestOptionT[i], "")
             BlzFrameSetScale(QuestOptionT[i], 1.00)
+            BlzFrameSetEnable(QuestOptionT[i], false)
             BlzFrameSetVisible(QuestOptionT[i], false)
             t = CreateTrigger()
             BlzTriggerRegisterFrameEvent(t, QuestOptionT[i], FRAMEEVENT_CONTROL_CLICK)
@@ -272,6 +275,8 @@ OnInit("Quests", function ()
             end
         end
         if p == LocalPlayer then
+            BlzFrameSetEnable(QuestOptionT[id], true)
+            BlzFrameSetVisible(QuestOptionT[id], true)
             QuestList:add(QuestOptionT[id])
             BlzPlaySpecialEffect(QuestTemplates[id].questMark, ANIM_TYPE_DEATH)
             UpdateMenu()
@@ -325,7 +330,7 @@ OnInit("Quests", function ()
         else
             QuestTemplates[id].isRequirement = false
             if setRequirementsToQuestId ~= -1 then
-                QuestTemplates[setRequirementsToQuestId].requirements = lastRequirements
+                QuestTemplates[id].requirements = lastRequirements
 
                 lastRequirements = {}
                 setRequirementsToQuestId = -1
@@ -339,7 +344,7 @@ OnInit("Quests", function ()
         if not PlayerQuests[p][id] then
             return
         end
-        if not QuestTemplates[id].onlyOnce then
+        if not QuestTemplates[id].onlyOnce and not QuestTemplates[id].isRequirement then
             local counter = QuestTemplates[id].counter
             local remain = DO_QUEST_AGAIN_DELAY
             if counter then
@@ -356,6 +361,11 @@ OnInit("Quests", function ()
                 end
             end, function ()
                 PlayerQuests[p][id] = nil
+                if QuestTemplates[id].requirements then
+                    for _, v in ipairs(QuestTemplates[id].requirements) do
+                        PlayerQuests[p][v.id] = nil
+                    end
+                end
                 if p == LocalPlayer then
                     if QuestTemplates[id].questMark then
                         BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 255)
@@ -371,6 +381,8 @@ OnInit("Quests", function ()
         if p == LocalPlayer then
             if not QuestTemplates[id].isRequirement then
                 QuestList:remove(QuestOptionT[id])
+                BlzFrameSetEnable(QuestOptionT[id], false)
+                BlzFrameSetVisible(QuestOptionT[id], false)
                 PressedQuest = -1
                 StartSound(bj_questCompletedSound)
                 if not BlzFrameIsVisible(QuestMenu) then
@@ -429,6 +441,8 @@ OnInit("Quests", function ()
                             if isCompleted[i] then
                                 QuestList:remove(QuestOptionT[id])
                             else
+                                BlzFrameSetEnable(QuestOptionT[id], true)
+                                BlzFrameSetVisible(QuestOptionT[id], true)
                                 QuestList:add(QuestOptionT[id])
                             end
                         end
@@ -461,6 +475,12 @@ OnInit("Quests", function ()
             return ""
         end
         return QuestTemplates[id].name
+    end
+
+    ---@param id integer
+    ---@return boolean
+    function IsQuestARequirement(id)
+        return QuestTemplates[id] and QuestTemplates[id].isRequirement
     end
 
     OnInit.trig(function ()
@@ -558,7 +578,7 @@ OnInit("Quests", function ()
         end
         for k, _ in pairs(questId) do
             if coroutine.status(k) == "dead" then
-                questPlayer[k] = nil
+                questId[k] = nil
             end
         end
         for k, _ in pairs(QuestTrigger) do
@@ -619,6 +639,13 @@ OnInit("Quests", function ()
             setRequirements = true
             setRequirementsToQuestId = udg_QuestId
             savedFields = {udg_QuestName, udg_QuestDescription, udg_QuestLevel, udg_QuestOnlyOnce, udg_QuestMaxProgress, udg_QuestPetitioner}
+            udg_QuestName = ""
+            udg_QuestDescription = ""
+            udg_QuestId = -1
+            udg_QuestLevel = 0
+            udg_QuestOnlyOnce = false
+            udg_QuestMaxProgress = 1
+            udg_QuestPetitioner = nil
         else
             if not setRequirements then
                 error("You can't set to false to \"QuestSetRequirements\" 2 times in a row")

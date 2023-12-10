@@ -179,19 +179,21 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r |cffffff00Max. " .. data.bankItemsMaxStock .. "|r\n" .. result)
 
             for i = 1, #data.questsIds do
-                local id = data.questsIds[i]
-                local s = GetQuestName(id)
-                if data.questsIsCompleted[i] then
-                    s = "|cffFFCC00" .. s .. "|r"
-                else
-                    local max = GetQuestMaxProgress(id)
-                    if max > 1 then
-                        s = s .. " " .. ((max == data.questsProgresses[i]) and "|cff00ff00" or "|cffffffff") .. "(" .. data.questsProgresses[i] .. "/" .. max .. ")|r"
+                if not IsQuestARequirement(i) then
+                    local id = data.questsIds[i]
+                    local s = GetQuestName(id)
+                    if data.questsIsCompleted[i] then
+                        s = "|cffFFCC00" .. s .. "|r"
+                    else
+                        local max = GetQuestMaxProgress(id)
+                        if max > 1 then
+                            s = s .. " " .. ((max == data.questsProgresses[i]) and "|cff00ff00" or "|cffffffff") .. "(" .. data.questsProgresses[i] .. "/" .. max .. ")|r"
+                        end
                     end
+                    BlzFrameSetText(TooltipQuestsName[id], s)
+                    TooltipQuestsArea:add(TooltipQuestsName[id])
+                    table.insert(QuestsAdded, id)
                 end
-                BlzFrameSetText(TooltipQuestsName[id], s)
-                TooltipQuestsArea:add(TooltipQuestsName[id])
-                table.insert(QuestsAdded, id)
             end
         else
             BlzFrameSetText(TooltipName, "|cffff6600Empty|r")
