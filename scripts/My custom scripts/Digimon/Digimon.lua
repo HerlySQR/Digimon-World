@@ -61,7 +61,7 @@ OnInit("Digimon", function ()
     ---@field IVsta integer
     ---@field IVdex integer
     ---@field IVwis integer
-    ---@field cosmetic CosmeticInstance
+    ---@field cosmetics table<string, CosmeticInstance>
     Digimon = {
         _instance = {} ---@type table<unit, Digimon>
     }
@@ -368,6 +368,8 @@ OnInit("Digimon", function ()
             else
                 self:setIV(math.random(15), math.random(15), math.random(15))
             end
+
+            self.cosmetics = {}
         end
 
         Digimon.createEvent:run(self)

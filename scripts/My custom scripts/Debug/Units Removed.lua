@@ -1,8 +1,8 @@
 Debug.beginFile("Units Removed")
 OnInit(function ()
-    Require "UnitEnterEvent"
+    Require "AddHook"
     if udg_KeepTrackOfRemovedUnits then
-        OnUnitLeave(function (u)
+        AddHook("RemoveUnit", function (u)
             print("Digimon removed:")
             print("Name: " .. GetHeroProperName(u))
             print("Level: " .. GetHeroLevel(u))

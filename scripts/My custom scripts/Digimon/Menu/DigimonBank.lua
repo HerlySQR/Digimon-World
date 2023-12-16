@@ -4,6 +4,7 @@ OnInit("DigimonBank", function ()
     Require "AFK"
     Require "Menu"
     Require "Hotkeys"
+    Require "EventListener"
 
     local MAX_STOCK = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
@@ -116,6 +117,8 @@ OnInit("DigimonBank", function ()
 
     local cooldowns = __jarray(0) ---@type table<Digimon, number>
     local revivingSuspended = __jarray(false) ---@type table<player, boolean>
+
+    local digimonUpdateEvent = EventListener.create()
 
     Bank.__index = Bank
 
@@ -1645,6 +1648,8 @@ OnInit("DigimonBank", function ()
                     bank:searchMain()
                 end
                 index = i
+
+                digimonUpdateEvent:run(p, d)
                 break
             end
         end
@@ -1727,6 +1732,8 @@ OnInit("DigimonBank", function ()
             if bank.pressed == index then
                 bank.pressed = -1
             end
+
+            digimonUpdateEvent:run(p, d)
         end
         if p == LocalPlayer then
             UpdateMenu()
@@ -2046,5 +2053,9 @@ OnInit("DigimonBank", function ()
         AddToBank(Player(0), value)
     end)
 
+    ---@param func fun(p: player, d: Digimon)
+    function OnBankUpdated(func)
+        digimonUpdateEvent:register(func)
+    end
 end)
 Debug.endFile()

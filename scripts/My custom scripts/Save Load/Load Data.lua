@@ -94,8 +94,9 @@ OnInit(function ()
                             udg_SaveLoadSlot = slot
                             udg_SaveLoadEvent_Player = p
                             TriggerExecute(gg_trg_Load_Actions)
-                            THIS_THREAD = coroutine.running()
-                            coroutine.yield()
+                            --THIS_THREAD = coroutine.running()
+                            --coroutine.yield()
+                            udg_SaveLoadUsedCosmetics = LoadUsedCosmetics(p, slot)
 
                             if udg_SaveCodeLegacy then
                                 udg_SaveCodeLegacy = false

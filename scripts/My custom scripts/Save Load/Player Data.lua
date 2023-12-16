@@ -95,8 +95,7 @@ OnInit("Player Data", function ()
     ---@field questsIsCompleted boolean[]
     ---@field completedQuests integer
     ---@field date osdate
-    ---@field unlockedCosmetics table<integer, boolean>
-    ---@field usedCosmetic integer
+    ---@field usedCosmetics table<integer, integer[]>
 
     PlayerDatas = {} ---@type table<player, PlayerData[]>
 
@@ -167,8 +166,7 @@ OnInit("Player Data", function ()
             date = {sec = udg_SaveLoadSec, min = udg_SaveLoadMin, hour = udg_SaveLoadHour, day = udg_SaveLoadDay,
                 month = udg_SaveLoadMonth, year = udg_SaveLoadYear, wday = udg_SaveLoadWDay, yday = udg_SaveLoadYDay,
                 isdst = udg_SaveLoadIsDst},
-            unlockedCosmetics = udg_SaveLoadUnlockedCosmetics,
-            usedCosmetic = udg_SaveLoadUsedCosmetic
+            usedCosmetics = udg_SaveLoadUsedCosmetics
         }
 
         ClearSaveLoadData()
@@ -195,7 +193,6 @@ OnInit("Player Data", function ()
         end)
         ClearDigimons(p)
         SetQuestsData(p)
-        SetUnlockedCosmetics(p)
 
         restartListener:run(p)
     end
@@ -257,10 +254,14 @@ OnInit("Player Data", function ()
                         StoreDigimon(p, d)
                         SendToBank(p, d)
                     end
+                    local cosmetics = data.usedCosmetics[i]
+                    if cosmetics then
+                        for j = 1, #cosmetics do
+                            ApplyCosmetic(p, cosmetics[j], d)
+                        end
+                    end
                 end
                 SetQuestsData(p, data.questsIds, data.questsProgresses, data.questsIsCompleted)
-                SetUnlockedCosmetics(p, data.unlockedCosmetics)
-                ApplyCosmetic(p, data.usedCosmetic)
 
                 loadListener:run(p)
             end
@@ -301,7 +302,6 @@ OnInit("Player Data", function ()
         udg_SaveLoadWDay = 1
         udg_SaveLoadYDay = 1
         udg_SaveLoadIsDst = false
-        udg_SaveLoadUnlockedCosmetics = __jarray(false)
         udg_SaveLoadUsedCosmetic = 1
     end
 

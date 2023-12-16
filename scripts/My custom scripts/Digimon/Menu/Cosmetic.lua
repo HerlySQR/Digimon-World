@@ -8,12 +8,17 @@ OnInit("Cosmetic", function ()
     Require "FrameLoader"
     local FrameList = Require "FrameList" ---@type FrameList
     Require "Menu"
+    Require "DigimonBank"
 
     local MAX_LENGTH_PASSWORD = 200
     local NO_SKIN = FourCC('n000')
     local DEFAULT_SKIN = FourCC('H002')
     local MAX_EFFECT_PER_ROW = 4
     local LocalPlayer = GetLocalPlayer()
+    local ATTACH_SEUDONYM = {
+        ["origin"] = "aura",
+        ["chest"] = "chest"
+    }
 
     local CosmeticOpen = nil ---@type framehandle
     local BackdropCosmeticOpen = nil ---@type framehandle
@@ -28,6 +33,9 @@ OnInit("Cosmetic", function ()
     local CosmeticUnlockText = nil ---@type framehandle
     local CosmeticUnlockCode = nil ---@type framehandle
     local CosmeticUnlockYes = nil ---@type framehandle
+
+    local CosmeticPreviousDigimon = nil ---@type framehandle
+    local CosmeticNextDigimon = nil ---@type framehandle
 
     local actualRow = MAX_EFFECT_PER_ROW
     local actualContainer = nil ---@type framehandle
@@ -57,11 +65,15 @@ OnInit("Cosmetic", function ()
     local LockedCosmetics = {} ---@type table<string, integer>
     local UnlockedCosmetics = {} ---@type table<player, table<integer, boolean>>
     local toUnlock = {} ---@type table<integer, boolean>
-    local clickedEffect = __jarray(-1)
-    local usedCosmetic = {} ---@type table<player, Cosmetic>
+
+    local clickedEffect = __jarray(-1) ---@type table<player, integer>
     local lastEffect = {} ---@type table<player, effect>
     local selectedUnits = {} ---@type table<player, group>
     local inputCode = __jarray("") ---@type table<player, string>
+    local digimonTypes = {} ---@type table<player, Digimon[]>
+    local selectedDigimon = __jarray(1) ---@type table<player, integer>
+
+    local modelEffects = {} ---@type table<player, table<string, effect>>
 
     local prevCamera = {} ---@type{targetX: number, targetY: number, targetZ: number, eyeX: number, eyeY: number, eyeZ: number, targetDistance: number, farZ: number, angleOfAttack: number, fieldOfView: number, roll: number, rotation: number, zOffset: number, nearZ: number, localPitch: number, localYaw: number, localRoll: number}
     local inMenu = false
@@ -69,9 +81,10 @@ OnInit("Cosmetic", function ()
     OnInit.final(function ()
         ForForce(FORCE_PLAYING, function ()
             UnlockedCosmetics[GetEnumPlayer()] = setmetatable({}, {__index = toUnlock})
-            usedCosmetic[GetEnumPlayer()] = Cosmetics[1]
             selectedUnits[GetEnumPlayer()] = CreateGroup()
+            modelEffects[GetEnumPlayer()] = {}
         end)
+        BlzFrameSetValue(CosmeticList.Slider, 99)
     end)
 
     Timed.echo(0.02, function ()
@@ -80,21 +93,56 @@ OnInit("Cosmetic", function ()
         end
     end)
 
+    ---@param p player
+    local function UpdateModel(p)
+        local d = digimonTypes[p][selectedDigimon[p]]
+
+        for k, v in pairs(modelEffects[p]) do
+            DestroyEffect(v)
+            modelEffects[p][k] = nil
+        end
+
+        if p == LocalPlayer then
+            if inMenu then
+                BlzSetUnitSkin(model, d and d:getTypeId() or DEFAULT_SKIN)
+            else
+                BlzSetUnitSkin(model, NO_SKIN)
+            end
+        end
+
+        local ignore = nil
+        if clickedEffect[p] ~= -1 then
+            local eff = ""
+            if p == LocalPlayer then
+                eff = Cosmetics[clickedEffect[p]].root
+                BlzFrameSetEnable(CosmeticAccept, true)
+            end
+            if lastEffect[p] then
+                BlzSetSpecialEffectAlpha(lastEffect[p], 0)
+                DestroyEffect(lastEffect[p])
+            end
+            ignore = Cosmetics[clickedEffect[p]].attachment
+            lastEffect[p] = AddSpecialEffectTarget(eff, model, ignore)
+        end
+
+        if d then
+            for k, v in pairs(d.cosmetics) do
+                if k ~= ignore then
+                    local eff = ""
+                    if p == LocalPlayer then
+                        eff = Cosmetics[v.id].root
+                    end
+                    modelEffects[p][k] = AddSpecialEffectTarget(eff, model, k)
+                end
+            end
+        end
+    end
+
     ---@param id integer
     local function CosmeticActions(id)
         local p = GetTriggerPlayer()
         clickedEffect[p] = id
-
-        local eff = ""
-        if p == LocalPlayer then
-            eff = Cosmetics[id].root
-            BlzFrameSetEnable(CosmeticAccept, true)
-        end
-        if lastEffect[p] then
-            BlzSetSpecialEffectAlpha(lastEffect[p], 0)
-            DestroyEffect(lastEffect[p])
-        end
-        lastEffect[p] = AddSpecialEffectTarget(eff, model, Cosmetics[id].attachment)
+        UpdateModel(p)
     end
 
     local function CosmeticOpenFunc()
@@ -122,6 +170,8 @@ OnInit("Cosmetic", function ()
         SyncSelections()
         GroupEnumUnitsSelected(selectedUnits[p], p)
 
+        digimonTypes[p] = GetAllDigimons(p)
+
         if p == LocalPlayer then
             HideMenu(true)
             BlzFrameSetVisible(CosmeticMenu, true)
@@ -131,11 +181,9 @@ OnInit("Cosmetic", function ()
 
             inMenu = true
 
-            local d = GetMainDigimon(p)
-            BlzSetUnitSkin(model, d and d:getTypeId() or DEFAULT_SKIN)
-
             AddButtonToEscStack(CosmeticExit)
         end
+        UpdateModel(p)
     end
 
     local function CosmeticAcceptFunc()
@@ -147,7 +195,12 @@ OnInit("Cosmetic", function ()
             BlzFrameSetText(CosmeticText, "|cff00FF00Effect applied|r")
         end
 
-        ApplyCosmetic(p, clickedEffect[p])
+        ApplyCosmetic(p, clickedEffect[p], digimonTypes[p][selectedDigimon[p]])
+        if lastEffect[p] then
+            DestroyEffect(lastEffect[p])
+            lastEffect[p] = nil
+        end
+        UpdateModel(p)
 
         Timed.call(3, function ()
             if p == LocalPlayer and BlzFrameGetText(CosmeticText) == "|cff00FF00Effect applied|r" then
@@ -195,14 +248,24 @@ OnInit("Cosmetic", function ()
 
             inMenu = false
 
-            BlzSetUnitSkin(model, NO_SKIN)
-
             RemoveButtonFromEscStack(CosmeticExit)
 
             BlzFrameSetText(CosmeticUnlockText, "|cffFFCC00Enter a code to unlock a cosmetic|r")
             BlzFrameSetText(CosmeticUnlockCode, "")
         end
+        UpdateModel(p)
     end
+
+    OnBankUpdated(function (p, d)
+        if digimonTypes[p][selectedDigimon[p]] == d then
+            selectedDigimon[p] = 1
+        end
+        digimonTypes[p] = GetAllDigimons(p)
+        ClearCosmetics(d)
+        if p == LocalPlayer then
+            UpdateModel()
+        end
+    end)
 
     local function CosmeticUnlockCodeFunc()
         inputCode[GetTriggerPlayer()] = BlzGetTriggerFrameText()
@@ -229,6 +292,20 @@ OnInit("Cosmetic", function ()
                 end
             end
         end)
+    end
+
+    local function CosmeticPreviousDigimonFunc()
+        local p = GetTriggerPlayer()
+        local actDigi = selectedDigimon[p]
+        selectedDigimon[p] = actDigi <= 1 and #digimonTypes[p] or actDigi - 1
+        UpdateModel(p)
+    end
+
+    local function CosmeticNextDigimonFunc()
+        local p = GetTriggerPlayer()
+        local actDigi = selectedDigimon[p]
+        selectedDigimon[p] = actDigi >= #digimonTypes[p] and 1 or actDigi + 1
+        UpdateModel(p)
     end
 
     local function InitFrames()
@@ -318,18 +395,40 @@ OnInit("Cosmetic", function ()
         BlzFrameSetText(CosmeticUnlockYes, "|cffFCD20DYes|r")
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, CosmeticUnlockYes, FRAMEEVENT_CONTROL_CLICK) 
-        TriggerAddAction(t, CosmeticUnlockYesFunc) 
+        TriggerAddAction(t, CosmeticUnlockYesFunc)
+
+        CosmeticPreviousDigimon = BlzCreateFrame("ScriptDialogButton", CosmeticMenu, 0, 0)
+        BlzFrameSetAbsPoint(CosmeticPreviousDigimon, FRAMEPOINT_TOPLEFT, 0.0800000, 0.420000)
+        BlzFrameSetAbsPoint(CosmeticPreviousDigimon, FRAMEPOINT_BOTTOMRIGHT, 0.110000, 0.380000)
+        BlzFrameSetText(CosmeticPreviousDigimon, "|cffFCD20D<|r")
+        BlzFrameSetScale(CosmeticPreviousDigimon, 1.00)
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, CosmeticPreviousDigimon, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, CosmeticPreviousDigimonFunc)
+
+        CosmeticNextDigimon = BlzCreateFrame("ScriptDialogButton", CosmeticMenu, 0, 0)
+        BlzFrameSetAbsPoint(CosmeticNextDigimon, FRAMEPOINT_TOPLEFT, 0.370000, 0.420000)
+        BlzFrameSetAbsPoint(CosmeticNextDigimon, FRAMEPOINT_BOTTOMRIGHT, 0.400000, 0.380000)
+        BlzFrameSetText(CosmeticNextDigimon, "|cffFCD20D>|r")
+        BlzFrameSetScale(CosmeticNextDigimon, 1.00)
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, CosmeticNextDigimon, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, CosmeticNextDigimonFunc)
     end
 
     FrameLoaderAdd(InitFrames)
 
-    -- I don't know why I should add this
     OnInit.final(function ()
+        -- I don't know why I should add this
         local buffer = BlzCreateFrameByType("BACKDROP", "BACKDROP", CosmeticEffects, "", 1)
         BlzFrameSetPoint(buffer, FRAMEPOINT_TOPLEFT, CosmeticEffects, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
         BlzFrameSetSize(buffer, 0.23000, 0.05750)
         BlzFrameSetTexture(buffer, "war3mapImported\\EmptyBTN.blp", 0, true)
         CosmeticList:add(buffer)
+
+        ForForce(FORCE_PLAYING, function ()
+            LoadUnlockedCosmetics(GetEnumPlayer())
+        end)
     end)
 
     ---@param id integer
@@ -415,15 +514,11 @@ OnInit("Cosmetic", function ()
     end
 
     ---@param p player
-    ---@param slot integer
-    ---@return table<integer, boolean>, integer
-    function SaveCosmetics(p, slot)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\Slot_" .. slot .. ".pld"
+    function SaveUnlockedCosmetics(p)
+        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\Unlocked.pld"
         local savecode = Savecode.create()
         local amount = 0
-        local list = __jarray(false)
         for id, v in pairs(UnlockedCosmetics[p]) do
-            list[id] = v
             if v then
                 savecode:Encode(id, udg_MAX_COSMETICS) -- Save the id of the cosmetics
                 amount = amount + 1
@@ -431,30 +526,21 @@ OnInit("Cosmetic", function ()
         end
         savecode:Encode(amount, udg_MAX_COSMETICS) -- Save the amount of cosmetics
 
-        savecode:Encode(usedCosmetic[p] and usedCosmetic[p].id or 1, udg_MAX_COSMETICS) -- Save the used cosmetic
-
         local s = savecode:Save(p, 1)
 
-        if p == GetLocalPlayer() then
+        if p == LocalPlayer then
             FileIO.Write(path, s)
         end
 
         savecode:destroy()
-
-        return list, usedCosmetic[p] and usedCosmetic[p].id or 1
     end
 
     ---@param p player
-    ---@param slot integer
-    ---@return table<integer, boolean>, integer
-    function LoadCosmetics(p, slot)
+    function LoadUnlockedCosmetics(p)
         local list = __jarray(false)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\Slot_" .. slot .. ".pld"
-        local id = 1
+        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\Unlocked.pld"
         local savecode = Savecode.create()
         if savecode:Load(p, GetSyncedData(p, FileIO.Read, path), 1) then
-            id = savecode:Decode(udg_MAX_COSMETICS) -- Load the used cosmetic
-
             local amount = savecode:Decode(udg_MAX_COSMETICS) -- Load the amount of cosmetics
             for _ = 1, amount do
                 local unlocked = savecode:Decode(udg_MAX_COSMETICS) -- Load the id of the cosmetics
@@ -466,60 +552,108 @@ OnInit("Cosmetic", function ()
 
         savecode:destroy()
 
-        return list, id
-    end
-
-    ---@param p player
-    ---@param list? table<integer, boolean>
-    function SetUnlockedCosmetics(p, list)
-        UnlockedCosmetics[p] = setmetatable(list or __jarray(false), {__index = toUnlock})
-        if list then
-            if p == LocalPlayer then
-                for id, v in pairs(list) do
-                    if v and Cosmetics[id].lockFrame then
-                        BlzFrameSetVisible(Cosmetics[id].lockFrame, false)
-                        BlzFrameSetVisible(Cosmetics[id].button, true)
-                    end
+        UnlockedCosmetics[p] = setmetatable(list, {__index = toUnlock})
+        if p == LocalPlayer then
+            for id, v in pairs(list) do
+                if v and Cosmetics[id].lockFrame then
+                    BlzFrameSetVisible(Cosmetics[id].lockFrame, false)
+                    BlzFrameSetVisible(Cosmetics[id].button, true)
                 end
             end
-        else
-            usedCosmetic[p] = Cosmetics[1]
         end
     end
 
     ---@param p player
+    ---@param slot integer
+    ---@return table<integer, integer[]>
+    function SaveUsedCosmetics(p, slot)
+        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\UsingSlot_" .. slot .. ".pld"
+        local savecode = Savecode.create()
+        local digis = GetAllDigimons(p)
+        local result = {}
+
+        for i, d in ipairs(digis) do
+            local amount = 0
+            result[i] = __jarray(0)
+            for _, c in pairs(d.cosmetics) do
+                savecode:Encode(c.id, udg_MAX_COSMETICS) -- Save the id of cosmetic of the digimon
+                amount = amount + 1
+                result[i][amount] = c.id
+            end
+            savecode:Encode(amount, udg_MAX_COSMETICS) -- Save the amount of effects has the digimon
+            savecode:Encode(i, udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Save the place the digimon is in the list
+        end
+        savecode:Encode(#digis, udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Save the amount of digimons
+
+        local s = savecode:Save(p, 1)
+
+        if p == LocalPlayer then
+            FileIO.Write(path, s)
+        end
+
+        savecode:destroy()
+
+        return result
+    end
+
+    ---@param p player
+    ---@param slot integer
+    ---@return table<integer, integer[]>
+    function LoadUsedCosmetics(p, slot)
+        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\UsingSlot_" .. slot .. ".pld"
+        local result = {}
+        local savecode = Savecode.create()
+        if savecode:Load(p, GetSyncedData(p, FileIO.Read, path), 1) then
+            local length = savecode:Decode(udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Load the amount of digimons
+
+            for _ = 1, length do
+                local place = savecode:Decode(udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Load the place the digimon is in the list
+                local amount = savecode:Decode(udg_MAX_COSMETICS) -- Load the amount of effects has the digimon
+
+                result[place] = __jarray(0)
+
+                for j = amount, 1, -1 do
+                    result[place][j] = savecode:Decode(udg_MAX_COSMETICS) -- Load the id of cosmetic of the digimon
+                end
+            end
+        end
+
+        savecode:destroy()
+
+        return result
+    end
+
+    ---@param p player
     ---@param id integer
-    function ApplyCosmetic(p, id)
+    ---@param d Digimon
+    function ApplyCosmetic(p, id, d)
+        if not d then
+            ErrorMessage("Invalid digimon", p)
+            return
+        end
         if not UnlockedCosmetics[p][id] then
             ErrorMessage("This cosmetic is locked", p)
             return
         end
 
-        usedCosmetic[p] = Cosmetics[id]
-
-        for _, d in ipairs(GetAllDigimons(p)) do
-            if d.cosmetic then
-                DestroyEffect(d.cosmetic.eff)
-            else
-                d.cosmetic = {owner = d}
-            end
-
-            d.cosmetic.id = id
-            d.cosmetic.eff = AddSpecialEffectTarget(Cosmetics[id].root, d.root, Cosmetics[id].attachment)
+        local cosmetic = Cosmetics[id]
+        local instance = d.cosmetics[cosmetic.attachment]
+        if instance then
+            DestroyEffect(instance.eff)
+        else
+            instance = {owner = d, id = id}
+            d.cosmetics[cosmetic.attachment] = instance
         end
+        instance.eff = AddSpecialEffectTarget(cosmetic.root, d.root, cosmetic.attachment)
     end
 
-    Digimon.capturedEvent:register(function (data)
-        local p = data.owner ---@type player
-        local d = data.target ---@type Digimon
-        if usedCosmetic[p] then
-            d.cosmetic = {
-                owner = data.target,
-                id = usedCosmetic[p].id,
-                eff = AddSpecialEffectTarget(usedCosmetic[p].root, d.root, usedCosmetic[p].attachment)
-            }
+    ---@param d Digimon
+    function ClearCosmetics(d)
+        for k, v in pairs(d.cosmetics) do
+            DestroyEffect(v.eff)
+            d.cosmetics[k] = nil
         end
-    end)
+    end
 
     Digimon.preEvolutionEvent:register(function (d)
         DestroyEffect(d.cosmetic.eff)
@@ -527,6 +661,7 @@ OnInit("Cosmetic", function ()
 
     Digimon.evolutionEvent:register(function (d)
         d.cosmetic.eff = AddSpecialEffectTarget(Cosmetics[d.cosmetic.id].root, d.root, Cosmetics[d.cosmetic.id].attachment)
+        UpdateModel(d.owner)
     end)
 
     ---@param p player
@@ -582,6 +717,8 @@ OnInit("Cosmetic", function ()
         end
 
         EditUnlockMessage(p, "|cff00ff00Cosmetic unlocked successfully.|r")
+
+        SaveUnlockedCosmetics(p)
     end
 
     ---@param p player
