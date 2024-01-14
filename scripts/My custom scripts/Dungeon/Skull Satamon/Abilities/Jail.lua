@@ -9,6 +9,7 @@ OnInit(function ()
     local TARGET_EFFECT = "Abilities\\Spells\\Undead\\Darksummoning\\DarkSummonTarget.mdl"
     local JAIL_EFFECT = "Abilities\\Spells\\Undead\\UnholyAura\\UnholyAura.mdl"
     local KILL_EFFECT = "Abilities\\Spells\\Other\\Charm\\CharmTarget.mdl"
+    local DMG_PER_SEC = 10.
 
     local jails = {gg_dest_B07X_52154, gg_dest_B07X_52152, gg_dest_B07X_52153} ---@type destructable[]
     local facings = {190.99, 164.85, 119.37} -- Why there is not a GetDestructableFacing function?
@@ -16,6 +17,8 @@ OnInit(function ()
     local offsets = {} ---@type location[]
     local used = __jarray(false) ---@type boolean[]
     local prisoner = {} ---@type unit[]
+    local isCaged = __jarray(false) ---@type table<player, boolean>
+    local stop = {} ---@type function[]
 
     ---@param i integer
     local function restartJail(i)
@@ -23,7 +26,12 @@ OnInit(function ()
         SetUnitInvulnerable(prisoner[i], false)
         SetUnitPathing(prisoner[i], true)
         PauseUnit(prisoner[i], false)
+        isCaged[GetOwningPlayer(prisoner[i])] = false
         prisoner[i] = nil
+        if stop[i] then
+            stop[i]()
+            stop[i] = nil
+        end
         Timed.call(2 + 3*math.random(), function ()
             local eff = AddSpecialEffectLoc(JAIL_EFFECT, positions[i])
             Timed.call(2., function ()
@@ -98,6 +106,12 @@ OnInit(function ()
         end)
     end
 
+    RegisterSpellCastEvent(SPELL, function ()
+        if isCaged[GetOwningPlayer(GetSpellTargetUnit())] then
+            UnitAbortCurrentOrder(GetSpellAbilityUnit())
+        end
+    end)
+
     RegisterSpellEffectEvent(SPELL, function ()
         for i = 1, #jails do
             if not used[i] and IsDestructableAliveBJ(jails[i]) then
@@ -106,6 +120,8 @@ OnInit(function ()
 
                 used[i] = true
                 prisoner[i] = target
+                isCaged[GetOwningPlayer(target)] = true
+                BossIgnoreUnit(caster, target, true)
 
                 local eff = AddSpecialEffectTarget(TARGET_EFFECT, target, "origin")
                 SetUnitInvulnerable(target, true)
@@ -128,6 +144,15 @@ OnInit(function ()
                         SetUnitY(target, GetLocationY(offsets[i]))
                         SetUnitFacing(target, facings[i])
                         SetDestructableInvulnerable(jails[i], false)
+                        local cb = Timed.echo(1., function ()
+                            SetUnitInvulnerable(target, false)
+                            Damage.apply(caster, target, DMG_PER_SEC, false, false, udg_Dark, DAMAGE_TYPE_DEATH, WEAPON_TYPE_WHOKNOWS)
+                            SetUnitInvulnerable(target, true)
+                        end)
+                        stop[i] = function ()
+                            cb()
+                            BossIgnoreUnit(caster, target, false)
+                        end
                     end
                     m:launch()
                 end)

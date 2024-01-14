@@ -190,5 +190,19 @@ OnInit("SpellAISystem", function ()
         udg_SpellAIAllyTarget = false
     end)
 
+    OnInit.map(function ()
+        ForUnitsInRect(bj_mapInitialPlayableArea, function (u)
+            local index = 0
+            while true do
+                local abil = BlzGetUnitAbilityByIndex(u, index)
+                if not abil then break end
+                local id = BlzGetAbilityId(abil)
+                if SpellAIs[id] then
+                    insertSpell(u, id)
+                end
+                index = index + 1
+            end
+        end)
+    end)
 end)
 Debug.endFile()

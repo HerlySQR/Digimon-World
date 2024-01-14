@@ -1,5 +1,9 @@
 Debug.beginFile("Load Data")
 OnInit(function ()
+    if not udg_AutoLoadData then
+        return
+    end
+
     Require "FrameLoader"
     Require "SaveHelper"
     Require "Player Data"

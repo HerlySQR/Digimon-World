@@ -222,9 +222,11 @@ OnInit("AbilityUtils", function ()
     end
 
     ---@param num number
+    ---@param div number?
     ---@return number
-    local function roundUp(num)
-        local remainder = ModuloReal(math.abs(num), bj_CELLWIDTH)
+    function RoundUp(num, div)
+        div = div or bj_CELLWIDTH
+        local remainder = ModuloReal(math.abs(num), div)
         if remainder == 0. then
             return num
         end
@@ -232,7 +234,7 @@ OnInit("AbilityUtils", function ()
         if num < 0 then
             return -(math.abs(num) - remainder);
         else
-            return num + bj_CELLWIDTH - remainder;
+            return num + div - remainder;
         end
     end
 
@@ -241,8 +243,8 @@ OnInit("AbilityUtils", function ()
     ---@param range number
     ---@param callback fun(x: number, y: number): boolean?
     function ForEachCellInRange(centerX, centerY, range, callback)
-        centerX = roundUp(centerX)
-        centerY = roundUp(centerY)
+        centerX = RoundUp(centerX)
+        centerY = RoundUp(centerY)
 
         -- Iterate over the center
         if callback(centerX, centerY) then return end
@@ -265,6 +267,24 @@ OnInit("AbilityUtils", function ()
                     if callback(centerX - xOffset, centerY + yOffset) then return end
                     if callback(centerX - xOffset, centerY - yOffset) then return end
                 end
+            end
+        end
+    end
+
+    ---@param centerX number
+    ---@param centerY number
+    ---@param side number
+    ---@param callback fun(x: number, y: number): boolean?
+    function ForEachCellInArea(centerX, centerY, side, callback)
+        local firstX = RoundUp(centerX - side)
+        local firstY = RoundUp(centerY - side)
+        local n = math.ceil(2 * side / bj_CELLWIDTH)
+
+        for i = 1, n do
+            local xOffset = i * bj_CELLWIDTH
+            for j = 1, n do
+                local yOffset = j * bj_CELLWIDTH
+                if callback(firstX + xOffset, firstY + yOffset) then return end
             end
         end
     end

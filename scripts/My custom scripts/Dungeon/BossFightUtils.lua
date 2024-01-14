@@ -37,7 +37,8 @@ OnInit("BossFightUtils", function ()
     ---@param flag boolean
     function BossIgnoreUnit(boss, u, flag)
         if flag then
-            ZTS_ModifyThreat(u, boss, 0, false)
+            ZTS_RemovePlayerUnit(u)
+            ZTS_AddPlayerUnit(u)
         end
         ignored[boss][u] = flag
     end
@@ -344,7 +345,10 @@ OnInit("BossFightUtils", function ()
                         local u = nil
                         local maxThreat = -1
                         for u2 in unitsInTheField:elements() do
-                            if not ignored[boss][u2] then
+                            if ignored[boss][u2] then
+                                ZTS_RemovePlayerUnit(u2)
+                                ZTS_AddPlayerUnit(u2)
+                            else
                                 local threat = ZTS_GetThreatUnitAmount(boss, u2)
                                 if threat > maxThreat then
                                     u = u2
@@ -352,14 +356,18 @@ OnInit("BossFightUtils", function ()
                                 end
                             end
                         end
-                        if not attacking and u then
-                            attacking = true
-                            local x, y = GetUnitX(u), GetUnitY(u)
-                            Timed.call(2., function ()
-                                if UnitCanAttack(boss) then
-                                    IssuePointOrderById(boss, Orders.attack, x, y)
-                                end
-                            end)
+                        if u then
+                            if not attacking then
+                                attacking = true
+                                local x, y = GetUnitX(u), GetUnitY(u)
+                                Timed.call(2., function ()
+                                    if UnitCanAttack(boss) then
+                                        IssuePointOrderById(boss, Orders.attack, x, y)
+                                    end
+                                end)
+                            end
+                        else
+                            IssuePointOrderById(boss, Orders.move, initialPosX, initialPosY)
                         end
                         -- Spells
                         actions(u, unitsInTheField)
@@ -391,6 +399,11 @@ OnInit("BossFightUtils", function ()
                         reduced = true
                         interval = onlyOne and 3. or 1.
                     end
+                end
+
+                -- If the boss is not doing anything, set attacking state to false
+                if GetUnitCurrentOrder(boss) == 0 then
+                    attacking = false
                 end
             else
                 if not dead then

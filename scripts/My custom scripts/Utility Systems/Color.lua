@@ -52,10 +52,12 @@ OnInit("Color", function ()
     local Color = {}
     Color.__index = Color
 
-    ---@param r integer | string  Could be an integer in the range 0-255, an integer in the hex base or a string with the format "0xRRGGBB" or "RRGGBB" "0xAARRGGBB" or "AARRGGBB"
-    ---@param g? integer          Should be an integer in the range 0-255 or a hex with at most 2 digits
-    ---@param b? integer          Should be an integer in the range 0-255 or a hex with at most 2 digits
-    ---@param a? integer          Should be an integer in the range 0-255 or a hex with at most 2 digits or nil
+    ---@overload fun(c: string): Color a string with the format "0xRRGGBB" or "RRGGBB" "0xAARRGGBB" or "AARRGGBB"
+    ---@overload fun(c: integer): Color an integer in the hex base
+    ---@param r integer          Should be an integer in the range 0-255 or a hex with at most 2 digits
+    ---@param g integer          Should be an integer in the range 0-255 or a hex with at most 2 digits
+    ---@param b integer          Should be an integer in the range 0-255 or a hex with at most 2 digits
+    ---@param a? integer         Should be an integer in the range 0-255 or a hex with at most 2 digits or nil
     ---@return Color
     function Color.new(r, g, b, a)
         if type(r) == "string" then
