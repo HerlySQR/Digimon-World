@@ -2,11 +2,16 @@ Debug.beginFile("GenerateSpecialArena")
 OnInit(function ()
     Require "Noise"
     Require "Timed"
+    Require "AbilityUtils"
 
     local arena = gg_rct_SpecialArena ---@type rect
     local minX, minY, maxX, maxY = GetRectMinX(arena), GetRectMinY(arena), GetRectMaxX(arena), GetRectMaxY(arena)
+    local centerX, centerY = GetRectCenterX(arena), GetRectCenterY(arena)
+    local height = maxY - minY
     local effects = {} ---@type effect[][]
     local terrainDeformations = {} ---@type terraindeformation[][]
+    local bannedCells = __jarray(false) ---@type table<integer, boolean>
+    local weather = nil ---@type weathereffect
 
     local VOID = FourCC('Zsan')
     local CONVERSOR = 1 / (bj_CELLWIDTH * 10)
@@ -39,6 +44,15 @@ OnInit(function ()
         end)
         coroutine.yield()
     end
+
+    coroutine.wrap(function ()
+        local radius = height / 3
+        forEachCell(function (x, y, i)
+            if DistanceBetweenCoords(x, y, maxX, centerY) < radius or DistanceBetweenCoords(x, y, minX, centerY) < radius then
+                bannedCells[i] = true
+            end
+        end)
+    end)()
 
     ---@param e effect
     local function InsertEffect(e)
@@ -78,28 +92,32 @@ OnInit(function ()
                     end
                 end
                 if a > 0.4 then
-                    if i & 2 == 0 then
-                        local d = AddSpecialEffect(udg_NativeForestMainDestructable, x, y)
-                        BlzSetSpecialEffectYaw(d, GetRandomReal(0, 2*math.pi))
-                        BlzSetSpecialEffectScale(d, GetRandomReal(0.8, 1.2))
-                        InsertEffect(d)
-                    else
-                        if math.random() < 0.5 then
-                            local s = AddSpecialEffect(udg_NativeForestExtraDecoration, x, y)
-                            BlzSetSpecialEffectYaw(s, GetRandomReal(0, 2*math.pi))
-                            BlzSetSpecialEffectScale(s, GetRandomReal(1.6, 1.8))
-                            InsertEffect(s)
-                        end
-                    end
-                    SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
-                elseif a >= 0.3 and a < 0.4 then
-                    if math.random() < 0.5 then
+                    if not bannedCells[i] then
                         if i & 2 == 0 then
                             local d = AddSpecialEffect(udg_NativeForestMainDestructable, x, y)
                             BlzSetSpecialEffectYaw(d, GetRandomReal(0, 2*math.pi))
                             BlzSetSpecialEffectScale(d, GetRandomReal(0.8, 1.2))
                             InsertEffect(d)
-                            SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
+                        else
+                            if math.random() < 0.5 then
+                                local s = AddSpecialEffect(udg_NativeForestExtraDecoration, x, y)
+                                BlzSetSpecialEffectYaw(s, GetRandomReal(0, 2*math.pi))
+                                BlzSetSpecialEffectScale(s, GetRandomReal(1.6, 1.8))
+                                InsertEffect(s)
+                            end
+                        end
+                        SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
+                    end
+                elseif a >= 0.3 and a < 0.4 then
+                    if math.random() < 0.5 then
+                        if i & 2 == 0 then
+                            if not bannedCells[i] then
+                                local d = AddSpecialEffect(udg_NativeForestMainDestructable, x, y)
+                                BlzSetSpecialEffectYaw(d, GetRandomReal(0, 2*math.pi))
+                                BlzSetSpecialEffectScale(d, GetRandomReal(0.8, 1.2))
+                                InsertEffect(d)
+                                SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
+                            end
                         else
                             if math.random() < 0.5 then
                                 local s = AddSpecialEffect(udg_NativeForestExtraDecoration, x, y)
@@ -116,10 +134,12 @@ OnInit(function ()
 
     function GenerateGearSavannaArena()
         forEachCell(function (x, y, i)
-            local a = Noise.openSimplex2D(x * udg_NativeForestAmplitude * CONVERSOR, y * udg_NativeForestAmplitude * CONVERSOR)
-            
-            local o = Noise.octavePerlin2D(x * CONVERSOR, y * CONVERSOR, 3, 1)
-            InsertTerrainDeformation(TerrainDeformCrater(x, y, 63, -o*bj_CLIFFHEIGHT, 0, true))
+            local a = Noise.openSimplex2D(x * udg_GearSavannaAmplitude * CONVERSOR, y * udg_GearSavannaAmplitude * CONVERSOR * 1.4)
+
+            if i == 1 then
+                local o = Noise.octavePerlin2D(x * CONVERSOR, y * CONVERSOR, 3, 1)
+                InsertTerrainDeformation(TerrainDeformCrater(x, y, 639, -o*bj_CLIFFHEIGHT, 0, true))
+            end
 
             if a < -0.2 then
                 SetTerrainType(x, y, udg_GearSavannaRoadTile, -1, 1, 1)
@@ -138,33 +158,47 @@ OnInit(function ()
                     end
                     local r = math.random()
                     if r < 0.03 then
-                        local d = AddSpecialEffect(udg_GearSavannaMainDestructable, x, y)
-                        BlzSetSpecialEffectYaw(d, GetRandomReal(0, 2*math.pi))
-                        BlzSetSpecialEffectScale(d, GetRandomReal(0.8, 1.2))
-                        InsertEffect(d)
+                        if not bannedCells[i] then
+                            local d = AddSpecialEffect(udg_GearSavannaMainDestructable, x, y)
+                            BlzSetSpecialEffectYaw(d, GetRandomReal(0, 2*math.pi))
+                            BlzSetSpecialEffectScale(d, GetRandomReal(0.8, 1.2))
+                            InsertEffect(d)
 
-                        SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
+                            SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
+                        end
 
                         ForEachCellInRange(x, y, 256, function (x2, y2)
-                            local s = AddSpecialEffect(udg_NativeForestCommonDecoration, x2, y2)
+                            local s = AddSpecialEffect(udg_GearSavannaCommonDecoration, x2, y2)
                             BlzSetSpecialEffectScale(s, GetRandomReal(1.6, 2.))
                             BlzSetSpecialEffectYaw(s, GetRandomReal(0, 2*math.pi))
                             InsertEffect(s)
                         end)
                     elseif r < 0.06 then
-                        local g = AddSpecialEffect(udg_GearSavannaExtraDecoration, x, y)
-                        BlzSetSpecialEffectYaw(g, GetRandomReal(0, 2*math.pi))
-                        BlzSetSpecialEffectScale(g, GetRandomReal(0.8, 1.2))
-                        InsertEffect(g)
+                        if not bannedCells[i] then
+                            local g = AddSpecialEffect(udg_GearSavannaExtraDecoration, x, y)
+                            BlzSetSpecialEffectYaw(g, GetRandomReal(0, 2*math.pi))
+                            BlzSetSpecialEffectScale(g, GetRandomReal(1.6, 3.1))
+                            InsertEffect(g)
 
-                        SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
+                            ForEachCellInArea(x, y, 64., function (x2, y2)
+                                SetTerrainPathable(x2, y2, PATHING_TYPE_WALKABILITY, false)
+                            end, 0.5)
+                        end
 
-                        ForEachCellInRange(x, y, 256, function (x2, y2)
-                            local s = AddSpecialEffect(udg_NativeForestCommonDecoration, x2, y2)
-                            BlzSetSpecialEffectScale(s, GetRandomReal(1.6, 2.))
-                            BlzSetSpecialEffectYaw(s, GetRandomReal(0, 2*math.pi))
-                            InsertEffect(s)
-                        end)
+                        if not bannedCells[i] then
+                            ForEachCellInRange(x, y, 128, function (x2, y2)
+                                if math.random() < 0.5 then
+                                    local s = AddSpecialEffect(udg_GearSavannaSecondDestructable, x2, y2)
+                                    BlzSetSpecialEffectScale(s, GetRandomReal(1.5, 2.))
+                                    BlzSetSpecialEffectYaw(s, GetRandomReal(0, 2*math.pi))
+                                    InsertEffect(s)
+
+                                    ForEachCellInArea(x2, y2, 96., function (x3, y3)
+                                        SetTerrainPathable(x3, y3, PATHING_TYPE_WALKABILITY, false)
+                                    end, 0.5)
+                                end
+                            end)
+                        end
                     elseif r < 0.09 then
 
                     elseif r < 0.12 then
@@ -175,7 +209,75 @@ OnInit(function ()
         end)
     end
 
+    function GenerateMistyTreesArena()
+        local alreadyAMist = {} ---@type location[]
+        weather = AddWeatherEffect(arena, FourCC('WOlw')) -- Outland wind light
+        forEachCell(function (x, y, i)
+            local a = Noise.openSimplex2D(x * udg_MistyTreesAmplitude * CONVERSOR, y * udg_MistyTreesAmplitude * CONVERSOR)
+
+            if a < -0.25 then
+                SetTerrainType(x, y, udg_MistyTreesRoadTile, -1, 1, 1)
+            else
+                SetTerrainType(x, y, udg_MistyTreesSideWalkTile, -1, 1, 1)
+                if a > 0.2 then
+                    if not bannedCells[i] then
+                        local r
+                        local rd = math.random()
+                        if rd < 0.6 then
+                            r = udg_MistyTreesMainDestructable
+                        elseif rd < 0.8 then
+                            r = udg_MistyTreesSecondDestructable
+                        else
+                            r = udg_MistyTreesThirdDestructable
+                        end
+                        local d = AddSpecialEffect(r, x, y)
+                        BlzSetSpecialEffectYaw(d, GetRandomReal(0, 2*math.pi))
+                        if r == udg_MistyTreesSecondDestructable then
+                            BlzSetSpecialEffectColor(d, 180, 180, 255)
+                            BlzSetSpecialEffectScale(d, GetRandomReal(0.6, 0.8))
+                        else
+                            BlzSetSpecialEffectScale(d, GetRandomReal(0.8, 1.2))
+                        end
+                        if r == udg_MistyTreesThirdDestructable then
+                            BlzSetSpecialEffectColor(d, 100, 140, 100)
+                            ForEachCellInArea(x, y, 96., function (x2, y2)
+                                SetTerrainPathable(x2, y2, PATHING_TYPE_WALKABILITY, false)
+                            end, 0.5)
+                        else
+                            SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
+                        end
+                        InsertEffect(d)
+
+                        if a > 0.4 then
+                            local yes = true
+                            for j = 1, #alreadyAMist do
+                                if DistanceBetweenCoords(x, y, GetLocationX(alreadyAMist[j]), GetLocationY(alreadyAMist[j])) < 500 then
+                                    yes = false
+                                    break
+                                end
+                            end
+                            if yes then
+                                local m = AddSpecialEffect(udg_MistyTreesCommonDecoration, x, y)
+                                BlzSetSpecialEffectYaw(m, GetRandomReal(0, 2*math.pi))
+                                BlzSetSpecialEffectScale(m, 15.)
+                                InsertEffect(m)
+                                table.insert(alreadyAMist, Location(x, y))
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+        for j = 1, #alreadyAMist do
+            RemoveLocation(alreadyAMist[j])
+        end
+    end
+
     function RestartSpecialArena()
+        if weather then
+            RemoveWeatherEffect(weather)
+            weather = nil
+        end
         forEachCell(function (x, y)
             SetTerrainType(x, y, VOID, 0, 1, 0)
             SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, true)
@@ -183,6 +285,7 @@ OnInit(function ()
 
         local e_i = #effects
         local t_i = #terrainDeformations
+        local co = coroutine.running()
         Timed.echo(0.02, function ()
             if e_i >= 1 or t_i >= 1 then
                 local eVase = e_i
@@ -212,16 +315,42 @@ OnInit(function ()
                 e_i = e_i - 1
                 t_i = t_i - 1
             else
+                coroutine.resume(co)
                 return true
             end
         end)
+        coroutine.yield()
+        Noise.generatePermutationTable()
     end
 
     -- Tests
     if false then return end
 
+    math.randomseed(os.time())
+
     OnInit.final(function ()
-        GenerateGearSavannaArena()
+        local g = true
+        local f
+        f = function ()
+            if g then
+                GenerateMistyTreesArena()
+                --[[local r = math.random()
+                if r < 0.33 then
+                    GenerateNativeForestArena()
+                elseif r < 0.66 then
+                    GenerateGearSavannaArena()
+                else
+                end]]
+            else
+                RestartSpecialArena()
+            end
+            g = not g
+
+            PolledWait(5.)
+
+            f()
+        end
+        f()
     end)
 end)
 Debug.endFile()

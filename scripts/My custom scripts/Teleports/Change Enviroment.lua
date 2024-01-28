@@ -24,6 +24,7 @@ OnInit(function ()
                 end
                 if d.environment ~= env then
                     d.environment = env
+                    SyncSelections()
                     if IsUnitSelected(u, d:getOwner()) then
                         env:apply(d:getOwner(), fadeOut)
                     end
@@ -70,6 +71,7 @@ OnInit(function ()
                 end
                 if d.environment ~= env then
                     d.environment = env
+                    SyncSelections()
                     if IsUnitSelected(u, d:getOwner()) then
                         env:apply(d:getOwner(), fadeOut)
                     end

@@ -1,5 +1,7 @@
 Debug.beginFile("Menu")
 OnInit("Menu", function ()
+    Require "AddHook"
+
     local Frames = {} ---@type framehandle[]
     local WasVisible = __jarray(false) ---@type boolean[]
     local LocalPlayer = GetLocalPlayer()
@@ -7,6 +9,8 @@ OnInit("Menu", function ()
     local DefaultHeight = BlzFrameGetHeight(Console)
     local MenuStack = {} ---@type framehandle[]
     --local HideSimpleFrame = nil ---@type framehandle
+    local prevCamera = {} ---@type{targetX: number, targetY: number, targetZ: number, eyeX: number, eyeY: number, eyeZ: number, targetDistance: number, farZ: number, angleOfAttack: number, fieldOfView: number, roll: number, rotation: number, zOffset: number, nearZ: number, localPitch: number, localYaw: number, localRoll: number}
+    local selectedUnits = {} ---@type table<player, group>
 
     ---@param showOriginFrames boolean?
     function ShowMenu(showOriginFrames)
@@ -79,6 +83,7 @@ OnInit("Menu", function ()
         local t = CreateTrigger()
         ForForce(bj_FORCE_ALL_PLAYERS, function ()
             TriggerRegisterPlayerEvent(t, GetEnumPlayer(), EVENT_PLAYER_END_CINEMATIC)
+            selectedUnits[GetEnumPlayer()] = CreateGroup()
         end)
         TriggerAddAction(t, function ()
             if GetTriggerPlayer() == LocalPlayer then
@@ -95,6 +100,57 @@ OnInit("Menu", function ()
         -- Current has access by Name for it (Parent hierachy is a little bit different from V1.31)
         BlzFrameSetParent(BlzGetFrameByName("CommandBarFrame", 0), HideSimpleFrame)
         AddFrameToMenu(HideSimpleFrame)]]
+    end)
+
+    function SaveCameraSetup()
+        prevCamera.targetX = GetCameraTargetPositionX()
+        prevCamera.targetY = GetCameraTargetPositionY()
+        prevCamera.targetZ = GetCameraTargetPositionZ()
+        prevCamera.targetDistance = GetCameraField(CAMERA_FIELD_TARGET_DISTANCE)
+        prevCamera.farZ = GetCameraField(CAMERA_FIELD_FARZ)
+        prevCamera.angleOfAttack = math.deg(GetCameraField(CAMERA_FIELD_ANGLE_OF_ATTACK))
+        --prevCamera.fieldOfView = GetCameraField(CAMERA_FIELD_FIELD_OF_VIEW)
+        prevCamera.zOffset = GetCameraField(CAMERA_FIELD_ZOFFSET)
+        prevCamera.nearZ = GetCameraField(CAMERA_FIELD_NEARZ)
+    end
+
+    function RestartToPreviousCamera()
+        ResetToGameCamera(0)
+        PanCameraToTimedWithZ(prevCamera.targetX, prevCamera.targetY, prevCamera.targetZ, 0)
+        SetCameraField(CAMERA_FIELD_TARGET_DISTANCE, prevCamera.targetDistance, 0)
+        SetCameraField(CAMERA_FIELD_FARZ, prevCamera.farZ, 0)
+        SetCameraField(CAMERA_FIELD_ANGLE_OF_ATTACK, prevCamera.angleOfAttack, 0)
+        --SetCameraField(CAMERA_FIELD_FIELD_OF_VIEW, prevCamera.fieldOfView, 0)
+        SetCameraField(CAMERA_FIELD_ZOFFSET, prevCamera.zOffset, 0)
+        SetCameraField(CAMERA_FIELD_NEARZ, prevCamera.nearZ, 0)
+    end
+
+    ---@param p player
+    function SaveSelectedUnits(p)
+        SyncSelections()
+        GroupEnumUnitsSelected(selectedUnits[p], p)
+    end
+
+    ---@param p player
+    function RestartSelectedUnits(p)
+        ForGroup(selectedUnits[p], function ()
+            if p == LocalPlayer then
+                SelectUnit(GetEnumUnit(), true)
+            end
+        end)
+        GroupClear(selectedUnits[p])
+    end
+
+    ---@param u unit
+    ---@param p player
+    ---@return boolean
+    function IsUnitSelectionSaved(u, p)
+        return IsUnitInGroup(u, selectedUnits[p])
+    end
+
+    local oldIsUnitSelected
+    oldIsUnitSelected = AddHook("IsUnitSelected", function (u, p)
+        return oldIsUnitSelected(u, p) or IsUnitSelectionSaved(u, p)
     end)
 
 end)

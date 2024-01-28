@@ -36,11 +36,12 @@ OnInit("GetSyncedData", function ()
     ---
     ---The sync takes time, so the function yields the thread until the data is synced.
     ---@async
+    ---@overload fun(p: player, func: table): table
     ---@generic T
     ---@param p player
-    ---@param func fun(...): T || table
+    ---@param func fun(...): T
     ---@vararg any
-    ---@return T | table
+    ---@return T
     function GetSyncedData(p, func, ...)
         if not (GetPlayerController(p) == MAP_CONTROL_USER and GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) then
             error("The player " .. GetPlayerName(p) .. " is not an in-game player.", 2)

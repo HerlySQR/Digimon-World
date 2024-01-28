@@ -53,9 +53,10 @@ OnInit("Backpack", function ()
     local Backpacks = {} ---@type table<player, Backpack>
 
     OnInit.final(function ()
-        ForForce(bj_FORCE_ALL_PLAYERS, function ()
-            Backpacks[GetEnumPlayer()] = {
-                owner = GetEnumPlayer(),
+        for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
+            local p = Player(i)
+            Backpacks[p] = {
+                owner = p,
                 caster = CreateUnit(Digimon.PASSIVE, DUMMY_CASTER, WorldBounds.maxX, WorldBounds.maxY, 0),
                 usingCaster = false,
                 items = {},
@@ -65,7 +66,7 @@ OnInit("Backpack", function ()
                 discardMode = false,
                 dropMode = false
             }
-        end)
+        end
     end)
 
     local MinRange = 700. ---The minimun range a player's digimon should be to the target to cast the spell

@@ -101,6 +101,7 @@ OnInit(function ()
                             --THIS_THREAD = coroutine.running()
                             --coroutine.yield()
                             udg_SaveLoadUsedCosmetics = LoadUsedCosmetics(p, slot)
+                            udg_SaveLoadVisitedPlaces = LoadVisitedPlaces(p, slot)
 
                             if udg_SaveCodeLegacy then
                                 udg_SaveCodeLegacy = false

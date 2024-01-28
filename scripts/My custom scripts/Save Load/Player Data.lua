@@ -96,6 +96,7 @@ OnInit("Player Data", function ()
     ---@field completedQuests integer
     ---@field date osdate
     ---@field usedCosmetics table<integer, integer[]>
+    ---@field vistedPlaces boolean[]
 
     PlayerDatas = {} ---@type table<player, PlayerData[]>
 
@@ -166,7 +167,8 @@ OnInit("Player Data", function ()
             date = {sec = udg_SaveLoadSec, min = udg_SaveLoadMin, hour = udg_SaveLoadHour, day = udg_SaveLoadDay,
                 month = udg_SaveLoadMonth, year = udg_SaveLoadYear, wday = udg_SaveLoadWDay, yday = udg_SaveLoadYDay,
                 isdst = udg_SaveLoadIsDst},
-            usedCosmetics = udg_SaveLoadUsedCosmetics
+            usedCosmetics = udg_SaveLoadUsedCosmetics,
+            vistedPlaces = udg_SaveLoadVisitedPlaces
         }
 
         ClearSaveLoadData()
@@ -262,6 +264,8 @@ OnInit("Player Data", function ()
                     end
                 end
                 SetQuestsData(p, data.questsIds, data.questsProgresses, data.questsIsCompleted)
+
+                ApplyVisitedPlaces(p, data.vistedPlaces)
 
                 loadListener:run(p)
             end

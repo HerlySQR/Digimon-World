@@ -782,6 +782,18 @@ udg_GearSavannaCommonDecoration = ""
 udg_GearSavannaUncommonDecoration = ""
 udg_GearSavannaExtraDecoration = ""
 udg_GearSavannaAmplitude = 0.0
+udg_GearSavannaSecondDestructable = ""
+udg_GearSavannaThirdDestructable = ""
+udg_QuestCanReturn = nil
+udg_MistyTreesRoadTile = 0
+udg_MistyTreesSideWalkTile = 0
+udg_MistyTreesMainDestructable = ""
+udg_MistyTreesSecondDestructable = ""
+udg_MistyTreesThirdDestructable = ""
+udg_MistyTreesCommonDecoration = ""
+udg_MistyTreesUncommonDecoration = ""
+udg_MistyTreesExtraDecoration = ""
+udg_MistyTreesAmplitude = 0.0
 gg_rct_ADN_Entrance = nil
 gg_rct_Ancient_Dino_Region = nil
 gg_rct_Ancient_Dino_Spawn = nil
@@ -2421,6 +2433,7 @@ gg_rct_SpecialArena = nil
 gg_cam_Camera_001 = nil
 gg_cam_Camera_002 = nil
 gg_cam_CosmeticModel = nil
+gg_cam_Camera_004 = nil
 gg_snd_H01VillagerM33 = nil
 gg_snd_H03VillagerM41 = nil
 gg_snd_H03VillagerM43 = nil
@@ -2588,6 +2601,7 @@ gg_trg_Gather_Berries_3 = nil
 gg_trg_Gather_Berries = nil
 gg_trg_CreateGymTeams = nil
 gg_trg_Define_properties = nil
+gg_trg_Restart_Arena = nil
 gg_trg_CreateCosmetic = nil
 gg_trg_CosmeticTest = nil
 gg_trg_CosmeticName = nil
@@ -2750,6 +2764,7 @@ gg_trg_Boss_drop_KingSukamon_2 = nil
 gg_trg_Boss_drop_Mastertyranmon_2 = nil
 gg_trg_Boss_drop_shogun_2 = nil
 gg_trg_Boss_drop_Garuda_2 = nil
+gg_trg_Untitled_Trigger_001 = nil
 gg_trg_Absolute_Load = nil
 gg_trg_Save_GUI = nil
 gg_trg_Save_Actions = nil
@@ -2810,894 +2825,908 @@ gg_unit_n01U_0112 = nil
 gg_unit_N028_0135 = nil
 gg_unit_N01V_0099 = nil
 gg_unit_O027_0136 = nil
+gg_unit_H042_0147 = nil
+gg_unit_H042_0138 = nil
+gg_unit_H042_0139 = nil
 gg_dest_B07X_52153 = nil
 gg_dest_B07X_52152 = nil
 gg_dest_B07X_52154 = nil
-gg_trg_Restart_Arena = nil
 function InitGlobals()
-    local i = 0
-    udg_EvolveLevelCondition = 0
-    udg_BackpackLevel = 1
-    globals.udg_PreDamageEvent = 0.0
-    globals.udg_ArmorDamageEvent = 0.0
-    udg_ZeroDamageEvent = 0.0
-    udg_LethalDamageEvent = 0.0
-    udg_OnDamageEvent = 0.0
-    globals.udg_AfterDamageEvent = 0.0
-    udg_SourceDamageEvent = 0.0
-    udg_AOEDamageEvent = 0.0
-    udg_DamageModifierEvent = 0.0
-    udg_DamageEvent = 0.0
-    udg_RemoveDamageEvent = false
-    udg_DamageEventOverride = false
-    udg_DamageEngineEnabled = false
-    udg_DamageEventPrevAmt = 0.0
-    udg_DamageEventUserAmt = 0.0
-    udg_DamageEventLevel = 0
-    udg_DamageEventAOE = 0
-    udg_DamageEventAOEGroup = CreateGroup()
-    udg_DamageScalingWC3 = 0.0
-    udg_DamageScalingUser = 0.0
-    udg_IsDamageAttack = false
-    udg_IsDamageMelee = false
-    udg_IsDamageRanged = false
-    udg_IsDamageSpell = false
-    udg_IsDamageCode = false
-    udg_DamageEventAmount = 0.0
-    udg_DamageEventArmorPierced = 0.0
-    udg_LethalDamageHP = 0.0
-    udg_DamageEventAttackT = 0
-    udg_DamageEventDamageT = 0
-    udg_DamageEventArmorT = 0
-    udg_DamageEventDefenseT = 0
-    udg_DamageEventWeaponT = 0
-    udg_DamageEventType = 0
-    udg_NextDamageIsAttack = false
-    udg_NextDamageIsRanged = false
-    udg_NextDamageIsMelee = false
-    udg_NextDamageType = 0
-    udg_NextDamageWeaponT = 0
-    udg_DamageFilterConfigured = false
-    udg_DamageFilterAttackT = 0
-    udg_DamageFilterDamageT = 0
-    udg_DamageFilterType = 0
-    udg_DamageFilterMinAmount = 0.0
-    udg_DamageFilterRunChance = 0.0
-    udg_DamageFilterFailChance = 0.0
-    udg_DamageFilterSourceC = 0
-    udg_DamageFilterTargetC = 0
-    udg_UNIT_CLASS_MAGIC_IMMUNE = 0
-    udg_UNIT_CLASS_ETHEREAL = 0
-    udg_UNIT_CLASS_RESISTANT = 0
-    udg_UNIT_CLASS_SLEEPING = 0
-    udg_UNIT_CLASS_POLYMORPHED = 0
-    udg_UNIT_CLASS_POISONED = 0
-    udg_UNIT_CLASS_TAUREN = 0
-    udg_UNIT_CLASS_ANCIENT = 0
-    udg_UNIT_CLASS_TOWNHALL = 0
-    udg_UNIT_CLASS_SAPPER = 0
-    udg_UNIT_CLASS_PEON = 0
-    udg_UNIT_CLASS_MECHANICAL = 0
-    udg_UNIT_CLASS_UNDEAD = 0
-    udg_UNIT_CLASS_SNARED = 0
-    udg_UNIT_CLASS_PLAGUED = 0
-    udg_UNIT_CLASS_STUNNED = 0
-    udg_UNIT_CLASS_SUMMONED = 0
-    udg_UNIT_CLASS_GIANT = 0
-    udg_UNIT_CLASS_RANGED = 0
-    udg_UNIT_CLASS_MELEE = 0
-    udg_UNIT_CLASS_ATTACKS_GROUND = 0
-    udg_UNIT_CLASS_ATTACKS_FLYING = 0
-    udg_UNIT_CLASS_GROUND = 0
-    udg_UNIT_CLASS_FLYING = 0
-    udg_UNIT_CLASS_STRUCTURE = 0
-    udg_UNIT_CLASS_DEAD = 0
-    udg_UNIT_CLASS_HERO = 0
-    udg_ARMOR_TYPE_NONE = 0
-    udg_ARMOR_TYPE_FLESH = 0
-    udg_ARMOR_TYPE_METAL = 0
-    udg_ARMOR_TYPE_WOOD = 0
-    udg_ARMOR_TYPE_ETHEREAL = 0
-    udg_ARMOR_TYPE_STONE = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_ArmorTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    udg_ATTACK_TYPE_SPELLS = 0
-    udg_ATTACK_TYPE_NORMAL = 0
-    udg_ATTACK_TYPE_PIERCE = 0
-    udg_ATTACK_TYPE_SIEGE = 0
-    udg_ATTACK_TYPE_MAGIC = 0
-    udg_ATTACK_TYPE_CHAOS = 0
-    udg_ATTACK_TYPE_HERO = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_AttackTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    udg_DamageTypeBlocked = 0
-    udg_DamageTypeCriticalStrike = 0
-    udg_DamageTypeCode = 0
-    udg_DamageTypeExplosive = 0
-    udg_DamageTypeHeal = 0
-    udg_DamageTypePure = 0
-    udg_DamageTypePureExplosive = 0
-    udg_DamageTypeReduced = 0
-    udg_DAMAGE_TYPE_UNKNOWN = 0
-    udg_DAMAGE_TYPE_NORMAL = 0
-    udg_DAMAGE_TYPE_ENHANCED = 0
-    udg_DAMAGE_TYPE_FIRE = 0
-    udg_DAMAGE_TYPE_COLD = 0
-    udg_DAMAGE_TYPE_LIGHTNING = 0
-    udg_DAMAGE_TYPE_POISON = 0
-    udg_DAMAGE_TYPE_DISEASE = 0
-    udg_DAMAGE_TYPE_DIVINE = 0
-    udg_DAMAGE_TYPE_MAGIC = 0
-    udg_DAMAGE_TYPE_SONIC = 0
-    udg_DAMAGE_TYPE_ACID = 0
-    udg_DAMAGE_TYPE_FORCE = 0
-    udg_DAMAGE_TYPE_DEATH = 0
-    udg_DAMAGE_TYPE_MIND = 0
-    udg_DAMAGE_TYPE_PLANT = 0
-    udg_DAMAGE_TYPE_DEFENSIVE = 0
-    udg_DAMAGE_TYPE_DEMOLITION = 0
-    udg_DAMAGE_TYPE_SLOW_POISON = 0
-    udg_DAMAGE_TYPE_SPIRIT_LINK = 0
-    udg_DAMAGE_TYPE_SHADOW_STRIKE = 0
-    udg_DAMAGE_TYPE_UNIVERSAL = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_DamageTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    udg_DEFENSE_TYPE_LIGHT = 0
-    udg_DEFENSE_TYPE_MEDIUM = 0
-    udg_DEFENSE_TYPE_HEAVY = 0
-    udg_DEFENSE_TYPE_FORTIFIED = 0
-    udg_DEFENSE_TYPE_NORMAL = 0
-    udg_DEFENSE_TYPE_HERO = 0
-    udg_DEFENSE_TYPE_DIVINE = 0
-    udg_DEFENSE_TYPE_UNARMORED = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_DefenseTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_WeaponTypeDebugStr[i] = ""
-        i = i + 1
-    end
-    udg_WEAPON_TYPE_NONE = 0
-    udg_WEAPON_TYPE_ML_CHOP = 0
-    udg_WEAPON_TYPE_MM_CHOP = 0
-    udg_WEAPON_TYPE_MH_CHOP = 0
-    udg_WEAPON_TYPE_ML_SLICE = 0
-    udg_WEAPON_TYPE_MM_SLICE = 0
-    udg_WEAPON_TYPE_MH_SLICE = 0
-    udg_WEAPON_TYPE_MM_BASH = 0
-    udg_WEAPON_TYPE_MH_BASH = 0
-    udg_WEAPON_TYPE_MM_STAB = 0
-    udg_WEAPON_TYPE_MH_STAB = 0
-    udg_WEAPON_TYPE_WL_SLICE = 0
-    udg_WEAPON_TYPE_WM_SLICE = 0
-    udg_WEAPON_TYPE_WH_SLICE = 0
-    udg_WEAPON_TYPE_WL_BASH = 0
-    udg_WEAPON_TYPE_WM_BASH = 0
-    udg_WEAPON_TYPE_WH_BASH = 0
-    udg_WEAPON_TYPE_WL_STAB = 0
-    udg_WEAPON_TYPE_WM_STAB = 0
-    udg_WEAPON_TYPE_CL_SLICE = 0
-    udg_WEAPON_TYPE_CM_SLICE = 0
-    udg_WEAPON_TYPE_CH_SLICE = 0
-    udg_WEAPON_TYPE_AM_CHOP = 0
-    udg_WEAPON_TYPE_RH_BASH = 0
-    udg_TempReal = 0.0
-    udg_TempInt3 = 0
-    udg_TempInt2 = 0
-    udg_TempInt = 0
-    udg_LoopC = 0
-    udg_LoopB = 0
-    udg_LoopD = 0
-    udg_MaxLoopA = 0
-    udg_MaxLoopB = 0
-    udg_TotalItems = 0
-    udg_Experience = 0
-    udg_TotalHeroes = 0
-    udg_Setup_Total_Items = 0
-    udg_ItemIndex = 0
-    udg_LoopA = 0
-    udg_Setup_Total_Heroes = 0
-    udg_HeroIndex = 0
-    udg_TempPlayerGroup = CreateForce()
-    udg_Camera_Distance = 0.0
-    udg_PGroup = CreateForce()
-    udg_ItemInteger = 0
-    udg_TempGroup = CreateGroup()
-    udg_Delayed_Duration = 0.0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_ItemDropWeights[i] = 0.0
-        i = i + 1
-    end
-    udg_ItemDropOnce = false
-    udg_Name = ""
-    udg_Minimap = ""
-    udg_TP_EnterText = ""
-    udg_TP_LeaveText = ""
-    udg_EnvName1 = ""
-    udg_EnvName2 = ""
-    udg_FadeOut = false
-    udg_ItemSpawnMaxItems = 0
-    udg_CREEPS_PER_PLAYER = 0
-    udg_CREEPS_PER_REGION = 0
-    udg_LIFE_SPAN = 0.0
-    udg_LIFE_REDUCED = 0.0
-    udg_DELAY_SPAWN = 0.0
-    udg_DELAY_NORMAL = 0.0
-    udg_DELAY_DEATH = 0.0
-    udg_RANGE_LEVEL_1 = 0.0
-    udg_RANGE_LEVEL_2 = 0.0
-    udg_NEIGHBOURHOOD = 0.0
-    udg_UPDATE_INTERVAL = 0.0
-    udg_Water = ATTACK_TYPE_CHAOS
-    udg_Beast = ATTACK_TYPE_MAGIC
-    udg_Machine = ATTACK_TYPE_HERO
-    udg_Air = ATTACK_TYPE_PIERCE
-    udg_Dark = ATTACK_TYPE_SIEGE
-    udg_Fire = ATTACK_TYPE_MELEE
-    udg_Nature = ATTACK_TYPE_NORMAL
-    udg_WaterAsInt = 0
-    udg_BeastAsInt = 0
-    udg_MachineAsInt = 0
-    udg_AirAsInt = 0
-    udg_DarkAsInt = 0
-    udg_FireAsInt = 0
-    udg_NatureAsInt = 0
-    udg_HolyAsInt = 0
-    udg_Red = 0.0
-    udg_Green = 0.0
-    udg_Blue = 0.0
-    udg_Text = ""
-    udg_Size = 0.0
-    udg_ZOffset = 0.0
-    udg_DamageVariation = 0.0
-    udg_Root = ""
-    udg_DamageRealtoInteger = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_AbsorbON[i] = 0
-        i = i + 1
-    end
-    udg_BruteRandom = 0
-    udg_EvasionChanceReal = 0.0
-    udg_EvasionChanceRandom = 0.0
-    udg_BullseyeSpell = FourCC("A02P")
-    udg_BullseyeMissChanceLess = 15.00
-    udg_CriticalDamageModifier = 1.00
-    udg_CriticalDamageReal = 0.0
-    udg_CriticalChanceReal = 0.0
-    udg_CriticalChanceRandom = 0.0
-    udg_Attribute = -1
-    udg_EfficiencySpell = FourCC("A02O")
-    udg_EfficiencyCritChancePlus = 10.00
-    udg_EfficiencyCritDmgPlus = 0.10
-    udg_StrongSpell = FourCC("A02Y")
-    udg_StrongCritDmgPlus = 0.15
-    udg_StrongHealthPerLevel = 5
-    udg_DrainHPStealed = 10.00
-    udg_BruteForceSpell = FourCC("A02Q")
-    udg_BruteForceStrDmgFactor = 0.25
-    udg_BruteForceChance = 20
-    udg_BruteForcePushDist = 50.00
-    udg_HardShellSpell = FourCC("A02S")
-    udg_HardShellDmgTakenFactor = 0.90
-    udg_ReactiveSpell = FourCC("A02T")
-    udg_ReactiveDmgReturnFactor = 0.25
-    udg_CalmMindSpell = FourCC("A02U")
-    udg_CalmMindManaPerLevel = 2
-    udg_HungerSpell = FourCC("A02K")
-    udg_HungerBuff = FourCC("A02L")
-    udg_FeederSpell = FourCC("A02M")
-    udg_FeederDmgFactor = 0.20
-    udg_EnvySpell = FourCC("A031")
-    udg_EnvyManaReduced = 0.01
-    udg_EnvyManaGained = 0.50
-    udg_HardSpell = FourCC("A036")
-    udg_HardDmgBlocked = 0.50
-    udg_HardChance = 25
-    udg_HotSpell = FourCC("A02N")
-    udg_HotStrDmgFactor = 0.20
-    udg_HotDmgPerSecFactor = 0.10
-    udg_ColdBodySpell = FourCC("A030")
-    udg_ColdBodyFreezeChance = 15
-    udg_FrostSpell = FourCC("A028")
-    udg_FrostAgiDmgFactor = 0.30
-    udg_FrostChance = 25
-    udg_SaveLoadGold = 0
-    udg_SaveLoadLumber = 0
-    udg_SaveLoadFood = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadBackpackItemCharges[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadInventories[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadLevels[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadExps[i] = 0
-        i = i + 1
-    end
-    udg_SaveLoadSlot = 0
-    udg_Loading = false
-    udg_LoadCount = 0
-    udg_PN_Load = 0
-    udg_SaveNameMax = 0
-    udg_SaveLoad_TriggerName = ""
-    udg_SaveLoadMaxLength = 0
-    udg_SaveUseGUI = false
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveNameList[i] = ""
-        i = i + 1
-    end
-    udg_SaveLoad_Slot = 0
-    udg_SaveHeroName = false
-    udg_SaveTempReal = 0.0
-    udg_SaveShowCode = false
-    udg_HeroXPRequired = 0
-    udg_HeroXPPrevLevelFactor = 0
-    udg_HeroXPLevelFactor = 0
-    udg_HeroXPConstant = 0
-    udg_SaveAbilityTypeMax = 0
-    udg_SaveUnitMaxStat = 0
-    udg_SaveItemTypeMax = 0
-    udg_SaveUnitTypeMax = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveCurrentSlot[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SavePlayerLoading[i] = false
-        i = i + 1
-    end
-    udg_SaveLoad_HeroName = false
-    udg_SaveLoadEvent_Code = ""
-    udg_SaveLoadEvent = 0.0
-    udg_SaveTempString = ""
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveMaxValue[i] = 0
-        i = i + 1
-    end
-    udg_SaveCount = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveValue[i] = 0
-        i = i + 1
-    end
-    udg_LocalFiles_WarningMessage = ""
-    udg_MapName = ""
-    udg_SaveTempInt = 0
-    udg_SaveCodeColored = ""
-    udg_BruteForceTargetEffectUnit = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
-    udg_FeederCasterEffect = "Abilities\\Spells\\Undead\\VampiricAura\\VampiricAuraTarget.mdl"
-    udg_HotTargetEffect = "Abilities\\Spells\\Other\\BreathOfFire\\BreathOfFireDamage.mdl"
-    udg_CreepSpawnMinLevel = 1
-    udg_CreepSpawnMaxLevel = 1
-    udg_CreepSpawnInDay = true
-    udg_CreepSpawnInNight = true
-    udg_CHANCE_UNCOMMON = 0.0
-    udg_CHANCE_RARE = 0.0
-    udg_CHANCE_LEGENDARY = 0.0
-    udg_RandomDropNumber = 0
-    udg_FoodBonusType = ""
-    udg_FoodBonusAmountReal = 0.0
-    udg_FoodBonusAmountInt = 0
-    udg_FoodBonusIsDrink = false
-    udg_EvolveOnlyDayCondition = false
-    udg_EvolveOnlyNightCondition = false
-    udg_VALUEHEAL = 0.0
-    udg_ConveyanceNewEnvName = ""
-    udg_SaveOnSinglePlayer = true
-    udg_QuestId = 0
-    udg_MAX_QUESTS = 99
-    udg_QuestName = ""
-    udg_QuestDescription = ""
-    udg_QuestOnlyOnce = false
-    udg_DO_QUEST_AGAIN_DELAY = 15.00
-    udg_PlayerIsOnQuest = false
-    udg_KillDigimonsId = 3
-    udg_QuestIsCompleted = false
-    udg_AcquireItemId = 4
-    udg_GoToPlaceId = 6
-    udg_MAX_STACK = 99
-    udg_MAX_ITEMS = 16
-    udg_SaveCodeLegacy = false
-    udg_MAX_DIGIMONS = 8
-    udg_BulkySpell = FourCC("A039")
-    udg_BulkyPerLevel = 3
-    udg_NetAlwaysCapture = false
-    udg_QuestProgress = 0
-    udg_QuestMaxProgress = 1
-    udg_SaveLoadCompletedQuests = 0
-    udg_QuestLevel = 0
-    udg_TempBool = false
-    udg_TempBool2 = false
-    udg_TempBool3 = false
-    udg_TalkDigimonsId = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_Talk1[i] = false
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_Talk2[i] = false
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_Talk3[i] = false
-        i = i + 1
-    end
-    udg_AcquireSwordId = 1
-    udg_AcquireMeatId = 2
-    udg_KillFlymonId = 5
-    udg_FlymonDamagers = CreateForce()
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_FlymonDamagersTime[i] = 0
-        i = i + 1
-    end
-    udg_KillDrimogemonId = 7
-    udg_DrimogemonDamagers = CreateForce()
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_DrimogemonDamagersTime[i] = 0
-        i = i + 1
-    end
-    udg_KillDigimons2Id = 40
-    udg_GatherBerriesId = 41
-    udg_KillDigimons3Id = 42
-    udg_GymRank = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_Talk4[i] = false
-        i = i + 1
-    end
-    udg_TalkDigimonsBirdId = 8
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_Talk1_Leomon[i] = false
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_Talk2_Coelamon[i] = false
-        i = i + 1
-    end
-    udg_KillDigimonsId_Savanna = 9
-    udg_AcquireFishId = 10
-    udg_GoToCentaurClinicId = 11
-    udg_AcquireJurassicHerbsId = 12
-    udg_GymLevel = 1
-    udg_AcquireTrashTreasures_ID = 43
-    udg_KillDigimons4Id = 44
-    udg_TalkGatomonId = 13
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_Talk1_2[i] = false
-        i = i + 1
-    end
-    udg_AcquireNetId = 14
-    udg_AcquireSunshineId = 15
-    udg_KillCrabmonId = 16
-    udg_CrabmonDamagers = CreateForce()
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_CrabmonDamagersTime[i] = 0
-        i = i + 1
-    end
-    udg_MAX_SAVED_DIGIMONS = 6
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadIsSaved[i] = 0
-        i = i + 1
-    end
-    udg_MAX_SAVED_ITEMS = 12
-    udg_MIN_SAVED_ITEMS = 6
-    udg_NEW_ITEM_SLOT_COST = 50
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadBankItemsCharges[i] = 0
-        i = i + 1
-    end
-    udg_SaveLoadBankItemsMaxStock = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadQuestIds[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadQuestProgresses[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadQuestIsCompleted[i] = false
-        i = i + 1
-    end
-    udg_SaveLoadBankDigimonsMaxStock = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadDigimonStrLevels[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadDigimonAgiLevels[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadDigimonIntLevels[i] = 0
-        i = i + 1
-    end
-    udg_STAMINA_TRAINING = FourCC("A0CU")
-    udg_DEXTERITY_TRAINING = FourCC("A0CT")
-    udg_WISDOM_TRAINING = FourCC("A0CV")
-    udg_CriticalChanceReal_Heal = 0.0
-    udg_CriticalChanceRandom_Heal = 0.0
-    udg_CriticalDamageReal_Heal = 0.0
-    udg_CriticalDamageModifier_Heal = 1.00
-    udg_VALUEHEAL_Heal = 0.0
-    udg_VALUEHEAL_Final = 0.0
-    udg_ThreatLevel = 0.0
-    udg_GoToPlaceId_Palmon = 17
-    udg_AcquireFlowersId = 18
-    udg_ByPass = false
-    udg_DamageByPass = 0.0
-    udg_QuestWait = 0.0
-    udg_QuestNoRepeat = false
-    udg_QuestForce = CreateForce()
-    udg_DamageBonusAmount = 0
-    udg_DamageAuraSpell = FourCC("AEfk")
-    udg_DamageAuraBuff = FourCC("AEfk")
-    udg_DamageAuraAttackBase = 0.0
-    udg_DamageAuraAttackPreviousFactor = 0.0
-    udg_DamageAuraAttackLevelFactor = 0.0
-    udg_DamageAuraAttackConstantFactor = 0.0
-    udg_MAX_USED_DIGIMONS = 3
-    udg_DamageAuraArea = 0.0
-    udg_DamageAuraOwnerEffect = ""
-    udg_MULTICOLOR_DIGIVICE = FourCC("I050")
-    udg_SpellAIHasUnitTarget = false
-    udg_SpellAIHasPointTarget = false
-    udg_SpellAIHasNoTarget = false
-    udg_SpellAIEnemyTarget = false
-    udg_SpellAIAllyTarget = false
-    udg_SpellAIOrder = ""
-    udg_SaveLoadDay = 1
-    udg_SaveLoadSec = 0
-    udg_SaveLoadMin = 0
-    udg_SaveLoadHour = 0
-    udg_SaveLoadMonth = 1
-    udg_SaveLoadYear = 1970
-    udg_SaveLoadWDay = 1
-    udg_SaveLoadYDay = 1
-    udg_SaveLoadIsDst = false
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadDigimonIVSta[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadDigimonIVDex[i] = 0
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadDigimonIVWis[i] = 0
-        i = i + 1
-    end
-    udg_FOOD_BUFF_DURATION = 1800.00
-    udg_TalkId = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_TalkLines[i] = ""
-        i = i + 1
-    end
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_TalkDelays[i] = 0.0
-        i = i + 1
-    end
-    udg_TalkToForce = CreateForce()
-    udg_AcquireFlowersTalkComplete = 0
-    udg_WaitIndex = 0
-    udg_AcquireFlowersTalkAcquire = 0
-    udg_TalkedWithPalmon = false
-    udg_GoToPlaceId_PalmonTalk = 0
-    udg_TalkedWithTentomon = false
-    udg_SwordAcquired = false
-    udg_MeatAcquired = false
-    udg_DigimonsKilled = false
-    udg_ItemAquired = false
-    udg_AcquireGatomonQuestTalk = 0
-    udg_AcquireFriendsQuestTalk = 0
-    udg_KillCrabmonTalkAcquire = 0
-    udg_AcquireSunshineTalkAcquire = 0
-    udg_AcquireSunshineTalkComplete = 0
-    udg_TalkedWithGatomon = false
-    udg_AcquireSwordTalkAcquire = 0
-    udg_AcquireMeatIdTalkAcquire = 0
-    udg_AcquireMeatIdTalkComplete = 0
-    udg_KillDigimonsTalkAcquire = 0
-    udg_AcquireNetTalkAcquired = 0
-    udg_GoToPlaceTalkAcquire = 0
-    udg_AcquireItemTalkAcqure = 0
-    udg_KillFlymonTalkAcquire = 0
-    udg_KillDrimogemonTalkAcquire = 0
-    udg_TalkDigimonsBirdAcquire = 0
-    udg_TalkedWithLeomon = false
-    udg_TalkedWithCoelamon = false
-    udg_KillDigimonsSavannaTalkAcquire = 0
-    udg_KillDigimonsSavannaTalkEnd = 0
-    udg_AcquireFishTalkAcquire = 0
-    udg_AcquireFishTalkEnd = 0
-    udg_GoToCentaurClinicTalkAcquire = 0
-    udg_GoToCentaurClinicTalkEnd = 0
-    udg_AcquireJurassicHerbsTalkGet = 0
-    udg_AcquireJurassicHerbsTalkEnd = 0
-    udg_KillDigimons4TalkAcquire = 0
-    udg_AcquireTrashTreasuresTalkGet = 0
-    udg_KillDigimons2TalkAcquire = 0
-    udg_GatherBerriesTalkAcquire = 0
-    udg_KillDigimons3TalkAcquire = 0
-    udg_KillDigimons3TalkComplete = 0
-    udg_AcquireSwordTalkWhile = 0
-    udg_AcquireSwordTalkFinish = 0
-    udg_AcquireMeatIdTalkWhile = 0
-    udg_AcquireMeatIdTalkComplete_2 = 0
-    udg_AcquireSwordTalkWhile_2 = 0
-    udg_AcquireItemTalkAcqure_2 = 0
-    udg_AcquireItemTalkAcqure_While = 0
-    udg_AcquireItemTalkAcqure_Finish = 0
-    udg_KillCrabmonTalkAcquire_While = 0
-    udg_KillDigimonsTalkAcquire_While = 0
-    udg_KillDigimonsTalkAcquire_Finish = 0
-    udg_AcquireFriendsQuestTalk_While = 0
-    udg_AcquireGatomonQuestTalk_While = 0
-    udg_AcquireGatomonQuestTalk_Finish = 0
-    udg_AcquireFriendsQuestTalk_Finish = 0
-    udg_AcquireNetTalkAcquired_Before = 0
-    udg_AcquireNetTalkAcquired_While = 0
-    udg_AcquireNetTalkAcquired_Finish = 0
-    udg_AcquireNetTalkAcquired_AttheBu = 0
-    udg_GoToPlaceId_PalmonTalk_While = 0
-    udg_GoToPlaceId_PalmonTalk_Before = 0
-    udg_GoToPlaceId_PalmonTalk_After = 0
-    udg_AcquireFlowersTalkWhile = 0
-    udg_AcquireFlowersTalkBefore = 0
-    udg_AcquireSunshineTalkFinish = 0
-    udg_AcquireSunshineBefore = 0
-    udg_KillDigimons3TalkAcquire_While = 0
-    udg_KillDigimons3TalkAcquire_Befor = 0
-    udg_KillDigimons2TalkFinish = 0
-    udg_KillDigimons2TalkFinish_While = 0
-    udg_GoToPlaceTalkAcquire_before = 0
-    udg_GoToPlaceTalkAcquire_while = 0
-    udg_GoToPlaceTalkAcquire_after = 0
-    udg_KillDigimons4TalkAcquire_While = 0
-    udg_KillDigimons4TalkAcquire_Finis = 0
-    udg_KillDigimons4TalkAcquire_Befor = 0
-    udg_AcquireTrashTreasuresTalkGet_B = 0
-    udg_AcquireTrashTreasuresTalkGet_F = 0
-    udg_GatherBerriesTalkAcquire_Bef = 0
-    udg_GatherBerriesTalkAcquire_Fin = 0
-    udg_RepeatMusic = CreateTimer()
-    udg_KillCrabmonTalkAcquire_Before = 0
-    udg_KillCrabmonTalkAcquire_After = 0
-    udg_KillFlymonTalkAcquire_While = 0
-    udg_KillFlymonTalkAcquire_After = 0
-    udg_KillFlymonTalkAcquire_Before = 0
-    udg_KillDrimogemonTalkAcquire_Whil = 0
-    udg_KillDrimogemonTalkAcquire_Afte = 0
-    udg_KillDrimogemonTalkAcquire_Befo = 0
-    udg_KillDrimogemonTalkAcquire_Wh2 = 0
-    udg_TalkDigimonsBirdAcquire_After = 0
-    udg_TalkDigimonsBirdAcquire_While = 0
-    udg_TalkDigimonsBirdAcquire_Before = 0
-    udg_KillDigimonsSavannaTalkWhile = 0
-    udg_KillDigimonsSavannaTalkBefore = 0
-    udg_AcquireFishTalkBefore = 0
-    udg_AcquireFishTalkAfter = 0
-    udg_GoToCentaurClinicTalkBefore = 0
-    udg_GoToCentaurClinicTalkWhile = 0
-    udg_GoToCentaurClinicTalkAfter = 0
-    udg_AcquireIceId = 19
-    udg_AcquireIceTalkComplete = 0
-    udg_AcquireIcesTalkAcquire = 0
-    udg_TalkedWithFrigimon = false
-    udg_AcquireIcesTalkWhile = 0
-    udg_AcquireIcesTalkBefore = 0
-    udg_AcquireJurassicHerbsTalkBef = 0
-    udg_AcquireJurassicHerbsTalkWhie = 0
-    udg_AcquireJurassicHerbsTalkFinish = 0
-    udg_KillMasterID = 20
-    udg_KillMasterTalkAcquire = 0
-    udg_MasterDamagers = CreateForce()
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_MasterDamagersTime[i] = 0
-        i = i + 1
-    end
-    udg_KillMasteTalkAcquire_Afte = 0
-    udg_KillMasteTalkAcquire_Befo = 0
-    udg_KillMasterTalkAcquire_Wh2 = 0
-    udg_KillMasteTalkAcquire_Whil = 0
-    udg_AcquireOreId = 21
-    udg_AcquireOreTalkAcquire = 0
-    udg_AcquireOreTalkEnd = 0
-    udg_AcquireOreTalkAfter = 0
-    udg_AcquireOreTalkBefore = 0
-    udg_AcquireFishId_Copy = 22
-    udg_AcquireFishTalkAcquire_Copy = 0
-    udg_AcquireFishTalkEnd_Copy = 0
-    udg_AcquireFishTalkAfter_Copy = 0
-    udg_AcquireFishTalkBefore_Copy = 0
-    udg_TempINTBi = 0
-    udg_TempGroupAnti = CreateGroup()
-    udg_MAX_RANK = 18
-    udg_StrongWingsSpell = FourCC("A02V")
-    udg_SpeedySpell = FourCC("A037")
-    udg_HontelRandom = 0
-    udg_AcquireDigimonTalk = 0
-    udg_AcquireDigimonTalk_2 = 0
-    udg_AcquireCactusID = 45
-    udg_AcquireCactusTalkAcquire = 0
-    udg_AcquireCactusTalkComplete = 0
-    udg_AcquireCactusTalkFinish = 0
-    udg_AcquireCactusTalkBefore = 0
-    udg_AcquireTrashTreasures_ID_2 = 46
-    udg_AcquireTrashTreasuresTalkGet_2 = 0
-    udg_AcquireTrashTreasuresTalkGet_B_Copy = 0
-    udg_AcquireTrashTreasuresTalkGet_F_Copy = 0
-    udg_CosmeticId = 0
-    udg_CosmeticPassword = ""
-    udg_CosmeticRoot = ""
-    udg_CosmeticAttachment = "origin"
-    udg_MAX_COSMETICS = 500
-    udg_CosmeticIcon = ""
-    udg_CosmeticUnlockDesc = ""
-    udg_ITEM_DROP_CHANCE = 0
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SaveLoadUnlockedCosmetics[i] = false
-        i = i + 1
-    end
-    udg_SaveLoadUsedCosmetic = 1
-    udg_QuestSetRequirements = false
-    udg_KillBossesID = 23
-    udg_KillGarudamonReqID = 24
-    udg_GarudamonKilled = false
-    udg_GarudamonDamagers = CreateForce()
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_GarudamonDamagersTime[i] = 0
-        i = i + 1
-    end
-    udg_KillBossesTalkAcquire = 0
-    udg_KillBossesTalkCompleted = 0
-    udg_KillDatamonReqID = 25
-    udg_DatamonDamagers = CreateForce()
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_DatamonDamagersTime[i] = 0
-        i = i + 1
-    end
-    udg_DatamonKilled = false
-    udg_PanjyamonDamagers = CreateForce()
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_PanjyamonDamagersTime[i] = 0
-        i = i + 1
-    end
-    udg_KillPanjyamonReqID = 26
-    udg_PanjyamonKilled = false
-    udg_CherrymonDamagers = CreateForce()
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_CherrymonDamagersTime[i] = 0
-        i = i + 1
-    end
-    udg_KillCherrymonReqID = 27
-    udg_CherrymonKilled = false
-    udg_SkullsatamonDamagers = CreateForce()
-    i = 0
-    while (true) do
-        if ((i > 1)) then break end
-        udg_SkullsatamonDamagersTime[i] = 0
-        i = i + 1
-    end
-    udg_KillSkullsatamonReqID = 28
-    udg_SkullsatamonKilled = false
-    udg_KeepTrackOfRemovedUnits = true
-    udg_KillBossesTalkWhile = 0
-    udg_KillBossesTalkBefore = 0
-    udg_NativeForestRoadTile = FourCC("Adrt")
-    udg_NativeForestSideWalkTile = FourCC("Adrg")
-    udg_NativeForestMainDestructable = "war3mapImported\\NewOak1.mdl"
-    udg_NativeForestCommonDecoration = "Doodad\\AnimatedGrass.mdl"
-    udg_NativeForestUncommonDecoration = "Doodads\\Ruins\\Plants\\Ruins_Flower\\Ruins_Flower0.mdl"
-    udg_NativeForestExtraDecoration = "Doodad\\shrubAnimated.mdl"
-    udg_NativeForestAmplitude = 1.65
-    udg_AutoLoadData = false
-    udg_GearSavannaRoadTile = FourCC("Adrt")
-    udg_GearSavannaSideWalkTile = FourCC("Adrg")
-    udg_GearSavannaMainDestructable = "war3mapImported\\NewOak1.mdl"
-    udg_GearSavannaCommonDecoration = "Doodad\\AnimatedGrass.mdl"
-    udg_GearSavannaUncommonDecoration = "Doodads\\Ruins\\Plants\\Ruins_Flower\\Ruins_Flower0.mdl"
-    udg_GearSavannaExtraDecoration = "Doodad\\shrubAnimated.mdl"
-    udg_GearSavannaAmplitude = 1.50
+local i = 0
+
+udg_EvolveLevelCondition = 0
+udg_BackpackLevel = 1
+globals.udg_PreDamageEvent = 0.0
+globals.udg_ArmorDamageEvent = 0.0
+udg_ZeroDamageEvent = 0.0
+udg_LethalDamageEvent = 0.0
+udg_OnDamageEvent = 0.0
+globals.udg_AfterDamageEvent = 0.0
+udg_SourceDamageEvent = 0.0
+udg_AOEDamageEvent = 0.0
+udg_DamageModifierEvent = 0.0
+udg_DamageEvent = 0.0
+udg_RemoveDamageEvent = false
+udg_DamageEventOverride = false
+udg_DamageEngineEnabled = false
+udg_DamageEventPrevAmt = 0.0
+udg_DamageEventUserAmt = 0.0
+udg_DamageEventLevel = 0
+udg_DamageEventAOE = 0
+udg_DamageEventAOEGroup = CreateGroup()
+udg_DamageScalingWC3 = 0.0
+udg_DamageScalingUser = 0.0
+udg_IsDamageAttack = false
+udg_IsDamageMelee = false
+udg_IsDamageRanged = false
+udg_IsDamageSpell = false
+udg_IsDamageCode = false
+udg_DamageEventAmount = 0.0
+udg_DamageEventArmorPierced = 0.0
+udg_LethalDamageHP = 0.0
+udg_DamageEventAttackT = 0
+udg_DamageEventDamageT = 0
+udg_DamageEventArmorT = 0
+udg_DamageEventDefenseT = 0
+udg_DamageEventWeaponT = 0
+udg_DamageEventType = 0
+udg_NextDamageIsAttack = false
+udg_NextDamageIsRanged = false
+udg_NextDamageIsMelee = false
+udg_NextDamageType = 0
+udg_NextDamageWeaponT = 0
+udg_DamageFilterConfigured = false
+udg_DamageFilterAttackT = 0
+udg_DamageFilterDamageT = 0
+udg_DamageFilterType = 0
+udg_DamageFilterMinAmount = 0.0
+udg_DamageFilterRunChance = 0.0
+udg_DamageFilterFailChance = 0.0
+udg_DamageFilterSourceC = 0
+udg_DamageFilterTargetC = 0
+udg_UNIT_CLASS_MAGIC_IMMUNE = 0
+udg_UNIT_CLASS_ETHEREAL = 0
+udg_UNIT_CLASS_RESISTANT = 0
+udg_UNIT_CLASS_SLEEPING = 0
+udg_UNIT_CLASS_POLYMORPHED = 0
+udg_UNIT_CLASS_POISONED = 0
+udg_UNIT_CLASS_TAUREN = 0
+udg_UNIT_CLASS_ANCIENT = 0
+udg_UNIT_CLASS_TOWNHALL = 0
+udg_UNIT_CLASS_SAPPER = 0
+udg_UNIT_CLASS_PEON = 0
+udg_UNIT_CLASS_MECHANICAL = 0
+udg_UNIT_CLASS_UNDEAD = 0
+udg_UNIT_CLASS_SNARED = 0
+udg_UNIT_CLASS_PLAGUED = 0
+udg_UNIT_CLASS_STUNNED = 0
+udg_UNIT_CLASS_SUMMONED = 0
+udg_UNIT_CLASS_GIANT = 0
+udg_UNIT_CLASS_RANGED = 0
+udg_UNIT_CLASS_MELEE = 0
+udg_UNIT_CLASS_ATTACKS_GROUND = 0
+udg_UNIT_CLASS_ATTACKS_FLYING = 0
+udg_UNIT_CLASS_GROUND = 0
+udg_UNIT_CLASS_FLYING = 0
+udg_UNIT_CLASS_STRUCTURE = 0
+udg_UNIT_CLASS_DEAD = 0
+udg_UNIT_CLASS_HERO = 0
+udg_ARMOR_TYPE_NONE = 0
+udg_ARMOR_TYPE_FLESH = 0
+udg_ARMOR_TYPE_METAL = 0
+udg_ARMOR_TYPE_WOOD = 0
+udg_ARMOR_TYPE_ETHEREAL = 0
+udg_ARMOR_TYPE_STONE = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_ArmorTypeDebugStr[i] = ""
+i = i + 1
+end
+udg_ATTACK_TYPE_SPELLS = 0
+udg_ATTACK_TYPE_NORMAL = 0
+udg_ATTACK_TYPE_PIERCE = 0
+udg_ATTACK_TYPE_SIEGE = 0
+udg_ATTACK_TYPE_MAGIC = 0
+udg_ATTACK_TYPE_CHAOS = 0
+udg_ATTACK_TYPE_HERO = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_AttackTypeDebugStr[i] = ""
+i = i + 1
+end
+udg_DamageTypeBlocked = 0
+udg_DamageTypeCriticalStrike = 0
+udg_DamageTypeCode = 0
+udg_DamageTypeExplosive = 0
+udg_DamageTypeHeal = 0
+udg_DamageTypePure = 0
+udg_DamageTypePureExplosive = 0
+udg_DamageTypeReduced = 0
+udg_DAMAGE_TYPE_UNKNOWN = 0
+udg_DAMAGE_TYPE_NORMAL = 0
+udg_DAMAGE_TYPE_ENHANCED = 0
+udg_DAMAGE_TYPE_FIRE = 0
+udg_DAMAGE_TYPE_COLD = 0
+udg_DAMAGE_TYPE_LIGHTNING = 0
+udg_DAMAGE_TYPE_POISON = 0
+udg_DAMAGE_TYPE_DISEASE = 0
+udg_DAMAGE_TYPE_DIVINE = 0
+udg_DAMAGE_TYPE_MAGIC = 0
+udg_DAMAGE_TYPE_SONIC = 0
+udg_DAMAGE_TYPE_ACID = 0
+udg_DAMAGE_TYPE_FORCE = 0
+udg_DAMAGE_TYPE_DEATH = 0
+udg_DAMAGE_TYPE_MIND = 0
+udg_DAMAGE_TYPE_PLANT = 0
+udg_DAMAGE_TYPE_DEFENSIVE = 0
+udg_DAMAGE_TYPE_DEMOLITION = 0
+udg_DAMAGE_TYPE_SLOW_POISON = 0
+udg_DAMAGE_TYPE_SPIRIT_LINK = 0
+udg_DAMAGE_TYPE_SHADOW_STRIKE = 0
+udg_DAMAGE_TYPE_UNIVERSAL = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_DamageTypeDebugStr[i] = ""
+i = i + 1
+end
+udg_DEFENSE_TYPE_LIGHT = 0
+udg_DEFENSE_TYPE_MEDIUM = 0
+udg_DEFENSE_TYPE_HEAVY = 0
+udg_DEFENSE_TYPE_FORTIFIED = 0
+udg_DEFENSE_TYPE_NORMAL = 0
+udg_DEFENSE_TYPE_HERO = 0
+udg_DEFENSE_TYPE_DIVINE = 0
+udg_DEFENSE_TYPE_UNARMORED = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_DefenseTypeDebugStr[i] = ""
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_WeaponTypeDebugStr[i] = ""
+i = i + 1
+end
+udg_WEAPON_TYPE_NONE = 0
+udg_WEAPON_TYPE_ML_CHOP = 0
+udg_WEAPON_TYPE_MM_CHOP = 0
+udg_WEAPON_TYPE_MH_CHOP = 0
+udg_WEAPON_TYPE_ML_SLICE = 0
+udg_WEAPON_TYPE_MM_SLICE = 0
+udg_WEAPON_TYPE_MH_SLICE = 0
+udg_WEAPON_TYPE_MM_BASH = 0
+udg_WEAPON_TYPE_MH_BASH = 0
+udg_WEAPON_TYPE_MM_STAB = 0
+udg_WEAPON_TYPE_MH_STAB = 0
+udg_WEAPON_TYPE_WL_SLICE = 0
+udg_WEAPON_TYPE_WM_SLICE = 0
+udg_WEAPON_TYPE_WH_SLICE = 0
+udg_WEAPON_TYPE_WL_BASH = 0
+udg_WEAPON_TYPE_WM_BASH = 0
+udg_WEAPON_TYPE_WH_BASH = 0
+udg_WEAPON_TYPE_WL_STAB = 0
+udg_WEAPON_TYPE_WM_STAB = 0
+udg_WEAPON_TYPE_CL_SLICE = 0
+udg_WEAPON_TYPE_CM_SLICE = 0
+udg_WEAPON_TYPE_CH_SLICE = 0
+udg_WEAPON_TYPE_AM_CHOP = 0
+udg_WEAPON_TYPE_RH_BASH = 0
+udg_TempReal = 0.0
+udg_TempInt3 = 0
+udg_TempInt2 = 0
+udg_TempInt = 0
+udg_LoopC = 0
+udg_LoopB = 0
+udg_LoopD = 0
+udg_MaxLoopA = 0
+udg_MaxLoopB = 0
+udg_TotalItems = 0
+udg_Experience = 0
+udg_TotalHeroes = 0
+udg_Setup_Total_Items = 0
+udg_ItemIndex = 0
+udg_LoopA = 0
+udg_Setup_Total_Heroes = 0
+udg_HeroIndex = 0
+udg_TempPlayerGroup = CreateForce()
+udg_Camera_Distance = 0.0
+udg_PGroup = CreateForce()
+udg_ItemInteger = 0
+udg_TempGroup = CreateGroup()
+udg_Delayed_Duration = 0.0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_ItemDropWeights[i] = 0.0
+i = i + 1
+end
+udg_ItemDropOnce = false
+udg_Name = ""
+udg_Minimap = ""
+udg_TP_EnterText = ""
+udg_TP_LeaveText = ""
+udg_EnvName1 = ""
+udg_EnvName2 = ""
+udg_FadeOut = false
+udg_ItemSpawnMaxItems = 0
+udg_CREEPS_PER_PLAYER = 0
+udg_CREEPS_PER_REGION = 0
+udg_LIFE_SPAN = 0.0
+udg_LIFE_REDUCED = 0.0
+udg_DELAY_SPAWN = 0.0
+udg_DELAY_NORMAL = 0.0
+udg_DELAY_DEATH = 0.0
+udg_RANGE_LEVEL_1 = 0.0
+udg_RANGE_LEVEL_2 = 0.0
+udg_NEIGHBOURHOOD = 0.0
+udg_UPDATE_INTERVAL = 0.0
+udg_Water = ATTACK_TYPE_CHAOS
+udg_Beast = ATTACK_TYPE_MAGIC
+udg_Machine = ATTACK_TYPE_HERO
+udg_Air = ATTACK_TYPE_PIERCE
+udg_Dark = ATTACK_TYPE_SIEGE
+udg_Fire = ATTACK_TYPE_MELEE
+udg_Nature = ATTACK_TYPE_NORMAL
+udg_WaterAsInt = 0
+udg_BeastAsInt = 0
+udg_MachineAsInt = 0
+udg_AirAsInt = 0
+udg_DarkAsInt = 0
+udg_FireAsInt = 0
+udg_NatureAsInt = 0
+udg_HolyAsInt = 0
+udg_Red = 0.0
+udg_Green = 0.0
+udg_Blue = 0.0
+udg_Text = ""
+udg_Size = 0.0
+udg_ZOffset = 0.0
+udg_DamageVariation = 0.0
+udg_Root = ""
+udg_DamageRealtoInteger = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_AbsorbON[i] = 0
+i = i + 1
+end
+udg_BruteRandom = 0
+udg_EvasionChanceReal = 0.0
+udg_EvasionChanceRandom = 0.0
+udg_BullseyeSpell = FourCC("A02P")
+udg_BullseyeMissChanceLess = 15.00
+udg_CriticalDamageModifier = 1.00
+udg_CriticalDamageReal = 0.0
+udg_CriticalChanceReal = 0.0
+udg_CriticalChanceRandom = 0.0
+udg_Attribute = -1
+udg_EfficiencySpell = FourCC("A02O")
+udg_EfficiencyCritChancePlus = 10.00
+udg_EfficiencyCritDmgPlus = 0.10
+udg_StrongSpell = FourCC("A02Y")
+udg_StrongCritDmgPlus = 0.15
+udg_StrongHealthPerLevel = 5
+udg_DrainHPStealed = 10.00
+udg_BruteForceSpell = FourCC("A02Q")
+udg_BruteForceStrDmgFactor = 0.25
+udg_BruteForceChance = 20
+udg_BruteForcePushDist = 50.00
+udg_HardShellSpell = FourCC("A02S")
+udg_HardShellDmgTakenFactor = 0.90
+udg_ReactiveSpell = FourCC("A02T")
+udg_ReactiveDmgReturnFactor = 0.25
+udg_CalmMindSpell = FourCC("A02U")
+udg_CalmMindManaPerLevel = 2
+udg_HungerSpell = FourCC("A02K")
+udg_HungerBuff = FourCC("A02L")
+udg_FeederSpell = FourCC("A02M")
+udg_FeederDmgFactor = 0.20
+udg_EnvySpell = FourCC("A031")
+udg_EnvyManaReduced = 0.01
+udg_EnvyManaGained = 0.50
+udg_HardSpell = FourCC("A036")
+udg_HardDmgBlocked = 0.50
+udg_HardChance = 25
+udg_HotSpell = FourCC("A02N")
+udg_HotStrDmgFactor = 0.20
+udg_HotDmgPerSecFactor = 0.10
+udg_ColdBodySpell = FourCC("A030")
+udg_ColdBodyFreezeChance = 15
+udg_FrostSpell = FourCC("A028")
+udg_FrostAgiDmgFactor = 0.30
+udg_FrostChance = 25
+udg_SaveLoadGold = 0
+udg_SaveLoadLumber = 0
+udg_SaveLoadFood = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadBackpackItemCharges[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadInventories[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadLevels[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadExps[i] = 0
+i = i + 1
+end
+udg_SaveLoadSlot = 0
+udg_Loading = false
+udg_LoadCount = 0
+udg_PN_Load = 0
+udg_SaveNameMax = 0
+udg_SaveLoad_TriggerName = ""
+udg_SaveLoadMaxLength = 0
+udg_SaveUseGUI = false
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveNameList[i] = ""
+i = i + 1
+end
+udg_SaveLoad_Slot = 0
+udg_SaveHeroName = false
+udg_SaveTempReal = 0.0
+udg_SaveShowCode = false
+udg_HeroXPRequired = 0
+udg_HeroXPPrevLevelFactor = 0
+udg_HeroXPLevelFactor = 0
+udg_HeroXPConstant = 0
+udg_SaveAbilityTypeMax = 0
+udg_SaveUnitMaxStat = 0
+udg_SaveItemTypeMax = 0
+udg_SaveUnitTypeMax = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveCurrentSlot[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SavePlayerLoading[i] = false
+i = i + 1
+end
+udg_SaveLoad_HeroName = false
+udg_SaveLoadEvent_Code = ""
+udg_SaveLoadEvent = 0.0
+udg_SaveTempString = ""
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveMaxValue[i] = 0
+i = i + 1
+end
+udg_SaveCount = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveValue[i] = 0
+i = i + 1
+end
+udg_LocalFiles_WarningMessage = ""
+udg_MapName = ""
+udg_SaveTempInt = 0
+udg_SaveCodeColored = ""
+udg_BruteForceTargetEffectUnit = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
+udg_FeederCasterEffect = "Abilities\\Spells\\Undead\\VampiricAura\\VampiricAuraTarget.mdl"
+udg_HotTargetEffect = "Abilities\\Spells\\Other\\BreathOfFire\\BreathOfFireDamage.mdl"
+udg_CreepSpawnMinLevel = 1
+udg_CreepSpawnMaxLevel = 1
+udg_CreepSpawnInDay = true
+udg_CreepSpawnInNight = true
+udg_CHANCE_UNCOMMON = 0.0
+udg_CHANCE_RARE = 0.0
+udg_CHANCE_LEGENDARY = 0.0
+udg_RandomDropNumber = 0
+udg_FoodBonusType = ""
+udg_FoodBonusAmountReal = 0.0
+udg_FoodBonusAmountInt = 0
+udg_FoodBonusIsDrink = false
+udg_EvolveOnlyDayCondition = false
+udg_EvolveOnlyNightCondition = false
+udg_VALUEHEAL = 0.0
+udg_ConveyanceNewEnvName = ""
+udg_SaveOnSinglePlayer = true
+udg_QuestId = 0
+udg_MAX_QUESTS = 99
+udg_QuestName = ""
+udg_QuestDescription = ""
+udg_QuestOnlyOnce = false
+udg_DO_QUEST_AGAIN_DELAY = 15.00
+udg_PlayerIsOnQuest = false
+udg_KillDigimonsId = 3
+udg_QuestIsCompleted = false
+udg_AcquireItemId = 4
+udg_GoToPlaceId = 6
+udg_MAX_STACK = 99
+udg_MAX_ITEMS = 16
+udg_SaveCodeLegacy = false
+udg_MAX_DIGIMONS = 8
+udg_BulkySpell = FourCC("A039")
+udg_BulkyPerLevel = 3
+udg_NetAlwaysCapture = false
+udg_QuestProgress = 0
+udg_QuestMaxProgress = 1
+udg_SaveLoadCompletedQuests = 0
+udg_QuestLevel = 0
+udg_TempBool = false
+udg_TempBool2 = false
+udg_TempBool3 = false
+udg_TalkDigimonsId = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_Talk1[i] = false
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_Talk2[i] = false
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_Talk3[i] = false
+i = i + 1
+end
+udg_AcquireSwordId = 1
+udg_AcquireMeatId = 2
+udg_KillFlymonId = 5
+udg_FlymonDamagers = CreateForce()
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_FlymonDamagersTime[i] = 0
+i = i + 1
+end
+udg_KillDrimogemonId = 7
+udg_DrimogemonDamagers = CreateForce()
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_DrimogemonDamagersTime[i] = 0
+i = i + 1
+end
+udg_KillDigimons2Id = 40
+udg_GatherBerriesId = 41
+udg_KillDigimons3Id = 42
+udg_GymRank = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_Talk4[i] = false
+i = i + 1
+end
+udg_TalkDigimonsBirdId = 8
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_Talk1_Leomon[i] = false
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_Talk2_Coelamon[i] = false
+i = i + 1
+end
+udg_KillDigimonsId_Savanna = 9
+udg_AcquireFishId = 10
+udg_GoToCentaurClinicId = 11
+udg_AcquireJurassicHerbsId = 12
+udg_GymLevel = 1
+udg_AcquireTrashTreasures_ID = 43
+udg_KillDigimons4Id = 44
+udg_TalkGatomonId = 13
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_Talk1_2[i] = false
+i = i + 1
+end
+udg_AcquireNetId = 14
+udg_AcquireSunshineId = 15
+udg_KillCrabmonId = 16
+udg_CrabmonDamagers = CreateForce()
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_CrabmonDamagersTime[i] = 0
+i = i + 1
+end
+udg_MAX_SAVED_DIGIMONS = 6
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadIsSaved[i] = 0
+i = i + 1
+end
+udg_MAX_SAVED_ITEMS = 12
+udg_MIN_SAVED_ITEMS = 6
+udg_NEW_ITEM_SLOT_COST = 50
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadBankItemsCharges[i] = 0
+i = i + 1
+end
+udg_SaveLoadBankItemsMaxStock = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadQuestIds[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadQuestProgresses[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadQuestIsCompleted[i] = false
+i = i + 1
+end
+udg_SaveLoadBankDigimonsMaxStock = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadDigimonStrLevels[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadDigimonAgiLevels[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadDigimonIntLevels[i] = 0
+i = i + 1
+end
+udg_STAMINA_TRAINING = FourCC("A0CU")
+udg_DEXTERITY_TRAINING = FourCC("A0CT")
+udg_WISDOM_TRAINING = FourCC("A0CV")
+udg_CriticalChanceReal_Heal = 0.0
+udg_CriticalChanceRandom_Heal = 0.0
+udg_CriticalDamageReal_Heal = 0.0
+udg_CriticalDamageModifier_Heal = 1.00
+udg_VALUEHEAL_Heal = 0.0
+udg_VALUEHEAL_Final = 0.0
+udg_ThreatLevel = 0.0
+udg_GoToPlaceId_Palmon = 17
+udg_AcquireFlowersId = 18
+udg_ByPass = false
+udg_DamageByPass = 0.0
+udg_QuestWait = 0.0
+udg_QuestNoRepeat = false
+udg_QuestForce = CreateForce()
+udg_DamageBonusAmount = 0
+udg_DamageAuraSpell = FourCC("AEfk")
+udg_DamageAuraBuff = FourCC("AEfk")
+udg_DamageAuraAttackBase = 0.0
+udg_DamageAuraAttackPreviousFactor = 0.0
+udg_DamageAuraAttackLevelFactor = 0.0
+udg_DamageAuraAttackConstantFactor = 0.0
+udg_MAX_USED_DIGIMONS = 3
+udg_DamageAuraArea = 0.0
+udg_DamageAuraOwnerEffect = ""
+udg_MULTICOLOR_DIGIVICE = FourCC("I050")
+udg_SpellAIHasUnitTarget = false
+udg_SpellAIHasPointTarget = false
+udg_SpellAIHasNoTarget = false
+udg_SpellAIEnemyTarget = false
+udg_SpellAIAllyTarget = false
+udg_SpellAIOrder = ""
+udg_SaveLoadDay = 1
+udg_SaveLoadSec = 0
+udg_SaveLoadMin = 0
+udg_SaveLoadHour = 0
+udg_SaveLoadMonth = 1
+udg_SaveLoadYear = 1970
+udg_SaveLoadWDay = 1
+udg_SaveLoadYDay = 1
+udg_SaveLoadIsDst = false
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadDigimonIVSta[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadDigimonIVDex[i] = 0
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadDigimonIVWis[i] = 0
+i = i + 1
+end
+udg_FOOD_BUFF_DURATION = 1800.00
+udg_TalkId = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_TalkLines[i] = ""
+i = i + 1
+end
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_TalkDelays[i] = 0.0
+i = i + 1
+end
+udg_TalkToForce = CreateForce()
+udg_AcquireFlowersTalkComplete = 0
+udg_WaitIndex = 0
+udg_AcquireFlowersTalkAcquire = 0
+udg_TalkedWithPalmon = false
+udg_GoToPlaceId_PalmonTalk = 0
+udg_TalkedWithTentomon = false
+udg_SwordAcquired = false
+udg_MeatAcquired = false
+udg_DigimonsKilled = false
+udg_ItemAquired = false
+udg_AcquireGatomonQuestTalk = 0
+udg_AcquireFriendsQuestTalk = 0
+udg_KillCrabmonTalkAcquire = 0
+udg_AcquireSunshineTalkAcquire = 0
+udg_AcquireSunshineTalkComplete = 0
+udg_TalkedWithGatomon = false
+udg_AcquireSwordTalkAcquire = 0
+udg_AcquireMeatIdTalkAcquire = 0
+udg_AcquireMeatIdTalkComplete = 0
+udg_KillDigimonsTalkAcquire = 0
+udg_AcquireNetTalkAcquired = 0
+udg_GoToPlaceTalkAcquire = 0
+udg_AcquireItemTalkAcqure = 0
+udg_KillFlymonTalkAcquire = 0
+udg_KillDrimogemonTalkAcquire = 0
+udg_TalkDigimonsBirdAcquire = 0
+udg_TalkedWithLeomon = false
+udg_TalkedWithCoelamon = false
+udg_KillDigimonsSavannaTalkAcquire = 0
+udg_KillDigimonsSavannaTalkEnd = 0
+udg_AcquireFishTalkAcquire = 0
+udg_AcquireFishTalkEnd = 0
+udg_GoToCentaurClinicTalkAcquire = 0
+udg_GoToCentaurClinicTalkEnd = 0
+udg_AcquireJurassicHerbsTalkGet = 0
+udg_AcquireJurassicHerbsTalkEnd = 0
+udg_KillDigimons4TalkAcquire = 0
+udg_AcquireTrashTreasuresTalkGet = 0
+udg_KillDigimons2TalkAcquire = 0
+udg_GatherBerriesTalkAcquire = 0
+udg_KillDigimons3TalkAcquire = 0
+udg_KillDigimons3TalkComplete = 0
+udg_AcquireSwordTalkWhile = 0
+udg_AcquireSwordTalkFinish = 0
+udg_AcquireMeatIdTalkWhile = 0
+udg_AcquireMeatIdTalkComplete_2 = 0
+udg_AcquireSwordTalkWhile_2 = 0
+udg_AcquireItemTalkAcqure_2 = 0
+udg_AcquireItemTalkAcqure_While = 0
+udg_AcquireItemTalkAcqure_Finish = 0
+udg_KillCrabmonTalkAcquire_While = 0
+udg_KillDigimonsTalkAcquire_While = 0
+udg_KillDigimonsTalkAcquire_Finish = 0
+udg_AcquireFriendsQuestTalk_While = 0
+udg_AcquireGatomonQuestTalk_While = 0
+udg_AcquireGatomonQuestTalk_Finish = 0
+udg_AcquireFriendsQuestTalk_Finish = 0
+udg_AcquireNetTalkAcquired_Before = 0
+udg_AcquireNetTalkAcquired_While = 0
+udg_AcquireNetTalkAcquired_Finish = 0
+udg_AcquireNetTalkAcquired_AttheBu = 0
+udg_GoToPlaceId_PalmonTalk_While = 0
+udg_GoToPlaceId_PalmonTalk_Before = 0
+udg_GoToPlaceId_PalmonTalk_After = 0
+udg_AcquireFlowersTalkWhile = 0
+udg_AcquireFlowersTalkBefore = 0
+udg_AcquireSunshineTalkFinish = 0
+udg_AcquireSunshineBefore = 0
+udg_KillDigimons3TalkAcquire_While = 0
+udg_KillDigimons3TalkAcquire_Befor = 0
+udg_KillDigimons2TalkFinish = 0
+udg_KillDigimons2TalkFinish_While = 0
+udg_GoToPlaceTalkAcquire_before = 0
+udg_GoToPlaceTalkAcquire_while = 0
+udg_GoToPlaceTalkAcquire_after = 0
+udg_KillDigimons4TalkAcquire_While = 0
+udg_KillDigimons4TalkAcquire_Finis = 0
+udg_KillDigimons4TalkAcquire_Befor = 0
+udg_AcquireTrashTreasuresTalkGet_B = 0
+udg_AcquireTrashTreasuresTalkGet_F = 0
+udg_GatherBerriesTalkAcquire_Bef = 0
+udg_GatherBerriesTalkAcquire_Fin = 0
+udg_RepeatMusic = CreateTimer()
+udg_KillCrabmonTalkAcquire_Before = 0
+udg_KillCrabmonTalkAcquire_After = 0
+udg_KillFlymonTalkAcquire_While = 0
+udg_KillFlymonTalkAcquire_After = 0
+udg_KillFlymonTalkAcquire_Before = 0
+udg_KillDrimogemonTalkAcquire_Whil = 0
+udg_KillDrimogemonTalkAcquire_Afte = 0
+udg_KillDrimogemonTalkAcquire_Befo = 0
+udg_KillDrimogemonTalkAcquire_Wh2 = 0
+udg_TalkDigimonsBirdAcquire_After = 0
+udg_TalkDigimonsBirdAcquire_While = 0
+udg_TalkDigimonsBirdAcquire_Before = 0
+udg_KillDigimonsSavannaTalkWhile = 0
+udg_KillDigimonsSavannaTalkBefore = 0
+udg_AcquireFishTalkBefore = 0
+udg_AcquireFishTalkAfter = 0
+udg_GoToCentaurClinicTalkBefore = 0
+udg_GoToCentaurClinicTalkWhile = 0
+udg_GoToCentaurClinicTalkAfter = 0
+udg_AcquireIceId = 19
+udg_AcquireIceTalkComplete = 0
+udg_AcquireIcesTalkAcquire = 0
+udg_TalkedWithFrigimon = false
+udg_AcquireIcesTalkWhile = 0
+udg_AcquireIcesTalkBefore = 0
+udg_AcquireJurassicHerbsTalkBef = 0
+udg_AcquireJurassicHerbsTalkWhie = 0
+udg_AcquireJurassicHerbsTalkFinish = 0
+udg_KillMasterID = 20
+udg_KillMasterTalkAcquire = 0
+udg_MasterDamagers = CreateForce()
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_MasterDamagersTime[i] = 0
+i = i + 1
+end
+udg_KillMasteTalkAcquire_Afte = 0
+udg_KillMasteTalkAcquire_Befo = 0
+udg_KillMasterTalkAcquire_Wh2 = 0
+udg_KillMasteTalkAcquire_Whil = 0
+udg_AcquireOreId = 21
+udg_AcquireOreTalkAcquire = 0
+udg_AcquireOreTalkEnd = 0
+udg_AcquireOreTalkAfter = 0
+udg_AcquireOreTalkBefore = 0
+udg_AcquireFishId_Copy = 22
+udg_AcquireFishTalkAcquire_Copy = 0
+udg_AcquireFishTalkEnd_Copy = 0
+udg_AcquireFishTalkAfter_Copy = 0
+udg_AcquireFishTalkBefore_Copy = 0
+udg_TempINTBi = 0
+udg_TempGroupAnti = CreateGroup()
+udg_MAX_RANK = 18
+udg_StrongWingsSpell = FourCC("A02V")
+udg_SpeedySpell = FourCC("A037")
+udg_HontelRandom = 0
+udg_AcquireDigimonTalk = 0
+udg_AcquireDigimonTalk_2 = 0
+udg_AcquireCactusID = 45
+udg_AcquireCactusTalkAcquire = 0
+udg_AcquireCactusTalkComplete = 0
+udg_AcquireCactusTalkFinish = 0
+udg_AcquireCactusTalkBefore = 0
+udg_AcquireTrashTreasures_ID_2 = 46
+udg_AcquireTrashTreasuresTalkGet_2 = 0
+udg_AcquireTrashTreasuresTalkGet_B_Copy = 0
+udg_AcquireTrashTreasuresTalkGet_F_Copy = 0
+udg_CosmeticId = 0
+udg_CosmeticPassword = ""
+udg_CosmeticRoot = ""
+udg_CosmeticAttachment = "origin"
+udg_MAX_COSMETICS = 500
+udg_CosmeticIcon = ""
+udg_CosmeticUnlockDesc = ""
+udg_ITEM_DROP_CHANCE = 0
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SaveLoadUnlockedCosmetics[i] = false
+i = i + 1
+end
+udg_SaveLoadUsedCosmetic = 1
+udg_QuestSetRequirements = false
+udg_KillBossesID = 23
+udg_KillGarudamonReqID = 24
+udg_GarudamonKilled = false
+udg_GarudamonDamagers = CreateForce()
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_GarudamonDamagersTime[i] = 0
+i = i + 1
+end
+udg_KillBossesTalkAcquire = 0
+udg_KillBossesTalkCompleted = 0
+udg_KillDatamonReqID = 25
+udg_DatamonDamagers = CreateForce()
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_DatamonDamagersTime[i] = 0
+i = i + 1
+end
+udg_DatamonKilled = false
+udg_PanjyamonDamagers = CreateForce()
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_PanjyamonDamagersTime[i] = 0
+i = i + 1
+end
+udg_KillPanjyamonReqID = 26
+udg_PanjyamonKilled = false
+udg_CherrymonDamagers = CreateForce()
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_CherrymonDamagersTime[i] = 0
+i = i + 1
+end
+udg_KillCherrymonReqID = 27
+udg_CherrymonKilled = false
+udg_SkullsatamonDamagers = CreateForce()
+i = 0
+while (true) do
+if ((i > 1)) then break end
+udg_SkullsatamonDamagersTime[i] = 0
+i = i + 1
+end
+udg_KillSkullsatamonReqID = 28
+udg_SkullsatamonKilled = false
+udg_KeepTrackOfRemovedUnits = true
+udg_KillBossesTalkWhile = 0
+udg_KillBossesTalkBefore = 0
+udg_NativeForestRoadTile = FourCC("Adrt")
+udg_NativeForestSideWalkTile = FourCC("Adrg")
+udg_NativeForestMainDestructable = "war3mapImported\\NewOak1.mdl"
+udg_NativeForestCommonDecoration = "Doodad\\AnimatedGrass.mdl"
+udg_NativeForestUncommonDecoration = "Doodads\\Ruins\\Plants\\Ruins_Flower\\Ruins_Flower0.mdl"
+udg_NativeForestExtraDecoration = "Doodad\\shrubAnimated.mdl"
+udg_NativeForestAmplitude = 1.65
+udg_AutoLoadData = false
+udg_GearSavannaRoadTile = FourCC("Adrt")
+udg_GearSavannaSideWalkTile = FourCC("Adrg")
+udg_GearSavannaMainDestructable = "war3mapImported\\NewOak1.mdl"
+udg_GearSavannaCommonDecoration = "Doodad\\AnimatedGrass.mdl"
+udg_GearSavannaUncommonDecoration = "Doodads\\Ruins\\Plants\\Ruins_Flower\\Ruins_Flower0.mdl"
+udg_GearSavannaExtraDecoration = "Doodad\\Hamsterwheel.mdl"
+udg_GearSavannaAmplitude = 1.65
+udg_GearSavannaSecondDestructable = "Doodads\\LordaeronSummer\\Terrain\\LoardaeronRockChunks\\LoardaeronRockChunks0.mdl"
+udg_GearSavannaThirdDestructable = "Doodads\\Ashenvale\\Rocks\\AshenRock\\AshenRock0.mdl"
+udg_MistyTreesRoadTile = FourCC("Adrd")
+udg_MistyTreesSideWalkTile = FourCC("Agrs")
+udg_MistyTreesMainDestructable = "war3mapImported\\FinePine0.mdl"
+udg_MistyTreesSecondDestructable = "Doodads\\Terrain\\NorthrendTree\\NorthrendTree9S.mdl"
+udg_MistyTreesThirdDestructable = "Doodads\\LordaeronSummer\\Terrain\\LoardaeronRockChunks\\LoardaeronRockChunks0.mdl"
+udg_MistyTreesCommonDecoration = "TerrainGlow.mdl"
+udg_MistyTreesUncommonDecoration = "Doodads\\Ruins\\Plants\\Ruins_Flower\\Ruins_Flower0.mdl"
+udg_MistyTreesExtraDecoration = "Doodad\\Hamsterwheel.mdl"
+udg_MistyTreesAmplitude = 1.65
 end

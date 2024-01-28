@@ -242,25 +242,27 @@ OnInit("AbilityUtils", function ()
     ---@param centerY number
     ---@param range number
     ---@param callback fun(x: number, y: number): boolean?
-    function ForEachCellInRange(centerX, centerY, range, callback)
-        centerX = RoundUp(centerX)
-        centerY = RoundUp(centerY)
+    ---@param scalar number?
+    function ForEachCellInRange(centerX, centerY, range, callback, scalar)
+        local cellWidth = scalar and scalar * bj_CELLWIDTH or bj_CELLWIDTH
+        centerX = RoundUp(centerX, cellWidth)
+        centerY = RoundUp(centerY, cellWidth)
 
         -- Iterate over the center
         if callback(centerX, centerY) then return end
 
-        local n = math.ceil(range / bj_CELLWIDTH)
+        local n = math.ceil(range / cellWidth)
 
         for i = 1, n do
             -- Iterate over the axis
-            local xOffset = i * bj_CELLWIDTH
+            local xOffset = i * cellWidth
             if callback(centerX + xOffset, centerY) then return end
             if callback(centerX, centerY + xOffset) then return end
             if callback(centerX - xOffset, centerY) then return end
             if callback(centerX, centerY - xOffset) then return end
             -- Iterate over each quadrant
             for j = 1, n do
-                local yOffset = j * bj_CELLWIDTH
+                local yOffset = j * cellWidth
                 if DistanceBetweenCoords(centerX, centerY, centerX + xOffset, centerY + yOffset) <= range then
                     if callback(centerX + xOffset, centerY + yOffset) then return end
                     if callback(centerX + xOffset, centerY - yOffset) then return end
@@ -275,15 +277,17 @@ OnInit("AbilityUtils", function ()
     ---@param centerY number
     ---@param side number
     ---@param callback fun(x: number, y: number): boolean?
-    function ForEachCellInArea(centerX, centerY, side, callback)
-        local firstX = RoundUp(centerX - side)
-        local firstY = RoundUp(centerY - side)
-        local n = math.ceil(2 * side / bj_CELLWIDTH)
+    ---@param scalar number?
+    function ForEachCellInArea(centerX, centerY, side, callback, scalar)
+        local cellWidth = scalar and scalar * bj_CELLWIDTH or bj_CELLWIDTH
+        local firstX = RoundUp(centerX - side * 1.5, cellWidth)
+        local firstY = RoundUp(centerY - side * 1.5, cellWidth)
+        local n = math.ceil(2 * side / cellWidth)
 
         for i = 1, n do
-            local xOffset = i * bj_CELLWIDTH
+            local xOffset = i * cellWidth
             for j = 1, n do
-                local yOffset = j * bj_CELLWIDTH
+                local yOffset = j * cellWidth
                 if callback(firstX + xOffset, firstY + yOffset) then return end
             end
         end

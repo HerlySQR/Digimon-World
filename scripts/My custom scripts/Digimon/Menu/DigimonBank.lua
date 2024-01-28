@@ -109,7 +109,6 @@ OnInit("DigimonBank", function ()
     ---@field customer Digimon
     ---@field caster unit
     ---@field usingCaster boolean
-    ---@field selectedUnits group
     ---@field buyer unit
     ---@field seller unit
     local Bank = {}
@@ -372,12 +371,7 @@ OnInit("DigimonBank", function ()
         if self.p == LocalPlayer then
             ClearSelection()
         end
-        ForGroup(self.selectedUnits, function ()
-            if self.p == LocalPlayer then
-                SelectUnit(GetEnumUnit(), true)
-            end
-        end)
-        GroupClear(self.selectedUnits)
+        RestartSelectedUnits(self.p)
         self.usingCaster = false
 
         if self.p == LocalPlayer then
@@ -402,7 +396,6 @@ OnInit("DigimonBank", function ()
             bank.caster = CreateUnit(Digimon.PASSIVE, ITEM_BANK_CASTER, WorldBounds.maxX, WorldBounds.maxY, 0)
             bank.seller = CreateUnit(Digimon.PASSIVE, ITEM_BANK_SELLER, WorldBounds.maxX, WorldBounds.maxY, 0)
             bank.buyer = CreateUnit(Digimon.PASSIVE, ITEM_BANK_BUYER, WorldBounds.maxX, WorldBounds.maxY, 0)
-            bank.selectedUnits = CreateGroup()
         end)
     end)
 
@@ -717,8 +710,7 @@ OnInit("DigimonBank", function ()
         local p = GetTriggerPlayer()
         local bank = Bank[GetPlayerId(p)] ---@type Bank
         SetUnitOwner(bank.caster, p, false)
-        SyncSelections()
-        GroupEnumUnitsSelected(bank.selectedUnits, p)
+        SaveSelectedUnits(p)
 
         if p == LocalPlayer then
             BlzFrameSetEnable(SaveItem, false)

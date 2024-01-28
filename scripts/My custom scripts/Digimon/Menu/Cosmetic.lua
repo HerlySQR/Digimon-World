@@ -68,20 +68,17 @@ OnInit("Cosmetic", function ()
 
     local clickedEffect = __jarray(-1) ---@type table<player, integer>
     local lastEffect = {} ---@type table<player, effect>
-    local selectedUnits = {} ---@type table<player, group>
     local inputCode = __jarray("") ---@type table<player, string>
     local digimonTypes = {} ---@type table<player, Digimon[]>
     local selectedDigimon = __jarray(1) ---@type table<player, integer>
 
     local modelEffects = {} ---@type table<player, table<string, effect>>
 
-    local prevCamera = {} ---@type{targetX: number, targetY: number, targetZ: number, eyeX: number, eyeY: number, eyeZ: number, targetDistance: number, farZ: number, angleOfAttack: number, fieldOfView: number, roll: number, rotation: number, zOffset: number, nearZ: number, localPitch: number, localYaw: number, localRoll: number}
     local inMenu = false
 
     OnInit.final(function ()
         ForForce(FORCE_PLAYING, function ()
             UnlockedCosmetics[GetEnumPlayer()] = setmetatable({}, {__index = toUnlock})
-            selectedUnits[GetEnumPlayer()] = CreateGroup()
             modelEffects[GetEnumPlayer()] = {}
         end)
         BlzFrameSetValue(CosmeticList.Slider, 99)
@@ -149,15 +146,7 @@ OnInit("Cosmetic", function ()
         local p = GetTriggerPlayer()
 
         if p == LocalPlayer then
-            prevCamera.targetX = GetCameraTargetPositionX()
-            prevCamera.targetY = GetCameraTargetPositionY()
-            prevCamera.targetZ = GetCameraTargetPositionZ()
-            prevCamera.targetDistance = GetCameraField(CAMERA_FIELD_TARGET_DISTANCE)
-            prevCamera.farZ = GetCameraField(CAMERA_FIELD_FARZ)
-            prevCamera.angleOfAttack = math.deg(GetCameraField(CAMERA_FIELD_ANGLE_OF_ATTACK))
-            --prevCamera.fieldOfView = GetCameraField(CAMERA_FIELD_FIELD_OF_VIEW)
-            prevCamera.zOffset = GetCameraField(CAMERA_FIELD_ZOFFSET)
-            prevCamera.nearZ = GetCameraField(CAMERA_FIELD_NEARZ)
+            SaveCameraSetup()
         end
 
         local oldEnv = GetPlayerEnviroment(p)
@@ -167,8 +156,7 @@ OnInit("Cosmetic", function ()
 
         UnitShareVision(model, p, true)
 
-        SyncSelections()
-        GroupEnumUnitsSelected(selectedUnits[p], p)
+        SaveSelectedUnits(p)
 
         digimonTypes[p] = GetAllDigimons(p)
 
@@ -223,25 +211,13 @@ OnInit("Cosmetic", function ()
 
         UnitShareVision(model, p, false)
 
-        ForGroup(selectedUnits[p], function ()
-            if p == LocalPlayer then
-                SelectUnit(GetEnumUnit(), true)
-            end
-        end)
-        GroupClear(selectedUnits[p])
+        RestartSelectedUnits(p)
 
         if p == LocalPlayer then
             ShowMenu(true)
             BlzFrameSetVisible(CosmeticMenu, false)
 
-            ResetToGameCamera(0)
-            PanCameraToTimedWithZ(prevCamera.targetX, prevCamera.targetY, prevCamera.targetZ, 0)
-            SetCameraField(CAMERA_FIELD_TARGET_DISTANCE, prevCamera.targetDistance, 0)
-            SetCameraField(CAMERA_FIELD_FARZ, prevCamera.farZ, 0)
-            SetCameraField(CAMERA_FIELD_ANGLE_OF_ATTACK, prevCamera.angleOfAttack, 0)
-            --SetCameraField(CAMERA_FIELD_FIELD_OF_VIEW, prevCamera.fieldOfView, 0)
-            SetCameraField(CAMERA_FIELD_ZOFFSET, prevCamera.zOffset, 0)
-            SetCameraField(CAMERA_FIELD_NEARZ, prevCamera.nearZ, 0)
+            RestartToPreviousCamera()
 
             BlzFrameSetEnable(CosmeticAccept, false)
             BlzFrameSetEnable(CosmeticOpen, true)

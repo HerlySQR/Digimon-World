@@ -11,11 +11,13 @@ OnInit("Quests", function ()
     Require "AddHook"
     local Color = Require "Color" ---@type Color
 
-    local YELLOW = Color.new(255, 255, 255)
-    local GREEN = Color.new(0, 255, 0)
-    local TEAL = Color.new(134, 227, 186)
-    local GRAY = Color.new(98, 101, 103)
-    local ORANGE = Color.new(192, 93, 81)
+    local YELLOW = Color.new(255, 255, 0)
+    local GREEN = Color.new(0, 255, 255)
+    local WHITE = Color.new(255, 255, 255)
+    local QUEST_MARK = "Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl"
+    local QUEST_MARK_DONE = "Objects\\RandomObject\\RandomObject.mdl"
+    local MAX_QUESTS = udg_MAX_QUESTS
+    local DO_QUEST_AGAIN_DELAY = udg_DO_QUEST_AGAIN_DELAY
 
     local NoRepeat = {} ---@type table<player, table<trigger, boolean>>
     local QuestTrigger = SyncedTable.create() ---@type table<thread, trigger>
@@ -37,9 +39,6 @@ OnInit("Quests", function ()
     local Origin = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local LocalPlayer = GetLocalPlayer()
     local PressedQuest = -1
-    local QUEST_MARK = "Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl"
-    local MAX_QUESTS = udg_MAX_QUESTS
-    local DO_QUEST_AGAIN_DELAY = udg_DO_QUEST_AGAIN_DELAY
 
     ---@class QuestTemplate
     ---@field name string
@@ -49,6 +48,7 @@ OnInit("Quests", function ()
     ---@field onlyOnce boolean
     ---@field maxProgress integer
     ---@field questMark effect?
+    ---@field questMarkDone effect?
     ---@field counter texttag?
     ---@field isRequirement boolean
     ---@field requirements QuestTemplate[]?
@@ -294,11 +294,9 @@ OnInit("Quests", function ()
                 BlzFrameSetSpriteAnimate(QuestButtonSprite, 1, 0)
             end
             if QuestTemplates[id].questMark then
-                if QuestTemplates[id].onlyOnce then
-                    BlzSetSpecialEffectColor(QuestTemplates[id].questMark, TEAL)
-                else
-                    BlzSetSpecialEffectColor(QuestTemplates[id].questMark, GRAY)
-                end
+                BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
+                BlzSetSpecialEffectAlpha(QuestTemplates[id].questMarkDone, 255)
+                BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, WHITE)
             end
         end
         Timed.call(8., function ()
@@ -326,13 +324,18 @@ OnInit("Quests", function ()
         if petitioner then
             local questMark = AddSpecialEffect(QUEST_MARK, GetUnitX(petitioner), GetUnitY(petitioner))
             if onlyOnce then
-                BlzSetSpecialEffectColor(QuestTemplates[id].questMark, YELLOW)
+                BlzSetSpecialEffectColor(questMark, YELLOW)
             else
-                BlzSetSpecialEffectColor(QuestTemplates[id].questMark, GREEN)
+                BlzSetSpecialEffectColor(questMark, GREEN)
             end
             BlzSetSpecialEffectZ(questMark, GetUnitZ(petitioner, true) + 175)
             QuestTemplates[id].questMark = questMark
             QuestTemplates[id].counter = CreateTextTagUnitBJ("", petitioner, 50., 10., 100., 100., 100., 0.)
+
+            local questMarkDone = AddSpecialEffect(QUEST_MARK_DONE, GetUnitX(petitioner), GetUnitY(petitioner))
+            BlzSetSpecialEffectZ(questMarkDone, GetUnitZ(petitioner, true) + 175)
+            BlzSetSpecialEffectAlpha(questMarkDone, 0)
+            QuestTemplates[id].questMarkDone = questMarkDone
         end
         if setRequirements then
             QuestTemplates[id].isRequirement = true
@@ -377,7 +380,7 @@ OnInit("Quests", function ()
                     end
                 end
                 if p == LocalPlayer then
-                    if QuestTemplates[id].questMark then
+                    if QuestTemplates[id].questMarkDone then
                         BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 255)
                         BlzPlaySpecialEffect(QuestTemplates[id].questMark, ANIM_TYPE_STAND)
                         BlzSetSpecialEffectColor(QuestTemplates[id].questMark, GREEN)
@@ -400,14 +403,14 @@ OnInit("Quests", function ()
                     DisplayTextToPlayer(p, 0, 0, "|cffFFCC00QUEST COMPLETED:|r |cff00ff00" .. PlayerQuests[p][id].name .. "|r")
                 end
                 if QuestTemplates[id].questMark then
-                    BlzPlaySpecialEffect(QuestTemplates[id].questMark, ANIM_TYPE_DEATH)
+                    BlzPlaySpecialEffect(QuestTemplates[id].questMarkDone, ANIM_TYPE_DEATH)
                 end
             end
             UpdateMenu()
         end
         Timed.call(0.667, function ()
             if p == LocalPlayer and QuestTemplates[id].questMark then
-                BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
+                BlzSetSpecialEffectAlpha(QuestTemplates[id].questMarkDone, 0)
             end
         end)
     end
@@ -534,8 +537,12 @@ OnInit("Quests", function ()
         udg_QuestCanReturn = CreateTrigger()
         TriggerAddAction(udg_QuestCanReturn, function ()
             local id = udg_QuestId
-            if udg_QuestPlayer == LocalPlayer and QuestTemplates[id].questMark then
-                BlzSetSpecialEffectColor(QuestTemplates[id].questMark, ORANGE)
+            if udg_QuestPlayer == LocalPlayer and QuestTemplates[id].questMarkDone then
+                if QuestTemplates[id].onlyOnce then
+                    BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, YELLOW)
+                else
+                    BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, GREEN)
+                end
             end
         end)
     end)
