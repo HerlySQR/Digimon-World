@@ -10,9 +10,9 @@ OnInit("BossFightUtils", function ()
     local ignored = {} ---@type table<unit, table<unit, boolean>>
     local battlefield = {} ---@type table<unit, rect[]>
 
-    local DASH_EFFECT = "war3mapImported\\Valiant Charge Royal.mdx"
-    local TELEPORT_CASTER_EFFECT = "war3mapImported\\Blink Purple Caster.mdx"
-    local TELEPORT_TARGET_EFFECT = "war3mapImported\\Blink Purple Target.mdx"
+    local DASH_EFFECT = "war3mapImported\\Valiant Charge Royal.mdl"
+    local TELEPORT_CASTER_EFFECT = "war3mapImported\\Blink Purple Caster.mdl"
+    local TELEPORT_TARGET_EFFECT = "war3mapImported\\Blink Purple Target.mdl"
     local UNDERGOUND_EFFECT = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
 
     ---Don't cast timed duration spells when other timed duration spell is casted
@@ -243,44 +243,43 @@ OnInit("BossFightUtils", function ()
         end)
     end
 
-    OnInit.final("BossFightUtils_OnlyOne", function ()
-        Require "PlayerUtils"
-        local count = 0
-        ForForce(FORCE_PLAYING, function ()
-            count = count + 1
-        end)
-        return count == 1
-    end)
+    ---@param n integer
+    ---@param half boolean?
+    ---@return number
+    local function getInterval(n, half)
+        return 6 * math.exp(-0.5493061443341 * ((half and n/2 or n) - 1))
+    end
 
-    ---@param name string
-    ---@param boss unit
-    ---@param actions fun(u?: unit, unitsInTheField?: Set)
-    ---@param onStart? function
-    ---@param onReset? function
-    function InitBossFight(name, boss, actions, onStart, onReset)
-        local onlyOne = Require "BossFightUtils_OnlyOne" ---@type boolean
+    ---@param data {name: string, boss: unit, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
+    function InitBossFight(data)
+        if type(data) ~= "table" then
+            print("Bad data implemented in bossfight:", data)
+            return
+        end
 
-        assert(_G["gg_rct_" .. name .. "_1"], "The regions of " .. name .. " are not set")
-        assert(boss, "The boss is not set")
+        assert(_G["gg_rct_" .. data.name .. "_1"], "The regions of " .. data.name .. " are not set")
+        assert(data.boss, "The boss is not set")
 
-        ZTS_AddThreatUnit(boss, false)
-        ignored[boss] = __jarray(false)
+        ZTS_AddThreatUnit(data.boss, false)
+        ignored[data.boss] = __jarray(false)
 
-        local owner = GetOwningPlayer(boss)
-        local interval = onlyOne and 5. or 2. -- seconds
-        battlefield[boss] = {}
+        local owner = GetOwningPlayer(data.boss)
+        local interval = 3.
+        battlefield[data.boss] = {}
+        local playersOnField = Set.create()
+        local currentTarget = nil ---@type unit
 
-        local initialPosX, initialPosY = GetUnitX(boss), GetUnitY(boss)
+        local initialPosX, initialPosY = GetUnitX(data.boss), GetUnitY(data.boss)
 
-        local advice = CreateTextTagLocBJ("Revive in: ", GetUnitLoc(boss), 50, 10, 100, 100, 100, 0)
+        local advice = CreateTextTagLocBJ("Revive in: ", GetUnitLoc(data.boss), 50, 10, 100, 100, 100, 0)
         SetTextTagPermanent(advice, true)
         SetTextTagVisibility(advice, false)
 
         local numRect = 1
         while true do
-            local r = rawget(_G, "gg_rct_" .. name .. "_" .. numRect) -- To not display the error message
+            local r = rawget(_G, "gg_rct_" .. data.name .. "_" .. numRect) -- To not display the error message
             if r then
-                battlefield[boss][numRect] = r
+                battlefield[data.boss][numRect] = r
             else
                 break
             end
@@ -290,66 +289,126 @@ OnInit("BossFightUtils", function ()
 
         local unitsInTheField = Set.create()
         local attacking = false
-        local reduced = false
         local dead = false
         local returned = true
 
-        local function reset()
-            if not returned then
-                SetUnitState(boss, UNIT_STATE_LIFE, GetUnitState(boss, UNIT_STATE_MAX_LIFE))
-                SetUnitState(boss, UNIT_STATE_MANA, GetUnitState(boss, UNIT_STATE_MAX_MANA))
-                UnitResetCooldown(boss)
-                interval = onlyOne and 5. or 2. -- seconds
-                attacking = false
-                reduced = false
-                returned = true
-                if onReset then
-                    onReset()
-                end
-                ignored[boss] = __jarray(false)
+        if data.forceWall then
+            for _, d in ipairs(data.forceWall) do
+                ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
             end
         end
 
-        if onStart then
-            onStart()
+        local function reset()
+            if not returned then
+                SetUnitState(data.boss, UNIT_STATE_LIFE, GetUnitState(data.boss, UNIT_STATE_MAX_LIFE))
+                SetUnitState(data.boss, UNIT_STATE_MANA, GetUnitState(data.boss, UNIT_STATE_MAX_MANA))
+                UnitResetCooldown(data.boss)
+                interval = 3.
+                attacking = false
+                returned = true
+                if data.forceWall then
+                    for _, d in ipairs(data.forceWall) do
+                        ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+                    end
+                end
+                if data.onReset then
+                    data.onReset()
+                end
+                ignored[data.boss] = __jarray(false)
+            end
+        end
+
+        if data.onStart then
+            data.onStart()
         end
 
         local current = 0
-        Timed.echo(1., function ()
-            current = current + 1.
-            if UnitAlive(boss) then
+        Timed.echo(0.5, function ()
+            current = current + 0.5
+            if UnitAlive(data.boss) then
                 if dead then
                     dead = false
                 end
 
+                local whoAlreadyAre = playersOnField:toArray()
+                local whoWereHere = unitsInTheField:copy()
+
+                for p in playersOnField:elements() do
+                    ResumeRevive(p)
+                end
+
                 unitsInTheField:clear()
+                playersOnField:clear()
 
                 local isInBattlefield = false
                 -- Check if are units in the battlefield
                 for i = 1, numRect do
-                    ForUnitsInRect(battlefield[boss][i], function (u)
-                        if u ~= boss and UnitAlive(u) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                    ForUnitsInRect(battlefield[data.boss][i], function (u)
+                        if u ~= data.boss and UnitAlive(u) and IsUnitEnemy(data.boss, GetOwningPlayer(u)) then
                             unitsInTheField:addSingle(u)
+                            playersOnField:addSingle(GetOwningPlayer(u))
                         end
                     end)
-                    isInBattlefield = isInBattlefield or RectContainsUnit(battlefield[boss][i], boss)
+                    isInBattlefield = isInBattlefield or RectContainsUnit(battlefield[data.boss][i], data.boss)
+                end
+
+                for p in playersOnField:elements() do
+                    SuspendRevive(p)
                 end
 
                 if unitsInTheField:isEmpty() then
                     -- Reset the boss
                     reset()
-                    IssuePointOrderById(boss, Orders.smart, initialPosX, initialPosY)
+                    IssuePointOrderById(data.boss, Orders.smart, initialPosX, initialPosY)
                 else
+                    if playersOnField:size() >= data.maxPlayers then
+                        if playersOnField:size() > data.maxPlayers then
+                            whoAlreadyAre = playersOnField:except(whoAlreadyAre)
+                            for _ = 1, (playersOnField:size() - data.maxPlayers) do
+                                local p = whoAlreadyAre:random()
+                                if p then
+                                    playersOnField:removeSingle(p)
+                                    whoAlreadyAre:removeSingle(p)
+                                    for u in unitsInTheField:elements() do
+                                        if GetOwningPlayer(u) == p then
+                                            SetUnitPosition(u, GetRectCenterX(data.entrance), GetRectCenterY(data.entrance))
+                                        elseif whoAlreadyAre:contains(GetOwningPlayer(u)) then
+                                            SetUnitPosition(u, GetRectCenterX(data.inner), GetRectCenterY(data.inner))
+                                        end
+                                        unitsInTheField:removeSingle(u)
+                                    end
+                                    ResumeRevive(p)
+                                end
+                            end
+                        end
+                        for _, d in ipairs(data.forceWall) do
+                            ModifyGateBJ(bj_GATEOPERATION_CLOSE, d)
+                        end
+                    elseif playersOnField:size() < data.maxPlayers then
+                        if IsDestructableAliveBJ(data.forceWall[1]) then
+                            for _, d in ipairs(data.forceWall) do
+                                ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+                            end
+                        end
+                    end
+                    -- Reset aggro for units that left the battlefield
+                    for u in whoWereHere:except(unitsInTheField):elements() do
+                        ZTS_RemovePlayerUnit(u)
+                        ZTS_AddPlayerUnit(u)
+                    end
+                    -- The chances of casting increases when has low hp
+                    interval = getInterval(playersOnField:size(), GetUnitHPRatio(data.boss) < 0.5)
+
                     if current >= interval then
                         returned = false
                         local u = nil
                         local maxThreat = -1
                         for u2 in unitsInTheField:elements() do
-                            if ignored[boss][u2] then
+                            if ignored[data.boss][u2] then
                                 ZTS_RemovePlayerUnit(u2)
                                 ZTS_AddPlayerUnit(u2)
                             else
-                                local threat = ZTS_GetThreatUnitAmount(boss, u2)
+                                local threat = ZTS_GetThreatUnitAmount(data.boss, u2)
                                 if threat > maxThreat then
                                     u = u2
                                     maxThreat = threat
@@ -361,56 +420,84 @@ OnInit("BossFightUtils", function ()
                                 attacking = true
                                 local x, y = GetUnitX(u), GetUnitY(u)
                                 Timed.call(2., function ()
-                                    if UnitCanAttack(boss) then
-                                        IssuePointOrderById(boss, Orders.attack, x, y)
+                                    if UnitCanAttack(data.boss) then
+                                        IssuePointOrderById(data.boss, Orders.attack, x, y)
                                     end
                                 end)
                             end
                         else
-                            IssuePointOrderById(boss, Orders.move, initialPosX, initialPosY)
+                            IssuePointOrderById(data.boss, Orders.move, initialPosX, initialPosY)
                         end
                         -- Spells
-                        actions(u, unitsInTheField)
+                        data.actions(u, unitsInTheField)
                     end
                 end
 
                 if not isInBattlefield then
                     reset()
-                    IssuePointOrderById(boss, Orders.smart, initialPosX, initialPosY)
+                    IssuePointOrderById(data.boss, Orders.smart, initialPosX, initialPosY)
 
                     Timed.echo(0.5, 10., function ()
                         for i = 1, numRect do
-                            isInBattlefield = RectContainsUnit(battlefield[boss][i], boss)
+                            isInBattlefield = RectContainsUnit(battlefield[data.boss][i], data.boss)
                             if isInBattlefield then
                                 return true
                             end
                         end
                     end, function ()
                         reset()
-                        SetUnitPosition(boss, initialPosX, initialPosY)
-                        DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdx", initialPosX, initialPosY))
-                        DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdx", boss, "origin"))
+                        SetUnitPosition(data.boss, initialPosX, initialPosY)
+                        DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", initialPosX, initialPosY))
+                        DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdl", data.boss, "origin"))
                     end)
                 end
 
-                -- The chances of casting increases when has low hp
-                if not reduced then
-                    if GetUnitState(boss, UNIT_STATE_LIFE) / GetUnitState(boss, UNIT_STATE_MAX_LIFE) < 0.5 then
-                        reduced = true
-                        interval = onlyOne and 3. or 1.
-                    end
-                end
-
                 -- If the boss is not doing anything, set attacking state to false
-                if GetUnitCurrentOrder(boss) == 0 then
+                if GetUnitCurrentOrder(data.boss) == 0 then
                     attacking = false
                 end
             else
                 if not dead then
                     dead = true
 
-                    isCasting[boss] = false
+                    isCasting[data.boss] = false
+
+                    if data.returnPlace then
+                        local tm = CreateTimer()
+                        local window = CreateTimerDialog(tm)
+                        TimerDialogSetTitle(window, "Digimons returning in:")
+                        ForUnitsInRect(data.toTeleport, function (u)
+                            TimerDialogDisplay(window, GetOwningPlayer(u) == LocalPlayer)
+                        end)
+
+                        TimerStart(tm, 15., false, function ()
+                            TimerDialogDisplay(window, false)
+                            DestroyTimerDialog(window)
+                            PauseTimer(tm)
+                            DestroyTimer(tm)
+
+                            ForUnitsInRect(data.toTeleport, function (u)
+                                local l = GetRandomLocInRect(data.returnPlace)
+                                DestroyEffect(AddSpecialEffectLoc("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", l))
+                                DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdl", GetUnitX(u), GetUnitY(u)))
+                                SetUnitPositionLoc(u, l)
+                                RemoveLocation(l)
+                            end)
+                        end)
+                    end
+
+                    if data.forceWall then
+                        for _, d in ipairs(data.forceWall) do
+                            ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+                        end
+                    end
+
+                    for p in playersOnField:elements() do
+                        ResumeRevive(p)
+                    end
+
                     unitsInTheField:clear()
+                    playersOnField:clear()
 
                     SetTextTagVisibility(advice, IsVisibleToPlayer(initialPosX, initialPosY, LocalPlayer))
 
@@ -423,15 +510,15 @@ OnInit("BossFightUtils", function ()
                     end, function ()
                         dead = false
                         SetTextTagVisibility(advice, false)
-                        SetUnitOwner(boss, owner, true)
-                        ReviveHero(boss, initialPosX, initialPosY, true)
-                        ShowUnit(boss, true)
+                        SetUnitOwner(data.boss, owner, true)
+                        ReviveHero(data.boss, initialPosX, initialPosY, true)
+                        ShowUnit(data.boss, true)
 
                         returned = false
                         reset()
 
-                        if onStart then
-                            onStart()
+                        if data.onStart then
+                            data.onStart()
                         end
                     end)
                 end
@@ -444,10 +531,10 @@ OnInit("BossFightUtils", function ()
         do
             local t = CreateTrigger()
             TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
-            TriggerAddCondition(t, Condition(function () return GetTriggerUnit() == boss end))
+            TriggerAddCondition(t, Condition(function () return GetTriggerUnit() == data.boss end))
             TriggerAddAction(t, function ()
                 local u = GetAttacker()
-                if IsUnitType(u, UNIT_TYPE_HERO) and u ~= boss and not unitsInTheField:contains(u) then
+                if IsUnitType(u, UNIT_TYPE_HERO) and u ~= data.boss and not unitsInTheField:contains(u) then
                     IssueTargetOrderById(u, Orders.attack, u)
                     ErrorMessage("You can't attack the boss from there", GetOwningPlayer(u))
                 end
@@ -457,16 +544,28 @@ OnInit("BossFightUtils", function ()
         do
             local t = CreateTrigger()
             TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_CAST)
-            TriggerAddCondition(t, Condition(function () return GetSpellTargetUnit() == boss end))
+            TriggerAddCondition(t, Condition(function ()
+                local u = GetSpellTargetUnit()
+                if u then
+                    return u == data.boss
+                else
+                    local x, y = GetSpellTargetX(), GetSpellTargetY()
+                    for _, r in ipairs(battlefield[data.boss]) do
+                        if RectContainsCoords(r, x, y) then
+                            return true
+                        end
+                    end
+                end
+                return false
+            end))
             TriggerAddAction(t, function ()
                 local u = GetSpellAbilityUnit()
-                if IsUnitType(u, UNIT_TYPE_HERO) and u ~= boss and not unitsInTheField:contains(u) then
+                if IsUnitType(u, UNIT_TYPE_HERO) and u ~= data.boss and not unitsInTheField:contains(u) then
                     IssueTargetOrderById(u, Orders.attack, u)
                     ErrorMessage("You can't attack the boss from there", GetOwningPlayer(u))
                 end
             end)
         end
-
     end
 end)
 Debug.endFile()

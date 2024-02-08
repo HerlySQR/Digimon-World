@@ -1654,7 +1654,7 @@ OnInit("DigimonBank", function ()
     ---@param p player
     ---@param d Digimon
     ---@param hide boolean
-    ---@return integer
+    ---@return boolean
     function StoreToBank(p, d, hide)
         local result = Bank[GetPlayerId(p)]:storeDigimon(GetBankIndex(p, d), hide)
 
@@ -2019,10 +2019,9 @@ OnInit("DigimonBank", function ()
         return stucked
     end
 
-    ---For debug
     ---@param p any
     ---@param u any
-    local function AddToBank(p, u)
+    function AddToBank(p, u)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
         local d = Digimon.getInstance(u)
         for i = 0, MAX_STOCK - 1 do
@@ -2030,7 +2029,7 @@ OnInit("DigimonBank", function ()
                 bank.stocked[i] = d
                 bank.inUse[i] = d
                 d.owner = p
-                if bank.main == d then
+                if not bank.main then
                     bank:searchMain()
                 end
                 break

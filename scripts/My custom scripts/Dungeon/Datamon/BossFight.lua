@@ -149,141 +149,152 @@ OnInit(function ()
         end)
     end
 
-    InitBossFight("Datamon", boss, function (u, unitsInTheField)
-        if not BossStillCasting(boss) and u then
-            local chance = math.random(0, 100)
-            if chance <= 30 then
-                IssuePointOrderById(boss, missileBarrageOrder, GetUnitX(u), GetUnitY(u))
-            elseif chance > 30 and chance <= 80 then
-                IssueTargetOrderById(boss, hommingMissileOrder, u)
-            elseif not secondPhase then
-                --BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)
-            end
-        end
-
-        if canTrap then
-            cooldown = cooldown - 1
-            if cooldown <= 0 then
-                restartGenerators()
-                cooldown = ELECTRIC_TRAP_TICKS_CD
-                canTrap = false
-                local list = SyncedTable.create()
-                for u2 in unitsInTheField:elements() do
-                    if not list[GetOwningPlayer(u2)] then
-                        list[GetOwningPlayer(u2)] = u2
-                    end
+    InitBossFight({
+        name = "Datamon",
+        boss = boss,
+        maxPlayers = 3,
+        forceWall = {gg_dest_Dofw_52713},
+        returnPlace = gg_rct_DatamonReturnPlace,
+        inner = gg_rct_DatamonInner,
+        entrance = gg_rct_DatamonEntrance,
+        toTeleport = gg_rct_DatamonToReturn,
+        actions = function (u, unitsInTheField)
+            if not BossStillCasting(boss) and u then
+                local chance = math.random(0, 100)
+                if chance <= 30 then
+                    IssuePointOrderById(boss, missileBarrageOrder, GetUnitX(u), GetUnitY(u))
+                elseif chance > 30 and chance <= 80 then
+                    IssueTargetOrderById(boss, hommingMissileOrder, u)
+                elseif not secondPhase then
+                    --BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)
                 end
-                for _, u2 in pairs(list) do
-                    DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT, GetUnitX(u2), GetUnitY(u2)))
-                    local l = GetRandomLocInRect(generatorRect)
-                    SetUnitPositionLoc(u2, l)
-                    DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
-                    RemoveLocation(l)
-                    if u == u2 then
+            end
+
+            if canTrap then
+                cooldown = cooldown - 1
+                if cooldown <= 0 then
+                    restartGenerators()
+                    cooldown = ELECTRIC_TRAP_TICKS_CD
+                    canTrap = false
+                    local list = SyncedTable.create()
+                    for u2 in unitsInTheField:elements() do
+                        if not list[GetOwningPlayer(u2)] then
+                            list[GetOwningPlayer(u2)] = u2
+                        end
+                    end
+                    for _, u2 in pairs(list) do
+                        DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT, GetUnitX(u2), GetUnitY(u2)))
+                        local l = GetRandomLocInRect(generatorRect)
+                        SetUnitPositionLoc(u2, l)
+                        DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
+                        RemoveLocation(l)
+                        if u == u2 then
+                            IssuePointOrderById(boss, Orders.attack, GetUnitX(boss), GetUnitY(boss))
+                        end
+                    end
+                    if not BossStillCasting(boss) then
                         IssuePointOrderById(boss, Orders.attack, GetUnitX(boss), GetUnitY(boss))
                     end
                 end
-                if not BossStillCasting(boss) then
-                    IssuePointOrderById(boss, Orders.attack, GetUnitX(boss), GetUnitY(boss))
-                end
             end
-        end
 
-        if not secondPhase then
-            if GetUnitHPRatio(boss) <= 0.4 then
-                secondPhase = true
+            if not secondPhase then
+                if GetUnitHPRatio(boss) <= 0.4 then
+                    secondPhase = true
 
-                local previousPos = GetUnitLoc(boss)
-                DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT, previousPos))
-                SetUnitPositionLoc(boss, observerPos)
-                DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, observerPos))
-                SetUnitFacing(boss, 180.)
-                SetUnitInvulnerable(boss, true)
-                BlzSetUnitIntegerField(boss, UNIT_IF_MOVE_TYPE, 0)
-                SetUnitMoveSpeed(boss, 0)
+                    local previousPos = GetUnitLoc(boss)
+                    DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT, previousPos))
+                    SetUnitPositionLoc(boss, observerPos)
+                    DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, observerPos))
+                    SetUnitFacing(boss, 180.)
+                    SetUnitInvulnerable(boss, true)
+                    BlzSetUnitIntegerField(boss, UNIT_IF_MOVE_TYPE, 0)
+                    SetUnitMoveSpeed(boss, 0)
 
-                local needToKill = CreateGroup()
-                local guardromons = {} ---@type Digimon[]
+                    local needToKill = CreateGroup()
+                    local guardromons = {} ---@type Digimon[]
 
-                for j = 1, minions do
-                    local l = GetRandomLocInRect(returnPlace)
-                    guardromons[j] = Digimon.create(Digimon.VILLAIN, GUARDROMON, GetLocationX(l), GetLocationY(l), bj_UNIT_FACING)
-                    guardromons[j].isSummon = true
-                    guardromons[j]:setLevel(GetHeroLevel(boss))
-                    DestroyEffect(AddSpecialEffectLoc(GUARDROMON_EFFECT, l))
-                    RemoveLocation(l)
-                    GroupAddUnit(needToKill, guardromons[j].root)
-                end
-
-                Timed.echo(1., function ()
-                    for k, _ in pairs(canSeeHim) do
-                        UnitShareVision(boss, k, false)
-                        canSeeHim[k] = nil
+                    for j = 1, minions do
+                        local l = GetRandomLocInRect(returnPlace)
+                        guardromons[j] = Digimon.create(Digimon.VILLAIN, GUARDROMON, GetLocationX(l), GetLocationY(l), bj_UNIT_FACING)
+                        guardromons[j].isSummon = true
+                        guardromons[j]:setLevel(GetHeroLevel(boss))
+                        DestroyEffect(AddSpecialEffectLoc(GUARDROMON_EFFECT, l))
+                        RemoveLocation(l)
+                        GroupAddUnit(needToKill, guardromons[j].root)
                     end
-                    if GroupDead(needToKill) or not secondPhase then
-                        if not secondPhase then
-                            for j = 1, minions do
-                                if guardromons[j]:isAlive() then
-                                    DestroyEffect(AddSpecialEffect(GUARDROMON_EFFECT, guardromons[j]:getPos()))
-                                    guardromons[j]:destroy()
-                                end
-                            end
-                        else
-                            goMetamorphosis = true
+
+                    Timed.echo(1., function ()
+                        for k, _ in pairs(canSeeHim) do
+                            UnitShareVision(boss, k, false)
+                            canSeeHim[k] = nil
                         end
-                        SetUnitInvulnerable(boss, false)
-                        BlzSetUnitIntegerField(boss, UNIT_IF_MOVE_TYPE, 1)
-                        SetUnitMoveSpeed(boss, originalMoveSpeed)
-                        DestroyGroup(needToKill)
-                        DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT, observerPos))
-                        SetUnitPositionLoc(boss, previousPos)
-                        DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, previousPos))
-                        RemoveLocation(previousPos)
-                        return true
-                    end
-                    for u2 in unitsInTheField:elements() do
-                        canSeeHim[GetOwningPlayer(u2)] = true
-                    end
-                    for k, _ in pairs(canSeeHim) do
-                        UnitShareVision(boss, k, true)
-                    end
-                end)
+                        if GroupDead(needToKill) or not secondPhase then
+                            if not secondPhase then
+                                for j = 1, minions do
+                                    if guardromons[j]:isAlive() then
+                                        DestroyEffect(AddSpecialEffect(GUARDROMON_EFFECT, guardromons[j]:getPos()))
+                                        guardromons[j]:destroy()
+                                    end
+                                end
+                            else
+                                goMetamorphosis = true
+                            end
+                            SetUnitInvulnerable(boss, false)
+                            BlzSetUnitIntegerField(boss, UNIT_IF_MOVE_TYPE, 1)
+                            SetUnitMoveSpeed(boss, originalMoveSpeed)
+                            DestroyGroup(needToKill)
+                            DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT, observerPos))
+                            SetUnitPositionLoc(boss, previousPos)
+                            DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, previousPos))
+                            RemoveLocation(previousPos)
+                            return true
+                        end
+                        for u2 in unitsInTheField:elements() do
+                            canSeeHim[GetOwningPlayer(u2)] = true
+                        end
+                        for k, _ in pairs(canSeeHim) do
+                            UnitShareVision(boss, k, true)
+                        end
+                    end)
+                end
             end
-        end
 
-        if not metamorphosis then
-            if goMetamorphosis then
-                metamorphosis = true
-                SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 2)
-                BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, 33554432)
-                BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, true)
-                originalBaseDamage = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
+            if not metamorphosis then
+                if goMetamorphosis then
+                    metamorphosis = true
+                    SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 2)
+                    BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, 33554432)
+                    BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, true)
+                    originalBaseDamage = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
+                    BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, originalBaseDamage)
+                    local current = 0
+                    Timed.echo(0.02, 1., function ()
+                        SetUnitVertexColor(boss, white:lerp(gray, current))
+                        SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
+                        current = current + 0.02
+                    end)
+                end
+            end
+        end,
+        onReset = function ()
+            secondPhase = false
+            goMetamorphosis = false
+
+            if metamorphosis then
+                metamorphosis = false
+                SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 1)
+                BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, originalTargetsAllowed)
+                BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
                 BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, originalBaseDamage)
                 local current = 0
                 Timed.echo(0.02, 1., function ()
-                    SetUnitVertexColor(boss, white:lerp(gray, current))
-                    SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
+                    SetUnitVertexColor(boss, gray:lerp(white, current))
+                    SetUnitScale(boss, Lerp(increasedSize, current, originalSize), 0., 0.)
                     current = current + 0.02
                 end)
             end
         end
-    end, nil, function ()
-        secondPhase = false
-        goMetamorphosis = false
-
-        if metamorphosis then
-            metamorphosis = false
-            SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 1)
-            BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, originalTargetsAllowed)
-            BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
-            BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, originalBaseDamage)
-            local current = 0
-            Timed.echo(0.02, 1., function ()
-                SetUnitVertexColor(boss, gray:lerp(white, current))
-                SetUnitScale(boss, Lerp(increasedSize, current, originalSize), 0., 0.)
-                current = current + 0.02
-            end)
-        end
-    end)
+    })
 end)
 Debug.endFile()

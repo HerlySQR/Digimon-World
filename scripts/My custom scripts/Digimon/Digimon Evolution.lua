@@ -20,10 +20,13 @@ OnInit("DigimonEvolution", function ()
     ---@class EvolutionCondition
     ---@field toEvolve integer
     ---@field level integer
-    ---@field place rect nilable
-    ---@field stone integer nilable
+    ---@field place rect?
+    ---@field stone integer?
     ---@field onlyDay boolean
     ---@field onlyNight boolean
+    ---@field str integer?
+    ---@field agi integer?
+    ---@field int integer?
 
     local EvolutionConditions = {} ---@type table<integer, EvolutionCondition[]>
 
@@ -76,7 +79,7 @@ OnInit("DigimonEvolution", function ()
                     for _, cond in ipairs(EvolutionConditions[initial]) do
                         local canEvolve = true
                         -- Check lvl
-                        canEvolve = canEvolve and d:getLevel() >= cond.level
+                        canEvolve = canEvolve and (d:getLevel() >= cond.level)
                         -- Check place
                         if cond.place then
                             canEvolve = canEvolve and RectContainsUnit(cond.place, d.root)
@@ -90,6 +93,16 @@ OnInit("DigimonEvolution", function ()
                             canEvolve = canEvolve and (GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK)
                         elseif cond.onlyNight then
                             canEvolve = canEvolve and (GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK)
+                        end
+                        -- Check stats
+                        if cond.str then
+                            canEvolve = canEvolve and (GetHeroStr(d.root, true) >= cond.str)
+                        end
+                        if cond.agi then
+                            canEvolve = canEvolve and (GetHeroAgi(d.root, true) >= cond.agi)
+                        end
+                        if cond.int then
+                            canEvolve = canEvolve and (GetHeroInt(d.root, true) >= cond.int)
                         end
 
                         if canEvolve then
@@ -115,7 +128,10 @@ OnInit("DigimonEvolution", function ()
     ---@param stone integer | nil
     ---@param onlyDay boolean
     ---@param onlyNight boolean
-    local function CreateSpecificCondtions(initial, toEvolve, level, place, stone, onlyDay, onlyNight)
+    ---@param str integer | nil
+    ---@param agi integer | nil
+    ---@param int integer | nil
+    local function CreateSpecificCondtions(initial, toEvolve, level, place, stone, onlyDay, onlyNight, str, agi, int)
         if onlyDay and onlyNight then
             error("Digimon Evolution: Contradiction with time day condition in " .. GetObjectName(initial) .. " to " .. GetObjectName(toEvolve))
         end
@@ -130,7 +146,10 @@ OnInit("DigimonEvolution", function ()
             place = place,
             stone = stone,
             onlyDay = onlyDay,
-            onlyNight = onlyNight
+            onlyNight = onlyNight,
+            str = str,
+            agi = agi,
+            int = int
         })
     end
 
@@ -287,6 +306,12 @@ OnInit("DigimonEvolution", function ()
         KillSoundWhenDone(s)
     end)
 
+    udg_EvolveItemCondition = nil
+    udg_EvolveRegionCondition = nil
+    udg_EvolveStrCondition = nil
+    udg_EvolveAgiCondition = nil
+    udg_EvolveIntCondition = nil
+
     -- For GUI
     udg_CreateEvolutionCondition = CreateTrigger()
     TriggerAddAction(udg_CreateEvolutionCondition, function ()
@@ -296,7 +321,10 @@ OnInit("DigimonEvolution", function ()
             rawget(_G, "udg_EvolveRegionCondition"),
             rawget(_G, "udg_EvolveItemCondition"),
             udg_EvolveOnlyDayCondition,
-            udg_EvolveOnlyNightCondition
+            udg_EvolveOnlyNightCondition,
+            rawget(_G, "udg_EvolveStrCondition"),
+            rawget(_G, "udg_EvolveAgiCondition"),
+            rawget(_G, "udg_EvolveIntCondition")
         )
         udg_InitialForm = 0
         udg_EvolvedForm = 0
@@ -305,6 +333,9 @@ OnInit("DigimonEvolution", function ()
         udg_EvolveItemCondition = nil
         udg_EvolveOnlyDayCondition = false
         udg_EvolveOnlyNightCondition = false
+        udg_EvolveStrCondition = nil
+        udg_EvolveAgiCondition = nil
+        udg_EvolveIntCondition = nil
     end)
 
 end)

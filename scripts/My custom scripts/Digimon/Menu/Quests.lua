@@ -10,6 +10,7 @@ OnInit("Quests", function ()
     Require "SyncedTable"
     Require "AddHook"
     local Color = Require "Color" ---@type Color
+    Require "EventListener"
 
     local YELLOW = Color.new(255, 255, 0)
     local GREEN = Color.new(0, 255, 255)
@@ -21,6 +22,7 @@ OnInit("Quests", function ()
 
     local NoRepeat = {} ---@type table<player, table<trigger, boolean>>
     local QuestTrigger = SyncedTable.create() ---@type table<thread, trigger>
+    local onQuestAdded = EventListener.create()
 
     local QuestButton = nil ---@type framehandle
     local BackdropQuestButton = nil ---@type framehandle
@@ -304,6 +306,7 @@ OnInit("Quests", function ()
                 BlzFrameSetVisible(QuestButtonSprite, false)
             end
         end)
+        onQuestAdded:run(p, id)
     end
 
     ---@param name string
@@ -503,6 +506,11 @@ OnInit("Quests", function ()
     ---@return boolean
     function IsQuestARequirement(id)
         return QuestTemplates[id] and QuestTemplates[id].isRequirement
+    end
+
+    ---@param func fun(p:player, id: integer)
+    function OnQuestAdded(func)
+        onQuestAdded:register(func)
     end
 
     OnInit.trig(function ()

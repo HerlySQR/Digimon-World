@@ -4,6 +4,7 @@ OnInit("Environment", function ()
     Require "FrameEffects"
     Require "FrameLoader"
     Require "SaveHelper"
+    Require "EventListener"
 
     local MAX_REGIONS = 30
 
@@ -16,6 +17,8 @@ OnInit("Environment", function ()
     local LocalPlayer = GetLocalPlayer()
     local TopMsg = nil ---@type framehandle
     local camera = gg_cam_SeeTheMap ---@type camerasetup
+    local onSeeMapClicked = EventListener.create()
+    local onSeeMapClosed = EventListener.create()
 
     local mapPortions = {} ---@type table<string, Environment>
     local vistedPlaces = {} ---@type table<player, table<integer, framehandle>>
@@ -261,6 +264,7 @@ OnInit("Environment", function ()
             HideMenu(true)
             BlzFrameSetVisible(MapBackdrop, true)
         end
+        onSeeMapClicked:run(p)
     end
 
     local function ExitFunc()
@@ -273,6 +277,7 @@ OnInit("Environment", function ()
             RestartToPreviousCamera()
         end
         RestartSelectedUnits(p)
+        onSeeMapClosed:run(p)
     end
 
     local function InitFrames()
@@ -371,8 +376,6 @@ OnInit("Environment", function ()
             for i = MAX_REGIONS, 1, -1 do
                 list[i] = savecode:Decode(2) == 1 -- Load if id of the place is visted
             end
-
-            DisplayTextToPlayer(p, 0, 0, "Visited places loaded")
         end
 
         savecode:destroy()
@@ -389,6 +392,16 @@ OnInit("Environment", function ()
                 BlzFrameSetVisible(canBeVisted[i], true)
             end
         end
+    end
+
+    ---@param func fun(p: player)
+    function OnSeeMapClicked(func)
+        onSeeMapClicked:register(func)
+    end
+
+    ---@param func fun(p: player)
+    function OnSeeMapClosed(func)
+        onSeeMapClosed:register(func)
     end
 
     Environment.allMap = Environment.create("", bj_mapInitialPlayableArea, "entireMap.tga")

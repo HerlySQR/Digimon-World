@@ -9,6 +9,7 @@ OnInit("Backpack", function ()
     Require "ErrorMessage"
     Require "Menu"
     Require "Hotkeys"
+    Require "EventListener"
 
     local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local Backpack = nil ---@type framehandle
@@ -26,6 +27,8 @@ OnInit("Backpack", function ()
     local BackPackItemCharges = {} ---@type framehandle[]
     local BackpackItemTooltip = {} ---@type framehandle[]
     local BackpackItemTooltipText = {} ---@type framehandle[]
+
+    local onBackpackPick = EventListener.create()
 
     local DUMMY_CASTER = FourCC('n01B')
 
@@ -593,6 +596,7 @@ OnInit("Backpack", function ()
             if p == LocalPlayer then
                 UpdateMenu()
             end
+            onBackpackPick:run(u, id)
         end
     end)
 
@@ -691,6 +695,11 @@ OnInit("Backpack", function ()
         if p == LocalPlayer then
             UpdateMenu()
         end
+    end
+
+    ---@param func fun(mu: unit, mi: integer)
+    function OnBackpackPick(func)
+        onBackpackPick:register(func)
     end
 
 end)

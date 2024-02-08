@@ -10,24 +10,33 @@ OnInit(function ()
     local mammothmonRushOrder = Orders.breathoffire
     local catJumpOrder = Orders.shadowstrike
 
-    InitBossFight("Panjyamon", boss, function (u)
-        if not BossStillCasting(boss) then
-            local spellChance = math.random(0, 100)
-            if spellChance <= 20 then
-                IssuePointOrderById(boss, iceFistOrder, GetUnitX(u), GetUnitY(u))
-            elseif (spellChance > 20 and spellChance <= 40) and DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), GetUnitX(u), GetUnitY(u)) <= 300. then
-                IssueImmediateOrderById(boss, iceStompOrder)
-            elseif spellChance > 40 and spellChance <= 60 then
-                IssueImmediateOrderById(boss, punchRushOrder)
-            elseif spellChance > 60 and spellChance <= 80 then
-                IssuePointOrderById(boss, mammothmonRushOrder, GetUnitX(u), GetUnitY(u))
-            else
-                IssueTargetOrderById(boss, catJumpOrder, u)
+    InitBossFight({
+        name = "Panjyamon",
+        boss = boss,
+        maxPlayers = 3,
+        forceWall = {gg_dest_Dofv_13463, gg_dest_Dofv_13464},
+        inner = gg_rct_PanjyamonInner,
+        entrance = gg_rct_PanjyamonEntrance,
+        actions = function (u)
+            if not BossStillCasting(boss) then
+                local spellChance = math.random(0, 100)
+                if spellChance <= 20 then
+                    IssuePointOrderById(boss, iceFistOrder, GetUnitX(u), GetUnitY(u))
+                elseif (spellChance > 20 and spellChance <= 40) and DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), GetUnitX(u), GetUnitY(u)) <= 300. then
+                    IssueImmediateOrderById(boss, iceStompOrder)
+                elseif spellChance > 40 and spellChance <= 60 then
+                    IssueImmediateOrderById(boss, punchRushOrder)
+                elseif spellChance > 60 and spellChance <= 80 then
+                    IssuePointOrderById(boss, mammothmonRushOrder, GetUnitX(u), GetUnitY(u))
+                else
+                    IssueTargetOrderById(boss, catJumpOrder, u)
+                end
             end
+        end,
+        onStart = function ()
+            BlzStartUnitAbilityCooldown(boss, FourCC('A0DM'), 60.)
         end
-    end, function ()
-        BlzStartUnitAbilityCooldown(boss, FourCC('A0DM'), 60.)
-    end)
+    })
 
     -- Ice aura
     local BUFF = FourCC('B01N')
