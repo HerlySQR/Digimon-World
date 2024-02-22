@@ -3,6 +3,8 @@ OnInit(function ()
     Require "Noise"
     Require "Timed"
     Require "AbilityUtils"
+    Require "Pathfinder"
+    Require "MDTable"
 
     local arena = gg_rct_SpecialArena ---@type rect
     local minX, minY, maxX, maxY = GetRectMinX(arena), GetRectMinY(arena), GetRectMaxX(arena), GetRectMaxY(arena)
@@ -12,11 +14,13 @@ OnInit(function ()
     local terrainDeformations = {} ---@type terraindeformation[][]
     local bannedCells = __jarray(false) ---@type table<integer, boolean>
     local weather = nil ---@type weathereffect
+    local pointIndex = MDTable.create(2) ---@type integer[][]
 
     local VOID = FourCC('Zsan')
     local CONVERSOR = 1 / (bj_CELLWIDTH * 10)
     local CELL_SIZE = bj_CELLWIDTH / 2
     local ROW_SIZE = (maxY - minY) // CELL_SIZE
+    local MAX_CHANCE_TO_CREATE_PATH = 10
 
     ---@param func fun(x: number, y: number, i: integer)
     local function forEachCell(func)
@@ -27,22 +31,76 @@ OnInit(function ()
             if x <= maxX then
                 local xVase = x
                 local y = minY
+                local nowEnd = false
                 Timed.echo(0.02, function ()
                     if y <= maxY then
                         i = i + 1
                         func(xVase, y, i)
                         y = y + CELL_SIZE
                     else
+                        if nowEnd then
+                            coroutine.resume(co)
+                        end
                         return true
                     end
                 end)
                 x = x + CELL_SIZE
+                if x > maxX then
+                    nowEnd = true
+                end
             else
-                coroutine.resume(co)
                 return true
             end
         end)
         coroutine.yield()
+    end
+
+    ---@return boolean
+    local function checkPath()
+        local co = coroutine.running()
+        local pf = Pathfinder.create(maxX - 64., centerY, minX + 64., centerY)
+        pf.stepDelay = 1
+        pf.outputPath = false
+        pf.debug = true
+        pf:setCond(function (x, y)
+            return RectContainsCoords(arena, x, y) and IsTerrainWalkable(x, y)
+        end)
+        pf:search(function (sucess, _)
+            coroutine.resume(co, sucess)
+        end)
+        print("check path")
+        return coroutine.yield()
+    end
+
+    local function createPath()
+        local co = coroutine.running()
+
+        for _ = 0, MAX_CHANCE_TO_CREATE_PATH do
+            local exit = false
+            local pf = Pathfinder.create(maxX - 64., centerY, minX + 64., centerY)
+            pf.stepDelay = 1
+            pf.outputPath = true
+            pf.debug = true
+            pf:setCond(function (x, y)
+                return RectContainsCoords(arena, x, y) and Noise.octavePerlin2D(x * CONVERSOR * 0.5, y * CONVERSOR * 0.5, 3, 0.1) * bj_CLIFFHEIGHT > 0.09
+            end)
+            pf:search(function (sucess, path)
+                if sucess then
+                    exit = true
+                    for _, n in ipairs(path) do
+                        SetTerrainPathable(n.posX, n.posY, PATHING_TYPE_WALKABILITY, true)
+                    end
+                end
+                coroutine.resume(co)
+            end)
+            print("create path")
+            coroutine.yield()
+            if exit then
+                return
+            end
+            Noise.generatePermutationTable()
+        end
+        print("An acceptable path between the 2 players couldn't be created in the expected time.")
     end
 
     coroutine.wrap(function ()
@@ -51,6 +109,7 @@ OnInit(function ()
             if DistanceBetweenCoords(x, y, maxX, centerY) < radius or DistanceBetweenCoords(x, y, minX, centerY) < radius then
                 bannedCells[i] = true
             end
+            pointIndex[math.floor(x)][math.floor(y)] = i
         end)
     end)()
 
@@ -271,6 +330,10 @@ OnInit(function ()
         for j = 1, #alreadyAMist do
             RemoveLocation(alreadyAMist[j])
         end
+        print(checkPath())
+        if false then
+            createPath()
+        end
     end
 
     function RestartSpecialArena()
@@ -346,7 +409,7 @@ OnInit(function ()
             end
             g = not g
 
-            PolledWait(5.)
+            PolledWait(10.)
 
             f()
         end

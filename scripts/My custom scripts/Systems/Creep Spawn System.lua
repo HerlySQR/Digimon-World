@@ -4,7 +4,6 @@ OnInit(function ()
     Require "LinkedList"
     Require "Set"
     Require "AbilityUtils"
-    Require "SyncedTable"
     Require "Digimon Capture"
     Require "ZTS"
 
@@ -31,6 +30,7 @@ OnInit(function ()
     ---@field returning boolean
     ---@field spawnpoint {x: number, y: number}
     ---@field rd RegionData
+    ---@field patrolling boolean
 
     ---@class RegionData
     ---@field rectID table
@@ -60,6 +60,7 @@ OnInit(function ()
         creep.returning = false
         creep.remaining = LIFE_SPAN
         creep.spawnpoint = pos
+        creep.patrolling = true
 
         ZTS_AddThreatUnit(creep.root, true)
 
@@ -70,7 +71,7 @@ OnInit(function ()
 
     local All = LinkedList.create()
 
-    ---@param types Creep[]
+    ---@param types integer[]
     ---@return unitpool
     local function GenerateCreepPool(types)
         local pool = CreateUnitPool()
@@ -96,19 +97,19 @@ OnInit(function ()
         end
 
         local chanceCommon = 1
-        if #legendaries > 0 then
+        if CHANCE_LEGENDARY > 0 and #legendaries > 0 then
             chanceCommon = chanceCommon - CHANCE_LEGENDARY
             for _, v in ipairs(legendaries) do
                 UnitPoolAddUnitType(pool, v, CHANCE_LEGENDARY/#legendaries)
             end
         end
-        if #rares > 0 then
+        if CHANCE_RARE > 0 and #rares > 0 then
             chanceCommon = chanceCommon - CHANCE_RARE
             for _, v in ipairs(rares) do
                 UnitPoolAddUnitType(pool, v, CHANCE_RARE/#rares)
             end
         end
-        if #uncommons > 0 then
+        if CHANCE_UNCOMMON > 0 and #uncommons > 0 then
             chanceCommon = chanceCommon - CHANCE_UNCOMMON
             for _, v in ipairs(uncommons) do
                 UnitPoolAddUnitType(pool, v, CHANCE_UNCOMMON/#uncommons)
@@ -246,6 +247,8 @@ OnInit(function ()
             regionData.inregion = false
             lvl = 1
             ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, checkForUnit)
+            -- Check if a unit is still nearby the spawn region
+            regionData.someoneClose = true
             -- Control the creep or the spawn
             if regionData.inregion then
                 regionData.delay = regionData.delay - INTERVAL
@@ -267,21 +270,24 @@ OnInit(function ()
                     end
                 end
             else
-                -- Check if a unit is still nearby the spawn region
                 regionData.someoneClose = false
                 ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, checkNearby)
-                for _, creep in ipairs(regionData.creeps) do
-                    if creep.rd == regionData then
-                        creep.remaining = creep.remaining - INTERVAL
+                regionData.delay = math.max(regionData.delay, DELAY_NORMAL)
+            end
 
-                        --If there is no nearby unit in the RANGE_LEVEL_2 then reduce once the duration
-                        if not regionData.someoneClose and not creep.reduced then
-                            creep.remaining = creep.remaining - LIFE_REDUCED
-                            creep.reduced = true
-                        end
+            for _, creep in ipairs(regionData.creeps) do
+                if creep.rd == regionData then
+                    creep.patrolling = not ZTS_GetCombatState(creep.root)
+                    if creep.patrolling then
+                        creep.remaining = creep.remaining - INTERVAL
+                    end
+
+                    --If there is no nearby unit in the RANGE_LEVEL_2 then reduce once the duration
+                    if not regionData.someoneClose and not creep.reduced then
+                        creep.remaining = creep.remaining - LIFE_REDUCED
+                        creep.reduced = true
                     end
                 end
-                regionData.delay = math.max(regionData.delay, DELAY_NORMAL)
             end
 
             for i = #regionData.creeps, 1, -1 do
@@ -298,6 +304,11 @@ OnInit(function ()
                             table.remove(r2.creeps, i)
                         end
                     end
+                end
+                if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
+                    local dist = GetRandomReal(128, 384)
+                    local angle = GetRandomReal(0, 2*math.pi)
+                    creep:issueOrder(Orders.attack, creep:getX() + dist * math.cos(angle), creep:getY() + dist * math.sin(angle))
                 end
             end
             PlayersInRegion:clear()

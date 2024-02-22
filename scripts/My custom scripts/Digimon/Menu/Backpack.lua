@@ -405,8 +405,8 @@ OnInit("Backpack", function ()
         local t = nil ---@type trigger
 
         Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.555000, 0.180000)
-        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.590000, 0.145000)
+        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_TOPLEFT, 0.520000, 0.180000)
+        BlzFrameSetAbsPoint(Backpack, FRAMEPOINT_BOTTOMRIGHT, 0.555000, 0.145000)
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
         AssignFrame(Backpack, 0) -- 0

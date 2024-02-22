@@ -288,8 +288,8 @@ OnInit("Cosmetic", function ()
         local t
 
         CosmeticOpen = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        BlzFrameSetAbsPoint(CosmeticOpen, FRAMEPOINT_TOPLEFT, 0.340000, 0.180000)
-        BlzFrameSetAbsPoint(CosmeticOpen, FRAMEPOINT_BOTTOMRIGHT, 0.375000, 0.145000)
+        BlzFrameSetAbsPoint(CosmeticOpen, FRAMEPOINT_TOPLEFT, 0.320000, 0.180000)
+        BlzFrameSetAbsPoint(CosmeticOpen, FRAMEPOINT_BOTTOMRIGHT, 0.355000, 0.145000)
         BlzFrameSetVisible(CosmeticOpen, false)
         AddFrameToMenu(CosmeticOpen)
         AddDefaultTooltip(CosmeticOpen, "Cosmetics", "Look to the effects you can apply to your digimons.")

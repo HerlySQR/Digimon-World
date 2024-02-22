@@ -137,8 +137,7 @@ OnInit("Environment", function ()
 
     ---This function should be in a "if player == GetLocalPlayer() then" block
     ---@param env Environment
-    ---@param expectator? boolean
-    local function internalApply(env, expectator)
+    local function internalApply(env)
         if InTranssition[LocalPlayer] then -- Prevents that the player changes enviroment when is transsitioning
             return
         end
@@ -154,7 +153,7 @@ OnInit("Environment", function ()
 
         BlzChangeMinimapTerrainTex(env.minimap)
 
-        if not expectator and env.mapPortion then
+        if env.mapPortion then
             BlzFrameSetVisible(env.mapPortion, true)
             BlzFrameSetVisible(env.mapPortionGlow, true)
         end
@@ -163,9 +162,8 @@ OnInit("Environment", function ()
     ---@param env Environment|string
     ---@param p player
     ---@param fade? boolean
-    ---@param expectator? boolean
     ---@return boolean success
-    function Environment.apply(env, p, fade, expectator)
+    function Environment.apply(env, p, fade)
         if type(env) == "string" then
             env = used[env]
         end
@@ -189,12 +187,12 @@ OnInit("Environment", function ()
             InTranssition[p] = false
 
             if p == LocalPlayer then
-                internalApply(env, expectator)
+                internalApply(env)
                 FadeIn("ReplaceableTextures\\CameraMasks\\Black_mask.blp", 0.25)
             end
         else
             if p == LocalPlayer then
-                internalApply(env, expectator)
+                internalApply(env)
             end
         end
 
@@ -203,7 +201,7 @@ OnInit("Environment", function ()
         end)
 
         Environments[p] = env
-        if not expectator and env.mapPortion then
+        if env.mapPortion then
             if not vistedPlaces[p][env.id] then
                 vistedPlaces[p][env.id] = env.mapPortion
                 if p == LocalPlayer then
@@ -254,7 +252,7 @@ OnInit("Environment", function ()
         if p == LocalPlayer then
             SaveCameraSetup()
         end
-        local oldEnv = GetPlayerEnviroment(p)
+        local oldEnv = Environments[p]
         Environment.map:apply(p)
         LockEnvironment(p, true)
         oldEnv:apply(p)
@@ -291,15 +289,15 @@ OnInit("Environment", function ()
         BlzFrameSetAlpha(TopMsg, 0)
 
         SeeMap = BlzCreateFrame("IconButtonTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
-        BlzFrameSetAbsPoint(SeeMap, FRAMEPOINT_TOPLEFT, 0.395000, 0.180000)
-        BlzFrameSetAbsPoint(SeeMap, FRAMEPOINT_BOTTOMRIGHT, 0.430000, 0.145000)
+        BlzFrameSetAbsPoint(SeeMap, FRAMEPOINT_TOPLEFT, 0.360000, 0.180000)
+        BlzFrameSetAbsPoint(SeeMap, FRAMEPOINT_BOTTOMRIGHT, 0.395000, 0.145000)
         AddFrameToMenu(SeeMap)
         AddDefaultTooltip(SeeMap, "See the map", "Look at the places you visited.")
         BlzFrameSetVisible(SeeMap, false)
 
         BackdropSeeMap = BlzCreateFrameByType("BACKDROP", "BackdropSeeMap", SeeMap, "", 0)
         BlzFrameSetAllPoints(BackdropSeeMap, SeeMap)
-        BlzFrameSetTexture(BackdropSeeMap, "ReplaceableTextures\\CommandButtons\\BTNSpy.blp", 0, true)
+        BlzFrameSetTexture(BackdropSeeMap, "ReplaceableTextures\\CommandButtons\\BTNMapIcon.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SeeMap, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, SeeMapFunc)
@@ -390,6 +388,8 @@ OnInit("Environment", function ()
             if list[i] then
                 vistedPlaces[p][i] = canBeVisted[i]
                 BlzFrameSetVisible(canBeVisted[i], true)
+            else
+                BlzFrameSetVisible(canBeVisted[i], false)
             end
         end
     end

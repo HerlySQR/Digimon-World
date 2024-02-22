@@ -158,7 +158,7 @@ OnInit.final(function ()
             DestroyEffect(eff)
 
             local tr = Transmission.create(Force(p))
-            tr:AddLine(pixie.root, nil, "Piximon", nil, "Just look, a new adventurer.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "Piximon", nil, "Oh look, a new adventurer.", Transmission.SET, 3., true)
             tr:AddActions(1., function ()
                 local angle = math.random() * 2 * math.pi
                 pixie:issueOrder(Orders.move, pixie:getX() + 100 * math.cos(angle), pixie:getY() + 100 * math.sin(angle))

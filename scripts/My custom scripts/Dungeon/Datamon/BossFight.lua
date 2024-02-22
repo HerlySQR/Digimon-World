@@ -6,7 +6,6 @@ OnInit(function ()
     local Color = Require "Color" ---@type Color
 
     local GENERATOR = FourCC('n01U')
-    local ELECTRIC_TRAP_DAMAGE = 15.
     local ELECTRIC_TRAP_TICKS_CD = 8
     local ELECTRIC_TRAP_EFFECT = "Abilities\\Spells\\Orc\\LightningShield\\LightningShieldBuff.mdl"
     local ENERGY_FIELD = FourCC('YZef')
@@ -38,6 +37,9 @@ OnInit(function ()
     local white = Color.new(0xFFFFFFFF)
     local gray = Color.new(0xFF666666)
     local canSeeHim = SyncedTable.create() ---@type table<player, boolean>
+    local electricTrapDamage = 0.01
+    local electricTrapTick = 0
+    local electricTrapInstances = 1
 
     local hommingMissileOrder = Orders.shadowstrike
     local missileBarrageOrder = Orders.blackarrow
@@ -62,6 +64,9 @@ OnInit(function ()
                 DestroyEffect(AddSpecialEffectLoc(RESTORE_EFFECT, generatorsPos[i]))
             end
         end
+        electricTrapDamage = 0.01
+        electricTrapInstances = 1
+        electricTrapTick = 0
     end
 
     ---@return boolean
@@ -86,8 +91,14 @@ OnInit(function ()
 
     Timed.echo(1., function ()
         if not allGeneratorsDead() then
+            electricTrapTick = electricTrapTick + 1
+            if electricTrapTick >= 10 then
+                electricTrapTick = 0
+                electricTrapInstances = electricTrapInstances + 1
+                electricTrapDamage = electricTrapDamage + 0.01 * electricTrapInstances * (1/2 + generatorUnits:size()/6)
+            end
             for u in generatorUnits:elements() do
-                Damage.apply(boss, u, ELECTRIC_TRAP_DAMAGE, false, false, udg_Machine, DAMAGE_TYPE_LIGHTNING, WEAPON_TYPE_WHOKNOWS)
+                Damage.apply(boss, u, electricTrapDamage * GetUnitState(u, UNIT_STATE_MAX_LIFE), false, false, udg_Machine, DAMAGE_TYPE_LIGHTNING, WEAPON_TYPE_WHOKNOWS)
                 DestroyEffect(AddSpecialEffectTarget(ELECTRIC_TRAP_EFFECT, u, "origin"))
             end
             SetDoodadAnimationRect(generatorRect, ENERGY_FIELD, "show", false)

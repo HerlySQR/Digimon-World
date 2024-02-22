@@ -8,11 +8,13 @@ OnInit.final(function ()
     for i = 0, bj_MAX_PLAYERS - 1 do
         TriggerRegisterPlayerEvent(t, Player(i), EVENT_PLAYER_MOUSE_UP)
     end
+    TriggerAddCondition(t, Condition(function () return BlzGetTriggerPlayerMouseButton() == MOUSE_BUTTON_TYPE_RIGHT end))
     TriggerAddAction(t, function ()
         local r = math.random()
-        if r < 0.5 and BlzGetTriggerPlayerMouseButton() == MOUSE_BUTTON_TYPE_RIGHT then
+        if r < 0.5 then
             local p = GetTriggerPlayer()
             local units = {}
+            SyncSelections()
             ForUnitsSelected(p, function (u)
                 table.insert(units, u)
             end)

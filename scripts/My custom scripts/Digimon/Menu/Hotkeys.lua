@@ -181,8 +181,8 @@ OnInit("Hotkeys", function ()
         local t = nil ---@type trigger
 
         HotkeyButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        BlzFrameSetAbsPoint(HotkeyButton, FRAMEPOINT_TOPLEFT, 0.475000, 0.180000)
-        BlzFrameSetAbsPoint(HotkeyButton, FRAMEPOINT_BOTTOMRIGHT, 0.510000, 0.145000)
+        BlzFrameSetAbsPoint(HotkeyButton, FRAMEPOINT_TOPLEFT, 0.440000, 0.180000)
+        BlzFrameSetAbsPoint(HotkeyButton, FRAMEPOINT_BOTTOMRIGHT, 0.475000, 0.145000)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, HotkeyButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, ShowMenu)
