@@ -125,6 +125,11 @@ OnInit("Menu", function ()
         SetCameraField(CAMERA_FIELD_NEARZ, prevCamera.nearZ, 0)
     end
 
+    ---@return {[1]: number, [2]: number}
+    function GetSavedCameraTarget()
+        return {prevCamera.targetX, prevCamera.targetY}
+    end
+
     ---@param p player
     function SaveSelectedUnits(p)
         SyncSelections()

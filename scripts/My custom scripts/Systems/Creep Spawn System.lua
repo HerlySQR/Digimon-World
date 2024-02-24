@@ -224,7 +224,7 @@ OnInit(function ()
     end
 
     local PlayersInRegion = Set.create()
-    local regionData, lvl ---@type RegionData, integer
+    local regionData, lvl, bossNearby ---@type RegionData, integer, boolean
     local function checkForUnit(u)
         if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
             regionData.someoneClose = true
@@ -237,6 +237,12 @@ OnInit(function ()
     local function checkNearby(u)
         if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
             regionData.someoneClose = true
+        end
+    end
+
+    local function checkBoss(u)
+        if GetOwningPlayer(u) == Digimon.VILLAIN then
+            bossNearby = true
         end
     end
 
@@ -308,7 +314,14 @@ OnInit(function ()
                 if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
                     local dist = GetRandomReal(128, 384)
                     local angle = GetRandomReal(0, 2*math.pi)
-                    creep:issueOrder(Orders.attack, creep:getX() + dist * math.cos(angle), creep:getY() + dist * math.sin(angle))
+                    local x, y = creep:getX() + dist * math.cos(angle), creep:getY() + dist * math.sin(angle)
+
+                    bossNearby = false
+                    ForUnitsInRange(x, y, 1000., checkBoss)
+
+                    if not bossNearby and IsTerrainWalkable(x, y) then
+                        creep:issueOrder(Orders.attack, x, y)
+                    end
                 end
             end
             PlayersInRegion:clear()

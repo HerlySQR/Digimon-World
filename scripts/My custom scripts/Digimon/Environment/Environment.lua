@@ -5,6 +5,7 @@ OnInit("Environment", function ()
     Require "FrameLoader"
     Require "SaveHelper"
     Require "EventListener"
+    Require "GetSyncedData"
 
     local MAX_REGIONS = 30
 
@@ -152,11 +153,6 @@ OnInit("Environment", function ()
         SetCameraField(CAMERA_FIELD_ROTATION, rotation, 0)
 
         BlzChangeMinimapTerrainTex(env.minimap)
-
-        if env.mapPortion then
-            BlzFrameSetVisible(env.mapPortion, true)
-            BlzFrameSetVisible(env.mapPortionGlow, true)
-        end
     end
 
     ---@param env Environment|string
@@ -202,11 +198,15 @@ OnInit("Environment", function ()
 
         Environments[p] = env
         if env.mapPortion then
+            if p == LocalPlayer then
+                BlzFrameSetVisible(env.mapPortionGlow, true)
+            end
             if not vistedPlaces[p][env.id] then
                 vistedPlaces[p][env.id] = env.mapPortion
                 if p == LocalPlayer then
                     BlzFrameSetVisible(Sprite, true)
                     BlzFrameSetSpriteAnimate(Sprite, 1, 0)
+                    BlzFrameSetVisible(env.mapPortion, true)
                 end
                 Timed.call(8., function ()
                     if p == LocalPlayer then
@@ -217,6 +217,16 @@ OnInit("Environment", function ()
         end
 
         return true
+    end
+
+    ---@param p player
+    ---@param ally player
+    function Environment.spect(p, ally)
+        local pos = GetSyncedData(ally, locked[ally] and GetSavedCameraTarget or {GetCameraTargetPositionX, nil, GetCameraTargetPositionY});
+        (locked[ally] and prevEnv[ally] or Environments[ally]):apply(p, true)
+        if p == LocalPlayer then
+            PanCameraToTimed(pos[1], pos[2], 0)
+        end
     end
 
     ---@param texture string
