@@ -480,6 +480,10 @@ OnInit("Quests", function ()
                     have[id] = true
                 end
             end
+        else
+            if p == LocalPlayer then
+                while QuestList:remove() do end
+            end
         end
         for i = 0, MAX_QUESTS do
             if not have[i] and QuestTemplates[i] then

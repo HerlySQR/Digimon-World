@@ -159,7 +159,7 @@ OnInit("Environment", function ()
     ---@param p player
     ---@param fade? boolean
     ---@return boolean success
-    function Environment.apply(env, p, fade)
+    function Environment.apply(env, p, fade, _spect)
         if type(env) == "string" then
             env = used[env]
         end
@@ -197,7 +197,7 @@ OnInit("Environment", function ()
         end)
 
         Environments[p] = env
-        if env.mapPortion then
+        if not _spect and env.mapPortion then
             if p == LocalPlayer then
                 BlzFrameSetVisible(env.mapPortionGlow, true)
             end
@@ -223,7 +223,7 @@ OnInit("Environment", function ()
     ---@param ally player
     function Environment.spect(p, ally)
         local pos = GetSyncedData(ally, locked[ally] and GetSavedCameraTarget or {GetCameraTargetPositionX, nil, GetCameraTargetPositionY});
-        (locked[ally] and prevEnv[ally] or Environments[ally]):apply(p, true)
+        (locked[ally] and prevEnv[ally] or Environments[ally]):apply(p, true, true)
         if p == LocalPlayer then
             PanCameraToTimed(pos[1], pos[2], 0)
         end

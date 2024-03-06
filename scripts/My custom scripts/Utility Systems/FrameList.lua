@@ -147,7 +147,7 @@ OnInit("FrameList", function ()
     end
 
     ---Removes frame (can be a number) from frameListTable, skip noUpdate that is only used from FrameList.destory
-    ---@param frame framehandle | integer
+    ---@param frame? framehandle | integer
     ---@param noUpdate? boolean
     ---@return number | boolean
     function FrameList:remove(frame, noUpdate)
