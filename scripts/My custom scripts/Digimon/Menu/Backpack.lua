@@ -41,6 +41,7 @@ OnInit("Backpack", function ()
     ---@field spellCooldown integer
     ---@field slot integer
     ---@field stopped boolean
+    ---@field noConsummable boolean
 
     ---@class Backpack
     ---@field owner player
@@ -72,7 +73,7 @@ OnInit("Backpack", function ()
         end
     end)
 
-    local MinRange = 700. ---The minimun range a player's digimon should be to the target to cast the spell
+    local MinRange = 850. ---The minimun range a player's digimon should be to the target to cast the spell
     local MAX_STACK = udg_MAX_STACK ---The maximun number of items that you can have in every slot
     local MAX_ITEMS = udg_MAX_ITEMS
 
@@ -94,7 +95,8 @@ OnInit("Backpack", function ()
             level = AllowedItems[itemId].level,
             charges = 0,
             description = GetObjectName(itemId) .. "\n" .. BlzGetAbilityExtendedTooltip(itemId, 0),
-            stopped = false
+            stopped = false,
+            noConsummable = AllowedItems[itemId].noConsummable
         }
         itemData.spellCooldown = math.floor(BlzGetAbilityCooldown(itemData.spell, itemData.level - 1))
 
@@ -196,6 +198,11 @@ OnInit("Backpack", function ()
             end
         else
             local itemData = backpack.items[i]
+
+            if itemData.noConsummable then
+                return
+            end
+
             if backpack.cooldowns[itemData.id] > 0 then
                 if p == LocalPlayer then
                     BlzFrameSetText(BackpackText, "|cffffcc00Item is on cooldown|r")
@@ -219,11 +226,6 @@ OnInit("Backpack", function ()
             if p == LocalPlayer then
                 SelectUnitSingle(caster)
             end
-            Timed.call(0.04, function ()
-                if p == LocalPlayer then
-                    ForceUIKey("Q")
-                end
-            end)
             backpack.usingCaster = true
 
             if p == LocalPlayer then
@@ -235,6 +237,17 @@ OnInit("Backpack", function ()
                 BlzFrameSetText(BackpackText, "|cff00ff00Select a target|r")
             end
         end
+    end
+
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SELECTED)
+        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetTriggerUnit()) == DUMMY_CASTER end))
+        TriggerAddAction(t, function ()
+            if GetTriggerPlayer() == LocalPlayer then
+                ForceUIKey("Q")
+            end
+        end)
     end
 
     ---@param backpack Backpack
@@ -287,6 +300,9 @@ OnInit("Backpack", function ()
     trig = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
     TriggerAddAction(trig, function ()
+        if not GetSpellAbilityUnit() then -- why????
+            return
+        end
         local itemData = Backpacks[GetOwningPlayer(GetSpellAbilityUnit())].actualItemData
 
         if itemData and itemData.spell == GetSpellAbilityId() then
@@ -592,10 +608,21 @@ OnInit("Backpack", function ()
                 itemData.slot = #items
             end
             itemData.charges = itemData.charges + GetItemCharges(m)
+
+            if itemData.charges > MAX_STACK then
+                local newItem = CreateItem(id, GetUnitX(u), GetUnitY(u))
+                SetItemCharges(newItem, itemData.charges - MAX_STACK)
+                SetItemPlayer(newItem, p, true)
+                itemData.charges = MAX_STACK
+                UnitAddItem(u, newItem)
+            end
+
             RemoveItem(m)
+
             if p == LocalPlayer then
                 UpdateMenu()
             end
+
             onBackpackPick:run(u, id)
         end
     end)
@@ -640,11 +667,13 @@ OnInit("Backpack", function ()
         AllowedItems[udg_BackpackItem] = {
             ability = udg_BackpackAbility,
             level = udg_BackpackLevel,
+            noConsummable = udg_BackpackNoConsummable
         }
 
         udg_BackpackItem = 0
         udg_BackpackAbility = 0
         udg_BackpackLevel = 1
+        udg_BackpackNoConsummable = false
     end)
 
     ---@param p any
@@ -697,10 +726,128 @@ OnInit("Backpack", function ()
         end
     end
 
+    ---@param p player
+    ---@param itm integer
+    ---@return integer
+    function GetBackpackItemCharges(p, itm)
+        if not AllowedItems[itm] then
+            return 0
+        end
+
+        local backpack = Backpacks[p]
+        local charges = 0
+        for _, itemData in ipairs(backpack.items) do
+            if itemData.id == itm then
+                charges = charges + itemData.charges
+            end
+        end
+        return charges
+    end
+
+    ---@param p player
+    ---@param itm integer
+    ---@param charges integer
+    function SetBackpackItemCharges(p, itm, charges)
+        if not AllowedItems[itm] then
+            return 0
+        end
+
+        charges = math.max(0, charges)
+
+        local backpack = Backpacks[p]
+        local items = backpack.items
+        local itemDatas = {} ---@type ItemData[]
+        local count = 0
+
+        for _, itemData in ipairs(items) do
+            if itemData.id == itm then
+                table.insert(itemDatas, itemData)
+                count = count + itemData.charges
+            end
+        end
+
+        local diff = charges - count
+
+        if diff == 0 then
+            return
+        elseif diff > 0 then
+            for _, itemData in ipairs(itemDatas) do
+                if itemData.charges < MAX_STACK then
+                    local left = math.min(diff, MAX_STACK - itemData.charges)
+                    diff = diff - left
+                    itemData.charges = itemData.charges + left
+                end
+                if diff <= 0 then
+                    break
+                end
+            end
+
+            while diff > 0 do
+                local itemData = CreateItemData(itm)
+                table.insert(items, itemData)
+                itemData.slot = #items
+                itemData.charges = math.min(diff, MAX_STACK)
+                diff = diff - MAX_STACK
+            end
+
+            if diff > 0 then
+                local d = GetMainDigimon(p)
+                local x, y
+                if d then
+                    x, y = d:getPos()
+                else
+                    x, y = GetRectCenterX(gg_rct_Player_1_Spawn), GetRectCenterY(gg_rct_Player_1_Spawn)
+                end
+                local newItem = CreateItem(itm, x, y)
+                SetItemCharges(newItem, diff)
+                SetItemPlayer(newItem, p, true)
+            end
+        elseif diff < 0 then
+            diff = -diff
+
+            for _, itemData in ipairs(itemDatas) do
+                local left = math.min(itemData.charges, diff)
+                diff = diff - left
+                itemData.charges = itemData.charges - left
+                if itemData.charges <= 0 then
+                    table.remove(items, itemData.slot)
+                    for newSlot, otherData in ipairs(backpack.items) do
+                        otherData.slot = newSlot
+                    end
+                end
+                if diff <= 0 then
+                    break
+                end
+            end
+        end
+
+        if p == LocalPlayer then
+            UpdateMenu()
+        end
+    end
+
     ---@param func fun(mu: unit, mi: integer)
     function OnBackpackPick(func)
         onBackpackPick:register(func)
     end
-
+--[[
+    do
+        local tr = CreateTrigger()
+        TriggerRegisterPlayerChatEvent(tr, Player(0), "b ", false)
+        TriggerAddAction(tr, function ()
+            local amount = tonumber(GetEventPlayerChatString():sub(3))
+            local p = GetTriggerPlayer()
+            SetBackpackItemCharges(p, Backpacks[p].items[1].id, amount)
+        end)
+    end
+    do
+        local tr = CreateTrigger()
+        TriggerRegisterPlayerChatEvent(tr, Player(0), "p", false)
+        TriggerAddAction(tr, function ()
+            local p = GetTriggerPlayer()
+            print(GetBackpackItemCharges(p, Backpacks[p].items[1].id))
+        end)
+    end
+]]
 end)
 Debug.endFile()

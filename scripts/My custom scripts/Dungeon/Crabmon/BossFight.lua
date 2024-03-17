@@ -24,14 +24,14 @@ OnInit(function ()
                 if not IssueTargetOrderById(boss, ScissorMagicOrder, u) then
                     if rad <= 29 then
                         IssuePointOrderById(boss, ScissorMagicChaosOrder, GetUnitX(u), GetUnitY(u))
-                      elseif 30 <= rad and rad <= 67 then
+                    elseif 30 <= rad and rad <= 67 then
                         IssueTargetOrderById(boss, InnerFireOrder, boss)
                     elseif rad <= 68 then
                         IssueImmediateOrderById(boss, BeserkOrder)
-                      end
                     end
                 end
             end
+        end
     })
 end)
 Debug.endFile()

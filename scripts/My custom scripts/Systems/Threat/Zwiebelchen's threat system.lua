@@ -173,7 +173,7 @@ OnInit("ZTS", function ()
     Require "MDTable"
    
     local UpdateIntervall      = 0.5  ---@type number --The intervall for issueing orders and performing AttackRange check. recommended value: 0.5
-    local HelpRange      = 400  ---@type number --The range between units considered being in the same camp. If a unit of the same camp gets attacked, all others will help.
+    local HelpRange      = 200  ---@type number --The range between units considered being in the same camp. If a unit of the same camp gets attacked, all others will help.
                                           --Set CallForHelp to something lower in Gameplay Constants.
     local OrderReturnRange      = 4000  ---@type number --The range the unit's target can be away from the original camping position, before being ordered to return.
     local ReturnRange      = 1500  ---@type number --The range the unit can move away from the original camping position, before being ordered to return.
@@ -797,7 +797,11 @@ OnInit("ZTS", function ()
         end
     end
 
-    AddHook("RemoveUnit", RemovedUnitFound)
+    local oldRemoveUnit
+    oldRemoveUnit = AddHook("RemoveUnit", function (u)
+        RemovedUnitFound(u)
+        oldRemoveUnit(u)
+    end)
 
     local function OnDeath()
         if NPClist[GetTriggerUnit()][0] then

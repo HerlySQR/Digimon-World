@@ -95,6 +95,7 @@ OnInit("DigimonBank", function ()
     ---@field saved Digimon[]
     ---@field pressed integer
     ---@field usingClicked integer
+    ---@field maxUsable integer
     ---@field savedClicked integer
     ---@field savedDigimonsStock integer
     ---@field wantDigimonSlot boolean
@@ -128,6 +129,7 @@ OnInit("DigimonBank", function ()
             saved = {},
             pressed = -1,
             usingClicked = -1,
+            maxUsable = MAX_USED,
             savedClicked = -1,
             savedDigimonsStock = 0,
             wantDigimonSlot = false,
@@ -167,7 +169,7 @@ OnInit("DigimonBank", function ()
         if self.pressed == -1 then
             return false
         end
-        return GetDigimonCooldown(self.stocked[self.pressed]) <= 0 and self:used() < MAX_USED
+        return GetDigimonCooldown(self.stocked[self.pressed]) <= 0 and self:used() < self.maxUsable
     end
 
     ---@return Digimon[]
@@ -1597,15 +1599,11 @@ OnInit("DigimonBank", function ()
 
     -- Update frames
     Timed.echo(0.1, function ()
-        for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
-            local bank = Bank[i] ---@type Bank
-            if GetDigimonCount(bank.p) > 0 then
-                if bank.p == LocalPlayer then
-                    BlzFrameSetEnable(Summon, bank:useDigimonConditions() and bank:avaible(bank.pressed))
-                    BlzFrameSetEnable(Store, bank:storeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
-                    BlzFrameSetEnable(Free, bank:freeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
-                end
-            end
+        local bank = Bank[GetPlayerId(LocalPlayer)] ---@type Bank
+        if GetDigimonCount(bank.p) > 0 then
+            BlzFrameSetEnable(Summon, bank:useDigimonConditions() and bank:avaible(bank.pressed))
+            BlzFrameSetEnable(Store, bank:storeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
+            BlzFrameSetEnable(Free, bank:freeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
         end
     end)
 
@@ -2019,20 +2017,22 @@ OnInit("DigimonBank", function ()
         return stucked
     end
 
-    ---@param p any
-    ---@param u any
+    ---@param p player
+    ---@param u unit | Digimon
     function AddToBank(p, u)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
-        local d = Digimon.getInstance(u)
-        for i = 0, MAX_STOCK - 1 do
-            if not bank.stocked[i] then
-                bank.stocked[i] = d
-                bank.inUse[i] = d
-                d.owner = p
-                if not bank.main then
-                    bank:searchMain()
+        local d = Debug.wc3Type(u) == "unit" and Digimon.getInstance(u) or u
+        if d then
+            for i = 0, MAX_STOCK - 1 do
+                if not bank.stocked[i] then
+                    bank.stocked[i] = d
+                    bank.inUse[i] = d
+                    d.owner = p
+                    if not bank.main then
+                        bank:searchMain()
+                    end
+                    break
                 end
-                break
             end
         end
         if p == LocalPlayer then
@@ -2047,6 +2047,13 @@ OnInit("DigimonBank", function ()
     ---@param func fun(p: player, d: Digimon)
     function OnBankUpdated(func)
         digimonUpdateEvent:register(func)
+    end
+
+    ---If n is ausent, just set the default value
+    ---@param p player
+    ---@param n integer?
+    function SetMaxUsableDigimons(p, n)
+        Bank[GetPlayerId(p)].maxUsable = n or MAX_USED
     end
 end)
 Debug.endFile()
