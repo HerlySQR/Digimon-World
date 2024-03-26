@@ -149,7 +149,7 @@ OnInit("Digimon", function ()
 
     ---@param e integer
     function Digimon:setExp(e)
-        SetHeroXP(self.root, e, false)
+        SetHeroXP(self.root, e, true)
     end
 
     ---@return boolean

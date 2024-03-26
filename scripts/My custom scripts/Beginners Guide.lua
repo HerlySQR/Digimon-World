@@ -509,6 +509,9 @@ OnInit.final(function ()
     TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
     TriggerAddAction(t, function ()
         local d = Digimon.getInstance(GetManipulatingUnit())
+        if not d then
+            return
+        end
         local p = d:getOwner()
         if not inTutorial[p] then
             return
@@ -753,6 +756,9 @@ OnInit.final(function ()
     TriggerRegisterEnterRectSimple(t, gg_rct_Bank_Inner)
     TriggerAddAction(t, function ()
         local d = Digimon.getInstance(GetEnteringUnit())
+        if not d then
+            return
+        end
         local p = d:getOwner()
         if not inTutorial[p] then
             return

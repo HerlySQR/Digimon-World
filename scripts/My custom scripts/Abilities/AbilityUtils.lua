@@ -38,6 +38,8 @@ OnInit("AbilityUtils", function ()
     PURGE_SPELL = FourCC('A034')
     PURGE_ORDER = Orders.purge
 
+    RARE_DATA = FourCC('I05V')
+
     -- Remove sleep when is attacked
     local SLEEP_BUFF = FourCC('B005')
     Digimon.postDamageEvent:register(function (info)

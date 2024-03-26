@@ -250,7 +250,7 @@ OnInit("BossFightUtils", function ()
         return 6 * math.exp(-0.5493061443341 * ((half and n/2 or n) - 1))
     end
 
-    ---@param data {name: string, boss: unit, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
+    ---@param data {name: string, boss: unit, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
     function InitBossFight(data)
         if type(data) ~= "table" then
             print("Bad data implemented in bossfight:", data)
@@ -521,6 +521,10 @@ OnInit("BossFightUtils", function ()
                             data.onStart()
                         end
                     end)
+
+                    if data.onDeath then
+                        data.onDeath()
+                    end
                 end
             end
             if current >= interval then

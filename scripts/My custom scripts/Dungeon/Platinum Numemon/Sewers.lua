@@ -11,7 +11,7 @@ OnInit.final(function ()
 
     local MAX_HEROS = 2
     local MAX_TIME = 3600.
-    local RESET_SEWERS = FourCC('I05T')
+    local RESET_SEWERS = FourCC('A0G2')
     local NPC = gg_unit_N02H_0159 ---@type unit
     local RAREMON = FourCC('O02C')
     local DRAGOMON = FourCC('O023')
@@ -42,6 +42,7 @@ OnInit.final(function ()
     local dragomons = {} ---@type unit[]
     local dragomonsPos = {} ---@type table<unit, location>
     local wall = {gg_dest_B082_53390, gg_dest_Dofw_53389} ---@type destructable[]
+    local canReset = false
 
     for i, r in ipairs(summonPlaces) do
         local w, h = GetRectWidthBJ(r), GetRectHeightBJ(r)
@@ -76,7 +77,7 @@ OnInit.final(function ()
     local function resetSewers()
         started = false
         SetTextTagVisibility(text, false)
-        RemoveItemFromStock(NPC, RESET_SEWERS)
+        UnitRemoveAbility(NPC, RESET_SEWERS)
         TimerDialogDisplay(window, false)
 
         for i, u in ipairs(creeps) do
@@ -128,8 +129,8 @@ OnInit.final(function ()
 
     do
         local t = CreateTrigger()
-        TriggerRegisterUnitEvent(t, NPC, EVENT_UNIT_SELL_ITEM)
-        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetSoldItem()) == RESET_SEWERS end))
+        TriggerRegisterUnitEvent(t, NPC, EVENT_UNIT_SPELL_EFFECT)
+        TriggerAddCondition(t, Condition(function () return GetSpellAbilityId() == RESET_SEWERS end))
         TriggerAddAction(t, function ()
             PauseTimer(tm)
             resetSewers()
@@ -150,10 +151,6 @@ OnInit.final(function ()
         for p in players:elements() do
             SetMaxUsableDigimons(p)
             heros[p] = 0
-        end
-
-        if started then
-            RemoveItemFromStock(NPC, RESET_SEWERS)
         end
 
         players:clear()
@@ -190,8 +187,18 @@ OnInit.final(function ()
             startSewers()
         end
 
-        if players:isEmpty() and started then
-            AddItemToStock(NPC, RESET_SEWERS, 1, 1)
+        if started then
+            if players:isEmpty() then
+                if not canReset then
+                    canReset = true
+                    UnitAddAbility(NPC, RESET_SEWERS)
+                end
+            else
+                if canReset then
+                    canReset = false
+                    UnitRemoveAbility(NPC, RESET_SEWERS)
+                end
+            end
         end
 
         -- Summon raremons

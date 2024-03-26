@@ -1,4 +1,6 @@
 OnInit(function ()
+    Require "AddHook"
+
     local INTERVAL = 15.
 
     ---@class RectInfo
@@ -85,7 +87,7 @@ OnInit(function ()
     end)
     -- Start update
     Timed.call(function ()
-        Timed.echo(Update, INTERVAL)
+        Timed.echo(INTERVAL, Update)
     end)
 
     -- For GUI
@@ -95,5 +97,16 @@ OnInit(function ()
         udg_ItemSpawnRegions = {}
         udg_ItemSpawnTypes = {}
         udg_ItemSpawnMaxItems = 0
+    end)
+
+    local oldRemoveItem
+    oldRemoveItem = AddHook("RemoveItem", function (m)
+        local this = Reference[m]
+        if this then
+            Reference[m] = nil
+            this.parent.count = this.parent.count - 1
+            this.amount = this.amount - 1
+        end
+        oldRemoveItem(m)
     end)
 end)

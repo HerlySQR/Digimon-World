@@ -5,6 +5,7 @@ OnInit("DigimonBank", function ()
     Require "Menu"
     Require "Hotkeys"
     Require "EventListener"
+    Require "Clear Items"
 
     local MAX_STOCK = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
@@ -337,6 +338,7 @@ OnInit("DigimonBank", function ()
             table.insert(self.savedItems, m)
             SetItemVisible(m, false)
             SetItemPosition(m, WorldBounds.maxX, WorldBounds.maxY)
+            SetItemLifeSpan(m, math.maxinteger)
             return true
         else
             ErrorMessage("Item bank is full.", self.p)
@@ -352,6 +354,7 @@ OnInit("DigimonBank", function ()
         local m = table.remove(self.savedItems, self.itemClicked)
         SetItemVisible(m, true)
         SetItemPosition(m, self.customer:getPos())
+        SetItemLifeSpan(m)
     end
 
     function Bank:discardItem()

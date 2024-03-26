@@ -14,6 +14,18 @@ OnInit(function ()
         entrance = gg_rct_PlatinumNumemonEntrance,
         toTeleport = gg_rct_Sewers,
         actions = function (u)
+        end,
+        onDeath = function ()
+            local owners = CreateForce()
+            ForUnitsInRect(gg_rct_PlatinumNumemon_1, function (u)
+                if IsPlayerInGame(GetOwningPlayer(u)) then
+                    ForceAddPlayer(owners, GetOwningPlayer(u))
+                end
+            end)
+            ForForce(owners, function ()
+                CreateItem(RARE_DATA, GetUnitX(boss), GetUnitY(boss))
+            end)
+            DestroyForce(owners)
         end
     })
 end)

@@ -11,6 +11,7 @@ OnInit(function ()
     Require "NewBonus"
     Require "AddHook"
     Require "Player Data"
+    local FrameList = Require "FrameList" ---@type FrameList
 
     local LocalPlayer = GetLocalPlayer()
     local MAX_ARENAS = 4
@@ -63,6 +64,14 @@ OnInit(function ()
     local PlayerDigimonBanned = {} ---@type framehandle[][]
     local FIGHT = nil ---@type framehandle
 
+    local RankShopMenu = nil ---@type framehandle
+    local RankShopItems = nil ---@type framehandle
+    local RankShopText = nil ---@type framehandle
+    local RankShopExit = nil ---@type framehandle
+    local RankShopItemT = {} ---@type framehandle[]
+    local BackdropRankShopItemT = {} ---@type framehandle[]
+    local RankShopList = nil ---@type FrameList
+
     local DigimonTypes = {} ---@type integer[][]
     for i = 0, MAX_RANK do
         DigimonTypes[i] = {}
@@ -71,7 +80,12 @@ OnInit(function ()
     local PVP_TICKET = FourCC('I03A')
     local ARENA_TICKET = FourCC('I03B')
     local LOBBY = gg_rct_Gym_Lobby ---@type rect
+    local VENDOR = gg_unit_N01O_0120 ---@type unit
+    local OPEN_SHOP = FourCC('I05X')
+    local MAX_ITEM_PER_ROW = 4
 
+    local actualRow = MAX_ITEM_PER_ROW
+    local actualContainer = nil ---@type framehandle
     local UsedArena = __jarray(false) ---@type boolean[]
 
     ---@alias playerIndex
@@ -106,6 +120,14 @@ OnInit(function ()
     ---@field clockWindow timerdialog
     local FightInfo = {}
     FightInfo.__index = FightInfo
+
+    ---@class RankItem
+    ---@field id integer
+    ---@field rank integer
+    ---@field goldCost integer
+    ---@field woodCost integer
+
+    local RankItems = {} ---@type RankItem[]
 
     ---@return boolean
     function FightInfo:localPlayerCond()
@@ -446,7 +468,7 @@ OnInit(function ()
     end)
 
     OnLoad(function (p)
-        BlzDecPlayerTechResearched(p, RANK_UPGRADE, GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED))
+        SetPlayerTechResearched(p, RANK_UPGRADE, GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED))
     end)
 
     local FightInfos = {} ---@type FightInfo[]
@@ -633,6 +655,20 @@ OnInit(function ()
         end
     end
 
+    local function UpdateItems()
+        for i, itm in ipairs(RankItems) do
+            local rank = GetPlayerState(LocalPlayer, PLAYER_STATE_RESOURCE_FOOD_USED)
+
+            if rank >= itm.rank then
+                BlzFrameSetTexture(BackdropRankShopItemT[i], BlzGetAbilityIcon(itm.id), 0, true)
+                BlzFrameSetEnable(RankShopItemT[i], true)
+            else
+                BlzFrameSetTexture(BackdropRankShopItemT[i], BlzGetAbilityIcon(itm.id):gsub("Buttons\\BTN", "ButtonsDisabled\\DISBTN"), 0, true)
+                BlzFrameSetEnable(RankShopItemT[i], false)
+            end
+        end
+    end
+
     ---@param i integer
     ---@param j integer
     local function PlayerDigimonFunc(i, j)
@@ -654,6 +690,125 @@ OnInit(function ()
             if fight:localPlayerCond() then
                 UpdateMenu()
             end
+        end
+    end
+
+    ---@param p player
+    ---@param i integer
+    local function RankBuyItem(p, i)
+        local itm = RankItems[i]
+
+        local actGold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
+        local actWood = GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)
+
+        if actGold < itm.goldCost then
+            ErrorMessage("Not enough digibits", p)
+            return
+        end
+
+        if actWood < itm.woodCost then
+            ErrorMessage("Not enough digicrystals", p)
+            return
+        end
+
+        SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, actGold - itm.goldCost)
+        SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, actWood - itm.woodCost)
+
+        SetItemPlayer(CreateItem(itm.id, GetUnitX(VENDOR), GetUnitY(VENDOR)), p, true)
+    end
+
+    ---@param id integer
+    ---@param rank integer
+    ---@param goldCost integer
+    ---@param woodCost integer
+    local function DefineRankItem(id, rank, goldCost, woodCost)
+        table.insert(RankItems, {
+            id = id,
+            rank = rank,
+            goldCost = goldCost,
+            woodCost = woodCost
+        })
+
+        local i = #RankItems
+
+        if actualRow >= MAX_ITEM_PER_ROW then
+            actualRow = 0
+            FrameLoaderAdd(function ()
+                actualContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RankShopItems, "", 1)
+                BlzFrameSetPoint(actualContainer, FRAMEPOINT_TOPLEFT, RankShopItems, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+                BlzFrameSetSize(actualContainer, 0.25000, 0.06667)
+                BlzFrameSetTexture(actualContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+            end)
+        end
+
+        FrameLoaderAdd(function ()
+            RankShopItemT[i] = BlzCreateFrame("IconButtonTemplate", actualContainer, 0, 0)
+            BlzFrameSetPoint(RankShopItemT[i], FRAMEPOINT_TOPLEFT, actualContainer, FRAMEPOINT_TOPLEFT, 0.06667 * actualRow, 0.0000)
+            BlzFrameSetPoint(RankShopItemT[i], FRAMEPOINT_BOTTOMRIGHT, actualContainer, FRAMEPOINT_BOTTOMRIGHT, -0.20000 + 0.06667 * actualRow, 0.01667)
+            BlzFrameSetEnable(RankShopItemT[i], false)
+
+            BackdropRankShopItemT[i] = BlzCreateFrameByType("BACKDROP", "BackdropRankShopItemT[" .. i .. "]", RankShopItemT[i], "", 0)
+            BlzFrameSetAllPoints(BackdropRankShopItemT[i], RankShopItemT[i])
+            BlzFrameSetTexture(BackdropRankShopItemT[i], BlzGetAbilityIcon(id):gsub("Buttons\\BTN", "ButtonsDisabled\\DISBTN"), 0, true)
+            local t = CreateTrigger()
+            BlzTriggerRegisterFrameEvent(t, RankShopItemT[i], FRAMEEVENT_CONTROL_CLICK)
+            TriggerAddAction(t, function ()
+                local p = GetTriggerPlayer()
+                RankBuyItem(p, i)
+                if p == LocalPlayer then
+                    BlzFrameSetEnable(RankShopItemT[i], false)
+                end
+                Timed.call(1., function ()
+                    if p == LocalPlayer then
+                        BlzFrameSetEnable(RankShopItemT[i], true)
+                    end
+                end)
+            end)
+
+            local tooltip = BlzCreateFrame("QuestButtonBaseTemplate", RankShopItemT[i], 0, 0)
+
+            local tooltipText = BlzCreateFrameByType("TEXT", "name", tooltip, "", 0)
+            BlzFrameSetPoint(tooltipText, FRAMEPOINT_BOTTOMLEFT, RankShopItemT[i], FRAMEPOINT_CENTER, 0.0000, 0.0000)
+            BlzFrameSetEnable(tooltipText, false)
+            BlzFrameSetScale(tooltipText, 1.00)
+            BlzFrameSetTextAlignment(tooltipText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+            BlzFrameSetText(tooltipText,
+                "|cffDAF7A6Rank level " .. rank .. "|r\n" ..
+                (goldCost > 0 and ("|cff828282Digibits:|r |cffffcc00" .. goldCost .. "|r\n") or "") ..
+                (woodCost > 0 and ("|cff6f2583DigiCrystal:|r |cffffcc00" .. woodCost .. "|r\n") or "") ..
+                BlzGetAbilityExtendedTooltip(id, 0))
+            BlzFrameSetSize(tooltipText, 0.15, 0)
+            BlzFrameSetPoint(tooltip, FRAMEPOINT_TOPLEFT, tooltipText, FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
+            BlzFrameSetPoint(tooltip, FRAMEPOINT_BOTTOMRIGHT, tooltipText, FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
+
+            BlzFrameSetTooltip(RankShopItemT[i], tooltip)
+
+            if actualRow == 0 then
+                RankShopList:add(actualContainer)
+            end
+        end)
+
+        actualRow = actualRow + 1
+    end
+
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == OPEN_SHOP end))
+        TriggerAddAction(t, function ()
+            if GetOwningPlayer(GetManipulatingUnit()) == LocalPlayer and not BlzFrameIsVisible(RankShopMenu) then
+                BlzFrameSetVisible(RankShopMenu, true)
+                AddButtonToEscStack(RankShopExit)
+                UpdateItems()
+            end
+        end)
+    end
+
+    local function RankShopExitFunc()
+        if GetTriggerPlayer() == LocalPlayer then
+            BlzFrameSetVisible(RankShopMenu, false)
+            RemoveButtonFromEscStack(RankShopExit)
         end
     end
 
@@ -770,6 +925,37 @@ OnInit(function ()
         BlzFrameSetScale(FIGHT, 12.5)
         BlzFrameSetTextAlignment(FIGHT, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_MIDDLE)
         BlzFrameSetVisible(FIGHT, false)
+
+        RankShopMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
+        BlzFrameSetAbsPoint(RankShopMenu, FRAMEPOINT_TOPLEFT, 0.260000, 0.480000)
+        BlzFrameSetAbsPoint(RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, 0.560000, 0.190000)
+        BlzFrameSetVisible(RankShopMenu, false)
+
+        RankShopItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", RankShopMenu, "", 1)
+        BlzFrameSetPoint(RankShopItems, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, 0.03000, -0.033333)
+        BlzFrameSetPoint(RankShopItems, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.02000, 0.023333)
+        BlzFrameSetTexture(RankShopItems, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        RankShopList = FrameList.create(false, RankShopItems)
+        BlzFrameSetPoint(RankShopList.Frame, FRAMEPOINT_TOPLEFT, RankShopItems, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+        RankShopList:setSize(0.25, 0.233334)
+
+        RankShopText = BlzCreateFrameByType("TEXT", "name", RankShopMenu, "", 0)
+        BlzFrameSetScale(RankShopText, 1.57)
+        BlzFrameSetPoint(RankShopText, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, 0.040000, -0.020000)
+        BlzFrameSetPoint(RankShopText, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.24000)
+        BlzFrameSetText(RankShopText, "|cffFFCC00Click to buy an item|r")
+        BlzFrameSetEnable(RankShopText, false)
+        BlzFrameSetTextAlignment(RankShopText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        RankShopExit = BlzCreateFrame("ScriptDialogButton", RankShopMenu, 0, 0)
+        BlzFrameSetPoint(RankShopExit, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, 0.10000, -0.25500)
+        BlzFrameSetPoint(RankShopExit, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.0050000)
+        BlzFrameSetText(RankShopExit, "|cffFCD20DClose|r")
+        BlzFrameSetScale(RankShopExit, 1.00)
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, RankShopExit, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, RankShopExitFunc)
     end
 
     FrameLoaderAdd(InitFrames)
@@ -785,6 +971,12 @@ OnInit(function ()
             SelectPlayer[GetEnumPlayer()] = DialogCreate()
             PlayerOptions[GetEnumPlayer()] = Set.create()
         end)
+        -- I don't know why I should add this
+        local buffer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RankShopItems, "", 1)
+        BlzFrameSetPoint(buffer, FRAMEPOINT_TOPLEFT, RankShopItems, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+        BlzFrameSetPoint(buffer, FRAMEPOINT_BOTTOMRIGHT, RankShopItems, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.13000)
+        BlzFrameSetTexture(buffer, "war3mapImported\\EmptyBTN.blp", 0, true)
+        RankShopList:add(buffer)
     end)
 
     ---@param p player
@@ -1188,6 +1380,15 @@ OnInit(function ()
             udg_GymRank = 0
             udg_GymDigimonType = __jarray(0)
             udg_GymLevel = 1
+        end)
+
+        udg_RankVendorAdd = CreateTrigger()
+        TriggerAddAction(udg_RankVendorAdd, function ()
+            DefineRankItem(udg_RankVendorItem, udg_RankVendorRank, udg_RankVendorGoldCost, udg_RankVendorWoodCost)
+            udg_RankVendorItem = 0
+            udg_RankVendorRank = 0
+            udg_RankVendorGoldCost = 0
+            udg_RankVendorWoodCost = 0
         end)
     end)
 
