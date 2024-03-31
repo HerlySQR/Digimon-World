@@ -20,9 +20,13 @@ OnInit.final(function ()
     local MAX_RAREMON_PER_RECT = 20
     local BOSSFIGHT_PLACE = gg_rct_PlatinumNumemon_1 ---@type rect
     local RAREMON_BAIT = FourCC('A0G0')
-    local ESNARE = FourCC('A0G1')
-    local ESNARE_BUFF = FourCC('BEer')
-    local ESNARE_ORDER = Orders.entanglingroots
+    local ESNARE = FourCC('A0G3')
+    local ESNARE_BUFF = FourCC('Beng')
+    local ESNARE_ORDER = Orders.ensnare
+    local SUMMON_RAREMON_TICK = 2. -- seconds
+    local EXTRA_HEALTH_FACTOR = 0.5
+    local EXTRA_DMG_FACTOR = 1.
+    local RAREMON_EXPLOSION_DAMAGE = 500.
 
     local place = gg_rct_Sewers ---@type rect
     local started = false
@@ -39,10 +43,12 @@ OnInit.final(function ()
     local summonPlaces = {gg_rct_Sewers_Summons_1, gg_rct_Sewers_Summons_2, gg_rct_Sewers_Summons_3, gg_rct_Sewers_Summons_4} ---@type rect[]
     local summonPlacesCheck = {} ---@type rect[]
     local summonCounts = __jarray(0) ---@type integer[]
+    local exploding =  __jarray(false) ---@type table<Digimon, boolean>
     local dragomons = {} ---@type unit[]
     local dragomonsPos = {} ---@type table<unit, location>
     local wall = {gg_dest_B082_53390, gg_dest_Dofw_53389} ---@type destructable[]
     local canReset = false
+    local summonRaremonCurrent = 0.
 
     for i, r in ipairs(summonPlaces) do
         local w, h = GetRectWidthBJ(r), GetRectHeightBJ(r)
@@ -57,6 +63,8 @@ OnInit.final(function ()
             table.insert(creepLocs, GetUnitLoc(u))
             table.insert(creepFacings, GetUnitFacing(u))
             ZTS_AddThreatUnit(u, false)
+            AddUnitBonus(u, BONUS_HEALTH, math.floor(GetUnitState(u, UNIT_STATE_MAX_LIFE) * EXTRA_HEALTH_FACTOR))
+            AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
 
             if GetUnitTypeId(u) == DRAGOMON then
                 table.insert(dragomons, u)
@@ -92,6 +100,8 @@ OnInit.final(function ()
                 u = CreateUnitAtLoc(Digimon.NEUTRAL, creepTypes[i], creepLocs[i], creepFacings[i])
                 SetHeroLevel(u, creepLevels[i], false)
                 ZTS_AddThreatUnit(u, false)
+                AddUnitBonus(u, BONUS_HEALTH, math.floor(GetUnitState(u, UNIT_STATE_MAX_LIFE) * EXTRA_HEALTH_FACTOR))
+                AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
                 creeps[i] = u
 
                 if GetUnitTypeId(u) == DRAGOMON then
@@ -202,52 +212,82 @@ OnInit.final(function ()
         end
 
         -- Summon raremons
-        for i, r in ipairs(summonPlacesCheck) do
-            local summoned = false
-            ForUnitsInRect(r, function (u)
-                if not summoned and summonCounts[i] < MAX_RAREMON_PER_RECT and RectContainsUnit(place, u) and not RectContainsUnit(BOSSFIGHT_PLACE, u) and IsPlayerInGame(GetOwningPlayer(u)) then
-                    local l = GetRandomLocInRect(summonPlaces[i])
-                    local d = Digimon.create(Digimon.NEUTRAL, RAREMON, GetLocationX(l), GetLocationY(l), GetRandomReal(0, 360))
-                    DestroyEffect(AddSpecialEffectLoc(RAREMON_SUMMON_EFFECT, l))
-                    RemoveLocation(l)
+        summonRaremonCurrent = summonRaremonCurrent + 1
+        if summonRaremonCurrent >= SUMMON_RAREMON_TICK then
+            summonRaremonCurrent = 0
 
-                    d.isSummon = true
-                    d:setLevel(85)
-                    SetUnitMoveSpeed(d.root, 150)
-                    SetUnitScale(d.root, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SCALING_VALUE), 0, 0)
-                    ZTS_AddThreatUnit(d.root, false)
-                    SetUnitState(d.root, UNIT_STATE_MANA, 0)
-                    BlzSetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE))
-                    BlzSetUnitRealField(d.root, UNIT_RF_MANA_REGENERATION, 0)
-                    BlzSetUnitRealField(d.root, UNIT_RF_SHADOW_IMAGE_WIDTH, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SHADOW_IMAGE_WIDTH))
-                    BlzSetUnitRealField(d.root, UNIT_RF_SHADOW_IMAGE_HEIGHT, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SHADOW_IMAGE_HEIGHT))
-                    BlzSetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE))
-                    AddUnitBonus(d.root, BONUS_DAMAGE, 15)
+            for i, r in ipairs(summonPlacesCheck) do
+                local summoned = false
+                ForUnitsInRect(r, function (u)
+                    if not summoned and summonCounts[i] < MAX_RAREMON_PER_RECT and RectContainsUnit(place, u) and not RectContainsUnit(BOSSFIGHT_PLACE, u) and IsPlayerInGame(GetOwningPlayer(u)) then
+                        local l = GetRandomLocInRect(summonPlaces[i])
+                        local d = Digimon.create(Digimon.NEUTRAL, RAREMON, GetLocationX(l), GetLocationY(l), GetRandomReal(0, 360))
+                        DestroyEffect(AddSpecialEffectLoc(RAREMON_SUMMON_EFFECT, l))
+                        RemoveLocation(l)
 
-                    summonCounts[i] = summonCounts[i] + 1
-                    summonings[i][summonCounts[i]] = d
-                    summoned = true
-                end
+                        d.isSummon = true
+                        d:setLevel(85)
+                        SetUnitMoveSpeed(d.root, 250)
+                        SetUnitScale(d.root, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SCALING_VALUE), 0, 0)
+                        ZTS_AddThreatUnit(d.root, false)
+                        SetUnitState(d.root, UNIT_STATE_MANA, 0)
+                        BlzSetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE))
+                        BlzSetUnitRealField(d.root, UNIT_RF_MANA_REGENERATION, 0)
+                        BlzSetUnitRealField(d.root, UNIT_RF_SHADOW_IMAGE_WIDTH, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SHADOW_IMAGE_WIDTH))
+                        BlzSetUnitRealField(d.root, UNIT_RF_SHADOW_IMAGE_HEIGHT, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SHADOW_IMAGE_HEIGHT))
+                        BlzSetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE))
+                        AddUnitBonus(d.root, BONUS_DAMAGE, 15)
+
+                        summonCounts[i] = summonCounts[i] + 1
+                        summonings[i][summonCounts[i]] = d
+                        summoned = true
+                    end
+                    for j = summonCounts[i], 1, -1 do
+                        local d = summonings[i][j]
+                        ZTS_ModifyThreat(u, d.root, 10., true)
+                    end
+                end)
+
                 for j = summonCounts[i], 1, -1 do
                     local d = summonings[i][j]
-                    ZTS_ModifyThreat(u, d.root, 10., true)
-                end
-            end)
+                    local remove = false
 
-            for j = summonCounts[i], 1, -1 do
-                local d = summonings[i][j]
-                local remove = false
+                    if not exploding[d] then
+                        if math.random(10) == 1 then
+                            exploding[d] = true
+                            d:pause()
+                            local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl", d.root, "overhead")
+                            BlzSetSpecialEffectScale(eff, 3.)
+                            DestroyEffectTimed(eff, SUMMON_RAREMON_TICK)
+                        end
+                    else
+                        if d:isAlive() then
+                            local x, y = d:getPos()
+                            ForUnitsInRange(x, y, 300., function (u)
+                                if IsUnitEnemy(d.root, GetOwningPlayer(u)) then
+                                    Damage.apply(d.root, u, RAREMON_EXPLOSION_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                                elseif GetUnitTypeId(u) == RAREMON then
+                                    SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE) - RAREMON_EXPLOSION_DAMAGE)
+                                end
+                            end)
+                            DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Demon\\DemonLargeDeathExplode\\DemonLargeDeathExplode.mdl", x, y))
+                            DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\Mortar\\MortarMissile.mdl", x, y))
+                        end
+                        d:destroy()
+                    end
 
-                if not d:isAlive() then
-                    remove = true
-                elseif not ZTS_GetCombatState(d.root) then
-                    d:destroy()
-                    remove = true
-                end
+                    if not d:isAlive() then
+                        remove = true
+                    elseif not ZTS_GetCombatState(d.root) then
+                        d:destroy()
+                        remove = true
+                    end
 
-                if remove then
-                    table.remove(summonings[i], j)
-                    summonCounts[i] = summonCounts[i] - 1
+                    if remove then
+                        table.remove(summonings[i], j)
+                        summonCounts[i] = summonCounts[i] - 1
+                        exploding[d] = nil
+                    end
                 end
             end
         end
