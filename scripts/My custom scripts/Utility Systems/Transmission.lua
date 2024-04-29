@@ -223,6 +223,7 @@ OnInit("Transmission", function ()
 
     ---Runs the transmission
     function Transmission:Start()
+        self._paused = false
         -- The default force is all the in-game players
         if IsForceEmpty(self.toForce) then
             self:SetTargetForce(InGame)
@@ -386,7 +387,7 @@ OnInit("Transmission", function ()
         setmetatable(self, Transmission) -- Sorry, but I don't wanna have LinkedList as its metatable
 
         self._skipped = false
-        self._paused = false
+        self._paused = true
         self._played = nil
         self.toForce = CreateForce()
         self.OriginalTargetForce = CreateForce()
@@ -470,7 +471,7 @@ OnInit("Transmission", function ()
         local player = GetTriggerPlayer()
         for i = #AllInstances[player], 1, -1 do
             local curr = AllInstances[player][i]
-            if curr.isSkippable and GetTriggerEventId() ~= EVENT_PLAYER_LEAVE then
+            if curr.isSkippable and not curr._paused and GetTriggerEventId() ~= EVENT_PLAYER_LEAVE then
                 ForceRemovePlayer(curr.toForce, player)
                 if player == LocalPlayer then
                     -- I don't know if this is free of desync (I checked and there is not desync yet)

@@ -21,6 +21,7 @@ OnInit.final(function ()
     local equipPicked = __jarray(false) ---@type table<player, boolean>
     local netPicked = __jarray(false) ---@type table<player, boolean>
     local shopEnter = __jarray(false) ---@type table<player, boolean>
+    local restaurantEnter = __jarray(false) ---@type table<player, boolean>
     local enemyFound = __jarray(false) ---@type table<player, boolean>
     local enemyKilled = __jarray(false) ---@type table<player, boolean>
     local digimonDied = __jarray(false) ---@type table<player, boolean>
@@ -35,7 +36,7 @@ OnInit.final(function ()
     local checkForEnemy = nil ---@type fun(p: player)
     local checkForTransport = nil ---@type fun(p: player)
 
-    local MAX_TUTORIALS = 12
+    local MAX_TUTORIALS = 13
     local DIGITAMA = FourCC('n00A')
     local PIXIMON = FourCC('O06U')
     local WHAMON = FourCC('N009')
@@ -46,6 +47,31 @@ OnInit.final(function ()
     local TELEPORT_TARGET_EFFECT = "war3mapImported\\Blink Purple Target.mdx"
 
     local Tentomon = gg_unit_N01F_0075
+
+    local queue = {} ---@type table<player, Transmission[]>
+
+    ---@param tr Transmission
+    ---@param p player
+    local function enquequeTransmission(tr, p)
+        if not queue[p] then
+            queue[p] = {}
+        end
+        if not queue[p][1] then
+            tr:Start()
+        end
+        table.insert(queue[p], tr)
+    end
+
+    ---@param p player
+    local function dequequeTransmission(p)
+        if not queue[p] then
+            queue[p] = {}
+        end
+        table.remove(queue[p], 1)
+        if queue[p][1] then
+            queue[p][1]:Start()
+        end
+    end
 
     ---@param p player
     ---@param d Digimon
@@ -143,8 +169,9 @@ OnInit.final(function ()
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Good luck!", Transmission.SET, 2., true)
             tr:AddEnd(function ()
                 FinishTutorial(p)
+                dequequeTransmission(p)
             end)
-            tr:Start()
+            enquequeTransmission(tr, p)
         end
     end
 
@@ -189,13 +216,14 @@ OnInit.final(function ()
                 tr:AddEnd(function ()
                     IssuePointOrderById(pixie.root, Orders.move, GetRectCenterX(gg_rct_JijimonsHouse_Inside), GetRectCenterY(gg_rct_JijimonsHouse_Inside))
                     Timed.call(1.5, function ()
+                        dequequeTransmission(p)
                         d:unpause()
                         ClearShops(d:getPos())
                     end)
                 end)
                 tr:Start()
             end)
-            tr:Start()
+            enquequeTransmission(tr, p)
 
             checkForEnemy(p)
             checkForTransport(p)
@@ -255,7 +283,7 @@ OnInit.final(function ()
                     if not scolded then
                         for _, d2 in ipairs(GetUsedDigimons(p)) do
                             local x, y = d2:getPos()
-                            if DistanceBetweenCoords(GetRectCenterX(gg_rct_Player_1_Spawn), GetRectCenterY(gg_rct_Player_1_Spawn), x, y) > 3300. and
+                            if DistanceBetweenCoords(GetRectCenterX(gg_rct_Player_1_Spawn), GetRectCenterY(gg_rct_Player_1_Spawn), x, y) > 4300. and
                                 not RectContainsCoords(gg_rct_Jijimon_House, x, y) and
                                 not RectContainsCoords(gg_rct_BirdraTransport_Inner, x, y) and
                                 not RectContainsCoords(gg_rct_Hospital_Inner, x, y) and
@@ -317,9 +345,10 @@ OnInit.final(function ()
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Do you wanna explore it all?", Transmission.SET, 3., true)
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can see all the places you visited in your map.", Transmission.SET, 3., true)
                     tr:AddEnd(function ()
+                        dequequeTransmission(p)
                         ShowMapButton(p, true)
                     end)
-                    tr:Start()
+                    enquequeTransmission(tr, p)
                 end)
             end
         end
@@ -422,11 +451,12 @@ OnInit.final(function ()
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This digimon asked for your help.", Transmission.SET, 3., true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can consult to your quest log for more information.", Transmission.SET, 3.5, true)
                 tr:AddEnd(function ()
+                    dequequeTransmission(p)
                     d:unpause()
                     ClearShops(d:getPos())
                     AddCompletedTutorial(p)
                 end)
-                tr:Start()
+                enquequeTransmission(tr, p)
             elseif id == udg_TalkDigimonsId then
                 thirdPart[p] = true
                 d:pause()
@@ -435,12 +465,15 @@ OnInit.final(function ()
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can also try interact with them and see what they want.", Transmission.SET, 3.5, true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In that case you can consult to your quest log.", Transmission.SET, 3., true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But if you want you can just explore the city.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And remember to return to him when you finish the quest.", Transmission.SET, 3., true)
+
                 tr:AddEnd(function ()
+                    dequequeTransmission(p)
                     d:unpause()
                     ClearShops(d:getPos())
                     AddCompletedTutorial(p)
                 end)
-                tr:Start()
+                enquequeTransmission(tr, p)
             end
         end)
     end)
@@ -463,8 +496,8 @@ OnInit.final(function ()
             if id == NET then
                 netPicked[p] = true
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "The item you picked is a digimon net.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can use it to capture enemy digimon rookies to join them to your side.", Transmission.SET, 3.5, true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Is easier capture them when are weak.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "The digimon net is used to capture an wild rookie digimon", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Is easier capture them when they have low health.", Transmission.SET, 3., true)
                 tr:AddActions(function ()
                     ShowBank(p, true)
                 end)
@@ -477,30 +510,32 @@ OnInit.final(function ()
                 end
             end
             tr:AddEnd(function ()
+                dequequeTransmission(p)
                 AddCompletedTutorial(p)
                 if extra then
                     extra()
                 end
             end)
-            tr:Start()
+            enquequeTransmission(tr, p)
         elseif not netPicked[p] and id == NET then
             netPicked[p] = true
             local pixie = piximons[p]
             local tr = Transmission.create(Force(p))
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is a digimon net.", Transmission.SET, 3., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "It's used to capture enemy digimon rookies to join them to your side.", Transmission.SET, 3., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "I recommend weak them before trying to capture them.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "the digimon net is used to capture an wild rookie digimon to make it join to your side.", Transmission.SET, 4., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "I recommend you reduce their health before capturing them.", Transmission.SET, 3., true)
             tr:AddActions(function ()
                 ShowBank(p, true)
             end)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Then you can look at them in your menu.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Then you can look for them in your digimon menu.", Transmission.SET, 3., true)
             tr:AddEnd(function ()
+                dequequeTransmission(p)
                 if tr:WasSkipped() then
                     ShowBank(p, true)
                 end
                 AddCompletedTutorial(p)
             end)
-            tr:Start()
+            enquequeTransmission(tr, p)
         end
     end)
 
@@ -531,19 +566,19 @@ OnInit.final(function ()
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "It helps you to increase your stats.", Transmission.SET, 3., true)
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you are limited in how many you can have at the time.", Transmission.SET, 3.5, true)
                     tr:AddEnd(function ()
+                        dequequeTransmission(p)
                         AddCompletedTutorial(p)
                         d:unpause()
                         ClearShops(d:getPos())
                     end)
-                    tr:Start()
+                    enquequeTransmission(tr, p)
                 end
             end
         end)
     end)
 
-    -- Player enters in the shop or restaraunt
+    -- Player enters in the shop
     t = CreateTrigger()
-    TriggerRegisterEnterRectSimple(t, gg_rct_Restaurant_Inner)
     TriggerRegisterEnterRectSimple(t, gg_rct_Shop_Inner)
     TriggerAddAction(t, function ()
         local d = Digimon.getInstance(GetEnteringUnit())
@@ -559,15 +594,53 @@ OnInit.final(function ()
 
             Timed.call(0.5, function ()
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the Digimon World are places where you can buy items from other digimons.", Transmission.SET, 4., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "That is if you have digibits of course.", Transmission.SET, 2., true)
+                if not restaurantEnter[p] then
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the Digimon World are places where you can buy items from other digimons.", Transmission.SET, 4., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "That is if you have digibits of course.", Transmission.SET, 2., true)
+                end
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In this shop you can buy equipment.", Transmission.SET, 2., true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Those items can have special qualities.", Transmission.SET, 2., true)
                 tr:AddEnd(function ()
+                    dequequeTransmission(p)
                     AddCompletedTutorial(p)
                     d:unpause()
                     ClearShops(d:getPos())
                 end)
-                tr:Start()
+                enquequeTransmission(tr, p)
+            end)
+        end
+    end)
+
+    -- Player enters in the restaraunt
+    t = CreateTrigger()
+    TriggerRegisterEnterRectSimple(t, gg_rct_Restaurant_Inner)
+    TriggerAddAction(t, function ()
+        local d = Digimon.getInstance(GetEnteringUnit())
+        local p = d:getOwner()
+        if not inTutorial[p] then
+            return
+        end
+
+        if not restaurantEnter[p] then
+            restaurantEnter[p] = true
+            local pixie = piximons[p]
+            d:pause()
+
+            Timed.call(0.5, function ()
+                local tr = Transmission.create(Force(p))
+                if not shopEnter[p] then
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the Digimon World are places where you can buy items from other digimons.", Transmission.SET, 4., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "That is if you have digibits of course.", Transmission.SET, 2., true)
+                end
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the restaurant they sell you food or drinks that buffs you for a long time.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you can only have one at the time.", Transmission.SET, 2.5, true)
+                tr:AddEnd(function ()
+                    dequequeTransmission(p)
+                    AddCompletedTutorial(p)
+                    d:unpause()
+                    ClearShops(d:getPos())
+                end)
+                enquequeTransmission(tr, p)
             end)
         end
     end)
@@ -604,6 +677,9 @@ OnInit.final(function ()
                                             tr = Transmission.create(Force(p))
                                             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "If you feel confident you can try fight it.", Transmission.SET, 3., true)
                                             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you could flee if you can't.", Transmission.SET, 2., true)
+                                            tr:AddEnd(function ()
+                                                dequequeTransmission(p)
+                                            end)
                                             tr:Start()
                                             canFollow[p] = true
                                         end)
@@ -611,7 +687,7 @@ OnInit.final(function ()
                                     tr:Start()
                                 end)
                             end)
-                            tr:Start()
+                            enquequeTransmission(tr, p)
                         end
                     end)
                     if enemyFound[p] then
@@ -635,9 +711,10 @@ OnInit.final(function ()
                 local tr = Transmission.create(Force(p))
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "When you win you will get digibits and also experience if he has a similar level as yours", Transmission.SET, 4., true)
                 tr:AddEnd(function ()
+                    dequequeTransmission(p)
                     AddCompletedTutorial(p)
                 end)
-                tr:Start()
+                enquequeTransmission(tr, p)
             end
         end
 
@@ -655,9 +732,10 @@ OnInit.final(function ()
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Your digimon died.", Transmission.SET, 3., true)
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Don't worry, after a while it will be ready for action.", Transmission.SET, 3.5, true)
             tr:AddEnd(function ()
+                dequequeTransmission(p)
                 AddCompletedTutorial(p)
             end)
-            tr:Start()
+            enquequeTransmission(tr, p)
         end
     end)
 
@@ -682,11 +760,12 @@ OnInit.final(function ()
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can come here to heal.", Transmission.SET, 2., true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And in case all your crew fall on combat, you will appear here.", Transmission.SET, 3.5, true)
                 tr:AddEnd(function ()
+                    dequequeTransmission(p)
                     AddCompletedTutorial(p)
                     d:unpause()
                     ClearShops(d:getPos())
                 end)
-                tr:Start()
+                enquequeTransmission(tr, p)
             end)
         end
     end)
@@ -727,6 +806,7 @@ OnInit.final(function ()
                                                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But I don't recommend that yet, you are not ready.", Transmission.SET, 3., true)
                                             end
                                             tr:AddEnd(function ()
+                                                dequequeTransmission(p)
                                                 canFollow[p] = true
                                                 d:unpause()
                                                 ClearShops(d:getPos())
@@ -738,7 +818,7 @@ OnInit.final(function ()
                                     tr:Start()
                                 end)
                             end)
-                            tr:Start()
+                            enquequeTransmission(tr, p)
                         end
                     end)
                     if transportFound[p] then
@@ -776,12 +856,13 @@ OnInit.final(function ()
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "...", Transmission.SET, 3., true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You know how to do it, right?", Transmission.SET, 2.5, true)
                 tr:AddEnd(function ()
+                    dequequeTransmission(p)
                     ShowBank(p, true)
                     AddCompletedTutorial(p)
                     d:unpause()
                     ClearShops(d:getPos())
                 end)
-                tr:Start()
+                enquequeTransmission(tr, p)
             end)
         end
     end)
@@ -803,15 +884,16 @@ OnInit.final(function ()
 
             Timed.call(0.5, function ()
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "So you decided to enter the gym.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "So you decided to enter the |cffffff00Grey Arena|r.", Transmission.SET, 3., true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Where you can fight with the strongest digimons (if you pay of course |cff00ff00;)|r ).", Transmission.SET, 4, true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can also have friendly fights with other adventurers.", Transmission.SET, 2.5, true)
                 tr:AddEnd(function ()
+                    dequequeTransmission(p)
                     AddCompletedTutorial(p)
                     d:unpause()
                     ClearShops(d:getPos())
                 end)
-                tr:Start()
+                enquequeTransmission(tr, p)
             end)
         end
     end)
@@ -839,12 +921,13 @@ OnInit.final(function ()
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Some damage types are better to certain armor types than others.", Transmission.SET, 3.5, true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can test it with this targets.", Transmission.SET, 2., true)
                 tr:AddEnd(function ()
+                    dequequeTransmission(p)
                     canFollow[p] = true
                     AddCompletedTutorial(p)
                     d:unpause()
                     ClearShops(d:getPos())
                 end)
-                tr:Start()
+                enquequeTransmission(tr, p)
             end)
         end
     end)

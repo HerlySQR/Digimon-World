@@ -260,6 +260,8 @@ OnInit("BossFightUtils", function ()
         assert(_G["gg_rct_" .. data.name .. "_1"], "The regions of " .. data.name .. " are not set")
         assert(data.boss, "The boss is not set")
 
+        BlzSetUnitRealField(data.boss, UNIT_RF_HIT_POINTS_REGENERATION_RATE, 5.)
+        BlzSetUnitRealField(data.boss, UNIT_RF_MANA_REGENERATION, 15.)
         ZTS_AddThreatUnit(data.boss, false)
         ignored[data.boss] = __jarray(false)
 

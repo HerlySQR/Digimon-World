@@ -7,6 +7,12 @@ OnInit("Help", function ()
     local HelpButton = nil ---@type framehandle
     local BackdropHelpButton = nil ---@type framehandle
     local HelpImage = nil ---@type framehandle
+    local DiscordBackdrop = nil 
+    local DiscordLogo = nil 
+    local DiscordLink = nil 
+    local DiscordText = nil 
+
+    local DISCORD_LINK = "https://discord.gg/RZVSYWzA7b"
 
     local function ShowImage()
         local p = GetTriggerPlayer()
@@ -45,6 +51,45 @@ OnInit("Help", function ()
     end
 
     FrameLoaderAdd(InitFrames)
+
+    OnInit.final(function ()
+        BlzFrameClick(BlzGetFrameByName("UpperButtonBarQuestsButton", 0))
+        BlzFrameClick(BlzGetFrameByName("QuestAcceptButton", 0))
+
+        FrameLoaderAdd(function ()
+            DiscordBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", BlzGetFrameByName("QuestDialog", 0), "", 1)
+            BlzFrameSetAbsPoint(DiscordBackdrop, FRAMEPOINT_TOPLEFT, 0.640000, 0.520000)
+            BlzFrameSetAbsPoint(DiscordBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.270000)
+            BlzFrameSetTexture(DiscordBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+            DiscordLogo = BlzCreateFrameByType("BACKDROP", "BACKDROP", DiscordBackdrop, "", 1)
+            BlzFrameSetPoint(DiscordLogo, FRAMEPOINT_TOPLEFT, DiscordBackdrop, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+            BlzFrameSetPoint(DiscordLogo, FRAMEPOINT_BOTTOMRIGHT, DiscordBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.090000)
+            BlzFrameSetTexture(DiscordLogo, "war3mapImported\\discord_logo.blp", 0, true)
+
+            DiscordLink = BlzCreateFrame("EscMenuEditBoxTemplate", DiscordBackdrop, 0, 0)
+            BlzFrameSetPoint(DiscordLink, FRAMEPOINT_TOPLEFT, DiscordBackdrop, FRAMEPOINT_TOPLEFT, 0.0000, -0.20000)
+            BlzFrameSetPoint(DiscordLink, FRAMEPOINT_BOTTOMRIGHT, DiscordBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.010000)
+            BlzFrameSetText(DiscordLink, DISCORD_LINK)
+
+            t = CreateTrigger()
+            BlzTriggerRegisterFrameEvent(t, DiscordLink, FRAMEEVENT_EDITBOX_TEXT_CHANGED)
+            TriggerAddAction(t, function ()
+                if BlzFrameGetText(DiscordLink) ~= DISCORD_LINK then
+                    BlzFrameSetText(DiscordLink, DISCORD_LINK)
+                end
+            end)
+
+            DiscordText = BlzCreateFrameByType("TEXT", "name", DiscordBackdrop, "", 0)
+            BlzFrameSetScale(DiscordText, 2.14)
+            BlzFrameSetPoint(DiscordText, FRAMEPOINT_TOPLEFT, DiscordBackdrop, FRAMEPOINT_TOPLEFT, 0.0000, -0.16000)
+            BlzFrameSetPoint(DiscordText, FRAMEPOINT_BOTTOMRIGHT, DiscordBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.050000)
+            BlzFrameSetText(DiscordText, "|cffFFCC00Join our discord|r")
+            BlzFrameSetEnable(DiscordText, false)
+            BlzFrameSetTextAlignment(DiscordText, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+
+        end)
+    end)
 
     ---@param p player
     ---@param flag boolean

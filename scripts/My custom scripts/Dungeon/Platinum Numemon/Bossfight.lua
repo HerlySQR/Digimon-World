@@ -182,50 +182,54 @@ OnInit(function ()
             end)
         elseif spell == SUMMON_RAREMON then
             for i = 1, #RAREMON_PLACES do
-                local d = Digimon.create(Digimon.NEUTRAL, RAREMON, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i]), GetRandomReal(160, 200))
-                DestroyEffect(AddSpecialEffect(RAREMON_SUMMON_EFFECT, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i])))
+                for _ = 1, 2 do
+                    local d = Digimon.create(Digimon.NEUTRAL, RAREMON, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i]), GetRandomReal(160, 200))
+                    DestroyEffect(AddSpecialEffect(RAREMON_SUMMON_EFFECT, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i])))
 
-                d.isSummon = true
-                d:setLevel(90)
-                SetUnitMoveSpeed(d.root, 275)
-                ZTS_AddThreatUnit(d.root, false)
-                SetUnitState(d.root, UNIT_STATE_MANA, 0)
-                SetUnitVertexColor(d.root, 255, 150, 150, 255)
-                AddUnitBonus(d.root, BONUS_DAMAGE, 25)
-                AddUnitBonus(d.root, BONUS_HEALTH, GetUnitState(d.root, UNIT_STATE_MAX_LIFE))
+                    d.isSummon = true
+                    d:setLevel(90)
+                    SetUnitMoveSpeed(d.root, 275)
+                    ZTS_AddThreatUnit(d.root, false)
+                    SetUnitState(d.root, UNIT_STATE_MANA, 0)
+                    SetUnitVertexColor(d.root, 255, 150, 150, 255)
+                    AddUnitBonus(d.root, BONUS_DAMAGE, 25)
+                    AddUnitBonus(d.root, BONUS_HEALTH, GetUnitState(d.root, UNIT_STATE_MAX_LIFE))
 
-                ForUnitsInRect(area, function (u)
-                    if IsUnitEnemy(u, owner) then
-                        ZTS_ModifyThreat(u, d.root, 10., true)
-                    end
-                end)
-                local exploding = false
-
-                Timed.echo(1., function ()
-                    if exploding or not UnitAlive(boss) then
-                        if exploding and d:isAlive() then
-                            local x, y = d:getPos()
-                            ForUnitsInRange(x, y, 300., function (u)
-                                if IsUnitEnemy(d.root, GetOwningPlayer(u)) then
-                                    Damage.apply(d.root, u, RAREMON_EXPLOSION_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
-                                elseif GetUnitTypeId(u) == RAREMON then
-                                    SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE) - RAREMON_EXPLOSION_DAMAGE)
-                                end
-                            end)
-                            DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Demon\\DemonLargeDeathExplode\\DemonLargeDeathExplode.mdl", x, y))
-                            DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\Mortar\\MortarMissile.mdl", x, y))
+                    ForUnitsInRect(area, function (u)
+                        if IsUnitEnemy(u, owner) then
+                            ZTS_ModifyThreat(u, d.root, 10., true)
                         end
-                        d:kill()
-                        return true
-                    end
-                    if math.random(10) == 1 then
-                        exploding = true
-                        d:pause()
-                        local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl", d.root, "overhead")
-                        BlzSetSpecialEffectScale(eff, 3.)
-                        DestroyEffectTimed(eff, 1.)
-                    end
-                end)
+                    end)
+                    local exploding = false
+
+                    Timed.echo(1., function ()
+                        if exploding or not UnitAlive(boss) then
+                            if exploding and d:isAlive() then
+                                local x, y = d:getPos()
+                                ForUnitsInRange(x, y, 300., function (u)
+                                    if IsUnitEnemy(d.root, GetOwningPlayer(u)) then
+                                        Damage.apply(d.root, u, RAREMON_EXPLOSION_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                                    elseif GetUnitTypeId(u) == RAREMON then
+                                        SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE) - RAREMON_EXPLOSION_DAMAGE)
+                                    end
+                                end)
+                                DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Demon\\DemonLargeDeathExplode\\DemonLargeDeathExplode.mdl", x, y))
+                                DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\Mortar\\MortarMissile.mdl", x, y))
+                                d:destroy()
+                            else
+                                d:kill()
+                            end
+                            return true
+                        end
+                        if math.random(20) == 1 then
+                            exploding = true
+                            d:pause()
+                            local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl", d.root, "overhead")
+                            BlzSetSpecialEffectScale(eff, 3.)
+                            DestroyEffectTimed(eff, 1.)
+                        end
+                    end)
+                end
             end
         end
     end)
