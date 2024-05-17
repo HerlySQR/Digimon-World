@@ -36,7 +36,7 @@ OnInit.final(function ()
     local checkForEnemy = nil ---@type fun(p: player)
     local checkForTransport = nil ---@type fun(p: player)
 
-    local MAX_TUTORIALS = 13
+    local MAX_TUTORIALS = 12
     local DIGITAMA = FourCC('n00A')
     local PIXIMON = FourCC('O06U')
     local WHAMON = FourCC('N009')
@@ -733,7 +733,6 @@ OnInit.final(function ()
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Don't worry, after a while it will be ready for action.", Transmission.SET, 3.5, true)
             tr:AddEnd(function ()
                 dequequeTransmission(p)
-                AddCompletedTutorial(p)
             end)
             enquequeTransmission(tr, p)
         end

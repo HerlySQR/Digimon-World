@@ -27,6 +27,8 @@ OnInit.final(function ()
     local EXTRA_HEALTH_FACTOR = 0.5
     local EXTRA_DMG_FACTOR = 1.
     local RAREMON_EXPLOSION_DAMAGE = 500.
+    local FRENZY = FourCC('A0G8')
+    local FRENZY_BUFF = FourCC('B02S')
 
     local place = gg_rct_Sewers ---@type rect
     local started = false
@@ -373,5 +375,59 @@ OnInit.final(function ()
             end
         end)
     end
+
+    -- Frenzy
+
+    Timed.echo(1., function ()
+        ForUnitsInRect(place, function (u)
+            if GetUnitTypeId(u) == BLACK_KING_NUMEMON then
+                if GetUnitHPRatio(u) < 0.5 then
+                    if GetUnitAbilityLevel(u, FRENZY) == 0 then
+                        UnitAddAbility(u, FRENZY)
+                    end
+                else
+                    if GetUnitAbilityLevel(u, FRENZY) > 0 then
+                        UnitRemoveAbility(u, FRENZY)
+                    end
+                end
+            end
+        end)
+    end)
+
+    do
+        local t = CreateTrigger()
+        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
+        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER)
+        TriggerAddCondition(t, Condition(function ()
+            return GetUnitTypeId(GetOrderedUnit()) == BLACK_KING_NUMEMON and GetUnitAbilityLevel(GetOrderedUnit(), FRENZY) > 0
+        end))
+        TriggerAddAction(t, function ()
+            if not ZTS_IsEvent() then
+                return
+            end
+            DisableTrigger(t)
+            IssueImmediateOrderById(GetOrderedUnit(), Orders.frenzy)
+            EnableTrigger(t)
+        end)
+    end
+
+    local counters = __jarray(0) ---@type table<unit, integer>
+    RegisterSpellEffectEvent(FRENZY, function ()
+        local caster = GetSpellAbilityUnit()
+        if counters[caster] <= 0 then
+            AddUnitBonus(caster, BONUS_DAMAGE, 15)
+            AddUnitBonus(caster, BONUS_ARMOR, 10)
+            Timed.echo(1., function ()
+                counters[caster] = counters[caster] - 1
+                if counters[caster] <= 0 or not UnitAlive(caster) then
+                    AddUnitBonus(caster, BONUS_DAMAGE, -15)
+                    AddUnitBonus(caster, BONUS_ARMOR, -10)
+                    return true
+                end
+            end)
+        end
+        counters[caster] = math.floor(BlzGetAbilityRealLevelField(GetSpellAbility(), ABILITY_RLF_DURATION_NORMAL, 0))
+    end)
 end)
 Debug.endFile()
