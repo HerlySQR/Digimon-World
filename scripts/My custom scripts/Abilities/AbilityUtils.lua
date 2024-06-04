@@ -60,14 +60,21 @@ OnInit("AbilityUtils", function ()
                GetHeroInt(caster, true) * intFactor
     end
 
+    ---Returns the base attack damage of the unit
+    ---@param caster unit
+    ---@return number
+    function GetBaseAttack(caster)
+        local base = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
+        local dice = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_NUMBER_OF_DICE, 0)
+        local side = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_SIDES_PER_DIE, 0)
+        return base + (dice * (side + 1)) / 2
+    end
+
     ---Returns the avarage attack damage of the unit
     ---@param caster unit
     ---@return number
     function GetAvarageAttack(caster)
-        local base = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
-        local dice = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_NUMBER_OF_DICE, 0)
-        local side = BlzGetUnitWeaponIntegerField(caster, UNIT_WEAPON_IF_ATTACK_DAMAGE_SIDES_PER_DIE, 0)
-        return base + (dice * (side + 1)) / 2 + GetUnitBonus(caster, BONUS_DAMAGE)
+        return GetBaseAttack(caster) + GetUnitBonus(caster, BONUS_DAMAGE)
     end
 
     ---Returns the distance between the given coords

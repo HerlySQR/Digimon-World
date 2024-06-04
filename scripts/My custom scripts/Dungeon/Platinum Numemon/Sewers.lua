@@ -25,7 +25,8 @@ OnInit.final(function ()
     local ESNARE_ORDER = Orders.ensnare
     local SUMMON_RAREMON_TICK = 2. -- seconds
     local EXTRA_HEALTH_FACTOR = 0.5
-    local EXTRA_DMG_FACTOR = 1.
+    local EXTRA_DMG_FACTOR = 5.
+    local EXTRA_ARMOR = 5
     local RAREMON_EXPLOSION_DAMAGE = 500.
     local FRENZY = FourCC('A0G8')
     local FRENZY_BUFF = FourCC('B02S')
@@ -65,13 +66,23 @@ OnInit.final(function ()
             table.insert(creepLocs, GetUnitLoc(u))
             table.insert(creepFacings, GetUnitFacing(u))
             ZTS_AddThreatUnit(u, false)
-            AddUnitBonus(u, BONUS_HEALTH, math.floor(GetUnitState(u, UNIT_STATE_MAX_LIFE) * EXTRA_HEALTH_FACTOR))
+            AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
+            AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
+            AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
 
             if GetUnitTypeId(u) == DRAGOMON then
                 table.insert(dragomons, u)
                 dragomonsPos[u] = GetUnitLoc(u)
                 UnitAddAbility(u, ESNARE)
+            elseif GetUnitTypeId(u) == BLACK_KING_NUMEMON then
+                AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
+                AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
+                AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
+                AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetBaseAttack(u) * EXTRA_DMG_FACTOR))
+                AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
+                SetUnitScale(u, 1.5, 0, 0)
+                SetUnitVertexColor(u, 255, 100, 100, 255)
             end
         end
     end)
@@ -89,6 +100,7 @@ OnInit.final(function ()
         SetTextTagVisibility(text, false)
         UnitRemoveAbility(NPC, RESET_SEWERS)
         TimerDialogDisplay(window, false)
+        ReviveHero()
 
         for i, u in ipairs(creeps) do
             if UnitAlive(u) then
@@ -102,7 +114,9 @@ OnInit.final(function ()
                 u = CreateUnitAtLoc(Digimon.NEUTRAL, creepTypes[i], creepLocs[i], creepFacings[i])
                 SetHeroLevel(u, creepLevels[i], false)
                 ZTS_AddThreatUnit(u, false)
-                AddUnitBonus(u, BONUS_HEALTH, math.floor(GetUnitState(u, UNIT_STATE_MAX_LIFE) * EXTRA_HEALTH_FACTOR))
+                AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
+                AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
+                AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
                 creeps[i] = u
 
@@ -110,6 +124,14 @@ OnInit.final(function ()
                     table.insert(dragomons, u)
                     dragomonsPos[u] = GetUnitLoc(u)
                     UnitAddAbility(u, ESNARE)
+                elseif GetUnitTypeId(u) == BLACK_KING_NUMEMON then
+                    AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
+                    AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
+                    AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
+                    AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetBaseAttack(u) * EXTRA_DMG_FACTOR))
+                    AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
+                    SetUnitScale(u, 1.5, 0, 0)
+                    SetUnitVertexColor(u, 255, 100, 100, 255)
                 end
             end
             SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MAX_MANA))

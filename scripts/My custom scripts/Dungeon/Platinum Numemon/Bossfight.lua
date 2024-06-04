@@ -65,7 +65,7 @@ OnInit(function ()
         end
     })
 
-    local BIG_FART_DAMAGE = 500.
+    local BIG_FART_DAMAGE = 200.
     local BIG_FART_SCALES_1 = {2., 2.5, 3.}
     local BIG_FART_SCALES_2 = {2.5, 3.5, 4.5}
     local BIG_FART_FACTOR = {1., 0.5, 0.3}
@@ -154,31 +154,42 @@ OnInit(function ()
                 end)
             end
         elseif spell == BIG_FART then
-            local fart = AddSpecialEffect("Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl", GetUnitX(boss), GetUnitY(boss))
-            local ranges, scales
-            if not secondPhase then
-                ranges = BIG_FART_RANGES_1
-                scales = BIG_FART_SCALES_1
-            else
-                ranges = BIG_FART_RANGES_2
-                scales = BIG_FART_SCALES_2
-            end
-            local act = 1
-            BlzSetSpecialEffectScale(fart, scales[act])
-            Timed.echo(1., function ()
-                DestroyEffect(fart)
-                act = act + 1
-                if act > 3 then
-                    return true
+            local s = CreateSound("Units\\Creeps\\Ogre\\OgrePissed5.flac", false, true, true, 10, 10, "DefaultEAXON")
+            SetSoundPosition(s, GetUnitX(boss), GetUnitY(boss), 0)
+            SetSoundVolume(s, 127)
+            StartSound(s)
+            KillSoundWhenDone(s)
+
+            Timed.echo(0.02, 0.07, function ()
+                local dist = 150 * math.random()
+                local angle = GetRandomReal(5*math.pi/8, 7*math.pi/8)
+                local xOffset, yOffset = dist * math.cos(angle), dist * math.sin(angle)
+                local fart = AddSpecialEffect("Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl", GetUnitX(boss) + xOffset, GetUnitY(boss) + yOffset)
+                local ranges, scales
+                if not secondPhase then
+                    ranges = BIG_FART_RANGES_1
+                    scales = BIG_FART_SCALES_1
+                else
+                    ranges = BIG_FART_RANGES_2
+                    scales = BIG_FART_SCALES_2
                 end
-                local x, y = GetUnitX(boss), GetUnitY(boss)
-                fart = AddSpecialEffect("Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl", GetUnitX(boss), GetUnitY(boss))
-                ForUnitsInRange(x, y, ranges[act], function (u)
-                    if (not ranges[act-1] or DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u)) >= ranges[act-1]) and IsUnitEnemy(u, owner) then
-                        Damage.apply(boss, u, BIG_FART_DAMAGE * BIG_FART_FACTOR[act], false, false, udg_Dark, DAMAGE_TYPE_POISON, WEAPON_TYPE_WHOKNOWS)
-                    end
-                end)
+                local act = 1
                 BlzSetSpecialEffectScale(fart, scales[act])
+                Timed.echo(1.5, function ()
+                    DestroyEffect(fart)
+                    act = act + 1
+                    if act > 3 then
+                        return true
+                    end
+                    local x, y = GetUnitX(boss), GetUnitY(boss)
+                    fart = AddSpecialEffect("Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl", GetUnitX(boss) + xOffset, GetUnitY(boss) + yOffset)
+                    ForUnitsInRange(x, y, ranges[act], function (u)
+                        if (not ranges[act-1] or DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u)) >= ranges[act-1]) and IsUnitEnemy(u, owner) then
+                            Damage.apply(boss, u, BIG_FART_DAMAGE * BIG_FART_FACTOR[act], false, false, udg_Dark, DAMAGE_TYPE_POISON, WEAPON_TYPE_WHOKNOWS)
+                        end
+                    end)
+                    BlzSetSpecialEffectScale(fart, scales[act])
+                end)
             end)
         elseif spell == SUMMON_RAREMON then
             for i = 1, #RAREMON_PLACES do

@@ -289,9 +289,9 @@ OnInit("PressSaveOrLoad", function ()
 
         -- Save Button
 
-        SaveButton = BlzCreateFrame("ScriptDialogButton", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
-        BlzFrameSetAbsPoint(SaveButton, FRAMEPOINT_TOPLEFT, 0.680000, 0.570000)
-        BlzFrameSetAbsPoint(SaveButton, FRAMEPOINT_BOTTOMRIGHT, 0.740000, 0.540000)
+        SaveButton = BlzCreateFrame("ScriptDialogButton", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
+        BlzFrameSetAbsPoint(SaveButton, FRAMEPOINT_TOPLEFT, 0.800000, 0.535000)
+        BlzFrameSetAbsPoint(SaveButton, FRAMEPOINT_BOTTOMRIGHT, 0.860000, 0.505000)
         BlzFrameSetText(SaveButton, "|cff" .. NormalColor .. "Save|r")
         BlzFrameSetScale(SaveButton, 1.00)
         BlzFrameSetVisible(SaveButton, false)
@@ -303,9 +303,9 @@ OnInit("PressSaveOrLoad", function ()
 
         -- Load Button
 
-        LoadButton = BlzCreateFrame("ScriptDialogButton", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
-        BlzFrameSetAbsPoint(LoadButton, FRAMEPOINT_TOPLEFT, 0.740000, 0.570000)
-        BlzFrameSetAbsPoint(LoadButton, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.540000)
+        LoadButton = BlzCreateFrame("ScriptDialogButton", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
+        BlzFrameSetAbsPoint(LoadButton, FRAMEPOINT_TOPLEFT, 0.800000, 0.505000)
+        BlzFrameSetAbsPoint(LoadButton, FRAMEPOINT_BOTTOMRIGHT, 0.860000, 0.475000)
         BlzFrameSetText(LoadButton, "|cff" .. NormalColor .. "Load|r")
         BlzFrameSetScale(LoadButton, 1.00)
         BlzFrameSetVisible(LoadButton, false)
@@ -318,8 +318,8 @@ OnInit("PressSaveOrLoad", function ()
         -- Menu
 
         SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
-        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.580000, 0.540000)
-        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.320000)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.580000, 0.535000)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.315000)
         BlzFrameSetVisible(SaveLoadMenu, false)
         AddFrameToMenu(SaveLoadMenu)
 
