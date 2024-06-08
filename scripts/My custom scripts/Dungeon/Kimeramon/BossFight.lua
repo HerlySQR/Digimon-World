@@ -3,10 +3,16 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local boss = gg_unit_O06V_0193 ---@type unit
+    local originalSize = BlzGetUnitRealField(boss, UNIT_RF_SCALING_VALUE)
+    local increasedSize = originalSize * 1.55
+    local white = Color.new(0xFFFFFFFF)
+    local indianRed = Color.new(0xFFCD5C5C)
 
     local impaleOrder = Orders.impale
 
     local METEORMON = FourCC('O036')
+
+    local secondPhase = false
 
     Timed.call(0.01, function ()
         SetUnitOwner(gg_unit_O06H_0203, Digimon.VILLAIN, true)
@@ -128,9 +134,11 @@ OnInit(function ()
     InitBossFight({
         name = "Kimeramon",
         boss = boss,
+        manualRevive = true,
         maxPlayers = 4,
         forceWall = {gg_dest_Dofv_53414},
         returnPlace = gg_rct_ASRReturn,
+        returnEnv = "Ancient Dino Region",
         inner = gg_rct_KimeramonInner,
         entrance = gg_rct_KimeramonEntrance,
         toTeleport = gg_rct_Ancient_Speedy_Zone,
@@ -179,6 +187,19 @@ OnInit(function ()
                 end
 
             end
+
+            if not secondPhase then
+                if GetUnitHPRatio(boss) < 0.5 then
+                    secondPhase = true
+                    local current = 0
+                    Timed.echo(0.02, 1., function ()
+                        SetUnitVertexColor(boss, white:lerp(indianRed, current))
+                        SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
+                        current = current + 0.02
+                    end)
+                    AddUnitBonus(boss, BONUS_DAMAGE, 100)
+                end
+            end
         end,
         onReset = function ()
             if started then
@@ -187,6 +208,17 @@ OnInit(function ()
             end
             landingOptions:removeSingle(4)
             landingOptions:add(1, 2, 3)
+
+            if secondPhase then
+                secondPhase = false
+                local current = 0
+                Timed.echo(0.02, 1., function ()
+                    SetUnitVertexColor(boss, indianRed:lerp(white, current))
+                    SetUnitScale(boss, Lerp(increasedSize, current, originalSize), 0., 0.)
+                    current = current + 0.02
+                end)
+                AddUnitBonus(boss, BONUS_DAMAGE, -100)
+            end
         end
     })
 end)

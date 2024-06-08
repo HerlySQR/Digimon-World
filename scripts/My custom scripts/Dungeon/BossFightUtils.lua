@@ -256,7 +256,7 @@ OnInit("BossFightUtils", function ()
         return 6 * math.exp(-0.5493061443341 * ((half and n/2 or n) - 1))
     end
 
-    ---@param data {name: string, boss: unit, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
+    ---@param data {name: string, boss: unit, manualRevive: boolean, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
     function InitBossFight(data)
         if type(data) ~= "table" then
             print("Bad data implemented in bossfight:", data)
@@ -279,9 +279,12 @@ OnInit("BossFightUtils", function ()
 
         local initialPosX, initialPosY = GetUnitX(data.boss), GetUnitY(data.boss)
 
-        local advice = CreateTextTagLocBJ("Revive in: ", GetUnitLoc(data.boss), 50, 10, 100, 100, 100, 0)
-        SetTextTagPermanent(advice, true)
-        SetTextTagVisibility(advice, false)
+        local advice
+        if not data.manualRevive then
+            advice = CreateTextTagLocBJ("Revive in: ", GetUnitLoc(data.boss), 50, 10, 100, 100, 100, 0)
+            SetTextTagPermanent(advice, true)
+            SetTextTagVisibility(advice, false)
+        end
 
         local numRect = 1
         while true do
@@ -334,7 +337,13 @@ OnInit("BossFightUtils", function ()
             dead = false
             SetTextTagVisibility(advice, false)
             SetUnitOwner(data.boss, owner, true)
-            ReviveHero(data.boss, initialPosX, initialPosY, true)
+
+            if not UnitAlive(data.boss) then
+                ReviveHero(data.boss, initialPosX, initialPosY, true)
+            else
+                SetUnitPosition(data.boss, initialPosX, initialPosY)
+            end
+
             ShowUnit(data.boss, true)
 
             returned = false
@@ -500,11 +509,29 @@ OnInit("BossFightUtils", function ()
                             DestroyTimer(tm)
 
                             ForUnitsInRect(data.toTeleport, function (u)
-                                local l = GetRandomLocInRect(data.returnPlace)
-                                DestroyEffect(AddSpecialEffectLoc("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", l))
-                                DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdl", GetUnitX(u), GetUnitY(u)))
-                                SetUnitPositionLoc(u, l)
-                                RemoveLocation(l)
+                                local p = GetOwningPlayer(u)
+                                if IsPlayerInGame(p) then
+                                    local l = GetRandomLocInRect(data.returnPlace)
+                                    DestroyEffect(AddSpecialEffectLoc("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", l))
+                                    DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdl", GetUnitX(u), GetUnitY(u)))
+                                    SetUnitPositionLoc(u, l)
+                                    RemoveLocation(l)
+                                    if data.returnEnv then
+                                        local d = Digimon.getInstance(u)
+                                        if d then
+                                            d.environment = Environment.get(data.returnEnv)
+                                            coroutine.wrap(function ()
+                                                SyncSelections()
+                                                if IsUnitSelected(u, p) then
+                                                    d.environment:apply(p, true)
+                                                    if p == LocalPlayer then
+                                                        PanCameraToTimed(GetUnitX(u), GetUnitY(u), 0.)
+                                                    end
+                                                end
+                                            end)()
+                                        end
+                                    end
+                                end
                             end)
                         end)
                     end
@@ -524,18 +551,26 @@ OnInit("BossFightUtils", function ()
 
                     SetTextTagVisibility(advice, IsVisibleToPlayer(initialPosX, initialPosY, LocalPlayer))
 
-                    local remaining = 360.
-
-                    Timed.echo(0.02, 360., function ()
-                        remaining = remaining - 0.02
-                        SetTextTagText(advice, "Revive in: " .. R2I(remaining), 0.023)
-                        SetTextTagVisibility(advice, dead and IsVisibleToPlayer(initialPosX, initialPosY, LocalPlayer))
-                        -- In case the boss revived for another reason
-                        if UnitAlive(data.boss) then
-                            onFinish()
-                            return true
-                        end
-                    end, onFinish)
+                    if not data.manualRevive then
+                        local remaining = 360.
+                        Timed.echo(0.02, 360., function ()
+                            remaining = remaining - 0.02
+                            SetTextTagText(advice, "Revive in: " .. R2I(remaining), 0.023)
+                            SetTextTagVisibility(advice, dead and IsVisibleToPlayer(initialPosX, initialPosY, LocalPlayer))
+                            -- In case the boss revived for another reason
+                            if UnitAlive(data.boss) then
+                                onFinish()
+                                return true
+                            end
+                        end, onFinish)
+                    else
+                        Timed.echo(1., function ()
+                            if UnitAlive(data.boss) then
+                                onFinish()
+                                return true
+                            end
+                        end)
+                    end
 
                     if data.onDeath then
                         data.onDeath()

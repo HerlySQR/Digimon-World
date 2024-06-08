@@ -1,40 +1,53 @@
 Debug.beginFile("Platinum Numemon\\BossFight")
 OnInit(function ()
     Require "BossFightUtils"
+    local ProgressBar = Require "ProgressBar" ---@type ProgressBar
 
     local boss = gg_unit_H04V_0175 ---@type unit
+    local originalSize = BlzGetUnitRealField(boss, UNIT_RF_SCALING_VALUE)
+    local increasedSize = originalSize * 1.5
     local owner = GetOwningPlayer(boss)
     local area = gg_rct_PlatinumNumemon_1 ---@type rect
+    local white = Color.new(0xFFFFFFFF)
+    local indianRed = Color.new(0xFFCD5C5C)
 
     local RAIN_OF_FILTH = FourCC('A0G4')
     local STINKY_AURA = FourCC('A0G5')
     local BIG_FART = FourCC('A0G6')
     local SUMMON_RAREMON = FourCC('A0G7')
+    local BIG_POOP = FourCC('A0G1')
 
     local rainOfFilthOrder = Orders.thunderclap
     local bigFartOrder = Orders.stomp
     local summonRaremonOrder = Orders.spiritwolf
+    local bigPoopOrder = Orders.breathoffrost
 
     local secondPhase = false
 
     InitBossFight({
         name = "PlatinumNumemon",
         boss = boss,
+        manualRevive = true,
         maxPlayers = 3,
         forceWall = {gg_dest_B082_53321},
-        returnPlace = gg_rct_Leave_Sewers,
+        returnPlace = gg_rct_DatamonReturnPlace,
+        returnEnv = "Factorial Town",
         inner = gg_rct_PlatinumNumemonInner,
         entrance = gg_rct_PlatinumNumemonEntrance,
         toTeleport = gg_rct_Sewers,
         actions = function (u)
             if u then
-                local chance = math.random(100)
-                if chance <= 20 then
-                    IssueImmediateOrderById(boss, rainOfFilthOrder)
-                elseif chance <= 50 then
-                    IssueImmediateOrderById(boss, bigFartOrder)
-                elseif chance <= 65 then
-                    IssueImmediateOrderById(boss, summonRaremonOrder)
+                if not BossStillCasting(boss) then
+                    local chance = math.random(100)
+                    if chance <= 20 then
+                        IssueImmediateOrderById(boss, rainOfFilthOrder)
+                    elseif chance <= 50 then
+                        IssueImmediateOrderById(boss, bigFartOrder)
+                    elseif chance <= 65 then
+                        IssueImmediateOrderById(boss, summonRaremonOrder)
+                    elseif chance <= 85 then
+                        IssuePointOrderById(boss, bigPoopOrder, GetUnitX(u), GetUnitY(u))
+                    end
                 end
             end
 
@@ -42,6 +55,13 @@ OnInit(function ()
                 if GetUnitHPRatio(boss) < 0.5 then
                     secondPhase = true
                     UnitAddAbility(boss, STINKY_AURA)
+                    local current = 0
+                    Timed.echo(0.02, 1., function ()
+                        SetUnitVertexColor(boss, white:lerp(indianRed, current))
+                        SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
+                        current = current + 0.02
+                    end)
+                    AddUnitBonus(boss, BONUS_DAMAGE, 100)
                 end
             end
         end,
@@ -61,6 +81,13 @@ OnInit(function ()
             if secondPhase then
                 secondPhase = false
                 UnitRemoveAbility(boss, STINKY_AURA)
+                local current = 0
+                Timed.echo(0.02, 1., function ()
+                    SetUnitVertexColor(boss, indianRed:lerp(white, current))
+                    SetUnitScale(boss, Lerp(increasedSize, current, originalSize), 0., 0.)
+                    current = current + 0.02
+                end)
+                AddUnitBonus(boss, BONUS_DAMAGE, -100)
             end
         end
     })
@@ -76,6 +103,11 @@ OnInit(function ()
     local RAREMON_PLACES = {gg_rct_SummonRaremon1, gg_rct_SummonRaremon2, gg_rct_SummonRaremon3, gg_rct_SummonRaremon4}
     local RAREMON_SUMMON_EFFECT = "Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl"
     local RAREMON_EXPLOSION_DAMAGE = 600.
+
+    local BIG_POOP_MISSILE = "Missile\\PoopMissile.mdx"
+    local BIG_POOP_DELAY = 2. -- Same as object editor
+    local BIG_POOP_AREA = 300. -- Same as object editor
+    local BIG_POOP_DMG = 600.
 
     ---@param x number
     ---@param y number
@@ -126,123 +158,172 @@ OnInit(function ()
         end)
     end
 
-    local t = CreateTrigger()
-    TriggerRegisterUnitEvent(t, boss, EVENT_UNIT_SPELL_EFFECT)
-    TriggerAddAction(t, function ()
-        local spell = GetSpellAbilityId()
+    do
+        local t = CreateTrigger()
+        TriggerRegisterUnitEvent(t, boss, EVENT_UNIT_SPELL_CHANNEL)
+        TriggerAddCondition(t, Condition(function () return GetSpellAbilityId() == BIG_POOP end))
+        TriggerAddAction(t, function ()
+            BossIsCasting(boss, true)
+            SetUnitAnimation(boss, "spell")
 
-        if spell == RAIN_OF_FILTH then
-            PauseUnit(boss, true)
-            SetUnitAnimation(boss, "channel")
-            if not secondPhase then
-                Timed.echo(0.25, 10., function ()
-                    local angle = 2*math.pi*math.random()
-                    local dist = GetRandomReal(100., 500.)
-                    dropFilth(GetUnitX(boss) + dist * math.cos(angle), GetUnitY(boss) + dist * math.sin(angle), 250., 3)
-                end, function ()
-                    PauseUnit(boss, false)
-                    ResetUnitAnimation(boss)
-                end)
-            else
-                Timed.echo(0.15, 10., function ()
-                    local l = GetRandomLocInRect(area)
-                    dropFilth(GetLocationX(l), GetLocationY(l), 375., 5)
-                    RemoveLocation(l)
-                end, function ()
-                    PauseUnit(boss, false)
-                    ResetUnitAnimation(boss)
-                end)
-            end
-        elseif spell == BIG_FART then
-            local s = CreateSound("Units\\Creeps\\Ogre\\OgrePissed5.flac", false, true, true, 10, 10, "DefaultEAXON")
-            SetSoundPosition(s, GetUnitX(boss), GetUnitY(boss), 0)
-            SetSoundVolume(s, 127)
-            StartSound(s)
-            KillSoundWhenDone(s)
+            local bar = ProgressBar.create()
+            bar:setColor(PLAYER_COLOR_PEANUT)
+            bar:setZOffset(300)
+            bar:setSize(1.5)
+            bar:setTargetUnit(boss)
 
-            Timed.echo(0.02, 0.07, function ()
-                local dist = 150 * math.random()
-                local angle = GetRandomReal(5*math.pi/8, 7*math.pi/8)
-                local xOffset, yOffset = dist * math.cos(angle), dist * math.sin(angle)
-                local fart = AddSpecialEffect("Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl", GetUnitX(boss) + xOffset, GetUnitY(boss) + yOffset)
-                local ranges, scales
-                if not secondPhase then
-                    ranges = BIG_FART_RANGES_1
-                    scales = BIG_FART_SCALES_1
-                else
-                    ranges = BIG_FART_RANGES_2
-                    scales = BIG_FART_SCALES_2
+            local progress = 0
+            Timed.echo(0.02, BIG_POOP_DELAY, function ()
+                if not UnitAlive(boss) then
+                    bar:destroy()
+                    BossIsCasting(boss, false)
+                    return true
                 end
-                local act = 1
-                BlzSetSpecialEffectScale(fart, scales[act])
-                Timed.echo(1.5, function ()
-                    DestroyEffect(fart)
-                    act = act + 1
-                    if act > 3 then
-                        return true
-                    end
-                    local x, y = GetUnitX(boss), GetUnitY(boss)
-                    fart = AddSpecialEffect("Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl", GetUnitX(boss) + xOffset, GetUnitY(boss) + yOffset)
-                    ForUnitsInRange(x, y, ranges[act], function (u)
-                        if (not ranges[act-1] or DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u)) >= ranges[act-1]) and IsUnitEnemy(u, owner) then
-                            Damage.apply(boss, u, BIG_FART_DAMAGE * BIG_FART_FACTOR[act], false, false, udg_Dark, DAMAGE_TYPE_POISON, WEAPON_TYPE_WHOKNOWS)
-                        end
-                    end)
-                    BlzSetSpecialEffectScale(fart, scales[act])
-                end)
+                progress = progress + 0.02
+                bar:setPercentage((progress/BIG_POOP_DELAY)*100, 1)
+            end, function ()
+                BossIsCasting(boss, false)
+                bar:destroy()
             end)
-        elseif spell == SUMMON_RAREMON then
-            for i = 1, #RAREMON_PLACES do
-                for _ = 1, 2 do
-                    local d = Digimon.create(Digimon.NEUTRAL, RAREMON, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i]), GetRandomReal(160, 200))
-                    DestroyEffect(AddSpecialEffect(RAREMON_SUMMON_EFFECT, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i])))
+        end)
+    end
 
-                    d.isSummon = true
-                    d:setLevel(90)
-                    SetUnitMoveSpeed(d.root, 275)
-                    ZTS_AddThreatUnit(d.root, false)
-                    SetUnitState(d.root, UNIT_STATE_MANA, 0)
-                    SetUnitVertexColor(d.root, 255, 150, 150, 255)
-                    AddUnitBonus(d.root, BONUS_DAMAGE, 25)
-                    AddUnitBonus(d.root, BONUS_HEALTH, GetUnitState(d.root, UNIT_STATE_MAX_LIFE))
+    do
+        local t = CreateTrigger()
+        TriggerRegisterUnitEvent(t, boss, EVENT_UNIT_SPELL_EFFECT)
+        TriggerAddAction(t, function ()
+            local spell = GetSpellAbilityId()
 
-                    ForUnitsInRect(area, function (u)
-                        if IsUnitEnemy(u, owner) then
-                            ZTS_ModifyThreat(u, d.root, 10., true)
-                        end
+            if spell == RAIN_OF_FILTH then
+                PauseUnit(boss, true)
+                SetUnitAnimation(boss, "channel")
+                if not secondPhase then
+                    Timed.echo(0.25, 10., function ()
+                        local angle = 2*math.pi*math.random()
+                        local dist = GetRandomReal(100., 500.)
+                        dropFilth(GetUnitX(boss) + dist * math.cos(angle), GetUnitY(boss) + dist * math.sin(angle), 250., 3)
+                    end, function ()
+                        PauseUnit(boss, false)
+                        ResetUnitAnimation(boss)
                     end)
-                    local exploding = false
+                else
+                    Timed.echo(0.15, 10., function ()
+                        local l = GetRandomLocInRect(area)
+                        dropFilth(GetLocationX(l), GetLocationY(l), 375., 5)
+                        RemoveLocation(l)
+                    end, function ()
+                        PauseUnit(boss, false)
+                        ResetUnitAnimation(boss)
+                    end)
+                end
+            elseif spell == BIG_FART then
+                local s = CreateSound("Units\\Creeps\\Ogre\\OgrePissed5.flac", false, true, true, 10, 10, "DefaultEAXON")
+                SetSoundPosition(s, GetUnitX(boss), GetUnitY(boss), 0)
+                SetSoundVolume(s, 127)
+                StartSound(s)
+                KillSoundWhenDone(s)
 
-                    Timed.echo(1., function ()
-                        if exploding or not UnitAlive(boss) then
-                            if exploding and d:isAlive() then
-                                local x, y = d:getPos()
-                                ForUnitsInRange(x, y, 300., function (u)
-                                    if IsUnitEnemy(d.root, GetOwningPlayer(u)) then
-                                        Damage.apply(d.root, u, RAREMON_EXPLOSION_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
-                                    elseif GetUnitTypeId(u) == RAREMON then
-                                        SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE) - RAREMON_EXPLOSION_DAMAGE)
-                                    end
-                                end)
-                                DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Demon\\DemonLargeDeathExplode\\DemonLargeDeathExplode.mdl", x, y))
-                                DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\Mortar\\MortarMissile.mdl", x, y))
-                                d:destroy()
-                            else
-                                d:kill()
-                            end
+                Timed.echo(0.02, 0.07, function ()
+                    local dist = 150 * math.random()
+                    local angle = GetRandomReal(5*math.pi/8, 7*math.pi/8)
+                    local xOffset, yOffset = dist * math.cos(angle), dist * math.sin(angle)
+                    local fart = AddSpecialEffect("Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl", GetUnitX(boss) + xOffset, GetUnitY(boss) + yOffset)
+                    local ranges, scales
+                    if not secondPhase then
+                        ranges = BIG_FART_RANGES_1
+                        scales = BIG_FART_SCALES_1
+                    else
+                        ranges = BIG_FART_RANGES_2
+                        scales = BIG_FART_SCALES_2
+                    end
+                    local act = 1
+                    BlzSetSpecialEffectScale(fart, scales[act])
+                    Timed.echo(1.5, function ()
+                        DestroyEffect(fart)
+                        act = act + 1
+                        if act > 3 then
                             return true
                         end
-                        if math.random(20) == 1 then
-                            exploding = true
-                            d:pause()
-                            local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl", d.root, "overhead")
-                            BlzSetSpecialEffectScale(eff, 3.)
-                            DestroyEffectTimed(eff, 1.)
+                        local x, y = GetUnitX(boss), GetUnitY(boss)
+                        fart = AddSpecialEffect("Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl", GetUnitX(boss) + xOffset, GetUnitY(boss) + yOffset)
+                        ForUnitsInRange(x, y, ranges[act], function (u)
+                            if (not ranges[act-1] or DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u)) >= ranges[act-1]) and IsUnitEnemy(u, owner) then
+                                Damage.apply(boss, u, BIG_FART_DAMAGE * BIG_FART_FACTOR[act], false, false, udg_Dark, DAMAGE_TYPE_POISON, WEAPON_TYPE_WHOKNOWS)
+                            end
+                        end)
+                        BlzSetSpecialEffectScale(fart, scales[act])
+                    end)
+                end)
+            elseif spell == SUMMON_RAREMON then
+                for i = 1, #RAREMON_PLACES do
+                    for _ = 1, 2 do
+                        local d = Digimon.create(Digimon.VILLAIN, RAREMON, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i]), GetRandomReal(160, 200))
+                        DestroyEffect(AddSpecialEffect(RAREMON_SUMMON_EFFECT, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i])))
+
+                        d.isSummon = true
+                        d:setLevel(90)
+                        SetUnitMoveSpeed(d.root, 275)
+                        ZTS_AddThreatUnit(d.root, false)
+                        SetUnitState(d.root, UNIT_STATE_MANA, 0)
+                        SetUnitVertexColor(d.root, 255, 150, 150, 255)
+                        AddUnitBonus(d.root, BONUS_DAMAGE, 25)
+                        AddUnitBonus(d.root, BONUS_HEALTH, GetUnitState(d.root, UNIT_STATE_MAX_LIFE))
+
+                        ForUnitsInRect(area, function (u)
+                            if IsUnitEnemy(u, owner) then
+                                ZTS_ModifyThreat(u, d.root, 10., true)
+                            end
+                        end)
+                        local exploding = false
+
+                        Timed.echo(1., function ()
+                            if exploding or not UnitAlive(boss) then
+                                if exploding and d:isAlive() then
+                                    local x, y = d:getPos()
+                                    ForUnitsInRange(x, y, 300., function (u)
+                                        if IsUnitEnemy(d.root, GetOwningPlayer(u)) then
+                                            Damage.apply(d.root, u, RAREMON_EXPLOSION_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                                        elseif GetUnitTypeId(u) == RAREMON then
+                                            SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE) - RAREMON_EXPLOSION_DAMAGE)
+                                        end
+                                    end)
+                                    DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Demon\\DemonLargeDeathExplode\\DemonLargeDeathExplode.mdl", x, y))
+                                    DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\Mortar\\MortarMissile.mdl", x, y))
+                                    d:destroy()
+                                else
+                                    d:kill()
+                                end
+                                return true
+                            end
+                            if math.random(20) == 1 then
+                                exploding = true
+                                d:pause()
+                                local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl", d.root, "overhead")
+                                BlzSetSpecialEffectScale(eff, 3.)
+                                DestroyEffectTimed(eff, 1.)
+                            end
+                        end)
+                    end
+                end
+            elseif spell == BIG_POOP then
+                local missile = Missiles:create(GetUnitX(boss), GetUnitY(boss), 25, GetSpellTargetX(), GetSpellTargetY(), 0)
+                missile.source = boss
+                missile.owner = owner
+                missile:scale(15)
+                missile.damage = BIG_POOP_DMG
+                missile:model(BIG_POOP_MISSILE)
+                missile:speed(700.)
+                missile:arc(50.)
+                missile.onFinish = function ()
+                    ForUnitsInRange(missile.x, missile.y, BIG_POOP_AREA, function (u)
+                        if IsUnitEnemy(u, missile.owner) then
+                            Damage.apply(boss, u, BIG_POOP_DMG, true, false, udg_Dark, DAMAGE_TYPE_MIND, WEAPON_TYPE_WHOKNOWS)
                         end
                     end)
                 end
+                missile:launch()
             end
-        end
-    end)
+        end)
+    end
 end)
 Debug.endFile()

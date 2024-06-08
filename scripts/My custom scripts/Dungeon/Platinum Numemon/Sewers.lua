@@ -27,10 +27,12 @@ OnInit.final(function ()
     local EXTRA_HEALTH_FACTOR = 0.5
     local EXTRA_DMG_FACTOR = 5.
     local EXTRA_ARMOR = 5
+    local EXTRA_MANA_REGEN = 5
     local RAREMON_EXPLOSION_DAMAGE = 500.
     local FRENZY = FourCC('A0G8')
     local FRENZY_BUFF = FourCC('B02S')
 
+    local boss = gg_unit_H04V_0175 ---@type unit
     local place = gg_rct_Sewers ---@type rect
     local started = false
     local players = Set.create()
@@ -81,6 +83,7 @@ OnInit.final(function ()
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetBaseAttack(u) * EXTRA_DMG_FACTOR))
                 AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
+                AddUnitBonus(u, BONUS_MANA_REGEN, EXTRA_MANA_REGEN)
                 SetUnitScale(u, 1.5, 0, 0)
                 SetUnitVertexColor(u, 255, 100, 100, 255)
             end
@@ -100,7 +103,10 @@ OnInit.final(function ()
         SetTextTagVisibility(text, false)
         UnitRemoveAbility(NPC, RESET_SEWERS)
         TimerDialogDisplay(window, false)
-        ReviveHero()
+
+        if not UnitAlive(boss) then
+            ReviveHero(boss, GetUnitX(boss), GetUnitY(boss), true)
+        end
 
         for i, u in ipairs(creeps) do
             if UnitAlive(u) then
@@ -130,6 +136,7 @@ OnInit.final(function ()
                     AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
                     AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetBaseAttack(u) * EXTRA_DMG_FACTOR))
                     AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
+                    AddUnitBonus(u, BONUS_MANA_REGEN, EXTRA_MANA_REGEN)
                     SetUnitScale(u, 1.5, 0, 0)
                     SetUnitVertexColor(u, 255, 100, 100, 255)
                 end
@@ -215,7 +222,9 @@ OnInit.final(function ()
             end
         end
 
-        TimerDialogDisplay(window, players:contains(GetLocalPlayer()))
+        if UnitAlive(boss) then
+            TimerDialogDisplay(window, players:contains(GetLocalPlayer()))
+        end
 
         if not started and players:size() > 0 then
             startSewers()
@@ -403,7 +412,7 @@ OnInit.final(function ()
     Timed.echo(1., function ()
         ForUnitsInRect(place, function (u)
             if GetUnitTypeId(u) == BLACK_KING_NUMEMON then
-                if GetUnitHPRatio(u) < 0.5 then
+                if GetUnitHPRatio(u) < 0.55 then
                     if GetUnitAbilityLevel(u, FRENZY) == 0 then
                         UnitAddAbility(u, FRENZY)
                     end
@@ -440,16 +449,34 @@ OnInit.final(function ()
         if counters[caster] <= 0 then
             AddUnitBonus(caster, BONUS_DAMAGE, 15)
             AddUnitBonus(caster, BONUS_ARMOR, 10)
+            SetUnitScale(caster, 2., 0, 0)
+            SetUnitVertexColor(caster, 255, 20, 20, 255)
             Timed.echo(1., function ()
                 counters[caster] = counters[caster] - 1
                 if counters[caster] <= 0 or not UnitAlive(caster) then
                     AddUnitBonus(caster, BONUS_DAMAGE, -15)
                     AddUnitBonus(caster, BONUS_ARMOR, -10)
+                    SetUnitVertexColor(caster, 255, 100, 100, 255)
+                    SetUnitScale(caster, 1.5, 0, 0)
                     return true
                 end
             end)
         end
         counters[caster] = math.floor(BlzGetAbilityRealLevelField(GetSpellAbility(), ABILITY_RLF_DURATION_NORMAL, 0))
     end)
+
+    -- Reset when the boss dies
+    do
+        local t = CreateTrigger()
+        TriggerRegisterUnitEvent(t, boss, EVENT_UNIT_DEATH)
+        TriggerAddAction(t, function ()
+            PauseTimer(tm)
+            TimerDialogDisplay(window, false)
+            Timed.call(16., function ()
+                ReviveHero(boss, GetUnitX(boss), GetUnitY(boss), true)
+                resetSewers()
+            end)
+        end)
+    end
 end)
 Debug.endFile()

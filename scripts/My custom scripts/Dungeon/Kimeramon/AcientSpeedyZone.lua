@@ -21,6 +21,7 @@ OnInit.final(function ()
     local EXTRA_HEALTH_FACTOR = 0.75
     local EXTRA_DMG_FACTOR = 6.25
     local EXTRA_ARMOR = 5
+    local EXTRA_MANA_REGEN = 5
     local SLOW = FourCC('A0G9')
     local SLOW_BUFF = FourCC('B02T')
     local THROW_ROCK = FourCC('ACtb')
@@ -28,6 +29,7 @@ OnInit.final(function ()
     local VOLCANIC_EXPLOSION = FourCC('A0GA')
     local VOLCANIC_EXPLOSION_ORDER = Orders.summongrizzly
 
+    local boss = gg_unit_O06V_0193 ---@type unit
     local place = gg_rct_Ancient_Speedy_Zone ---@type rect
     local started = false
     local players = Set.create()
@@ -92,6 +94,7 @@ OnInit.final(function ()
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetBaseAttack(u) * EXTRA_DMG_FACTOR))
                 AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
+                AddUnitBonus(u, BONUS_MANA_REGEN, EXTRA_MANA_REGEN)
                 SetUnitScale(u, 1.2, 0, 0)
                 SetUnitVertexColor(u, 255, 100, 100, 255)
             end
@@ -111,6 +114,10 @@ OnInit.final(function ()
         PauseTimer(tm)
         SetTextTagVisibility(text, false)
         TimerDialogDisplay(window, false)
+
+        if not UnitAlive(boss) then
+            ReviveHero(boss, GetUnitX(boss), GetUnitY(boss), true)
+        end
 
         for i, u in ipairs(creeps) do
             if UnitAlive(u) then
@@ -145,6 +152,7 @@ OnInit.final(function ()
                     AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
                     AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetBaseAttack(u) * EXTRA_DMG_FACTOR))
                     AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
+                    AddUnitBonus(u, BONUS_MANA_REGEN, EXTRA_MANA_REGEN)
                     SetUnitScale(u, 1.2, 0, 0)
                     SetUnitVertexColor(u, 255, 100, 100, 255)
                 end
@@ -218,7 +226,9 @@ OnInit.final(function ()
             end
         end
 
-        TimerDialogDisplay(window, players:contains(GetLocalPlayer()))
+        if UnitAlive(boss) then
+            TimerDialogDisplay(window, players:contains(GetLocalPlayer()))
+        end
 
         if not started and players:size() > 0 then
             startAcientSpeedyZone()

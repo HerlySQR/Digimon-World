@@ -49,7 +49,7 @@ OnInit("Color", function ()
     ---@field green integer
     ---@field blue integer
     ---@field alpha integer
-    local Color = {}
+    Color = {}
     Color.__index = Color
 
     ---@overload fun(c: string): Color a string with the format "0xRRGGBB" or "RRGGBB" "0xAARRGGBB" or "AARRGGBB"
@@ -277,7 +277,5 @@ OnInit("Color", function ()
         hook2("SetCineFilterEndColor")
         hook2("SetWaterBaseColor")
     end
-
-    return Color
 end)
 if Debug then Debug.endFile() end
