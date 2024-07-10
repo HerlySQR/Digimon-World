@@ -7,10 +7,15 @@ OnInit(function ()
     local increasedSize = originalSize * 1.55
     local white = Color.new(0xFFFFFFFF)
     local indianRed = Color.new(0xFFCD5C5C)
+    local tornadoPlace = gg_rct_KimeramonTornado ---@type rect
 
     local impaleOrder = Orders.impale
+    local cycloneClapOrder = Orders.tornado
+    local fireRayOrder = Orders.creepthunderclap
 
     local METEORMON = FourCC('O036')
+    local FIRE_RAY = FourCC('A0GE')
+    local TORNADO = FourCC('n02J')
 
     local secondPhase = false
 
@@ -48,8 +53,8 @@ OnInit(function ()
             local count = 0
             local angle = 0
             local target = nil
-            ForUnitsInRange(x, y, 700., function (u)
-                if IsUnitEnemy(boss, GetOwningPlayer(u)) then
+            ForUnitsInRange(x, y, 1600., function (u)
+                if IsPlayerInGame(GetOwningPlayer(u)) then
                     count = count + 1
                     angle = math.deg(math.atan(GetUnitY(u) - y, GetUnitX(u) - x))
                     target = u
@@ -65,6 +70,7 @@ OnInit(function ()
             local d = Digimon.create(Digimon.VILLAIN, METEORMON, x, y, options[i][3])
             d:setLevel(95)
             d.isSummon = true
+            DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", x, y))
             ZTS_AddThreatUnit(d.root, false)
             if options[i][4] then
                 ZTS_ModifyThreat(options[i][4], d.root, 1, false)
@@ -84,7 +90,7 @@ OnInit(function ()
     end
 
     local function doFlight()
-        if flying then
+        if flying or BossStillCasting(boss) then
             return
         end
 
@@ -98,6 +104,26 @@ OnInit(function ()
         landingOptions:removeSingle(drop)
         local landX, landY = GetRectCenterX(landingPoints[drop]), GetRectCenterY(landingPoints[drop])
 
+        local canGrab = {}
+        ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 200., function (u)
+            if IsPlayerInGame(GetOwningPlayer(u)) and IsUnitType(u, UNIT_TYPE_HERO) then
+                table.insert(canGrab, u)
+            end
+        end)
+        local grabbed = canGrab[math.random(#canGrab)] ---@type unit?
+        local defaultGrabbedFly
+        if grabbed then
+            defaultGrabbedFly = GetUnitFlyHeight(grabbed)
+            local face = math.rad(GetUnitFacing(boss))
+            SetUnitPosition(grabbed, GetUnitX(boss) + 64*math.cos(face), GetUnitY(boss) + 64*math.sin(face))
+            UnitAddAbility(grabbed, CROW_FORM_ID)
+            UnitRemoveAbility(grabbed, CROW_FORM_ID)
+            SetUnitFlyHeight(grabbed, 50, 999999)
+            PauseUnit(grabbed, true)
+            SetUnitInvulnerable(grabbed, true)
+            SetUnitFlyHeight(grabbed, 1280, 640)
+        end
+
         local defaultFly = GetUnitFlyHeight(boss)
         SetUnitFlyHeight(boss, 1280, 640)
         SetUnitAnimationByIndex(boss, 1)
@@ -108,6 +134,12 @@ OnInit(function ()
         Timed.call(2., function ()
             ShowUnitHide(boss)
 
+            if grabbed then
+                local color = GetUnitTintingColor(grabbed)
+                color.alpha = 0
+                SetUnitVertexColor(grabbed, color)
+            end
+
             if IsPlayerInForce(GetLocalPlayer(), canSee) then
                 PingMinimapEx(landX, landY, 5., 255, 128, 0, false)
             end
@@ -116,6 +148,15 @@ OnInit(function ()
                 ShowUnitShow(boss)
                 SetUnitFlyHeight(boss, defaultFly, 640)
                 SetUnitPosition(boss, landX, landY)
+
+                if grabbed then
+                    local face = math.rad(GetUnitFacing(boss))
+                    SetUnitPosition(grabbed, GetUnitX(boss) + 64*math.cos(face), GetUnitY(boss) + 64*math.sin(face))
+                    SetUnitFlyHeight(grabbed, 50, 640)
+                    local color = GetUnitTintingColor(grabbed)
+                    color.alpha = 255
+                    SetUnitVertexColor(grabbed, color)
+                end
 
                 Timed.call(2., function ()
                     SetUnitInvulnerable(boss, false)
@@ -126,6 +167,12 @@ OnInit(function ()
                     flying = false
 
                     ZTS_AddThreatUnit(boss, false)
+
+                    if grabbed then
+                        SetUnitFlyHeight(grabbed, defaultGrabbedFly, 999999)
+                        PauseUnit(grabbed, false)
+                        SetUnitInvulnerable(grabbed, false)
+                    end
                 end)
             end)
         end)
@@ -147,7 +194,7 @@ OnInit(function ()
                 if not started then
                     started = true
                     doFlight()
-                    stop = Timed.echo(100., function ()
+                    stop = Timed.echo(50., function ()
                         canFly = not canFly
                     end)
                 end
@@ -176,13 +223,19 @@ OnInit(function ()
                     end)
                 end
 
-                if not flying then
+                if not flying and not BossStillCasting(boss) and not BlzIsUnitInvulnerable(u) then
                     local chance = math.random(100)
 
                     if chance < 30 then
                         IssueTargetOrderById(boss, impaleOrder, u)
+                    elseif chance < 40 then
+                        IssuePointOrderById(boss, cycloneClapOrder, GetUnitX(u), GetUnitY(u))
                     elseif chance > 90 then
                         BossMove(boss, 0, 600., GetHeroStr(boss, true), true)
+                    end
+
+                    if secondPhase and math.random(100) < 30 then
+                        IssueImmediateOrderById(boss, fireRayOrder)
                     end
                 end
 
@@ -198,8 +251,57 @@ OnInit(function ()
                         current = current + 0.02
                     end)
                     AddUnitBonus(boss, BONUS_DAMAGE, 100)
+                    UnitAddAbility(boss, FIRE_RAY)
+                end
+            else
+                -- Summon moving tornado
+                if math.random(4) == 1 then
+                    SetUnitAnimation(boss, "spell")
+                    local face = math.rad(GetUnitFacing(boss))
+
+                    local tornado = CreateUnit(Digimon.VILLAIN, TORNADO, GetUnitX(boss) + 400.*math.cos(face), GetUnitY(boss) + 400.*math.sin(face), bj_UNIT_FACING)
+                    DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\GryphonRiderMissile\\GryphonRiderMissileTarget.mdl", GetUnitX(tornado), GetUnitY(tornado)))
+                    SetUnitScale(tornado, 0.1, 0, 0)
+                    local scale = 0.1
+                    Timed.echo(0.02, 1, function ()
+                        scale = scale + 0.018
+                        SetUnitScale(tornado, scale, 0, 0)
+                    end)
+
+                    local xDir = math.cos(-face)
+                    local yDir = math.sin(-face)
+
+                    Timed.echo(0.02, 120., function ()
+                        SetUnitX(tornado, GetUnitX(tornado) + 2 * xDir)
+                        SetUnitY(tornado, GetUnitY(tornado) + 2 * yDir)
+
+                        if GetUnitX(tornado) > GetRectMaxX(tornadoPlace) or GetUnitX(tornado) < GetRectMinX(tornadoPlace) then
+                            xDir = -xDir
+                        end
+                        if GetUnitY(tornado) > GetRectMaxY(tornadoPlace) or GetUnitY(tornado) < GetRectMinY(tornadoPlace) then
+                            yDir = -yDir
+                        end
+                        if not UnitAlive(boss) then
+                            KillUnit(tornado)
+                            return true
+                        end
+                    end, function ()
+                        KillUnit(tornado)
+                    end)
                 end
             end
+        end,
+        onDeath = function ()
+            local owners = CreateForce()
+            ForUnitsInRect(gg_rct_KimeramonTornado, function (u)
+                if IsPlayerInGame(GetOwningPlayer(u)) then
+                    ForceAddPlayer(owners, GetOwningPlayer(u))
+                end
+            end)
+            ForForce(owners, function ()
+                CreateItem(RARE_DATA, GetUnitX(boss), GetUnitY(boss))
+            end)
+            DestroyForce(owners)
         end,
         onReset = function ()
             if started then
@@ -218,6 +320,7 @@ OnInit(function ()
                     current = current + 0.02
                 end)
                 AddUnitBonus(boss, BONUS_DAMAGE, -100)
+                UnitRemoveAbility(boss, FIRE_RAY)
             end
         end
     })

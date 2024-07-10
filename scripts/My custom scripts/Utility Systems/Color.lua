@@ -236,11 +236,11 @@ OnInit("Color", function ()
         hook1("LeaderboardSetItemValueColor")
 
         local oldFunc1
-        oldFunc1 = AddHook("SetLightningColor", function (whichBolt, r, g, b)
+        oldFunc1 = AddHook("SetLightningColor", function (whichBolt, r, g, b, a)
             if not g then
                 oldFunc1(whichBolt, r.red/255, r.green/255, r.blue/255, r.alpha/255)
             else
-                oldFunc1(whichBolt, r, g, b)
+                oldFunc1(whichBolt, r, g, b, a)
             end
         end)
         hook1("SetImageColor")

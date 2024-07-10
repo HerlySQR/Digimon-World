@@ -50,22 +50,9 @@ OnInit.final(function ()
     local wall = {gg_dest_Dofw_53415} ---@type destructable[]
     local summonPlace = gg_rct_ASRSummonCreeps
     local summonTrigger = gg_rct_ASRSummonCreepsTrigger
+    local summonReferencePoint = gg_rct_KimeramonEntrance
     local ambushed = false
     local ambushUnits = CreateGroup()
-
-    do
-        local t = CreateTrigger()
-        TriggerRegisterUnitEvent(t, BOSS, EVENT_UNIT_DEATH)
-        TriggerAddAction(t, function ()
-            RemoveItemFromStock(NPC, ENTER)
-        end)
-
-        t = CreateTrigger()
-        TriggerRegisterUnitEvent(t, BOSS, EVENT_UNIT_HERO_REVIVE_FINISH)
-        TriggerAddAction(t, function ()
-            AddItemToStock(NPC, ENTER, 1, 1)
-        end)
-    end
 
     ForUnitsInRect(place, function (u)
         if GetOwningPlayer(u) == Digimon.NEUTRAL then
@@ -339,7 +326,7 @@ OnInit.final(function ()
             ambushed = true
             local sep = math.random(5)
             for i = 1, 5 do
-                local u = CreateUnit(Digimon.NEUTRAL, i <= sep and TRICERAMON or VERMILIMON, GetRectCenterX(summonTrigger), GetRectCenterY(summonTrigger), bj_UNIT_FACING)
+                local u = CreateUnit(Digimon.NEUTRAL, i <= sep and TRICERAMON or VERMILIMON, GetRectCenterX(summonReferencePoint), GetRectCenterY(summonReferencePoint), bj_UNIT_FACING)
                 SetHeroLevel(u, 95, false)
                 AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
@@ -352,6 +339,20 @@ OnInit.final(function ()
                 SetUnitY(u, GetRectCenterY(summonPlace))
             end
             GroupPointOrderById(ambushUnits, Orders.attack, GetRectCenterX(summonTrigger), GetRectCenterY(summonTrigger))
+        end)
+    end
+
+    -- Reset when the boss dies
+    do
+        local t = CreateTrigger()
+        TriggerRegisterUnitEvent(t, boss, EVENT_UNIT_DEATH)
+        TriggerAddAction(t, function ()
+            PauseTimer(tm)
+            TimerDialogDisplay(window, false)
+            Timed.call(16., function ()
+                ReviveHero(boss, GetUnitX(boss), GetUnitY(boss), true)
+                resetAcientSpeedyZone()
+            end)
         end)
     end
 end)

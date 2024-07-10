@@ -10,6 +10,7 @@ OnInit("SpellAISystem", function ()
 
     local SpellAIs = {} ---@type table<integer, fun(u: unit):boolean>
     local UnitSpellAIs = SyncedTable.create() ---@type table<unit, Set>
+    local isCasting = __jarray(false) ---@type table<unit, boolean>
 
     ---@param range number
     ---@return number
@@ -20,7 +21,7 @@ OnInit("SpellAISystem", function ()
 
     Timed.echo(1., function ()
         for creep, set in pairs(UnitSpellAIs) do
-            if ZTS_GetCombatState(creep) and not IsUnitPaused(creep) and not IsUnitHidden(creep) then
+            if not isCasting[creep] and ZTS_GetCombatState(creep) and not IsUnitPaused(creep) and not IsUnitHidden(creep) then
                 set:random()(creep)
             end
         end
@@ -54,6 +55,16 @@ OnInit("SpellAISystem", function ()
         end
     end
 
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_CHANNEL)
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
+        TriggerAddCondition(t, Condition(function () return UnitSpellAIs[GetSpellAbilityUnit()] ~= nil end))
+        TriggerAddAction(t, function ()
+            isCasting[GetSpellAbilityUnit()] = GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_CHANNEL
+        end)
+    end
+
     ---@param spell integer
     ---@param order string
     ---@param hasUnitTarget boolean
@@ -82,10 +93,12 @@ OnInit("SpellAISystem", function ()
                 if enemyTarget then
                     local maxThreat = -1
                     ForUnitsInRange(GetUnitX(u), GetUnitY(u), range, function (u2)
-                        local threat = ZTS_GetThreatUnitAmount(u, u2)
-                        if threat > maxThreat then
-                            target = u2
-                            maxThreat = threat
+                        if not BlzIsUnitInvulnerable(u) then
+                            local threat = ZTS_GetThreatUnitAmount(u, u2)
+                            if threat > maxThreat then
+                                target = u2
+                                maxThreat = threat
+                            end
                         end
                     end)
                 end
@@ -104,7 +117,7 @@ OnInit("SpellAISystem", function ()
                     return IssuePointOrderById(u, order, x, y)
                 else
                     local random = GetRandomUnitOnRange(GetUnitX(u), GetUnitY(u), range, function (u2)
-                        return ((enemyTarget and IsUnitEnemy(u, GetOwningPlayer(u2))) or (allyTarget and IsUnitAlly(u, GetOwningPlayer(u2))))
+                        return ((enemyTarget and IsUnitEnemy(u, GetOwningPlayer(u2)) and not BlzIsUnitInvulnerable(u)) or (allyTarget and IsUnitAlly(u, GetOwningPlayer(u2))))
                     end)
                     if random then
                         return IssuePointOrderById(u, order, GetUnitX(random), GetUnitY(random))
@@ -113,7 +126,7 @@ OnInit("SpellAISystem", function ()
             elseif hasNoTarget then
                 local count = 0
                 ForUnitsInRange(GetUnitX(u), GetUnitY(u), area, function (u2)
-                    if enemyTarget and not IsUnitEnemy(u, GetOwningPlayer(u2)) then
+                    if enemyTarget and (not IsUnitEnemy(u, GetOwningPlayer(u2)) or BlzIsUnitInvulnerable(u)) then
                         return
                     end
                     if allyTarget and not IsUnitAlly(u, GetOwningPlayer(u2)) then

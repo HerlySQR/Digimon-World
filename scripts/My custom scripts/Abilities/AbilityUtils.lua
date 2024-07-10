@@ -132,12 +132,19 @@ OnInit("AbilityUtils", function ()
 
     local pos = Location(0, 0)
 
+    ---@param x number
+    ---@param y number
+    ---@return number
+    function GetPosZ(x, y)
+        MoveLocation(pos, x, y)
+        return GetLocationZ(pos)
+    end
+
     ---@param u unit
     ---@param withFly? boolean
     ---@return number
     function GetUnitZ(u, withFly)
-        MoveLocation(pos, GetUnitX(u), GetUnitY(u))
-        return GetLocationZ(pos) + (withFly and GetUnitFlyHeight(u) or 0)
+        return GetPosZ(GetUnitX(u), GetUnitY(u)) + (withFly and GetUnitFlyHeight(u) or 0)
     end
 
     ---@param x number
@@ -300,6 +307,60 @@ OnInit("AbilityUtils", function ()
                 if callback(firstX + xOffset, firstY + yOffset) then return end
             end
         end
+    end
+
+    ---Determins if point P is in rectangle ABCD
+    ---@param ax number
+    ---@param ay number
+    ---@param bx number
+    ---@param by number
+    ---@param cx number
+    ---@param cy number
+    ---@param dx number
+    ---@param dy number
+    ---@param px number
+    ---@param py number
+    ---@return boolean
+    function IsPointInRectangle(ax, ay, bx, by, cx, cy, dx, dy, px, py)
+        local cross0 = (py-ay)*(bx-ax)-(px-ax)*(by-ay)
+        local cross1 = (py-cy)*(ax-cx)-(px-cx)*(ay-cy)
+        local cross4 = (py-dy)*(ax-dx)-(px-dx)*(ay-dy)
+        return ((cross0*cross1 >= 0) and (((py-by)*(cx-bx)-(px-bx)*(cy-by))*cross1 >= 0)) or ((cross0*cross4 >= 0) and (((py-by)*(dx-bx)-(px-bx)*(dy-by))*cross4 >= 0))
+    end
+
+    ---Checks whether the point is in a polygon defined by a sequence of connected points.
+    ---@param px number
+    ---@param py number
+    ---@param ... number
+    ---@return boolean
+    function IsPointInPolygon(px, py, ...)
+        local points = {...}
+        local count = #points
+        assert(count > 0 and count & 2 == 0, "Wrong number of parameters")
+        local result = false
+        count = #points // 2
+        points[2*count+1] = points[1]
+        points[2*count+2] = points[2]
+        -- Winding number test. Simplified by quadrant checking.
+        local test = 0
+        for i = 1, count do
+            local px1 = points[2*i-1]
+            local py1 = points[2*i]
+            local px2 = points[2*i+1]
+            local py2 = points[2*i+2]
+            local side = (px2 - px1) * (py - py1) - (px - px1) * (py2 - py1)
+            if py >= py1 then
+                if py < py2 and side >= 0 then
+                    test = test + 1
+                end
+            elseif py >= py2 then
+                if side <= 0 then
+                    test = test - 1
+                end
+            end
+        end
+        result = test ~= 0
+        return result
     end
 
 end)
