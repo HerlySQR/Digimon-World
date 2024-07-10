@@ -19,6 +19,11 @@ OnInit(function ()
     local BIG_POOP = FourCC('A0G1')
     local WARUMONZEAMON = FourCC('O058')
 
+    local EXTRA_HEALTH_FACTOR = 0.6
+    local EXTRA_DMG_FACTOR = 6.
+    local EXTRA_ARMOR = 6
+    local EXTRA_MANA_REGEN = 6
+
     local rainOfFilthOrder = Orders.thunderclap
     local bigFartOrder = Orders.stomp
     local summonRaremonOrder = Orders.spiritwolf
@@ -39,7 +44,7 @@ OnInit(function ()
         inner = gg_rct_PlatinumNumemonInner,
         entrance = gg_rct_PlatinumNumemonEntrance,
         toTeleport = gg_rct_Sewers,
-        actions = function (u)
+        actions = function (u, unitsOnTheField)
             if u then
                 if not BossStillCasting(boss) then
                     local chance = math.random(100)
@@ -62,19 +67,82 @@ OnInit(function ()
                             if RectContainsUnit(pipes[enter], boss) then
                                 ShowUnitHide(boss)
                                 Timed.call(2., function ()
-                                    SetUnitX(boss, originalX)
-                                    SetUnitY(boss, originalY)
+                                    -- Show an earthquake effect only if the player is seeing the place where the effect is casted
+                                    if RectContainsCoords(area, GetCameraTargetPositionX(), GetCameraTargetPositionY()) then
+                                        CameraSetTargetNoiseEx(15., 500000, false)
+                                        CameraSetSourceNoiseEx(15., 500000, false)
+                                    end
+                                    Timed.echo(1.5, function ()
+                                        CameraSetSourceNoise(0, 0)
+                                        CameraSetTargetNoise(0, 0)
+                                    end)
+                                    Timed.call(1., function ()
+                                        for _ = 1, math.round(4.235*math.exp(0.166*unitsOnTheField:size())) do
+                                            local l = GetRandomLocInRect(area)
+                                            for _ = 1, 5 do
+                                                if IsTerrainWalkable(GetLocationX(l), GetLocationY(l)) then
+                                                    break
+                                                end
+                                                RemoveLocation(l)
+                                                l = GetRandomLocInRect(area)
+                                            end
 
-                                    ZTS_AddThreatUnit(boss, false)
+                                            if not IsTerrainWalkable(GetLocationX(l), GetLocationY(l)) then
+                                                RemoveLocation(l)
+                                                goto next_iteration
+                                            end
 
-                                    SetUnitX(boss, GetRectCenterX(pipes[exit]))
-                                    SetUnitY(boss, GetRectCenterY(pipes[exit]))
-                                    BlzSetUnitFacingEx(boss, 180.)
+                                            local w = Digimon.create(Digimon.VILLAIN, WARUMONZEAMON, GetLocationX(l), GetLocationY(l), 360*math.random())
+                                            RemoveLocation(l)
+                                            w:addAbility(CROW_FORM_ID)
+                                            w:removeAbility(CROW_FORM_ID)
+                                            Timed.call(function ()
+                                                SetUnitFlyHeight(w.root, GetRandomReal(800., 1080.), 999999)
+                                                Timed.call(function ()
+                                                    SetUnitFlyHeight(w.root, GetUnitDefaultFlyHeight(w.root), 960.)
+                                                end)
+                                            end)
+                                            w:setLevel(90)
+                                            w.isSummon = true
+                                            w:pause()
+                                            ZTS_AddThreatUnit(w.root, false)
+                                            AddUnitBonus(w.root, BONUS_STRENGTH, math.floor(GetHeroStr(w.root, false) * EXTRA_HEALTH_FACTOR))
+                                            AddUnitBonus(w.root, BONUS_AGILITY, math.floor(GetHeroAgi(w.root, false) * EXTRA_HEALTH_FACTOR))
+                                            AddUnitBonus(w.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(w.root, false) * EXTRA_HEALTH_FACTOR))
+                                            AddUnitBonus(w.root, BONUS_DAMAGE, math.floor(GetAvarageAttack(w.root) * EXTRA_DMG_FACTOR))
+                                            Timed.echo(1., 100., function ()
+                                                if not UnitAlive(boss) then
+                                                    w:destroy()
+                                                    return true
+                                                end
+                                            end, function ()
+                                                w:destroy()
+                                            end)
+                                            DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl", w.root, "chest"))
+                                            Timed.call(1.5, function ()
+                                                w:unpause()
+                                            end)
+                                            ::next_iteration::
+                                        end
+                                        Timed.call(3., function ()
+                                            SetUnitX(boss, originalX)
+                                            SetUnitY(boss, originalY)
 
-                                    ShowUnitShow(boss)
+                                            ZTS_AddThreatUnit(boss, false)
 
-                                    BossIsCasting(boss, false)
+                                            SetUnitX(boss, GetRectCenterX(pipes[exit]))
+                                            SetUnitY(boss, GetRectCenterY(pipes[exit]))
+                                            BlzSetUnitFacingEx(boss, 180.)
+
+                                            ShowUnitShow(boss)
+
+                                            BossIsCasting(boss, false)
+                                        end)
+                                    end)
                                 end)
+                                return true
+                            end
+                            if not UnitAlive(boss) then
                                 return true
                             end
                             IssuePointOrderById(boss, Orders.move, GetRectCenterX(pipes[enter]), GetRectCenterY(pipes[enter]))
@@ -171,13 +239,13 @@ OnInit(function ()
                     ForUnitsInRange(x, y, 150., function (u)
                         if IsUnitEnemy(u, owner) then
                             Damage.apply(boss, u, dmg, true, false, udg_Nature, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
-                            -- Poison
+                            -- Dirty
                             DummyCast(
                                 owner,
-                                GetUnitX(boss), GetUnitY(boss),
-                                POISON_SPELL,
-                                POISON_ORDER,
-                                1,
+                                GetUnitX(u), GetUnitY(u),
+                                CURSE_SPELL,
+                                CURSE_ORDER,
+                                2,
                                 CastType.TARGET,
                                 u
                             )
@@ -368,7 +436,7 @@ OnInit(function ()
                         end
                     end)
                     local poop = AddSpecialEffect("Missile\\Poop1.mdx", missile.x, missile.y)
-                    BlzSetSpecialEffectScale(poop, 5)
+                    BlzSetSpecialEffectScale(poop, 4.5)
                     missile:scale(0.01)
                     Timed.call(2., function ()
                         DestroyEffect(poop)
