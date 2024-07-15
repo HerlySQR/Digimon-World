@@ -19,8 +19,6 @@ OnInit(function ()
     local boss = gg_unit_O03P_0105 ---@type unit
     local originalSize = BlzGetUnitRealField(boss, UNIT_RF_SCALING_VALUE)
     local increasedSize = originalSize * 1.25
-    local originalTargetsAllowed = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0)
-    local originalBaseDamage = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
     local originalMoveSpeed = GetUnitMoveSpeed(boss)
     local cooldown = ELECTRIC_TRAP_TICKS_CD
     local generators = {gg_unit_n01U_0110, gg_unit_n01U_0112, gg_unit_n01U_0114, gg_unit_n01U_0113} ---@type unit[]
@@ -275,10 +273,7 @@ OnInit(function ()
                 if goMetamorphosis then
                     metamorphosis = true
                     SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 2)
-                    BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, 33554432)
-                    BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, true)
-                    originalBaseDamage = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
-                    BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, originalBaseDamage)
+                    BossChangeAttack(boss, 1)
                     local current = 0
                     Timed.echo(0.02, 1., function ()
                         SetUnitVertexColor(boss, white:lerp(gray, current))
@@ -295,9 +290,7 @@ OnInit(function ()
             if metamorphosis then
                 metamorphosis = false
                 SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 1)
-                BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, originalTargetsAllowed)
-                BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
-                BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, originalBaseDamage)
+                BossChangeAttack(boss, 0)
                 local current = 0
                 Timed.echo(0.02, 1., function ()
                     SetUnitVertexColor(boss, gray:lerp(white, current))

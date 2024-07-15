@@ -10,7 +10,6 @@ OnInit(function ()
     local area = gg_rct_PlatinumNumemon_1 ---@type rect
     local white = Color.new(0xFFFFFFFF)
     local indianRed = Color.new(0xFFCD5C5C)
-    local originalTargetsAllowed = BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0)
 
     local RAIN_OF_FILTH = FourCC('A0G4')
     local STINKY_AURA = FourCC('A0G5')
@@ -21,8 +20,6 @@ OnInit(function ()
 
     local EXTRA_HEALTH_FACTOR = 0.6
     local EXTRA_DMG_FACTOR = 6.
-    local EXTRA_ARMOR = 6
-    local EXTRA_MANA_REGEN = 6
 
     local rainOfFilthOrder = Orders.thunderclap
     local bigFartOrder = Orders.stomp
@@ -67,63 +64,86 @@ OnInit(function ()
                             if RectContainsUnit(pipes[enter], boss) then
                                 ShowUnitHide(boss)
                                 Timed.call(2., function ()
-                                    -- Show an earthquake effect only if the player is seeing the place where the effect is casted
-                                    if RectContainsCoords(area, GetCameraTargetPositionX(), GetCameraTargetPositionY()) then
-                                        CameraSetTargetNoiseEx(15., 500000, false)
-                                        CameraSetSourceNoiseEx(15., 500000, false)
-                                    end
-                                    Timed.echo(1.5, function ()
-                                        CameraSetSourceNoise(0, 0)
-                                        CameraSetTargetNoise(0, 0)
-                                    end)
-                                    Timed.call(1., function ()
-                                        for _ = 1, math.round(4.235*math.exp(0.166*unitsOnTheField:size())) do
-                                            local l = GetRandomLocInRect(area)
-                                            for _ = 1, 5 do
-                                                if IsTerrainWalkable(GetLocationX(l), GetLocationY(l)) then
+
+                                    for _ = 1, math.round(4.235*math.exp(0.166*unitsOnTheField:size())) do
+                                        local l = GetRandomLocInRect(area)
+                                        for _ = 1, 6 do
+                                            if IsTerrainWalkable(GetLocationX(l), GetLocationY(l)) then
+                                                local check = false
+                                                ForUnitsInRange(GetLocationX(l), GetLocationY(l), 700., function (u2)
+                                                    if IsUnitEnemy(u2, owner) then
+                                                        check = true
+                                                    end
+                                                end)
+                                                if check then
                                                     break
                                                 end
-                                                RemoveLocation(l)
-                                                l = GetRandomLocInRect(area)
                                             end
+                                            RemoveLocation(l)
+                                            l = GetRandomLocInRect(area)
+                                        end
 
-                                            if not IsTerrainWalkable(GetLocationX(l), GetLocationY(l)) then
-                                                RemoveLocation(l)
+                                        if not IsTerrainWalkable(GetLocationX(l), GetLocationY(l)) then
+                                            RemoveLocation(l)
+                                            goto next_iteration
+                                        else
+                                            local check = false
+                                            ForUnitsInRange(GetLocationX(l), GetLocationY(l), 700., function (u2)
+                                                if IsUnitEnemy(u2, owner) then
+                                                    check = true
+                                                end
+                                            end)
+                                            if not check then
                                                 goto next_iteration
                                             end
-
-                                            local w = Digimon.create(Digimon.VILLAIN, WARUMONZEAMON, GetLocationX(l), GetLocationY(l), 360*math.random())
-                                            RemoveLocation(l)
-                                            w:addAbility(CROW_FORM_ID)
-                                            w:removeAbility(CROW_FORM_ID)
-                                            Timed.call(function ()
-                                                SetUnitFlyHeight(w.root, GetRandomReal(800., 1080.), 999999)
-                                                Timed.call(function ()
-                                                    SetUnitFlyHeight(w.root, GetUnitDefaultFlyHeight(w.root), 960.)
-                                                end)
-                                            end)
-                                            w:setLevel(90)
-                                            w.isSummon = true
-                                            w:pause()
-                                            ZTS_AddThreatUnit(w.root, false)
-                                            AddUnitBonus(w.root, BONUS_STRENGTH, math.floor(GetHeroStr(w.root, false) * EXTRA_HEALTH_FACTOR))
-                                            AddUnitBonus(w.root, BONUS_AGILITY, math.floor(GetHeroAgi(w.root, false) * EXTRA_HEALTH_FACTOR))
-                                            AddUnitBonus(w.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(w.root, false) * EXTRA_HEALTH_FACTOR))
-                                            AddUnitBonus(w.root, BONUS_DAMAGE, math.floor(GetAvarageAttack(w.root) * EXTRA_DMG_FACTOR))
-                                            Timed.echo(1., 100., function ()
-                                                if not UnitAlive(boss) then
-                                                    w:destroy()
-                                                    return true
-                                                end
-                                            end, function ()
-                                                w:destroy()
-                                            end)
-                                            DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl", w.root, "chest"))
-                                            Timed.call(1.5, function ()
-                                                w:unpause()
-                                            end)
-                                            ::next_iteration::
                                         end
+
+                                        local w = Digimon.create(Digimon.VILLAIN, WARUMONZEAMON, GetLocationX(l), GetLocationY(l), 360*math.random())
+                                        RemoveLocation(l)
+
+                                        w:hide()
+                                        w:addAbility(CROW_FORM_ID)
+                                        w:removeAbility(CROW_FORM_ID)
+                                        SetUnitFlyHeight(w.root, GetRandomReal(800., 1080.), 999999)
+                                        Timed.call(1.5, function ()
+                                            w:show()
+                                            DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl", w.root, "chest"))
+                                            SetUnitFlyHeight(w.root, GetUnitDefaultFlyHeight(w.root), 960.)
+                                        end)
+
+                                        w:setLevel(90)
+                                        w.isSummon = true
+                                        w:pause()
+                                        ZTS_AddThreatUnit(w.root, false)
+                                        AddUnitBonus(w.root, BONUS_STRENGTH, math.floor(GetHeroStr(w.root, false) * EXTRA_HEALTH_FACTOR))
+                                        AddUnitBonus(w.root, BONUS_AGILITY, math.floor(GetHeroAgi(w.root, false) * EXTRA_HEALTH_FACTOR))
+                                        AddUnitBonus(w.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(w.root, false) * EXTRA_HEALTH_FACTOR))
+                                        AddUnitBonus(w.root, BONUS_DAMAGE, math.floor(GetAvarageAttack(w.root) * EXTRA_DMG_FACTOR))
+                                        Timed.echo(1., 100., function ()
+                                            if not UnitAlive(boss) then
+                                                w:destroy()
+                                                return true
+                                            end
+                                        end, function ()
+                                            w:destroy()
+                                        end)
+                                        Timed.call(1.5, function ()
+                                            w:unpause()
+                                        end)
+                                        ::next_iteration::
+                                    end
+
+                                    Timed.call(1., function ()
+                                        -- Show an earthquake effect only if the player is seeing the place where the effect is casted
+                                        if RectContainsCoords(area, GetCameraTargetPositionX(), GetCameraTargetPositionY()) then
+                                            CameraSetTargetNoiseEx(15., 500000, false)
+                                            CameraSetSourceNoiseEx(15., 500000, false)
+                                        end
+                                        Timed.echo(1.5, function ()
+                                            CameraSetSourceNoise(0, 0)
+                                            CameraSetTargetNoise(0, 0)
+                                        end)
+
                                         Timed.call(3., function ()
                                             SetUnitX(boss, originalX)
                                             SetUnitY(boss, originalY)
@@ -162,8 +182,7 @@ OnInit(function ()
                         current = current + 0.02
                     end)
                     AddUnitBonus(boss, BONUS_DAMAGE, 100)
-                    BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, 33554432)
-                    BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, true)
+                    BossChangeAttack(boss, 1)
                 end
             end
         end,
@@ -190,8 +209,7 @@ OnInit(function ()
                     current = current + 0.02
                 end)
                 AddUnitBonus(boss, BONUS_DAMAGE, -100)
-                BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, originalTargetsAllowed)
-                BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
+                BossChangeAttack(boss, 0)
             end
         end
     })

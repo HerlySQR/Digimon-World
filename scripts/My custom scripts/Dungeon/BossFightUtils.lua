@@ -9,6 +9,8 @@ OnInit("BossFightUtils", function ()
     local LocalPlayer = GetLocalPlayer()
     local ignored = {} ---@type table<unit, table<unit, boolean>>
     local battlefield = {} ---@type table<unit, rect[]>
+    local originalTargetsAllowed = {} ---@type table<unit, integer>
+    local originalBaseDamage = {} ---@type table<unit, integer>
 
     local DASH_EFFECT = "war3mapImported\\Valiant Charge Royal.mdl"
     local TELEPORT_CASTER_EFFECT = "war3mapImported\\Blink Purple Caster.mdl"
@@ -41,6 +43,20 @@ OnInit("BossFightUtils", function ()
             ZTS_AddPlayerUnit(u)
         end
         ignored[boss][u] = flag
+    end
+
+    ---@param boss any
+    ---@param index any
+    function BossChangeAttack(boss, index)
+        if index == 1 then
+            BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, 33554432)
+            BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, true)
+            BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, BlzGetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 1))
+        elseif index == 0 then
+            BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, originalTargetsAllowed[boss])
+            BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
+            BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, originalBaseDamage[boss])
+        end
     end
 
     ---@param boss unit
@@ -135,8 +151,10 @@ OnInit("BossFightUtils", function ()
                         local eff = AddSpecialEffectTarget(DASH_EFFECT, boss, "origin")
                         local affected = CreateGroup()
                         local finish = Timed.echo(0.1, function ()
-                            ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
+                            local actX, actY = GetUnitX(boss), GetUnitY(boss)
+                            ForUnitsInRange(actX, actY, 256, function (u)
                                 if not IsUnitInGroup(u, affected) and IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                                    Knockback(u, math.atan(GetUnitY(u) - actY, GetUnitX(u) - actX), 200., 700., "Abilities\\Spells\\Human\\Defend\\DefendCaster.mdl")
                                     GroupAddUnit(affected, u)
                                     Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
                                 end
@@ -236,8 +254,10 @@ OnInit("BossFightUtils", function ()
                         BlzSetUnitMovementType(boss, 2)
                         Jump(boss, xTarget, yTarget, speed, 50, nil, nil, function ()
                             BlzSetUnitMovementType(boss, oldMove)
-                            ForUnitsInRange(GetUnitX(boss), GetUnitY(boss), 256, function (u)
+                            local actX, actY = GetUnitX(boss), GetUnitY(boss)
+                            ForUnitsInRange(actX, actY, 256, function (u)
                                 if IsUnitEnemy(boss, GetOwningPlayer(u)) then
+                                    Knockback(u, math.atan(GetUnitY(u) - actY, GetUnitX(u) - actX), 200., 700., "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl")
                                     Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
                                 end
                             end)
@@ -265,6 +285,9 @@ OnInit("BossFightUtils", function ()
 
         assert(_G["gg_rct_" .. data.name .. "_1"], "The regions of " .. data.name .. " are not set")
         assert(data.boss, "The boss is not set")
+
+        originalTargetsAllowed[data.boss] = BlzGetUnitWeaponIntegerField(data.boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0)
+        originalBaseDamage[data.boss] = BlzGetUnitWeaponIntegerField(data.boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
 
         BlzSetUnitRealField(data.boss, UNIT_RF_HIT_POINTS_REGENERATION_RATE, 5.)
         BlzSetUnitRealField(data.boss, UNIT_RF_MANA_REGENERATION, 15.)

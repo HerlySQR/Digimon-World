@@ -14,8 +14,14 @@ OnInit(function ()
     local fireRayOrder = Orders.creepthunderclap
 
     local METEORMON = FourCC('O036')
+    local VOLCAMON = FourCC('O056')
     local FIRE_RAY = FourCC('A0GE')
     local TORNADO = FourCC('n02J')
+    local LIGHTNING_ATTACK = FourCC('A0GH')
+    local EXTRA_HEALTH_FACTOR = 0.6
+    local EXTRA_DMG_FACTOR = 6.
+
+    local summons = {} ---@type Digimon[]
 
     local secondPhase = false
 
@@ -68,7 +74,12 @@ OnInit(function ()
         for i = 1, math.min(#spawns, math.round(4.235*math.exp(0.166*amount))) do
             local x, y = GetRectCenterX(spawns[options[i][1]]), GetRectCenterY(spawns[options[i][1]])
             local d = Digimon.create(Digimon.VILLAIN, METEORMON, x, y, options[i][3])
+            table.insert(summons, d)
             d:setLevel(95)
+            AddUnitBonus(d.root, BONUS_STRENGTH, math.floor(GetHeroStr(d.root, false) * EXTRA_HEALTH_FACTOR))
+            AddUnitBonus(d.root, BONUS_AGILITY, math.floor(GetHeroAgi(d.root, false) * EXTRA_HEALTH_FACTOR))
+            AddUnitBonus(d.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(d.root, false) * EXTRA_HEALTH_FACTOR))
+            AddUnitBonus(d.root, BONUS_DAMAGE, math.floor(GetAvarageAttack(d.root) * EXTRA_DMG_FACTOR))
             d.isSummon = true
             DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", x, y))
             ZTS_AddThreatUnit(d.root, false)
@@ -112,6 +123,8 @@ OnInit(function ()
         end)
         local grabbed = canGrab[math.random(#canGrab)] ---@type unit?
         local defaultGrabbedFly
+
+        local rate = 2250
         if grabbed then
             defaultGrabbedFly = GetUnitFlyHeight(grabbed)
             local face = math.rad(GetUnitFacing(boss))
@@ -121,13 +134,47 @@ OnInit(function ()
             SetUnitFlyHeight(grabbed, 50, 999999)
             PauseUnit(grabbed, true)
             SetUnitInvulnerable(grabbed, true)
-            SetUnitFlyHeight(grabbed, 1280, 640)
+            SetUnitPathing(grabbed, false)
+
+            if secondPhase then
+                Timed.echo(0.1, 2., function ()
+                    SetUnitFlyHeight(grabbed, 1600, rate)
+                end)
+            else
+                SetUnitFlyHeight(grabbed, 1280, 640)
+            end
         end
 
         local defaultFly = GetUnitFlyHeight(boss)
-        SetUnitFlyHeight(boss, 1280, 640)
+        if secondPhase then
+            local actX, actY = GetUnitX(boss), GetUnitY(boss)
+            DestroyEffect(AddSpecialEffect("war3mapImported\\HolyStomp.mdx", actX, actY))
+            local eff = AddSpecialEffect("Abilities\\Spells\\Orc\\EarthQuake\\EarthQuakeTarget.mdl", actX, actY)
+            Timed.call(3., function ()
+                DestroyEffect(eff)
+            end)
+            Timed.echo(0.1, 2., function ()
+                rate = rate - 86
+                SetUnitFlyHeight(boss, 1600, rate)
+            end)
+            Timed.call(0.5, function ()
+                DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Volcano\\VolcanoDeath.mdl", actX, actY))
+                Timed.call(1., function ()
+                    local d = Digimon.create(Digimon.VILLAIN, VOLCAMON, actX, actY, bj_UNIT_FACING)
+                    table.insert(summons, d)
+                    d:setLevel(95)
+                    AddUnitBonus(d.root, BONUS_STRENGTH, math.floor(GetHeroStr(d.root, false) * EXTRA_HEALTH_FACTOR))
+                    AddUnitBonus(d.root, BONUS_AGILITY, math.floor(GetHeroAgi(d.root, false) * EXTRA_HEALTH_FACTOR))
+                    AddUnitBonus(d.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(d.root, false) * EXTRA_HEALTH_FACTOR))
+                    AddUnitBonus(d.root, BONUS_DAMAGE, math.floor(GetAvarageAttack(d.root) * EXTRA_DMG_FACTOR))
+                end)
+            end)
+        else
+            SetUnitFlyHeight(boss, 1280, 640)
+        end
         SetUnitAnimationByIndex(boss, 1)
         SetUnitTimeScale(boss, 2)
+        SetUnitPathing(boss, false)
 
         ZTS_RemoveThreatUnit(boss)
 
@@ -156,6 +203,7 @@ OnInit(function ()
                     local color = GetUnitTintingColor(grabbed)
                     color.alpha = 255
                     SetUnitVertexColor(grabbed, color)
+                    SetUnitPathing(grabbed, true)
                 end
 
                 Timed.call(2., function ()
@@ -164,6 +212,7 @@ OnInit(function ()
                     BlzSetUnitIntegerField(boss, UNIT_IF_MOVE_TYPE, defaultMoveType)
                     ResetUnitAnimation(boss)
                     SetUnitTimeScale(boss, 1)
+                    SetUnitPathing(boss, true)
                     flying = false
 
                     ZTS_AddThreatUnit(boss, false)
@@ -239,21 +288,39 @@ OnInit(function ()
                     end
                 end
 
-            end
-
-            if not secondPhase then
-                if GetUnitHPRatio(boss) < 0.5 then
-                    secondPhase = true
-                    local current = 0
-                    Timed.echo(0.02, 1., function ()
-                        SetUnitVertexColor(boss, white:lerp(indianRed, current))
-                        SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
-                        current = current + 0.02
-                    end)
-                    AddUnitBonus(boss, BONUS_DAMAGE, 100)
-                    UnitAddAbility(boss, FIRE_RAY)
+                -- Make the summons follow the nearest player unit to them
+                for i = #summons, 1, -1 do
+                    local d = summons[i]
+                    if d:isAlive() then
+                        local follow = nil ---@type unit
+                        ForUnitsInRange(d:getX(), d:getY(), 900., function (u2)
+                            if IsPlayerInGame(GetOwningPlayer(u2)) then
+                                follow = u2
+                            end
+                        end)
+                        if not follow then
+                            ZTS_RemoveThreatUnit(d.root)
+                            local nearby
+                            local shortestDistance = math.huge
+                            local x, y = d:getPos()
+                            for _, u2 in ipairs(unitsInTheField) do
+                                local dist = DistanceBetweenCoords(GetUnitX(u2), GetUnitY(u2), x, y)
+                                if dist < shortestDistance then
+                                    shortestDistance = dist
+                                    nearby = u2
+                                end
+                            end
+                            if nearby then
+                                d:issueOrder(Orders.attack, GetUnitX(nearby), GetUnitY(nearby))
+                            end
+                        else
+                            ZTS_AddThreatUnit(d.root, false)
+                        end
+                    else
+                        table.remove(summons, i)
+                    end
                 end
-            else
+
                 -- Summon moving tornado
                 if math.random(4) == 1 then
                     SetUnitAnimation(boss, "spell")
@@ -290,6 +357,22 @@ OnInit(function ()
                     end)
                 end
             end
+
+            if not secondPhase then
+                if GetUnitHPRatio(boss) < 0.5 then
+                    secondPhase = true
+                    local current = 0
+                    Timed.echo(0.02, 1., function ()
+                        SetUnitVertexColor(boss, white:lerp(indianRed, current))
+                        SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
+                        current = current + 0.02
+                    end)
+                    AddUnitBonus(boss, BONUS_DAMAGE, 100)
+                    UnitAddAbility(boss, FIRE_RAY)
+                    BossChangeAttack(boss, 1)
+                    UnitAddAbility(boss, LIGHTNING_ATTACK)
+                end
+            end
         end,
         onDeath = function ()
             local owners = CreateForce()
@@ -321,6 +404,8 @@ OnInit(function ()
                 end)
                 AddUnitBonus(boss, BONUS_DAMAGE, -100)
                 UnitRemoveAbility(boss, FIRE_RAY)
+                BossChangeAttack(boss, 0)
+                UnitRemoveAbility(boss, LIGHTNING_ATTACK)
             end
         end
     })

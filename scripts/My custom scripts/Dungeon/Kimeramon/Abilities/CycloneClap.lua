@@ -43,19 +43,22 @@ OnInit(function ()
         local x, y = GetUnitX(caster), GetUnitY(caster)
         local tx, ty = GetSpellTargetX(), GetSpellTargetY()
         local angle = math.atan(ty - y, tx - x)
-        local tornado = Missiles:create(x, y, 0, tx + DISTANCE*math.cos(angle), ty + DISTANCE*math.sin(angle), 0)
-        tornado.source = caster
-        tornado.owner = GetOwningPlayer(caster)
-        tornado:scale(1.2)
-        tornado:model(TORNADO)
-        tornado:speed(900.)
-        tornado.collision = 200.
-        tornado.onHit = function (u)
-            if IsUnitEnemy(u, tornado.owner) then
-                DummyCast(tornado.owner, GetUnitX(u), GetUnitY(u), DUMMY_CYCLONE, Orders.cyclone, 1, CastType.TARGET, u)
+        for _ = 0, 2 do
+            local tornado = Missiles:create(x, y, 0, tx + DISTANCE*math.cos(angle), ty + DISTANCE*math.sin(angle), 0)
+            tornado.source = caster
+            tornado.owner = GetOwningPlayer(caster)
+            tornado:scale(1.2)
+            tornado:model(TORNADO)
+            tornado:speed(900.)
+            tornado.collision = 200.
+            tornado.onHit = function (u)
+                if IsUnitEnemy(u, tornado.owner) then
+                    DummyCast(tornado.owner, GetUnitX(u), GetUnitY(u), DUMMY_CYCLONE, Orders.cyclone, 1, CastType.TARGET, u)
+                end
             end
+            tornado:launch()
+            angle = angle + GetRandomReal(math.pi/6, math.pi/3)
         end
-        tornado:launch()
     end)
 
 end)
