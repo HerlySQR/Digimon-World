@@ -170,16 +170,17 @@ OnInit("SpellAISystem", function ()
             return oldUnitRemoveAbility(u, id)
         end)
 
-        local oldSetUnitOwner
-        oldSetUnitOwner = AddHook("SetUnitOwner", function (whichUnit, whichPlayer, changeColor)
-            if GetUnitAbilityLevel(whichUnit, spell) > 0 then
-                if IsPlayerInForce(whichPlayer, FORCE_PLAYING) then
-                    removeSpell(whichUnit, spell)
-                else
-                    insertSpell(whichUnit, spell)
-                end
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_CHANGE_OWNER)
+        TriggerAddCondition(t, Condition(function () return GetUnitAbilityLevel(GetChangingUnit(), spell) > 0 end))
+        TriggerAddAction(t, function ()
+            local whichUnit = GetChangingUnit()
+            local whichPlayer = GetOwningPlayer(whichUnit)
+            if IsPlayerInForce(whichPlayer, FORCE_PLAYING) then
+                removeSpell(whichUnit, spell)
+            else
+                insertSpell(whichUnit, spell)
             end
-            oldSetUnitOwner(whichUnit, whichPlayer, changeColor)
         end)
     end
 

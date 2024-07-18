@@ -21,9 +21,6 @@ OnInit(function ()
     local EXTRA_HEALTH_FACTOR = 0.6
     local EXTRA_DMG_FACTOR = 6.
 
-    local rainOfFilthOrder = Orders.thunderclap
-    local bigFartOrder = Orders.stomp
-    local summonRaremonOrder = Orders.spiritwolf
     local bigPoopOrder = Orders.breathoffrost
 
     local secondPhase = false
@@ -41,19 +38,16 @@ OnInit(function ()
         inner = gg_rct_PlatinumNumemonInner,
         entrance = gg_rct_PlatinumNumemonEntrance,
         toTeleport = gg_rct_Sewers,
+        spells = {
+            RAIN_OF_FILTH, 20, Orders.thunderclap, CastType.IMMEDIATE, -- Rain of filth
+            BIG_FART, 25, Orders.stomp, CastType.IMMEDIATE, -- Big fart
+            SUMMON_RAREMON, 10, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon raremon
+            BIG_POOP, 20, Orders.breathoffrost, CastType.POINT -- Big poop
+        },
         actions = function (u, unitsOnTheField)
             if u then
                 if not BossStillCasting(boss) then
-                    local chance = math.random(100)
-                    if chance <= 20 then
-                        IssueImmediateOrderById(boss, rainOfFilthOrder)
-                    elseif chance <= 45 then
-                        IssueImmediateOrderById(boss, bigFartOrder)
-                    elseif chance <= 55 then
-                        IssueImmediateOrderById(boss, summonRaremonOrder)
-                    elseif chance <= 70 then
-                        IssuePointOrderById(boss, bigPoopOrder, GetUnitX(u), GetUnitY(u))
-                    else
+                    if math.random(100) <= 30 then
                         BossIsCasting(boss, true)
                         ZTS_RemoveThreatUnit(boss)
 

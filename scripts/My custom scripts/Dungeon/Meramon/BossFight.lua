@@ -1,11 +1,8 @@
+Debug.beginFile("Meramon\\BossFight")
 OnInit(function ()
     Require "BossFightUtils"
 
     local boss = gg_unit_O061_0445 ---@type unit
-
-    local fireBallOrder = Orders.firebolt
-    local lavaExplosionsOrder = Orders.volcano
-    local scorchingHeatOrder = Orders.incineratearrow
 
     InitBossFight({
         name = "Meramon",
@@ -16,17 +13,13 @@ OnInit(function ()
         inner = gg_rct_MeramonInner,
         entrance = gg_rct_MeramonEntrance,
         toTeleport = gg_rct_MeramonToReturn,
+        spells = {
+            FourCC('A02B'), 30, Orders.stomp, CastType.IMMEDIATE, -- Lava explosions
+            FourCC('A02A'), 40, Orders.firebolt, CastType.TARGET, -- Fire ball
+            FourCC('A02C'), 30, Orders.thunderclap, CastType.TARGET -- Scorching heat
+        },
         actions = function (u)
-            local spellChance = math.random(0, 100)
-            if not BossStillCasting(boss) then
-                if spellChance <= 30 then
-                    IssueImmediateOrderById(boss, lavaExplosionsOrder)
-                elseif spellChance > 30 and spellChance <= 70 then
-                    IssueTargetOrderById(boss, fireBallOrder, u)
-                elseif spellChance > 70 then
-                    IssueImmediateOrderById(boss, scorchingHeatOrder)
-                end
-            end
         end
     })
 end)
+Debug.endFile()

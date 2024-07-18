@@ -1,11 +1,9 @@
+Debug.beginFile("Flymon\\BossFight")
 OnInit(function ()
     Require "BossFightUtils"
 
     local boss = gg_unit_O067_0406 ---@type unit
 
-    local brownStingerShotsOrder = Orders.blackarrow
-    local brownStingerOrder = Orders.charm
-    local poisonPowderOrder = Orders.cloudoffog
     local CycloneOrder = Orders.cyclone
     local BeserkOrder = Orders.berserk
 
@@ -18,19 +16,20 @@ OnInit(function ()
         inner = gg_rct_FlymonInner,
         entrance = gg_rct_FlymonEntrance,
         toTeleport = gg_rct_FlymonToReturn,
+        spells = {
+            FourCC('A06Z'), 100, Orders.charm, CastType.TARGET, -- Stinger
+            FourCC('A06Y'), 50, Orders.blackarrow, CastType.POINT, -- Stinger Shots
+            FourCC('A070'), 20, Orders.cloudoffog, CastType.TARGET -- Poison Powder
+        },
         actions = function (u)
             if not BossStillCasting(boss) then
-                if not IssueTargetOrderById(boss, brownStingerOrder, u) then
-                local rad = math.random(0, 100)
-                    if rad <= 50 then
-                        IssuePointOrderById(boss, brownStingerShotsOrder, GetUnitX(u), GetUnitY(u))
-                    elseif rad > 50 and rad < 80 then
-                        IssueImmediateOrderById(boss, BeserkOrder)
-                    elseif rad >= 80 then
-                        IssueTargetOrderById(boss, CycloneOrder, u)
-                    end
+                if math.random(0, 100) >= 80 then
+                    IssueTargetOrderById(boss, CycloneOrder, u)
+                else
+                    IssueImmediateOrderById(boss, BeserkOrder)
                 end
             end
         end
     })
 end)
+Debug.endFile()

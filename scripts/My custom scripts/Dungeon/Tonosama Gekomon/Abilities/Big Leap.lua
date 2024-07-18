@@ -3,7 +3,7 @@ OnInit(function ()
     Require "BossFightUtils"
     Require "JumpSystem"
 
-    local SPELL = FourCC('A0BG')
+    local SPELL = FourCC('A0BK')
     local SPEED = 700.
     local HEIGHT = 100.
     local STOMP = FourCC('A0BL')

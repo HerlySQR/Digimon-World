@@ -9,10 +9,6 @@ OnInit(function ()
     local indianRed = Color.new(0xFFCD5C5C)
     local tornadoPlace = gg_rct_KimeramonTornado ---@type rect
 
-    local impaleOrder = Orders.impale
-    local cycloneClapOrder = Orders.tornado
-    local fireRayOrder = Orders.creepthunderclap
-
     local METEORMON = FourCC('O036')
     local VOLCAMON = FourCC('O056')
     local FIRE_RAY = FourCC('A0GE')
@@ -238,6 +234,14 @@ OnInit(function ()
         inner = gg_rct_KimeramonInner,
         entrance = gg_rct_KimeramonEntrance,
         toTeleport = gg_rct_Ancient_Speedy_Zone,
+        spells = {
+            FourCC('A0GB'), 30, Orders.impale, CastType.TARGET, -- Impale
+            FourCC('A0GC'), 10, Orders.tornado, CastType.POINT, -- Cyclone Clap
+            FourCC('A0GE'), 30, Orders.creepthunderclap, CastType.IMMEDIATE -- Fire Ray
+        },
+        castCondition = function ()
+            return not flying
+        end,
         actions = function (u, unitsInTheField)
             if u then
                 if not started then
@@ -272,20 +276,8 @@ OnInit(function ()
                     end)
                 end
 
-                if not flying and not BossStillCasting(boss) and not BlzIsUnitInvulnerable(u) then
-                    local chance = math.random(100)
-
-                    if chance < 30 then
-                        IssueTargetOrderById(boss, impaleOrder, u)
-                    elseif chance < 40 then
-                        IssuePointOrderById(boss, cycloneClapOrder, GetUnitX(u), GetUnitY(u))
-                    elseif chance > 90 then
-                        BossMove(boss, 0, 600., GetHeroStr(boss, true), true)
-                    end
-
-                    if secondPhase and math.random(100) < 30 then
-                        IssueImmediateOrderById(boss, fireRayOrder)
-                    end
+                if math.random(100) > 90 then
+                    BossMove(boss, 0, 600., GetHeroStr(boss, true), true)
                 end
 
                 -- Make the summons follow the nearest player unit to them

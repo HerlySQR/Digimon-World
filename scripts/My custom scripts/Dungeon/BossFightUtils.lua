@@ -276,7 +276,7 @@ OnInit("BossFightUtils", function ()
         return 6 * math.exp(-0.5493061443341 * ((half and n/2 or n) - 1))
     end
 
-    ---@param data {name: string, boss: unit, manualRevive: boolean, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
+    ---@param data {name: string, boss: unit, manualRevive: boolean, spells: table, castCondition: (fun():boolean)?, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
     function InitBossFight(data)
         if type(data) ~= "table" then
             print("Bad data implemented in bossfight:", data)
@@ -298,7 +298,16 @@ OnInit("BossFightUtils", function ()
         local interval = 3.
         battlefield[data.boss] = {}
         local playersOnField = Set.create()
-        local currentTarget = nil ---@type unit
+        local spellsCasted = 0
+        local spells = {} ---@type table<integer, {weight: number, order: integer, ttype: CastType}>
+
+        for i = 1, #data.spells // 4 do
+            spells[data.spells[4*(i-1)+1]] = {
+                weight = data.spells[4*(i-1)+2],
+                order = data.spells[4*(i-1)+3],
+                ttype = data.spells[4*(i-1)+4]
+            }
+        end
 
         local initialPosX, initialPosY = GetUnitX(data.boss), GetUnitY(data.boss)
 
@@ -479,11 +488,46 @@ OnInit("BossFightUtils", function ()
                                         IssuePointOrderById(data.boss, Orders.attack, x, y)
                                     end
                                 end)
+                            else
+                                if spellsCasted >= 2 and not BossStillCasting(data.boss) and not BlzIsUnitInvulnerable(u) and (not data.castCondition or data.castCondition()) then
+                                    spellsCasted = 0
+                                    local chances = {}
+                                    local options = {}
+                                    for spell, stats in pairs(spells) do
+                                        print(GetUnitAbilityLevel(data.boss, spell), BlzGetUnitAbilityCooldownRemaining(data.boss, spell), BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell) - 1))
+                                        if GetUnitAbilityLevel(data.boss, spell) > 0
+                                            and BlzGetUnitAbilityCooldownRemaining(data.boss, spell) <= 0
+                                            and BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell) - 1) <= GetUnitState(data.boss, UNIT_STATE_MANA) then
+
+                                            table.insert(options, spell)
+                                            chances[#options] = (chances[#options-1] or 0) + stats.weight
+                                            print(#options)
+                                        end
+                                    end
+
+                                    if options[1] then
+                                        local r = chances[#chances] * math.random()
+                                        for i = 1, #options do
+                                            if r < chances[i] then
+                                                local stats = spells[options[i]]
+                                                print(options[i], stats.weight, stats.order, stats.ttype, r, chances[#chances])
+                                                if stats.ttype == CastType.IMMEDIATE then
+                                                    IssueImmediateOrderById(data.boss, stats.order)
+                                                elseif stats.ttype == CastType.POINT then
+                                                    IssuePointOrderById(data.boss, stats.order, GetUnitX(u), GetUnitY(u))
+                                                elseif stats.ttype == CastType.TARGET then
+                                                    IssueTargetOrderById(data.boss, stats.order, u)
+                                                end
+                                                break
+                                            end
+                                        end
+                                    end
+                                end
                             end
                         else
                             IssuePointOrderById(data.boss, Orders.move, initialPosX, initialPosY)
                         end
-                        -- Spells
+
                         data.actions(u, unitsInTheField)
                     end
                 end
@@ -640,6 +684,16 @@ OnInit("BossFightUtils", function ()
                 if IsUnitType(u, UNIT_TYPE_HERO) and u ~= data.boss and not unitsInTheField:contains(u) then
                     IssueTargetOrderById(u, Orders.attack, u)
                     ErrorMessage("You can't attack the boss from there", GetOwningPlayer(u))
+                end
+            end)
+        end
+
+        do
+            local t = CreateTrigger()
+            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_EFFECT)
+            TriggerAddAction(t, function ()
+                if not spells[GetSpellAbilityId()] then
+                    spellsCasted = spellsCasted + 1
                 end
             end)
         end

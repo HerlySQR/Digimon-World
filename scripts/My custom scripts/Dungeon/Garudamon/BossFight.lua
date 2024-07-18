@@ -5,9 +5,6 @@ OnInit(function ()
     local boss = gg_unit_O015_0092 ---@type unit
 
     local fireBallOrder = Orders.firebolt
-    local birdOfFireOrder = Orders.flamestrike
-    local dashOrder = Orders.battleroar
-    local flyAndThrowOrder = Orders.avengerform
 
     InitBossFight({
         name = "Garudamon",
@@ -18,20 +15,14 @@ OnInit(function ()
         inner = gg_rct_GarudamonInner,
         entrance = gg_rct_GarudamonEntrance,
         toTeleport = gg_rct_GarudamonToReturn,
+        spells = {
+            FourCC('A0BM'), 30, Orders.firebolt, CastType.TARGET, -- Bird of Fire
+            FourCC('A0BN'), 70, Orders.battleroar, CastType.POINT, -- Dash
+            FourCC('A070'), 30, Orders.avengerform, CastType.TARGET -- Fly and Throw
+        },
         actions = function (u)
-            if math.random(0, 100) <= 30 then
-                IssueTargetOrderById(boss, birdOfFireOrder, u)
-            end
-            if not BossStillCasting(boss) then
-                if math.random(0, 100) <= 50 then
-                    IssueTargetOrderById(boss, fireBallOrder, u)
-                end
-                local spellChance = math.random(0, 100)
-                if spellChance <= 70 then
-                    IssuePointOrderById(boss, dashOrder, GetUnitX(u), GetUnitY(u))
-                elseif spellChance > 70 then
-                    IssueTargetOrderById(boss, flyAndThrowOrder, u)
-                end
+            if math.random(0, 100) <= 50 then
+                IssueTargetOrderById(boss, fireBallOrder, u)
             end
         end
     })

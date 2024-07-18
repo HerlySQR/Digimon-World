@@ -4,11 +4,6 @@ OnInit(function ()
 
     local boss = gg_unit_O006_0036 ---@type unit
 
-    local icePrisonOrder = Orders.frostnova
-    local spontaneousStormOrder = Orders.monsoon
-    local greatLightningOrder = Orders.chainlightning
-    local coldStormOrder = Orders.stampede
-
     InitBossFight({
         name = "Megaseadramon",
         boss = boss,
@@ -18,19 +13,13 @@ OnInit(function ()
         inner = gg_rct_MegaseadramonInner,
         entrance = gg_rct_MegaseadramonEntrance,
         toTeleport = gg_rct_MegaseadramonToReturn,
+        spells = {
+            FourCC('A00W'), 30, Orders.frostnova, CastType.TARGET, -- Ice prison
+            FourCC('A00X'), 30, Orders.monsoon, CastType.POINT, -- Spontaneous storm
+            FourCC('A00Y'), 30, Orders.chainlightning, CastType.TARGET, -- Great lightning
+            FourCC('A00Z'), 10, Orders.stampede, CastType.IMMEDIATE -- Cold storm
+        },
         actions = function (u)
-            if not BossStillCasting(boss) then
-                local rad = math.random(0, 100)
-                if rad <= 30 then
-                    IssueTargetOrderById(boss, icePrisonOrder, u)
-                elseif rad > 30 and rad <= 60 then
-                    IssuePointOrderById(boss, spontaneousStormOrder, GetUnitX(u), GetUnitY(u))
-                elseif rad > 60 and rad <= 90 then
-                    IssueTargetOrderById(boss, greatLightningOrder, u)
-                elseif rad > 90 then
-                    IssueImmediateOrderById(boss, coldStormOrder)
-                end
-            end
         end
     })
 end)

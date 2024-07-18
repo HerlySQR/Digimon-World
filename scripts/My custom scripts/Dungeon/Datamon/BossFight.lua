@@ -39,9 +39,6 @@ OnInit(function ()
     local electricTrapTick = 0
     local electricTrapInstances = 1
 
-    local hommingMissileOrder = Orders.shadowstrike
-    local missileBarrageOrder = Orders.blackarrow
-
     for i = 1, #generators do
         generatorsPos[i] = GetUnitLoc(generators[i])
     end
@@ -167,17 +164,12 @@ OnInit(function ()
         inner = gg_rct_DatamonInner,
         entrance = gg_rct_DatamonEntrance,
         toTeleport = gg_rct_DatamonToReturn,
+        spells = {
+            FourCC('A0E0'), 30, Orders.blackarrow, CastType.POINT, -- Missile Barrage
+            FourCC('A0DZ'), 50, Orders.shadowstrike, CastType.TARGET -- Homming Missile
+        },
         actions = function (u, unitsInTheField)
-            if not BossStillCasting(boss) and u then
-                local chance = math.random(0, 100)
-                if chance <= 30 then
-                    IssuePointOrderById(boss, missileBarrageOrder, GetUnitX(u), GetUnitY(u))
-                elseif chance > 30 and chance <= 80 then
-                    IssueTargetOrderById(boss, hommingMissileOrder, u)
-                elseif not secondPhase then
-                    --BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)
-                end
-            end
+            --BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)
 
             if canTrap then
                 cooldown = cooldown - 1

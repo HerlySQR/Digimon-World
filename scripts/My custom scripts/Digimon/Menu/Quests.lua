@@ -117,9 +117,14 @@ OnInit("Quests", function ()
 
     local function ShowInformation(i)
         if GetTriggerPlayer() == LocalPlayer then
-            BlzFrameSetVisible(QuestInformation, true)
-            PressedQuest = i
-            UpdateMenu()
+            if PressedQuest ~= i then
+                BlzFrameSetVisible(QuestInformation, true)
+                PressedQuest = i
+                UpdateMenu()
+            else
+                PressedQuest = -1
+                BlzFrameSetVisible(QuestInformation, false)
+            end
         end
     end
 

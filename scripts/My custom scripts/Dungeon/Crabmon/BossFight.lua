@@ -4,10 +4,8 @@ OnInit(function ()
 
     local boss = gg_unit_O02B_0083 ---@type unit
 
-    local ScissorMagicChaosOrder = Orders.blackarrow
     local ScissorMagicOrder = Orders.chainlightning
-    local InnerFireOrder = Orders.innerfire
-    local BeserkOrder = Orders.berserk
+    local aquaMagicOrder = Orders.innerfire
 
     InitBossFight({
         name = "Crabmon",
@@ -18,17 +16,14 @@ OnInit(function ()
         inner = gg_rct_CrabmonInner,
         entrance = gg_rct_CrabmonEntrance,
         toTeleport = gg_rct_Beach_of_Dragon,
+        spells = {
+            FourCC('A0C4'), 29, Orders.blackarrow, CastType.POINT, -- Scissor Magic Chaos
+            FourCC('A0A7'), 32, Orders.berserk, CastType.IMMEDIATE -- Berserk
+        },
         actions = function (u)
             if not BossStillCasting(boss) then
-                local rad = math.random(0, 100)
                 if not IssueTargetOrderById(boss, ScissorMagicOrder, u) then
-                    if rad <= 29 then
-                        IssuePointOrderById(boss, ScissorMagicChaosOrder, GetUnitX(u), GetUnitY(u))
-                    elseif 30 <= rad and rad <= 67 then
-                        IssueTargetOrderById(boss, InnerFireOrder, boss)
-                    elseif rad <= 68 then
-                        IssueImmediateOrderById(boss, BeserkOrder)
-                    end
+                    IssueTargetOrderById(boss, aquaMagicOrder, boss)
                 end
             end
         end

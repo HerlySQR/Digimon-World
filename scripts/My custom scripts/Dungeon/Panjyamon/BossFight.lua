@@ -4,11 +4,7 @@ OnInit(function ()
 
     local boss = gg_unit_O037_0096 ---@type unit
 
-    local iceFistOrder = Orders.breathoffrost
     local iceStompOrder = Orders.stomp
-    local punchRushOrder = Orders.berserk
-    local mammothmonRushOrder = Orders.breathoffire
-    local catJumpOrder = Orders.shadowstrike
 
     InitBossFight({
         name = "Panjyamon",
@@ -17,19 +13,16 @@ OnInit(function ()
         forceWall = {gg_dest_Dofv_13463, gg_dest_Dofv_13464},
         inner = gg_rct_PanjyamonInner,
         entrance = gg_rct_PanjyamonEntrance,
+        spells = {
+            FourCC('A0DJ'), 20, Orders.breathoffrost, CastType.POINT, -- Ice fist
+            FourCC('A0DL'), 20, Orders.berserk, CastType.IMMEDIATE, -- Punch rush
+            FourCC('A0DM'), 20, Orders.breathoffire, CastType.POINT, -- Mammothmon rush
+            FourCC('A0DN'), 20, Orders.shadowstrike, CastType.TARGET -- Cat jump
+        },
         actions = function (u)
             if not BossStillCasting(boss) then
-                local spellChance = math.random(0, 100)
-                if spellChance <= 20 then
-                    IssuePointOrderById(boss, iceFistOrder, GetUnitX(u), GetUnitY(u))
-                elseif (spellChance > 20 and spellChance <= 40) and DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), GetUnitX(u), GetUnitY(u)) <= 300. then
+                if math.random(0, 100) <= 20 and DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), GetUnitX(u), GetUnitY(u)) <= 300. then
                     IssueImmediateOrderById(boss, iceStompOrder)
-                elseif spellChance > 40 and spellChance <= 60 then
-                    IssueImmediateOrderById(boss, punchRushOrder)
-                elseif spellChance > 60 and spellChance <= 80 then
-                    IssuePointOrderById(boss, mammothmonRushOrder, GetUnitX(u), GetUnitY(u))
-                else
-                    IssueTargetOrderById(boss, catJumpOrder, u)
                 end
             end
         end,
