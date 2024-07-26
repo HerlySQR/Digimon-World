@@ -47,6 +47,8 @@ OnInit("TalkSystem", function ()
         local name = GetHeroProperName(talk.talker)
 
         if receiver then
+            SetUnitFacing(receiver, math.deg(math.atan(GetUnitY(talk.talker) - GetUnitY(receiver), GetUnitX(talk.talker) - GetUnitX(receiver))))
+            UnitAbortCurrentOrder(receiver)
             PauseUnit(receiver, true)
         end
 

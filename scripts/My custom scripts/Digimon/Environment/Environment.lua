@@ -18,6 +18,7 @@ OnInit("Environment", function ()
     local LocalPlayer = GetLocalPlayer()
     local TopMsg = nil ---@type framehandle
     local camera = gg_cam_SeeTheMap ---@type camerasetup
+    local inMenu = false
     local onSeeMapClicked = EventListener.create()
     local onSeeMapClosed = EventListener.create()
 
@@ -28,6 +29,12 @@ OnInit("Environment", function ()
     for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
         vistedPlaces[Player(i)] = {}
     end
+
+    Timed.echo(0.02, function ()
+        if inMenu then
+            CameraSetupApplyForceDuration(camera, false, 0)
+        end
+    end)
 
     ---@class Environment
     ---@field name string
@@ -271,6 +278,7 @@ OnInit("Environment", function ()
             AddButtonToEscStack(Exit)
             HideMenu(true)
             BlzFrameSetVisible(MapBackdrop, true)
+            inMenu = true
         end
         onSeeMapClicked:run(p)
     end
@@ -283,6 +291,7 @@ OnInit("Environment", function ()
             ShowMenu(true)
             BlzFrameSetVisible(MapBackdrop, false)
             RestartToPreviousCamera()
+            inMenu = false
         end
         RestartSelectedUnits(p)
         onSeeMapClosed:run(p)

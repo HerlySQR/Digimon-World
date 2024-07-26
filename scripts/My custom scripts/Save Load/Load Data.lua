@@ -5,6 +5,7 @@ OnInit(function ()
     end
 
     Require "FrameLoader"
+    Require "Menu"
     Require "SaveHelper"
     Require "Player Data"
     Require "GetSyncedData"
@@ -16,9 +17,7 @@ OnInit(function ()
     local PlayerStatus = {} ---@type framehandle[]
     local PlayerReady = {} ---@type framehandle[]
 
-    BlzHideOriginFrames(true)
-    local DefaultHeight = BlzFrameGetHeight(BlzGetFrameByName("ConsoleUIBackdrop",0))
-    BlzFrameSetSize(BlzGetFrameByName("ConsoleUIBackdrop",0), 0, 0.0001)
+    HideMenu(true)
     EnableUserControl(false)
 
     local function InitFrames()
@@ -138,8 +137,7 @@ OnInit(function ()
 
             PolledWait(1.)
 
-            BlzHideOriginFrames(false)
-            BlzFrameSetSize(BlzGetFrameByName("ConsoleUIBackdrop",0), 0, DefaultHeight)
+            ShowMenu(true)
             BlzFrameSetVisible(WaitPlayers, false)
             EnableUserControl(true)
         end)()

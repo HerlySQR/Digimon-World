@@ -35,12 +35,12 @@ OnInit(function ()
 
         Digimon.expEvent:run(data)
 
-        local tt = CreateTextTagUnitBJ("+" .. data.exp .. " exp", data.receiver.root, ZOFSSET, SIZE, COLOR_R, COLOR_G, COLOR_B, 0.)
+        --[[local tt = CreateTextTagUnitBJ("+" .. data.exp .. " exp", data.receiver.root, ZOFSSET, SIZE, COLOR_R, COLOR_G, COLOR_B, 0.)
         SetTextTagVelocityBJ(tt, 64, 90)
         SetTextTagPermanent(tt, false)
         SetTextTagLifespan(tt, 1.00)
         SetTextTagFadepoint(tt, 0.50)
-        SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, data.receiver:getOwner()))
+        SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, data.receiver:getOwner()))]]
         data.receiver:setExp(data.receiver:getExp() + data.exp)
     end
 

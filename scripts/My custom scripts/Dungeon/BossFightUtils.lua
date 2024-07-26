@@ -298,15 +298,19 @@ OnInit("BossFightUtils", function ()
         local interval = 3.
         battlefield[data.boss] = {}
         local playersOnField = Set.create()
-        local spellsCasted = 0
-        local spells = {} ---@type table<integer, {weight: number, order: integer, ttype: CastType}>
 
-        for i = 1, #data.spells // 4 do
-            spells[data.spells[4*(i-1)+1]] = {
-                weight = data.spells[4*(i-1)+2],
-                order = data.spells[4*(i-1)+3],
-                ttype = data.spells[4*(i-1)+4]
-            }
+        local spellsCasted
+        local spells ---@type table<integer, {weight: number, order: integer, ttype: CastType}>
+        if data.spells then
+            spellsCasted = 0
+            spells = {}
+            for i = 1, #data.spells // 4 do
+                spells[data.spells[4*(i-1)+1]] = {
+                    weight = data.spells[4*(i-1)+2],
+                    order = data.spells[4*(i-1)+3],
+                    ttype = data.spells[4*(i-1)+4]
+                }
+            end
         end
 
         local initialPosX, initialPosY = GetUnitX(data.boss), GetUnitY(data.boss)
@@ -489,36 +493,35 @@ OnInit("BossFightUtils", function ()
                                     end
                                 end)
                             else
-                                if spellsCasted >= 2 and not BossStillCasting(data.boss) and not BlzIsUnitInvulnerable(u) and (not data.castCondition or data.castCondition()) then
-                                    spellsCasted = 0
-                                    local chances = {}
-                                    local options = {}
-                                    for spell, stats in pairs(spells) do
-                                        print(GetUnitAbilityLevel(data.boss, spell), BlzGetUnitAbilityCooldownRemaining(data.boss, spell), BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell) - 1))
-                                        if GetUnitAbilityLevel(data.boss, spell) > 0
-                                            and BlzGetUnitAbilityCooldownRemaining(data.boss, spell) <= 0
-                                            and BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell) - 1) <= GetUnitState(data.boss, UNIT_STATE_MANA) then
+                                if data.spells then
+                                    if spellsCasted >= 2 and not BossStillCasting(data.boss) and not BlzIsUnitInvulnerable(u) and (not data.castCondition or data.castCondition()) then
+                                        spellsCasted = 0
+                                        local chances = {}
+                                        local options = {}
+                                        for spell, stats in pairs(spells) do
+                                            if GetUnitAbilityLevel(data.boss, spell) > 0
+                                                and BlzGetUnitAbilityCooldownRemaining(data.boss, spell) <= 0
+                                                and BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell) - 1) <= GetUnitState(data.boss, UNIT_STATE_MANA) then
 
-                                            table.insert(options, spell)
-                                            chances[#options] = (chances[#options-1] or 0) + stats.weight
-                                            print(#options)
+                                                table.insert(options, spell)
+                                                chances[#options] = (chances[#options-1] or 0) + stats.weight
+                                            end
                                         end
-                                    end
 
-                                    if options[1] then
-                                        local r = chances[#chances] * math.random()
-                                        for i = 1, #options do
-                                            if r < chances[i] then
-                                                local stats = spells[options[i]]
-                                                print(options[i], stats.weight, stats.order, stats.ttype, r, chances[#chances])
-                                                if stats.ttype == CastType.IMMEDIATE then
-                                                    IssueImmediateOrderById(data.boss, stats.order)
-                                                elseif stats.ttype == CastType.POINT then
-                                                    IssuePointOrderById(data.boss, stats.order, GetUnitX(u), GetUnitY(u))
-                                                elseif stats.ttype == CastType.TARGET then
-                                                    IssueTargetOrderById(data.boss, stats.order, u)
+                                        if options[1] then
+                                            local r = chances[#chances] * math.random()
+                                            for i = 1, #options do
+                                                if r < chances[i] then
+                                                    local stats = spells[options[i]]
+                                                    if stats.ttype == CastType.IMMEDIATE then
+                                                        IssueImmediateOrderById(data.boss, stats.order)
+                                                    elseif stats.ttype == CastType.POINT then
+                                                        IssuePointOrderById(data.boss, stats.order, GetUnitX(u), GetUnitY(u))
+                                                    elseif stats.ttype == CastType.TARGET then
+                                                        IssueTargetOrderById(data.boss, stats.order, u)
+                                                    end
+                                                    break
                                                 end
-                                                break
                                             end
                                         end
                                     end
@@ -688,7 +691,7 @@ OnInit("BossFightUtils", function ()
             end)
         end
 
-        do
+        if data.spells then
             local t = CreateTrigger()
             TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_EFFECT)
             TriggerAddAction(t, function ()

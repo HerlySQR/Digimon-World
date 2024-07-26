@@ -370,14 +370,14 @@ OnInit("Quests", function ()
             local remain = DO_QUEST_AGAIN_DELAY
             if counter then
                 if p == LocalPlayer then
-                    SetTextTagTextBJ(counter, "Comeback in: " .. DO_QUEST_AGAIN_DELAY, 10.)
+                    SetTextTagTextBJ(counter, "Comeback in: " .. math.floor(DO_QUEST_AGAIN_DELAY), 10.)
                 end
             end
             Timed.echo(1., DO_QUEST_AGAIN_DELAY, function ()
                 remain = remain - 1
                 if counter then
                     if p == LocalPlayer then
-                        SetTextTagTextBJ(counter, "Comeback in: " .. remain, 10.)
+                        SetTextTagTextBJ(counter, "Comeback in: " .. math.floor(remain), 10.)
                     end
                 end
             end, function ()

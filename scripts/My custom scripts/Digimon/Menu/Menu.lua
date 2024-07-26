@@ -1,16 +1,28 @@
 Debug.beginFile("Menu")
 OnInit("Menu", function ()
     Require "AddHook"
+    Require "Timed"
+    Require "FrameLoader"
 
     local Frames = {} ---@type framehandle[]
     local WasVisible = __jarray(false) ---@type boolean[]
     local LocalPlayer = GetLocalPlayer()
     local Console = BlzGetFrameByName("ConsoleUIBackdrop", 0)
-    local DefaultHeight = BlzFrameGetHeight(Console)
     local MenuStack = {} ---@type framehandle[]
     --local HideSimpleFrame = nil ---@type framehandle
     local prevCamera = {} ---@type{targetX: number, targetY: number, targetZ: number, eyeX: number, eyeY: number, eyeZ: number, targetDistance: number, farZ: number, angleOfAttack: number, fieldOfView: number, roll: number, rotation: number, zOffset: number, nearZ: number, localPitch: number, localYaw: number, localRoll: number}
     local selectedUnits = {} ---@type table<player, group>
+
+    local Clock = nil ---@type framehandle 
+    local Minimap = nil ---@type framehandle 
+    local MinimapBackDrop = nil ---@type framehandle 
+    local HeroBar = nil ---@type framehandle 
+    local HeroHealth = {} ---@type framehandle[] 
+    local HeroMana = {} ---@type framehandle[] 
+    local CommandButtonBackDrop = nil ---@type framehandle 
+    local CommandButton = {} ---@type framehandle[] 
+    local InventoryButtonBackDrop = nil ---@type framehandle 
+    local InventoryButton = {} ---@type framehandle[] 
 
     ---@param showOriginFrames boolean?
     function ShowMenu(showOriginFrames)
@@ -18,8 +30,12 @@ OnInit("Menu", function ()
             BlzFrameSetVisible(frame, WasVisible[i])
         end
         if showOriginFrames then
-            BlzHideOriginFrames(false)
-            BlzFrameSetSize(Console, 0, DefaultHeight)
+            BlzFrameSetVisible(Clock, true)
+            BlzFrameSetVisible(Minimap, true)
+            BlzFrameSetVisible(MinimapBackDrop, true)
+            BlzFrameSetVisible(HeroBar, true)
+            BlzFrameSetVisible(CommandButtonBackDrop, true)
+            BlzFrameSetVisible(InventoryButtonBackDrop, true)
         end
     end
 
@@ -31,13 +47,18 @@ OnInit("Menu", function ()
         end
         if hideOriginFrames then
             ClearSelection()
-            BlzHideOriginFrames(true)
-            BlzFrameSetSize(Console, 0, 0.0001)
+            BlzFrameSetVisible(Clock, false)
+            BlzFrameSetVisible(Minimap, false)
+            BlzFrameSetVisible(MinimapBackDrop, false)
+            BlzFrameSetVisible(HeroBar, false)
+            BlzFrameSetVisible(CommandButtonBackDrop, false)
+            BlzFrameSetVisible(InventoryButtonBackDrop, false)
         end
     end
 
     ---@param frame framehandle
     function AddFrameToMenu(frame)
+        assert(frame, "You are adding a nil frame to the menu")
         table.insert(Frames, frame)
         WasVisible[#Frames] = BlzFrameIsVisible(frame)
     end
@@ -72,7 +93,7 @@ OnInit("Menu", function ()
 
         BlzFrameSetText(text, content)
         BlzFrameSetSize(text, 0.25, 0)
-        BlzFrameSetAbsPoint(text, FRAMEPOINT_BOTTOMRIGHT, 0.790000, 0.18500)
+        BlzFrameSetAbsPoint(text, FRAMEPOINT_TOPLEFT, 0.01000, 0.54500)
         BlzFrameSetPoint(tooltip,FRAMEPOINT_TOPLEFT, text, FRAMEPOINT_TOPLEFT, -0.01, 0.025)
         BlzFrameSetPoint(tooltip, FRAMEPOINT_BOTTOMRIGHT, text, FRAMEPOINT_BOTTOMRIGHT, 0.01, -0.01)
 
@@ -156,6 +177,116 @@ OnInit("Menu", function ()
     local oldIsUnitSelected
     oldIsUnitSelected = AddHook("IsUnitSelected", function (u, p)
         return oldIsUnitSelected(u, p) or IsUnitSelectionSaved(u, p)
+    end)
+
+    FrameLoaderAdd(function ()
+        local frame ---@type framehandle 
+
+        BlzHideOriginFrames(true)
+
+        -- Hide bottom-center black backdrop
+        BlzFrameSetSize(Console, 0.0001, 0.0001)
+        -- Show Quests/Menu/Chat/Allies buttons
+        frame = BlzGetFrameByName("UpperButtonBarFrame", 0)
+        BlzFrameSetVisible(frame, true)
+        AddFrameToMenu(frame)
+        -- Show Gold/Lumber/Food/Upkeep labels
+        frame = BlzGetFrameByName("ResourceBarFrame", 0)
+        BlzFrameSetVisible(frame, true)
+        AddFrameToMenu(frame)
+        -- Hide Upkeep label
+        BlzFrameSetAbsPoint(BlzGetFrameByName("ResourceBarUpkeepText", 0), FRAMEPOINT_TOPRIGHT, 0.4, 0.9)
+        -- Show day clock
+        Clock = BlzFrameGetChild(BlzFrameGetChild(BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 5),0)
+        BlzFrameSetVisible(Clock, true)
+
+        -- Move Hero buttons
+        HeroBar = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BAR, 0)
+        BlzFrameSetVisible(HeroBar, true)
+        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, 0.095000, 0.155000)
+
+        -- Move minimap
+        MinimapBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
+        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_TOPLEFT, -0.080000, 0.170000)
+        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_BOTTOMRIGHT, 0.09000, 0.00000)
+
+        Minimap = BlzGetFrameByName("MiniMapFrame", 0)
+        BlzFrameSetParent(Minimap, MinimapBackDrop)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_TOPRIGHT, 0.075000, 0.155000)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, -0.065000, 0.015000)
+        BlzFrameSetVisible(Minimap, true)
+
+        -- Move Hero Health/Mana bars
+        for i = 0, 2 do
+            HeroHealth[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_HP_BAR, i)
+            BlzFrameClearAllPoints(HeroHealth[i])
+            BlzFrameSetPoint(HeroHealth[i], FRAMEPOINT_TOPLEFT, BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i), FRAMEPOINT_TOPLEFT, 0.050000, -0.010000)
+            BlzFrameSetSize(HeroHealth[i], 0.15, 0.01)
+
+            HeroMana[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_MANA_BAR, i)
+            BlzFrameSetSize(HeroMana[i], 0.15, 0.01)
+        end
+
+        -- Move unit command buttons
+        CommandButtonBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
+        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.30000, 0.180000)
+        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, 0.53000, 0.00000)
+
+        for i = 0, 2 do
+            for j = 0, 3 do
+                CommandButton[i] = BlzGetFrameByName("CommandButton_" .. (i*4+j), 0)
+                BlzFrameSetAbsPoint(CommandButton[i], FRAMEPOINT_TOPLEFT, 0.320000 + 0.05*j, 0.160000 - 0.05*i)
+                BlzFrameSetSize(CommandButton[i], 0.05, 0.05)
+            end
+        end
+
+        -- Move inventory
+        InventoryButtonBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.53500, 0.14500)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, 0.637500, 0.005000)
+
+        frame = BlzFrameGetParent(BlzFrameGetParent(BlzGetFrameByName("InventoryButton_0", 0)))
+        BlzFrameSetVisible(frame, true)
+        BlzFrameSetSize(frame, 0.0001, 0.0001)
+
+        frame = BlzGetFrameByName("InventoryCoverTexture", 0)
+        BlzFrameSetSize(frame, 0.0001, 0.0001)
+
+        for i = 0, 2 do
+            for j = 0, 1 do
+                InventoryButton[i] = BlzGetFrameByName("InventoryButton_" .. (i*2+j), 0)
+                BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, 0.550000 + 0.04*j, 0.130000 - 0.04*i)
+                BlzFrameSetSize(InventoryButton[i], 0.04, 0.04)
+            end
+        end
+
+        -- Hide buff bar and label
+        frame = BlzGetOriginFrame(ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR, 0)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_BOTTOMRIGHT, 0.4, 0.9)
+
+        frame = BlzGetOriginFrame(ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR_LABEL, 0)
+        BlzFrameClearAllPoints(frame)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_CENTER, 0.1, 0.9)
+
+        -- Move multiple unit selection frame
+        Timed.call(function ()
+            local u = CreateUnit(Player(0), FourCC('hpea'), 0, 0, 0)
+            SelectUnitForPlayerSingle(u, Player(0))
+            RemoveUnit(u)
+
+            local unitFrame = BlzGetFrameByName("SimpleInfoPanelUnitDetail", 0) ---@type framehandle 
+            local bottomCenterUI = BlzFrameGetParent(unitFrame) ---@type framehandle 
+            local groupFrame = BlzFrameGetChild(bottomCenterUI, 5) ---@type framehandle 
+            local buttonContainerFrame = BlzFrameGetChild(groupFrame, 0) ---@type framehandle 
+            for i = 0, 11 do
+                BlzFrameSetAbsPoint(BlzFrameGetChild(buttonContainerFrame, i), FRAMEPOINT_TOPLEFT, 0.30 + 0.03*i, 0.22)
+            end
+        end)
+
+        -- Move tooltip frame
+        frame = BlzGetOriginFrame(ORIGIN_FRAME_UBERTOOLTIP, 0)
+        BlzFrameClearAllPoints(frame)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_TOPLEFT, 0.0000, 0.57000)
     end)
 
 end)
