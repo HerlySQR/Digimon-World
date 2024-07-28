@@ -1,5 +1,5 @@
 Debug.beginFile("Stats")
-OnInit(function ()
+OnInit("Stats", function ()
     Require "FrameLoader"
     Require "Menu"
     Require "Timed"
@@ -51,6 +51,7 @@ OnInit(function ()
     local green = Color.new(0x00FF00)
 
     local visible = true
+    local ignore = {} ---@type table<integer, boolean>
 
     local function StatsButtonFunc()
         if GetTriggerPlayer() == GetLocalPlayer() then
@@ -65,7 +66,7 @@ OnInit(function ()
             end
 
             local u = GetMainSelectedUnitEx()
-            if not u then
+            if not u or ignore[GetUnitTypeId(u)] then
                 BlzFrameSetVisible(StatsBackdrop, false)
             else
                 local name = GetObjectName(GetUnitTypeId(u))
@@ -104,9 +105,9 @@ OnInit(function ()
 
                 local base = BlzGetUnitWeaponIntegerField(u, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
                 if base == 0 then
+                    BlzFrameSetTexture(StatsDamageIcon, "war3mapImported\\EmptyBTN.blp", 0, true)
                     BlzFrameSetText(StatsDamage, "")
                 else
-
                     local typ = BlzGetUnitWeaponIntegerField(u, UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE, 0)
                     local root
                     if typ == udg_WaterAsInt then
@@ -184,8 +185,7 @@ OnInit(function ()
 
     FrameLoaderAdd(function ()
         StatsButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        BlzFrameSetAbsPoint(StatsButton, FRAMEPOINT_TOPLEFT, 0.84000, 0.5300)
-        BlzFrameSetAbsPoint(StatsButton, FRAMEPOINT_BOTTOMRIGHT, 0.88000, 0.4900)
+        AddButtonToTheRight(StatsButton, 0)
         BlzFrameSetVisible(StatsButton, true)
         AddFrameToMenu(StatsButton)
 
@@ -323,10 +323,16 @@ OnInit(function ()
         BlzFrameSetTextAlignment(StatsMana, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
     end)
 
+    ---@param p player
     function ShowStats(p)
         if p == GetLocalPlayer() then
             BlzFrameSetVisible(StatsButton, true)
         end
+    end
+
+    ---@param uType integer
+    function IgnoreStats(uType)
+        ignore[uType] = true
     end
 end)
 Debug.endFile()

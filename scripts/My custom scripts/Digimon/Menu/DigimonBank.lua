@@ -1141,8 +1141,7 @@ OnInit("DigimonBank", function ()
         end
 
         SummonADigimon = BlzCreateFrame("IconButtonTemplate", OriginFrame,0,0)
-        BlzFrameSetAbsPoint(SummonADigimon, FRAMEPOINT_TOPLEFT, 0.200000, 0.180000)
-        BlzFrameSetAbsPoint(SummonADigimon, FRAMEPOINT_BOTTOMRIGHT, 0.235000, 0.145000)
+        AddButtonToTheRight(SummonADigimon, 1)
         AddDefaultTooltip(SummonADigimon, "Your digimons", "Look your stored digimons.")
         AssignFrame(SummonADigimon, 20)
 
@@ -1299,8 +1298,7 @@ OnInit("DigimonBank", function ()
         -- Saved
 
         SaveItem = BlzCreateFrame("IconButtonTemplate", SummonADigimon, 0, 0)
-        BlzFrameSetAbsPoint(SaveItem, FRAMEPOINT_TOPLEFT, 0.240000, 0.180000)
-        BlzFrameSetAbsPoint(SaveItem, FRAMEPOINT_BOTTOMRIGHT, 0.275000, 0.145000)
+        AddButtonToTheRight(SaveItem, 2)
         AddDefaultTooltip(SaveItem, "Save item", "Saves the selected item in the bank (you have to go to the bank to see it).")
 
         BackdropSaveItem = BlzCreateFrameByType("BACKDROP", "BackdropSaveItem", SaveItem, "", 0)
@@ -1586,8 +1584,7 @@ OnInit("DigimonBank", function ()
         TriggerAddAction(t, BuySlotNoFunc)
 
         SellItem = BlzCreateFrame("IconButtonTemplate", SummonADigimon, 0, 0)
-        BlzFrameSetAbsPoint(SellItem, FRAMEPOINT_TOPLEFT, 0.280000, 0.180000)
-        BlzFrameSetAbsPoint(SellItem, FRAMEPOINT_BOTTOMRIGHT, 0.315000, 0.145000)
+        AddButtonToTheRight(SellItem, 3)
         AddDefaultTooltip(SellItem, "Sell item", "Sells the selected item of yours.")
 
         BackdropSellItem = BlzCreateFrameByType("BACKDROP", "BackdropSellItem", SellItem, "", 0)

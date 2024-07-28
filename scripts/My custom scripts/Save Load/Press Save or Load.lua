@@ -290,8 +290,7 @@ OnInit("PressSaveOrLoad", function ()
         -- Save Button
 
         SaveButton = BlzCreateFrame("ScriptDialogButton", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
-        BlzFrameSetAbsPoint(SaveButton, FRAMEPOINT_TOPLEFT, 0.800000, 0.535000)
-        BlzFrameSetAbsPoint(SaveButton, FRAMEPOINT_BOTTOMRIGHT, 0.860000, 0.505000)
+        AddButtonToTheRight(SaveButton, 10)
         BlzFrameSetText(SaveButton, "|cff" .. NormalColor .. "Save|r")
         BlzFrameSetScale(SaveButton, 1.00)
         BlzFrameSetVisible(SaveButton, false)
@@ -304,8 +303,7 @@ OnInit("PressSaveOrLoad", function ()
         -- Load Button
 
         LoadButton = BlzCreateFrame("ScriptDialogButton", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
-        BlzFrameSetAbsPoint(LoadButton, FRAMEPOINT_TOPLEFT, 0.800000, 0.505000)
-        BlzFrameSetAbsPoint(LoadButton, FRAMEPOINT_BOTTOMRIGHT, 0.860000, 0.475000)
+        AddButtonToTheRight(LoadButton, 11)
         BlzFrameSetText(LoadButton, "|cff" .. NormalColor .. "Load|r")
         BlzFrameSetScale(LoadButton, 1.00)
         BlzFrameSetVisible(LoadButton, false)

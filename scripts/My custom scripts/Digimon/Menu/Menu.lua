@@ -13,29 +13,44 @@ OnInit("Menu", function ()
     local prevCamera = {} ---@type{targetX: number, targetY: number, targetZ: number, eyeX: number, eyeY: number, eyeZ: number, targetDistance: number, farZ: number, angleOfAttack: number, fieldOfView: number, roll: number, rotation: number, zOffset: number, nearZ: number, localPitch: number, localYaw: number, localRoll: number}
     local selectedUnits = {} ---@type table<player, group>
 
-    local Clock = nil ---@type framehandle 
-    local Minimap = nil ---@type framehandle 
-    local MinimapBackDrop = nil ---@type framehandle 
-    local HeroBar = nil ---@type framehandle 
-    local HeroHealth = {} ---@type framehandle[] 
-    local HeroMana = {} ---@type framehandle[] 
-    local CommandButtonBackDrop = nil ---@type framehandle 
-    local CommandButton = {} ---@type framehandle[] 
-    local InventoryButtonBackDrop = nil ---@type framehandle 
-    local InventoryButton = {} ---@type framehandle[] 
+    local UpperButton = nil ---@type framehandle
+    local ResourceBar = nil ---@type framehandle
+    local Clock = nil ---@type framehandle
+    local Minimap = nil ---@type framehandle
+    local MinimapBackDrop = nil ---@type framehandle
+    local HeroBar = nil ---@type framehandle
+    local HeroHealth = {} ---@type framehandle[]
+    local HeroMana = {} ---@type framehandle[]
+    local CommandButtonBackDrop = nil ---@type framehandle
+    local CommandButton = {} ---@type framehandle[]
+    local InventoryButtonBackDrop = nil ---@type framehandle
+    local InventoryButton = {} ---@type framehandle[]
+
+    local oldFrameSetVisible
+    oldFrameSetVisible = AddHook("BlzFrameSetVisible", function (frame, flag)
+        for i, f in ipairs(Frames) do
+            if frame == f then
+                WasVisible[i] = flag
+                break
+            end
+        end
+        oldFrameSetVisible(frame, flag)
+    end)
 
     ---@param showOriginFrames boolean?
     function ShowMenu(showOriginFrames)
         for i, frame in ipairs(Frames) do
-            BlzFrameSetVisible(frame, WasVisible[i])
+            oldFrameSetVisible(frame, WasVisible[i])
         end
         if showOriginFrames then
-            BlzFrameSetVisible(Clock, true)
-            BlzFrameSetVisible(Minimap, true)
-            BlzFrameSetVisible(MinimapBackDrop, true)
-            BlzFrameSetVisible(HeroBar, true)
-            BlzFrameSetVisible(CommandButtonBackDrop, true)
-            BlzFrameSetVisible(InventoryButtonBackDrop, true)
+            oldFrameSetVisible(UpperButton, true)
+            oldFrameSetVisible(ResourceBar, true)
+            oldFrameSetVisible(Clock, true)
+            oldFrameSetVisible(Minimap, true)
+            oldFrameSetVisible(MinimapBackDrop, true)
+            oldFrameSetVisible(HeroBar, true)
+            oldFrameSetVisible(CommandButtonBackDrop, true)
+            oldFrameSetVisible(InventoryButtonBackDrop, true)
         end
     end
 
@@ -43,16 +58,18 @@ OnInit("Menu", function ()
     function HideMenu(hideOriginFrames)
         for i, frame in ipairs(Frames) do
             WasVisible[i] = BlzFrameIsVisible(frame)
-            BlzFrameSetVisible(frame, false)
+            oldFrameSetVisible(frame, false)
         end
         if hideOriginFrames then
             ClearSelection()
-            BlzFrameSetVisible(Clock, false)
-            BlzFrameSetVisible(Minimap, false)
-            BlzFrameSetVisible(MinimapBackDrop, false)
-            BlzFrameSetVisible(HeroBar, false)
-            BlzFrameSetVisible(CommandButtonBackDrop, false)
-            BlzFrameSetVisible(InventoryButtonBackDrop, false)
+            oldFrameSetVisible(UpperButton, false)
+            oldFrameSetVisible(ResourceBar, false)
+            oldFrameSetVisible(Clock, false)
+            oldFrameSetVisible(Minimap, false)
+            oldFrameSetVisible(MinimapBackDrop, false)
+            oldFrameSetVisible(HeroBar, false)
+            oldFrameSetVisible(CommandButtonBackDrop, false)
+            oldFrameSetVisible(InventoryButtonBackDrop, false)
         end
     end
 
@@ -187,13 +204,11 @@ OnInit("Menu", function ()
         -- Hide bottom-center black backdrop
         BlzFrameSetSize(Console, 0.0001, 0.0001)
         -- Show Quests/Menu/Chat/Allies buttons
-        frame = BlzGetFrameByName("UpperButtonBarFrame", 0)
+        UpperButton = BlzGetFrameByName("UpperButtonBarFrame", 0)
         BlzFrameSetVisible(frame, true)
-        AddFrameToMenu(frame)
         -- Show Gold/Lumber/Food/Upkeep labels
-        frame = BlzGetFrameByName("ResourceBarFrame", 0)
+        ResourceBar = BlzGetFrameByName("ResourceBarFrame", 0)
         BlzFrameSetVisible(frame, true)
-        AddFrameToMenu(frame)
         -- Hide Upkeep label
         BlzFrameSetAbsPoint(BlzGetFrameByName("ResourceBarUpkeepText", 0), FRAMEPOINT_TOPRIGHT, 0.4, 0.9)
         -- Show day clock
@@ -287,7 +302,61 @@ OnInit("Menu", function ()
         frame = BlzGetOriginFrame(ORIGIN_FRAME_UBERTOOLTIP, 0)
         BlzFrameClearAllPoints(frame)
         BlzFrameSetAbsPoint(frame, FRAMEPOINT_TOPLEFT, 0.0000, 0.57000)
+
+        -- Hide Mouse Dead Zone at Command Bar
+        BlzFrameSetVisible(BlzFrameGetChild(BlzGetFrameByName("ConsoleUI", 0), 5), false)
     end)
+
+    ---@param frame framehandle
+    ---@param index integer
+    function AddButtonToTheRight(frame, index)
+        BlzFrameClearAllPoints(frame)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_TOPLEFT, 0.83500, 0.535000 - index * 0.045)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_BOTTOMRIGHT, 0.87500, 0.495000 - index * 0.045)
+    end
+
+    local ignore = {} ---@type table<integer, boolean>
+
+    local oldSelectUnit
+    oldSelectUnit = AddHook("SelectUnit", function (whichUnit, flag)
+        if ignore[GetUnitTypeId(whichUnit)] then
+            for i = 0, 11 do
+                BlzFrameSetAbsPoint(CommandButton[i], FRAMEPOINT_TOPLEFT, 0.40000, 0.90000)
+            end
+        else
+            for i = 0, 2 do
+                for j = 0, 3 do
+                    BlzFrameSetAbsPoint(CommandButton[i], FRAMEPOINT_TOPLEFT, 0.320000 + 0.05*j, 0.160000 - 0.05*i)
+                end
+            end
+        end
+        oldSelectUnit(whichUnit, flag)
+    end)
+
+    --[[local t = CreateTrigger()
+    for i = 0, bj_MAX_PLAYERS do
+        TriggerRegisterPlayerSelectionEventBJ(t, Player(i), true)
+    end
+    TriggerAddAction(t, function ()
+        if GetTriggerPlayer() == GetLocalPlayer() then
+            if ignore[GetUnitTypeId(GetTriggerUnit())] then
+                for i = 0, 11 do
+                    BlzFrameSetAbsPoint(CommandButton[i], FRAMEPOINT_TOPLEFT, 0.40000, 0.90000)
+                end
+            else
+                for i = 0, 2 do
+                    for j = 0, 3 do
+                        BlzFrameSetAbsPoint(CommandButton[i], FRAMEPOINT_TOPLEFT, 0.320000 + 0.05*j, 0.160000 - 0.05*i)
+                    end
+                end
+            end
+        end
+    end)]]
+
+    ---@param uType integer
+    function IgnoreCommandButton(uType)
+        ignore[uType] = true
+    end
 
 end)
 Debug.endFile()

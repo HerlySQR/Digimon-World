@@ -238,9 +238,7 @@ OnInit("Cosmetic", function ()
         end
         digimonTypes[p] = GetAllDigimons(p)
         ClearCosmetics(d)
-        if p == LocalPlayer then
-            UpdateModel()
-        end
+        UpdateModel(p)
     end)
 
     local function CosmeticUnlockCodeFunc()
@@ -288,8 +286,7 @@ OnInit("Cosmetic", function ()
         local t
 
         CosmeticOpen = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        BlzFrameSetAbsPoint(CosmeticOpen, FRAMEPOINT_TOPLEFT, 0.320000, 0.180000)
-        BlzFrameSetAbsPoint(CosmeticOpen, FRAMEPOINT_BOTTOMRIGHT, 0.355000, 0.145000)
+        AddButtonToTheRight(CosmeticOpen, 4)
         BlzFrameSetVisible(CosmeticOpen, false)
         AddFrameToMenu(CosmeticOpen)
         AddDefaultTooltip(CosmeticOpen, "Cosmetics", "Look to the effects you can apply to your digimons.")
