@@ -3,6 +3,7 @@ OnInit("Menu", function ()
     Require "AddHook"
     Require "Timed"
     Require "FrameLoader"
+    Require "EventListener"
 
     local Frames = {} ---@type framehandle[]
     local WasVisible = __jarray(false) ---@type boolean[]
@@ -19,12 +20,51 @@ OnInit("Menu", function ()
     local Minimap = nil ---@type framehandle
     local MinimapBackDrop = nil ---@type framehandle
     local HeroBar = nil ---@type framehandle
+    local HeroButton = {} ---@type framehandle[]
     local HeroHealth = {} ---@type framehandle[]
     local HeroMana = {} ---@type framehandle[]
     local CommandButtonBackDrop = nil ---@type framehandle
     local CommandButton = {} ---@type framehandle[]
-    local InventoryButtonBackDrop = nil ---@type framehandle
-    local InventoryButton = {} ---@type framehandle[]
+
+    local onChangeDimensions = EventListener.create()
+    local windowWidth = 1400
+    local windowHeight = 900
+    local minX, maxX = 0., 0.8
+
+    local function check()
+        local width = BlzGetLocalClientWidth()
+        local height = BlzGetLocalClientHeight()
+        if (width ~= windowWidth and width ~= 0) or (height ~= windowHeight and height ~= 0) then
+            windowWidth = width
+            windowHeight = height
+
+            local extraWidth = ((windowWidth/windowHeight * 0.6) - 0.8) / 2
+            minX, maxX = -extraWidth, 0.8+extraWidth
+
+            onChangeDimensions:run()
+        end
+    end
+
+    check()
+    OnInit.final(check)
+    Timed.echo(0.1, check)
+
+    OnInit.final("LeaderboardUI", function ()
+        CreateLeaderboardBJ(bj_FORCE_ALL_PLAYERS, "")
+        BlzFrameSetSize(BlzGetFrameByName("Leaderboard", 0), 0, 0)
+        BlzFrameSetVisible(BlzGetFrameByName("LeaderboardBackdrop", 0), false)
+        BlzFrameSetVisible(BlzGetFrameByName("LeaderboardTitle", 0), false)
+    end)
+
+    ---@return number
+    function GetMinScreenX()
+        return minX
+    end
+
+    ---@return number
+    function GetMaxScreenX()
+        return maxX
+    end
 
     local oldFrameSetVisible
     oldFrameSetVisible = AddHook("BlzFrameSetVisible", function (frame, flag)
@@ -50,7 +90,6 @@ OnInit("Menu", function ()
             oldFrameSetVisible(MinimapBackDrop, true)
             oldFrameSetVisible(HeroBar, true)
             oldFrameSetVisible(CommandButtonBackDrop, true)
-            oldFrameSetVisible(InventoryButtonBackDrop, true)
         end
     end
 
@@ -69,7 +108,6 @@ OnInit("Menu", function ()
             oldFrameSetVisible(MinimapBackDrop, false)
             oldFrameSetVisible(HeroBar, false)
             oldFrameSetVisible(CommandButtonBackDrop, false)
-            oldFrameSetVisible(InventoryButtonBackDrop, false)
         end
     end
 
@@ -108,6 +146,7 @@ OnInit("Menu", function ()
 
         BlzFrameSetText(BlzGetFrameByName("BoxedTextTitle", 0), title)
 
+        BlzFrameSetTextSizeLimit(text, content:len())
         BlzFrameSetText(text, content)
         BlzFrameSetSize(text, 0.25, 0)
         BlzFrameSetAbsPoint(text, FRAMEPOINT_TOPLEFT, 0.01000, 0.54500)
@@ -218,28 +257,30 @@ OnInit("Menu", function ()
         -- Move Hero buttons
         HeroBar = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BAR, 0)
         BlzFrameSetVisible(HeroBar, true)
-        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, 0.095000, 0.155000)
+        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.155000)
 
         -- Move minimap
         MinimapBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
-        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_TOPLEFT, -0.080000, 0.170000)
-        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_BOTTOMRIGHT, 0.09000, 0.00000)
+        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.01, 0.170000)
+        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.18, 0.00000)
 
         Minimap = BlzGetFrameByName("MiniMapFrame", 0)
         BlzFrameSetParent(Minimap, MinimapBackDrop)
-        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_TOPRIGHT, 0.075000, 0.155000)
-        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, -0.065000, 0.015000)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_TOPRIGHT, minX + 0.165, 0.155000)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, minX + 0.025, 0.015000)
         BlzFrameSetVisible(Minimap, true)
 
         -- Move Hero Health/Mana bars
         for i = 0, 2 do
+            HeroButton[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i)
+
             HeroHealth[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_HP_BAR, i)
             BlzFrameClearAllPoints(HeroHealth[i])
-            BlzFrameSetPoint(HeroHealth[i], FRAMEPOINT_TOPLEFT, BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i), FRAMEPOINT_TOPLEFT, 0.050000, -0.010000)
-            BlzFrameSetSize(HeroHealth[i], 0.15, 0.01)
+            BlzFrameSetPoint(HeroHealth[i], FRAMEPOINT_TOPLEFT, HeroButton[i], FRAMEPOINT_TOPLEFT, 0.050000, -0.010000)
+            BlzFrameSetSize(HeroHealth[i], 0.07 - minX, 0.01)
 
             HeroMana[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_MANA_BAR, i)
-            BlzFrameSetSize(HeroMana[i], 0.15, 0.01)
+            BlzFrameSetSize(HeroMana[i], 0.07 - minX, 0.01)
         end
 
         -- Move unit command buttons
@@ -255,25 +296,13 @@ OnInit("Menu", function ()
             end
         end
 
-        -- Move inventory
-        InventoryButtonBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.53500, 0.14500)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, 0.637500, 0.005000)
-
+        -- Hide inventory
         frame = BlzFrameGetParent(BlzFrameGetParent(BlzGetFrameByName("InventoryButton_0", 0)))
         BlzFrameSetVisible(frame, true)
         BlzFrameSetSize(frame, 0.0001, 0.0001)
 
         frame = BlzGetFrameByName("InventoryCoverTexture", 0)
         BlzFrameSetSize(frame, 0.0001, 0.0001)
-
-        for i = 0, 2 do
-            for j = 0, 1 do
-                InventoryButton[i] = BlzGetFrameByName("InventoryButton_" .. (i*2+j), 0)
-                BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, 0.550000 + 0.04*j, 0.130000 - 0.04*i)
-                BlzFrameSetSize(InventoryButton[i], 0.04, 0.04)
-            end
-        end
 
         -- Hide buff bar and label
         frame = BlzGetOriginFrame(ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR, 0)
@@ -307,13 +336,47 @@ OnInit("Menu", function ()
         BlzFrameSetVisible(BlzFrameGetChild(BlzGetFrameByName("ConsoleUI", 0), 5), false)
     end)
 
+    local rightButtons = {} ---@type framehandle[]
+    local maxIndex = 0
+
     ---@param frame framehandle
     ---@param index integer
     function AddButtonToTheRight(frame, index)
         BlzFrameClearAllPoints(frame)
-        BlzFrameSetAbsPoint(frame, FRAMEPOINT_TOPLEFT, 0.83500, 0.535000 - index * 0.045)
-        BlzFrameSetAbsPoint(frame, FRAMEPOINT_BOTTOMRIGHT, 0.87500, 0.495000 - index * 0.045)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_TOPLEFT, maxX - 0.05, 0.535000 - index * 0.045)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_BOTTOMRIGHT, maxX - 0.005, 0.495000 - index * 0.045)
+        rightButtons[index] = frame
+        if index > maxIndex then
+            maxIndex = index
+        end
     end
+
+    onChangeDimensions:register(function ()
+        for i = 0, maxIndex do
+            if rightButtons[i] then
+                BlzFrameClearAllPoints(rightButtons[i])
+                BlzFrameSetAbsPoint(rightButtons[i], FRAMEPOINT_TOPLEFT, maxX - 0.05, 0.535000 - i * 0.045)
+                BlzFrameSetAbsPoint(rightButtons[i], FRAMEPOINT_BOTTOMRIGHT, maxX - 0.005, 0.495000 - i * 0.045)
+            end
+        end
+
+        BlzFrameClearAllPoints(MinimapBackDrop)
+        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.01, 0.170000)
+        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.18, 0.00000)
+
+        BlzFrameClearAllPoints(Minimap)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_TOPRIGHT, minX + 0.165, 0.155000)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, minX + 0.025, 0.015000)
+
+        BlzFrameClearAllPoints(HeroBar)
+        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.155000)
+
+        for i = 0, 2 do
+            BlzFrameSetSize(HeroHealth[i], 0.07 - minX, 0.01)
+
+            BlzFrameSetSize(HeroMana[i], 0.07 - minX, 0.01)
+        end
+    end)
 
     local ignore = {} ---@type table<integer, boolean>
 
@@ -357,6 +420,12 @@ OnInit("Menu", function ()
     function IgnoreCommandButton(uType)
         ignore[uType] = true
     end
+
+    ---@param func function
+    function OnChangeDimensions(func)
+        onChangeDimensions:register(func)
+    end
+
 
 end)
 Debug.endFile()

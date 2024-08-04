@@ -445,8 +445,8 @@ OnInit("Backpack", function ()
         BlzFrameSetVisible(BackpackSprite, false)
 
         BackpackMenu = BlzCreateFrame("CheckListBox", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, 0.630000, 0.150000)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, 0.835000, 0.0100000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.26, 0.150000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.0100000)
         BlzFrameSetVisible(BackpackMenu, false)
         AddFrameToMenu(BackpackMenu)
 
@@ -552,6 +552,12 @@ OnInit("Backpack", function ()
         end
 
     end
+
+    OnChangeDimensions(function ()
+        BlzFrameClearAllPoints(BackpackMenu)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.26, 0.150000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.0100000)
+    end)
 
     local gotItem = __jarray(false) ---@type table<player, boolean>
 

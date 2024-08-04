@@ -1,0 +1,1394 @@
+if Debug then Debug.beginFile("UIUtils") end
+OnInit("UIUtils", function ()
+    Require "Timed"
+    Require "EventListener"
+    --[[
+    /*********************************************************************************
+    *
+    *            UI Utils Lua v1.0
+    *
+    *    Create and manage user interface in highly convenient and intuitive way!
+    *
+    *    Based on Kazeon's UI Utils v1.05: https://www.hiveworkshop.com/threads/320005/
+    *
+    *    Features:
+    *        • Includes several primitive frame types (texture, text, slider, etc.)
+    *        • Compatible with custom frame definition
+    *        • Uses pixel as measurement unit
+    *        • Friendly UI native wrappers
+    *        • Custom hierarchy system with in-depth inheritance control
+    *        • Automatically prevents non-simple frame from going out of the 4:3 bounds
+    *        • Enhanced frame pivot & anchor point feature for all-resolution support
+    *        • Automatic create context handling
+    *        • Extra security measures (prevents UI native related crashes out of the box)
+    *        • Customizable full-screen mode
+    *        • Essential default/original frames container
+    *        • Includes all available built-in fdf files
+    *
+    *    I.  System requirements:
+    *        • Timed            : https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
+    *        • EventListener    : https://www.hiveworkshop.com/threads/event-listener.323354/
+    *        • Warcraft III version 1.31+
+    *
+    *    II. Installation:
+    *        • Import Timed and EventListener
+    *        • Copy UIUtils trigger to your map
+    *        • Go to Import Manager and import following files to your map:
+    *            - UIUtils.toc
+    *            - UIUtils.fdf
+    *        • Configure the system below
+    *        • For true fullscreen you might need to manually remove the inventory cover texture
+    *
+    *    III. Credits:
+    *        • Tasyen   | UI tutorials & researches
+    *
+    *    IV. API - (Complete manual: https://www.hiveworkshop.com/threads/320046/)
+    *
+    *           struct UIFrame
+               
+                1. Ctor & dtor
+                    - Let "isSimple" be "true" if it is a simple frame type
+                        | function UIFrame.create(isSimple: boolean, frameType: string, parent: UIFrame, x: real, y: real, level: integer): UIFrame
+                       
+                    - Dispose the frame
+                        | method UIFrame:destroy()
+                   
+                2. Methods
+                    - Set & get frame's textures
+                        • Might not be compatible with custom frame definition
+                        • Some only work for specific type of primitive frames
+                        • Some might not work properly just yet (blizzard limitation)
+                        > Default main texture
+                            | method UIFrame:setTexture(filePath: string)
+                            | method UIFrame:getTexture(): string
+                        > Texture displayed when frame is disabled
+                            | method UIFrame:setDisabledTexture(filePath: string)
+                            | method UIFrame:disabledTexture(): string
+                        > Highlighter texture
+                            | method UIFrame:highlightTexture(filePath: string)
+                            | method UIFrame:highlightTexture(): string
+                        > Texture displayed when frame is pressed
+                            | method UIFrame:pushedTexture(filePath: string)
+                            | method UIFrame:pushedTexture(): string
+                        > Background texture for the frame
+                            | method UIFrame:backgroundTexture(filePath: string)
+                            | method UIFrame:backgroundTexture(): string
+                        > Border texture for the frame
+                            | method UIFrame:borderTexture(filePath: string)
+                            | method UIFrame:borderTexture(): string
+                   
+                    - Set & get frame's parent
+                        | method UIFrame:setParent(frame: UIFrame)
+                        | method UIFrame:gtParent(): UIFrame
+                       
+                    - Get frame's screen space position
+                        • Values might be affected by frame's parent anchor point
+                            | method UIFrame:getScreenPos(): number
+                            | method UIFrame:getScreenPos(): number
+                   
+                    - Get frame's bounds
+                            | method UIFrame:left(): number
+                            | method UIFrame:right(): number
+                            | method UIFrame:top(): number
+                            | method UIFrame:botto(): number
+                           
+                    - Get frame's true (scaled) size in pixel
+                        | method UIFrame:width(): number
+                        | method UIFrame:heigh(): number
+                       
+                    - Set & get frame's scale factor
+                        > Frame's independent scale factor
+                            | method UIFrame:setLocalScale(r: number)
+                            | method UIFrame:getLocalScale(): number
+                        > Frame's true scale
+                            | method UIFrame:getScale(): number
+                       
+                    - Set & get frame's visibility state
+                        | method UIFrame:setVisible(state: boolean)
+                        | method UIFrame:getVisible(): boolean
+                       
+                    - Set & get frame's transparency (0-255)
+                        | method UIFrame:setOpacity(amount integer)
+                        | method UIFrame:getOpacity(): integer
+                       
+                    - Set & get enable state of the frame
+                        | method UIFrame:setEnabled(stat: boolean)
+                        | method UIFrame:getEnabled(): boolean
+                       
+                    - Set & get frame's self sorting/layering order
+                        | method UIFrame:setLevel(level: integer)
+                        | method UIFrame:getLevel(): integer
+                        > Get frame's actual sorting/layering order
+                            | method UIFrame:getTrueLevel(): integer
+                           
+                    - Set & get frame's text content
+                        | method UIFrame:setText(st: string)
+                        | method UIFrame:getText(): string
+                       
+                    - Set & get frame's text content length limit
+                        | method UIFrame:setMaxLength(length: integer)
+                        | method UIFrame:getMaxLength(): integer
+                       
+                    - Set frame's text color
+                        > Use "BlzConvertColor" function to convert ARGB color
+                            | method UIFrame:setTextColor(color: integer)
+                       
+                    - Set & get frame's model file
+                        | method UIFrame:setModel(filePath: string)
+                        | method UIFrame:getModel(): string
+                       
+                    - Set vertex color of the model frame
+                        > Use "BlzConvertColor" function to convert ARGB color
+                            | method UIFrame:setVertexColor(color: integer)
+                       
+                    - Set & get value of slider frame
+                        | method UIFrame:setValue(r: number)
+                        | method UIFrame:getValue(): number
+                       
+                    - Step size is increment of slider bar relative to its min max value
+                        | method UIFrame:setStepSize(r: number)
+                        | method UIFrame:getStepSize(): number
+                       
+                    - Set & get tooltips frame
+                        | method UIFrame:setTooltips(frame: UIFrame)
+                        | method UIFrame:setTooltips(): UIFrame
+                       
+                    - Get sub-frame handle based on passed name
+                        • Usage: tempFrame:subFrame().get("tempFrameText") => returns subframe handle of "tempFrame" by name of "tempFrameText"
+                            | method UIFrame:subFrame(name: string): framehandle
+                       
+                    - Register any event happen to the frame (click, mouse enter/leave, etc.)
+                        • Use "UIFrame.TriggerComponent" to get the triggering frame
+                        • Use "BlzGetTriggerFrameEvent()" function to get the event type
+                            | method UIFrame:onAnyEvent(func): triggercondition
+                   
+                    - Iterates through all child frames of the frame
+                        | method UIFrame:forEachChild(func: fun(child: UIFrame))
+                       
+                    - Set frame's text properties
+                        | method UIFrame:setTextAlignment(vertical: textaligntype, horizontal: textaligntype)
+                        | method UIFrame:setFont(fontType: string, fontSize: number, flags: integer)
+                   
+                    - Set slider min max values
+                        | method UIFrame:setMinMaxValue(min: number, max: number)
+                   
+                    - Animate frame texture
+                        | method UIFrame:setSpriteAnimate(integer primaryProp, integer flags)
+                       
+                    - Give focus to the frame
+                        | method UIFrame:setFocus(state: boolean)
+                   
+                    - Cage mouse inside the frame's boundaries
+                        | method UIFrame:cageMouse(state: boolean)
+                   
+                    - Emulate click on the frame
+                        | method UIFrame:click()
+                       
+                    - Force update the frame
+                        | method UIFrame:refresh()
+                       
+                    - Modify frame's position
+                        > Set frame's local position
+                            | method UIFrame:move(x: number, y: number)
+                        > Set frame's screen position (ignores parent position)
+                            | method UIFrame:moveEx(x: number, y: number)
+                        > Set frame position relative to other specified frame
+                            | method UIFrame:relate(relative: UIFrame, x: number, y: number)
+                           
+                    - Set dimension of the frame
+                        | method UIFrame:setSize(width: number, height: number)
+                       
+                    - Set frame's anchor & pivot point
+                        | method UIFrame:setPivotPoint(x: number, y: number)
+                        | method UIFrame:setAnchorPoint(x: number, y: number)
+                   
+                3. Members
+                    - Main frame handle
+                        | readonly framehandle frame
+
+                    - Set & get frame's name
+                        | string name
+
+                    - Set & get property inheritance
+                        • Frame refresh is recommended after modifying inheritance
+                            | boolean inheritScale
+                            | boolean inheritOpacity
+                            | boolean inheritVisibility
+                            | boolean inheritEnableState
+                            | boolean inheritPosition
+                            | boolean inheritLevel
+                            | boolean scalePosition
+
+                    - Frame's type name
+                        | readonly string frameType
+                       
+                    - Frame's local space position
+                        | readonly number localPosX
+                        | readonly number localPosY
+                       
+                    - Frame's anchor & pivot points
+                        | readonly number anchorX
+                        | readonly number anchorY
+                        | readonly number pivotX
+                        | readonly number pivotY
+                       
+                    - Frame's unscaled size
+                        | readonly number unscaledWidth
+                        | readonly number unscaledHeight
+                       
+                    - Get frame text font properties
+                        | readonly integer fontFlags
+                        | readonly number  fontSize
+                        | readonly string  fontType
+                       
+                    - Slider frame's min max value
+                        | readonly number valueMin
+                        | readonly number valueMax
+                       
+                    - Create context index of the frame
+                        | readonly integer context
+                       
+                    - Local states of the frame
+                        | readonly boolean visibleSelf
+                        | readonly boolean enabledSelf
+                       
+                    - Is the frame a simple frame type or not
+                        | readonly boolean isSimple
+                       
+                    - Local transparency of the frame
+                        | readonly integer localOpacity
+                       
+                4. Static Members
+                    - Triggerer of the "onAnyEvent"
+                        | readonly static UIFrame TriggerComponent
+
+                    - Primitive frame names
+                        | readonly static string TYPE_TEXT
+                        | readonly static string TYPE_SIMPLE_TEXT
+                        | readonly static string TYPE_TEXTURE
+                        | readonly static string TYPE_SIMPLE_TEXTURE
+                        | readonly static string TYPE_BUTTON
+                        | readonly static string TYPE_SIMPLE_BUTTON
+                        | readonly static string TYPE_BAR
+                        | readonly static string TYPE_H_SLIDER
+                        | readonly static string TYPE_V_SLIDER
+
+
+                struct UIUtils
+   
+                1. Static Methods
+                    - Calculate aspect ratio height
+                        | function UIUtils.CalcAspectRatio(w: number, h: number, aspectWidth: number): integer
+                       
+                    - Convert pixel unit to DPI and vice versa
+                        • Usage: [value]*UIUtils.PXTODPI()
+                                 [value]*UIUtils.DPITOPX()
+                            | function UIUtils.PXTODPI(): number
+                            | function UIUtils.DPITOPX(): number
+                           
+                    - Width of the 4:3 bound
+                        | function UIUtils.FrameBoundWidth(): number
+       
+                    - Convert from pixel to screen x/y coordinate (in DPI unit)
+                        | function UIUtils.GetScreenPosX(x: number): number
+                        | function UIUtils.GetScreenPosY(y: number): number
+                       
+                    - Force update default frames
+                        | function UIUtils.RefreshDefaultFrames()
+                       
+                    - Force update resolution
+                        | function UIUtils.RefreshResolution()
+                       
+                    - Resolution change event
+                        | function UIUtils.RegisterOnResolutionChangeEvent(func: function): boolean
+                        | function UIUtils.RemoveOnResolutionChangeEvent(func: function): boolean
+                       
+                2. Static Members
+                    - Updated after resolution change event
+                        • Values might be async between clients
+                            | readonly static integer ResolutionWidth
+                            | readonly static integer ResolutionHeight
+                            | readonly static integer AspectWidth
+                            | readonly static integer AspectHeight
+
+
+                struct DefaultFrame (singleton)
+                    - Origin frames
+                        | readonly static framehandle         Game
+                        | readonly static framehandle         World
+                        | readonly static framehandle         HeroBar
+                        | readonly static framehandle array   HeroButton        [0 - 6]
+                        | readonly static framehandle array   HeroHPBar         [0 - 6]
+                        | readonly static framehandle array   HeroMPBar         [0 - 6]
+                        | readonly static framehandle array   HeroIndicator     [0 - 6]
+                        | readonly static framehandle array   ItemButton        [0 - 5]
+                        | readonly static framehandle array   CommandButton     [0 - 11]
+                        | readonly static framehandle array   SystemButton      [0 - 3]
+                        | readonly static framehandle         Portrait
+                        | readonly static framehandle         Minimap
+                        | readonly static framehandle array   MinimapButton     [0 - 4]
+                        | readonly static framehandle         Tooltip
+                        | readonly static framehandle         UberTooltip
+                        | readonly static framehandle         ChatMsg
+                        | readonly static framehandle         UnitMsg
+                        | readonly static framehandle         TopMsg
+             
+                    - Other frames
+                        | readonly static framehandle         Console
+                        | readonly static framehandle         GoldText
+                        | readonly static framehandle         LumberText
+                        | readonly static framehandle         FoodText
+                        | readonly static framehandle         UnitNameText
+                        | readonly static framehandle         ResourceBar
+                        | readonly static framehandle         UpperButtonBar
+    ]]
+
+    --[[ V. Configurations ]]
+
+    -- 1. TOC file path
+    local TOC_FILE = "war3mapimported\\UIUtils.toc"
+
+    -- 2. Temporary cache name
+    local CACHE_NAME = "UIUtils.w3v"
+
+    -- 3. Resolution change detection interval
+    local RESOLUTION_CHECK_INTERVAL = 0.1
+
+    -- 4. true : hides console frames on map init (full screen)
+    local HIDE_CONSOLE_FRAME = false
+
+    -- 5. true : frame's properties will be retained when it changes parent
+    local PERSISTENT_CHILD_PROPERTIES = true
+
+    -- 6. true : helps to prevent non-simple frame from going beyond the 4:3 bounds
+    local REFRAIN_NON_SIMPLE_FRAME = true
+
+    -- 7. Reference resolution, as which is used to design the interface
+    local RESOLUTION_WIDTH  = 1360
+    local RESOLUTION_HEIGHT = 768
+
+    -- 8. Configure in-game message frame
+    local MESSAGE_FRAME_VISIBLE  = false
+    local MESSAGE_FRAME_ANCHOR_X = 0.0
+    local MESSAGE_FRAME_ANCHOR_Y = 1.0
+    local MESSAGE_FRAME_PIVOT_X  = 0.0
+    local MESSAGE_FRAME_PIVOT_Y  = 1.0
+    local MESSAGE_FRAME_POS_X    = 100.0
+    local MESSAGE_FRAME_POS_Y    = -150.0
+
+    -- 9. Configure in-game chat frame
+    local CHAT_FRAME_VISIBLE  = false
+    local CHAT_FRAME_ANCHOR_X = 0.0
+    local CHAT_FRAME_ANCHOR_Y = 0.0
+    local CHAT_FRAME_PIVOT_X  = 0.0
+    local CHAT_FRAME_PIVOT_Y  = 0.0
+    local CHAT_FRAME_POS_X    = 10.0
+    local CHAT_FRAME_POS_Y    = 100.0
+
+    -- 10. Configure tooltips frame
+    local TOOLTIPS_FRAME_VISIBLE  = false
+    local TOOLTIPS_FRAME_ANCHOR_X = 1.0
+    local TOOLTIPS_FRAME_ANCHOR_Y = 0.0
+    local TOOLTIPS_FRAME_PIVOT_X  = 1.0
+    local TOOLTIPS_FRAME_PIVOT_Y  = 0.0
+    local TOOLTIPS_FRAME_POS_X    = -50.0
+    local TOOLTIPS_FRAME_POS_Y    = 0.0
+
+    -- 11. Configure minimap frame
+    local MINIMAP_FRAME_VISIBLE  = false
+    local MINIMAP_FRAME_ANCHOR_X = 1.0
+    local MINIMAP_FRAME_ANCHOR_Y = 1.0
+    local MINIMAP_FRAME_PIVOT_X  = 1.0
+    local MINIMAP_FRAME_PIVOT_Y  = 1.0
+    local MINIMAP_FRAME_POS_X    = 0.0
+    local MINIMAP_FRAME_POS_Y    = 0.0
+
+    -- 12. Configure unit portrait frame
+    local PORTRAIT_FRAME_VISIBLE  = false
+    local PORTRAIT_FRAME_ANCHOR_X = 0.0
+    local PORTRAIT_FRAME_ANCHOR_Y = 0.0
+    local PORTRAIT_FRAME_PIVOT_X  = 0.0
+    local PORTRAIT_FRAME_PIVOT_Y  = 0.0
+    local PORTRAIT_FRAME_POS_X    = 0.0
+    local PORTRAIT_FRAME_POS_Y    = 0.0
+
+    -- 13. Configure other frame visibility
+    local RESOURCE_FRAME_VISIBLE   = false
+    local CMD_BUTTON_FRAME_VISIBLE = false
+
+    --[[
+    *    END OF DOCUMENT ----- Modify following codes on your own risk
+    *
+    ********************************************************************************]]
+
+    DefaultFrame = {
+        Game        = BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),
+        World       = BlzGetOriginFrame(ORIGIN_FRAME_WORLD_FRAME, 0),
+        HeroBar     = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BAR, 0),
+        Portrait    = BlzGetOriginFrame(ORIGIN_FRAME_PORTRAIT, 0),
+        Minimap     = BlzGetOriginFrame(ORIGIN_FRAME_MINIMAP, 0),
+        Tooltip     = BlzGetOriginFrame(ORIGIN_FRAME_TOOLTIP, 0),
+        UberTooltip = BlzGetOriginFrame(ORIGIN_FRAME_UBERTOOLTIP, 0),
+        ChatMsg     = BlzGetOriginFrame(ORIGIN_FRAME_CHAT_MSG, 0),
+        UnitMsg     = BlzGetOriginFrame(ORIGIN_FRAME_UNIT_MSG, 0),
+        TopMsg      = BlzGetOriginFrame(ORIGIN_FRAME_TOP_MSG, 0),
+
+        HeroButton  = {},   ---@type framehandle[]
+        HeroHPBar = {},     ---@type framehandle[]
+        HeroMPBar = {},     ---@type framehandle[]
+        HeroIndicator = {}, ---@type framehandle[]
+        ItemButton = {},    ---@type framehandle[]
+        CommandButton = {}, ---@type framehandle[]
+        SystemButton = {},  ---@type framehandle[]
+        MinimapButton = {}, ---@type framehandle[]
+
+        Console    = BlzGetFrameByName("ConsoleUI", 0),
+        GoldText   = BlzGetFrameByName("ResourceBarGoldText", 0),
+        LumberText = BlzGetFrameByName("ResourceBarLumberText", 0),
+        FoodText   = BlzGetFrameByName("ResourceBarSupplyText", 0),
+        ResourceBar = BlzGetFrameByName("ResourceBarFrame", 0),
+        UnitNameText = BlzGetFrameByName("SimpleNameValue", 0),
+        UpperButtonBar = BlzGetFrameByName("UpperButtonBarFrame", 0)
+    }
+
+    for i = 0, 11 do
+        DefaultFrame.HeroButton[i]    = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i)
+        DefaultFrame.HeroHPBar[i]     = BlzGetOriginFrame(ORIGIN_FRAME_HERO_HP_BAR, i)
+        DefaultFrame.HeroMPBar[i]     = BlzGetOriginFrame(ORIGIN_FRAME_HERO_MANA_BAR, i)
+        DefaultFrame.HeroIndicator[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON_INDICATOR, i)
+        DefaultFrame.ItemButton[i]    = BlzGetOriginFrame(ORIGIN_FRAME_ITEM_BUTTON, i)
+        DefaultFrame.CommandButton[i] = BlzGetOriginFrame(ORIGIN_FRAME_COMMAND_BUTTON, i)
+        DefaultFrame.SystemButton[i]  = BlzGetOriginFrame(ORIGIN_FRAME_SYSTEM_BUTTON, i)
+        DefaultFrame.MinimapButton[i] = BlzGetOriginFrame(ORIGIN_FRAME_MINIMAP_BUTTON, i)
+    end
+
+    local AllComponents = {} ---@type UIFrame[]
+    local OnResolutionChangeEvent = EventListener.create()
+
+    UIUtils = {
+        ResolutionWidth  = RESOLUTION_WIDTH,
+        ResolutionHeight = RESOLUTION_HEIGHT,
+
+        ScaleFactor = 1
+    }
+
+    ---@param w number
+    ---@param h number
+    ---@param aspectWidth number
+    ---@return integer
+    function UIUtils.CalcAspectRatio(w, h, aspectWidth)
+        return R2I(aspectWidth*h/w+0.5)
+    end
+
+    ---@return number
+    function UIUtils.PXTODPI()
+        return 0.6/UIUtils.ResolutionHeight
+    end
+
+    ---@return number
+    function UIUtils.DPITOPX()
+        return UIUtils.ResolutionHeight/0.6
+    end
+
+    ---@return number
+    function UIUtils.FrameBoundWidth()
+        return UIUtils.ResolutionWidth
+    end
+
+    ---@param x number
+    ---@return number
+    function UIUtils.GetScreenPosX(x)
+        return (-UIUtils.FrameBoundWidth()+x)*UIUtils.PXTODPI()
+    end
+
+    ---@param y number
+    ---@return number
+    function UIUtils.GetScreenPosY(y)
+        return y*UIUtils.PXTODPI()
+    end
+
+    function UIUtils.RefreshDefaultFrames()
+        if MESSAGE_FRAME_VISIBLE then
+            BlzFrameClearAllPoints(DefaultFrame.UnitMsg)
+            BlzFrameSetAbsPoint(DefaultFrame.UnitMsg, FRAMEPOINT_BOTTOMLEFT,
+            UIUtils.GetScreenPosX(MESSAGE_FRAME_POS_X+UIUtils.ResolutionWidth*MESSAGE_FRAME_ANCHOR_X-BlzFrameGetWidth(DefaultFrame.UnitMsg)*UIUtils.DPITOPX()*MESSAGE_FRAME_PIVOT_X),
+            UIUtils.GetScreenPosY(MESSAGE_FRAME_POS_Y+UIUtils.ResolutionHeight*MESSAGE_FRAME_ANCHOR_Y-BlzFrameGetHeight(DefaultFrame.UnitMsg)*UIUtils.DPITOPX()*MESSAGE_FRAME_PIVOT_Y))
+        end
+
+        if CHAT_FRAME_VISIBLE then
+            BlzFrameSetAbsPoint(DefaultFrame.ChatMsg, FRAMEPOINT_BOTTOMLEFT,
+            UIUtils.GetScreenPosX(CHAT_FRAME_POS_X+UIUtils.ResolutionWidth*CHAT_FRAME_ANCHOR_X-BlzFrameGetWidth(DefaultFrame.ChatMsg)*UIUtils.DPITOPX()*CHAT_FRAME_PIVOT_X),
+            UIUtils.GetScreenPosY(CHAT_FRAME_POS_Y+UIUtils.ResolutionHeight*CHAT_FRAME_ANCHOR_Y-BlzFrameGetHeight(DefaultFrame.ChatMsg)*UIUtils.DPITOPX()*CHAT_FRAME_PIVOT_Y))
+        end
+
+        if TOOLTIPS_FRAME_VISIBLE then
+            BlzFrameClearAllPoints(DefaultFrame.UberTooltip)
+            BlzFrameSetAbsPoint(DefaultFrame.UberTooltip, FRAMEPOINT_BOTTOMLEFT,
+            UIUtils.GetScreenPosX(TOOLTIPS_FRAME_POS_X+UIUtils.ResolutionWidth*TOOLTIPS_FRAME_ANCHOR_X-BlzFrameGetWidth(DefaultFrame.UberTooltip)*UIUtils.DPITOPX()*TOOLTIPS_FRAME_PIVOT_X),
+            UIUtils.GetScreenPosY(TOOLTIPS_FRAME_POS_Y+UIUtils.ResolutionHeight*TOOLTIPS_FRAME_ANCHOR_Y-BlzFrameGetHeight(DefaultFrame.UberTooltip)*UIUtils.DPITOPX()*TOOLTIPS_FRAME_PIVOT_Y))
+        end
+
+        if MINIMAP_FRAME_VISIBLE then
+            BlzFrameClearAllPoints(DefaultFrame.Minimap)
+            BlzFrameSetAbsPoint(DefaultFrame.Minimap, FRAMEPOINT_BOTTOMLEFT,
+            UIUtils.GetScreenPosX(MINIMAP_FRAME_POS_X+UIUtils.ResolutionWidth*MINIMAP_FRAME_ANCHOR_X-BlzFrameGetWidth(DefaultFrame.Minimap)*UIUtils.DPITOPX()*MINIMAP_FRAME_PIVOT_X),
+            UIUtils.GetScreenPosY(MINIMAP_FRAME_POS_Y+UIUtils.ResolutionHeight*MINIMAP_FRAME_ANCHOR_Y-BlzFrameGetHeight(DefaultFrame.Minimap)*UIUtils.DPITOPX()*MINIMAP_FRAME_PIVOT_Y))
+        end
+
+        if PORTRAIT_FRAME_VISIBLE then
+            BlzFrameClearAllPoints(DefaultFrame.Portrait)
+            BlzFrameSetAbsPoint(DefaultFrame.Portrait, FRAMEPOINT_BOTTOMLEFT,
+            UIUtils.GetScreenPosX(PORTRAIT_FRAME_POS_X+UIUtils.ResolutionWidth*PORTRAIT_FRAME_ANCHOR_X-BlzFrameGetWidth(DefaultFrame.Portrait)*UIUtils.DPITOPX()*PORTRAIT_FRAME_PIVOT_X),
+            UIUtils.GetScreenPosY(PORTRAIT_FRAME_POS_Y+UIUtils.ResolutionHeight*PORTRAIT_FRAME_ANCHOR_Y-BlzFrameGetHeight(DefaultFrame.Portrait)*UIUtils.DPITOPX()*PORTRAIT_FRAME_PIVOT_Y))
+        end
+    end
+
+    function UIUtils.RefreshResolution()
+        UIUtils.ResolutionWidth  = BlzGetLocalClientWidth()
+        UIUtils.ResolutionHeight = BlzGetLocalClientHeight()
+        UIUtils.ScaleFactor  = UIUtils.ResolutionHeight/RESOLUTION_HEIGHT
+        for _, node in ipairs(AllComponents) do
+            if not node:getParent() then
+                node:refresh()
+            end
+        end
+    end
+
+    ---@param func function
+    ---@return boolean
+    function UIUtils.RegisterOnResolutionChangeEvent(func)
+        return OnResolutionChangeEvent:register(func)
+    end
+
+    ---@param func function
+    ---@return boolean
+    function UIUtils.RemoveOnResolutionChangeEvent(func)
+        return OnResolutionChangeEvent:unregister(func)
+    end
+
+    UIUtils.RefreshResolution()
+    if HIDE_CONSOLE_FRAME then
+        BlzEnableUIAutoPosition(false)
+        BlzFrameClearAllPoints(DefaultFrame.World)
+        BlzFrameClearAllPoints(DefaultFrame.Console)
+        BlzFrameSetAllPoints(DefaultFrame.World, DefaultFrame.Game)
+        BlzFrameSetAbsPoint(DefaultFrame.Console, FRAMEPOINT_TOPRIGHT, -999.0, -999.0)
+        UIUtils.RefreshDefaultFrames()
+        if not RESOURCE_FRAME_VISIBLE then
+            BlzFrameClearAllPoints(DefaultFrame.GoldText)
+            BlzFrameSetAbsPoint(DefaultFrame.GoldText, FRAMEPOINT_BOTTOMLEFT, -999.0, -999.0)
+            BlzFrameClearAllPoints(DefaultFrame.LumberText)
+            BlzFrameSetAbsPoint(DefaultFrame.LumberText, FRAMEPOINT_BOTTOMLEFT, -999.0, -999.0)
+            BlzFrameClearAllPoints(DefaultFrame.FoodText)
+            BlzFrameSetAbsPoint(DefaultFrame.FoodText, FRAMEPOINT_BOTTOMLEFT, -999.0, -999.0)
+            BlzFrameClearAllPoints(DefaultFrame.ResourceBar)
+            BlzFrameSetAbsPoint(DefaultFrame.ResourceBar, FRAMEPOINT_BOTTOMLEFT, -999.0, -999.0)
+        end
+        if not CMD_BUTTON_FRAME_VISIBLE then
+            local i = 0
+            while DefaultFrame.CommandButton[i] do
+                BlzFrameClearAllPoints(DefaultFrame.CommandButton[i])
+                BlzFrameSetAbsPoint(DefaultFrame.CommandButton[i], FRAMEPOINT_BOTTOMLEFT, -999.0, -999.0)
+                i = i + 1
+            end
+        end
+    end
+    Timed.echo(RESOLUTION_CHECK_INTERVAL, function ()
+        if BlzGetLocalClientWidth() ~= UIUtils.ResolutionWidth or BlzGetLocalClientHeight() ~= UIUtils.ResolutionHeight then
+            UIUtils.RefreshResolution()
+            UIUtils.RefreshDefaultFrames()
+            OnResolutionChangeEvent:run()
+        end
+    end)
+
+    UISubFrame = {
+        frame = nil ---@type UIFrame
+    }
+
+    ---@param s string
+    ---@return framehandle
+    function UISubFrame.get(s)
+        return BlzGetFrameByName(s, UISubFrame.frame.context)
+    end
+
+    ---@class UIFrame
+    ---@field private index integer
+    ---@field name string
+    ---@field inheritScale boolean
+    ---@field inheritOpacity boolean
+    ---@field inheritVisibility boolean
+    ---@field inheritEnableState boolean
+    ---@field inheritPosition boolean
+    ---@field inheritLevel boolean
+    ---@field scalePosition boolean
+    ---@field frameType string
+    ---@field localPosX number
+    ---@field localPosY number
+    ---@field anchorX number
+    ---@field anchorY number
+    ---@field pivotX number
+    ---@field pivotY number
+    ---@field unscaledWidth number
+    ---@field unscaledHeight number
+    ---@field valueMin number
+    ---@field valueMax number
+    ---@field fontSize number
+    ---@field fontType string
+    ---@field fontFlags integer
+    ---@field context integer
+    ---@field isSimple boolean
+    ---@field visibleSelf boolean
+    ---@field enabledSelf boolean
+    ---@field localOpacity integer
+    ---@field private m_level integer
+    ---@field private m_opacity integer
+    ---@field private m_localScale number
+    ---@field private m_stepSize number
+    ---@field private m_width number
+    ---@field private m_height number
+    ---@field private m_scale number
+    ---@field private m_left number
+    ---@field private m_bottom number
+    ---@field private m_screenPosX number
+    ---@field private m_screenPosY number
+    ---@field private m_scaledLeft number
+    ---@field private m_scaledBottom number
+    ---@field private m_scaledScreenPosX number
+    ---@field private m_scaledScreenPosY number
+    ---@field private m_parent UIFrame?
+    ---@field private m_childs UIFrame[]
+    ---@field private m_tooltips UIFrame?
+    ---@field private mainTextureFile string
+    ---@field private disabledTextureFile string
+    ---@field private pushedTextureFile string
+    ---@field private highlightTextureFile string
+    ---@field private backgroundTextureFile string
+    ---@field private borderTextureFile string
+    ---@field private modelFile string
+    ---@field private anyEventTrigg trigger
+    ---@field frame framehandle
+    ---@field private textFrameH framehandle
+    ---@field private modelFrameH framehandle
+    ---@field private mainTextureH framehandle
+    ---@field private disabledTextureH framehandle
+    ---@field private pushedTextureH framehandle
+    ---@field private highlightTextureH framehandle
+    ---@field private backgroundTextureH framehandle
+    ---@field private borderTextureH framehandle
+    UIFrame = {
+        EnumChild = nil, ---@type UIFrame
+        TriggerComponent = nil, ---@type UIFrame
+
+        TYPE_TEXT            = "UIUtilsText",
+        TYPE_SIMPLE_TEXT     = "UIUtilsSimpleText",
+        TYPE_TEXTURE         = "UIUtilsTexture",
+        TYPE_SIMPLE_TEXTURE  = "UIUtilsSimpleTexture",
+        TYPE_BUTTON          = "UIUtilsButton",
+        TYPE_SIMPLE_BUTTON   = "UIUtilsSimpleButton",
+        TYPE_BAR             = "UIUtilsBar",
+        TYPE_H_SLIDER        = "UIUtilsSliderH",
+        TYPE_V_SLIDER        = "UIUtilsSliderV",
+
+        ExecTrigg = CreateTrigger(),
+        GC = InitGameCache(CACHE_NAME),
+        HT = InitHashtable(),
+
+        index = 0,
+        name = "",
+        inheritScale = false,
+        inheritOpacity = false,
+        inheritVisibility = false,
+        inheritEnableState = false,
+        inheritPosition = false,
+        inheritLevel = false,
+        scalePosition = false,
+        frameType = "",
+        localPosX = 0.,
+        localPosY = 0.,
+        anchorX = 0.,
+        anchorY = 0.,
+        pivotX = 0.,
+        pivotY = 0.,
+        unscaledWidth = 0.,
+        unscaledHeight = 0.,
+        valueMin = 0.,
+        valueMax = 0.,
+        fontSize = 0.,
+        fontType = "",
+        fontFlags = 0,
+        context = 0,
+        isSimple = false,
+        visibleSelf = false,
+        enabledSelf = false,
+        localOpacity = 0,
+        m_level = 0,
+        m_opacity = 0,
+        m_localScale = 0.,
+        m_stepSize = 0.,
+        m_width = 0.,
+        m_height = 0.,
+        m_scale = 0.,
+        m_left = 0.,
+        m_bottom = 0.,
+        m_screenPosX = 0.,
+        m_screenPosY = 0.,
+        m_scaledLeft = 0.,
+        m_scaledBottom = 0.,
+        m_scaledScreenPosX = 0.,
+        m_scaledScreenPosY = 0.,
+        mainTextureFile = "",
+        disabledTextureFile = "",
+        pushedTextureFile = "",
+        highlightTextureFile = "",
+        backgroundTextureFile = "",
+        borderTextureFile = "",
+        modelFile = ""
+    }
+    UIFrame.__index = UIFrame
+    UIFrame.__name = "UIFrame"
+
+    BlzLoadTOCFile(TOC_FILE)
+
+    ---@param frameType string
+    ---@param isSimple boolean
+    ---@return boolean
+    function UIFrame.IsSimple(frameType, isSimple)
+        return frameType == UIFrame.TYPE_SIMPLE_TEXT or frameType == UIFrame.TYPE_SIMPLE_TEXTURE or frameType == UIFrame.TYPE_BAR or isSimple and not (frameType == UIFrame.TYPE_TEXT or frameType == UIFrame.TYPE_TEXTURE or frameType == UIFrame.TYPE_BUTTON or frameType == UIFrame.TYPE_H_SLIDER or frameType == UIFrame.TYPE_V_SLIDER)
+    end
+
+    ---@return boolean
+    function UIFrame.GetTriggerComponent()
+        UIFrame.TriggerComponent = AllComponents[LoadInteger(UIFrame.HT, GetHandleId(BlzGetTriggerFrame()), 0)]
+        return false
+    end
+
+    ---@overload fun(name: string): framehandle
+    ---@return {get: fun(s: string): framehandle}
+    function UIFrame:getSubFrame(name)
+        if name then
+            local h = BlzGetFrameByName(name, self.context)
+            if not h then
+                return self.frame
+            else
+                return h
+            end
+        else
+            UISubFrame.frame = self
+            return UISubFrame
+        end
+    end
+
+    ---@param func function
+    ---@return triggercondition
+    function UIFrame:onAnyEvent(func)
+        if not self.anyEventTrigg then
+            self.anyEventTrigg = CreateTrigger()
+            for i = 1, 16 do
+                BlzTriggerRegisterFrameEvent(self.anyEventTrigg, self.frame, ConvertFrameEventType(i))
+            end
+            TriggerAddCondition(self.anyEventTrigg, Condition(UIFrame.GetTriggerComponent))
+        end
+
+        return TriggerAddCondition(self.anyEventTrigg, Condition(func))
+    end
+
+    ---@param frm UIFrame?
+    function UIFrame:setParent(frm)
+        if frm then
+            table.insert(frm.m_childs, self)
+        end
+        if not PERSISTENT_CHILD_PROPERTIES then
+            if self.m_parent then
+                self.m_localScale = self.m_localScale*self.m_parent.m_localScale
+            end
+            if frm then
+                self.localPosX = self:getScreenPosX() - frm:getScreenPosX()
+                self.localPosY = self:getScreenPosY() - frm:getScreenPosY()
+            end
+        end
+        self.m_parent = frm
+    end
+
+    ---@return UIFrame
+    function UIFrame:getParent()
+        return self.m_parent
+    end
+
+    ---@param str string
+    function UIFrame:setText(str)
+        BlzFrameSetText(self.textFrameH, str)
+    end
+
+    ---@return string
+    function UIFrame:getText()
+        return BlzFrameGetText(self.textFrameH)
+    end
+
+    ---@param length integer
+    function UIFrame:setMaxLength(length)
+        BlzFrameSetTextSizeLimit(self.textFrameH, length)
+    end
+
+    ---@return integer
+    function UIFrame:getMaxLength()
+        return BlzFrameGetTextSizeLimit(self.textFrameH)
+    end
+
+    ---@param color integer
+    function UIFrame:setTextColor(color)
+        BlzFrameSetTextColor(self.textFrameH, color)
+    end
+
+    ---@param filePath string
+    function UIFrame:setTexture(filePath)
+        self.mainTextureFile = filePath
+        BlzFrameSetTexture(self.mainTextureH, filePath, 0, true)
+        if self.disabledTextureFile:len() == 0 then
+            self:setDisabledTexture(filePath)
+        end
+        if self.pushedTextureFile:len() == 0 then
+            self:setPushedTexture(filePath)
+        end
+    end
+
+    ---@return string
+    function UIFrame:getTexture()
+        return self.mainTextureFile
+    end
+
+    ---@param filePath string
+    function UIFrame:setDisabledTexture(filePath)
+        self.disabledTextureFile = filePath
+        BlzFrameSetTexture(self.disabledTextureH, filePath, 0, true)
+    end
+
+    ---@return string
+    function UIFrame:getDisabledTexture()
+        return self.disabledTextureFile
+    end
+
+    ---@param filePath string
+    function UIFrame:setHighlightTexture(filePath)
+        self.highlightTextureFile = filePath
+        BlzFrameSetTexture(self.highlightTextureH, filePath, 0, true)
+    end
+
+    ---@return string
+    function UIFrame:getHighlightTexture()
+        return self.highlightTextureFile
+    end
+
+    ---@param filePath string
+    function UIFrame:setPushedTexture(filePath)
+        self.pushedTextureFile = filePath
+        BlzFrameSetTexture(self.pushedTextureH, filePath, 0, true)
+    end
+
+    ---@return string
+    function UIFrame:getPushedTexture()
+        return self.pushedTextureFile
+    end
+
+    ---@param filePath string
+    function UIFrame:setBackgroundTexture(filePath)
+        self.backgroundTextureFile = filePath
+        BlzFrameSetTexture(self.backgroundTextureH, filePath, 0, true)
+    end
+
+    ---@return string
+    function UIFrame:getBackgroundTexture()
+        return self.backgroundTextureFile
+    end
+
+    ---@param filePath string
+    function UIFrame:setBorderTexture(filePath)
+        self.borderTextureFile = filePath
+        BlzFrameSetTexture(self.borderTextureH, filePath, 0, true)
+    end
+
+    ---@return string
+    function UIFrame:getBorderTexture()
+        return self.borderTextureFile
+    end
+
+    ---@param filePath string
+    function UIFrame:setModel(filePath)
+        self.modelFile = filePath
+        BlzFrameSetModel(self.modelFrameH, filePath, 0)
+    end
+
+    ---@return string
+    function UIFrame:model()
+        return self.modelFile
+    end
+
+    ---@return number
+    function UIFrame:getWidth()
+        return self.m_width
+    end
+
+    ---@return number
+    function UIFrame:getHeight()
+        return self.m_height
+    end
+
+    ---@param r number
+    function UIFrame:setLocalScale(r)
+        self.m_localScale = math.max(r, 0.0001)
+        if not self.m_parent or not self.inheritScale then
+            self.m_scale = self.m_localScale
+        else
+            self.m_scale = self.m_localScale*self.m_parent.m_scale
+        end
+        self.m_width = self.unscaledWidth*self.m_scale
+        self.m_height = self.unscaledHeight*self.m_scale
+        self:setSize(self.unscaledWidth, self.unscaledHeight)
+        self:setFont(self.fontType, self.fontSize, self.fontFlags)
+        self:move(self.localPosX, self.localPosY)
+        for _, node in ipairs(self.m_childs) do
+            node:setLocalScale(node.m_localScale)
+        end
+    end
+
+    ---@return number
+    function UIFrame:getLocalScale()
+        return self.m_localScale
+    end
+
+    ---@return number
+    function UIFrame:getScale()
+        return self.m_scale
+    end
+
+    ---@param amount integer
+    function UIFrame:setOpacity(amount)
+        self.localOpacity = amount
+        if not self.m_parent or not self.inheritOpacity then
+            self.m_opacity = self.localOpacity
+        else
+            self.m_opacity = R2I(self.localOpacity*self.m_parent.m_opacity/255.)
+        end
+        BlzFrameSetAlpha(self.frame, self.m_opacity)
+        for _, node in ipairs(self.m_childs) do
+            node:setOpacity(node.localOpacity)
+        end
+    end
+
+    ---@return integer
+    function UIFrame:getOpacity()
+        return self.m_opacity
+    end
+
+    ---@param level integer
+    function UIFrame:setLevel(level)
+        self.m_level = level
+        BlzFrameSetLevel(self.frame, self:getTrueLevel())
+        for _, node in ipairs(self.m_childs) do
+            node:setLevel(node.m_level)
+        end
+    end
+
+    ---@return integer
+    function UIFrame:getLevel()
+        return self.m_level
+    end
+
+    ---@return integer
+    function UIFrame:getTrueLevel()
+        if not self.m_parent or not self.inheritLevel then
+            return self.m_level
+        else
+            return self.m_level+self.m_parent.m_level
+        end
+    end
+
+    ---@param state boolean
+    function UIFrame:setVisible(state)
+        self.visibleSelf = state
+        BlzFrameSetVisible(self.frame, self:getVisible())
+        for _, node in ipairs(self.m_childs) do
+            node:setVisible(node.visibleSelf)
+        end
+    end
+
+    ---@return boolean
+    function UIFrame:getVisible()
+        if not self.m_parent or not self.inheritVisibility then
+            return self.visibleSelf
+        else
+            return self.visibleSelf and self.m_parent:getVisible()
+        end
+    end
+
+    ---@param state boolean
+    function UIFrame:setEnabled(state)
+        self.enabledSelf = state
+        BlzFrameSetEnable(self.frame, self:getEnabled())
+        for _, node in ipairs(self.m_childs) do
+            node:setEnabled(node.enabledSelf)
+        end
+    end
+
+    ---@return boolean
+    function UIFrame:getEnabled()
+        if not self.m_parent or not self.inheritEnableState then
+            return self.enabledSelf
+        else
+            return self.enabledSelf and self.m_parent:getEnabled()
+        end
+    end
+
+    ---@param color integer
+    function UIFrame:setVertexColor(color)
+        BlzFrameSetVertexColor(self.modelFrameH, color)
+    end
+
+    ---@param r number
+    function UIFrame:setValue(r)
+        BlzFrameSetValue(self.frame, r)
+    end
+
+    ---@return number
+    function UIFrame:getValue()
+        return BlzFrameGetValue(self.frame)
+    end
+
+    ---@param r number
+    function UIFrame:setStepSize(r)
+        self.m_stepSize = math.max(r, 0.0001)
+        BlzFrameSetStepSize(self.frame, self.m_stepSize)
+    end
+
+    ---@return number
+    function UIFrame:getStepSize()
+        return self.m_stepSize
+    end
+
+    ---@param frame UIFrame
+    function UIFrame:setTooltips(frame)
+        self.m_tooltips = frame
+        BlzFrameSetTooltip(self.frame, frame.frame)
+    end
+
+    ---@return UIFrame
+    function UIFrame:getTooltips()
+        return self.m_tooltips
+    end
+
+    ---@return number
+    function UIFrame:getLeft()
+        return self.m_left
+    end
+
+    ---@return number
+    function UIFrame:getRight()
+        return self.m_left+self.m_width
+    end
+
+    ---@return number
+    function UIFrame:getBottom()
+        return self.m_bottom
+    end
+
+    ---@return number
+    function UIFrame:getTop()
+        return self.m_bottom+self.m_height
+    end
+
+    ---@return number
+    function UIFrame:getScreenPosX()
+        return self.m_screenPosX
+    end
+
+    ---@return number
+    function UIFrame:getScreenPosY()
+        return self.m_screenPosY
+    end
+
+    ---@param x number
+    ---@return number
+    function UIFrame:_normalizePosX(x)
+        return math.min(math.max(x, UIUtils.FrameBoundWidth()+self.m_width*self.pivotX), UIUtils.ResolutionWidth-UIUtils.FrameBoundWidth()-self.m_width*(1.-self.pivotX))
+    end
+
+    ---@param x number
+    ---@return number
+    function UIFrame:_normalizeScaledPosX(x)
+        return math.min(math.max(x, UIUtils.FrameBoundWidth()+self.m_width*self.pivotX*UIUtils.ScaleFactor), UIUtils.ResolutionWidth-UIUtils.FrameBoundWidth()-self.m_width*(1.-self.pivotX)*UIUtils.ScaleFactor)
+    end
+
+    ---@param x number
+    ---@param y number
+    function UIFrame:setAnchorPoint(x, y)
+        self.anchorX = x
+        self.anchorY = y
+        self:move(self.localPosX, self.localPosY)
+    end
+
+    ---@param x number
+    ---@param y number
+    function UIFrame:setPivotPoint(x, y)
+        self.pivotX = x
+        self.pivotY = y
+        self:move(self.localPosX, self.localPosY)
+    end
+
+    ---@param width number
+    ---@param height number
+    function UIFrame:setSize(width, height)
+        self.unscaledWidth  = RMaxBJ(width,  0)
+        self.unscaledHeight = RMaxBJ(height, 0)
+        self.m_width = self.unscaledWidth*self.m_scale
+        self.m_height = self.unscaledHeight*self.m_scale
+        BlzFrameSetSize(self.frame, self.m_width*UIUtils.ScaleFactor*UIUtils.PXTODPI(), self.m_height*UIUtils.ScaleFactor*UIUtils.PXTODPI())
+        self:move(self.localPosX, self.localPosY)
+    end
+
+    function UIFrame:_calcRect()
+        local pivotOffsetX = self.m_width*self.pivotX
+        local pivotOffsetY = self.m_height*self.pivotY
+
+        self.m_left = self.m_screenPosX-pivotOffsetX
+        self.m_bottom = self.m_screenPosY-pivotOffsetY
+        self.m_scaledLeft = self.m_scaledScreenPosX-pivotOffsetX*UIUtils.ScaleFactor
+        self.m_scaledBottom = self.m_scaledScreenPosY-pivotOffsetY*UIUtils.ScaleFactor
+    end
+
+    ---@param x number
+    ---@param y number
+    function UIFrame:move(x, y)
+        self.localPosX = x
+        self.localPosY = y
+        if not self.m_parent or not self.inheritPosition then
+            local anchorOffsetX = UIUtils.ResolutionWidth*self.anchorX
+            local anchorOffsetY = UIUtils.ResolutionHeight*self.anchorY
+            if not self.isSimple then
+                self.m_screenPosX = self:_normalizePosX(self.localPosX+anchorOffsetX)
+                self.m_scaledScreenPosX = self:_normalizeScaledPosX(self.localPosX*UIUtils.ScaleFactor+anchorOffsetX)
+            else
+                self.m_screenPosX = self.localPosX+anchorOffsetX
+                self.m_scaledScreenPosX = self.localPosX*UIUtils.ScaleFactor+anchorOffsetX
+            end
+            self.m_screenPosY = self.localPosY+anchorOffsetY
+            self.m_scaledScreenPosY = self.localPosY*UIUtils.ScaleFactor+anchorOffsetY
+        else
+            local scale
+            if self.scalePosition then
+                scale = self.m_parent.m_scale
+            else
+                scale = 1
+            end
+            local anchorOffsetX = self.m_parent.m_width*self.anchorX
+            local anchorOffsetY = self.m_parent.m_height*self.anchorY
+            self.m_screenPosX = self.m_parent.m_left+anchorOffsetX+self.localPosX*scale
+            self.m_screenPosY = self.m_parent.m_bottom+anchorOffsetY+self.localPosY*scale
+            self.m_scaledScreenPosX = self.m_parent.m_scaledLeft+(anchorOffsetX+self.localPosX*scale)*UIUtils.ScaleFactor
+            self.m_scaledScreenPosY = self.m_parent.m_scaledBottom+(anchorOffsetY+self.localPosY*scale)*UIUtils.ScaleFactor
+        end
+        self:_calcRect()
+        if self.isSimple then
+            x = self.m_scaledScreenPosX-self.m_width*self.pivotX*UIUtils.ScaleFactor
+        else
+            x = self:_normalizeScaledPosX(self.m_scaledScreenPosX-self.m_width*self.pivotX*UIUtils.ScaleFactor)
+        end
+        BlzFrameSetAbsPoint(self.frame, FRAMEPOINT_BOTTOMLEFT, UIUtils.GetScreenPosX(x), UIUtils.GetScreenPosY(self.m_scaledScreenPosY-self.m_height*self.pivotY*UIUtils.ScaleFactor))
+        for _, node in ipairs(self.m_childs) do
+            node:move(node.localPosX, node.localPosY)
+        end
+    end
+
+    ---@param x number
+    ---@param y number
+    function UIFrame:moveEx(x, y)
+        if not self.m_parent or not self.inheritPosition then
+            self:move(x, y)
+        else
+            self:move((x-self.m_parent.m_screenPosX)/self.m_parent.m_localScale, (y-self.m_parent.m_screenPosY)/self.m_parent.m_localScale)
+        end
+    end
+
+    ---@param relative UIFrame
+    ---@param x number
+    ---@param y number
+    function UIFrame:relate(relative, x, y)
+        if not self.m_parent then
+            self:move(relative.m_screenPosX+x, relative.m_screenPosY+y)
+        else
+            self:moveEx(relative.m_screenPosX+x, relative.m_screenPosY+y)
+        end
+    end
+
+    function UIFrame:click()
+        BlzFrameClick(self.frame)
+    end
+
+    ---@param state boolean
+    function UIFrame:cageMouse(state)
+        BlzFrameCageMouse(self.frame, state)
+    end
+
+    ---@param state boolean
+    function UIFrame:setFocus(state)
+        BlzFrameSetFocus(self.frame, state)
+    end
+
+    ---@param primaryProp integer
+    ---@param flags integer
+    function UIFrame:setSpriteAnimate(primaryProp, flags)
+        BlzFrameSetSpriteAnimate(self.frame, primaryProp, flags)
+    end
+
+    ---@param min number
+    ---@param max number
+    function UIFrame:setMinMaxValue(min, max)
+        self.valueMin = min
+        self.valueMax = max
+        BlzFrameSetMinMaxValue(self.frame, min, max)
+    end
+
+    ---@param fontType string
+    ---@param fontSize number
+    ---@param flags integer
+    function UIFrame:setFont(fontType, fontSize, flags)
+        self.fontSize = fontSize
+        self.fontType = fontType
+        self.fontFlags = flags
+        if self.frameType == UIFrame.TYPE_SIMPLE_TEXT then
+            BlzFrameSetFont(self.textFrameH, self.fontType, self.fontSize*self.m_scale, self.fontFlags)
+        end
+    end
+
+    ---@param vertical textaligntype
+    ---@param horizontal textaligntype
+    function UIFrame:setTextAlignment(vertical, horizontal)
+        BlzFrameSetTextAlignment(self.textFrameH, vertical, horizontal)
+    end
+
+    function UIFrame:refresh()
+        self:setEnabled(self.enabledSelf)
+        self:setOpacity(self.localOpacity)
+        self:setLevel (self.m_level)
+        self:setLocalScale(self.m_localScale)
+        for _, node in ipairs(self.m_childs) do
+            node:refresh()
+        end
+    end
+
+    ---@param func fun(child: UIFrame)
+    function UIFrame:forEachChild(func)
+        for _, node in ipairs(self.m_childs) do
+            func(node)
+        end
+    end
+
+    function UIFrame:destroy()
+        for _, node in ipairs(self.m_childs) do
+            node:destroy()
+        end
+        BlzDestroyFrame(self.frame)
+        DestroyTrigger(self.anyEventTrigg)
+        StoreInteger(UIFrame.GC, self.name, tostring(self.context), GetStoredInteger(UIFrame.GC, self.name, "0"))
+        StoreInteger(UIFrame.GC, self.name, "0", self.context)
+        table.remove(AllComponents, self.index)
+        for i = self.index + 1, #AllComponents do
+            AllComponents[i].index = AllComponents[i].index - 1
+        end
+
+        self.anyEventTrigg      = nil
+        self.mainTextureH       = nil
+        self.disabledTextureH   = nil
+        self.highlightTextureH  = nil
+        self.pushedTextureH     = nil
+        self.backgroundTextureH = nil
+        self.borderTextureH     = nil
+        self.textFrameH         = nil
+        self.modelFrameH        = nil
+        self.frame              = nil
+        self.name               = nil
+        self.frameType          = nil
+        self.m_parent           = nil
+        self.m_childs           = nil
+    end
+
+    ---@param isSimple boolean
+    ---@param frameType string
+    ---@param parent UIFrame|nil
+    ---@param x number
+    ---@param y number
+    ---@param level integer
+    ---@return UIFrame
+    function UIFrame.create(isSimple, frameType, parent, x, y, level)
+        local self = setmetatable({}, UIFrame)
+
+        self.context = GetStoredInteger(UIFrame.GC, frameType, "0")
+        local tempInt  = GetStoredInteger(UIFrame.GC, frameType, tostring(self.context))
+        if tempInt == 0 then
+            StoreInteger(UIFrame.GC, frameType, "0", self.context+1)
+        else
+            StoreInteger(UIFrame.GC, frameType, "0", tempInt)
+        end
+
+        self:setParent            (parent)
+        self.m_childs           = {}
+        self.isSimple           = UIFrame.IsSimple(frameType, isSimple)
+        if self.isSimple then
+            self.frame          = BlzCreateSimpleFrame(frameType, DefaultFrame.Game, self.context)
+        else
+            self.frame          = BlzCreateFrame(frameType, DefaultFrame.Game, 0, self.context)
+        end
+        self.mainTextureH       = self:getSubFrame(frameType .. "Texture")
+        self.disabledTextureH   = self:getSubFrame(frameType .. "Disabled")
+        self.highlightTextureH  = self:getSubFrame(frameType .. "Highlight")
+        self.pushedTextureH     = self:getSubFrame(frameType .. "Pushed")
+        self.backgroundTextureH = self:getSubFrame(frameType .. "Background")
+        self.borderTextureH     = self:getSubFrame(frameType .. "Border")
+        self.textFrameH         = self:getSubFrame(frameType .. "Text")
+        self.modelFrameH        = self:getSubFrame(frameType .. "Model")
+
+        self.inheritScale       = true
+        self.inheritOpacity     = true
+        self.inheritVisibility  = true
+        self.inheritEnableState = true
+        self.inheritPosition    = true
+        self.inheritLevel       = true
+        self.scalePosition      = true
+
+        self.unscaledWidth      = BlzFrameGetWidth(self.frame)*(RESOLUTION_HEIGHT/0.6)
+        self.unscaledHeight     = BlzFrameGetHeight(self.frame)*(RESOLUTION_HEIGHT/0.6)
+        self.frameType          = frameType
+        self.name               = frameType .. self.context
+        self:setLevel            (level)
+        self.visibleSelf        = true
+        self.enabledSelf        = true
+        self.fontType           = "Fonts\\FRIZQT__.TTF"
+        self.fontSize           = 0.013
+        self.fontFlags          = 0
+        self:setValue            (0.0)
+        self.m_localScale         = 1.0
+        self.anchorX            = 0.0
+        self.anchorY            = 0.0
+        self.pivotX             = 0.0
+        self.pivotY             = 0.0
+        self:setOpacity          (255)
+
+        self.mainTextureFile       = ""
+        self.disabledTextureFile   = ""
+        self.pushedTextureFile     = ""
+        self.highlightTextureFile  = ""
+        self.backgroundTextureFile = ""
+        self.borderTextureFile     = ""
+        self.modelFile             = ""
+
+        self:move(x, y)
+        self:setMinMaxValue(0.0, 1.0)
+        self:refresh()
+        table.insert(AllComponents, self)
+        self.index = #AllComponents
+        SaveInteger(UIFrame.HT, GetHandleId(self.frame), 0, self.index)
+
+        return self
+    end
+
+
+end)
+if Debug then Debug.endFile() end

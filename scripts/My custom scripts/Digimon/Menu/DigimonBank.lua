@@ -1156,10 +1156,11 @@ OnInit("DigimonBank", function ()
         AddFrameToMenu(SummonADigimon)
 
         StockedDigimonsMenu = BlzCreateFrame("EscMenuBackdrop", OriginFrame,0,0)
-        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.00000, 0.340000)
-        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, 0.220000, 0.150000)
+        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.275, 0.550000)
+        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.360000)
         BlzFrameSetVisible(StockedDigimonsMenu, false)
         AddFrameToMenu(StockedDigimonsMenu)
+        BlzFrameSetLevel(StockedDigimonsMenu, 20)
 
         local indexes = {[0] = 21, 22, 23, 24, 25, 26, 27, 28}
 

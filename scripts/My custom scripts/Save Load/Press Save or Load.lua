@@ -315,9 +315,9 @@ OnInit("PressSaveOrLoad", function ()
 
         -- Menu
 
-        SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0),0,0)
-        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.580000, 0.535000)
-        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.315000)
+        SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.27, 0.535000)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.315000)
         BlzFrameSetVisible(SaveLoadMenu, false)
         AddFrameToMenu(SaveLoadMenu)
 
@@ -366,6 +366,7 @@ OnInit("PressSaveOrLoad", function ()
         Information = BlzCreateFrame("CheckListBox", SaveLoadMenu, 0, 0)
         BlzFrameSetPoint(Information, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, -0.50000, 0.0000)
         BlzFrameSetPoint(Information, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.22000, -0.30000)
+        BlzFrameSetLevel(Information, 100)
 
         TooltipName = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipName, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.010000)
@@ -548,6 +549,17 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     FrameLoaderAdd(InitFrames)
+
+    OnChangeDimensions(function ()
+        BlzFrameClearAllPoints(SaveLoadMenu)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.27, 0.535000)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.315000)
+    end)
+
+    OnInit.final(function ()
+        Require "LeaderboardUI"
+        BlzFrameSetParent(SaveLoadMenu, BlzGetFrameByName("Leaderboard", 0))
+    end)
 
     -- Functions to use
 

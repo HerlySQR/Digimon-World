@@ -36,6 +36,7 @@ OnInit("Stats", function ()
     local StatsWisdom = nil ---@type framehandle
     local StatsLife = nil ---@type framehandle
     local StatsMana = nil ---@type framehandle
+    local InventoryButton = {} ---@type framehandle[]
 
     local armorEquiv = {
         [0] = GetHandleId(udg_Holy),
@@ -68,6 +69,10 @@ OnInit("Stats", function ()
             local u = GetMainSelectedUnitEx()
             if not u or ignore[GetUnitTypeId(u)] then
                 BlzFrameSetVisible(StatsBackdrop, false)
+                for i = 0, 5 do
+                    BlzFrameClearAllPoints(InventoryButton[i])
+                    BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, 999, 999)
+                end
             else
                 local name = GetObjectName(GetUnitTypeId(u))
                 if IsUnitType(u, UNIT_TYPE_HERO) then
@@ -175,10 +180,21 @@ OnInit("Stats", function ()
                 else
                     BlzFrameSetText(StatsMana, "")
                 end
+
+                for i = 0, 2 do
+                    for j = 0, 1 do
+                        BlzFrameClearAllPoints(InventoryButton[i])
+                        BlzFrameSetPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, -0.1 + 0.04*j, -0.02 - 0.04*i)
+                    end
+                end
             end
         else
             if BlzFrameIsVisible(StatsBackdrop) then
                 BlzFrameSetVisible(StatsBackdrop, false)
+                for i = 0, 5 do
+                    BlzFrameClearAllPoints(InventoryButton[i])
+                    BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, 999, 999)
+                end
             end
         end
     end)
@@ -197,11 +213,19 @@ OnInit("Stats", function ()
         TriggerAddAction(TriggerStatsButton, StatsButtonFunc)
 
         StatsBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 1)
-        BlzFrameSetAbsPoint(StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.640000, 0.520000)
-        BlzFrameSetAbsPoint(StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.830000, 0.38000)
+        BlzFrameSetAbsPoint(StatsBackdrop, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.24, 0.520000)
+        BlzFrameSetAbsPoint(StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.38000)
         BlzFrameSetTexture(StatsBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
         BlzFrameSetVisible(StatsBackdrop, true)
         AddFrameToMenu(StatsBackdrop)
+
+        for i = 0, 2 do
+            for j = 0, 1 do
+                InventoryButton[i] = BlzGetFrameByName("InventoryButton_" .. (i*2+j), 0)
+                BlzFrameSetPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, -0.1 + 0.04*j, -0.02 - 0.04*i)
+                BlzFrameSetSize(InventoryButton[i], 0.04, 0.04)
+            end
+        end
 
         StatsName = BlzCreateFrameByType("TEXT", "name", StatsBackdrop, "", 0)
         BlzFrameSetPoint(StatsName, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
@@ -321,6 +345,12 @@ OnInit("Stats", function ()
         BlzFrameSetEnable(StatsMana, false)
         BlzFrameSetScale(StatsMana, 1.00)
         BlzFrameSetTextAlignment(StatsMana, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+    end)
+
+    OnChangeDimensions(function ()
+        BlzFrameClearAllPoints(StatsBackdrop)
+        BlzFrameSetAbsPoint(StatsBackdrop, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.24, 0.520000)
+        BlzFrameSetAbsPoint(StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.38000)
     end)
 
     ---@param p player
