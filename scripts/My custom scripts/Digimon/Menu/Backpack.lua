@@ -34,7 +34,6 @@ OnInit("Backpack", function ()
     local DUMMY_CASTER = FourCC('n01B')
 
     IgnoreCommandButton(DUMMY_CASTER)
-    IgnoreStats(DUMMY_CASTER)
 
     ---@class ItemData
     ---@field id integer
@@ -557,6 +556,12 @@ OnInit("Backpack", function ()
         BlzFrameClearAllPoints(BackpackMenu)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.26, 0.150000)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.0100000)
+    end)
+
+    OnInit.final(function ()
+        Require "LeaderboardUI"
+
+        BlzFrameSetParent(BackpackMenu, BlzGetFrameByName("Leaderboard", 0))
     end)
 
     local gotItem = __jarray(false) ---@type table<player, boolean>

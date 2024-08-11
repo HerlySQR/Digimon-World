@@ -301,7 +301,8 @@ OnInit("Environment", function ()
         local t
 
         TopMsg = BlzCreateFrameByType("TEXT", "name", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), "", 0)
-        BlzFrameSetAllPoints(TopMsg, BlzGetOriginFrame(ORIGIN_FRAME_TOP_MSG, 0))
+        BlzFrameSetPoint(TopMsg, FRAMEPOINT_TOPLEFT, BlzGetOriginFrame(ORIGIN_FRAME_TOP_MSG, 0), FRAMEPOINT_TOPLEFT, 0, -0.00625)
+        BlzFrameSetPoint(TopMsg, FRAMEPOINT_BOTTOMRIGHT, BlzGetOriginFrame(ORIGIN_FRAME_TOP_MSG, 0), FRAMEPOINT_BOTTOMRIGHT, 0, -0.00625)
         BlzFrameSetText(TopMsg, "")
         BlzFrameSetScale(TopMsg, 2.)
         BlzFrameSetTextAlignment(TopMsg, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)

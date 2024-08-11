@@ -1598,6 +1598,17 @@ OnInit("DigimonBank", function ()
 
     FrameLoaderAdd(InitFrames)
 
+    OnChangeDimensions(function ()
+        BlzFrameClearAllPoints(StockedDigimonsMenu)
+        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.275, 0.550000)
+        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.360000)
+    end)
+
+    OnInit.final(function ()
+        Require "LeaderboardUI"
+        BlzFrameSetParent(StockedDigimonsMenu, BlzGetFrameByName("Leaderboard", 0))
+    end)
+
     -- Update frames
     Timed.echo(0.1, function ()
         local bank = Bank[GetPlayerId(LocalPlayer)] ---@type Bank

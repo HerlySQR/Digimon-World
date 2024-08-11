@@ -95,14 +95,14 @@ OnInit.final(function ()
     SetTextTagVisibility(text, false)
 
     local tm = CreateTimer()
-    local window = CreateTimerDialog(tm)
-    TimerDialogSetTitle(window, "Defeat the boss in: ")
+    --local window = CreateTimerDialog(tm)
+    --TimerDialogSetTitle(window, "Defeat the boss in: ")
 
     local function resetSewers()
         started = false
         SetTextTagVisibility(text, false)
         UnitRemoveAbility(NPC, RESET_SEWERS)
-        TimerDialogDisplay(window, false)
+        --TimerDialogDisplay(window, false)
 
         if not UnitAlive(boss) then
             ReviveHero(boss, GetUnitX(boss), GetUnitY(boss), true)
@@ -223,7 +223,7 @@ OnInit.final(function ()
         end
 
         if UnitAlive(boss) then
-            TimerDialogDisplay(window, players:contains(GetLocalPlayer()))
+            --TimerDialogDisplay(window, players:contains(GetLocalPlayer()))
         end
 
         if not started and players:size() > 0 then
@@ -471,7 +471,7 @@ OnInit.final(function ()
         TriggerRegisterUnitEvent(t, boss, EVENT_UNIT_DEATH)
         TriggerAddAction(t, function ()
             PauseTimer(tm)
-            TimerDialogDisplay(window, false)
+            --TimerDialogDisplay(window, false)
             Timed.call(16., function ()
                 ReviveHero(boss, GetUnitX(boss), GetUnitY(boss), true)
                 resetSewers()

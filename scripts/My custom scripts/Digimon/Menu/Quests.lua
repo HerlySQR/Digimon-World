@@ -166,8 +166,8 @@ OnInit("Quests", function ()
         BlzFrameSetVisible(QuestButtonSprite, false)
 
         QuestMenu = BlzCreateFrame("QuestButtonBaseTemplate", Origin, 0, 0)
-        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_TOPLEFT, 0.645000, 0.390000)
-        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_BOTTOMRIGHT, 0.835000, 0.150000)
+        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.245, 0.390000)
+        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.150000)
         BlzFrameSetVisible(QuestMenu, false)
         AddFrameToMenu(QuestMenu)
 
@@ -240,6 +240,12 @@ OnInit("Quests", function ()
     end
 
     FrameLoaderAdd(InitFrames)
+
+    OnChangeDimensions(function ()
+        BlzFrameClearAllPoints(QuestMenu)
+        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.245, 0.390000)
+        BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.150000)
+    end)
 
     OnInit.final(function ()
         for i = 0, bj_MAX_PLAYER_SLOTS - 1 do

@@ -62,6 +62,10 @@ OnInit("Digimon", function ()
     ---@field IVdex integer
     ---@field IVwis integer
     ---@field cosmetics table<string, CosmeticInstance>
+    ---@field critcalAmount number
+    ---@field critcalChance number
+    ---@field evasionChance number
+    ---@field blockAmount number
     Digimon = {
         _instance = {} ---@type table<unit, Digimon>
     }
