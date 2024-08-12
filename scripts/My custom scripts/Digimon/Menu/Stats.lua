@@ -68,10 +68,10 @@ OnInit("Stats", function ()
                     BlzFrameSetVisible(StatsBackdrop[i], true)
                 end
 
-                if not list[i-1] then
+                if not list[i+1] then
                     BlzFrameSetVisible(StatsBackdrop[i], false)
                 else
-                    local u = list[i-1].root
+                    local u = list[i+1].root
                     local name = GetObjectName(GetUnitTypeId(u))
                     if IsUnitType(u, UNIT_TYPE_HERO) then
                         name = name .. " " .. GetHeroProperName(u)
@@ -265,7 +265,7 @@ OnInit("Stats", function ()
 
             StatsStaminaLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsStaminaLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.13500, -0.025000)
-            BlzFrameSetPoint(StatsStaminaLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.10000)
+            BlzFrameSetPoint(StatsStaminaLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.10000)
             BlzFrameSetText(StatsStaminaLabel[i], "|cffff7d00Stamina:|r")
             BlzFrameSetEnable(StatsStaminaLabel[i], false)
             BlzFrameSetScale(StatsStaminaLabel[i], 1.00)
@@ -273,7 +273,7 @@ OnInit("Stats", function ()
 
             StatsStamina[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsStamina[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.14000, -0.040000)
-            BlzFrameSetPoint(StatsStamina[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.085000)
+            BlzFrameSetPoint(StatsStamina[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.085000)
             BlzFrameSetText(StatsStamina[i], "|cffffffff999|r")
             BlzFrameSetEnable(StatsStamina[i], false)
             BlzFrameSetScale(StatsStamina[i], 1.00)
@@ -305,7 +305,7 @@ OnInit("Stats", function ()
 
             StatsWisdom[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsWisdom[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.14000, -0.10000)
-            BlzFrameSetPoint(StatsWisdom[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.025000)
+            BlzFrameSetPoint(StatsWisdom[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.025000)
             BlzFrameSetText(StatsWisdom[i], "|cffffffff999|r")
             BlzFrameSetEnable(StatsWisdom[i], false)
             BlzFrameSetScale(StatsWisdom[i], 1.00)
@@ -321,7 +321,7 @@ OnInit("Stats", function ()
 
             StatsMana[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsMana[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.095000, -0.12000)
-            BlzFrameSetPoint(StatsMana[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.0000)
+            BlzFrameSetPoint(StatsMana[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.0000)
             BlzFrameSetText(StatsMana[i], "|cff0000ff1000/1000|r")
             BlzFrameSetEnable(StatsMana[i], false)
             BlzFrameSetScale(StatsMana[i], 1.00)

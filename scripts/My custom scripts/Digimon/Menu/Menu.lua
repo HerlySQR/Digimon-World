@@ -4,6 +4,7 @@ OnInit("Menu", function ()
     Require "Timed"
     Require "FrameLoader"
     Require "EventListener"
+    Require "GameStatus"
 
     local Frames = {} ---@type framehandle[]
     local WasVisible = __jarray(false) ---@type boolean[]
@@ -272,24 +273,14 @@ OnInit("Menu", function ()
         BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, minX + 0.025, 0.015000)
         BlzFrameSetVisible(Minimap, true)
 
-        -- Move unit command buttons
         CommandButtonBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
         BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.17, 0.180000)
         BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.4, 0.00000)
 
-        for i = 0, 2 do
-            for j = 0, 3 do
-                local index = i*4+j
-                CommandButton[index] = BlzGetFrameByName("CommandButton_" .. index, 0)
-                BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, minX + 0.19 + 0.05*j, 0.160000 - 0.05*i)
-                BlzFrameSetSize(CommandButton[index], 0.05, 0.05)
-            end
-        end
-
         -- Move inventory
-        InventoryButtonBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.14500)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.4975, 0.005000)
+        InventoryButtonBackDrop = BlzCreateFrame("CheckListBox", Console, 0, 0)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.21500)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.42, 0.170000)
 
         -- Hide inventory
         frame = BlzFrameGetParent(BlzFrameGetParent(BlzGetFrameByName("InventoryButton_0", 0)))
@@ -299,19 +290,10 @@ OnInit("Menu", function ()
         frame = BlzGetFrameByName("InventoryCoverTexture", 0)
         BlzFrameSetSize(frame, 0.0001, 0.0001)
 
-        for i = 0, 2 do
-            for j = 0, 1 do
-                local index = i*2+j
-                InventoryButton[index] = BlzGetFrameByName("InventoryButton_" .. index, 0)
-                BlzFrameSetAbsPoint(InventoryButton[index], FRAMEPOINT_TOPLEFT, minX + 0.415 + 0.04*j, 0.130000 - 0.04*i)
-                BlzFrameSetSize(InventoryButton[index], 0.04, 0.04)
-            end
-        end
-
         -- Move Hero buttons
         HeroBar = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BAR, 0)
         BlzFrameSetVisible(HeroBar, true)
-        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.5, 0.155000)
+        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.155000)
 
         -- Move Hero Health/Mana bars
         for i = 0, 2 do
@@ -336,7 +318,14 @@ OnInit("Menu", function ()
 
         -- Hide multiple unit selection frame
         Timed.call(function ()
-            local u = CreateUnit(Player(0), FourCC('hpea'), 0, 0, 0)
+            local p
+            for i = 0, bj_MAX_PLAYERS - 1 do
+                p = Player(i)
+                if IsPlayerInGame(p) then
+                    break
+                end
+            end
+            local u = CreateUnit(p, FourCC('hpea'), 0, 0, 0)
             SelectUnitForPlayerSingle(u, Player(0))
             RemoveUnit(u)
 
@@ -346,6 +335,23 @@ OnInit("Menu", function ()
             local buttonContainerFrame = BlzFrameGetChild(groupFrame, 0) ---@type framehandle 
             for i = 0, 11 do
                 BlzFrameSetAbsPoint(BlzFrameGetChild(buttonContainerFrame, i), FRAMEPOINT_TOPLEFT, 999., 999.)
+            end
+
+            -- Move unit command buttons
+
+            for i = 0, 2 do
+                for j = 0, 3 do
+                    local index = i*4+j
+                    CommandButton[index] = BlzGetFrameByName("CommandButton_" .. index, 0)
+                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, minX + 0.19 + 0.05*j, 0.160000 - 0.05*i)
+                    BlzFrameSetSize(CommandButton[index], 0.05, 0.05)
+                end
+            end
+
+            for i = 0, 5 do
+                InventoryButton[i] = BlzGetFrameByName("InventoryButton_" .. i, 0)
+                BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, minX + 0.185 + 0.04*i, 0.2100)
+                BlzFrameSetSize(InventoryButton[i], 0.04, 0.04)
             end
         end)
 
@@ -406,20 +412,17 @@ OnInit("Menu", function ()
         end
 
         BlzFrameClearAllPoints(InventoryButtonBackDrop)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.14500)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.4975, 0.005000)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.21500)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.42, 0.17000)
 
-        for i = 0, 2 do
-            for j = 0, 1 do
-                local index = i*2+j
-                BlzFrameClearAllPoints(InventoryButton[index])
-                BlzFrameSetAbsPoint(InventoryButton[index], FRAMEPOINT_TOPLEFT, minX + 0.415 + 0.04*j, 0.130000 - 0.04*i)
-                BlzFrameSetSize(InventoryButton[index], 0.04, 0.04)
-            end
+        for i = 0, 5 do
+            BlzFrameClearAllPoints(InventoryButton[i])
+            BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, minX + 0.185 + 0.04*i, 0.2100)
+            BlzFrameSetSize(InventoryButton[i], 0.04, 0.04)
         end
 
         BlzFrameClearAllPoints(HeroBar)
-        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.5, 0.155000)
+        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.155000)
     end)
 
     local oldSelectUnit
@@ -427,13 +430,16 @@ OnInit("Menu", function ()
         if ignore[GetUnitTypeId(whichUnit)] then
             isIgnored = true
             for i = 0, 11 do
+                BlzFrameClearAllPoints(CommandButton[i])
                 BlzFrameSetAbsPoint(CommandButton[i], FRAMEPOINT_TOPLEFT, 0.40000, 0.90000)
             end
         else
             isIgnored = false
             for i = 0, 2 do
                 for j = 0, 3 do
-                    BlzFrameSetAbsPoint(CommandButton[i*4+j], FRAMEPOINT_TOPLEFT, 0.320000 + 0.05*j, 0.160000 - 0.05*i)
+                    local index = i*4+j
+                    BlzFrameClearAllPoints(CommandButton[index])
+                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, 0.19000 + 0.05*j, 0.160000 - 0.05*i)
                 end
             end
         end
