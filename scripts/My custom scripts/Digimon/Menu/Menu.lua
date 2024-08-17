@@ -37,6 +37,9 @@ OnInit("Menu", function ()
     local ignore = {} ---@type table<integer, boolean>
     local isIgnored = false
 
+    local onLeaderboard = EventListener.create()
+    local onSelectedUnit = EventListener.create()
+
     local function check()
         local width = BlzGetLocalClientWidth()
         local height = BlzGetLocalClientHeight()
@@ -60,6 +63,7 @@ OnInit("Menu", function ()
         BlzFrameSetSize(BlzGetFrameByName("Leaderboard", 0), 0, 0)
         BlzFrameSetVisible(BlzGetFrameByName("LeaderboardBackdrop", 0), false)
         BlzFrameSetVisible(BlzGetFrameByName("LeaderboardTitle", 0), false)
+        onLeaderboard:run()
     end)
 
     ---@return number
@@ -279,8 +283,8 @@ OnInit("Menu", function ()
 
         -- Move inventory
         InventoryButtonBackDrop = BlzCreateFrame("CheckListBox", Console, 0, 0)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.21500)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.42, 0.170000)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.21500)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.64, 0.170000)
 
         -- Hide inventory
         frame = BlzFrameGetParent(BlzFrameGetParent(BlzGetFrameByName("InventoryButton_0", 0)))
@@ -329,6 +333,8 @@ OnInit("Menu", function ()
             SelectUnitForPlayerSingle(u, Player(0))
             RemoveUnit(u)
 
+            onSelectedUnit:run()
+
             local unitFrame = BlzGetFrameByName("SimpleInfoPanelUnitDetail", 0) ---@type framehandle 
             local bottomCenterUI = BlzFrameGetParent(unitFrame) ---@type framehandle 
             local groupFrame = BlzFrameGetChild(bottomCenterUI, 5) ---@type framehandle 
@@ -350,7 +356,7 @@ OnInit("Menu", function ()
 
             for i = 0, 5 do
                 InventoryButton[i] = BlzGetFrameByName("InventoryButton_" .. i, 0)
-                BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, minX + 0.185 + 0.04*i, 0.2100)
+                BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, minX + 0.405 + 0.04*i, 0.2100)
                 BlzFrameSetSize(InventoryButton[i], 0.04, 0.04)
             end
         end)
@@ -412,12 +418,12 @@ OnInit("Menu", function ()
         end
 
         BlzFrameClearAllPoints(InventoryButtonBackDrop)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.21500)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.42, 0.17000)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.21500)
+        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.64, 0.17000)
 
         for i = 0, 5 do
             BlzFrameClearAllPoints(InventoryButton[i])
-            BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, minX + 0.185 + 0.04*i, 0.2100)
+            BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, minX + 0.405 + 0.04*i, 0.2100)
             BlzFrameSetSize(InventoryButton[i], 0.04, 0.04)
         end
 
@@ -439,7 +445,7 @@ OnInit("Menu", function ()
                 for j = 0, 3 do
                     local index = i*4+j
                     BlzFrameClearAllPoints(CommandButton[index])
-                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, 0.19000 + 0.05*j, 0.160000 - 0.05*i)
+                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, minX + 0.19000 + 0.05*j, 0.160000 - 0.05*i)
                 end
             end
         end
@@ -476,6 +482,19 @@ OnInit("Menu", function ()
         onChangeDimensions:register(func)
     end
 
+    ---@param func function
+    function OnLeaderboard(func)
+        onLeaderboard:register(function ()
+            FrameLoaderAdd(func)
+        end)
+    end
+
+    ---@param func function
+    function OnSelectedUnit(func)
+        onSelectedUnit:register(function ()
+            FrameLoaderAdd(func)
+        end)
+    end
 
 end)
 Debug.endFile()

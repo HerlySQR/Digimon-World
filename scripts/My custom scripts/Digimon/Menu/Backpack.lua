@@ -558,9 +558,7 @@ OnInit("Backpack", function ()
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.0100000)
     end)
 
-    OnInit.final(function ()
-        Require "LeaderboardUI"
-
+    OnLeaderboard(function ()
         BlzFrameSetParent(BackpackMenu, BlzGetFrameByName("Leaderboard", 0))
     end)
 

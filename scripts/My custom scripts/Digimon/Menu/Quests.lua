@@ -245,9 +245,7 @@ OnInit("Quests", function ()
         BlzFrameSetAbsPoint(QuestMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.150000)
     end)
 
-    OnInit.final(function ()
-        Require "LeaderboardUI"
-
+    OnLeaderboard(function ()
         BlzFrameSetParent(QuestMenu, BlzGetFrameByName("Leaderboard", 0))
     end)
 

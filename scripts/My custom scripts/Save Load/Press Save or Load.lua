@@ -18,7 +18,9 @@ OnInit("PressSaveOrLoad", function ()
 
     local Pressed = __jarray(0) ---@type table<player, integer>
     local SaveButton = nil ---@type framehandle
+    local BackdropSaveButton = nil ---@type framehandle
     local LoadButton = nil ---@type framehandle
+    local BackdropLoadButton = nil ---@type framehandle
     local SaveLoadMenu = nil ---@type framehandle
     local SaveSlotT = {} ---@type framehandle[]
     local Information = nil ---@type framehandle
@@ -288,27 +290,34 @@ OnInit("PressSaveOrLoad", function ()
         BlzLoadTOCFile("war3mapImported\\slider.toc")
 
         -- Save Button
-
-        SaveButton = BlzCreateFrame("ScriptDialogButton", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
+        SaveButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(SaveButton, 10)
         BlzFrameSetText(SaveButton, "|cff" .. NormalColor .. "Save|r")
         BlzFrameSetScale(SaveButton, 1.00)
         BlzFrameSetVisible(SaveButton, false)
         AddFrameToMenu(SaveButton)
+        AddDefaultTooltip(SaveButton, "Save", "Save your progress.")
 
+        BackdropSaveButton = BlzCreateFrameByType("BACKDROP", "BackdropSaveButton", SaveButton, "", 0)
+        BlzFrameSetAllPoints(BackdropSaveButton, SaveButton)
+        BlzFrameSetTexture(BackdropSaveButton, "ReplaceableTextures\\CommandButtons\\BTNCrystalBall.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SaveButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, SaveFunc)
 
         -- Load Button
 
-        LoadButton = BlzCreateFrame("ScriptDialogButton", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
+        LoadButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
         AddButtonToTheRight(LoadButton, 11)
         BlzFrameSetText(LoadButton, "|cff" .. NormalColor .. "Load|r")
         BlzFrameSetScale(LoadButton, 1.00)
         BlzFrameSetVisible(LoadButton, false)
         AddFrameToMenu(LoadButton)
+        AddDefaultTooltip(SaveButton, "Load", "Load your progress.")
 
+        BackdropLoadButton = BlzCreateFrameByType("BACKDROP", "BackdropLoadButton", LoadButton, "", 0)
+        BlzFrameSetAllPoints(BackdropLoadButton, LoadButton)
+        BlzFrameSetTexture(BackdropLoadButton, "ReplaceableTextures\\CommandButtons\\BTNCrystalBall.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, LoadButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, LoadFunc)
@@ -556,8 +565,7 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.315000)
     end)
 
-    OnInit.final(function ()
-        Require "LeaderboardUI"
+    OnLeaderboard(function ()
         BlzFrameSetParent(SaveLoadMenu, BlzGetFrameByName("Leaderboard", 0))
     end)
 

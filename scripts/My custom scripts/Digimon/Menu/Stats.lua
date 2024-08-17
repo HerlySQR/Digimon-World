@@ -18,7 +18,6 @@ OnInit("Stats", function ()
 
     local StatsButton = nil ---@type framehandle
     local BackdropStatsButton = nil ---@type framehandle
-    local TriggerStatsButton = nil ---@type trigger
     local StatsBackdrop = {} ---@type framehandle[]
     local StatsName = {} ---@type framehandle[]
     local StatsDamageLabel = {} ---@type framehandle[]
@@ -52,11 +51,13 @@ OnInit("Stats", function ()
     local red = Color.new(0xFF0000)
     local green = Color.new(0x00FF00)
 
-    local visible = true
+    local visible = false
+    local changeVisible = false
 
     local function StatsButtonFunc()
         if GetTriggerPlayer() == GetLocalPlayer() then
             visible = not visible
+            changeVisible = true
         end
     end
 
@@ -64,7 +65,7 @@ OnInit("Stats", function ()
         local list = GetUsedDigimons(LocalPlayer)
         for i = 0, 2 do
             if visible then
-                if not BlzFrameIsVisible(StatsBackdrop[i]) then
+                if changeVisible and not BlzFrameIsVisible(StatsBackdrop[i]) then
                     BlzFrameSetVisible(StatsBackdrop[i], true)
                 end
 
@@ -180,32 +181,36 @@ OnInit("Stats", function ()
                     end
                 end
             else
-                if BlzFrameIsVisible(StatsBackdrop[i]) then
+                if changeVisible and BlzFrameIsVisible(StatsBackdrop[i]) then
                     BlzFrameSetVisible(StatsBackdrop[i], false)
                 end
             end
+        end
+        if changeVisible then
+            changeVisible = false
         end
     end)
 
     FrameLoaderAdd(function ()
         StatsButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(StatsButton, 0)
-        BlzFrameSetVisible(StatsButton, true)
+        BlzFrameSetVisible(StatsButton, false)
         AddFrameToMenu(StatsButton)
+        AddDefaultTooltip(StatsButton, "Show/Hide stats", "Show/Hide the stats of the digimons you are using.")
 
         BackdropStatsButton = BlzCreateFrameByType("BACKDROP", "BackdropStatsButton", StatsButton, "", 0)
         BlzFrameSetAllPoints(BackdropStatsButton, StatsButton)
         BlzFrameSetTexture(BackdropStatsButton, "ReplaceableTextures\\CommandButtons\\BTNCrystalBall.blp", 0, true)
-        TriggerStatsButton = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerStatsButton, StatsButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerStatsButton, StatsButtonFunc)
+        local t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, StatsButton, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, StatsButtonFunc)
 
         for i = 0, 2 do
             StatsBackdrop[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 1)
             BlzFrameSetAbsPoint(StatsBackdrop[i], FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.24, 0.520000 - 0.145*i)
             BlzFrameSetAbsPoint(StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.38000 - 0.145*i)
             BlzFrameSetTexture(StatsBackdrop[i], "war3mapImported\\EmptyBTN.blp", 0, true)
-            BlzFrameSetVisible(StatsBackdrop[i], true)
+            BlzFrameSetVisible(StatsBackdrop[i], false)
             AddFrameToMenu(StatsBackdrop[i])
 
             StatsName[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
@@ -337,9 +342,7 @@ OnInit("Stats", function ()
         end
     end)
 
-    OnInit.final(function ()
-        Require "LeaderboardUI"
-
+    OnLeaderboard(function ()
         for i = 0, 2 do
             BlzFrameSetParent(StatsBackdrop[i], BlzGetFrameByName("Leaderboard", 0))
         end
