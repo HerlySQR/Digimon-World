@@ -26,8 +26,6 @@ OnInit("Menu", function ()
     local HeroMana = {} ---@type framehandle[]
     local CommandButtonBackDrop = nil ---@type framehandle
     local CommandButton = {} ---@type framehandle[]
-    local InventoryButtonBackDrop = nil ---@type framehandle
-    local InventoryButton = {} ---@type framehandle[]
 
     local onChangeDimensions = EventListener.create()
     local windowWidth = 1400
@@ -76,6 +74,13 @@ OnInit("Menu", function ()
         return maxX
     end
 
+    local onFrameChangeVisible = EventListener.create()
+
+    ---@param func fun(frame: framehandle, flag: boolean)
+    function OnFrameChangeVisible(func)
+        onFrameChangeVisible:register(func)
+    end
+
     local oldFrameSetVisible
     oldFrameSetVisible = AddHook("BlzFrameSetVisible", function (frame, flag)
         for i, f in ipairs(Frames) do
@@ -85,6 +90,7 @@ OnInit("Menu", function ()
             end
         end
         oldFrameSetVisible(frame, flag)
+        onFrameChangeVisible:run(frame, flag)
     end)
 
     ---@param showOriginFrames boolean?
@@ -100,7 +106,6 @@ OnInit("Menu", function ()
             oldFrameSetVisible(MinimapBackDrop, true)
             oldFrameSetVisible(HeroBar, true)
             oldFrameSetVisible(CommandButtonBackDrop, true)
-            oldFrameSetVisible(InventoryButtonBackDrop, true)
         end
     end
 
@@ -119,7 +124,6 @@ OnInit("Menu", function ()
             oldFrameSetVisible(MinimapBackDrop, false)
             oldFrameSetVisible(HeroBar, false)
             oldFrameSetVisible(CommandButtonBackDrop, false)
-            oldFrameSetVisible(InventoryButtonBackDrop, false)
         end
     end
 
@@ -281,11 +285,6 @@ OnInit("Menu", function ()
         BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.17, 0.180000)
         BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.4, 0.00000)
 
-        -- Move inventory
-        InventoryButtonBackDrop = BlzCreateFrame("CheckListBox", Console, 0, 0)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.21500)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.64, 0.170000)
-
         -- Hide inventory
         frame = BlzFrameGetParent(BlzFrameGetParent(BlzGetFrameByName("InventoryButton_0", 0)))
         BlzFrameSetVisible(frame, true)
@@ -353,12 +352,6 @@ OnInit("Menu", function ()
                     BlzFrameSetSize(CommandButton[index], 0.05, 0.05)
                 end
             end
-
-            for i = 0, 5 do
-                InventoryButton[i] = BlzGetFrameByName("InventoryButton_" .. i, 0)
-                BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, minX + 0.405 + 0.04*i, 0.2100)
-                BlzFrameSetSize(InventoryButton[i], 0.04, 0.04)
-            end
         end)
 
         -- Move tooltip frame
@@ -415,16 +408,6 @@ OnInit("Menu", function ()
                     BlzFrameSetSize(CommandButton[index], 0.05, 0.05)
                 end
             end
-        end
-
-        BlzFrameClearAllPoints(InventoryButtonBackDrop)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.21500)
-        BlzFrameSetAbsPoint(InventoryButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.64, 0.17000)
-
-        for i = 0, 5 do
-            BlzFrameClearAllPoints(InventoryButton[i])
-            BlzFrameSetAbsPoint(InventoryButton[i], FRAMEPOINT_TOPLEFT, minX + 0.405 + 0.04*i, 0.2100)
-            BlzFrameSetSize(InventoryButton[i], 0.04, 0.04)
         end
 
         BlzFrameClearAllPoints(HeroBar)

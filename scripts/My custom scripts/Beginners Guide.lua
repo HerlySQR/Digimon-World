@@ -902,6 +902,9 @@ OnInit.final(function ()
     TriggerRegisterEnterRectSimple(t, gg_rct_Train_Area)
     TriggerAddAction(t, function ()
         local d = Digimon.getInstance(GetEnteringUnit())
+        if not d then
+            return
+        end
         local p = d:getOwner()
         if not inTutorial[p] then
             return

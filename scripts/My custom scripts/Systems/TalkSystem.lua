@@ -37,6 +37,11 @@ OnInit("TalkSystem", function ()
         end
     end
 
+    -- To prevent the unit portrait being replaced
+    AddHook("SetCinematicScene", function (portraitUnitId, color, speakerTitle, text, sceneDuration, voiceoverDuration)
+        DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "|cffccff00" .. speakerTitle .. ":|r " .. text)
+    end)
+
     local talkRun = CreateTrigger()
     TriggerAddAction(talkRun, function ()
         local thr = actualThread

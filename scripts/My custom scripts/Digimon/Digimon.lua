@@ -64,10 +64,20 @@ OnInit("Digimon", function ()
     ---@field cosmetics table<string, CosmeticInstance>
     ---@field critcalAmount number
     ---@field critcalChance number
-    ---@field evasionChance number
     ---@field blockAmount number
+    ---@field evasionChance number
     Digimon = {
-        _instance = {} ---@type table<unit, Digimon>
+        _instance = {}, ---@type table<unit, Digimon>
+        rank = Rank.ROOKIE,
+        onCombat = false,
+        saved = false,
+        IVsta = 0,
+        IVdex = 0,
+        IVwis = 0,
+        critcalAmount = 0.,
+        critcalChance = 0.,
+        blockAmount = 0.,
+        evasionChance = 0.,
     }
 
     Digimon.__index = Digimon
