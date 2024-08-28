@@ -33,6 +33,23 @@ OnInit("SaveFile", function ()
         return SaveFile.getFolder(version) .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. slot .. ".pld"
     end
 
+    ---@overload fun(p: player, name: string)
+    ---@param p player
+    ---@param slot integer
+    ---@param name string
+    ---@return string
+    function SaveFile.getPath2(p, slot, name)
+        if not name then
+            name = slot
+            slot = nil
+        end
+        if slot then
+            return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\SaveSlot_" .. slot .. "\\" .. name .. ".pld"
+        else
+            return SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\" .. name .. ".pld"
+        end
+    end
+
     ---@param p player
     ---@param title string
     ---@param slot integer

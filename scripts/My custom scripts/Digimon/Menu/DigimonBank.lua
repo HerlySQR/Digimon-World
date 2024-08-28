@@ -6,6 +6,8 @@ OnInit("DigimonBank", function ()
     Require "Hotkeys"
     Require "EventListener"
     Require "Clear Items"
+    Require "PressSaveOrLoad"
+    Require "Serializable"
 
     local MAX_STOCK = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
@@ -118,14 +120,14 @@ OnInit("DigimonBank", function ()
     ---@field buyer unit
     ---@field seller unit
     local Bank = {}
+    Bank.__index = Bank
+
     local LocalPlayer = GetLocalPlayer() ---@type player
 
     local cooldowns = __jarray(0) ---@type table<Digimon, number>
     local revivingSuspended = __jarray(false) ---@type table<player, boolean>
 
     local digimonUpdateEvent = EventListener.create()
-
-    Bank.__index = Bank
 
     for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
         Bank[i] = setmetatable({
@@ -154,6 +156,94 @@ OnInit("DigimonBank", function ()
             buyer = nil,
             seller = nil
         }, Bank)
+    end
+
+    ---@class BankData: Serializable
+    ---@field stocked DigimonData[]
+    ---@field maxSaved integer
+    ---@field saved DigimonData[]
+    ---@field sItmsSto integer
+    ---@field sItms integer[]
+    ---@field sItmsCha integer[]
+    BankData = setmetatable({}, Serializable)
+
+    ---@param main? Bank
+    ---@return BankData|Serializable
+    function BankData.create(main)
+        local self = { ---@type BankData
+            stocked = {},
+            saved = {},
+            sItms = {},
+            sItmsCha = {}
+        }
+        if main then
+            for i = 0, MAX_STOCK - 1 do
+                if main.stocked[i] then
+                    self.stocked[i] = DigimonData.create(main.stocked[i])
+                end
+            end
+            self.maxSaved = main.savedDigimonsStock
+            for i = 0, self.maxSaved - 1 do
+                if main.saved[i] then
+                    self.saved[i] = DigimonData.create(main.saved[i])
+                end
+            end
+            self.sItmsSto = main.savedItemsStock
+            for i = 1, self.sItmsSto do
+                if main.savedItems[i] then
+                    self.sItms[i] = GetItemTypeId(main.savedItems[i])
+                    self.sItmsCha[i] = GetItemCharges(main.savedItems[i])
+                end
+            end
+        end
+        return setmetatable(self, DigimonData)
+    end
+
+    function BankData:serializeProperties()
+        for i = 0, MAX_STOCK - 1 do
+            if self.stocked[i] then
+                self:addProperty("stocked" .. i, self.stocked[i]:serialize())
+            end
+        end
+        self:addProperty("maxSaved", self.maxSaved)
+        for i = 0, self.maxSaved - 1 do
+            if self.saved[i] then
+                self:addProperty("saved" .. i, self.saved[i]:serialize())
+            end
+        end
+        self:addProperty("sItmsSto", self.sItmsSto)
+        for i = 1, self.sItmsSto do
+            if self.sItms[i] then
+                self:addProperty("sItms" .. i, self.sItms[i])
+                self:addProperty("sItmsCha" .. i, self.sItmsCha[i])
+            end
+        end
+    end
+
+    function BankData:deserializeProperties()
+        for i = 0, MAX_STOCK - 1 do
+            local stocked = self:getStringProperty("stocked" .. i)
+            if stocked ~= "" then
+                self.stocked[i] = DigimonData.create()
+                self.stocked[i]:deserialize(stocked)
+            end
+        end
+        self.maxSaved = self:getIntProperty("maxSaved")
+        for i = 0, self.maxSaved - 1 do
+            local saved = self:getStringProperty("saved" .. i)
+            if saved ~= "" then
+                self.saved[i] = DigimonData.create()
+                self.saved[i]:deserialize(saved)
+            end
+        end
+        self.sItmsSto = self:getIntProperty("sItmsSto")
+        for i = 1, self.sItmsSto do
+            local sItms = self:getIntProperty("sItms" .. i)
+            if sItms ~= 0 then
+                self.sItms[i] = sItms
+                self.sItmsCha[i] = self:getIntProperty("sItmsCha" .. i)
+            end
+        end
     end
 
     -- Conditions
@@ -366,6 +456,22 @@ OnInit("DigimonBank", function ()
         if m then
             RemoveItem(m)
         end
+    end
+
+    function Bank:clearDigimons()
+        for i = 0, MAX_STOCK - 1 do
+            if self.stocked[i] then
+                self.stocked[i]:destroy()
+                self.stocked[i] = nil
+            end
+        end
+        for i = 0, self.savedDigimonsStock - 1 do
+            if self.saved[i] then
+                self.saved[i]:destroy()
+                self.saved[i] = nil
+            end
+        end
+        self.savedDigimonsStock = 0
     end
 
     function Bank:clearItems()
@@ -1654,6 +1760,7 @@ OnInit("DigimonBank", function ()
                 if bank.main == d then
                     bank:searchMain()
                 end
+                BlzSetUnitRealField(d.root, UNIT_RF_PRIORITY, i)
                 index = i
 
                 digimonUpdateEvent:run(p, d)
@@ -1700,6 +1807,7 @@ OnInit("DigimonBank", function ()
                 d:showFromTheCorner(bank.main:getX(), bank.main:getY())
                 d.environment = bank.main.environment
             end
+            BlzSetUnitRealField(d.root, UNIT_RF_PRIORITY, index)
             b = true
         end
         if p == LocalPlayer then
@@ -2071,6 +2179,78 @@ OnInit("DigimonBank", function ()
     ---@param n integer?
     function SetMaxUsableDigimons(p, n)
         Bank[GetPlayerId(p)].maxUsable = n or MAX_USED
+    end
+
+    ---@param p player
+    ---@param slot integer
+    ---@return BankData
+    function SaveDigimons(p, slot)
+        local fileRoot = SaveFile.getPath2(p, slot, "Digimons")
+        local data = BankData.create(Bank[p])
+        local code = EncodeString(p, data:serialize())
+
+        if p == LocalPlayer then
+            FileIO.Write(fileRoot, code)
+        end
+
+        return data
+    end
+
+    ---@param p player
+    ---@param slot integer
+    ---@return BankData
+    function LoadDigimons(p, slot)
+        local fileRoot = SaveFile.getPath2(p, slot, "Digimons")
+        local data = BankData.create()
+        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+
+        if code ~= "" then
+            data:deserialize(DecodeString(p, code))
+        end
+
+        return data
+    end
+
+    ---@param p player
+    ---@param data BankData
+    function SetBank(p, data)
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
+        bank:clearDigimons()
+        bank:clearItems()
+
+        for i = 0, MAX_STOCK - 1 do
+            if data.stocked[i] then
+                local d = RecreateDigimon(p, data.stocked[i])
+                bank.stocked[i] = d
+                d:setOwner(Digimon.PASSIVE)
+                d:hideInTheCorner()
+                digimonUpdateEvent:run(p, d)
+            end
+        end
+
+        bank.savedDigimonsStock = data.maxSaved
+        for i = 0, bank.savedDigimonsStock - 1 do
+            if data.saved[i] then
+                local d = RecreateDigimon(p, data.saved[i])
+                bank.saved[i] = d
+                d:setOwner(Digimon.PASSIVE)
+                d:hideInTheCorner()
+            end
+        end
+
+        bank.savedItemsStock = data.sItmsSto
+        for i = 1, bank.savedItemsStock do
+            if data.sItms[i] then
+                local m = CreateItem(data.sItms[i], WorldBounds.maxX, WorldBounds.maxY)
+                SetItemCharges(m, data.sItmsCha[i])
+                bank:saveItem(m)
+            end
+        end
+
+        if p == LocalPlayer then
+            UpdateMenu()
+            UpdateItems()
+        end
     end
 end)
 Debug.endFile()

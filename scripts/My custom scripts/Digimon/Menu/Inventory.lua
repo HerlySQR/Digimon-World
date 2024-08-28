@@ -10,8 +10,8 @@ OnInit(function ()
         Permanent = Shield (max. 1)
         Artifact = Weapon (max. 1)
         Campaing = Accesories (max. 2)
-        Charged = Digivice (max. 1)
-        Miscellaneous = Crest (max. 1)
+        Miscellaneous = Digivice (max. 1)
+        Charged = Crest (max. 1)
     ]]
 
     local SHIELD_SLOT = 0
@@ -73,9 +73,9 @@ OnInit(function ()
                     else
                         slot = ACCESORIES_SLOT_2
                     end
-                elseif typ == ITEM_TYPE_CHARGED then
-                    slot = DIGIVICE_SLOT
                 elseif typ == ITEM_TYPE_MISCELLANEOUS then
+                    slot = DIGIVICE_SLOT
+                elseif typ == ITEM_TYPE_CHARGED then
                     slot = CREST_SLOT
                 else
                     error("Item not identified")
@@ -96,8 +96,8 @@ OnInit(function ()
                         if (typ == ITEM_TYPE_PERMANENT and i ~= SHIELD_SLOT)
                             or (typ == ITEM_TYPE_ARTIFACT and i ~= WEAPON_SLOT)
                             or (typ == ITEM_TYPE_CAMPAIGN and (i ~= ACCESORIES_SLOT_1 and i ~= ACCESORIES_SLOT_2))
-                            or (typ == ITEM_TYPE_CHARGED and i ~= DIGIVICE_SLOT)
-                            or (typ == ITEM_TYPE_MISCELLANEOUS and i ~= CREST_SLOT) then
+                            or (typ == ITEM_TYPE_MISCELLANEOUS and i ~= DIGIVICE_SLOT)
+                            or (typ == ITEM_TYPE_CHARGED and i ~= CREST_SLOT) then
 
                             local slot
                             if typ == ITEM_TYPE_PERMANENT then
@@ -110,9 +110,9 @@ OnInit(function ()
                                 else
                                     slot = ACCESORIES_SLOT_2
                                 end
-                            elseif typ == ITEM_TYPE_CHARGED then
-                                slot = DIGIVICE_SLOT
                             elseif typ == ITEM_TYPE_MISCELLANEOUS then
+                                slot = DIGIVICE_SLOT
+                            elseif typ == ITEM_TYPE_CHARGED then
                                 slot = CREST_SLOT
                             end
 

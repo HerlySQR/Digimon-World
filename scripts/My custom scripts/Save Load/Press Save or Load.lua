@@ -8,6 +8,7 @@ OnInit("PressSaveOrLoad", function ()
     Require "GetSyncedData"
     Require "Cosmetic"
 
+    local MAX_STRING_ENCODED_LENGHT = 2^17
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
     local MAX_QUESTS = udg_MAX_QUESTS
@@ -300,7 +301,7 @@ OnInit("PressSaveOrLoad", function ()
 
         BackdropSaveButton = BlzCreateFrameByType("BACKDROP", "BackdropSaveButton", SaveButton, "", 0)
         BlzFrameSetAllPoints(BackdropSaveButton, SaveButton)
-        BlzFrameSetTexture(BackdropSaveButton, "ReplaceableTextures\\CommandButtons\\BTNDefend.blp", 0, true)
+        BlzFrameSetTexture(BackdropSaveButton, "ReplaceableTextures\\CommandButtons\\BTNSaveIcon.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SaveButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, SaveFunc)
@@ -317,7 +318,7 @@ OnInit("PressSaveOrLoad", function ()
 
         BackdropLoadButton = BlzCreateFrameByType("BACKDROP", "BackdropLoadButton", LoadButton, "", 0)
         BlzFrameSetAllPoints(BackdropLoadButton, LoadButton)
-        BlzFrameSetTexture(BackdropLoadButton, "ReplaceableTextures\\CommandButtons\\BTNReveal.blp", 0, true)
+        BlzFrameSetTexture(BackdropLoadButton, "ReplaceableTextures\\CommandButtons\\BTNLoad.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, LoadButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, LoadFunc)
@@ -593,6 +594,41 @@ OnInit("PressSaveOrLoad", function ()
             UpdateMenu()
             UpdateInformation()
         end
+    end
+
+    ---@param p player
+    ---@param s string
+    ---@return string
+    function EncodeString(p, s)
+        local savecode = Savecode.create()
+
+        local len = s:len()
+        for i = 1, len do
+            savecode:Encode(s:byte(i), 256)
+        end
+        savecode:Encode(len, MAX_STRING_ENCODED_LENGHT)
+
+        local code = savecode:Save(p, 1)
+        savecode:destroy()
+
+        return code
+    end
+
+    ---@param p player
+    ---@param s string
+    ---@return string
+    function DecodeString(p, s)
+        local savecode = Savecode.create()
+        savecode:Load(p, s, 1)
+
+        local len = savecode:Decode(MAX_STRING_ENCODED_LENGHT)
+        local decode = ""
+        for _ = 1, len do
+            decode = string.char(savecode:Decode(256)) .. decode
+        end
+        savecode:destroy()
+
+        return decode
     end
 end)
 Debug.endFile()

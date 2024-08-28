@@ -7,6 +7,9 @@ OnInit("Digimon", function ()
     Require "GlobalRemap"
     Require "NewBonus"
     Require "PlayerUtils"
+    Require "Serializable"
+    Require "SyncedTable"
+    Require "Obj2Str"
 
     local LocalPlayer = GetLocalPlayer() ---@type player
 
@@ -83,6 +86,84 @@ OnInit("Digimon", function ()
     Digimon.__index = Digimon
     Digimon.__name = "Digimon"
 
+    ---@class DigimonData: Serializable
+    ---@field typeId integer
+    ---@field exp integer
+    ---@field level integer
+    ---@field IVsta integer
+    ---@field IVdex integer
+    ---@field IVwis integer
+    ---@field lvlSta integer
+    ---@field lvlDex integer
+    ---@field lvlWis integer
+    ---@field invSlot0 integer
+    ---@field invSlot1 integer
+    ---@field invSlot2 integer
+    ---@field invSlot3 integer
+    ---@field invSlot4 integer
+    ---@field invSlot5 integer
+    ---@field cosmetics integer[]
+    DigimonData = setmetatable({}, Serializable)
+    DigimonData.__index = DigimonData
+
+    ---@param main? Digimon
+    ---@return DigimonData|Serializable
+    function DigimonData.create(main)
+        local self = { ---@type DigimonData
+            cosmetics = {}
+        }
+        if main then
+            self.typeId = main:getTypeId()
+            self.exp = main:getExp()
+            self.level = main:getLevel()
+            self.IVsta = main.IVsta
+            self.IVdex = main.IVdex
+            self.IVwis = main.IVwis
+            self.lvlSta = main:getAbilityLevel(STAMINA_TRAINING)
+            self.lvlDex = main:getAbilityLevel(DEXTERITY_TRAINING)
+            self.lvlWis = main:getAbilityLevel(WISDOM_TRAINING)
+            for i = 0, 5 do
+                self["invSlot" .. i] = GetItemTypeId(UnitItemInSlot(main.root, i))
+            end
+            for _, cosmetic in pairs(main.cosmetics) do
+                table.insert(self.cosmetics, cosmetic.id)
+            end
+        end
+        return setmetatable(self, DigimonData)
+    end
+
+    function DigimonData:serializeProperties()
+        self:addProperty("typeId", self.typeId)
+        self:addProperty("exp", self.exp)
+        self:addProperty("level", self.level)
+        self:addProperty("IVsta", self.IVsta)
+        self:addProperty("IVdex", self.IVdex)
+        self:addProperty("IVwis", self.IVwis)
+        for i = 0, 5 do
+            self:addProperty("invSlot" .. i, self["invSlot" .. i])
+        end
+        self:addProperty("lvlSta", self.lvlSta)
+        self:addProperty("lvlDex", self.lvlDex)
+        self:addProperty("lvlWis", self.lvlWis)
+        self:addProperty("cosmetics", Obj2Str(self.cosmetics))
+    end
+
+    function DigimonData:deserializeProperties()
+        self.typeId = self:getIntProperty("typeId")
+        self.exp = self:getIntProperty("exp")
+        self.level = self:getIntProperty("level")
+        self.IVsta = self:getIntProperty("IVsta")
+        self.IVdex = self:getIntProperty("IVdex")
+        self.IVwis = self:getIntProperty("IVwis")
+        for i = 0, 5 do
+            self["invSlot" .. i] = self:getIntProperty("invSlot" .. i)
+        end
+        self.lvlSta = self:getIntProperty("lvlSta")
+        self.lvlDex = self:getIntProperty("lvlDex")
+        self.lvlWis = self:getIntProperty("lvlWis")
+        self.cosmetics = Str2Obj(self:getStringProperty("cosmetics"))
+    end
+
     ---Create an instantiated digimon
     ---@param p player
     ---@param id integer
@@ -92,6 +173,34 @@ OnInit("Digimon", function ()
     ---@return Digimon
     function Digimon.create(p, id, x, y, facing)
         return Digimon.add(CreateUnit(p, id, x, y, facing))
+    end
+
+    ---@param p player
+    ---@param data DigimonData
+    ---@return Digimon
+    function RecreateDigimon(p, data)
+        local d = Digimon.create(p, data.typeId, WorldBounds.maxX, WorldBounds.maxY, 0)
+        d.owner = p
+        d:setExp(data.exp)
+        d:setIV(data.IVsta, data.IVdex, data.IVwis)
+        for i = 0, 5 do
+            if data["invSlot" .. i] ~= 0 then
+                UnitAddItemToSlotById(d.root, data["invSlot" .. i], i)
+            end
+        end
+        for _ = 1, data.lvlSta do
+            SelectHeroSkill(d.root, STAMINA_TRAINING)
+        end
+        for _ = 1, data.lvlDex do
+            SelectHeroSkill(d.root, DEXTERITY_TRAINING)
+        end
+        for _ = 1, data.lvlWis do
+            SelectHeroSkill(d.root, WISDOM_TRAINING)
+        end
+        for _, id in ipairs(data.cosmetics) do
+            ApplyCosmetic(p, id, d)
+        end
+        return d
     end
 
     local rarities = __jarray(Rarity.COMMON) ---@type table<integer, Rarity>
@@ -383,7 +492,7 @@ OnInit("Digimon", function ()
                 self:setIV(math.random(15), math.random(15), math.random(15))
             end
 
-            self.cosmetics = {}
+            self.cosmetics = SyncedTable.create()
         end
 
         Digimon.createEvent:run(self)

@@ -1,3 +1,4 @@
+Debug.beginFile("Abilities\\Targetable mana replish")
 OnInit(function ()
     Require "AbilityUtils"
 
@@ -5,7 +6,7 @@ OnInit(function ()
 
     RegisterSpellEffectEvent(Spell, function ()
         local caster = GetSpellAbilityUnit()
-        local data = BlzGetAbilityExtendedTooltip(Spell, GetUnitAbilityLevel(caster, Spell))
+        local data = BlzGetAbilityExtendedTooltip(Spell, GetUnitAbilityLevel(caster, Spell)-1)
 
         local amount = assert(tonumber(data), "Invalid amount from: " .. GetObjectName(Spell))
 
@@ -13,3 +14,4 @@ OnInit(function ()
         SetUnitManaBJ(target, GetUnitState(target, UNIT_STATE_MANA) + amount)
     end)
 end)
+Debug.endFile()
