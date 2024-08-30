@@ -354,6 +354,16 @@ OnInit("Environment", function ()
     end
 
     ---@param p player
+    ---@return boolean[]
+    function GetVisitedPlaces(p)
+        local list = {}
+        for i = 1, MAX_REGIONS do
+            list[i] = vistedPlaces[p][i] ~= nil
+        end
+        return list
+    end
+
+    ---@param p player
     ---@param slot integer
     ---@return boolean[]
     function SaveVisitedPlaces(p, slot)

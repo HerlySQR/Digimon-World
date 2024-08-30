@@ -1,6 +1,5 @@
 Debug.beginFile("DigimonBank")
 OnInit("DigimonBank", function ()
-    Require "PlayerDigimons"
     Require "AFK"
     Require "Menu"
     Require "Hotkeys"
@@ -8,6 +7,7 @@ OnInit("DigimonBank", function ()
     Require "Clear Items"
     Require "PressSaveOrLoad"
     Require "Serializable"
+    Require "Digimon"
 
     local MAX_STOCK = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
@@ -166,11 +166,12 @@ OnInit("DigimonBank", function ()
     ---@field sItms integer[]
     ---@field sItmsCha integer[]
     BankData = setmetatable({}, Serializable)
+    BankData.__index = BankData
 
     ---@param main? Bank
     ---@return BankData|Serializable
     function BankData.create(main)
-        local self = { ---@type BankData
+        local self = {
             stocked = {},
             saved = {},
             sItms = {},
@@ -196,7 +197,7 @@ OnInit("DigimonBank", function ()
                 end
             end
         end
-        return setmetatable(self, DigimonData)
+        return setmetatable(self, BankData)
     end
 
     function BankData:serializeProperties()
@@ -320,7 +321,7 @@ OnInit("DigimonBank", function ()
 
     ---@return boolean
     function Bank:freeDigimonConditions()
-        return GetDigimonCount(self.p) > 1
+        return self:used() > 1
     end
 
     ---@return boolean
@@ -412,11 +413,9 @@ OnInit("DigimonBank", function ()
             local old2 = self.saved[index2]
 
             if old1 then
-                ReleaseDigimon(self.p, old1)
                 old1.saved = true
             end
             if old2 then
-                StoreDigimon(self.p, old2)
                 old2.saved = false
             end
 
@@ -1723,7 +1722,7 @@ OnInit("DigimonBank", function ()
     -- Update frames
     Timed.echo(0.1, function ()
         local bank = Bank[GetPlayerId(LocalPlayer)] ---@type Bank
-        if GetDigimonCount(bank.p) > 0 then
+        if bank:used() > 0 then
             BlzFrameSetEnable(Summon, bank:useDigimonConditions() and bank:avaible(bank.pressed))
             BlzFrameSetEnable(Store, bank:storeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
             BlzFrameSetEnable(Free, bank:freeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
@@ -1826,7 +1825,6 @@ OnInit("DigimonBank", function ()
         if d then
             bank.stocked[index] = nil
             d.owner = nil
-            ReleaseDigimon(d:getOwner(), d)
             d:setOwner(Digimon.PASSIVE)
             if bank.inUse[index] then
                 bank.inUse[index] = nil
@@ -1987,6 +1985,12 @@ OnInit("DigimonBank", function ()
     end
 
     ---@param p player
+    ---@return integer
+    function GetUsedDigimonCount(p)
+        return Bank[GetPlayerId(p)]:used()
+    end
+
+    ---@param p player
     ---@param flag boolean
     function ShowBank(p, flag)
         if p == LocalPlayer then
@@ -2038,6 +2042,18 @@ OnInit("DigimonBank", function ()
         end
 
         return result
+    end
+
+    ---@param p player
+    ---@return boolean
+    function CanStockDigimons(p)
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
+        for i = 0, MAX_STOCK do
+            if not bank.stocked[i] then
+                return true
+            end
+        end
+        return false
     end
 
     ---@param p player
@@ -2181,12 +2197,30 @@ OnInit("DigimonBank", function ()
         Bank[GetPlayerId(p)].maxUsable = n or MAX_USED
     end
 
+    ---@param owner player
+    ---@return Digimon[]
+    function GetAllDigimons(owner)
+        local bank = Bank[GetPlayerId(owner)] ---@type Bank
+        local list = {}
+        for i = 0, MAX_STOCK - 1 do
+            if bank.stocked[i] then
+                table.insert(list, bank.stocked[i])
+            end
+        end
+        for i = 0, bank.savedDigimonsStock - 1 do
+            if bank.saved[i] then
+                table.insert(list, bank.saved[i])
+            end
+        end
+        return list
+    end
+
     ---@param p player
     ---@param slot integer
     ---@return BankData
     function SaveDigimons(p, slot)
         local fileRoot = SaveFile.getPath2(p, slot, "Digimons")
-        local data = BankData.create(Bank[p])
+        local data = BankData.create(Bank[GetPlayerId(p)])
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then
@@ -2198,14 +2232,19 @@ OnInit("DigimonBank", function ()
 
     ---@param p player
     ---@param slot integer
-    ---@return BankData
+    ---@return BankData?
     function LoadDigimons(p, slot)
         local fileRoot = SaveFile.getPath2(p, slot, "Digimons")
         local data = BankData.create()
         local code = GetSyncedData(p, FileIO.Read, fileRoot)
 
         if code ~= "" then
-            data:deserialize(DecodeString(p, code))
+            local success, decode = xpcall(DecodeString, print, p, code)
+            if not success or not decode then
+                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+                return
+            end
+            data:deserialize(decode)
         end
 
         return data

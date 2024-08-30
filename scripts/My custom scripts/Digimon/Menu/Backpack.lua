@@ -11,6 +11,8 @@ OnInit("Backpack", function ()
     Require "Hotkeys"
     Require "EventListener"
     Require "Stats"
+    Require "PressSaveOrLoad"
+    Require "Serializable"
 
     local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local Backpack = nil ---@type framehandle
@@ -56,6 +58,54 @@ OnInit("Backpack", function ()
     ---@field cooldowns table<integer, number>
     ---@field discardMode boolean
     ---@field dropMode boolean
+
+    ---@class BackpackData: Serializable
+    ---@field amount integer
+    ---@field id integer[]
+    ---@field charges integer[]
+    ---@field slot integer[]
+    BackpackData = setmetatable({}, Serializable)
+    BackpackData.__index = BackpackData
+
+    ---@param backpack? Backpack
+    ---@return Serializable
+    function BackpackData.create(backpack)
+        local self = setmetatable({
+            amount = 0,
+            id = {},
+            charges = {},
+            slot = {},
+        }, BackpackData)
+
+        if backpack then
+            for i, data in ipairs(backpack.items) do
+                self.amount = self.amount + 1
+                self.id[i] = data.id
+                self.charges[i] = data.charges
+                self.slot[i] = data.slot
+            end
+        end
+
+        return self
+    end
+
+    function BackpackData:serializeProperties()
+        self:addProperty("amount", self.amount)
+        for i = 1, self.amount do
+            self:addProperty("id" .. i, self.id[i])
+            self:addProperty("charges" .. i, self.charges[i])
+            self:addProperty("slot" .. i, self.slot[i])
+        end
+    end
+
+    function BackpackData:deserializeProperties()
+        self.amount = self:getIntProperty("amount")
+        for i = 1, self.amount do
+            self.id[i] = self:getIntProperty("id" .. i)
+            self.charges[i] = self:getIntProperty("charges" .. i)
+            self.slot[i] = self:getIntProperty("slot" .. i)
+        end
+    end
 
     local Backpacks = {} ---@type table<player, Backpack>
 
@@ -841,6 +891,58 @@ OnInit("Backpack", function ()
     ---@param func fun(mu: unit, mi: integer)
     function OnBackpackPick(func)
         onBackpackPick:register(func)
+    end
+
+    ---@param p player
+    ---@param slot integer
+    ---@return BackpackData
+    function SaveBackpack(p, slot)
+        local fileRoot = SaveFile.getPath2(p, slot, "Backpack")
+        local data = BackpackData.create(Backpacks[p])
+        local code = EncodeString(p, data:serialize())
+
+        if p == LocalPlayer then
+            FileIO.Write(fileRoot, code)
+        end
+
+        return data
+    end
+
+    ---@param p player
+    ---@param slot integer
+    ---@return BackpackData?
+    function LoadBackpack(p, slot)
+        local fileRoot = SaveFile.getPath2(p, slot, "Backpack")
+        local data = BackpackData.create()
+        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+
+        if code ~= "" then
+            local success, decode = xpcall(DecodeString, print, p, code)
+            if not success or not decode then
+                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+                return
+            end
+            data:deserialize(decode)
+        end
+
+        return data
+    end
+
+    ---@param p player
+    ---@param data BackpackData
+    function SetBackpack(p, data)
+        local backpack = Backpacks[p]
+        SetBackpackItems()
+
+        for i = 1, data.amount do
+            backpack.items[i] = CreateItemData(data.id[i])
+            backpack.items[i].slot = data.slot[i]
+            backpack.items[i].charges = data.charges[i]
+        end
+
+        if p == LocalPlayer then
+            UpdateMenu()
+        end
     end
 --[[
     do

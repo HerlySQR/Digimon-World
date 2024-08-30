@@ -3,8 +3,8 @@ OnInit(function ()
     Require "Digimon"
     Require "RegisterSpellEffectEvent"
 
-    local SLEEP = FourCC('A0GI')
-    local SLEEP_DISABLED = FourCC('A0GJ')
+    local SLEEP = FourCC('A0GO')
+    local SLEEP_DISABLED = FourCC('A0GP')
 
     local sleeping = __jarray(false) ---@type table<unit, boolean>
     local effects = __jarray(false) ---@type table<unit, effect>

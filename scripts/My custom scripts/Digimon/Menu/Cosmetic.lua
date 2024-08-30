@@ -2,13 +2,12 @@ Debug.beginFile("Cosmetic")
 OnInit("Cosmetic", function ()
     Require "Savecode"
     Require "SaveFile"
-    Require "PlayerDigimons"
+    Require "DigimonBank"
     Require "PlayerUtils"
     Require "ErrorMessage"
     Require "FrameLoader"
     local FrameList = Require "FrameList" ---@type FrameList
     Require "Menu"
-    Require "DigimonBank"
 
     local MAX_LENGTH_PASSWORD = 200
     local NO_SKIN = FourCC('n000')
@@ -398,10 +397,6 @@ OnInit("Cosmetic", function ()
         BlzFrameSetSize(buffer, 0.23000, 0.05750)
         BlzFrameSetTexture(buffer, "war3mapImported\\EmptyBTN.blp", 0, true)
         CosmeticList:add(buffer)
-
-        ForForce(FORCE_PLAYING, function ()
-            LoadUnlockedCosmetics(GetEnumPlayer())
-        end)
     end)
 
     ---@param id integer
@@ -488,7 +483,7 @@ OnInit("Cosmetic", function ()
 
     ---@param p player
     function SaveUnlockedCosmetics(p)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\Unlocked.pld"
+        local path = SaveFile.getPath2(p, "UnlockedCosmetics")
         local savecode = Savecode.create()
         local amount = 0
         for id, v in pairs(UnlockedCosmetics[p]) do
@@ -511,7 +506,7 @@ OnInit("Cosmetic", function ()
     ---@param p player
     function LoadUnlockedCosmetics(p)
         local list = __jarray(false)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\Unlocked.pld"
+        local path = SaveFile.getPath2(p, "UnlockedCosmetics")
         local savecode = Savecode.create()
         if savecode:Load(p, GetSyncedData(p, FileIO.Read, path), 1) then
             local amount = savecode:Decode(udg_MAX_COSMETICS) -- Load the amount of cosmetics
@@ -536,7 +531,7 @@ OnInit("Cosmetic", function ()
         end
     end
 
-    ---@param p player
+    --[[---@param p player
     ---@param slot integer
     ---@return table<integer, integer[]>
     function SaveUsedCosmetics(p, slot)
@@ -594,7 +589,7 @@ OnInit("Cosmetic", function ()
         savecode:destroy()
 
         return result
-    end
+    end]]--
 
     ---@param p player
     ---@param id integer

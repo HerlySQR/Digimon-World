@@ -1,6 +1,6 @@
 Debug.beginFile("Stats")
 OnInit("Stats", function ()
-    Require "Digimon"
+    Require "DigimonBank"
     Require "FrameLoader"
     Require "Menu"
     Require "Timed"
@@ -15,6 +15,21 @@ OnInit("Stats", function ()
     local DARK_ICON = "war3mapImported\\ATTShadow.blp"
     local HOLY_ICON = "war3mapImported\\ATTHoly.blp"
     local HERO_ICON = "war3mapImported\\ATTSystemMed.blp"
+
+    local SHIELD_ICON = "ReplaceableTextures\\CommandButtons\\PASShieldBag.blp"
+    local WEAPON_ICON = "ReplaceableTextures\\CommandButtons\\PASSwordBag.blp"
+    local ACCESORY_ICON = "ReplaceableTextures\\CommandButtons\\PASAcessBag.blp"
+    local DIGIVICE_ICON = "ReplaceableTextures\\CommandButtons\\PASDiviceBag.blp"
+    local CREST_ICON = "ReplaceableTextures\\CommandButtons\\PASCrestBag.blp"
+
+    local icons = {
+        [0] = SHIELD_ICON,
+        [1] = WEAPON_ICON,
+        [2] = ACCESORY_ICON,
+        [3] = ACCESORY_ICON,
+        [4] = DIGIVICE_ICON,
+        [5] = CREST_ICON
+    }
 
     local StatsButton = nil ---@type framehandle
     local BackdropStatsButton = nil ---@type framehandle
@@ -68,7 +83,7 @@ OnInit("Stats", function ()
     local dropItemI = __jarray(0) ---@type table<player, integer>
     local dropItemJ = __jarray(0) ---@type table<player, integer>
 
-    local show = FourCC('A0GL')
+    local show = FourCC('A0GQ')
 
     -- Add the see stats ability to the new digimon
     Digimon.createEvent:register(function (new)
@@ -252,7 +267,7 @@ OnInit("Stats", function ()
                             BlzFrameSetTexture(BackdropStatsItemT[i][j], BlzGetAbilityIcon(GetItemTypeId(m)), 0, true)
                         else
                             BlzFrameSetEnable(StatsItemT[i][j], false)
-                            BlzFrameSetTexture(BackdropStatsItemT[i][j], "", 0, true)
+                            BlzFrameSetTexture(BackdropStatsItemT[i][j], icons[j], 0, true)
                         end
                     end
                 end
@@ -505,7 +520,7 @@ OnInit("Stats", function ()
 
                 BackdropStatsItemT[i][j] = BlzCreateFrameByType("BACKDROP", "BackdropStatsItemT[" .. i .. "][" .. j .. "]", StatsItemT[i][j], "", 0)
                 BlzFrameSetAllPoints(BackdropStatsItemT[i][j], StatsItemT[i][j])
-                BlzFrameSetTexture(BackdropStatsItemT[i][j], "CustomFrame.png", 0, true)
+                BlzFrameSetTexture(BackdropStatsItemT[i][j], icons[j], 0, true)
                 t = CreateTrigger()
                 BlzTriggerRegisterFrameEvent(t, StatsItemT[i][j], FRAMEEVENT_CONTROL_CLICK)
                 TriggerAddAction(t, function ()

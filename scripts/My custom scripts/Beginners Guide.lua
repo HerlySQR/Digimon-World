@@ -4,7 +4,6 @@ OnInit.final(function ()
     Require "Environment"
     Require "Backpack"
     Require "Digimon"
-    Require "Player Data"
 
     local Menu = DialogCreate() ---@type dialog
     DialogSetMessage(Menu, "Do you wanna do the beginners guide?")
@@ -183,7 +182,7 @@ OnInit.final(function ()
         if GetClickedButton() == Yes then
             inTutorial[p] = true
 
-            local d = GetDigimons(p)[1]
+            local d = GetUsedDigimons(p)[1]
             d:show()
             SelectUnitForPlayerSingle(d.root, p)
 
@@ -237,11 +236,11 @@ OnInit.final(function ()
     TriggerRegisterEnterRectSimple(t, gg_rct_JijimonsHouse_Inside)
     TriggerAddAction(t, function ()
         local d = Digimon.getInstance(GetEnteringUnit())
-        local p = d.owner
-        if not inTutorial[p] then
-            return
-        end
         if d then
+            local p = d.owner
+            if not inTutorial[p] then
+                return
+            end
             if d:getTypeId() == PIXIMON then
                 d:setPos(GetRectCenterX(gg_rct_JijimonTP_outside), GetRectCenterY(gg_rct_JijimonTP_outside))
             elseif not firstPart[p] then
@@ -360,7 +359,7 @@ OnInit.final(function ()
             return
         end
 
-        local d = GetDigimons(p)[1]
+        local d = GetUsedDigimons(p)[1]
         if inTutorial[p] and not secondPart[p] then
             secondPart[p] = true
             local pixie = piximons[p]
@@ -442,7 +441,7 @@ OnInit.final(function ()
             return
         end
         Timed.call(2.5, function ()
-            local d = GetDigimons(p)[1]
+            local d = GetUsedDigimons(p)[1]
             local pixie = piximons[p]
 
             if secondPartSkipped[p] then

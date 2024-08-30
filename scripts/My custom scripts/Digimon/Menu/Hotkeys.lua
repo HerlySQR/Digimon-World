@@ -470,10 +470,6 @@ OnInit("Hotkeys", function ()
                 end
             end
         end)
-
-        ForForce(FORCE_PLAYING, function ()
-            LoadHotkeys(GetEnumPlayer())
-        end)
     end)
 
     ---@param frame framehandle
@@ -510,14 +506,14 @@ OnInit("Hotkeys", function ()
         local save = savecode:Save(LocalPlayer, 1)
 
         if p == LocalPlayer then
-            FileIO.Write(SaveFile.getFolder() .. "\\Hotkeys.pld", save)
+            FileIO.Write(SaveFile.getPath2(p, "Hotkeys"), save)
         end
         savecode:destroy()
     end
 
     ---@param p player
     function LoadHotkeys(p)
-        local loaded = GetSyncedData(p, FileIO.Read, SaveFile.getFolder() .. "\\Hotkeys.pld")
+        local loaded = GetSyncedData(p, FileIO.Read, SaveFile.getPath2(p, "Hotkeys"))
         if loaded:len() > 1 then
             local savecode = Savecode.create()
             if savecode:Load(p, loaded, 1) then
@@ -540,7 +536,6 @@ OnInit("Hotkeys", function ()
                 if p == LocalPlayer then
                     UpdateHotkeys()
                 end
-                DisplayTextToPlayer(p, 0, 0, "Hotkeys loaded")
             end
             savecode:destroy()
         end

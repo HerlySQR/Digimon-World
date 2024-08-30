@@ -10,7 +10,6 @@ OnInit(function ()
     Require "ErrorMessage"
     Require "NewBonus"
     Require "AddHook"
-    Require "Player Data"
     local FrameList = Require "FrameList" ---@type FrameList
 
     local LocalPlayer = GetLocalPlayer()
@@ -1328,13 +1327,13 @@ OnInit(function ()
                         end
                         return
                     end
-                    for _, d in ipairs(GetDigimons(p)) do
+                    for _, d in ipairs(GetUsedDigimons(p)) do
                         if UnitHasItemOfTypeBJ(d.root, PVP_TICKET) then
                             RemoveItem(GetItemOfTypeFromUnitBJ(d.root, PVP_TICKET))
                             break
                         end
                     end
-                    for _, d in ipairs(GetDigimons(toFight)) do
+                    for _, d in ipairs(GetUsedDigimons(toFight)) do
                         if UnitHasItemOfTypeBJ(d.root, PVP_TICKET) then
                             RemoveItem(GetItemOfTypeFromUnitBJ(d.root, PVP_TICKET))
                             break

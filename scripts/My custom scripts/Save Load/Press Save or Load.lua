@@ -1,12 +1,175 @@
 Debug.beginFile("PressSaveOrLoad")
 OnInit("PressSaveOrLoad", function ()
-    Require "Player Data"
+    Require "AddHook"
     Require "Timed"
     Require "Menu"
     Require "GameStatus"
     local FrameList = Require "FrameList" ---@type FrameList
     Require "GetSyncedData"
-    Require "Cosmetic"
+    Require "Serializable"
+
+    local restartListener = EventListener.create()
+    local loadListener = EventListener.create()
+
+    ---@param func fun(p: player)
+    function OnRestart(func)
+        restartListener:register(func)
+    end
+
+    ---@param func fun(p: player)
+    function OnLoad(func)
+        loadListener:register(func)
+    end
+
+    ---@class PlayerData: Serializable
+    ---@field gold integer
+    ---@field lumber integer
+    ---@field food integer
+    ---@field date osdate
+    ---@field vistedPlaces boolean[]
+    ---@field vistedPlaceCount integer
+    PlayerData = setmetatable({}, Serializable)
+    PlayerData.__index = PlayerData
+
+    ---@param p player?
+    ---@return PlayerData|Serializable
+    function PlayerData.create(p)
+        local self = setmetatable({
+            vistedPlaces = __jarray(false)
+        }, PlayerData)
+        if p then
+            self.gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
+            self.lumber = GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)
+            self.food = GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED)
+            self.date = GetSyncedData(p, os.date, "*t")
+            self.vistedPlaces = GetVisitedPlaces(p)
+            self.vistedPlaceCount = #self.vistedPlaces
+        end
+        return self
+    end
+
+    function PlayerData:serializeProperties()
+        self:addProperty("gold", self.gold)
+        self:addProperty("lumber", self.lumber)
+        self:addProperty("food", self.food)
+        self:addProperty("date", Obj2Str(self.date))
+        self:addProperty("vpCount", self.vistedPlaceCount)
+        for i = 1, self.vistedPlaceCount do
+            self:addProperty("vp" .. i, self.vistedPlaces[i])
+        end
+    end
+
+    function PlayerData:deserializeProperties()
+        self.gold = self:getIntProperty("gold")
+        self.lumber = self:getIntProperty("lumber")
+        self.food = self:getIntProperty("food")
+        self.date = Str2Obj(self:getStringProperty("date"))
+        self.vistedPlaceCount = self:getIntProperty("vpCount")
+        for i = 1, self.vistedPlaceCount do
+            self.vistedPlaces[i] = self:getBoolProperty("vp" .. i)
+        end
+    end
+
+    local PlayerDatas = {} ---@type table<player, PlayerData[]>
+    local DigimonDatas = {} ---@type table<player, BankData[]>
+    local BackpackDatas = {} ---@type table<player, BackpackData[]>
+    local QuestDatas = {} ---@type table<player, QuestData[]>
+
+    for i = 0, PLAYER_NEUTRAL_AGGRESSIVE do
+        PlayerDatas[Player(i)] = {}
+        DigimonDatas[Player(i)] = {}
+        BackpackDatas[Player(i)] = {}
+        QuestDatas[Player(i)] = {}
+    end
+
+    ---Clears all the data of the player
+    ---@param p player
+    function RestartData(p)
+        --[[for i = 0, udg_MAX_DIGIMONS - 1 do
+            pcall(RemoveFromBank, p, i, true)
+        end
+        for i = 0, udg_MAX_SAVED_DIGIMONS - 1 do
+            pcall(RemoveSavedDigimon, p, i)
+        end
+        SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, 0)
+        SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, 0)
+        SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, 0)
+        SetBackpackItems(p, nil)
+        SetBankItems(p)
+        EnumItemsInRect(WorldBounds.rect, nil, function ()
+            if GetItemPlayer(GetEnumItem()) == p then
+                RemoveItem(GetEnumItem())
+            end
+        end)
+        SetQuestsData(p)]]
+
+        restartListener:run(p)
+    end
+
+    ---@param p player
+    ---@param slot integer
+    function SavePlayerData(p, slot)
+        local fileRoot = SaveFile.getPath2(p, slot, "PlayerData")
+        local data = PlayerData.create(p)
+        local code = EncodeString(p, data:serialize())
+
+        if p == GetLocalPlayer() then
+            FileIO.Write(fileRoot, code)
+        end
+
+        PlayerDatas[p][slot] = data
+        DigimonDatas[p][slot] = SaveDigimons(p, slot)
+        BackpackDatas[p][slot] = SaveBackpack(p, slot)
+        QuestDatas[p][slot] = SaveQuests(p, slot)
+    end
+
+    ---@param p player
+    ---@param slot integer
+    ---@return boolean
+    function LoadPlayerData(p, slot)
+        local fileRoot = SaveFile.getPath2(p, slot, "PlayerData")
+        local data = PlayerData.create()
+        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+
+        if code ~= "" then
+            local success, decode = xpcall(DecodeString, print, p, code)
+            if not success or not decode then
+                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+                return false
+            end
+            data:deserialize(decode)
+        else
+            return false
+        end
+
+        PlayerDatas[p][slot] = data
+        DigimonDatas[p][slot] = LoadDigimons(p, slot)
+        BackpackDatas[p][slot] = LoadBackpack(p, slot)
+        QuestDatas[p][slot] = LoadQuests(p, slot)
+
+        loadListener:run(p)
+
+        return true
+    end
+
+    function SetPlayerData(p, slot)
+        if PlayerDatas[p][slot] then
+            local data = PlayerDatas[p][slot]
+            SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, data.gold)
+            SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, data.lumber)
+            SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, data.food)
+            ApplyVisitedPlaces(p, data.vistedPlaces)
+        end
+        if DigimonDatas[p][slot] then
+            SetBank(p, DigimonDatas[p][slot])
+        end
+        if BackpackDatas[p][slot] then
+            SetBackpack(p, BackpackDatas[p][slot])
+        end
+        if QuestDatas[p][slot] then
+            SetQuests(p, QuestDatas[p][slot])
+        end
+    end
 
     local MAX_STRING_ENCODED_LENGHT = 2^17
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
@@ -74,85 +237,43 @@ OnInit("PressSaveOrLoad", function ()
         end
     end
 
-    -- I'm afraid of using the ConvertItemType function
-    local function GetItemClass(id)
-        if id == 0 then
-            return ITEM_TYPE_PERMANENT
-        elseif id == 1 then
-            return ITEM_TYPE_CHARGED
-        elseif id == 2 then
-            return ITEM_TYPE_POWERUP
-        elseif id == 3 then
-            return ITEM_TYPE_ARTIFACT
-        elseif id == 4 then
-            return ITEM_TYPE_PURCHASABLE
-        elseif id == 5 then
-            return ITEM_TYPE_CAMPAIGN
-        elseif id == 6 then
-            return ITEM_TYPE_MISCELLANEOUS
-        elseif id == 7 then
-            return ITEM_TYPE_UNKNOWN
-        elseif id == 8 then
-            return ITEM_TYPE_ANY
-        end
-        return nil
-    end
-
     -- This function always should be in a "if player == GetLocalPlayer() then" block
     local function UpdateInformation()
-        local data = PlayerDatas[LocalPlayer][Pressed[LocalPlayer]]
+        local pData = PlayerDatas[LocalPlayer][Pressed[LocalPlayer]]
+        local dData = DigimonDatas[LocalPlayer][Pressed[LocalPlayer]]
+        local bData = BackpackDatas[LocalPlayer][Pressed[LocalPlayer]]
+        local qData = QuestDatas[LocalPlayer][Pressed[LocalPlayer]]
 
         for i = 1, #QuestsAdded do
             TooltipQuestsArea:remove(TooltipQuestsName[QuestsAdded[i]])
         end
         QuestsAdded = {}
 
-        if data then
+        if pData then
             BlzFrameSetText(TooltipName, "|cffff6600Information|r")
-            BlzFrameSetText(TooltipDate, os.date("\x25c", os.time(data.date)))
-            BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. data.gold)
-            BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal: |r" .. data.lumber)
-            BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank: |r" .. data.food)
-            local currentUsing = 0
-            local currentSaved = MAX_DIGIMONS
-            for i = 1, MAX_DIGIMONS + MAX_SAVED do
-                if data.digimons[i] and data.digimons[i] ~= 0 then
+            BlzFrameSetText(TooltipDate, os.date("\x25c", os.time(pData.date)))
+            BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. pData.gold)
+            BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal: |r" .. pData.lumber)
+            BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank: |r" .. pData.food)
+            for i = 0, MAX_DIGIMONS - 1 do
+                local index = i
+                if dData.stocked[i] then
                     local s = ""
-                    local inv = data.inventories[i]
                     for j = 0, 5 do
-                        if inv.items[j] then
-                            s = s .. GetObjectName(inv.items[j]) -- Thank you guys
-                            if GetItemClass(inv.classes[j]) == ITEM_TYPE_CHARGED then
-                                s = s .. "(" .. inv.charges[j] .. ")"
-                            end
+                        if dData.stocked[i]["invSlot" .. j] ~= 0 then
+                            s = s .. GetObjectName(dData.stocked[i]["invSlot" .. j]) -- Thank you guys
                             if j ~= 5 then
                                 s = s .. ", "
                             end
                         end
                     end
-                    local index
-                    if data.isSaved[i] == 1 then
-                        index = currentSaved
-                        currentSaved = currentSaved + 1
-                    else
-                        index = currentUsing
-                        currentUsing = currentUsing + 1
-                    end
                     BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r" .. s)
-                    BlzFrameSetTexture(TooltipDigimonIconT[index], BlzGetAbilityIcon(data.digimons[i]), 0, true)
-                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level " .. I2S(data.levels[i]) .. "|r")
-                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r" .. data.strLevels[i] .. " (+" .. data.IVsta[i] .. ")")
-                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r" .. data.agiLevels[i] .. " (+" .. data.IVdex[i] .. ")")
-                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r" .. data.intLevels[i] .. " (+" .. data.IVwis[i] .. ")")
+                    BlzFrameSetTexture(TooltipDigimonIconT[index], BlzGetAbilityIcon(dData.stocked[i].typeId), 0, true)
+                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level " .. I2S(dData.stocked[i].level) .. "|r")
+                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r" .. dData.stocked[i].lvlSta .. " (+" .. dData.stocked[i].IVsta .. ")")
+                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r" .. dData.stocked[i].lvlDex .. " (+" .. dData.stocked[i].IVdex .. ")")
+                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r" .. dData.stocked[i].lvlWis .. " (+" .. dData.stocked[i].IVwis .. ")")
                 else
-                    local index
-                    if currentUsing < MAX_DIGIMONS then
-                        index = currentUsing
-                        currentUsing = currentUsing + 1
-                    else
-                        index = currentSaved
-                        currentSaved = currentSaved + 1
-                    end
                     BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r")
                     BlzFrameSetTexture(TooltipDigimonIconT[index], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
                     BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level 0|r")
@@ -161,36 +282,65 @@ OnInit("PressSaveOrLoad", function ()
                     BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r")
                 end
             end
-            BlzFrameSetText(TooltipSaved, "|cff00eeffSaved:|r |cffffff00Max. " .. data.bankDigimonsMaxStock .. "|r")
+            for i = 0, udg_MAX_SAVED_DIGIMONS - 1 do
+                local index = i + MAX_DIGIMONS
+                if dData.saved[i] then
+                    local s = ""
+                    for j = 0, 5 do
+                        if dData.saved[i]["invSlot" .. j] ~= 0 then
+                            s = s .. GetObjectName(dData.saved[i]["invSlot" .. j]) -- Thank you guys
+                            if j ~= 5 then
+                                s = s .. ", "
+                            end
+                        end
+                    end
+                    BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r" .. s)
+                    BlzFrameSetTexture(TooltipDigimonIconT[index], BlzGetAbilityIcon(dData.saved[i].typeId), 0, true)
+                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level " .. I2S(dData.saved[i].level) .. "|r")
+                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r" .. dData.saved[i].lvlSta .. " (+" .. dData.saved[i].IVsta .. ")")
+                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r" .. dData.saved[i].lvlDex .. " (+" .. dData.saved[i].IVdex .. ")")
+                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r" .. dData.saved[i].lvlWis .. " (+" .. dData.saved[i].IVwis .. ")")
+                else
+                    BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r")
+                    BlzFrameSetTexture(TooltipDigimonIconT[index], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level 0|r")
+                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r")
+                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r")
+                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r")
+                end
+            end
+            BlzFrameSetText(TooltipSaved, "|cff00eeffSaved:|r |cffffff00Max. " .. dData.maxSaved .. "|r")
 
             local result = ""
-            for i = 1, #data.backpackItems do
-                result = result .. GetObjectName(data.backpackItems[i]) .. "(" .. data.backpackItemCharges[i] .. "), "
+            for i = 1, bData.amount do
+                result = result .. GetObjectName(bData.id[i]) .. "(" .. bData.charges[i] .. "), "
             end
             BlzFrameSetText(TooltipBackpack, "|cff3874ffBackpack:|r\n" .. result:sub(1, result:len() - 2))
 
             result = ""
-            for i = 1, #data.bankItems do
-                result = result .. GetObjectName(data.bankItems[i])
-                if data.bankItemCharges[i] > 1 then
-                    result = result .. "(" .. data.bankItemCharges[i] .. ")"
-                end
-                if i ~= #data.bankItems then
-                    result = result .. ", "
+            for i = 1, dData.sItmsSto do
+                if dData.sItms[i] then
+                    result = result .. GetObjectName(dData.sItms[i])
+                    if dData.sItmsCha[i] > 1 then
+                        result = result .. "(" .. dData.sItmsCha[i] .. ")"
+                    end
+                    if i ~= dData.sItmsSto then
+                        result = result .. ", "
+                    end
                 end
             end
-            BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r |cffffff00Max. " .. data.bankItemsMaxStock .. "|r\n" .. result)
+            BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r |cffffff00Max. " .. dData.sItmsSto .. "|r\n" .. result)
 
-            for i = 1, #data.questsIds do
-                if not IsQuestARequirement(i) then
-                    local id = data.questsIds[i]
+            for i = 1, qData.amount do
+                local id = qData.id[i]
+                if not IsQuestARequirement(id) then
                     local s = GetQuestName(id)
-                    if data.questsIsCompleted[i] then
+                    if qData.comp[i] then
                         s = "|cffFFCC00" .. s .. "|r"
                     else
                         local max = GetQuestMaxProgress(id)
                         if max > 1 then
-                            s = s .. " " .. ((max == data.questsProgresses[i]) and "|cff00ff00" or "|cffffffff") .. "(" .. data.questsProgresses[i] .. "/" .. max .. ")|r"
+                            s = s .. " " .. ((max == qData.prog[i]) and "|cff00ff00" or "|cffffffff") .. "(" .. qData.prog[i] .. "/" .. max .. ")|r"
                         end
                     end
                     BlzFrameSetText(TooltipQuestsName[id], s)
@@ -267,10 +417,7 @@ OnInit("PressSaveOrLoad", function ()
 
     local function AbsoluteSaveFunc()
         local p = GetTriggerPlayer()
-        udg_SaveLoadEvent_Player = p
-        udg_SaveLoadSlot = Pressed[udg_SaveLoadEvent_Player]
-        TriggerExecute(gg_trg_Save_GUI)
-        WaitLastSync()
+        SavePlayerData(p, Pressed[p])
         if p == LocalPlayer then
             UpdateMenu()
             UpdateInformation()
@@ -280,7 +427,7 @@ OnInit("PressSaveOrLoad", function ()
     local function AbsoluteLoadFunc()
         local p = GetTriggerPlayer()
         TriggerExecute(gg_trg_Absolute_Load)
-        UseData(p, Pressed[p])
+        SetPlayerData(p, Pressed[p])
         ExitFunc()
     end
 
@@ -604,7 +751,7 @@ OnInit("PressSaveOrLoad", function ()
 
         local len = s:len()
         for i = 1, len do
-            savecode:Encode(s:byte(i), 256)
+            savecode:Encode(s:byte(i), 255)
         end
         savecode:Encode(len, MAX_STRING_ENCODED_LENGHT)
 
@@ -616,19 +763,64 @@ OnInit("PressSaveOrLoad", function ()
 
     ---@param p player
     ---@param s string
-    ---@return string
+    ---@return string?
     function DecodeString(p, s)
         local savecode = Savecode.create()
-        savecode:Load(p, s, 1)
+
+        if not savecode:Load(p, s, 1) then
+            savecode:destroy()
+            return nil
+        end
 
         local len = savecode:Decode(MAX_STRING_ENCODED_LENGHT)
         local decode = ""
         for _ = 1, len do
-            decode = string.char(savecode:Decode(256)) .. decode
+            decode = string.char(savecode:Decode(255)) .. decode
         end
         savecode:destroy()
+        print(decode)
 
         return decode
     end
+
+    -- Check for invalid values
+
+    local function hook(func, thing)
+        local old
+        old = AddHook(func, function (id)
+            if not id or id == 0 then
+                error("Trying to get an invalid " .. thing .. ".\nMaybe you have an invalid or corrupted saved file.", 2)
+            end
+            return old(id)
+        end)
+    end
+    hook("BlzGetAbilityIcon", "icon")
+    hook("GetObjectName", "name")
+    local old1
+    old1 = AddHook("BlzGetAbilityExtendedTooltip", function (id, lvl)
+        if not id or id == 0 then
+            error("Trying to get an invalid tooltip.\nMaybe you have an invalid or corrupted saved file.", 2)
+        end
+        return old1(id, lvl)
+    end)
+    local old2
+    old2 = AddHook("CreateUnit", function (owningPlayer, unitid, x, y, face)
+        if not unitid or unitid == 0 then
+            error("Trying to create an invalid unit.\nMaybe you have an invalid or corrupted saved file.", 2)
+        end
+        return old2(owningPlayer, unitid, x, y, face)
+    end)
+
+    -- I don't know why these functions returns real now
+
+    local function hookReal(func)
+        local old
+        old = AddHook(func, function (obj)
+            return math.floor(old(obj))
+        end)
+    end
+
+    hookReal("GetItemCharges")
+    hookReal("GetHeroXP")
 end)
 Debug.endFile()

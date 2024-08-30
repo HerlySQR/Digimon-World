@@ -4,7 +4,7 @@ OnInit("DigimonEvolution", function ()
     Require "Digimon Capture"
     Require "Timed"
     Require "PlayerUtils"
-    Require "PlayerDigimons"
+    Require "DigimonBank"
 
     local MULTICOLOR_DIGIVICE = udg_MULTICOLOR_DIGIVICE ---@type integer
 
@@ -73,7 +73,7 @@ OnInit("DigimonEvolution", function ()
 
     local function CheckDigimonEvolutionConditions()
         ForForce(FORCE_PLAYING, function ()
-            for _, d in ipairs(GetDigimons(GetEnumPlayer())) do
+            for _, d in ipairs(GetUsedDigimons(GetEnumPlayer())) do
                 local initial = d:getTypeId()
                 if EvolutionConditions[initial] then
                     for _, cond in ipairs(EvolutionConditions[initial]) do

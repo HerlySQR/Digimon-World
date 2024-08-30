@@ -11,6 +11,8 @@ OnInit("Quests", function ()
     Require "AddHook"
     local Color = Require "Color" ---@type Color
     Require "EventListener"
+    Require "PressSaveOrLoad"
+    Require "Serializable"
 
     local YELLOW = Color.new(255, 255, 0)
     local GREEN = Color.new(0, 255, 255)
@@ -67,6 +69,55 @@ OnInit("Quests", function ()
     ---@field completed boolean
 
     local PlayerQuests = {} ---@type table<player, Quest[]>
+
+    ---@class QuestData: Serializable
+    ---@field amount integer
+    ---@field id integer[]
+    ---@field prog integer[]
+    ---@field comp boolean[]
+    QuestData = setmetatable({}, Serializable)
+    QuestData.__index = QuestData
+
+    ---@param p player?
+    ---@return QuestData | Serializable
+    function QuestData.create(p)
+        local self = setmetatable({
+            amount = 0,
+            id = {},
+            prog = {},
+            comp = {}
+        }, QuestData)
+        if p then
+            for i = 0, MAX_QUESTS do
+                local quest = PlayerQuests[p][i]
+                if quest then
+                    self.amount = self.amount + 1
+                    self.id[self.amount] = quest.id
+                    self.prog[self.amount] = quest.progress
+                    self.comp[self.amount] = quest.completed
+                end
+            end
+        end
+        return self
+    end
+
+    function QuestData:serializeProperties()
+        self:addProperty("amount", self.amount)
+        for i = 1, self.amount do
+            self:addProperty("id" .. i, self.id[i])
+            self:addProperty("prog" .. i, self.prog[i])
+            self:addProperty("comp" .. i, self.comp[i])
+        end
+    end
+
+    function QuestData:deserializeProperties()
+        self.amount = self:getIntProperty("amount")
+        for i = 1, self.amount do
+            self.id[i] = self:getIntProperty("id" .. i)
+            self.prog[i] = self:getIntProperty("prog" .. i)
+            self.comp[i] = self:getBoolProperty("comp" .. i)
+        end
+    end
 
     local function UpdateMenu()
         if PressedQuest < 0 or PressedQuest > MAX_QUESTS then
@@ -721,6 +772,93 @@ OnInit("Quests", function ()
             udg_QuestPetitioner = savedFields[6]
         end
     end)
+
+    ---@param p player
+    ---@param slot integer
+    ---@return QuestData
+    function SaveQuests(p, slot)
+        local fileRoot = SaveFile.getPath2(p, slot, "Quests")
+        local data = QuestData.create(p)
+        local code = EncodeString(p, data:serialize())
+
+        if p == LocalPlayer then
+            FileIO.Write(fileRoot, code)
+        end
+
+        return data
+    end
+
+    ---@param p player
+    ---@param slot integer
+    ---@return QuestData?
+    function LoadQuests(p, slot)
+        local fileRoot = SaveFile.getPath2(p, slot, "Quests")
+        local data = QuestData.create()
+        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+
+        if code ~= "" then
+            local success, decode = xpcall(DecodeString, print, p, code)
+            if not success or not decode then
+                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+                return
+            end
+            data:deserialize(decode)
+        end
+
+        return data
+    end
+
+    ---@param p player
+    ---@param data QuestData
+    function SetQuests(p, data)
+        local have = __jarray(false)
+        if p == LocalPlayer then
+            while QuestList:remove() do end
+        end
+        for i = 1, data.amount do
+            local id = data.id[i]
+            if QuestTemplates[id] then
+                PlayerQuests[p][id] = {
+                    name = QuestTemplates[id].name,
+                    description = QuestTemplates[id].description,
+                    owner = p,
+                    id = id,
+                    level = QuestTemplates[id].level,
+                    completed = data.comp[i],
+                    progress = data.prog[i]
+                }
+                if p == LocalPlayer then
+                    if not QuestTemplates[id].isRequirement then
+                        if data.prog[i] then
+                            QuestList:remove(QuestOptionT[id])
+                        else
+                            BlzFrameSetEnable(QuestOptionT[id], true)
+                            BlzFrameSetVisible(QuestOptionT[id], true)
+                            QuestList:add(QuestOptionT[id])
+                        end
+                    end
+                    if QuestTemplates[id].questMark then
+                        BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
+                    end
+                    BlzFrameSetVisible(QuestButton, true)
+                end
+                have[id] = true
+            end
+        end
+        for i = 0, MAX_QUESTS do
+            if not have[i] and QuestTemplates[i] then
+                PlayerQuests[p][i] = nil
+                if p == LocalPlayer then
+                    if QuestTemplates[i].questMark then
+                        BlzSetSpecialEffectAlpha(QuestTemplates[i].questMark, 255)
+                    end
+                end
+            end
+        end
+        if p == LocalPlayer then
+            UpdateMenu()
+        end
+    end
 
 end)
 Debug.endFile()

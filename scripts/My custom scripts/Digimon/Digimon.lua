@@ -109,7 +109,7 @@ OnInit("Digimon", function ()
     ---@param main? Digimon
     ---@return DigimonData|Serializable
     function DigimonData.create(main)
-        local self = { ---@type DigimonData
+        local self = {
             cosmetics = {}
         }
         if main then

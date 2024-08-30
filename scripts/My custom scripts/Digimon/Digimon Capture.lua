@@ -14,7 +14,7 @@ OnInit("Digimon Capture", function ()
         local p = GetOwningPlayer(caster)
 
         if GetOwningPlayer(target) == Digimon.NEUTRAL then
-            if not IsFullOfDigimons(p) or CanSaveDigimons(p) then
+            if CanStockDigimons(p) or CanSaveDigimons(p) then
                 local dTarget = Digimon.getInstance(target)
                 local captureChance = 0
                 if not udg_NetAlwaysCapture then
@@ -33,8 +33,6 @@ OnInit("Digimon Capture", function ()
                 if randomCapture < captureChance then
                     if SendToBank(p, dTarget) == -1 then
                         SaveDigimon(p, dTarget)
-                    else
-                        StoreDigimon(p, dTarget)
                     end
                     DisplayTextToPlayer(p, 0, 0, "You got it!")
                     DestroyEffectTimed(AddSpecialEffect("Abilities\\Spells\\Undead\\DarkRitual\\DarkRitualCaster.mdl", GetUnitX(target), GetUnitY(target)), 2.00)

@@ -7,7 +7,6 @@ OnInit(function ()
     Require "FrameLoader"
     Require "Menu"
     Require "SaveHelper"
-    Require "Player Data"
     Require "GetSyncedData"
 
     local WaitPlayers = nil ---@type framehandle
@@ -80,56 +79,22 @@ OnInit(function ()
         -- To make sure that I can yield this thread
         coroutine.wrap(function ()
             for i = 0, n do
+                local loaded = false
                 local user = users[i]
                 local p = user.handle
                 SaveHelper.SetUserLoading(user, true)
-                local loaded = 0
-                for slot = 1, 6 do
-                    local invalid = false
-                    local exists = GetSyncedData(p, SaveFile.exists, p, slot)
-                    if exists then
-                        local s = GetSyncedData(p, SaveFile.getData, p, slot)
-                        SaveHelper.SetSaveSlot(user, slot)
-                        local savecode = Savecode.create()
-                        if savecode:Load(p, s, 1) then
-                            udg_SaveCount = 0
-                            udg_SaveTempInt = savecode
-                            udg_SaveLoadSlot = slot
-                            udg_SaveLoadEvent_Player = p
-                            TriggerExecute(gg_trg_Load_Actions)
-                            --THIS_THREAD = coroutine.running()
-                            --coroutine.yield()
-                            udg_SaveLoadUsedCosmetics = LoadUsedCosmetics(p, slot)
-                            udg_SaveLoadVisitedPlaces = LoadVisitedPlaces(p, slot)
-
-                            if udg_SaveCodeLegacy then
-                                udg_SaveCodeLegacy = false
-                                invalid = true
-                            end
-                        else
-                            invalid = true
-                        end
-
-                        if not invalid then
-                            loaded = loaded + 1
-                            StoreData(p, slot)
-                        else
-                            if p == GetLocalPlayer() then
-                                print("You are using an invalid code.\n")
-                            end
-                            ClearSaveLoadData()
-                        end
-
-                        savecode:destroy()
-                    end
+                for slot = 1, 5 do
+                    loaded = LoadPlayerData(p, slot) or loaded
                 end
+                LoadHotkeys(p)
+                LoadUnlockedCosmetics(p)
                 SaveHelper.SetUserLoading(user, false)
                 if not user.isPlaying then
                     BlzFrameSetText(PlayerStatus[i], "|cffffff00Left the game|r")
-                elseif loaded == 0 then
+                elseif not loaded then
                     BlzFrameSetText(PlayerStatus[i], "|cffBFBFBFData not found")
                 else
-                    BlzFrameSetText(PlayerStatus[i], "|cff00ff00Data loaded|r")
+                    BlzFrameSetText(PlayerStatus[i], "|cff00ff00Ready|r")
                     ShowLoad(p, true)
                 end
                 BlzFrameSetVisible(BlzFrameGetChild(PlayerReady[i], 3), true)
