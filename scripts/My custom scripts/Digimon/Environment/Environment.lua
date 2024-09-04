@@ -309,7 +309,7 @@ OnInit("Environment", function ()
         BlzFrameSetAlpha(TopMsg, 0)
 
         SeeMap = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        AddButtonToTheRight(SeeMap, 5)
+        AddButtonToTheRight(SeeMap, 7)
         AddFrameToMenu(SeeMap)
         AddDefaultTooltip(SeeMap, "See the map", "Look at the places you visited.")
         BlzFrameSetVisible(SeeMap, false)

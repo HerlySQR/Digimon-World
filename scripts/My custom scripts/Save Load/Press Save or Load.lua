@@ -441,7 +441,7 @@ OnInit("PressSaveOrLoad", function ()
 
         -- Save Button
         SaveButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        AddButtonToTheRight(SaveButton, 10)
+        AddButtonToTheRight(SaveButton, 9)
         BlzFrameSetText(SaveButton, "|cff" .. NormalColor .. "Save|r")
         BlzFrameSetScale(SaveButton, 1.00)
         BlzFrameSetVisible(SaveButton, false)
@@ -458,12 +458,12 @@ OnInit("PressSaveOrLoad", function ()
         -- Load Button
 
         LoadButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
-        AddButtonToTheRight(LoadButton, 11)
+        AddButtonToTheRight(LoadButton, 10)
         BlzFrameSetText(LoadButton, "|cff" .. NormalColor .. "Load|r")
         BlzFrameSetScale(LoadButton, 1.00)
         BlzFrameSetVisible(LoadButton, false)
         AddFrameToMenu(LoadButton)
-        AddDefaultTooltip(SaveButton, "Load", "Load your progress.")
+        AddDefaultTooltip(LoadButton, "Load", "Load your progress.")
 
         BackdropLoadButton = BlzCreateFrameByType("BACKDROP", "BackdropLoadButton", LoadButton, "", 0)
         BlzFrameSetAllPoints(BackdropLoadButton, LoadButton)

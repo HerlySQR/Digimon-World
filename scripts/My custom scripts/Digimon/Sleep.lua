@@ -2,6 +2,7 @@ Debug.beginFile("Sleep")
 OnInit(function ()
     Require "Digimon"
     Require "RegisterSpellEffectEvent"
+    Require "MotionSensor"
 
     local SLEEP = FourCC('A0GO')
     local SLEEP_DISABLED = FourCC('A0GP')
@@ -14,11 +15,14 @@ OnInit(function ()
         local u = GetSpellAbilityUnit()
         if not sleeping[u] then
             sleeping[u] = true
-            effects[u] = AddSpecialEffectTarget("Abilities\\Spells\\Other\\CreepSleep\\CreepSleepTarget.mdl", u, "overhead")
+            effects[u] = AddSpecialEffect("Abilities\\Spells\\Other\\CreepSleep\\CreepSleepTarget.mdl", GetUnitX(u), GetUnitY(u))
+            BlzSetSpecialEffectZ(effects[u], BlzGetUnitRealField(u, UNIT_RF_SHADOW_IMAGE_HEIGHT) + GetUnitZ(u, true))
+            BlzSetSpecialEffectScale(effects[u], BlzGetUnitRealField(u, UNIT_RF_SCALING_VALUE))
             callbacks[u] = Timed.echo(1., function ()
                 SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE) + 0.01*GetUnitState(u, UNIT_STATE_MAX_LIFE))
                 SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA) + 0.01*GetUnitState(u, UNIT_STATE_MAX_MANA))
             end)
+            MotionSensor.addUnit(u)
         end
     end)
 
@@ -40,6 +44,15 @@ OnInit(function ()
     Digimon.issueOrderEvent:register(abortSleep)
     Digimon.issuePointOrderEvent:register(abortSleep)
     Digimon.issueTargetOrderEvent:register(abortSleep)
+
+    MotionSensor.changeEvent:register(function (sensor)
+        if Digimon.getInstance(sensor.main) then
+            abortSleep(Digimon.getInstance(sensor.main))
+        end
+        if not RectContainsUnit(sensor.main, gg_rct_Invisible_Bridge) then
+            MotionSensor.removeUnit(sensor.main)
+        end
+    end)
 
     -- Add the evolution ability to the new digimon
     Digimon.createEvent:register(function (new)

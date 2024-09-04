@@ -285,7 +285,7 @@ OnInit("Cosmetic", function ()
         local t
 
         CosmeticOpen = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        AddButtonToTheRight(CosmeticOpen, 4)
+        AddButtonToTheRight(CosmeticOpen, 2)
         BlzFrameSetVisible(CosmeticOpen, false)
         AddFrameToMenu(CosmeticOpen)
         AddDefaultTooltip(CosmeticOpen, "Cosmetics", "Look to the effects you can apply to your digimons.")

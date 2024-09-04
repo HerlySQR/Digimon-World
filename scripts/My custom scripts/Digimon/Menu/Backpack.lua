@@ -474,7 +474,7 @@ OnInit("Backpack", function ()
         local t = nil ---@type trigger
 
         Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
-        AddButtonToTheRight(Backpack, 9)
+        AddButtonToTheRight(Backpack, 8)
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
         AssignFrame(Backpack, 0) -- 0

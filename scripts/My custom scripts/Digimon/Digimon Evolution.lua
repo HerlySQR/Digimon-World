@@ -288,6 +288,7 @@ OnInit("DigimonEvolution", function ()
 
                 DestroyEffectTimed(AddSpecialEffect("Digievolution2.mdx", GetUnitX(u), GetUnitY(u)), time * 1.5)
                 cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u), Transmission.SET, time, true)
+                BlzSetUnitFacingEx(u, 270.)
             end)
             cur:AddEnd(function ()
                 SetUnitInvulnerable(u, false)

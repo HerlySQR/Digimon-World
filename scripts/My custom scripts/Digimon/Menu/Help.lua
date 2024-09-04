@@ -28,7 +28,7 @@ OnInit("Help", function ()
 
     local function InitFrames()
         HelpButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        AddButtonToTheRight(HelpButton, 6)
+        AddButtonToTheRight(HelpButton, 11)
         BlzFrameSetVisible(HelpButton, false)
         local t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, HelpButton, FRAMEEVENT_CONTROL_CLICK)

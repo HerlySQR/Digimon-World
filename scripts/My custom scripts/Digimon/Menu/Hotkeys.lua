@@ -181,7 +181,7 @@ OnInit("Hotkeys", function ()
         local t = nil ---@type trigger
 
         HotkeyButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        AddButtonToTheRight(HotkeyButton, 7)
+        AddButtonToTheRight(HotkeyButton, 3)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, HotkeyButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, ShowMenu)

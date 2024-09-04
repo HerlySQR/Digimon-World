@@ -119,6 +119,7 @@ OnInit("DigimonBank", function ()
     ---@field usingCaster boolean
     ---@field buyer unit
     ---@field seller unit
+    ---@field priorities Digimon[]
     local Bank = {}
     Bank.__index = Bank
 
@@ -154,7 +155,8 @@ OnInit("DigimonBank", function ()
             customer = nil,
             caster = nil,
             buyer = nil,
-            seller = nil
+            seller = nil,
+            priorities = {}
         }, Bank)
     end
 
@@ -363,6 +365,14 @@ OnInit("DigimonBank", function ()
             if hide then
                 d:setOwner(Digimon.PASSIVE)
                 d:hideInTheCorner()
+            end
+            for i = #self.priorities, 1, -1 do
+                if self.priorities[i] == d then
+                    table.remove(self.priorities, i)
+                    break
+                else
+                    BlzSetUnitRealField(self.priorities[i].root, UNIT_RF_PRIORITY, MAX_STOCK - i + 1)
+                end
             end
             return true
         end
@@ -1408,7 +1418,7 @@ OnInit("DigimonBank", function ()
         -- Saved
 
         SaveItem = BlzCreateFrame("IconButtonTemplate", SummonADigimon, 0, 0)
-        AddButtonToTheRight(SaveItem, 2)
+        AddButtonToTheRight(SaveItem, 6)
         AddDefaultTooltip(SaveItem, "Save item", "Saves the selected item in the bank (you have to go to the bank to see it).")
 
         BackdropSaveItem = BlzCreateFrameByType("BACKDROP", "BackdropSaveItem", SaveItem, "", 0)
@@ -1661,7 +1671,6 @@ OnInit("DigimonBank", function ()
             BlzFrameSetTooltip(SavedItemT[i], SaveItemTooltip[i])
         end
 
-
         BuySlotMenu = BlzCreateFrame("QuestButtonBaseTemplate", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(BuySlotMenu, FRAMEPOINT_TOPLEFT, 0.300000, 0.420000)
         BlzFrameSetAbsPoint(BuySlotMenu, FRAMEPOINT_BOTTOMRIGHT, 0.480000, 0.300000)
@@ -1694,7 +1703,7 @@ OnInit("DigimonBank", function ()
         TriggerAddAction(t, BuySlotNoFunc)
 
         SellItem = BlzCreateFrame("IconButtonTemplate", SummonADigimon, 0, 0)
-        AddButtonToTheRight(SellItem, 3)
+        AddButtonToTheRight(SellItem, 4)
         AddDefaultTooltip(SellItem, "Sell item", "Sells the selected item of yours.")
 
         BackdropSellItem = BlzCreateFrameByType("BACKDROP", "BackdropSellItem", SellItem, "", 0)
@@ -1759,7 +1768,6 @@ OnInit("DigimonBank", function ()
                 if bank.main == d then
                     bank:searchMain()
                 end
-                BlzSetUnitRealField(d.root, UNIT_RF_PRIORITY, i)
                 index = i
 
                 digimonUpdateEvent:run(p, d)
@@ -1795,6 +1803,8 @@ OnInit("DigimonBank", function ()
         local b = false
         if d then
             bank.inUse[index] = d
+            table.insert(bank.priorities, d)
+            BlzSetUnitRealField(d.root, UNIT_RF_PRIORITY, MAX_STOCK - #bank.priorities)
             d:setOwner(p)
             if not bank.main then
                 bank.main = d
@@ -1806,10 +1816,12 @@ OnInit("DigimonBank", function ()
                 d:showFromTheCorner(bank.main:getX(), bank.main:getY())
                 d.environment = bank.main.environment
             end
-            BlzSetUnitRealField(d.root, UNIT_RF_PRIORITY, index)
             b = true
         end
         if p == LocalPlayer then
+            if d then
+                SelectUnit(d.root, true)
+            end
             UpdateMenu()
         end
         return b
@@ -1981,7 +1993,7 @@ OnInit("DigimonBank", function ()
     ---@param p player
     ---@return Digimon[]
     function GetUsedDigimons(p)
-        return Bank[GetPlayerId(p)]:getUsedDigimons()
+        return Bank[GetPlayerId(p)].priorities
     end
 
     ---@param p player
@@ -2213,6 +2225,19 @@ OnInit("DigimonBank", function ()
             end
         end
         return list
+    end
+
+    ---@param owner player
+    ---@param d Digimon
+    ---@return integer
+    function GetDigimonPosition(owner, d)
+        local bank = Bank[GetPlayerId(owner)] ---@type Bank
+        for i = 1, #bank.priorities do
+            if bank.priorities[i] == d then
+                return i
+            end
+        end
+        return -1
     end
 
     ---@param p player

@@ -165,7 +165,7 @@ OnInit("Menu", function ()
         BlzFrameSetTextSizeLimit(text, content:len())
         BlzFrameSetText(text, content)
         BlzFrameSetSize(text, 0.25, 0)
-        BlzFrameSetAbsPoint(text, FRAMEPOINT_TOPLEFT, 0.01000, 0.54500)
+        BlzFrameSetAbsPoint(text, FRAMEPOINT_BOTTOMLEFT, 0.01000, 0.18500)
         BlzFrameSetPoint(tooltip,FRAMEPOINT_TOPLEFT, text, FRAMEPOINT_TOPLEFT, -0.01, 0.025)
         BlzFrameSetPoint(tooltip, FRAMEPOINT_BOTTOMRIGHT, text, FRAMEPOINT_BOTTOMRIGHT, 0.01, -0.01)
 
@@ -272,18 +272,18 @@ OnInit("Menu", function ()
 
         -- Move minimap
         MinimapBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
-        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.01, 0.170000)
+        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_TOPLEFT, minX, 0.180000)
         BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.18, 0.00000)
 
         Minimap = BlzGetFrameByName("MiniMapFrame", 0)
         BlzFrameSetParent(Minimap, MinimapBackDrop)
-        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_TOPRIGHT, minX + 0.165, 0.155000)
-        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, minX + 0.025, 0.015000)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_TOPRIGHT, minX + 0.165, 0.165000)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, minX + 0.015, 0.015000)
         BlzFrameSetVisible(Minimap, true)
 
         CommandButtonBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
-        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.17, 0.180000)
-        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.4, 0.00000)
+        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.180000)
+        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.41, 0.00000)
 
         -- Hide inventory
         frame = BlzFrameGetParent(BlzFrameGetParent(BlzGetFrameByName("InventoryButton_0", 0)))
@@ -296,11 +296,13 @@ OnInit("Menu", function ()
         -- Move Hero buttons
         HeroBar = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BAR, 0)
         BlzFrameSetVisible(HeroBar, true)
-        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.155000)
+        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.16000)
 
         -- Move Hero Health/Mana bars
         for i = 0, 2 do
             HeroButton[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i)
+            BlzFrameClearAllPoints(HeroButton[i])
+            BlzFrameSetPoint(HeroButton[i], FRAMEPOINT_TOPLEFT, HeroBar, FRAMEPOINT_TOPLEFT, 0.000000, -0.05*i)
 
             HeroHealth[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_HP_BAR, i)
             BlzFrameClearAllPoints(HeroHealth[i])
@@ -334,10 +336,10 @@ OnInit("Menu", function ()
 
             onSelectedUnit:run()
 
-            local unitFrame = BlzGetFrameByName("SimpleInfoPanelUnitDetail", 0) ---@type framehandle 
-            local bottomCenterUI = BlzFrameGetParent(unitFrame) ---@type framehandle 
-            local groupFrame = BlzFrameGetChild(bottomCenterUI, 5) ---@type framehandle 
-            local buttonContainerFrame = BlzFrameGetChild(groupFrame, 0) ---@type framehandle 
+            local unitFrame = BlzGetFrameByName("SimpleInfoPanelUnitDetail", 0) ---@type framehandle
+            local bottomCenterUI = BlzFrameGetParent(unitFrame) ---@type framehandle
+            local groupFrame = BlzFrameGetChild(bottomCenterUI, 5) ---@type framehandle
+            local buttonContainerFrame = BlzFrameGetChild(groupFrame, 0) ---@type framehandle
             for i = 0, 11 do
                 BlzFrameSetAbsPoint(BlzFrameGetChild(buttonContainerFrame, i), FRAMEPOINT_TOPLEFT, 999., 999.)
             end
@@ -348,7 +350,7 @@ OnInit("Menu", function ()
                 for j = 0, 3 do
                     local index = i*4+j
                     CommandButton[index] = BlzGetFrameByName("CommandButton_" .. index, 0)
-                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, minX + 0.19 + 0.05*j, 0.160000 - 0.05*i)
+                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, minX + 0.2 + 0.05*j, 0.16 - 0.05*i)
                     BlzFrameSetSize(CommandButton[index], 0.05, 0.05)
                 end
             end
@@ -357,7 +359,7 @@ OnInit("Menu", function ()
         -- Move tooltip frame
         frame = BlzGetOriginFrame(ORIGIN_FRAME_UBERTOOLTIP, 0)
         BlzFrameClearAllPoints(frame)
-        BlzFrameSetAbsPoint(frame, FRAMEPOINT_TOPLEFT, 0.0000, 0.57000)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_BOTTOMLEFT, 0.0000, 0.180000)
 
         -- Hide Mouse Dead Zone at Command Bar
         BlzFrameSetVisible(BlzFrameGetChild(BlzGetFrameByName("ConsoleUI", 0), 5), false)
@@ -388,30 +390,30 @@ OnInit("Menu", function ()
         end
 
         BlzFrameClearAllPoints(MinimapBackDrop)
-        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.01, 0.170000)
+        BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_TOPLEFT, minX, 0.180000)
         BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.18, 0.00000)
 
         BlzFrameClearAllPoints(Minimap)
-        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_TOPRIGHT, minX + 0.165, 0.155000)
-        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, minX + 0.025, 0.015000)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_TOPRIGHT, minX + 0.165, 0.165000)
+        BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, minX + 0.015, 0.015000)
 
         BlzFrameClearAllPoints(CommandButtonBackDrop)
-        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.17, 0.180000)
-        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.4, 0.00000)
+        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.180000)
+        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.41, 0.00000)
 
         if not isIgnored then
             for i = 0, 2 do
                 for j = 0, 3 do
                     local index = i*4+j
                     BlzFrameClearAllPoints(CommandButton[index])
-                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, minX + 0.19 + 0.05*j, 0.160000 - 0.05*i)
+                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, minX + 0.2 + 0.05*j, 0.16 - 0.05*i)
                     BlzFrameSetSize(CommandButton[index], 0.05, 0.05)
                 end
             end
         end
 
         BlzFrameClearAllPoints(HeroBar)
-        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.155000)
+        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.16000)
     end)
 
     local oldSelectUnit
@@ -428,7 +430,7 @@ OnInit("Menu", function ()
                 for j = 0, 3 do
                     local index = i*4+j
                     BlzFrameClearAllPoints(CommandButton[index])
-                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, minX + 0.19000 + 0.05*j, 0.160000 - 0.05*i)
+                    BlzFrameSetAbsPoint(CommandButton[index], FRAMEPOINT_TOPLEFT, minX + 0.2 + 0.05*j, 0.16 - 0.05*i)
                 end
             end
         end
