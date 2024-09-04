@@ -932,7 +932,7 @@ OnInit("Backpack", function ()
     ---@param data BackpackData
     function SetBackpack(p, data)
         local backpack = Backpacks[p]
-        SetBackpackItems()
+        SetBackpackItems(p)
 
         for i = 1, data.amount do
             backpack.items[i] = CreateItemData(data.id[i])

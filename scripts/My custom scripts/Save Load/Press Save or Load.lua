@@ -171,10 +171,11 @@ OnInit("PressSaveOrLoad", function ()
         end
     end
 
-    local MAX_STRING_ENCODED_LENGHT = 2^17
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
     local MAX_QUESTS = udg_MAX_QUESTS
+
+    local CHUNK_SIZE = 150
 
     local NormalColor = "FCD20D"
     local DisabledColor = "FFFFFF"
@@ -361,6 +362,7 @@ OnInit("PressSaveOrLoad", function ()
             end
             BlzFrameSetText(TooltipBackpack, "|cff3874ffBackpack:|r")
             BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r")
+            BlzFrameSetEnable(AbsoluteLoad, false)
         end
     end
 
@@ -682,7 +684,7 @@ OnInit("PressSaveOrLoad", function ()
         TooltipQuests = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipQuests, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.34000, -0.39000)
         BlzFrameSetPoint(TooltipQuests, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
-        BlzFrameSetText(TooltipQuests, "|cff5257ffCompleted Unique Quests:|r")
+        BlzFrameSetText(TooltipQuests, "|cff5257ffQuests:|r")
         BlzFrameSetEnable(TooltipQuests, false)
         BlzFrameSetScale(TooltipQuests, 1.00)
         BlzFrameSetTextAlignment(TooltipQuests, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
@@ -747,15 +749,30 @@ OnInit("PressSaveOrLoad", function ()
     ---@param s string
     ---@return string
     function EncodeString(p, s)
+        local len = s:len()
+        local iter = math.floor(len/CHUNK_SIZE)
+        local code = ""
+
+        for j = 1, iter do
+            local savecode = Savecode.create()
+
+            for i = 1, CHUNK_SIZE do
+                savecode:Encode(s:byte((j-1)*CHUNK_SIZE+i), 255)
+            end
+
+            code = code .. savecode:Save(p, 1) .. "~"
+            savecode:destroy()
+        end
+
+        local rest = len - iter*CHUNK_SIZE
         local savecode = Savecode.create()
 
-        local len = s:len()
-        for i = 1, len do
-            savecode:Encode(s:byte(i), 255)
+        for i = 1, rest do
+            savecode:Encode(s:byte(iter*CHUNK_SIZE+i), 255)
         end
-        savecode:Encode(len, MAX_STRING_ENCODED_LENGHT)
+        savecode:Encode(rest, CHUNK_SIZE)
 
-        local code = savecode:Save(p, 1)
+        code = code .. savecode:Save(p, 1)
         savecode:destroy()
 
         return code
@@ -765,20 +782,42 @@ OnInit("PressSaveOrLoad", function ()
     ---@param s string
     ---@return string?
     function DecodeString(p, s)
-        local savecode = Savecode.create()
+        local decode = ""
+        local prevBuffer = 1
+        local buffer = s:find("~")
 
-        if not savecode:Load(p, s, 1) then
+        while buffer do
+            local sub = s:sub(prevBuffer, buffer - 1)
+
+            local savecode = Savecode.create()
+            if not savecode:Load(p, sub, 1) then
+                savecode:destroy()
+                return nil
+            end
+            local decode2 = ""
+            for _ = 1, CHUNK_SIZE do
+                decode2 = string.char(savecode:Decode(255)) .. decode2
+            end
+            savecode:destroy()
+            decode = decode .. decode2
+
+            prevBuffer = buffer + 1
+            buffer = s:find("~", buffer + 1)
+        end
+
+        local sub = s:sub(prevBuffer)
+        local savecode = Savecode.create()
+        if not savecode:Load(p, sub, 1) then
             savecode:destroy()
             return nil
         end
-
-        local len = savecode:Decode(MAX_STRING_ENCODED_LENGHT)
-        local decode = ""
+        local len = savecode:Decode(CHUNK_SIZE)
+        local decode2 = ""
         for _ = 1, len do
-            decode = string.char(savecode:Decode(255)) .. decode
+            decode2 = string.char(savecode:Decode(255)) .. decode2
         end
         savecode:destroy()
-        print(decode)
+        decode = decode .. decode2
 
         return decode
     end

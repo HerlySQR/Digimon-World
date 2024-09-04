@@ -829,7 +829,7 @@ OnInit("Quests", function ()
                 }
                 if p == LocalPlayer then
                     if not QuestTemplates[id].isRequirement then
-                        if data.prog[i] then
+                        if data.comp[i] then
                             QuestList:remove(QuestOptionT[id])
                         else
                             BlzFrameSetEnable(QuestOptionT[id], true)
