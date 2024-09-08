@@ -296,7 +296,7 @@ OnInit("Menu", function ()
         -- Move Hero buttons
         HeroBar = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BAR, 0)
         BlzFrameSetVisible(HeroBar, true)
-        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.16000)
+        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.41, 0.16000)
 
         -- Move Hero Health/Mana bars
         for i = 0, 2 do
@@ -306,7 +306,7 @@ OnInit("Menu", function ()
 
             HeroHealth[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_HP_BAR, i)
             BlzFrameClearAllPoints(HeroHealth[i])
-            BlzFrameSetPoint(HeroHealth[i], FRAMEPOINT_TOPLEFT, HeroButton[i], FRAMEPOINT_TOPLEFT, 0.050000, -0.010000)
+            BlzFrameSetPoint(HeroHealth[i], FRAMEPOINT_TOPLEFT, HeroButton[i], FRAMEPOINT_TOPRIGHT, 0.010000, 0.00000)
             BlzFrameSetSize(HeroHealth[i], 0.1, 0.01)
 
             HeroMana[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_MANA_BAR, i)
@@ -413,7 +413,7 @@ OnInit("Menu", function ()
         end
 
         BlzFrameClearAllPoints(HeroBar)
-        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.4, 0.16000)
+        BlzFrameSetAbsPoint(HeroBar, FRAMEPOINT_TOPLEFT, minX + 0.41, 0.16000)
     end)
 
     local oldSelectUnit

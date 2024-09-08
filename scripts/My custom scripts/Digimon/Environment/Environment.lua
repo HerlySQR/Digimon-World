@@ -316,7 +316,7 @@ OnInit("Environment", function ()
 
         BackdropSeeMap = BlzCreateFrameByType("BACKDROP", "BackdropSeeMap", SeeMap, "", 0)
         BlzFrameSetAllPoints(BackdropSeeMap, SeeMap)
-        BlzFrameSetTexture(BackdropSeeMap, "ReplaceableTextures\\CommandButtons\\BTNMapIcon.blp", 0, true)
+        BlzFrameSetTexture(BackdropSeeMap, "ReplaceableTextures\\CommandButtons\\BTNMap.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SeeMap, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, SeeMapFunc)

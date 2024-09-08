@@ -1266,7 +1266,7 @@ OnInit("DigimonBank", function ()
 
         BackdropSummonADigimon = BlzCreateFrameByType("BACKDROP", "BackdropSummonADigimon", SummonADigimon, "", 0)
         BlzFrameSetAllPoints(BackdropSummonADigimon, SummonADigimon)
-        BlzFrameSetTexture(BackdropSummonADigimon, "ReplaceableTextures\\CommandButtons\\BTNDigimonsIcon.blp", 0, true)
+        BlzFrameSetTexture(BackdropSummonADigimon, "ReplaceableTextures\\CommandButtons\\BTNDigi.blp", 0, true)
 
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SummonADigimon, FRAMEEVENT_CONTROL_CLICK)
@@ -1423,7 +1423,7 @@ OnInit("DigimonBank", function ()
 
         BackdropSaveItem = BlzCreateFrameByType("BACKDROP", "BackdropSaveItem", SaveItem, "", 0)
         BlzFrameSetAllPoints(BackdropSaveItem, SaveItem)
-        BlzFrameSetTexture(BackdropSaveItem, "ReplaceableTextures\\CommandButtons\\BTNBankIcon.blp", 0, true)
+        BlzFrameSetTexture(BackdropSaveItem, "ReplaceableTextures\\CommandButtons\\BTNStore.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SaveItem, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, function () UseCaster("Q") end)
@@ -1708,7 +1708,7 @@ OnInit("DigimonBank", function ()
 
         BackdropSellItem = BlzCreateFrameByType("BACKDROP", "BackdropSellItem", SellItem, "", 0)
         BlzFrameSetAllPoints(BackdropSellItem, SellItem)
-        BlzFrameSetTexture(BackdropSellItem, "ReplaceableTextures\\CommandButtons\\BTNSellIcon.blp", 0, true)
+        BlzFrameSetTexture(BackdropSellItem, "ReplaceableTextures\\CommandButtons\\BTNSell.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SellItem, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, function () UseCaster("W") end)
@@ -1775,6 +1775,7 @@ OnInit("DigimonBank", function ()
             end
         end
         if p == LocalPlayer then
+            SelectUnit(d.root, false)
             UpdateMenu()
         end
         return index
@@ -1823,6 +1824,9 @@ OnInit("DigimonBank", function ()
                 SelectUnit(d.root, true)
             end
             UpdateMenu()
+        end
+        if d then
+            digimonUpdateEvent:run(p, d)
         end
         return b
     end

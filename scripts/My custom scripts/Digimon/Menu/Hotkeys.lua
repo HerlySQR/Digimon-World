@@ -191,7 +191,7 @@ OnInit("Hotkeys", function ()
 
         BackdropHotkeyButton = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyButton", HotkeyButton, "", 0)
         BlzFrameSetAllPoints(BackdropHotkeyButton, HotkeyButton)
-        BlzFrameSetTexture(BackdropHotkeyButton, "ReplaceableTextures\\CommandButtons\\BTNKeyboardIcon.blp", 0, true)
+        BlzFrameSetTexture(BackdropHotkeyButton, "ReplaceableTextures\\CommandButtons\\BTNHkey.blp", 0, true)
 
         HotkeyMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
         BlzFrameSetAbsPoint(HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.140000, 0.530000)

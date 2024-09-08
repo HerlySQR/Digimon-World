@@ -64,6 +64,7 @@ OnInit("Stats", function ()
     local StatsItemDrop = nil ---@type framehandle
     local FocusedUnit = nil ---@type framehandle
     local HeroButtons = {} ---@type framehandle[]
+    local HeroBuffs = {} ---@type framehandle[][]
 
     local LocalPlayer = GetLocalPlayer()
 
@@ -85,8 +86,9 @@ OnInit("Stats", function ()
     local seeOnly = {} ---@type table<player, unit>
     local dropItemI = __jarray(0) ---@type table<player, integer>
     local dropItemJ = __jarray(0) ---@type table<player, integer>
+    local buffIcons = __jarray("") ---@type table<integer, string>
 
-    local show = FourCC('A0GQ')
+    local show = FourCC('A0GR')
 
     -- Add the see stats ability to the new digimon
     Digimon.createEvent:register(function (new)
@@ -291,6 +293,39 @@ OnInit("Stats", function ()
         else
             BlzFrameSetVisible(FocusedUnit, false)
         end
+
+        for i = 1, 3 do
+            local d = list[i]
+            if d then
+                local j = 0
+                local index = 0
+                while j <= 9 do
+                    local abil = BlzGetUnitAbilityByIndex(d.root, index)
+                    if not abil then
+                        BlzFrameSetVisible(HeroBuffs[i][j], false)
+                        j = j + 1
+                    else
+                        local id = BlzGetAbilityId(abil)
+                        if math.floor(id / 16777216) == 66 and buffIcons[id] ~= "" then -- The first character of the four-char id is 'B'
+                            BlzFrameSetVisible(HeroBuffs[i][j], true)
+                            BlzFrameSetTexture(HeroBuffs[i][j], buffIcons[id], 0, true)
+                            j = j + 1
+                        end
+                    end
+                    index = index + 1
+                end
+            else
+                for j = 0, 9 do
+                    BlzFrameSetVisible(HeroBuffs[i][j], false)
+                end
+            end
+        end
+    end)
+
+    OnBankUpdated(function (p, _)
+        if p == LocalPlayer and BlzFrameIsVisible(StatsBackdrop[0]) and not seeOnly[p] then
+            changeVisible = true
+        end
     end)
 
     local function StatsItemFunc(i, j)
@@ -323,17 +358,23 @@ OnInit("Stats", function ()
 
         BackdropStatsButton = BlzCreateFrameByType("BACKDROP", "BackdropStatsButton", StatsButton, "", 0)
         BlzFrameSetAllPoints(BackdropStatsButton, StatsButton)
-        BlzFrameSetTexture(BackdropStatsButton, "ReplaceableTextures\\CommandButtons\\BTNCrystalBall.blp", 0, true)
+        BlzFrameSetTexture(BackdropStatsButton, "ReplaceableTextures\\CommandButtons\\BTNCharacteristic.blp", 0, true)
         local t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, StatsButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, StatsButtonFunc)
 
         for i = 0, 2 do
-            StatsBackdrop[i] = BlzCreateFrame("EscMenuBackdrop", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
+            StatsBackdrop[i] = BlzCreateFrameByType("BACKDROP", "StatsBackdrop[" .. i .. "]", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
             BlzFrameSetAbsPoint(StatsBackdrop[i], FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.4175, 0.552500 - 0.105*i)
             BlzFrameSetAbsPoint(StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.452500 - 0.105*i)
+            BlzFrameSetTexture(StatsBackdrop[i], "war3mapImported\\EmptyBTN.blp", 0, true)
             BlzFrameSetVisible(StatsBackdrop[i], false)
             AddFrameToMenu(StatsBackdrop[i])
+
+            local backdrop = BlzCreateFrame("EscMenuBackdrop", StatsBackdrop[i], 0, 0)
+            BlzFrameSetPoint(backdrop, FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, -0.0100, 0.0100)
+            BlzFrameSetPoint(backdrop, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.0100, -0.0100)
+            BlzFrameSetLevel(backdrop, -1)
 
             StatsName[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsName[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
@@ -452,7 +493,7 @@ OnInit("Stats", function ()
             BlzFrameSetText(StatsMana[i], "|cff0000ff1000/1000|r")
             BlzFrameSetEnable(StatsMana[i], false)
             BlzFrameSetScale(StatsMana[i], 1.00)
-            BlzFrameSetTextAlignment(StatsLife[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+            BlzFrameSetTextAlignment(StatsMana[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
             StatsDigimonIcon[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", StatsBackdrop[i], "", 1)
             BlzFrameSetPoint(StatsDigimonIcon[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.025000, -0.040000)
@@ -550,8 +591,16 @@ OnInit("Stats", function ()
             BlzFrameSetVisible(StatsItemDrop, false)
         end
 
-        for i = 0, 2 do
-            HeroButtons[i+1] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i)
+        for i = 1, 3 do
+            HeroButtons[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i-1)
+
+            HeroBuffs[i] = {}
+            for j = 0, 9 do
+                HeroBuffs[i][j] = BlzCreateFrameByType("BACKDROP", "HeroBuffs[" .. i .. "][" .. j .. "]", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
+                BlzFrameSetPoint(HeroBuffs[i][j], FRAMEPOINT_BOTTOMLEFT, HeroButtons[i], FRAMEPOINT_BOTTOMRIGHT, 0.01 + j*0.01, 0)
+                BlzFrameSetSize(HeroBuffs[i][j], 0.01, 0.01)
+                BlzFrameSetVisible(HeroBuffs[i][j], false)
+            end
         end
 
         FocusedUnit = BlzCreateFrameByType("SPRITE", "FocusedUnit", HeroButtons[0], "", 0)
@@ -582,5 +631,12 @@ OnInit("Stats", function ()
             BlzFrameSetVisible(StatsButton, true)
         end
     end
+
+    udg_StatsBuffAdd = CreateTrigger()
+    TriggerAddAction(udg_StatsBuffAdd, function ()
+        buffIcons[udg_StatsBuff] = udg_StatsBuffIcon
+        udg_StatsBuff = 0
+        udg_StatsBuffIcon = ""
+    end)
 end)
 Debug.endFile()

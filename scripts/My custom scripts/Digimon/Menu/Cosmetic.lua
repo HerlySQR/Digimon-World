@@ -292,7 +292,7 @@ OnInit("Cosmetic", function ()
 
         BackdropCosmeticOpen = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticOpen", CosmeticOpen, "", 0)
         BlzFrameSetAllPoints(BackdropCosmeticOpen, CosmeticOpen)
-        BlzFrameSetTexture(BackdropCosmeticOpen, "ReplaceableTextures\\CommandButtons\\BTNCosmeticsIcon.blp", 0, true)
+        BlzFrameSetTexture(BackdropCosmeticOpen, "ReplaceableTextures\\CommandButtons\\BTNAura.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, CosmeticOpen, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, CosmeticOpenFunc)

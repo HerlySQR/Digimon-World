@@ -208,7 +208,7 @@ OnInit("Quests", function ()
 
         BackdropQuestButton = BlzCreateFrameByType("BACKDROP", "BackdropQuestButton", QuestButton, "", 0)
         BlzFrameSetAllPoints(BackdropQuestButton, QuestButton)
-        BlzFrameSetTexture(BackdropQuestButton, "ReplaceableTextures\\CommandButtons\\BTNQuestIcon.blp", 0, true)
+        BlzFrameSetTexture(BackdropQuestButton, "ReplaceableTextures\\CommandButtons\\BTNQuest.blp", 0, true)
 
         QuestButtonSprite =  BlzCreateFrameByType("SPRITE", "QuestButtonSprite", QuestButton, "", 0)
         BlzFrameSetAllPoints(QuestButtonSprite, QuestButton)

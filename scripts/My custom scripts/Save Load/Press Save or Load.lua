@@ -450,7 +450,7 @@ OnInit("PressSaveOrLoad", function ()
 
         BackdropSaveButton = BlzCreateFrameByType("BACKDROP", "BackdropSaveButton", SaveButton, "", 0)
         BlzFrameSetAllPoints(BackdropSaveButton, SaveButton)
-        BlzFrameSetTexture(BackdropSaveButton, "ReplaceableTextures\\CommandButtons\\BTNSaveIcon.blp", 0, true)
+        BlzFrameSetTexture(BackdropSaveButton, "ReplaceableTextures\\CommandButtons\\BTNSave.blp", 0, true)
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SaveButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, SaveFunc)

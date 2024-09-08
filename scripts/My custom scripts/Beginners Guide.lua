@@ -182,50 +182,52 @@ OnInit.final(function ()
         if GetClickedButton() == Yes then
             inTutorial[p] = true
 
-            local d = GetUsedDigimons(p)[1]
-            d:show()
-            SelectUnitForPlayerSingle(d.root, p)
+            Timed.call(function ()
+                local d = GetUsedDigimons(p)[1]
+                d:show()
+                SelectUnitForPlayerSingle(d.root, p)
 
-            ForUnitsOfPlayer(p, function (u)
-                if GetUnitTypeId(u) == DIGITAMA then -- Digitama
-                    d:setPos(GetUnitX(u), GetUnitY(u))
-                end
-            end)
-
-            d:pause()
-
-            local pixie = Digimon.create(Digimon.CITY, PIXIMON, d:getX(), d:getY(), bj_UNIT_FACING)
-            pixie.owner = p
-            piximons[p] = pixie
-
-            local eff = AddSpecialEffect(TELEPORT_CASTER_EFFECT, d:getPos())
-            BlzSetSpecialEffectHeight(eff, GetUnitFlyHeight(pixie.root))
-            BlzSetSpecialEffectScale(eff, 0.75)
-            DestroyEffect(eff)
-
-            local tr = Transmission.create(Force(p))
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Oh look, a new adventurer.", Transmission.SET, 3., true)
-            tr:AddActions(1., function ()
-                local angle = math.random() * 2 * math.pi
-                pixie:issueOrder(Orders.move, pixie:getX() + 100 * math.cos(angle), pixie:getY() + 100 * math.sin(angle))
-            end)
-            tr:AddEnd(function ()
-                tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Alright, let's not waste time, follow me.", Transmission.SET, 4., true)
-                tr:AddEnd(function ()
-                    IssuePointOrderById(pixie.root, Orders.move, GetRectCenterX(gg_rct_JijimonsHouse_Inside), GetRectCenterY(gg_rct_JijimonsHouse_Inside))
-                    Timed.call(1.5, function ()
-                        dequequeTransmission(p)
-                        d:unpause()
-                        ClearShops(d:getPos())
-                    end)
+                ForUnitsOfPlayer(p, function (u)
+                    if GetUnitTypeId(u) == DIGITAMA then -- Digitama
+                        d:setPos(GetUnitX(u), GetUnitY(u))
+                    end
                 end)
-                tr:Start()
-            end)
-            enquequeTransmission(tr, p)
 
-            checkForEnemy(p)
-            checkForTransport(p)
+                d:pause()
+
+                local pixie = Digimon.create(Digimon.CITY, PIXIMON, d:getX(), d:getY(), bj_UNIT_FACING)
+                pixie.owner = p
+                piximons[p] = pixie
+
+                local eff = AddSpecialEffect(TELEPORT_CASTER_EFFECT, d:getPos())
+                BlzSetSpecialEffectHeight(eff, GetUnitFlyHeight(pixie.root))
+                BlzSetSpecialEffectScale(eff, 0.75)
+                DestroyEffect(eff)
+
+                local tr = Transmission.create(Force(p))
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Oh look, a new adventurer.", Transmission.SET, 3., true)
+                tr:AddActions(1., function ()
+                    local angle = math.random() * 2 * math.pi
+                    pixie:issueOrder(Orders.move, pixie:getX() + 100 * math.cos(angle), pixie:getY() + 100 * math.sin(angle))
+                end)
+                tr:AddEnd(function ()
+                    tr = Transmission.create(Force(p))
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Alright, let's not waste time, follow me.", Transmission.SET, 4., true)
+                    tr:AddEnd(function ()
+                        IssuePointOrderById(pixie.root, Orders.move, GetRectCenterX(gg_rct_JijimonsHouse_Inside), GetRectCenterY(gg_rct_JijimonsHouse_Inside))
+                        Timed.call(1.5, function ()
+                            dequequeTransmission(p)
+                            d:unpause()
+                            ClearShops(d:getPos())
+                        end)
+                    end)
+                    tr:Start()
+                end)
+                enquequeTransmission(tr, p)
+
+                checkForEnemy(p)
+                checkForTransport(p)
+            end)
         else
             coroutine.resume(threads[p])
         end
