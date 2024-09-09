@@ -178,7 +178,7 @@ OnInit("Digimon", function ()
     ---@param p player
     ---@param data DigimonData
     ---@return Digimon
-    function RecreateDigimon(p, data)
+    function Digimon.recreate(p, data)
         local d = Digimon.create(p, data.typeId, WorldBounds.maxX, WorldBounds.maxY, 0)
         d.owner = p
         d:setExp(data.exp)

@@ -175,7 +175,9 @@ OnInit("DigimonBank", function ()
     function BankData.create(main)
         local self = {
             stocked = {},
+            maxSaved = 0,
             saved = {},
+            sItmsSto = MIN_SAVED_ITEMS,
             sItms = {},
             sItmsCha = {}
         }
@@ -253,13 +255,7 @@ OnInit("DigimonBank", function ()
 
     ---@return integer
     function Bank:used()
-        local max = 0
-        for i = 0, MAX_STOCK - 1 do
-            if self.inUse[i] then
-                max = max + 1
-            end
-        end
-        return max
+        return #self.priorities
     end
 
     ---@return boolean
@@ -267,18 +263,7 @@ OnInit("DigimonBank", function ()
         if self.pressed == -1 then
             return false
         end
-        return GetDigimonCooldown(self.stocked[self.pressed]) <= 0 and self:used() < self.maxUsable
-    end
-
-    ---@return Digimon[]
-    function Bank:getUsedDigimons()
-        local list = {}
-        for i = 0, MAX_STOCK - 1 do
-            if self.inUse[i] then
-                table.insert(list, self.inUse[i])
-            end
-        end
-        return list
+        return cooldowns[self.stocked[self.pressed]] <= 0 and self:used() < self.maxUsable
     end
 
     ---@return boolean
@@ -302,7 +287,7 @@ OnInit("DigimonBank", function ()
 
         -- All should be together (already check there should be at least 2 used digimons)
         local centerX, centerY = 0, 0
-        local list = self:getUsedDigimons()
+        local list = self.priorities
 
         for _, d in ipairs(list) do
             centerX = centerX + d:getX()
@@ -470,8 +455,12 @@ OnInit("DigimonBank", function ()
     function Bank:clearDigimons()
         for i = 0, MAX_STOCK - 1 do
             if self.stocked[i] then
+                cooldowns[self.stocked[i]] = nil
                 self.stocked[i]:destroy()
                 self.stocked[i] = nil
+            end
+            if self.inUse[i] then
+                self.inUse[i] = nil
             end
         end
         for i = 0, self.savedDigimonsStock - 1 do
@@ -480,7 +469,15 @@ OnInit("DigimonBank", function ()
                 self.saved[i] = nil
             end
         end
+        self.main = nil
+        self.pressed = -1
+        self.usingClicked = -1
+        self.savedClicked = -1
+        self.wantDigimonSlot = false
+        self.allDead = false
         self.savedDigimonsStock = 0
+        self.priorities = {}
+        revivingSuspended[self.p] = false
     end
 
     function Bank:clearItems()
@@ -488,6 +485,8 @@ OnInit("DigimonBank", function ()
             RemoveItem(self.savedItems[i])
             self.savedItems[i] = nil
         end
+        self.wantItemSlot = false
+        self.itemClicked = -1
     end
 
     function Bank:resetCaster()
@@ -810,8 +809,10 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetSize(DigimonTTooltipText[i], 0, 0.01)
                 -- Hide
                 BlzFrameSetVisible(DigimonTUsed[i], false)
-                BlzFrameSetVisible(DigimonTSelected[i], false)
                 BlzFrameSetVisible(DigimonTIsMain[i], false)
+            end
+            if bank.pressed ~= i then
+                BlzFrameSetVisible(DigimonTSelected[i], false)
             end
             -- Re-size
             BlzFrameClearAllPoints(DigimonTTooltip[i])
@@ -1429,14 +1430,15 @@ OnInit("DigimonBank", function ()
         TriggerAddAction(t, function () UseCaster("Q") end)
 
         SavedDigimons = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.230000, 0.510000)
-        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, 0.570000, 0.180000)
+        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.215000, 0.510000)
+        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, 0.585000, 0.180000)
         BlzFrameSetVisible(SavedDigimons, false)
         AddFrameToMenu(SavedDigimons)
 
         Using = BlzCreateFrameByType("TEXT", "name", SavedDigimons, "", 0)
-        BlzFrameSetPoint(Using, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.040000, -0.030000)
-        BlzFrameSetPoint(Using, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.20000, 0.28000)
+        BlzFrameSetScale(Using, 1.29)
+        BlzFrameSetPoint(Using, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.035000, -0.030000)
+        BlzFrameSetPoint(Using, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.23500, 0.28000)
         BlzFrameSetText(Using, "|cffFFCC00Using|r")
         BlzFrameSetEnable(Using, false)
         BlzFrameSetTextAlignment(Using, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
@@ -1445,9 +1447,9 @@ OnInit("DigimonBank", function ()
         for i = 0, part - 1 do
             for j = 0, 1 do
                 local index = i + part * j
-                x1[index] = 0.040000 + j * 0.05000
+                x1[index] = 0.035000 + j * 0.05000
                 y1[index] = -0.070000 - i * 0.05000
-                x2[index] = -0.25000 + j * 0.05000
+                x2[index] = -0.28500 + j * 0.05000
                 y2[index] = 0.21000 - i * 0.05000
             end
         end
@@ -1502,19 +1504,20 @@ OnInit("DigimonBank", function ()
         end
 
         Saved = BlzCreateFrameByType("TEXT", "name", SavedDigimons, "", 0)
-        BlzFrameSetPoint(Saved, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.20000, -0.030000)
-        BlzFrameSetPoint(Saved, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.28000)
+        BlzFrameSetScale(Saved, 1.29)
+        BlzFrameSetPoint(Saved, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.21000, -0.030000)
+        BlzFrameSetPoint(Saved, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.060000, 0.28000)
         BlzFrameSetText(Saved, "|cffFFCC00Saved|r")
         BlzFrameSetEnable(Saved, false)
         BlzFrameSetTextAlignment(Saved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
-        part = MAX_SAVED // 2
+        part = MAX_SAVED // 3
         for i = 0, part - 1 do
-            for j = 0, 1 do
+            for j = 0, 2 do
                 local index = i + part * j
-                x1[index] = 0.20000 + j * 0.05000
+                x1[index] = 0.18500 + j * 0.05000
                 y1[index] = -0.070000 - i * 0.05000
-                x2[index] = -0.090000 + j * 0.05000
+                x2[index] = -0.13500 + j * 0.05000
                 y2[index] = 0.21000 - i * 0.05000
             end
         end
@@ -1570,8 +1573,8 @@ OnInit("DigimonBank", function ()
 
         Swap = BlzCreateFrame("ScriptDialogButton", SavedDigimons, 0, 0)
         BlzFrameSetScale(Swap, 1.29)
-        BlzFrameSetAbsPoint(Swap, FRAMEPOINT_TOPLEFT, 0.360000, 0.230000)
-        BlzFrameSetAbsPoint(Swap, FRAMEPOINT_BOTTOMRIGHT, 0.440000, 0.200000)
+        BlzFrameSetPoint(Swap, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.15000, -0.28000)
+        BlzFrameSetPoint(Swap, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.14000, 0.020000)
         BlzFrameSetText(Swap, "|cffFCD20DSwap|r")
         BlzFrameSetEnable(Swap, false)
         t = CreateTrigger()
@@ -1580,7 +1583,7 @@ OnInit("DigimonBank", function ()
 
         ExitSave = BlzCreateFrame("ScriptDialogButton", SavedDigimons, 0, 0)
         BlzFrameSetScale(ExitSave, 1.00)
-        BlzFrameSetPoint(ExitSave, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.31000, -0.0050000)
+        BlzFrameSetPoint(ExitSave, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.34000, -0.0050000)
         BlzFrameSetPoint(ExitSave, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.30000)
         BlzFrameSetText(ExitSave, "|cffFCD20DX|r")
         t = CreateTrigger()
@@ -1726,16 +1729,15 @@ OnInit("DigimonBank", function ()
         BlzFrameSetParent(StockedDigimonsMenu, BlzGetFrameByName("Leaderboard", 0))
         BlzFrameSetParent(SavedDigimons, BlzGetFrameByName("Leaderboard", 0))
         BlzFrameSetParent(ItemMenu, BlzGetFrameByName("Leaderboard", 0))
+        BlzFrameSetParent(BuySlotMenu, BlzGetFrameByName("Leaderboard", 0))
     end)
 
     -- Update frames
     Timed.echo(0.1, function ()
         local bank = Bank[GetPlayerId(LocalPlayer)] ---@type Bank
-        if bank:used() > 0 then
-            BlzFrameSetEnable(Summon, bank:useDigimonConditions() and bank:avaible(bank.pressed))
-            BlzFrameSetEnable(Store, bank:storeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
-            BlzFrameSetEnable(Free, bank:freeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
-        end
+        BlzFrameSetEnable(Summon, bank:useDigimonConditions() and bank:avaible(bank.pressed))
+        BlzFrameSetEnable(Store, bank:storeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
+        BlzFrameSetEnable(Free, bank:freeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
     end)
 
     -- Functions to use
@@ -2168,7 +2170,7 @@ OnInit("DigimonBank", function ()
             end
         end
         local stucked = true
-        for _, d in ipairs(bank:getUsedDigimons()) do
+        for _, d in ipairs(bank.priorities) do
             stucked = stucked and d:isPaused()
         end
         return stucked
@@ -2184,6 +2186,7 @@ OnInit("DigimonBank", function ()
                 if not bank.stocked[i] then
                     bank.stocked[i] = d
                     bank.inUse[i] = d
+                    table.insert(bank.priorities, d)
                     d.owner = p
                     if not bank.main then
                         bank:searchMain()
@@ -2288,7 +2291,7 @@ OnInit("DigimonBank", function ()
 
         for i = 0, MAX_STOCK - 1 do
             if data.stocked[i] then
-                local d = RecreateDigimon(p, data.stocked[i])
+                local d = Digimon.recreate(p, data.stocked[i])
                 bank.stocked[i] = d
                 d:setOwner(Digimon.PASSIVE)
                 d:hideInTheCorner()
@@ -2299,7 +2302,7 @@ OnInit("DigimonBank", function ()
         bank.savedDigimonsStock = data.maxSaved
         for i = 0, bank.savedDigimonsStock - 1 do
             if data.saved[i] then
-                local d = RecreateDigimon(p, data.saved[i])
+                local d = Digimon.recreate(p, data.saved[i])
                 bank.saved[i] = d
                 d:setOwner(Digimon.PASSIVE)
                 d:hideInTheCorner()

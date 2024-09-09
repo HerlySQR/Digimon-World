@@ -257,7 +257,7 @@ OnInit("Stats", function ()
                     end
 
                     if GetUnitState(u, UNIT_STATE_MAX_MANA) > 0 then
-                        BlzFrameSetText(StatsMana[i], "|cff0000ff" .. math.floor(GetUnitState(u, UNIT_STATE_MANA)) .. " / " .. math.floor(GetUnitState(u, UNIT_STATE_MAX_MANA)) .. "|r")
+                        BlzFrameSetText(StatsMana[i], "|cff007fff" .. math.floor(GetUnitState(u, UNIT_STATE_MANA)) .. " / " .. math.floor(GetUnitState(u, UNIT_STATE_MAX_MANA)) .. "|r")
                     else
                         BlzFrameSetText(StatsMana[i], "")
                     end
@@ -377,8 +377,8 @@ OnInit("Stats", function ()
             BlzFrameSetLevel(backdrop, -1)
 
             StatsName[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
-            BlzFrameSetPoint(StatsName[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
-            BlzFrameSetPoint(StatsName[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.28750, 0.060000)
+            BlzFrameSetPoint(StatsName[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.0000, -0.0050000)
+            BlzFrameSetPoint(StatsName[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.28750, 0.065000)
             BlzFrameSetText(StatsName[i], "|cffFFCC00Rookie Digimon Agumon|r")
             BlzFrameSetEnable(StatsName[i], false)
             BlzFrameSetScale(StatsName[i], 1.00)
@@ -480,24 +480,24 @@ OnInit("Stats", function ()
             BlzFrameSetTextAlignment(StatsWisdom[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             StatsLife[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
-            BlzFrameSetPoint(StatsLife[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.010000, -0.070000)
-            BlzFrameSetPoint(StatsLife[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.29750, 0.015000)
+            BlzFrameSetPoint(StatsLife[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.010000, -0.065000)
+            BlzFrameSetPoint(StatsLife[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.29750, 0.020000)
             BlzFrameSetText(StatsLife[i], "|cff00ff001000/1000\n|r")
             BlzFrameSetEnable(StatsLife[i], false)
             BlzFrameSetScale(StatsLife[i], 1.00)
             BlzFrameSetTextAlignment(StatsLife[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
             StatsMana[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
-            BlzFrameSetPoint(StatsMana[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.010000, -0.085000)
-            BlzFrameSetPoint(StatsMana[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.29750, 0.0000)
-            BlzFrameSetText(StatsMana[i], "|cff0000ff1000/1000|r")
+            BlzFrameSetPoint(StatsMana[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.010000, -0.080000)
+            BlzFrameSetPoint(StatsMana[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.29750, 0.0050000)
+            BlzFrameSetText(StatsMana[i], "|cff007fff1000/1000|r")
             BlzFrameSetEnable(StatsMana[i], false)
             BlzFrameSetScale(StatsMana[i], 1.00)
             BlzFrameSetTextAlignment(StatsMana[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
             StatsDigimonIcon[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", StatsBackdrop[i], "", 1)
-            BlzFrameSetPoint(StatsDigimonIcon[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.025000, -0.040000)
-            BlzFrameSetPoint(StatsDigimonIcon[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.31250, 0.030000)
+            BlzFrameSetPoint(StatsDigimonIcon[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.025000, -0.035000)
+            BlzFrameSetPoint(StatsDigimonIcon[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.31250, 0.035000)
             BlzFrameSetTexture(StatsDigimonIcon[i], "CustomFrame.png", 0, true)
 
             StatsCriticalLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)

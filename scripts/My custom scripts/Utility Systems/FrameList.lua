@@ -132,7 +132,7 @@ OnInit("FrameList", function ()
         if self.Mode == FrameList.Horizontal then
             BlzFrameSetSize(self.Slider, xSize, 0.012) -- ySize of slider is constant in horizontal mode
         else
-            BlzFrameSetSize(self.Slider, 0.012, ySize)
+            BlzFrameSetSize(self.Slider, 0.012, ySize - 0.025)
         end
     end
 

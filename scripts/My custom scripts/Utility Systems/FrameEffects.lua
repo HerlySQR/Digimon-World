@@ -1,4 +1,4 @@
-if Debug then Debug.beginFile("FourCCTable") end
+if Debug then Debug.beginFile("FrameEffects") end
 OnInit("FrameEffects", function ()
     Require "Timed" -- https://www.hiveworkshop.com/threads/timed-call-and-echo.339222/
 
@@ -6,16 +6,20 @@ OnInit("FrameEffects", function ()
 
     local Fades = {} ---@type table<framehandle, function>
 
-    ---@param frame framehandle -- Not nil
+    ---@param frame framehandle
     ---@param duration number
     ---@param whatPlayer? player
     function FrameFadeOut(frame, duration, whatPlayer)
         whatPlayer = whatPlayer or GetLocalPlayer()
 
-        pcall(function ()
+        if GetLocalPlayer() == whatPlayer then
             BlzFrameSetAlpha(frame, 255)
+        end
+
+        if Fades[frame] then
             Fades[frame]()
-        end)
+            Fades[frame] = nil
+        end
 
         local steps = math.floor(duration / INTERVAL)
         local stepSize = 255 // steps
@@ -44,10 +48,10 @@ OnInit("FrameEffects", function ()
     function FrameFadeIn(frame, duration, whatPlayer)
         whatPlayer = whatPlayer or GetLocalPlayer()
 
-        pcall(function ()
-            BlzFrameSetAlpha(frame, 0)
+        if Fades[frame] then
             Fades[frame]()
-        end)
+            Fades[frame] = nil
+        end
 
         local steps = math.floor(duration / INTERVAL)
         local stepSize = 255 // steps
@@ -55,6 +59,7 @@ OnInit("FrameEffects", function ()
 
         if GetLocalPlayer() == whatPlayer then
             BlzFrameSetVisible(frame, true)
+            BlzFrameSetAlpha(frame, 0)
         end
 
         Fades[frame] = Timed.echo(INTERVAL, function ()

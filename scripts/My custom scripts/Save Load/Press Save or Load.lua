@@ -90,18 +90,18 @@ OnInit("PressSaveOrLoad", function ()
         end
         for i = 0, udg_MAX_SAVED_DIGIMONS - 1 do
             pcall(RemoveSavedDigimon, p, i)
-        end
+        end]]
         SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, 0)
         SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, 0)
         SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, 0)
-        SetBackpackItems(p, nil)
-        SetBankItems(p)
+        SetBank(p, BankData.create())
+        SetBackpack(p, BackpackData.create())
+        SetQuests(p, QuestData.create())
         EnumItemsInRect(WorldBounds.rect, nil, function ()
             if GetItemPlayer(GetEnumItem()) == p then
                 RemoveItem(GetEnumItem())
             end
         end)
-        SetQuestsData(p)]]
 
         restartListener:run(p)
     end
@@ -199,8 +199,9 @@ OnInit("PressSaveOrLoad", function ()
     local TooltipDigimonItemsT = {} ---@type framehandle[]
     local TooltipDigimonLevelT = {} ---@type framehandle[]
     local TooltipDigimonStamina = {} ---@type framehandle[] 
-    local TooltipDigimonDexterity = {} ---@type framehandle[] 
-    local TooltipDigimonWisdom = {} ---@type framehandle[] 
+    local TooltipDigimonDexterity = {} ---@type framehandle[]
+    local TooltipDigimonWisdom = {} ---@type framehandle[]
+    local TooltipSavedDigimons = nil ---@type FrameList
     local TooltipUsing = nil ---@type framehandle
     local TooltipSaved = nil ---@type framehandle
     local TooltipBackpack = nil ---@type framehandle
@@ -664,6 +665,33 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetEnable(TooltipSaved, false)
         BlzFrameSetScale(TooltipSaved, 1.00)
         BlzFrameSetTextAlignment(TooltipSaved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+        TooltipSavedDigimonsBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Information, "", 1)
+        BlzFrameSetPoint(TooltipSavedDigimonsBackdrop, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.015000, -0.27050)
+        BlzFrameSetPoint(TooltipSavedDigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.13300)
+        BlzFrameSetTexture(TooltipSavedDigimonsBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        TooltipSavedDigimons = FrameList.create(false, TooltipSavedDigimonsBackdrop)
+        BlzFrameSetPoint(TooltipSavedDigimons.Frame, FRAMEPOINT_TOPLEFT, TooltipSavedDigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.0100, 0.00000)
+        BlzFrameSetPoint(TooltipSavedDigimons.Frame, FRAMEPOINT_BOTTOMRIGHT, TooltipSavedDigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0100, 0.0000)
+        TooltipSavedDigimons:setSize(BlzFrameGetWidth(TooltipSavedDigimons.Frame), BlzFrameGetHeight(TooltipSavedDigimons.Frame))
+
+        local amount = 0
+        local row
+        for i = MAX_DIGIMONS, MAX_DIGIMONS + MAX_SAVED - 1 do
+            if ModuloInteger(amount, 3) == 0 then
+                amount = 0
+                row = BlzCreateFrameByType("BACKDROP", "BACKDROP", TooltipSavedDigimonsBackdrop, "", 1)
+                BlzFrameSetPoint(row, FRAMEPOINT_TOPLEFT, TooltipSavedDigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+                BlzFrameSetSize(row, 0.47000, 0.06000)
+                BlzFrameSetTexture(row, "war3mapImported\\EmptyBTN.blp", 0, true)
+                TooltipSavedDigimons:add(row)
+            end
+            BlzFrameSetParent(TooltipDigimonT[i], row)
+            BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, row, FRAMEPOINT_TOPLEFT, amount*0.16500, 0.0000)
+            BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, row, FRAMEPOINT_BOTTOMRIGHT, -0.33 + amount*0.16500, 0.0150)
+            amount = amount + 1
+        end
 
         TooltipBackpack = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.39000)

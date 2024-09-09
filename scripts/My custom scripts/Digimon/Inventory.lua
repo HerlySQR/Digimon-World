@@ -73,12 +73,13 @@ OnInit(function ()
                     else
                         slot = ACCESORIES_SLOT_2
                     end
-                elseif typ == ITEM_TYPE_MISCELLANEOUS then
-                    slot = DIGIVICE_SLOT
+                --elseif typ == ITEM_TYPE_MISCELLANEOUS then
+                --    slot = DIGIVICE_SLOT
                 elseif typ == ITEM_TYPE_CHARGED then
                     slot = CREST_SLOT
                 else
-                    error("Item not identified")
+                    slot = DIGIVICE_SLOT
+                    --error("Item not identified")
                 end
                 UnitDropItemSlot(u, m, slot)
             end
@@ -96,7 +97,7 @@ OnInit(function ()
                         if (typ == ITEM_TYPE_PERMANENT and i ~= SHIELD_SLOT)
                             or (typ == ITEM_TYPE_ARTIFACT and i ~= WEAPON_SLOT)
                             or (typ == ITEM_TYPE_CAMPAIGN and (i ~= ACCESORIES_SLOT_1 and i ~= ACCESORIES_SLOT_2))
-                            or (typ == ITEM_TYPE_MISCELLANEOUS and i ~= DIGIVICE_SLOT)
+                            --or (typ == ITEM_TYPE_MISCELLANEOUS and i ~= DIGIVICE_SLOT)
                             or (typ == ITEM_TYPE_CHARGED and i ~= CREST_SLOT) then
 
                             local slot
@@ -110,10 +111,12 @@ OnInit(function ()
                                 else
                                     slot = ACCESORIES_SLOT_2
                                 end
-                            elseif typ == ITEM_TYPE_MISCELLANEOUS then
-                                slot = DIGIVICE_SLOT
+                            --elseif typ == ITEM_TYPE_MISCELLANEOUS then
+                            --    slot = DIGIVICE_SLOT
                             elseif typ == ITEM_TYPE_CHARGED then
                                 slot = CREST_SLOT
+                            else
+                                slot = DIGIVICE_SLOT
                             end
 
                             UnitDropItemSlot(d.root, m, slot)

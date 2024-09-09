@@ -42,12 +42,22 @@ OnInit("Help", function ()
         BlzFrameSetTexture(BackdropHelpButton, "ReplaceableTextures\\CommandButtons\\BTNHelp3.blp", 0, true)
 
         HelpImage = BlzCreateFrameByType("BACKDROP", "HelpImage", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
+        BlzFrameSetAbsPoint(HelpImage, FRAMEPOINT_TOPRIGHT, GetMaxScreenX(), 0)
+        BlzFrameSetAbsPoint(HelpImage, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX(), 0)
+        BlzFrameSetSize(HelpImage, 0.8, 0.6)
         BlzFrameSetAllPoints(HelpImage, BlzGetOriginFrame(ORIGIN_FRAME_WORLD_FRAME, 0))
         BlzFrameSetTexture(HelpImage, "war3mapImported\\Help.blp", 0, true)
         BlzFrameSetVisible(HelpImage, false)
     end
 
     FrameLoaderAdd(InitFrames)
+
+    OnChangeDimensions(function ()
+        BlzFrameClearAllPoints(HelpImage)
+        BlzFrameSetSize(HelpImage, 0.8, 0.6)
+        BlzFrameSetAbsPoint(HelpImage, FRAMEPOINT_TOPRIGHT, GetMaxScreenX() - 0.05, 0)
+        BlzFrameSetAbsPoint(HelpImage, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0)
+    end)
 
     OnInit.final(function ()
         BlzFrameClick(BlzGetFrameByName("UpperButtonBarQuestsButton", 0))
