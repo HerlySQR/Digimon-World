@@ -79,11 +79,6 @@ OnInit("BossFightUtils", function ()
         return GetRandomReal(GetRectMinX(r), GetRectMaxX(r)), GetRandomReal(GetRectMinY(r), GetRectMaxY(r))
     end
 
-    local function UnitCanAttack(u)
-        return BlzGetUnitWeaponBooleanField(u, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0) or
-               BlzGetUnitWeaponBooleanField(u, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1)
-    end
-
     ---@alias BossMoveType
     ---| 0 # Dash
     ---| 1 # Teleport

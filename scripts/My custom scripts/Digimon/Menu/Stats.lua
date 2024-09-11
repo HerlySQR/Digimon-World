@@ -178,7 +178,7 @@ OnInit("Stats", function ()
 
                         BlzFrameSetText(StatsBlock[i], tostring(d.blockAmount))
 
-                        BlzFrameSetText(StatsEvasion[i], d.evasionChance .. "\x25")
+                        BlzFrameSetText(StatsEvasion[i], d.evasionChance .. "\x25 (-" .. d.trueAttack .. "\x25)")
                     else
                         name = GetObjectName(GetUnitTypeId(u))
                         BlzFrameSetVisible(StatsHeroIcon[i], false)

@@ -48,7 +48,7 @@ OnInit("FileIO", function ()
     ---@field filename string
     ---@field buffer string
     File = {
-        AbilityCount = 10,
+        AbilityCount = 15,
         PreloadLimit = 200,
 
         Counter = 0,
@@ -245,6 +245,11 @@ OnInit("FileIO", function ()
         File.AbilityList[7] = FourCC('Adis')
         File.AbilityList[8] = FourCC('Afbt')
         File.AbilityList[9] = FourCC('Afbk')
+        File.AbilityList[10] = FourCC('Amdf')
+        File.AbilityList[11] = FourCC('Adts')
+        File.AbilityList[12] = FourCC('Ainf')
+        File.AbilityList[13] = FourCC('Aivs')
+        File.AbilityList[14] = FourCC('Asth')
 
         -- Read check
         File.ReadEnabled = File.open("FileTester.pld"):write("FileIO__"):readAndClose() == "FileIO__"

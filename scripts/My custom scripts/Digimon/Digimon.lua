@@ -65,10 +65,19 @@ OnInit("Digimon", function ()
     ---@field IVdex integer
     ---@field IVwis integer
     ---@field cosmetics table<string, CosmeticInstance>
+    ---@field private critcalAmountSum number
+    ---@field private critcalAmountProd number
+    ---@field private critcalChanceSum number
+    ---@field private critcalChanceProd number
     ---@field critcalAmount number
     ---@field critcalChance number
+    ---@field private blockAmountSum number
+    ---@field private blockAmountProd number
     ---@field blockAmount number
+    ---@field private evasionChanceSum number
+    ---@field private evasionChanceProd number
     ---@field evasionChance number
+    ---@field trueAttack integer
     Digimon = {
         _instance = {}, ---@type table<unit, Digimon>
         rank = Rank.ROOKIE,
@@ -77,10 +86,19 @@ OnInit("Digimon", function ()
         IVsta = 0,
         IVdex = 0,
         IVwis = 0,
-        critcalAmount = 0.,
+        critcalAmountSum = 0,
+        critcalAmountProd = 1.,
+        critcalChanceSum = 0,
+        critcalChanceProd = 1.,
+        critcalAmount = 1.,
         critcalChance = 0.,
+        blockAmountSum = 0,
+        blockAmountProd = 1.,
         blockAmount = 0.,
+        evasionChanceSum = 0,
+        evasionChanceProd = 1.,
         evasionChance = 0.,
+        trueAttack = 0
     }
 
     Digimon.__index = Digimon
@@ -440,6 +458,88 @@ OnInit("Digimon", function ()
         ForUnitsInRange(x, y, range, function (u)
             if Digimon._instance[u] then
                 callback(Digimon._instance[u])
+            end
+        end)
+    end
+
+    -- Damage modifiers
+
+    ---@param exact number
+    ---@return number
+    local function round(exact)
+        return tonumber(("\x25.3f"):format(exact))
+    end
+
+    ---@param amt number
+    ---@param add boolean
+    function Digimon:addCriticalChance(amt, add)
+        if add then
+            self.critcalChanceSum = round(self.critcalChanceSum + amt)
+        else
+            self.critcalChanceProd = round(self.critcalChanceProd * amt)
+        end
+        self.critcalChance = round(self.critcalChanceSum * self.critcalChanceProd)
+    end
+
+    ---@param amt number
+    ---@param add boolean
+    function Digimon:addCriticalAmount(amt, add)
+        if add then
+            self.critcalAmountSum = round(self.critcalAmountSum + amt)
+        else
+            self.critcalAmountProd = round(self.critcalAmountProd * amt)
+        end
+        self.critcalAmount = round((1. + self.critcalAmountSum) * self.critcalAmountProd)
+    end
+
+    ---@param amt number
+    ---@param add boolean
+    function Digimon:addBlockAmount(amt, add)
+        if add then
+            self.blockAmountSum = round(self.blockAmountSum + amt)
+        else
+            self.blockAmountProd = round(self.blockAmountProd * amt)
+        end
+        self.blockAmount = round(self.blockAmountSum * self.blockAmountProd)
+    end
+
+    ---@param amt number
+    ---@param add boolean
+    function Digimon:addEvasionChance(amt, add)
+        if add then
+            self.evasionChanceSum = round(self.evasionChanceSum + amt)
+        else
+            self.evasionChanceProd = round(self.evasionChanceProd * amt)
+        end
+        self.evasionChance = round(self.evasionChanceSum * self.evasionChanceProd)
+    end
+
+    ---@param amt number
+    function Digimon:addTrueAttack(amt)
+        self.trueAttack = self.trueAttack + amt
+    end
+
+    do
+        local t = CreateTrigger()
+        TriggerRegisterVariableEvent(t, "udg_PreDamageEvent", EQUAL, 1.00)
+        TriggerAddAction(t, function ()
+            local source = Digimon.getInstance(udg_DamageEventSource)
+            local target = Digimon.getInstance(udg_DamageEventTarget)
+
+            if source and target then
+                if 100*math.random() < (target.evasionChance - source.trueAttack) then
+                    udg_DamageEventAmount = 0.00
+                    udg_DamageEventArmorT = udg_ARMOR_TYPE_NONE
+                    udg_DamageEventWeaponT = udg_WEAPON_TYPE_NONE
+                    udg_DamageEventType = udg_DamageTypeBlocked
+                else
+                    if 100*math.random() < source.critcalChance then
+                        if source.critcalAmount > 1. then
+                            udg_DamageEventType = udg_DamageTypeCriticalStrike
+                            udg_DamageEventAmount = udg_DamageEventAmount * math.max(1., source.critcalAmount - source.blockAmount)
+                        end
+                    end
+                end
             end
         end)
     end

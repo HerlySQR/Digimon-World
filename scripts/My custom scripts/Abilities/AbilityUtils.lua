@@ -363,5 +363,10 @@ OnInit("AbilityUtils", function ()
         return result
     end
 
+    function UnitCanAttack(u)
+        return BlzGetUnitWeaponBooleanField(u, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0) or
+               BlzGetUnitWeaponBooleanField(u, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1)
+    end
+
 end)
 Debug.endFile()
