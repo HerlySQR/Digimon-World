@@ -32,6 +32,15 @@ OnInit("Stats", function ()
         [5] = CREST_ICON
     }
 
+    local names = {
+        [0] = "Shield",
+        [1] = "Weapon",
+        [2] = "Accesory",
+        [3] = "Accesory",
+        [4] = "Digivice",
+        [5] = "Crest"
+    }
+
     local StatsButton = nil ---@type framehandle
     local BackdropStatsButton = nil ---@type framehandle
     local StatsBackdrop = {} ---@type framehandle[]
@@ -61,6 +70,8 @@ OnInit("Stats", function ()
     local StatsInventoryBackdrop = {} ---@type framehandle[]
     local StatsItemT = {} ---@type framehandle[][]
     local BackdropStatsItemT = {} ---@type framehandle[][]
+    local StatsItemTooltip = {} ---@type framehandle[][]
+    local StatsItemTooltipText = {} ---@type framehandle[][]
     local StatsItemDrop = nil ---@type framehandle
     local FocusedUnit = nil ---@type framehandle
     local HeroButtons = {} ---@type framehandle[]
@@ -267,10 +278,17 @@ OnInit("Stats", function ()
                         if m then
                             BlzFrameSetEnable(StatsItemT[i][j], true)
                             BlzFrameSetTexture(BackdropStatsItemT[i][j], BlzGetAbilityIcon(GetItemTypeId(m)), 0, true)
+                            BlzFrameSetText(StatsItemTooltipText[i][j], GetItemName(m) .. "\n" .. BlzGetItemDescription(m))
+                            BlzFrameSetSize(StatsItemTooltipText[i][j], 0.15, 0)
                         else
                             BlzFrameSetEnable(StatsItemT[i][j], false)
                             BlzFrameSetTexture(BackdropStatsItemT[i][j], icons[j], 0, true)
+                            BlzFrameSetText(StatsItemTooltipText[i][j], names[j])
+                            BlzFrameSetSize(StatsItemTooltipText[i][j], 0, 0.01)
                         end
+                        BlzFrameClearAllPoints(StatsItemTooltip[i][j])
+                        BlzFrameSetPoint(StatsItemTooltip[i][j], FRAMEPOINT_TOPLEFT, StatsItemTooltipText[i][j], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
+                        BlzFrameSetPoint(StatsItemTooltip[i][j], FRAMEPOINT_BOTTOMRIGHT, StatsItemTooltipText[i][j], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
                     end
                 end
             else
@@ -554,6 +572,8 @@ OnInit("Stats", function ()
 
             StatsItemT[i] = {}
             BackdropStatsItemT[i] = {}
+            StatsItemTooltip[i] = {}
+            StatsItemTooltipText[i] = {}
             local x1, x2, y1, y2 = {}, {}, {}, {}
             for j = 0, 1 do
                 for k = 0, 2 do
@@ -577,6 +597,19 @@ OnInit("Stats", function ()
                 TriggerAddAction(t, function ()
                     StatsItemFunc(i, j)
                 end)
+
+                StatsItemTooltip[i][j] = BlzCreateFrame("QuestButtonBaseTemplate", StatsItemT[i][j], 0, 0)
+
+                StatsItemTooltipText[i][j] = BlzCreateFrameByType("TEXT", "name", StatsItemTooltip[i][j], "", 0)
+                BlzFrameSetPoint(StatsItemTooltipText[i][j], FRAMEPOINT_TOPRIGHT, StatsItemT[i][j], FRAMEPOINT_TOPRIGHT, -0.025000, -0.025000)
+                BlzFrameSetText(StatsItemTooltipText[i][j], names[j])
+                BlzFrameSetEnable(StatsItemTooltipText[i][j], false)
+                BlzFrameSetScale(StatsItemTooltipText[i][j], 1.00)
+                BlzFrameSetTextAlignment(StatsItemTooltipText[i][j], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+                BlzFrameSetPoint(StatsItemTooltip[i][j], FRAMEPOINT_TOPLEFT, StatsItemTooltipText[i][j], FRAMEPOINT_TOPLEFT, -0.0150000, 0.0150000)
+                BlzFrameSetPoint(StatsItemTooltip[i][j], FRAMEPOINT_BOTTOMRIGHT, StatsItemTooltipText[i][j], FRAMEPOINT_BOTTOMRIGHT, 0.0150000, -0.0150000)
+                BlzFrameSetTooltip(StatsItemT[i][j], StatsItemTooltip[i][j])
             end
 
             StatsItemDrop = BlzCreateFrame("ScriptDialogButton", StatsInventoryBackdrop[0], 0, 0)

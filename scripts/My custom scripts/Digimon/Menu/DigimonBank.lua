@@ -1430,15 +1430,15 @@ OnInit("DigimonBank", function ()
         TriggerAddAction(t, function () UseCaster("Q") end)
 
         SavedDigimons = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.215000, 0.510000)
-        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, 0.585000, 0.180000)
+        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.195000, 0.510000)
+        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, 0.605000, 0.180000)
         BlzFrameSetVisible(SavedDigimons, false)
         AddFrameToMenu(SavedDigimons)
 
         Using = BlzCreateFrameByType("TEXT", "name", SavedDigimons, "", 0)
         BlzFrameSetScale(Using, 1.29)
         BlzFrameSetPoint(Using, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.035000, -0.030000)
-        BlzFrameSetPoint(Using, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.23500, 0.28000)
+        BlzFrameSetPoint(Using, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.27500, 0.28000)
         BlzFrameSetText(Using, "|cffFFCC00Using|r")
         BlzFrameSetEnable(Using, false)
         BlzFrameSetTextAlignment(Using, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
@@ -1449,7 +1449,7 @@ OnInit("DigimonBank", function ()
                 local index = i + part * j
                 x1[index] = 0.035000 + j * 0.05000
                 y1[index] = -0.070000 - i * 0.05000
-                x2[index] = -0.28500 + j * 0.05000
+                x2[index] = -0.32500 + j * 0.05000
                 y2[index] = 0.21000 - i * 0.05000
             end
         end
@@ -1505,19 +1505,19 @@ OnInit("DigimonBank", function ()
 
         Saved = BlzCreateFrameByType("TEXT", "name", SavedDigimons, "", 0)
         BlzFrameSetScale(Saved, 1.29)
-        BlzFrameSetPoint(Saved, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.21000, -0.030000)
-        BlzFrameSetPoint(Saved, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.060000, 0.28000)
+        BlzFrameSetPoint(Saved, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.22500, -0.030000)
+        BlzFrameSetPoint(Saved, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.085000, 0.28000)
         BlzFrameSetText(Saved, "|cffFFCC00Saved|r")
         BlzFrameSetEnable(Saved, false)
         BlzFrameSetTextAlignment(Saved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
-        part = MAX_SAVED // 3
+        part = MAX_SAVED // 4
         for i = 0, part - 1 do
-            for j = 0, 2 do
+            for j = 0, 3 do
                 local index = i + part * j
-                x1[index] = 0.18500 + j * 0.05000
+                x1[index] = 0.17500 + j * 0.05000
                 y1[index] = -0.070000 - i * 0.05000
-                x2[index] = -0.13500 + j * 0.05000
+                x2[index] = -0.18500 + j * 0.05000
                 y2[index] = 0.21000 - i * 0.05000
             end
         end
@@ -1573,8 +1573,8 @@ OnInit("DigimonBank", function ()
 
         Swap = BlzCreateFrame("ScriptDialogButton", SavedDigimons, 0, 0)
         BlzFrameSetScale(Swap, 1.29)
-        BlzFrameSetPoint(Swap, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.15000, -0.28000)
-        BlzFrameSetPoint(Swap, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.14000, 0.020000)
+        BlzFrameSetPoint(Swap, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.16000, -0.28000)
+        BlzFrameSetPoint(Swap, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.17000, 0.020000)
         BlzFrameSetText(Swap, "|cffFCD20DSwap|r")
         BlzFrameSetEnable(Swap, false)
         t = CreateTrigger()
@@ -1583,8 +1583,8 @@ OnInit("DigimonBank", function ()
 
         ExitSave = BlzCreateFrame("ScriptDialogButton", SavedDigimons, 0, 0)
         BlzFrameSetScale(ExitSave, 1.00)
-        BlzFrameSetPoint(ExitSave, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.34000, -0.0050000)
-        BlzFrameSetPoint(ExitSave, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.30000)
+        BlzFrameSetPoint(ExitSave, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.37500, -0.0050000)
+        BlzFrameSetPoint(ExitSave, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.30000)
         BlzFrameSetText(ExitSave, "|cffFCD20DX|r")
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, ExitSave, FRAMEEVENT_CONTROL_CLICK)
@@ -1593,13 +1593,13 @@ OnInit("DigimonBank", function ()
         -- Item
 
         ItemMenu = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(ItemMenu, FRAMEPOINT_TOPLEFT, 0.240000, 0.500000)
-        BlzFrameSetAbsPoint(ItemMenu, FRAMEPOINT_BOTTOMRIGHT, 0.540000, 0.200000)
+        BlzFrameSetAbsPoint(ItemMenu, FRAMEPOINT_TOPLEFT, 0.210000, 0.500000)
+        BlzFrameSetAbsPoint(ItemMenu, FRAMEPOINT_BOTTOMRIGHT, 0.570000, 0.200000)
         BlzFrameSetVisible(ItemMenu, false)
 
         ExitItem = BlzCreateFrame("ScriptDialogButton", ItemMenu, 0, 0)
         BlzFrameSetScale(ExitItem, 1.00)
-        BlzFrameSetPoint(ExitItem, FRAMEPOINT_TOPLEFT, ItemMenu, FRAMEPOINT_TOPLEFT, 0.27000, -0.0050000)
+        BlzFrameSetPoint(ExitItem, FRAMEPOINT_TOPLEFT, ItemMenu, FRAMEPOINT_TOPLEFT, 0.33000, -0.0050000)
         BlzFrameSetPoint(ExitItem, FRAMEPOINT_BOTTOMRIGHT, ItemMenu, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.27000)
         BlzFrameSetText(ExitItem, "|cffFCD20DX|r")
         t = CreateTrigger()
@@ -1608,8 +1608,8 @@ OnInit("DigimonBank", function ()
 
         SaveItemDrop = BlzCreateFrame("ScriptDialogButton", ItemMenu, 0, 0)
         BlzFrameSetScale(SaveItemDrop, 1.00)
-        BlzFrameSetPoint(SaveItemDrop, FRAMEPOINT_TOPLEFT, ItemMenu, FRAMEPOINT_TOPLEFT, 0.040000, -0.25000)
-        BlzFrameSetPoint(SaveItemDrop, FRAMEPOINT_BOTTOMRIGHT, ItemMenu, FRAMEPOINT_BOTTOMRIGHT, -0.16000, 0.020000)
+        BlzFrameSetPoint(SaveItemDrop, FRAMEPOINT_TOPLEFT, ItemMenu, FRAMEPOINT_TOPLEFT, 0.070000, -0.25000)
+        BlzFrameSetPoint(SaveItemDrop, FRAMEPOINT_BOTTOMRIGHT, ItemMenu, FRAMEPOINT_BOTTOMRIGHT, -0.19000, 0.020000)
         BlzFrameSetText(SaveItemDrop, "|cffFCD20DDrop|r")
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SaveItemDrop, FRAMEEVENT_CONTROL_CLICK)
@@ -1617,21 +1617,21 @@ OnInit("DigimonBank", function ()
 
         SaveItemDiscard = BlzCreateFrame("ScriptDialogButton", ItemMenu, 0, 0)
         BlzFrameSetScale(SaveItemDiscard, 1.00)
-        BlzFrameSetPoint(SaveItemDiscard, FRAMEPOINT_TOPLEFT, ItemMenu, FRAMEPOINT_TOPLEFT, 0.16000, -0.25000)
-        BlzFrameSetPoint(SaveItemDiscard, FRAMEPOINT_BOTTOMRIGHT, ItemMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.020000)
+        BlzFrameSetPoint(SaveItemDiscard, FRAMEPOINT_TOPLEFT, ItemMenu, FRAMEPOINT_TOPLEFT, 0.19000, -0.25000)
+        BlzFrameSetPoint(SaveItemDiscard, FRAMEPOINT_BOTTOMRIGHT, ItemMenu, FRAMEPOINT_BOTTOMRIGHT, -0.070000, 0.020000)
         BlzFrameSetText(SaveItemDiscard, "|cffFCD20DDiscard|r")
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, SaveItemDiscard, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, SaveItemDiscardFunc)
 
-        part = MAX_SAVED_ITEMS // 4
+        part = MAX_SAVED_ITEMS // 6
         for i = 0, part - 1 do
-            for j = 0, 3 do
+            for j = 0, 5 do
                 local index = i + part * j + 1
-                x1[index] = 0.030000 + j * 0.0625
-                y1[index] = -0.050000 - i * 0.0625
-                x2[index] = -0.22000 + j * 0.0625
-                y2[index] = 0.20000 - i * 0.0625
+                x1[index] = 0.030000 + j * 0.05
+                y1[index] = -0.040000 - i * 0.05
+                x2[index] = -0.28000 + j * 0.05
+                y2[index] = 0.21000 - i * 0.05
             end
         end
 
