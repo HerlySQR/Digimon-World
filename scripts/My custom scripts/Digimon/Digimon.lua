@@ -536,7 +536,7 @@ OnInit("Digimon", function ()
                     if 100*math.random() < source.critcalChance then
                         if source.critcalAmount > 1. then
                             udg_DamageEventType = udg_DamageTypeCriticalStrike
-                            udg_DamageEventAmount = udg_DamageEventAmount * math.max(1., source.critcalAmount - source.blockAmount)
+                            udg_DamageEventAmount = udg_DamageEventAmount * math.max(1., source.critcalAmount) * (1 - source.blockAmount/100)
                         end
                     end
                 end

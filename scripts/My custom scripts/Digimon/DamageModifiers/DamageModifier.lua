@@ -2,6 +2,7 @@ Debug.beginFile("DamageModifier")
 OnInit("DamageModifier", function ()
     Require "Digimon"
     Require "AddHook"
+    Require "MDTable"
 
     ---@class DamageModifier
     ---@field amt number
@@ -13,15 +14,16 @@ OnInit("DamageModifier", function ()
     ---@field trueAttack boolean
 
     ---@class PrevData
+    ---@field sta integer
     ---@field dex integer
     ---@field wis integer
     ---@field inv integer[]
-    ---@field spells integer[]
+    ---@field spells string[]
 
     local instances = {} ---@type Digimon[]
     local unitConds = {} ---@type table<integer, DamageModifier>
     local itemConds = {} ---@type table<integer, DamageModifier>
-    local abilConds = {} ---@type table<integer, DamageModifier>
+    local abilConds = MDTable.create(2) ---@type table<integer, DamageModifier[]>
     local prevDatas = {} ---@type table<Digimon, PrevData>
 
     ---@param d Digimon
@@ -51,16 +53,21 @@ OnInit("DamageModifier", function ()
             else
                 local prevData = prevDatas[d]
                 -- Hero stats
+                local actSta = GetHeroStr(d.root, true)
+                if prevData.sta ~= actSta then
+                    d:addBlockAmount((actSta - prevData.sta)*0.03, true)
+                    prevData.sta = actSta
+                end
                 local actDex = GetHeroAgi(d.root, true)
                 if prevData.dex ~= actDex then
                     d:addCriticalChance((actDex - prevData.dex)*0.075, true)
-                    d:addEvasionChance((actDex - prevData.dex)*0.065, true)
+                    d:addEvasionChance((actDex - prevData.dex)*0.06, true)
                     prevData.dex = actDex
                 end
-                local actInt = GetHeroInt(d.root, true)
-                if prevData.wis ~= actInt then
-                    d:addCriticalAmount((actInt - prevData.wis)*0.002, true)
-                    prevData.wis = actInt
+                local actWis = GetHeroInt(d.root, true)
+                if prevData.wis ~= actWis then
+                    d:addCriticalAmount((actWis - prevData.wis)*0.002, true)
+                    prevData.wis = actWis
                 end
                 -- Items
                 for j = 0, 5 do
@@ -82,15 +89,17 @@ OnInit("DamageModifier", function ()
                     local abil = BlzGetUnitAbilityByIndex(d.root, index)
                     if not abil and index >= n then break end
                     local id = BlzGetAbilityId(abil)
-                    if prevData.spells[index] ~= id then
-                        if abilConds[prevData.spells[index]] then
-                            modify(d, abilConds[prevData.spells[index]], true)
+                    local lvl = d:getAbilityLevel(id)
+                    if prevData.spells[index] ~= lvl .. id then
+                        local spell = math.tointeger(prevData.spells[index]:sub(2)) or 0
+                        if abilConds[spell][lvl] then
+                            modify(d, abilConds[spell][lvl], true)
                         end
-                        if abilConds[id] then
-                            modify(d, abilConds[id])
+                        if abilConds[id][lvl] then
+                            modify(d, abilConds[id][lvl])
                         end
                         if abil then
-                            prevData.spells[index] = id
+                            prevData.spells[index] = lvl .. id
                         else
                             prevData.spells[index] = nil
                         end
@@ -105,14 +114,18 @@ OnInit("DamageModifier", function ()
         if UnitCanAttack(d.root) then
             table.insert(instances, d)
             prevDatas[d] = {
+                sta = 0,
                 dex = 0,
                 wis = 0,
                 inv = __jarray(0),
-                spells = __jarray(0)
+                spells = __jarray("")
             }
             if unitConds[d:getTypeId()] then
                 modify(d, unitConds[d:getTypeId()])
             end
+            d:addCriticalChance(5)
+            d:evasionChance(3)
+            d:critcalAmount(0.2)
         end
     end)
 
@@ -126,7 +139,11 @@ OnInit("DamageModifier", function ()
     ---@param unitCond integer
     ---@param itemCond integer
     ---@param abilCond integer
-    local function Create(amt, add, criticalChance, critcalAmount, blockAmount, evasionChance, trueAttack, unitCond, itemCond, abilCond)
+    ---@param abilLevelCond integer
+    local function Create(amt, add, criticalChance, critcalAmount, blockAmount, evasionChance, trueAttack, unitCond, itemCond, abilCond, abilLevelCond)
+        if unitCond == 0 and itemCond == 0 and abilCond == 0 then
+            error("You didn't set a condition for the buff")
+        end
         local dmgMod = {
             amt = amt,
             add = add,
@@ -143,7 +160,7 @@ OnInit("DamageModifier", function ()
             itemConds[itemCond] = dmgMod
         end
         if abilCond ~= 0 then
-            abilConds[abilCond] = dmgMod
+            abilConds[abilCond][abilLevelCond] = dmgMod
         end
     end
 
@@ -159,7 +176,8 @@ OnInit("DamageModifier", function ()
             udg_DamageModifierTrueAttack,
             udg_DamageModifierUnitCond,
             udg_DamageModifierItemCond,
-            udg_DamageModifierAbilCond ~= 0 and udg_DamageModifierAbilCond or udg_DamageModifierBuffCond
+            udg_DamageModifierAbilCond ~= 0 and udg_DamageModifierAbilCond or udg_DamageModifierBuffCond,
+            udg_DamageModifierAbilLevelCond
         )
         udg_DamageModifierAmount = 0
         udg_DamageModifierAdd = false
@@ -172,6 +190,7 @@ OnInit("DamageModifier", function ()
         udg_DamageModifierItemCond = 0
         udg_DamageModifierAbilCond = 0
         udg_DamageModifierBuffCond = 0
+        udg_DamageModifierAbilLevelCond = 1
     end)
 end)
 Debug.endFile()

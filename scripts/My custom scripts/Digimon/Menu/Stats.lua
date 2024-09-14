@@ -187,9 +187,9 @@ OnInit("Stats", function ()
 
                         BlzFrameSetText(StatsCritical[i], d.critcalChance .. "\x25 (x" .. d.critcalAmount .. ")")
 
-                        BlzFrameSetText(StatsBlock[i], tostring(d.blockAmount))
+                        BlzFrameSetText(StatsBlock[i], d.blockAmount .. "\x25")
 
-                        BlzFrameSetText(StatsEvasion[i], d.evasionChance .. "\x25 / " .. -d.trueAttack .. "\x25")
+                        BlzFrameSetText(StatsEvasion[i], d.evasionChance .. "\x25")
                     else
                         name = GetObjectName(GetUnitTypeId(u))
                         BlzFrameSetVisible(StatsHeroIcon[i], false)
@@ -537,7 +537,7 @@ OnInit("Stats", function ()
             StatsEvasionLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsEvasionLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.31250, -0.065000)
             BlzFrameSetPoint(StatsEvasionLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.00000, 0.020000)
-            BlzFrameSetText(StatsEvasionLabel[i], "|cff42ffadEvasion/Miss:|r")
+            BlzFrameSetText(StatsEvasionLabel[i], "|cff42ffadEvasion:|r")
             BlzFrameSetEnable(StatsEvasionLabel[i], false)
             BlzFrameSetScale(StatsEvasionLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsEvasionLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
