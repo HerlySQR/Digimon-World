@@ -1,7 +1,5 @@
 if Debug then Debug.beginFile("Serializable") end
 OnInit("Serializable", function ()
-    Require "Savecode"
-
     --[[    Simple Serialisation and Deserialisation package intended to be used with SaveLoadData.
         Allows you to save properties of any "class" instance into a string,
         and load the same properties from that string.
@@ -199,10 +197,5 @@ OnInit("Serializable", function ()
             self.map[name] = value
         end
     end
-
-    --[[---@return string
-    function Serializable:encode()
-        local savecode = Savecode
-    end]]
 end)
 if Debug then Debug.endFile() end

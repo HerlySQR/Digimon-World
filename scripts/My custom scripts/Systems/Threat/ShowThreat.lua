@@ -18,22 +18,24 @@ OnInit(function ()
     --local speedAlpha = 8
 
     ForUnitsInRect(bj_mapInitialPlayableArea, function (u)
-        if GetUnitRace(u) == RACE_OTHER and IsUnitType(u, UNIT_TYPE_HERO) then
+        if GetHandleId(GetUnitRace(u)) == 11 and IsUnitType(u, UNIT_TYPE_HERO) then
             table.insert(bosses, u)
         end
     end)
 
-    Timed.echo(0.1, function ()
+    Timed.echo(1., function ()
         BlzFrameSetVisible(ThreatBackdrop, false)
         for i = 1, #bosses do
             local boss = bosses[i]
-            for j = 0, 3 do
-                local u = ZTS_GetThreatSlotUnit(boss, j)
+            local attackers = ZTS_GetAttackers(boss)
+            for j = 0, 2 do
+                local u = BlzGroupUnitAt(attackers, j)
                 if u then
                     ForceAddPlayer(canSee, GetOwningPlayer(u))
                 end
                 units[j] = u
             end
+            DestroyGroup(attackers)
             if IsPlayerInForce(LocalPlayer, canSee) then
                 BlzFrameSetVisible(ThreatBackdrop, true)
                 BlzFrameSetTexture(ThreatBoss, BlzGetAbilityIcon(GetUnitTypeId(boss)), 0, true)
@@ -67,14 +69,13 @@ OnInit(function ()
         BlzFrameSetScale(ThreatArrow, 4.57)
         BlzFrameSetAbsPoint(ThreatArrow, FRAMEPOINT_TOPLEFT, 0.0500000, 0.570000)
         BlzFrameSetAbsPoint(ThreatArrow, FRAMEPOINT_BOTTOMRIGHT, 0.100000, 0.520000)
-        BlzFrameSetText(ThreatArrow, "|cffFFCC00→|r")
-        BlzFrameSetEnable(ThreatArrow, false)
+        BlzFrameSetText(ThreatArrow, "|cffFFCC00->|r")
         BlzFrameSetTextAlignment(ThreatArrow, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
         for i = 0, 3 do
             ThreatPlayerUnitT[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", ThreatBackdrop, "", 1)
-            BlzFrameSetPoint(ThreatPlayerUnitT[i], FRAMEPOINT_TOPLEFT, ThreatBackdrop, FRAMEPOINT_TOPLEFT, 0.10500 + i*0.05, -0.0050000)
-            BlzFrameSetSize(ThreatPlayerUnitT[i], 0.05, 0.05)
+            BlzFrameSetPoint(ThreatPlayerUnitT[i], FRAMEPOINT_TOPLEFT, ThreatBackdrop, FRAMEPOINT_TOPLEFT, 0.10500 + i*0.04, -0.0050000)
+            BlzFrameSetSize(ThreatPlayerUnitT[i], 0.04, 0.04)
             BlzFrameSetTexture(ThreatPlayerUnitT[i], "", 0, true)
             BlzFrameSetAlpha(ThreatPlayerUnitT[i], 255 * (3-i) // 3)
         end
