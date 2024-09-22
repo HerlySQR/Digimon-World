@@ -43,6 +43,8 @@ OnInit("Environment", function ()
     ---@field mapPortion framehandle?
     ---@field mapPortionGlow framehandle?
     ---@field id integer?
+    ---@field soundtrackDay string?
+    ---@field soundtrackNight string?
     Environment = {}
     Environment.__index = Environment
 
@@ -65,14 +67,18 @@ OnInit("Environment", function ()
     ---@param mapPortion string?
     ---@param glowOffset location
     ---@param id integer
+    ---@param soundtrackDay string?
+    ---@param soundtrackNight string?
     ---@return Environment
-    function Environment.create(name, place, minimap, mapPortion, glowOffset, id)
+    function Environment.create(name, place, minimap, mapPortion, glowOffset, id, soundtrackDay, soundtrackNight)
         if not used[name] then
             local self = setmetatable({}, Environment)
 
             self.name = name
             self.place = place
             self.minimap = minimap
+            self.soundtrackDay = soundtrackDay
+            self.soundtrackNight = soundtrackNight
 
             if mapPortion then
                 FrameLoaderAdd(function ()
@@ -125,6 +131,7 @@ OnInit("Environment", function ()
     local Environments = {} ---@type table<player, Environment>
     local locked = {} ---@type table<player, boolean>
     local prevEnv = {} ---@type table<player, Environment>
+    local actMusic = ""
 
     ---@param p player
     ---@return Environment
@@ -176,10 +183,38 @@ OnInit("Environment", function ()
         if p == LocalPlayer and env ~= Environment.map and prevEnv[p] and prevEnv[p].mapPortion then
             BlzFrameSetVisible(prevEnv[p].mapPortionGlow, false)
         end
+
         prevEnv[p] = env
+
+        if p == LocalPlayer then
+            ClearMapMusic()
+            if GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK then
+                if env.soundtrackDay ~= "inherit" then
+                    if actMusic ~= env.soundtrackDay then
+                        StopMusic(false)
+                        actMusic = env.soundtrackDay
+                        if actMusic then
+                            PlayMusic(actMusic)
+                        end
+                    end
+                end
+            elseif GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK then
+                if env.soundtrackNight ~= "inherit" then
+                    if actMusic ~= env.soundtrackNight then
+                        StopMusic(false)
+                        actMusic = env.soundtrackNight
+                        if actMusic then
+                            PlayMusic(actMusic)
+                        end
+                    end
+                end
+            end
+        end
+
         if locked[p] then
             return false
         end
+
         if fade then
             if p == LocalPlayer then
                 FadeOut("ReplaceableTextures\\CameraMasks\\Black_mask.blp", 0.25)
@@ -234,6 +269,30 @@ OnInit("Environment", function ()
         if p == LocalPlayer then
             PanCameraToTimed(pos[1], pos[2], 0)
         end
+    end
+
+    do
+        local t = CreateTrigger()
+        TriggerRegisterGameStateEvent(t, GAME_STATE_TIME_OF_DAY, EQUAL, bj_TOD_DAWN)
+        TriggerAddAction(t, function ()
+            if Environments[LocalPlayer] and Environments[LocalPlayer].soundtrackDay and (Environments[LocalPlayer].soundtrackDay ~= Environments[LocalPlayer].soundtrackNight) then
+                ClearMapMusic()
+                StopMusic(false)
+                actMusic = Environments[LocalPlayer].soundtrackDay
+                PlayMusic(actMusic)
+            end
+        end)
+
+        t = CreateTrigger()
+        TriggerRegisterGameStateEvent(t, GAME_STATE_TIME_OF_DAY, EQUAL, bj_TOD_DUSK)
+        TriggerAddAction(t, function ()
+            if Environments[LocalPlayer] and Environments[LocalPlayer].soundtrackNight and (Environments[LocalPlayer].soundtrackNight ~= Environments[LocalPlayer].soundtrackDay) then
+                ClearMapMusic()
+                StopMusic(false)
+                actMusic = Environments[LocalPlayer].soundtrackNight
+                PlayMusic(actMusic)
+            end
+        end)
     end
 
     ---@param texture string
@@ -364,53 +423,6 @@ OnInit("Environment", function ()
     end
 
     ---@param p player
-    ---@param slot integer
-    ---@return boolean[]
-    function SaveVisitedPlaces(p, slot)
-        local list = __jarray(0)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\VistedPlaces\\Slot_" .. slot .. ".pld"
-        local savecode = Savecode.create()
-
-        for i = 1, MAX_REGIONS do
-            if vistedPlaces[p][i] then
-                savecode:Encode(1, 2) -- Save that id of the place is visted
-                list[i] = true
-            else
-                savecode:Encode(0, 2) -- Save that id of the place is not visted
-                list[i] = false
-            end
-        end
-
-        local s = savecode:Save(p, 1)
-
-        if p == LocalPlayer then
-            FileIO.Write(path, s)
-        end
-
-        savecode:destroy()
-
-        return list
-    end
-
-    ---@param p player
-    ---@param slot integer
-    ---@return boolean[]
-    function LoadVisitedPlaces(p, slot)
-        local list = __jarray(0)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\VistedPlaces\\Slot_" .. slot .. ".pld"
-        local savecode = Savecode.create()
-        if savecode:Load(p, GetSyncedData(p, FileIO.Read, path), 1) then
-            for i = MAX_REGIONS, 1, -1 do
-                list[i] = savecode:Decode(2) == 1 -- Load if id of the place is visted
-            end
-        end
-
-        savecode:destroy()
-
-        return list
-    end
-
-    ---@param p player
     ---@param list boolean[]
     function ApplyVisitedPlaces(p, list)
         for i = 1, MAX_REGIONS do
@@ -444,6 +456,35 @@ OnInit("Environment", function ()
     Environment.gymArena = {} ---@type Environment[]
     Environment.cosmeticModel = nil ---@type Environment
     Environment.map = nil ---@type Environment
+
+    udg_MapPortion = nil
+    udg_MapPortionGlowOffset = nil
+    udg_MapId = nil
+    udg_SoundtrackDay = nil
+    udg_SoundtrackNight = nil
+
+    udg_EnvironmentCreate = CreateTrigger()
+    TriggerAddAction(udg_EnvironmentCreate, function ()
+        LastCreatedEnvironment = Environment.create(
+            udg_Name,
+            udg_Place,
+            udg_Minimap,
+            udg_MapPortion,
+            udg_MapPortionGlowOffset,
+            udg_MapId,
+            udg_SoundtrackDay,
+            udg_SoundtrackNight
+        )
+
+        udg_Name = ""
+        udg_Place = nil
+        udg_Minimap = ""
+        udg_MapPortion = nil
+        udg_MapPortionGlowOffset = nil
+        udg_MapId = nil
+        udg_SoundtrackDay = nil
+        udg_SoundtrackNight = nil
+    end)
 
 end)
 Debug.endFile()

@@ -93,6 +93,7 @@ OnInit("Stats", function ()
     local red = Color.new(0xFF0000)
     local green = Color.new(0x00FF00)
     local exps = __jarray(0) ---@type integer[]
+    local reqExps = __jarray(0) ---@type integer[]
     exps[1] = 50
     local prevValFactor = 1
     local lvlFactor = 10
@@ -102,6 +103,10 @@ OnInit("Stats", function ()
         exps[i] = exps[i-1]*prevValFactor + (i+1)*lvlFactor + constFactor
     end
     exps[99] = exps[98]
+
+    for i = 1, 98 do
+        reqExps[i] = exps[i] - exps[i-1]
+    end
 
     local allVisible = false
     local changeVisible = false
@@ -202,7 +207,12 @@ OnInit("Stats", function ()
 
                         BlzFrameSetText(StatsEvasion[i], d.evasionChance .. "\x25")
 
-                        BlzFrameSetText(StatsExp[i], "|cff7fb0b0" .. GetHeroXP(u) .. "/" .. exps[GetHeroLevel(u)] .."|r")
+                        local l = GetHeroLevel(u)
+                        if l < 99 then
+                            BlzFrameSetText(StatsExp[i], "|cff7fb0b0" .. (GetHeroXP(u) - exps[l-1]) .. "/" .. reqExps[l] .."|r")
+                        else
+                            BlzFrameSetVisible(StatsExp[i], false)
+                        end
                     else
                         name = GetObjectName(GetUnitTypeId(u))
                         BlzFrameSetVisible(StatsHeroIcon[i], false)
