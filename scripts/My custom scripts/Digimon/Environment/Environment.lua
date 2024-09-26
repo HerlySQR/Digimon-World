@@ -21,6 +21,7 @@ OnInit("Environment", function ()
     local inMenu = false
     local onSeeMapClicked = EventListener.create()
     local onSeeMapClosed = EventListener.create()
+    local notChangeMusic = false
 
     local mapPortions = {} ---@type table<string, Environment>
     local vistedPlaces = {} ---@type table<player, table<integer, framehandle>>
@@ -187,24 +188,30 @@ OnInit("Environment", function ()
         prevEnv[p] = env
 
         if p == LocalPlayer then
-            ClearMapMusic()
+            if not notChangeMusic then
+                ClearMapMusic()
+            end
             if GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK then
                 if env.soundtrackDay ~= "inherit" then
                     if actMusic ~= env.soundtrackDay then
-                        StopMusic(false)
                         actMusic = env.soundtrackDay
-                        if actMusic then
-                            PlayMusic(actMusic)
+                        if not notChangeMusic then
+                            StopMusic(false)
+                            if actMusic then
+                                PlayMusic(actMusic)
+                            end
                         end
                     end
                 end
             elseif GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK then
                 if env.soundtrackNight ~= "inherit" then
                     if actMusic ~= env.soundtrackNight then
-                        StopMusic(false)
                         actMusic = env.soundtrackNight
-                        if actMusic then
-                            PlayMusic(actMusic)
+                        if not notChangeMusic then
+                            StopMusic(false)
+                            if actMusic then
+                                PlayMusic(actMusic)
+                            end
                         end
                     end
                 end
@@ -276,10 +283,12 @@ OnInit("Environment", function ()
         TriggerRegisterGameStateEvent(t, GAME_STATE_TIME_OF_DAY, EQUAL, bj_TOD_DAWN)
         TriggerAddAction(t, function ()
             if Environments[LocalPlayer] and Environments[LocalPlayer].soundtrackDay and (Environments[LocalPlayer].soundtrackDay ~= Environments[LocalPlayer].soundtrackNight) then
-                ClearMapMusic()
-                StopMusic(false)
                 actMusic = Environments[LocalPlayer].soundtrackDay
-                PlayMusic(actMusic)
+                if not notChangeMusic then
+                    ClearMapMusic()
+                    StopMusic(false)
+                    PlayMusic(actMusic)
+                end
             end
         end)
 
@@ -287,10 +296,12 @@ OnInit("Environment", function ()
         TriggerRegisterGameStateEvent(t, GAME_STATE_TIME_OF_DAY, EQUAL, bj_TOD_DUSK)
         TriggerAddAction(t, function ()
             if Environments[LocalPlayer] and Environments[LocalPlayer].soundtrackNight and (Environments[LocalPlayer].soundtrackNight ~= Environments[LocalPlayer].soundtrackDay) then
-                ClearMapMusic()
-                StopMusic(false)
                 actMusic = Environments[LocalPlayer].soundtrackNight
-                PlayMusic(actMusic)
+                if not notChangeMusic then
+                    ClearMapMusic()
+                    StopMusic(false)
+                    PlayMusic(actMusic)
+                end
             end
         end)
     end
@@ -443,6 +454,37 @@ OnInit("Environment", function ()
     ---@param func fun(p: player)
     function OnSeeMapClosed(func)
         onSeeMapClosed:register(func)
+    end
+
+    ---@param music string
+    function ChangeMusic(music)
+        notChangeMusic = true
+        ClearMapMusic()
+        PlayMusic(music)
+    end
+
+    function RestartMusic()
+        notChangeMusic = false
+        local env = prevEnv[LocalPlayer]
+        ClearMapMusic()
+        StopMusic(false)
+        local sound
+        if GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK then
+            if env.soundtrackDay ~= "inherit" then
+                sound = env.soundtrackDay
+            else
+                sound = actMusic
+            end
+        elseif GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK then
+            if env.soundtrackNight ~= "inherit" then
+                sound = env.soundtrackNight
+            else
+                sound = actMusic
+            end
+        end
+        if sound then
+            PlayMusic(sound)
+        end
     end
 
     Environment.allMap = Environment.create("", bj_mapInitialPlayableArea, "entireMap.tga")

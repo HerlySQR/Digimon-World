@@ -173,7 +173,7 @@ OnInit(function ()
             if info.availableSelects > 0 then
                 for j = 0, MAX_DIGIMONS do
                     local d = GetBankDigimon(info.p, j)
-                    if d and GetDigimonCooldown(d) <= 0
+                    if d and d:isAlive()
                         and not info.selectedDigimons:contains(j)
                         and not info.bannedDigimons:contains(j) then
 
@@ -278,6 +278,7 @@ OnInit(function ()
         local loser ---@type PlayerInfo
         for i = 1, MAX_FIGHTERS do
             local info = self.pi[i]
+            PunishPlayer(info.p, false)
             if info.digimonsInArena:isEmpty() then
                 loser = info
             else
@@ -329,7 +330,6 @@ OnInit(function ()
                 for i = 1, MAX_FIGHTERS do
                     local info = self.pi[i]
                     if info.p ~= Digimon.VILLAIN then
-                        ResumeRevive(info.p)
                         for j = 0, MAX_DIGIMONS - 1 do
                             local d = GetBankDigimon(info.p, j)
                             if d then
@@ -1060,6 +1060,8 @@ OnInit(function ()
     local function StartFight(p1, p2, arena)
         ShowBank(p1, false)
         ShowBank(p2, false)
+        PunishPlayer(p1, false)
+        PunishPlayer(p2, false)
         if p2 ~= Digimon.VILLAIN then
             DisplayTextToForce(WannaPvP, User[p1]:getNameColored() .. " and " .. User[p2]:getNameColored() .. " will fight.")
             PlayerSelected[p1] = nil
@@ -1082,19 +1084,17 @@ OnInit(function ()
             SetPlayerAllianceStateBJ(p1, p2, bj_ALLIANCE_UNALLIED)
             SetPlayerAllianceStateBJ(p2, p1, bj_ALLIANCE_UNALLIED)
             EnablePvP(p1, p2)
-            SuspendRevive(p1)
-            SuspendRevive(p2)
 
             local available1 = 0
             local available2 = 0
             for i = 0, MAX_DIGIMONS - 1 do
                 local d = GetBankDigimon(p1, i)
-                if d and GetDigimonCooldown(d) <= 0 then
+                if d and d:isAlive() then
                     available1 = available1 + 1
                 end
 
                 d = GetBankDigimon(p2, i)
-                if d and GetDigimonCooldown(d) <= 0 then
+                if d and d:isAlive() then
                     available2 = available2 + 1
                 end
             end
@@ -1114,7 +1114,7 @@ OnInit(function ()
             if info.availableSelects == 0 then
                 for i = 0, MAX_DIGIMONS - 1 do
                     local d = GetBankDigimon(p1, i)
-                    if d and GetDigimonCooldown(d) <= 0 then
+                    if d and d:isAlive() then
                         info.selectedDigimons:addSingle(i)
                     end
                 end
@@ -1129,7 +1129,7 @@ OnInit(function ()
             if info.availableSelects == 0 then
                 for i = 0, MAX_DIGIMONS - 1 do
                     local d = GetBankDigimon(p2, i)
-                    if d and GetDigimonCooldown(d) <= 0 then
+                    if d and d:isAlive() then
                         info.selectedDigimons:addSingle(i)
                     end
                 end
@@ -1167,7 +1167,7 @@ OnInit(function ()
 
                 for i = 0, MAX_DIGIMONS - 1 do
                     local d = GetBankDigimon(p1, i)
-                    if d and GetDigimonCooldown(d) <= 0 then
+                    if d and d:isAlive() then
                         BlzFrameSetTexture(BackdropPlayerDigimonT[1][i], BlzGetAbilityIcon(d:getTypeId()), 0, true)
                         BlzFrameSetEnable(PlayerDigimonT[1][i], true)
                     else
@@ -1177,7 +1177,7 @@ OnInit(function ()
                     BlzFrameSetVisible(PlayerDigimonClicked[1][i], false)
 
                     d = GetBankDigimon(p2, i)
-                    if d and GetDigimonCooldown(d) <= 0 then
+                    if d and d:isAlive() then
                         BlzFrameSetTexture(BackdropPlayerDigimonT[2][i], BlzGetAbilityIcon(d:getTypeId()), 0, true)
                         BlzFrameSetEnable(PlayerDigimonT[2][i], true)
                     else
@@ -1204,12 +1204,11 @@ OnInit(function ()
             end
 
             EnablePvP(p1, p2)
-            SuspendRevive(p1)
 
             local available = 0
             for i = 0, MAX_DIGIMONS - 1 do
                 local d = GetBankDigimon(p1, i)
-                if d and GetDigimonCooldown(d) <= 0 then
+                if d and d:isAlive() then
                     available = available + 1
                 end
             end
@@ -1226,7 +1225,7 @@ OnInit(function ()
             if info.availableSelects == 0 then
                 for i = 0, MAX_DIGIMONS - 1 do
                     local d = GetBankDigimon(p1, i)
-                    if d and GetDigimonCooldown(d) <= 0 then
+                    if d and d:isAlive() then
                         info.selectedDigimons:addSingle(i)
                     end
                 end
@@ -1273,7 +1272,7 @@ OnInit(function ()
 
                 for i = 0, MAX_DIGIMONS - 1 do
                     local d = GetBankDigimon(p1, i)
-                    if d and GetDigimonCooldown(d) <= 0 then
+                    if d and d:isAlive() then
                         BlzFrameSetTexture(BackdropPlayerDigimonT[1][i], BlzGetAbilityIcon(d:getTypeId()), 0, true)
                         BlzFrameSetEnable(PlayerDigimonT[1][i], true)
                     else

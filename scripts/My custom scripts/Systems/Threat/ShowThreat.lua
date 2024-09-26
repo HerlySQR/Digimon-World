@@ -28,7 +28,7 @@ OnInit(function ()
         for i = 1, #bosses do
             local boss = bosses[i]
             local attackers = ZTS_GetAttackers(boss)
-            for j = 0, 2 do
+            for j = 0, 3 do
                 local u = BlzGroupUnitAt(attackers, j)
                 if u then
                     ForceAddPlayer(canSee, GetOwningPlayer(u))
@@ -40,7 +40,7 @@ OnInit(function ()
                 BlzFrameSetVisible(ThreatBackdrop, true)
                 BlzFrameSetTexture(ThreatBoss, BlzGetAbilityIcon(GetUnitTypeId(boss)), 0, true)
                 for j = 0, 3 do
-                    local u = units[j]
+                    local u = units[#units-j] -- I don't know why they are in inverse order
                     if u then
                         BlzFrameSetVisible(ThreatPlayerUnitT[j], true)
                         BlzFrameSetTexture(ThreatPlayerUnitT[j], BlzGetAbilityIcon(GetUnitTypeId(u)), 0, true)

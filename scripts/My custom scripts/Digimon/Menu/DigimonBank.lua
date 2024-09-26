@@ -30,7 +30,6 @@ OnInit("DigimonBank", function ()
     local DigimonTUsed = {} ---@type framehandle[]
     local DigimonTSelected = {} ---@type framehandle[]
     local DigimonTIsMain = {} ---@type framehandle[]
-    local DigimonTCooldownT = {} ---@type framehandle[]
     local DigimonTTooltip = {} ---@type framehandle[]
     local DigimonTTooltipText = {} ---@type framehandle[]
     local Text = nil ---@type framehandle
@@ -56,7 +55,6 @@ OnInit("DigimonBank", function ()
     local BackdropSavedDigimonT = {} ---@type framehandle[]
     local SavedTSelected = {} ---@type framehandle[]
     local SavedDigimonLocked = {} ---@type framehandle[]
-    local SavedTCooldownT = {} ---@type framehandle[]
     local SavedTooltip = {} ---@type framehandle[]
     local SavedTooltipText = {} ---@type framehandle[]
     local Swap = nil ---@type framehandle
@@ -90,6 +88,11 @@ OnInit("DigimonBank", function ()
     local ITEM_BANK_SELLER = FourCC('n01Y')
     local ITEM_BANK_BUYER = FourCC('n026')
 
+    local CENTAURMON = gg_unit_N004_0002
+    local REVIVE_DIGIMONS = FourCC('I05Z')
+    local DIGIMON_REVIVE_EFF = "Abilities\\Spells\\Human\\ReviveHuman\\ReviveHuman.mdl"
+    local CENTAURMON_REVIVE_EFF = "Abilities\\Spells\\Other\\Awaken\\Awaken.mdl"
+
     IgnoreCommandButton(ITEM_BANK_CASTER)
     IgnoreCommandButton(ITEM_BANK_SELLER)
     IgnoreCommandButton(ITEM_BANK_BUYER)
@@ -120,13 +123,11 @@ OnInit("DigimonBank", function ()
     ---@field buyer unit
     ---@field seller unit
     ---@field priorities Digimon[]
+    ---@field punish boolean
     local Bank = {}
     Bank.__index = Bank
 
     local LocalPlayer = GetLocalPlayer() ---@type player
-
-    local cooldowns = __jarray(0) ---@type table<Digimon, number>
-    local revivingSuspended = __jarray(false) ---@type table<player, boolean>
 
     local digimonUpdateEvent = EventListener.create()
 
@@ -156,7 +157,8 @@ OnInit("DigimonBank", function ()
             caster = nil,
             buyer = nil,
             seller = nil,
-            priorities = {}
+            priorities = {},
+            punish = true
         }, Bank)
     end
 
@@ -263,7 +265,7 @@ OnInit("DigimonBank", function ()
         if self.pressed == -1 then
             return false
         end
-        return cooldowns[self.stocked[self.pressed]] <= 0 and self:used() < self.maxUsable
+        return self.stocked[self.pressed]:isAlive() and self:used() < self.maxUsable
     end
 
     ---@return boolean
@@ -377,7 +379,7 @@ OnInit("DigimonBank", function ()
     function Bank:isAlive(index)
         local d = self.stocked[index]
         if d then
-            return cooldowns[d] <= 0
+            return d:isAlive()
         end
         return false
     end
@@ -455,7 +457,6 @@ OnInit("DigimonBank", function ()
     function Bank:clearDigimons()
         for i = 0, MAX_STOCK - 1 do
             if self.stocked[i] then
-                cooldowns[self.stocked[i]] = nil
                 self.stocked[i]:destroy()
                 self.stocked[i] = nil
             end
@@ -477,7 +478,8 @@ OnInit("DigimonBank", function ()
         self.allDead = false
         self.savedDigimonsStock = 0
         self.priorities = {}
-        revivingSuspended[self.p] = false
+        self.spawnPoint.x = GetRectCenterX(gg_rct_Player_1_Spawn)
+        self.spawnPoint.y = GetRectCenterY(gg_rct_Player_1_Spawn)
     end
 
     function Bank:clearItems()
@@ -520,6 +522,7 @@ OnInit("DigimonBank", function ()
             bank.seller = CreateUnit(Digimon.PASSIVE, ITEM_BANK_SELLER, WorldBounds.maxX, WorldBounds.maxY, 0)
             bank.buyer = CreateUnit(Digimon.PASSIVE, ITEM_BANK_BUYER, WorldBounds.maxX, WorldBounds.maxY, 0)
         end)
+        AddItemToStock(CENTAURMON, REVIVE_DIGIMONS, 1, 1)
     end)
 
     -- Always use this function in a "if player == GetLocalPlayer() then" block
@@ -604,43 +607,6 @@ OnInit("DigimonBank", function ()
 
         bank:resetCaster()
     end)
-
-    --[[do
-        local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SELL_ITEM)
-        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetTriggerUnit()) == ITEM_BANK_SELLER end))
-        TriggerAddAction(t, function ()
-            local p = GetOwningPlayer(GetTriggerUnit())
-            local bank = Bank[GetPlayerId(p)] ---@type Bank
-            SetUnitOwner(bank.seller, Digimon.PASSIVE)
-            SetUnitX(bank.seller, WorldBounds.maxX)
-            SetUnitY(bank.seller, WorldBounds.maxY)
-            print("si")
-        end)
-    end]]
-
-    -- Always use this function in a "if player == GetLocalPlayer() then" block
-    local function UpdateCooldowns()
-        local bank = Bank[GetPlayerId(LocalPlayer)] ---@type Bank
-        for i = 0, MAX_STOCK - 1 do
-            local d = bank.stocked[i] ---@type Digimon
-            if d and cooldowns[d] > 0 then
-                BlzFrameSetText(DigimonTCooldownT[i], tostring(math.floor(cooldowns[d])))
-                BlzFrameSetText(UsingTCooldownT[i], tostring(math.floor(cooldowns[d])))
-            else
-                BlzFrameSetVisible(DigimonTCooldownT[i], false)
-                BlzFrameSetVisible(UsingTCooldownT[i], false)
-            end
-        end
-        for i = 0, MAX_SAVED - 1 do
-            local d = bank.saved[i] ---@type Digimon
-            if d and cooldowns[d] >= 0 then
-                BlzFrameSetText(SavedTCooldownT[i], tostring(math.floor(cooldowns[d])))
-            else
-                BlzFrameSetVisible(SavedTCooldownT[i], false)
-            end
-        end
-    end
 
     -- Always use this function in a "if player == GetLocalPlayer() then" block
     local function UpdateSave()
@@ -747,7 +713,6 @@ OnInit("DigimonBank", function ()
             BlzFrameSetPoint(SavedTooltip[i], FRAMEPOINT_TOPLEFT, SavedTooltipText[i], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
             BlzFrameSetPoint(SavedTooltip[i], FRAMEPOINT_BOTTOMRIGHT, SavedTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
         end
-        UpdateCooldowns()
     end
 
     local function ExitSaveFunc()
@@ -793,7 +758,11 @@ OnInit("DigimonBank", function ()
                     BlzFrameSetVisible(DigimonTUsed[i], true)
                     BlzFrameSetAlpha(DigimonTUsed[i], 127)
                 else
-                    text = text .. "|cff00ff00Stored|r"
+                    if d:isAlive() then
+                        text = text .. "|cff00ff00Stored|r"
+                    else
+                        text = text .. "|cffff0000Dead|r"
+                    end
                     BlzFrameSetVisible(DigimonTUsed[i], false)
                 end
                 BlzFrameSetText(DigimonTTooltipText[i], text)
@@ -819,7 +788,6 @@ OnInit("DigimonBank", function ()
             BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, DigimonTTooltipText[i], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
             BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, DigimonTTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
         end
-        UpdateCooldowns()
     end
 
     -- When the digimon evolves
@@ -1276,8 +1244,8 @@ OnInit("DigimonBank", function ()
         AddFrameToMenu(SummonADigimon)
 
         StockedDigimonsMenu = BlzCreateFrame("EscMenuBackdrop", OriginFrame,0,0)
-        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, GetMinScreenX(), 0.430000)
-        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, GetMinScreenX() + 0.130000, 0.160000)
+        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, GetMinScreenX(), 0.44000)
+        BlzFrameSetAbsPoint(StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, GetMinScreenX() + 0.13000, 0.17000)
         BlzFrameSetVisible(StockedDigimonsMenu, false)
         AddFrameToMenu(StockedDigimonsMenu)
         BlzFrameSetLevel(StockedDigimonsMenu, 20)
@@ -1319,15 +1287,6 @@ OnInit("DigimonBank", function ()
             BlzFrameSetTextAlignment(DigimonTIsMain[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_RIGHT)
             BlzFrameSetLevel(DigimonTIsMain[i], 3)
             BlzFrameSetVisible(DigimonTIsMain[i], false)
-
-            DigimonTCooldownT[i] = BlzCreateFrameByType("TEXT", "DigimonTCooldownT[" .. i .."]", DigimonT[i], "", 0)
-            BlzFrameSetScale(DigimonTCooldownT[i], 2.14)
-            BlzFrameSetAllPoints(DigimonTCooldownT[i], DigimonT[i])
-            BlzFrameSetText(DigimonTCooldownT[i], "60")
-            BlzFrameSetEnable(DigimonTCooldownT[i], false)
-            BlzFrameSetTextAlignment(DigimonTCooldownT[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
-            BlzFrameSetLevel(DigimonTCooldownT[i], 4)
-            BlzFrameSetVisible(DigimonTCooldownT[i], false)
 
             DigimonTTooltip[i] = BlzCreateFrame("QuestButtonDisabledBackdropTemplate", DigimonT[i],0,0)
 
@@ -1547,15 +1506,6 @@ OnInit("DigimonBank", function ()
             BlzFrameSetAlpha(SavedDigimonLocked[i], 127)
             BlzFrameSetLevel(SavedDigimonLocked[i], 2)
             BlzFrameSetVisible(SavedDigimonLocked[i], false)
-
-            SavedTCooldownT[i] = BlzCreateFrameByType("TEXT", "SavedTCooldownT[" .. i .."]", SavedDigimonT[i], "", 0)
-            BlzFrameSetScale(SavedTCooldownT[i], 2.14)
-            BlzFrameSetAllPoints(SavedTCooldownT[i], SavedDigimonT[i])
-            BlzFrameSetText(SavedTCooldownT[i], "60")
-            BlzFrameSetEnable(SavedTCooldownT[i], false)
-            BlzFrameSetTextAlignment(SavedTCooldownT[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
-            BlzFrameSetLevel(SavedTCooldownT[i], 4)
-            BlzFrameSetVisible(SavedTCooldownT[i], false)
 
             SavedTooltip[i] = BlzCreateFrame("QuestButtonDisabledBackdropTemplate", SavedDigimonT[i],0,0)
 
@@ -1910,90 +1860,89 @@ OnInit("DigimonBank", function ()
                     allDead = allDead and not d:isAlive()
                 end
             end
-            -- If all the digimons died then the spawnpoint will be the clinic
-            if allDead then
-                if not revivingSuspended[p] then
-                    DisplayTextToPlayer(p, 0, 0, "All your digimons are death, they will respawn in the clinic")
-                end
-                bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
-                bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
-                -- The player can see all the map if all their digimons are dead
-                -- Environment.allMap:apply(p, false)
-            else
-                bank.spawnPoint.x = GetRectCenterX(gg_rct_Player_1_Spawn)
-                bank.spawnPoint.y = GetRectCenterY(gg_rct_Player_1_Spawn)
-            end
+
             bank.allDead = allDead
 
             bank:storeDigimon(index, false)
             Timed.call(function () dead:setOwner(Digimon.PASSIVE) end) -- Just to not be detected by the auto-recycler
             -- Hide after 2 seconds to not do it automatically
             Timed.call(2., function ()
-                dead:hideInTheCorner()
+                bank:storeDigimon(index, true)
             end)
 
-            -- Cooldown
-            local lvl = dead:getLevel()
-            if lvl > 0 and lvl <= 20 then
-                cooldowns[dead] = 30
-            elseif lvl > 20 and lvl <= 50 then
-                cooldowns[dead] = 60
-            elseif lvl > 50 and lvl <= 90 then
-                cooldowns[dead] = 90
-            else
-                cooldowns[dead] = 120
-            end
             if p == LocalPlayer then
                 UpdateMenu()
-                BlzFrameSetVisible(DigimonTCooldownT[index], true)
             end
-            Timed.echo(1., function ()
-                if revivingSuspended[p] then
-                    return
+
+            -- If all the digimons died then the spawnpoint will be the clinic
+            if allDead then
+                DisplayTextToPlayer(p, 0, 0, "All your digimons are death, they will respawn in the clinic")
+
+                if bank.punish then
+                    SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, math.floor(0.95 * GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)))
                 end
 
-                -- In case the digimon revived by another method
-                if dead:isAlive() then
-                    cooldowns[dead] = 0
-                    if p == LocalPlayer then
-                        UpdateCooldowns()
+                bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
+                bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
+
+                Timed.call(15., function ()
+                    if dead:getTypeId() == 0 then
+                        return
                     end
-                    bank.allDead = false
-                    return true
-                end
-
-                local cd = cooldowns[dead] - 1
-                cooldowns[dead] = cd
-                if p == LocalPlayer then
-                    UpdateCooldowns()
-                end
-                if cd <= 0 then
-                    ReviveHero(dead.root, dead:getX(), dead:getY(), false)
-                    SetUnitLifePercentBJ(dead.root, 5)
-                    if bank.allDead then
-                        bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
-                        bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
-                        for i = 0, MAX_STOCK - 1 do
-                            if bank.stocked[i] then
-                                bank.stocked[i].environment = Environment.hospital
-                            end
+                    bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
+                    bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
+                    for i = 0, MAX_STOCK - 1 do
+                        local d = bank.stocked[i]
+                        if d then
+                            d.environment = Environment.hospital
+                            ReviveHero(d.root, d:getX(), d:getY(), false)
+                            SetUnitLifePercentBJ(d.root, 5)
                         end
-                        SummonDigimon(p, index)
                     end
-                    if p == LocalPlayer then
-                        UpdateCooldowns()
-                    end
+                    SummonDigimon(p, index)
+                    DestroyEffect(AddSpecialEffect(DIGIMON_REVIVE_EFF, dead:getPos()))
                     bank.allDead = false
-                    return true
-                end
-            end)
+                end)
+            else
+                bank.spawnPoint.x = GetRectCenterX(gg_rct_Player_1_Spawn)
+                bank.spawnPoint.y = GetRectCenterY(gg_rct_Player_1_Spawn)
+            end
         end
     end)
 
-    ---@param d Digimon
-    ---@return number
-    function GetDigimonCooldown(d)
-        return cooldowns[d]
+    do
+        local t = CreateTrigger()
+        TriggerRegisterUnitEvent(t, CENTAURMON, EVENT_UNIT_SELL_ITEM)
+        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetSoldItem()) == REVIVE_DIGIMONS end))
+        TriggerAddAction(t, function ()
+            local u = GetBuyingUnit()
+            local p = GetOwningPlayer(u)
+            local bank = Bank[GetPlayerId(p)] ---@type Bank
+            local noDead = true
+
+            for i = 0, MAX_STOCK - 1 do
+                local d = bank.stocked[i]
+                if d and not d:isAlive() then
+                    noDead = false
+                    d:revive(d:getPos())
+                end
+            end
+
+            if noDead then
+                udg_TalkId = udg_ReviveDigimonsTalk
+                udg_TalkTo = u
+                udg_TalkToForce = Force(p)
+                TriggerExecute(udg_TalkRun)
+            else
+                DestroyEffect(AddSpecialEffect(CENTAURMON_REVIVE_EFF, GetUnitX(CENTAURMON), GetUnitY(CENTAURMON)))
+            end
+        end)
+    end
+
+    ---@param p player
+    ---@param flag boolean
+    function PunishPlayer(p, flag)
+        Bank[GetPlayerId(p)].punish = flag
     end
 
     ---@param p player
@@ -2020,24 +1969,6 @@ OnInit("DigimonBank", function ()
                 RemoveButtonFromEscStack(SummonADigimon)
             end
         end
-    end
-
-    ---@param p player
-    function SuspendRevive(p)
-        revivingSuspended[p] = true
-        if p == LocalPlayer then
-            local bank = Bank[GetPlayerId(p)] ---@type Bank
-            for i = 0, MAX_STOCK - 1 do
-                if bank.stocked[i] and not bank:isAlive(i) then
-                    BlzFrameSetText(DigimonTCooldownT[i], "ll")
-                end
-            end
-        end
-    end
-
-    ---@param p player
-    function ResumeRevive(p)
-        revivingSuspended[p] = false
     end
 
     ---@param p player

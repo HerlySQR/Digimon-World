@@ -1,14 +1,9 @@
+Debug.beginFile("EXP")
 OnInit(function ()
     Require "Digimon"
     Require "Wc3Type"
 
     local AREA = 512.
-    local COLOR_R = 43.529
-    local COLOR_G = 43.529
-    local COLOR_B = 100.
-    local SIZE = 10
-    local ZOFSSET = 0.
-    local REDUCTION = {[0] = 1., 0.98, 0.95, 0.91, 0.86, 0.8}
 
     local function round(r)
         if r > 0 then
@@ -17,11 +12,8 @@ OnInit(function ()
         return R2I(r - 0.5)
     end
 
-    -- This will give XP to the nearby allies of the killing digimon
-    -- and if the difference levels of them and the dying digimon is less or equal to 5
-    -- level of the unit*5 + ((5-level of the unit)/4) * Reduction
-    local function ConvertEXP(lvl, diff)
-        return round((5. * lvl + (5 - lvl)/4) * REDUCTION[diff] + 0.5)
+    local function ConvertEXP(lvl)
+        return round(1.08*lvl+(7-(lvl))/(5/4)+6)
     end
 
     local LocalPlayer = GetLocalPlayer()
@@ -35,12 +27,6 @@ OnInit(function ()
 
         Digimon.expEvent:run(data)
 
-        --[[local tt = CreateTextTagUnitBJ("+" .. data.exp .. " exp", data.receiver.root, ZOFSSET, SIZE, COLOR_R, COLOR_G, COLOR_B, 0.)
-        SetTextTagVelocityBJ(tt, 64, 90)
-        SetTextTagPermanent(tt, false)
-        SetTextTagLifespan(tt, 1.00)
-        SetTextTagFadepoint(tt, 0.50)
-        SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, data.receiver:getOwner()))]]
         data.receiver:setExp(data.receiver:getExp() + data.exp)
     end
 
@@ -58,3 +44,4 @@ OnInit(function ()
         end
     end)
 end)
+Debug.endFile()

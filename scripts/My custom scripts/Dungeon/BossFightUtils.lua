@@ -3,6 +3,7 @@ OnInit("BossFightUtils", function ()
     Require "AbilityUtils"
     Require "ZTS"
     Require "Pathfinder"
+    Require "Environment"
 
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
@@ -16,6 +17,9 @@ OnInit("BossFightUtils", function ()
     local TELEPORT_CASTER_EFFECT = "war3mapImported\\Blink Purple Caster.mdl"
     local TELEPORT_TARGET_EFFECT = "war3mapImported\\Blink Purple Target.mdl"
     local UNDERGOUND_EFFECT = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
+    local MUSIC = "war3mapImported\\Mt_Infinity.mp3"
+
+    local playing = false
 
     ---Don't cast timed duration spells when other timed duration spell is casted
     ---@param caster unit
@@ -393,12 +397,8 @@ OnInit("BossFightUtils", function ()
                     dead = false
                 end
 
-                local whoAlreadyAre = playersOnField:toArray()
+                local whoAlreadyAre = playersOnField:copy()
                 local whoWereHere = unitsInTheField:copy()
-
-                for p in playersOnField:elements() do
-                    ResumeRevive(p)
-                end
 
                 unitsInTheField:clear()
                 playersOnField:clear()
@@ -415,8 +415,18 @@ OnInit("BossFightUtils", function ()
                     isInBattlefield = isInBattlefield or RectContainsUnit(battlefield[data.boss][i], data.boss)
                 end
 
-                for p in playersOnField:elements() do
-                    SuspendRevive(p)
+                if playersOnField:contains(LocalPlayer) then
+                    if not playing then
+                        playing = true
+                        ChangeMusic(MUSIC)
+                    end
+                end
+
+                if whoAlreadyAre:except(playersOnField):contains(LocalPlayer) then
+                    if playing then
+                        playing = false
+                        RestartMusic()
+                    end
                 end
 
                 if unitsInTheField:isEmpty() then
@@ -440,7 +450,6 @@ OnInit("BossFightUtils", function ()
                                         end
                                         unitsInTheField:removeSingle(u)
                                     end
-                                    ResumeRevive(p)
                                 end
                             end
                         end
@@ -531,7 +540,7 @@ OnInit("BossFightUtils", function ()
                 end
 
                 if not isInBattlefield then
-                    reset()
+                    --reset()
                     IssuePointOrderById(data.boss, Orders.smart, initialPosX, initialPosY)
 
                     Timed.echo(0.5, 10., function ()
@@ -605,10 +614,6 @@ OnInit("BossFightUtils", function ()
                         for _, d in ipairs(data.forceWall) do
                             ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
                         end
-                    end
-
-                    for p in playersOnField:elements() do
-                        ResumeRevive(p)
                     end
 
                     unitsInTheField:clear()

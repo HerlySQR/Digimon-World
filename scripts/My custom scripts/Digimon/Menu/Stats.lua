@@ -327,7 +327,7 @@ OnInit("Stats", function ()
         end
 
         local u = GetMainSelectedUnitEx()
-        if u and Digimon.getInstance(u) then
+        if u and Digimon.getInstance(u) and GetOwningPlayer(u) == LocalPlayer then
             local pos = GetDigimonPosition(LocalPlayer, Digimon.getInstance(u))
             BlzFrameSetVisible(FocusedUnit, true)
             BlzFrameClearAllPoints(FocusedUnit)
@@ -341,7 +341,7 @@ OnInit("Stats", function ()
             if d then
                 local j = 0
                 local index = 0
-                while j <= 9 do
+                while j <= 7 do
                     local abil = BlzGetUnitAbilityByIndex(d.root, index)
                     if not abil then
                         BlzFrameSetVisible(HeroBuffs[i][j], false)
@@ -357,7 +357,7 @@ OnInit("Stats", function ()
                     index = index + 1
                 end
             else
-                for j = 0, 9 do
+                for j = 0, 7 do
                     BlzFrameSetVisible(HeroBuffs[i][j], false)
                 end
             end
@@ -660,10 +660,10 @@ OnInit("Stats", function ()
             HeroButtons[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i-1)
 
             HeroBuffs[i] = {}
-            for j = 0, 9 do
+            for j = 0, 7 do
                 HeroBuffs[i][j] = BlzCreateFrameByType("BACKDROP", "HeroBuffs[" .. i .. "][" .. j .. "]", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
-                BlzFrameSetPoint(HeroBuffs[i][j], FRAMEPOINT_BOTTOMLEFT, HeroButtons[i], FRAMEPOINT_BOTTOMRIGHT, 0.01 + j*0.01, 0)
-                BlzFrameSetSize(HeroBuffs[i][j], 0.01, 0.01)
+                BlzFrameSetPoint(HeroBuffs[i][j], FRAMEPOINT_BOTTOMLEFT, HeroButtons[i], FRAMEPOINT_BOTTOMRIGHT, 0.01 + j*0.0125, 0)
+                BlzFrameSetSize(HeroBuffs[i][j], 0.0125, 0.0125)
                 BlzFrameSetVisible(HeroBuffs[i][j], false)
             end
         end

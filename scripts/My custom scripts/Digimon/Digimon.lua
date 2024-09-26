@@ -393,8 +393,8 @@ OnInit("Digimon", function ()
         return IsUnitHidden(self.root)
     end
 
-    ---@param x any
-    ---@param y any
+    ---@param x number
+    ---@param y number
     function Digimon:revive(x, y)
         ReviveHero(self.root, x, y, false)
     end
