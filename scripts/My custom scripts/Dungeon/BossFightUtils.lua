@@ -566,6 +566,13 @@ OnInit("BossFightUtils", function ()
                 if not dead then
                     dead = true
 
+                    if playersOnField:contains(LocalPlayer) then
+                        if playing then
+                            playing = false
+                            RestartMusic()
+                        end
+                    end
+
                     isCasting[data.boss] = false
 
                     if data.returnPlace then
