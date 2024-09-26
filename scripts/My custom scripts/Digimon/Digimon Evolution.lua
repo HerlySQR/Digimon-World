@@ -280,6 +280,9 @@ OnInit("DigimonEvolution", function ()
                 end)
             end)
             cur:AddActions(function ()
+                if evolve:getTypeId() == 0 then
+                    return
+                end
                 local x, y = evolve:getPos()
                 evolve:evolveTo(toEvolve) -- Here I added the more important things
                 u = evolve.root -- Have to refresh
@@ -291,9 +294,9 @@ OnInit("DigimonEvolution", function ()
                 BlzSetUnitFacingEx(u, 270.)
             end)
             cur:AddEnd(function ()
+                ClearPossibleEvolutions(evolve)
                 SetUnitInvulnerable(u, false)
                 PauseUnit(u, false)
-                ClearPossibleEvolutions(evolve)
             end)
             cur:Start()
         end)
