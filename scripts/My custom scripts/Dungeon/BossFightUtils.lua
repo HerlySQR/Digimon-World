@@ -346,6 +346,12 @@ OnInit("BossFightUtils", function ()
 
         local function reset()
             if not returned then
+                ZTS_RemoveThreatUnit(data.boss)
+                local prevX, prevY = GetUnitX(data.boss), GetUnitY(data.boss)
+                SetUnitX(data.boss, initialPosX) SetUnitY(data.boss, initialPosY)
+                ZTS_AddThreatUnit(data.boss, false)
+                SetUnitX(data.boss, prevX) SetUnitY(data.boss, prevY)
+
                 SetUnitState(data.boss, UNIT_STATE_LIFE, GetUnitState(data.boss, UNIT_STATE_MAX_LIFE))
                 SetUnitState(data.boss, UNIT_STATE_MANA, GetUnitState(data.boss, UNIT_STATE_MAX_MANA))
                 UnitResetCooldown(data.boss)
