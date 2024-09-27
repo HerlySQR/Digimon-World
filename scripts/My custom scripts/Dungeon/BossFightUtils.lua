@@ -12,6 +12,7 @@ OnInit("BossFightUtils", function ()
     local battlefield = {} ---@type table<unit, rect[]>
     local originalTargetsAllowed = {} ---@type table<unit, integer>
     local originalBaseDamage = {} ---@type table<unit, integer>
+    local canLeave = __jarray(false) ---@type table<unit, boolean>
 
     local DASH_EFFECT = "war3mapImported\\Valiant Charge Royal.mdl"
     local TELEPORT_CASTER_EFFECT = "war3mapImported\\Blink Purple Caster.mdl"
@@ -49,8 +50,8 @@ OnInit("BossFightUtils", function ()
         ignored[boss][u] = flag
     end
 
-    ---@param boss any
-    ---@param index any
+    ---@param boss unit
+    ---@param index 0 | 1
     function BossChangeAttack(boss, index)
         if index == 1 then
             BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_TARGETS_ALLOWED, 0, 33554432)
@@ -61,6 +62,10 @@ OnInit("BossFightUtils", function ()
             BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
             BlzSetUnitWeaponIntegerField(boss, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0, originalBaseDamage[boss])
         end
+    end
+
+    function BossCanLeave(boss, flag)
+        canLeave[boss] = flag
     end
 
     ---@param boss unit
@@ -545,7 +550,7 @@ OnInit("BossFightUtils", function ()
                     end
                 end
 
-                if not isInBattlefield then
+                if not isInBattlefield and not canLeave[data.boss] then
                     --reset()
                     IssuePointOrderById(data.boss, Orders.smart, initialPosX, initialPosY)
 
