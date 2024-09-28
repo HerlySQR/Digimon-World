@@ -331,7 +331,8 @@ OnInit("Stats", function ()
             local pos = GetDigimonPosition(LocalPlayer, Digimon.getInstance(u))
             BlzFrameSetVisible(FocusedUnit, true)
             BlzFrameClearAllPoints(FocusedUnit)
-            BlzFrameSetAllPoints(FocusedUnit, HeroButtons[pos])
+            BlzFrameSetPoint(FocusedUnit, FRAMEPOINT_BOTTOMLEFT, HeroButtons[pos], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
+            --BlzFrameSetAllPoints(FocusedUnit, HeroButtons[pos])
         else
             BlzFrameSetVisible(FocusedUnit, false)
         end
@@ -669,9 +670,11 @@ OnInit("Stats", function ()
         end
 
         FocusedUnit = BlzCreateFrameByType("SPRITE", "FocusedUnit", HeroButtons[0], "", 0)
-        BlzFrameSetAllPoints(FocusedUnit, HeroButtons[0])
-        BlzFrameSetModel(FocusedUnit, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
-        BlzFrameSetScale(FocusedUnit, BlzFrameGetWidth(FocusedUnit)/0.039)
+        BlzFrameSetModel(FocusedUnit, "war3mapImported\\crystallid_sprite.mdx", 0)
+        BlzFrameClearAllPoints(FocusedUnit)
+        BlzFrameSetPoint(FocusedUnit, FRAMEPOINT_BOTTOMLEFT, HeroButtons[0], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
+        BlzFrameSetSize(FocusedUnit, 0.00001, 0.00001)
+        BlzFrameSetScale(FocusedUnit, 0.75)
         BlzFrameSetVisible(FocusedUnit, false)
     end)
 
