@@ -10,10 +10,17 @@ OnInit(function ()
     local ThreatBoss = nil ---@type framehandle
     local ThreatArrow = nil ---@type framehandle
     local ThreatPlayerUnitT = {} ---@type framehandle[]
+    local ThreatPlayerUnitPercent = {} ---@type framehandle[]
 
     local bosses = {} ---@type unit[]
     local canSee = CreateForce()
     local units = {}
+    local colors = {
+        [0] = "ff00ff",
+        "ffff00",
+        "00ff00",
+        "ffffff"
+    }
     --local speedMove = 0.005
     --local speedAlpha = 8
 
@@ -28,12 +35,14 @@ OnInit(function ()
         for i = 1, #bosses do
             local boss = bosses[i]
             local attackers = ZTS_GetAttackers(boss)
+            local totalThreat = 0
             for j = 0, 3 do
                 local u = BlzGroupUnitAt(attackers, j)
                 if u then
                     ForceAddPlayer(canSee, GetOwningPlayer(u))
                 end
                 units[j] = u
+                totalThreat = totalThreat + ZTS_GetThreatUnitAmount(boss, u)
             end
             DestroyGroup(attackers)
             if IsPlayerInForce(LocalPlayer, canSee) then
@@ -44,9 +53,16 @@ OnInit(function ()
                     if u then
                         BlzFrameSetVisible(ThreatPlayerUnitT[j], true)
                         BlzFrameSetTexture(ThreatPlayerUnitT[j], BlzGetAbilityIcon(GetUnitTypeId(u)), 0, true)
+                        if #units == 0 then
+                            BlzFrameSetVisible(ThreatPlayerUnitPercent[j], false)
+                        else
+                            BlzFrameSetVisible(ThreatPlayerUnitPercent[j], true)
+                            BlzFrameSetText(ThreatPlayerUnitPercent[j], "|cff" .. colors[j] .. math.floor(ZTS_GetThreatUnitAmount(boss, u)/totalThreat * 100) .. "\x25|r")
+                        end
                     else
                         BlzFrameSetVisible(ThreatPlayerUnitT[j], false)
                     end
+                    BlzFrameSetVisible(ThreatPlayerUnitPercent[j], BlzFrameIsVisible(ThreatPlayerUnitT[j]))
                 end
             end
             ForceClear(canSee)
@@ -79,6 +95,12 @@ OnInit(function ()
             BlzFrameSetSize(ThreatPlayerUnitT[i], 0.04, 0.04)
             BlzFrameSetTexture(ThreatPlayerUnitT[i], "", 0, true)
             BlzFrameSetAlpha(ThreatPlayerUnitT[i], 255 * (3-i) // 3)
+
+            ThreatPlayerUnitPercent[i] = BlzCreateFrameByType("TEXT", "name", ThreatBackdrop, "", 0)
+            BlzFrameSetScale(ThreatPlayerUnitPercent[i], 0.90)
+            BlzFrameSetAllPoints(ThreatPlayerUnitPercent[i], ThreatPlayerUnitT[i])
+            BlzFrameSetText(ThreatPlayerUnitPercent[i], "0\x25")
+            BlzFrameSetTextAlignment(ThreatPlayerUnitPercent[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
         end
     end)
 end)

@@ -4,6 +4,7 @@ OnInit("BossFightUtils", function ()
     Require "ZTS"
     Require "Pathfinder"
     Require "Environment"
+    Require "SpellAISystem"
 
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
@@ -418,7 +419,7 @@ OnInit("BossFightUtils", function ()
                 -- Check if are units in the battlefield
                 for i = 1, numRect do
                     ForUnitsInRect(battlefield[data.boss][i], function (u)
-                        if u ~= data.boss and UnitAlive(u) and IsUnitEnemy(data.boss, GetOwningPlayer(u)) then
+                        if u ~= data.boss and UnitAlive(u) and IsPlayerInGame(GetOwningPlayer(u)) then
                             unitsInTheField:addSingle(u)
                             playersOnField:addSingle(GetOwningPlayer(u))
                         end
@@ -509,35 +510,45 @@ OnInit("BossFightUtils", function ()
                                 end)
                             else
                                 if data.spells then
-                                    if spellsCasted >= 2 and not BossStillCasting(data.boss) and not BlzIsUnitInvulnerable(u) and (not data.castCondition or data.castCondition()) then
-                                        spellsCasted = 0
-                                        local chances = {}
-                                        local options = {}
-                                        for spell, stats in pairs(spells) do
-                                            if GetUnitAbilityLevel(data.boss, spell) > 0
-                                                and BlzGetUnitAbilityCooldownRemaining(data.boss, spell) <= 0
-                                                and BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell) - 1) <= GetUnitState(data.boss, UNIT_STATE_MANA) then
+                                    if not isCasting[data.boss] then
+                                        if spellsCasted >= 0
+                                            and not BlzIsUnitInvulnerable(u)
+                                            and (GetUnitCurrentOrder(data.boss) == Orders.attack or GetUnitCurrentOrder(data.boss) == Orders.smart or GetUnitCurrentOrder(data.boss) == 0)
+                                            and (not data.castCondition or data.castCondition()) then
 
-                                                table.insert(options, spell)
-                                                chances[#options] = (chances[#options-1] or 0) + stats.weight
-                                            end
-                                        end
+                                            local chances = {}
+                                            local options = {}
+                                            print(GetHeroProperName(data.boss))
+                                            for spell, stats in pairs(spells) do
+                                                if GetUnitAbilityLevel(data.boss, spell) > 0
+                                                    and BlzGetUnitAbilityCooldownRemaining(data.boss, spell) <= 0
+                                                    and BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell) - 1) <= GetUnitState(data.boss, UNIT_STATE_MANA) then
 
-                                        if options[1] then
-                                            local r = chances[#chances] * math.random()
-                                            for i = 1, #options do
-                                                if r < chances[i] then
-                                                    local stats = spells[options[i]]
-                                                    if stats.ttype == CastType.IMMEDIATE then
-                                                        IssueImmediateOrderById(data.boss, stats.order)
-                                                    elseif stats.ttype == CastType.POINT then
-                                                        IssuePointOrderById(data.boss, stats.order, GetUnitX(u), GetUnitY(u))
-                                                    elseif stats.ttype == CastType.TARGET then
-                                                        IssueTargetOrderById(data.boss, stats.order, u)
-                                                    end
-                                                    break
+                                                    table.insert(options, stats)
+                                                    chances[#options] = (chances[#options-1] or 0) + stats.weight
+                                                    print(GetObjectName(spell), chances[#options])
                                                 end
                                             end
+
+                                            if options[1] then
+                                                spellsCasted = 0
+                                                local r = chances[#chances] * math.random()
+                                                print(r)
+                                                for i = 1, #options do
+                                                    if r < chances[i] then
+                                                        local stats = options[i]
+                                                        if stats.ttype == CastType.IMMEDIATE then
+                                                            print("immediate", IssueImmediateOrderById(data.boss, stats.order))
+                                                        elseif stats.ttype == CastType.POINT then
+                                                            print("point", IssuePointOrderById(data.boss, stats.order, GetUnitX(u), GetUnitY(u)))
+                                                        elseif stats.ttype == CastType.TARGET then
+                                                            print("target", IssueTargetOrderById(data.boss, stats.order, u))
+                                                        end
+                                                        break
+                                                    end
+                                                end
+                                            end
+                                            PauseSpellAI(data.boss, false)
                                         end
                                     end
                                 end
@@ -711,10 +722,13 @@ OnInit("BossFightUtils", function ()
 
         if data.spells then
             local t = CreateTrigger()
-            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_EFFECT)
+            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_FINISH)
             TriggerAddAction(t, function ()
                 if not spells[GetSpellAbilityId()] then
                     spellsCasted = spellsCasted + 1
+                    if spellsCasted >= 2 then
+                        PauseSpellAI(data.boss, true)
+                    end
                 end
             end)
         end

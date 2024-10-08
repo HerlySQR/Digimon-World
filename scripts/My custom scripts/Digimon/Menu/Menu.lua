@@ -26,6 +26,7 @@ OnInit("Menu", function ()
     local HeroMana = {} ---@type framehandle[]
     local CommandButtonBackDrop = nil ---@type framehandle
     local CommandButton = {} ---@type framehandle[]
+    local TopbarBackdrop = nil ---@type framehandle
 
     local onChangeDimensions = EventListener.create()
     local windowWidth = 1400
@@ -102,6 +103,7 @@ OnInit("Menu", function ()
             oldFrameSetVisible(UpperButton, true)
             oldFrameSetVisible(ResourceBar, true)
             oldFrameSetVisible(Clock, true)
+            oldFrameSetVisible(TopbarBackdrop, true)
             oldFrameSetVisible(Minimap, true)
             oldFrameSetVisible(MinimapBackDrop, true)
             oldFrameSetVisible(HeroBar, true)
@@ -120,6 +122,7 @@ OnInit("Menu", function ()
             oldFrameSetVisible(UpperButton, false)
             oldFrameSetVisible(ResourceBar, false)
             oldFrameSetVisible(Clock, false)
+            oldFrameSetVisible(TopbarBackdrop, false)
             oldFrameSetVisible(Minimap, false)
             oldFrameSetVisible(MinimapBackDrop, false)
             oldFrameSetVisible(HeroBar, false)
@@ -269,6 +272,10 @@ OnInit("Menu", function ()
         -- Show day clock
         Clock = BlzFrameGetChild(BlzFrameGetChild(BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 5),0)
         BlzFrameSetVisible(Clock, true)
+
+        TopbarBackdrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
+        BlzFrameSetAbsPoint(TopbarBackdrop, FRAMEPOINT_TOPLEFT, -0.0150000, 0.670000)
+        BlzFrameSetAbsPoint(TopbarBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.815000, 0.565000)
 
         -- Move minimap
         MinimapBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)

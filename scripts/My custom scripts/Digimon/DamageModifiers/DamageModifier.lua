@@ -123,9 +123,9 @@ OnInit("DamageModifier", function ()
             if unitConds[d:getTypeId()] then
                 modify(d, unitConds[d:getTypeId()])
             end
-            d:addCriticalChance(5)
-            d:evasionChance(3)
-            d:critcalAmount(0.2)
+            d:addCriticalChance(5, true)
+            d:evasionChance(5, true)
+            d:critcalAmount(0.25, true)
         end
     end)
 

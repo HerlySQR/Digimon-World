@@ -17,8 +17,9 @@ OnInit(function ()
         entrance = gg_rct_CrabmonEntrance,
         toTeleport = gg_rct_Beach_of_Dragon,
         spells = {
-            FourCC('A0C4'), 29, Orders.blackarrow, CastType.POINT, -- Scissor Magic Chaos
-            FourCC('A0A7'), 32, Orders.berserk, CastType.IMMEDIATE -- Berserk
+            FourCC('A0C4'), 29, Orders.clusterrockets, CastType.POINT, -- Scissor Magic Chaos
+            FourCC('A07A'), 32, Orders.berserk, CastType.IMMEDIATE, -- Berserk
+            FourCC('A0GV'), 40, Orders.breathoffire, CastType.TARGET, -- Cutting pliers
         },
         actions = function (u)
             if not BossStillCasting(boss) then

@@ -14,7 +14,7 @@ OnInit(function ()
     local BeserkOrder = Orders.berserk
 
     local flying = false
-    local waitFlying = 3
+    local waitFlying = 4
 
     InitBossFight({
         name = "Flymon",
@@ -40,8 +40,8 @@ OnInit(function ()
 
                 waitFlying = waitFlying - 1
                 if not flying and waitFlying <= 0 then
-                    if math.random() < 0.2 then
-                        waitFlying = 3
+                    if math.random() < 0.1 then
+                        waitFlying = 4
                         flying = true
                         SetUnitPathing(boss, false)
                         PauseUnit(boss, true)
@@ -75,7 +75,7 @@ OnInit(function ()
                                 SetUnitFlyHeight(boss, posZ, 99999.)
 
                                 SetUnitPosition(boss, posX, posY)
-                                BlzSetUnitFacingEx(
+                                SetUnitFacing(
                                     boss,
                                     math.deg(math.atan(
                                         -math.sin(3*theta)/math.sqrt(math.cos(2*theta))*factor,

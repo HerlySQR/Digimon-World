@@ -11,6 +11,7 @@ OnInit("SpellAISystem", function ()
     local SpellAIs = {} ---@type table<integer, fun(u: unit):boolean>
     local UnitSpellAIs = SyncedTable.create() ---@type table<unit, Set>
     local isCasting = __jarray(false) ---@type table<unit, boolean>
+    local isPaused = __jarray(false) ---@type table<unit, boolean>
 
     ---@param range number
     ---@return number
@@ -27,6 +28,11 @@ OnInit("SpellAISystem", function ()
         end
     end)
 
+    ---@param u unit
+    ---@param flag boolean
+    function PauseSpellAI(u, flag)
+        isPaused[u] = flag
+    end
 
     ---@param u unit
     ---@param spell integer
@@ -84,6 +90,9 @@ OnInit("SpellAISystem", function ()
         end
 
         SpellAIs[spell] = function (u)
+            if isPaused[u] then
+                return false
+            end
             local abil = BlzGetUnitAbility(u, spell)
             local level = GetUnitAbilityLevel(u, spell)
             local range = convertedRange(BlzGetAbilityRealLevelField(abil, ABILITY_RLF_CAST_RANGE, level - 1))
