@@ -4,7 +4,6 @@ OnInit(function ()
 
     local boss = gg_unit_O02B_0083 ---@type unit
 
-    local ScissorMagicOrder = Orders.chainlightning
     local aquaMagicOrder = Orders.innerfire
 
     InitBossFight({
@@ -17,15 +16,14 @@ OnInit(function ()
         entrance = gg_rct_CrabmonEntrance,
         toTeleport = gg_rct_Beach_of_Dragon,
         spells = {
-            FourCC('A0C4'), 29, Orders.clusterrockets, CastType.POINT, -- Scissor Magic Chaos
-            FourCC('A07A'), 32, Orders.berserk, CastType.IMMEDIATE, -- Berserk
-            FourCC('A0GV'), 40, Orders.breathoffire, CastType.TARGET, -- Cutting pliers
+            1, Orders.chainlightning, CastType.TARGET, -- Scissor Magic
+            3, Orders.berserk, CastType.IMMEDIATE, -- Berserk
+            2, Orders.clusterrockets, CastType.POINT, -- Scissor Magic Chaos
+            3, Orders.breathoffire, CastType.TARGET, -- Cutting pliers
         },
         actions = function (u)
-            if not BossStillCasting(boss) then
-                if not IssueTargetOrderById(boss, ScissorMagicOrder, u) then
-                    IssueTargetOrderById(boss, aquaMagicOrder, boss)
-                end
+            if not BossStillCasting(boss) and GetUnitHPRatio(boss) < 0.5 then
+                IssueTargetOrderById(boss, aquaMagicOrder, boss)
             end
         end
     })

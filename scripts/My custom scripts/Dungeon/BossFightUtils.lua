@@ -281,6 +281,12 @@ OnInit("BossFightUtils", function ()
         return 6 * math.exp(-0.5493061443341 * ((half and n/2 or n) - 1))
     end
 
+    ---@param n integer
+    ---@return number
+    local function geHitChance(n)
+        return 0.4 + 0.2*n
+    end
+
     ---@param data {name: string, boss: unit, manualRevive: boolean, spells: table, castCondition: (fun():boolean)?, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
     function InitBossFight(data)
         if type(data) ~= "table" then
@@ -301,19 +307,22 @@ OnInit("BossFightUtils", function ()
 
         local owner = GetOwningPlayer(data.boss)
         local interval = 3.
+        local hitChance = 1.
         battlefield[data.boss] = {}
         local playersOnField = Set.create()
 
-        local spellsCasted
-        local spells ---@type table<integer, {weight: number, order: integer, ttype: CastType}>
+        local hitsDealt
+        local actSpell
+        local spells ---@type table<integer, {weight: integer, order: integer, ttype: CastType}>
         if data.spells then
-            spellsCasted = 0
+            hitsDealt = 0
+            actSpell = 1
             spells = {}
-            for i = 1, #data.spells // 4 do
-                spells[data.spells[4*(i-1)+1]] = {
-                    weight = data.spells[4*(i-1)+2],
-                    order = data.spells[4*(i-1)+3],
-                    ttype = data.spells[4*(i-1)+4]
+            for i = 1, #data.spells // 3 do
+                spells[i] = {
+                    weight = data.spells[3*(i-1)+1],
+                    order = data.spells[3*(i-1)+2],
+                    ttype = data.spells[3*(i-1)+3]
                 }
             end
         end
@@ -362,6 +371,7 @@ OnInit("BossFightUtils", function ()
                 SetUnitState(data.boss, UNIT_STATE_MANA, GetUnitState(data.boss, UNIT_STATE_MAX_MANA))
                 UnitResetCooldown(data.boss)
                 interval = 3.
+                hitChance = 1.
                 attacking = false
                 returned = true
                 if data.forceWall then
@@ -483,6 +493,8 @@ OnInit("BossFightUtils", function ()
                     -- The chances of casting increases when has low hp
                     interval = getInterval(playersOnField:size(), GetUnitHPRatio(data.boss) < 0.5)
 
+                    hitChance = geHitChance(playersOnField:size())
+
                     if current >= interval then
                         returned = false
                         local u = nil
@@ -511,44 +523,24 @@ OnInit("BossFightUtils", function ()
                             else
                                 if data.spells then
                                     if not isCasting[data.boss] then
-                                        if spellsCasted >= 0
-                                            and not BlzIsUnitInvulnerable(u)
+                                        local stats = spells[actSpell]
+                                        if hitsDealt >= stats.weight
                                             and (GetUnitCurrentOrder(data.boss) == Orders.attack or GetUnitCurrentOrder(data.boss) == Orders.smart or GetUnitCurrentOrder(data.boss) == 0)
                                             and (not data.castCondition or data.castCondition()) then
 
-                                            local chances = {}
-                                            local options = {}
-                                            print(GetHeroProperName(data.boss))
-                                            for spell, stats in pairs(spells) do
-                                                if GetUnitAbilityLevel(data.boss, spell) > 0
-                                                    and BlzGetUnitAbilityCooldownRemaining(data.boss, spell) <= 0
-                                                    and BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell) - 1) <= GetUnitState(data.boss, UNIT_STATE_MANA) then
-
-                                                    table.insert(options, stats)
-                                                    chances[#options] = (chances[#options-1] or 0) + stats.weight
-                                                    print(GetObjectName(spell), chances[#options])
-                                                end
+                                            if stats.ttype == CastType.IMMEDIATE then
+                                                IssueImmediateOrderById(data.boss, stats.order)
+                                            elseif stats.ttype == CastType.POINT then
+                                                IssuePointOrderById(data.boss, stats.order, GetUnitX(u), GetUnitY(u))
+                                            elseif stats.ttype == CastType.TARGET then
+                                                IssueTargetOrderById(data.boss, stats.order, u)
                                             end
 
-                                            if options[1] then
-                                                spellsCasted = 0
-                                                local r = chances[#chances] * math.random()
-                                                print(r)
-                                                for i = 1, #options do
-                                                    if r < chances[i] then
-                                                        local stats = options[i]
-                                                        if stats.ttype == CastType.IMMEDIATE then
-                                                            print("immediate", IssueImmediateOrderById(data.boss, stats.order))
-                                                        elseif stats.ttype == CastType.POINT then
-                                                            print("point", IssuePointOrderById(data.boss, stats.order, GetUnitX(u), GetUnitY(u)))
-                                                        elseif stats.ttype == CastType.TARGET then
-                                                            print("target", IssueTargetOrderById(data.boss, stats.order, u))
-                                                        end
-                                                        break
-                                                    end
-                                                end
+                                            hitsDealt = 0
+                                            actSpell = actSpell + 1
+                                            if actSpell > #spells then
+                                                actSpell = 1
                                             end
-                                            PauseSpellAI(data.boss, false)
                                         end
                                     end
                                 end
@@ -721,13 +713,10 @@ OnInit("BossFightUtils", function ()
         end
 
         if data.spells then
-            local t = CreateTrigger()
-            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_FINISH)
-            TriggerAddAction(t, function ()
-                if not spells[GetSpellAbilityId()] then
-                    spellsCasted = spellsCasted + 1
-                    if spellsCasted >= 2 then
-                        PauseSpellAI(data.boss, true)
+            Digimon.postDamageEvent:register(function (info)
+                if (info.source == data.boss or info.source.root == data.boss) and udg_IsDamageAttack then
+                    if math.random() < hitChance then
+                        hitsDealt = hitsDealt + 1
                     end
                 end
             end)

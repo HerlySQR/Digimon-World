@@ -86,6 +86,10 @@ StatsMaxLife = nil
 TriggerStatsMaxLife = nil 
 StatsMaxMana = nil 
 TriggerStatsMaxMana = nil 
+StatsImpactLabel = nil 
+TriggerStatsImpactLabel = nil 
+StatsImpact = nil 
+TriggerStatsImpact = nil 
 StatsItemT = {} 
 BackdropStatsItemT = {} 
 TriggerStatsItemT = {} 
@@ -796,48 +800,48 @@ BlzFrameSetPoint(StatsDigimonIcon, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEP
 BlzFrameSetTexture(StatsDigimonIcon, "CustomFrame.png", 0, true)
 
 StatsCriticalLabel = BlzCreateFrameByType("TEXT", "name", StatsBackdrop, "", 0)
-BlzFrameSetPoint(StatsCriticalLabel, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31250, -0.0050000)
-BlzFrameSetPoint(StatsCriticalLabel, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.080000)
+BlzFrameSetPoint(StatsCriticalLabel, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31250, -0.0055000)
+BlzFrameSetPoint(StatsCriticalLabel, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.085000)
 BlzFrameSetText(StatsCriticalLabel, "|cffa80000Critical:|r")
 BlzFrameSetEnable(StatsCriticalLabel, false)
 BlzFrameSetScale(StatsCriticalLabel, 1.00)
 BlzFrameSetTextAlignment(StatsCriticalLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
 StatsBlockLabel = BlzCreateFrameByType("TEXT", "name", StatsBackdrop, "", 0)
-BlzFrameSetPoint(StatsBlockLabel, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31250, -0.035000)
-BlzFrameSetPoint(StatsBlockLabel, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.050000)
+BlzFrameSetPoint(StatsBlockLabel, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31250, -0.051500)
+BlzFrameSetPoint(StatsBlockLabel, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.039000)
 BlzFrameSetText(StatsBlockLabel, "|cff8a8a8aBlock:|r")
 BlzFrameSetEnable(StatsBlockLabel, false)
 BlzFrameSetScale(StatsBlockLabel, 1.00)
 BlzFrameSetTextAlignment(StatsBlockLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
 StatsEvasionLabel = BlzCreateFrameByType("TEXT", "name", StatsBackdrop, "", 0)
-BlzFrameSetPoint(StatsEvasionLabel, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31250, -0.065000)
-BlzFrameSetPoint(StatsEvasionLabel, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.020000)
+BlzFrameSetPoint(StatsEvasionLabel, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31250, -0.074500)
+BlzFrameSetPoint(StatsEvasionLabel, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.016000)
 BlzFrameSetText(StatsEvasionLabel, "|cff42ffadEvasion:|r")
 BlzFrameSetEnable(StatsEvasionLabel, false)
 BlzFrameSetScale(StatsEvasionLabel, 1.00)
 BlzFrameSetTextAlignment(StatsEvasionLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
 StatsCritical = BlzCreateFrameByType("TEXT", "name", StatsBackdrop, "", 0)
-BlzFrameSetPoint(StatsCritical, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31750, -0.020000)
-BlzFrameSetPoint(StatsCritical, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.065000)
+BlzFrameSetPoint(StatsCritical, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31750, -0.017000)
+BlzFrameSetPoint(StatsCritical, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.073500)
 BlzFrameSetText(StatsCritical, "|cffffffff999|r")
 BlzFrameSetEnable(StatsCritical, false)
 BlzFrameSetScale(StatsCritical, 1.00)
 BlzFrameSetTextAlignment(StatsCritical, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
 StatsBlock = BlzCreateFrameByType("TEXT", "name", StatsBackdrop, "", 0)
-BlzFrameSetPoint(StatsBlock, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31750, -0.050000)
-BlzFrameSetPoint(StatsBlock, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.035000)
+BlzFrameSetPoint(StatsBlock, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31750, -0.063000)
+BlzFrameSetPoint(StatsBlock, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.027500)
 BlzFrameSetText(StatsBlock, "|cffffffff999|r")
 BlzFrameSetEnable(StatsBlock, false)
 BlzFrameSetScale(StatsBlock, 1.00)
 BlzFrameSetTextAlignment(StatsBlock, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
 StatsEvasion = BlzCreateFrameByType("TEXT", "name", StatsBackdrop, "", 0)
-BlzFrameSetPoint(StatsEvasion, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31750, -0.080000)
-BlzFrameSetPoint(StatsEvasion, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 1.1102e-16, 0.0050000)
+BlzFrameSetPoint(StatsEvasion, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31750, -0.086000)
+BlzFrameSetPoint(StatsEvasion, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.0045000)
 BlzFrameSetText(StatsEvasion, "|cffffffff999|r")
 BlzFrameSetEnable(StatsEvasion, false)
 BlzFrameSetScale(StatsEvasion, 1.00)
@@ -902,6 +906,22 @@ BlzFrameSetText(StatsMaxMana, "|cff007fff1000|r")
 BlzFrameSetEnable(StatsMaxMana, false)
 BlzFrameSetScale(StatsMaxMana, 1.00)
 BlzFrameSetTextAlignment(StatsMaxMana, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+StatsImpactLabel = BlzCreateFrameByType("TEXT", "name", StatsBackdrop, "", 0)
+BlzFrameSetPoint(StatsImpactLabel, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31250, -0.028500)
+BlzFrameSetPoint(StatsImpactLabel, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.062000)
+BlzFrameSetText(StatsImpactLabel, "|cffffff00Impact:|r")
+BlzFrameSetEnable(StatsImpactLabel, false)
+BlzFrameSetScale(StatsImpactLabel, 1.00)
+BlzFrameSetTextAlignment(StatsImpactLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+StatsImpact = BlzCreateFrameByType("TEXT", "name", StatsBackdrop, "", 0)
+BlzFrameSetPoint(StatsImpact, FRAMEPOINT_TOPLEFT, StatsBackdrop, FRAMEPOINT_TOPLEFT, 0.31750, -0.040000)
+BlzFrameSetPoint(StatsImpact, FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.050500)
+BlzFrameSetText(StatsImpact, "|cffffffff999|r")
+BlzFrameSetEnable(StatsImpact, false)
+BlzFrameSetScale(StatsImpact, 1.00)
+BlzFrameSetTextAlignment(StatsImpact, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
 StatsItemT[0] = BlzCreateFrame("IconButtonTemplate", StatsInventoryBackdrop, 0, 0)
 BlzFrameSetPoint(StatsItemT[0], FRAMEPOINT_TOPLEFT, StatsInventoryBackdrop, FRAMEPOINT_TOPLEFT, 0.0050000, -0.0050000)

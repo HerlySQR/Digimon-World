@@ -1,7 +1,6 @@
 Debug.beginFile("DamageModifier")
 OnInit("DamageModifier", function ()
     Require "Digimon"
-    Require "AddHook"
     Require "MDTable"
 
     ---@class DamageModifier
@@ -123,9 +122,9 @@ OnInit("DamageModifier", function ()
             if unitConds[d:getTypeId()] then
                 modify(d, unitConds[d:getTypeId()])
             end
-            d:addCriticalChance(5, true)
-            d:evasionChance(5, true)
-            d:critcalAmount(0.25, true)
+            d:addCriticalChance(3, true)
+            d:evasionChance(3, true)
+            d:critcalAmount(0.15, true)
         end
     end)
 

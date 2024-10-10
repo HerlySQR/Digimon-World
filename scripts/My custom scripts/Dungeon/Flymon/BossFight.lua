@@ -10,9 +10,6 @@ OnInit(function ()
     UnitAddAbility(boss, CROW_FORM_ID)
     UnitRemoveAbility(boss, CROW_FORM_ID)
 
-    local CycloneOrder = Orders.cyclone
-    local BeserkOrder = Orders.berserk
-
     local flying = false
     local waitFlying = 4
 
@@ -26,18 +23,14 @@ OnInit(function ()
         entrance = gg_rct_FlymonEntrance,
         toTeleport = gg_rct_FlymonToReturn,
         spells = {
-            FourCC('A06Z'), 100, Orders.charm, CastType.TARGET, -- Stinger
-            FourCC('A06Y'), 50, Orders.blackarrow, CastType.POINT, -- Stinger Shots
-            FourCC('A070'), 20, Orders.cloudoffog, CastType.TARGET -- Poison Powder
+            1, Orders.charm, CastType.TARGET, -- Stinger
+            4, Orders.cyclone, CastType.TARGET, -- Cyclone
+            0, Orders.blackarrow, CastType.POINT, -- Stinger Shots
+            3, Orders.berserk, CastType.IMMEDIATE, -- Berserk
+            3, Orders.cloudoffog, CastType.TARGET -- Poison Powder
         },
         actions = function (u)
             if not (BossStillCasting(boss) or flying) then
-                if math.random(0, 100) >= 80 then
-                    IssueTargetOrderById(boss, CycloneOrder, u)
-                else
-                    IssueImmediateOrderById(boss, BeserkOrder)
-                end
-
                 waitFlying = waitFlying - 1
                 if not flying and waitFlying <= 0 then
                     if math.random() < 0.1 then
