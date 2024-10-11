@@ -5,6 +5,7 @@ OnInit(function ()
     local boss = gg_unit_O02B_0083 ---@type unit
 
     local aquaMagicOrder = Orders.innerfire
+    local aquaMagicBuff = FourCC('B01D')
 
     InitBossFight({
         name = "Crabmon",
@@ -22,7 +23,7 @@ OnInit(function ()
             3, Orders.breathoffire, CastType.TARGET, -- Cutting pliers
         },
         actions = function (u)
-            if not BossStillCasting(boss) and GetUnitHPRatio(boss) < 0.5 then
+            if not BossStillCasting(boss) and GetUnitAbilityLevel(boss, aquaMagicBuff) == 0 and GetUnitHPRatio(boss) < 0.5 then
                 IssueTargetOrderById(boss, aquaMagicOrder, boss)
             end
         end

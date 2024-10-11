@@ -4,6 +4,9 @@ OnInit(function ()
 
     local boss = gg_unit_O061_0445 ---@type unit
 
+    local meltAll = FourCC('A0H4')
+    local fireBallOrder = Orders.firebolt
+
     InitBossFight({
         name = "Meramon",
         boss = boss,
@@ -14,11 +17,20 @@ OnInit(function ()
         entrance = gg_rct_MeramonEntrance,
         toTeleport = gg_rct_MeramonToReturn,
         spells = {
-            FourCC('A02B'), 30, Orders.stomp, CastType.IMMEDIATE, -- Lava explosions
-            FourCC('A02A'), 40, Orders.firebolt, CastType.TARGET, -- Fire ball
-            FourCC('A02C'), 30, Orders.thunderclap, CastType.TARGET -- Scorching heat
+            4, Orders.thunderclap, CastType.IMMEDIATE, -- Scorching heat
+            0, Orders.howlofterror, CastType.IMMEDIATE, -- Melt All
+            5, Orders.stomp, CastType.IMMEDIATE, -- Lava explosions
         },
         actions = function (u)
+            if GetUnitCurrentOrder(boss) == Orders.smart or  GetUnitCurrentOrder(boss) == 0 then
+                IssueTargetOrderById(boss, fireBallOrder, u)
+            end
+            if GetUnitHPRatio(boss) < 0.5 then
+                UnitAddAbility(boss, meltAll)
+            end
+        end,
+        onStart = function ()
+            UnitRemoveAbility(boss, meltAll)
         end
     })
 end)
