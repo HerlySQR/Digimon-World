@@ -4,6 +4,8 @@ OnInit(function ()
 
     local boss = gg_unit_O006_0036 ---@type unit
 
+    local icePrison = FourCC('A00W')
+
     InitBossFight({
         name = "Megaseadramon",
         boss = boss,
@@ -14,12 +16,23 @@ OnInit(function ()
         entrance = gg_rct_MegaseadramonEntrance,
         toTeleport = gg_rct_MegaseadramonToReturn,
         spells = {
-            FourCC('A00W'), 30, Orders.frostnova, CastType.TARGET, -- Ice prison
-            FourCC('A00X'), 30, Orders.monsoon, CastType.POINT, -- Spontaneous storm
-            FourCC('A00Y'), 30, Orders.chainlightning, CastType.TARGET, -- Great lightning
-            FourCC('A00Z'), 10, Orders.stampede, CastType.IMMEDIATE -- Cold storm
+            2, Orders.chainlightning, CastType.TARGET, -- Great lightning
+            2, Orders.frostnova, CastType.TARGET, -- Ice prison
+            0, Orders.frostnova, CastType.TARGET, -- Ice prison
+            2, Orders.chainlightning, CastType.TARGET, -- Great lightning
+            2, Orders.monsoon, CastType.POINT, -- Spontaneous storm
+            3, Orders.stampede, CastType.IMMEDIATE -- Cold storm
         },
         actions = function (u)
+            if GetUnitHPRatio(boss) < 0.7 then
+                UnitAddAbility(boss, icePrison)
+            elseif GetUnitHPRatio(boss) < 0.4 then
+                BlzSetUnitAbilityCooldown(boss, icePrison, 0, 0)
+            end
+        end,
+        onStart = function ()
+            -- Delay the use of the Healing Minions
+            UnitRemoveAbility(boss, icePrison)
         end
     })
 end)

@@ -14,9 +14,10 @@ OnInit(function ()
         entrance = gg_rct_MamemonEntrance,
         toTeleport = gg_rct_MamemonToReturn,
         spells = {
-            FourCC('A0B4'), 20, Orders.creepthunderbolt, CastType.TARGET, -- Knockup punch
-            FourCC('A0B3'), 30, Orders.thunderbolt, CastType.TARGET, -- Knockback punch
-            FourCC('A0B6'), 30, Orders.roar, CastType.IMMEDIATE -- Increase Damage
+            2, Orders.thunderbolt, CastType.TARGET, -- Knockback punch
+            2, Orders.creepthunderbolt, CastType.TARGET, -- Knockup punch
+            2, Orders.roar, CastType.IMMEDIATE, -- Increase Damage
+            6, Orders.inferno, CastType.POINT -- Smiley bomb
         },
         actions = function (u)
         end

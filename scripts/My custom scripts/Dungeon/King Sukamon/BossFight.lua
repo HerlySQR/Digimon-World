@@ -3,8 +3,7 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local boss = gg_unit_O00X_0101 ---@type unit
-
-    local missileOrder = Orders.firebolt
+    local healingMinions = FourCC('A0B8')
 
     InitBossFight({
         name = "KingSukamon",
@@ -16,18 +15,19 @@ OnInit(function ()
         entrance = gg_rct_KingSukamonEntrance,
         toTeleport = gg_rct_KingSukamonToReturn,
         spells = {
-            FourCC('A0B8'), 30, Orders.spiritwolf, CastType.IMMEDIATE, -- Healing Minions
-            FourCC('A0D4'), 40, Orders.blackarrow, CastType.POINT, -- Poop Chaos
-            FourCC('A0BB'), 30, Orders.healingward, CastType.POINT -- Ward of damage
+            3, Orders.firebolt, CastType.TARGET, -- Generic Missile
+            4, Orders.healingward, CastType.POINT, -- Ward of damage
+            0, Orders.spiritwolf, CastType.IMMEDIATE, -- Healing Minions
+            5, Orders.blackarrow, CastType.POINT -- Poop Chaos
         },
         actions = function (u)
-            if not BossStillCasting(boss) then
-                IssueTargetOrderById(boss, missileOrder, u)
+            if GetUnitHPRatio(boss) < 0.5 then
+                UnitAddAbility(boss, healingMinions)
             end
         end,
         onStart = function ()
             -- Delay the use of the Healing Minions
-            BlzStartUnitAbilityCooldown(boss, FourCC('A0B8'), 80.)
+            UnitRemoveAbility(boss, healingMinions)
         end
     })
 end)
