@@ -105,11 +105,14 @@ OnInit(function ()
         inner = gg_rct_SkullSatamonInner,
         entrance = gg_rct_SkullSatamonEntrance,
         toTeleport = gg_rct_SkullSatamonToReturn,
+        spells = {
+            3, Orders.carrionswarm, CastType.POINT, -- Nail bone
+            2, Orders.ensnare, CastType.TARGET, -- Jail
+            4, Orders.cripple, CastType.TARGET, -- Cripple
+            4, Orders.thunderclap, CastType.IMMEDIATE, -- Thunderclap
+            3, Orders.ensnare, CastType.TARGET, -- Jail
+        },
         actions = function (u)
-            if math.random(0, 100) <= 10 then
-                IssueTargetOrderById(boss, jailOrder, u)
-            end
-
             if not phase[1] then
                 if GetUnitHPRatio(boss) < 0.7 then
                     phaseActions(1)
@@ -132,10 +135,6 @@ OnInit(function ()
                         SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
                         current = current + 0.02
                     end)
-                end
-            else
-                if math.random(0, 100) <= 50 then
-                    IssuePointOrderById(boss, firePillarOrder, GetUnitX(u), GetUnitY(u))
                 end
             end
         end,

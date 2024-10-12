@@ -4,7 +4,7 @@ OnInit(function ()
 
     local boss = gg_unit_O015_0092 ---@type unit
 
-    local fireBallOrder = Orders.firebolt
+    local wingBlade = FourCC('A08L')
 
     InitBossFight({
         name = "Garudamon",
@@ -16,14 +16,20 @@ OnInit(function ()
         entrance = gg_rct_GarudamonEntrance,
         toTeleport = gg_rct_GarudamonToReturn,
         spells = {
-            FourCC('A0BM'), 30, Orders.firebolt, CastType.TARGET, -- Bird of Fire
-            FourCC('A0BN'), 70, Orders.battleroar, CastType.POINT, -- Dash
-            FourCC('A070'), 30, Orders.avengerform, CastType.TARGET -- Fly and Throw
+            3, Orders.battleroar, CastType.POINT, -- Dash
+            0, Orders.carrionswarm, CastType.POINT, -- Wing blade
+            3, Orders.firebolt, CastType.TARGET, -- Fire ball
+            4, Orders.flamestrike, CastType.TARGET, -- Bird of Fire
+            4, Orders.avengerform, CastType.TARGET, -- Fly and Throw
+            1, Orders.curse, CastType.TARGET -- Ashes
         },
         actions = function (u)
-            if math.random(0, 100) <= 50 then
-                IssueTargetOrderById(boss, fireBallOrder, u)
+            if GetUnitHPRatio(boss) < 0.5 then
+                UnitAddAbility(boss, wingBlade)
             end
+        end,
+        onStart = function ()
+            UnitRemoveAbility(boss, wingBlade)
         end
     })
 end)

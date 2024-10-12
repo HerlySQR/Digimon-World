@@ -31,7 +31,6 @@ OnInit(function ()
             end
         end,
         onStart = function ()
-            -- Delay the use of the Healing Minions
             UnitRemoveAbility(boss, icePrison)
         end
     })

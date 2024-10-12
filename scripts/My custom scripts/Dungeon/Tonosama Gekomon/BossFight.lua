@@ -4,6 +4,9 @@ OnInit(function ()
 
     local boss = gg_unit_O012_0067 ---@type unit
 
+    local summonOtamamon = FourCC('A0DM')
+    local aquaMagic = FourCC('A0AC')
+
     InitBossFight({
         name = "TonosamaGekomon",
         boss = boss,
@@ -12,12 +15,21 @@ OnInit(function ()
         inner = gg_rct_TonosamaGekomonInner,
         entrance = gg_rct_TonosamaGekomonEntrance,
         spells = {
-            FourCC('A0BG'), 20, Orders.shockwave, CastType.TARGET, -- Sonic wave
-            FourCC('A0BH'), 20, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon Gekomon
-            FourCC('A0DM'), 20, Orders.summonwareagle, CastType.IMMEDIATE, -- Summon Otamamon
-            FourCC('A0BK'), 20, Orders.inferno, CastType.POINT -- Big leap
+            3, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon Gekomon
+            0, Orders.howlofterror, CastType.IMMEDIATE, -- Howl
+            3, Orders.inferno, CastType.POINT, -- Big leap
+            4, Orders.summonwareagle, CastType.IMMEDIATE, -- Summon Otamamon
+            4, Orders.shockwave, CastType.TARGET -- Sonic wave
         },
         actions = function (u)
+            if GetUnitHPRatio(boss) < 0.5 then
+                UnitAddAbility(boss, aquaMagic)
+                UnitAddAbility(boss, summonOtamamon)
+            end
+        end,
+        onStart = function ()
+            UnitRemoveAbility(boss, aquaMagic)
+            UnitRemoveAbility(boss, summonOtamamon)
         end
     })
 end)

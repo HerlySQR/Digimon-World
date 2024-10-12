@@ -4,10 +4,7 @@ OnInit(function ()
 
     local boss = gg_unit_O02V_0095 ---@type unit
 
-    local forestRageOrder = Orders.spiritwolf
-
-    local quarterLife = BlzGetUnitMaxHP(boss) * 0.25
-    local damageDone = 0
+    local entagle = FourCC('A0DG')
 
     InitBossFight({
         name = "Cherrymon",
@@ -17,29 +14,19 @@ OnInit(function ()
         inner = gg_rct_CherrymonInner,
         entrance = gg_rct_CherrymonEntrance,
         spells = {
-            FourCC('A0DG'), 45, Orders.entanglingroots, CastType.TARGET, -- Entangle
-            FourCC('A0DD'), 45, Orders.clusterrockets, CastType.POINT, -- Pit Pelter
-            FourCC('A0DE'), 25, Orders.stomp, CastType.IMMEDIATE -- Entangle Branches
+            4, Orders.clusterrockets, CastType.POINT, -- Pit Pelter
+            0, Orders.entanglingroots, CastType.TARGET, -- Entangle
+            5, Orders.spiritwolf, CastType.IMMEDIATE, -- Forest Rage
+            3, Orders.stomp, CastType.IMMEDIATE -- Entangle Branches
         },
         actions = function (u)
-            if damageDone >= quarterLife then
-                damageDone = 0
-                IssueImmediateOrderById(boss, forestRageOrder)
+            if GetUnitHPRatio(boss) < 0.5 then
+                UnitAddAbility(boss, entagle)
             end
         end,
         onStart = function ()
-            damageDone = 0
+            UnitRemoveAbility(boss, entagle)
         end
     })
-
-    do
-        local t = CreateTrigger()
-        TriggerRegisterVariableEvent(t, "udg_AfterDamageEvent", EQUAL, 1.00)
-        TriggerAddAction(t, function ()
-            if udg_DamageEventTarget == boss then
-                damageDone = damageDone + udg_DamageEventAmount
-            end
-        end)
-    end
 end)
 Debug.endFile()

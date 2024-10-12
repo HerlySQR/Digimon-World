@@ -4,7 +4,8 @@ OnInit(function ()
 
     local boss = gg_unit_O037_0096 ---@type unit
 
-    local iceStompOrder = Orders.stomp
+    local iceFist = FourCC('A0DJ')
+    local iceStomp = FourCC('A0DK')
 
     InitBossFight({
         name = "Panjyamon",
@@ -14,20 +15,22 @@ OnInit(function ()
         inner = gg_rct_PanjyamonInner,
         entrance = gg_rct_PanjyamonEntrance,
         spells = {
-            FourCC('A0DJ'), 20, Orders.breathoffrost, CastType.POINT, -- Ice fist
-            FourCC('A0DL'), 20, Orders.berserk, CastType.IMMEDIATE, -- Punch rush
-            FourCC('A0DM'), 20, Orders.breathoffire, CastType.POINT, -- Mammothmon rush
-            FourCC('A0DN'), 20, Orders.shadowstrike, CastType.TARGET -- Cat jump
+            6, Orders.shadowstrike, CastType.TARGET, -- Cat jump
+            2, Orders.berserk, CastType.IMMEDIATE, -- Punch rush
+            0, Orders.breathoffrost, CastType.POINT, -- Ice fist
+            5, Orders.shadowstrike, CastType.TARGET, -- Cat jump
+            0, Orders.stomp, CastType.IMMEDIATE, -- Ice stomp
+            2, Orders.breathoffire, CastType.POINT -- Mammothmon rush
         },
         actions = function (u)
-            if not BossStillCasting(boss) then
-                if math.random(0, 100) <= 20 and DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), GetUnitX(u), GetUnitY(u)) <= 300. then
-                    IssueImmediateOrderById(boss, iceStompOrder)
-                end
+            if GetUnitHPRatio(boss) < 0.5 then
+                UnitAddAbility(boss, iceFist)
+                UnitAddAbility(boss, iceStomp)
             end
         end,
         onStart = function ()
-            BlzStartUnitAbilityCooldown(boss, FourCC('A0DM'), 60.)
+            UnitRemoveAbility(boss, iceFist)
+            UnitRemoveAbility(boss, iceStomp)
         end
     })
 

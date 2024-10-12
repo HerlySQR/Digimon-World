@@ -155,6 +155,12 @@ OnInit(function ()
         end)
     end
 
+    RegisterSpellEffectEvent(FourCC('A0H5'), function ()
+        if GetSpellAbilityUnit() == boss then
+            BossMove(boss, 1, 1000, 150, math.random(2) == 1)
+        end
+    end)
+
     InitBossFight({
         name = "Datamon",
         boss = boss,
@@ -165,8 +171,9 @@ OnInit(function ()
         entrance = gg_rct_DatamonEntrance,
         toTeleport = gg_rct_DatamonToReturn,
         spells = {
-            FourCC('A0E0'), 30, Orders.blackarrow, CastType.POINT, -- Missile Barrage
-            FourCC('A0DZ'), 50, Orders.shadowstrike, CastType.TARGET -- Homming Missile
+            5, Orders.shadowstrike, CastType.TARGET, -- Homming Missile
+            3, Orders.clusterrockets, CastType.POINT, -- Missile Barrage
+            2, Orders.avengerform, CastType.IMMEDIATE, -- Move
         },
         actions = function (u, unitsInTheField)
             --BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)

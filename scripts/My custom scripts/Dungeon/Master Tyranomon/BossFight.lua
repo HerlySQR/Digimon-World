@@ -4,7 +4,7 @@ OnInit(function ()
 
     local boss = gg_unit_O008_0081 ---@type unit
 
-    local towerOfFireOrder = Orders.roar
+    local hungry = FourCC('A0AG')
 
     InitBossFight({
         name = "MasterTyranomon",
@@ -16,20 +16,19 @@ OnInit(function ()
         entrance = gg_rct_MasterTyranomonEntrance,
         toTeleport = gg_rct_MasterTyranomonToReturn,
         spells = {
-            FourCC('A02A'), 25, Orders.firebolt, CastType.TARGET, -- Fire ball
-            FourCC('A0E3'), 25, Orders.flamestrike, CastType.TARGET, -- Flame wave
-            FourCC('A0B2'), 25, Orders.spiritwolf, CastType.IMMEDIATE -- Tower of fire
+            3, Orders.roar, CastType.IMMEDIATE, -- War cry
+            0, 852623, CastType.TARGET, -- Hungry
+            3, Orders.firebolt, CastType.TARGET, -- Fire ball
+            4, Orders.spiritwolf, CastType.IMMEDIATE, -- Tower of fire
+            3, 25, Orders.flamestrike, CastType.TARGET, -- Flame wave
         },
         actions = function (u)
-            if not BossStillCasting(boss) then
-                if math.random(0, 100) <= 25 then
-                    local face = math.deg(math.atan(GetUnitY(u) - GetUnitY(boss), GetUnitX(u) - GetUnitX(boss)))
-                    SetUnitFacing(boss, face)
-                    Timed.call(0.9, function ()
-                        IssueImmediateOrderById(boss, towerOfFireOrder)
-                    end)
-                end
+            if GetUnitHPRatio(boss) < 0.5 then
+                UnitAddAbility(boss, hungry)
             end
+        end,
+        onStart = function ()
+            UnitRemoveAbility(boss, hungry)
         end
     })
 end)
