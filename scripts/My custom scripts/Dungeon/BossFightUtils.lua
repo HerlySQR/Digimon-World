@@ -278,13 +278,13 @@ OnInit("BossFightUtils", function ()
     ---@param half boolean?
     ---@return number
     local function getInterval(n, half)
-        return 6 * math.exp(-0.5493061443341 * ((half and n/2 or n) - 1))
+        return (half and 6 or 3) * math.exp(-0.5493061443341 * (n - 1))
     end
 
     ---@param n integer
     ---@return number
     local function geHitChance(n)
-        return 0.4 + 0.2*n
+        return 0.7 + 0.1*n
     end
 
     ---@param data {name: string, boss: unit, manualRevive: boolean, spells: table, castCondition: (fun():boolean)?, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}

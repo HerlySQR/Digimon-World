@@ -12,10 +12,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 2,
         forceWall = {gg_dest_Dofv_52786},
-        returnPlace = gg_rct_CrabmonReturnPlace,
         inner = gg_rct_CrabmonInner,
         entrance = gg_rct_CrabmonEntrance,
-        toTeleport = gg_rct_Beach_of_Dragon,
         spells = {
             1, Orders.chainlightning, CastType.TARGET, -- Scissor Magic
             3, Orders.berserk, CastType.IMMEDIATE, -- Berserk

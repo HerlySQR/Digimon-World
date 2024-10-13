@@ -223,6 +223,8 @@ OnInit(function ()
         end)
     end
 
+    local impale = FourCC('A0GB')
+
     InitBossFight({
         name = "Kimeramon",
         boss = boss,
@@ -235,14 +237,20 @@ OnInit(function ()
         entrance = gg_rct_KimeramonEntrance,
         toTeleport = gg_rct_Ancient_Speedy_Zone,
         spells = {
-            FourCC('A0GB'), 30, Orders.impale, CastType.TARGET, -- Impale
-            FourCC('A0GC'), 10, Orders.tornado, CastType.POINT, -- Cyclone Clap
-            FourCC('A0GE'), 30, Orders.creepthunderclap, CastType.IMMEDIATE -- Fire Ray
+            3, Orders.howlofterror, CastType.IMMEDIATE, -- Howl
+            4, Orders.tornado, CastType.POINT, -- Cyclone Clap
+            0, Orders.impale, CastType.TARGET, -- Impale
+            5, Orders.clusterrockets, CastType.POINT, -- Heat viper
+            6, Orders.impale, CastType.TARGET, -- Impale
+            3, Orders.creepthunderclap, CastType.IMMEDIATE, -- Fire Ray
         },
         castCondition = function ()
             return not flying
         end,
         actions = function (u, unitsInTheField)
+            if GetUnitHPRatio(boss) < 0.6 then
+                BlzEndUnitAbilityCooldown(boss, impale)
+            end
             if u then
                 if not started then
                     started = true

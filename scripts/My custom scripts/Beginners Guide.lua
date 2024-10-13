@@ -605,6 +605,9 @@ OnInit.final(function ()
     TriggerRegisterEnterRectSimple(t, gg_rct_Shop_Inner)
     TriggerAddAction(t, function ()
         local d = Digimon.getInstance(GetEnteringUnit())
+        if not d then
+            return
+        end
         local p = d:getOwner()
         if not inTutorial[p] then
             return
@@ -642,6 +645,9 @@ OnInit.final(function ()
     TriggerRegisterEnterRectSimple(t, gg_rct_Restaurant_Inner)
     TriggerAddAction(t, function ()
         local d = Digimon.getInstance(GetEnteringUnit())
+        if not d then
+            return
+        end
         local p = d:getOwner()
         if not inTutorial[p] then
             return
@@ -787,6 +793,9 @@ OnInit.final(function ()
     TriggerRegisterEnterRectSimple(t, gg_rct_Hospital_Inner)
     TriggerAddAction(t, function ()
         local d = Digimon.getInstance(GetEnteringUnit())
+        if not d then
+            return
+        end
         local p = d:getOwner()
         if not inTutorial[p] then
             return
@@ -943,6 +952,9 @@ OnInit.final(function ()
     TriggerRegisterEnterRectSimple(t, gg_rct_Gym_Lobby)
     TriggerAddAction(t, function ()
         local d = Digimon.getInstance(GetEnteringUnit())
+        if not d then
+            return
+        end
         local p = d:getOwner()
         if not inTutorial[p] then
             return

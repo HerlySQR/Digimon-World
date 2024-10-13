@@ -27,7 +27,7 @@ OnInit(function ()
             if GetUnitHPRatio(boss) < 0.7 then
                 UnitAddAbility(boss, icePrison)
             elseif GetUnitHPRatio(boss) < 0.4 then
-                BlzSetUnitAbilityCooldown(boss, icePrison, 0, 0)
+                BlzEndUnitAbilityCooldown(boss, icePrison)
             end
         end,
         onStart = function ()

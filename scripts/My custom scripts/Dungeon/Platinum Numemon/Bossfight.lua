@@ -39,12 +39,16 @@ OnInit(function ()
         entrance = gg_rct_PlatinumNumemonEntrance,
         toTeleport = gg_rct_Sewers,
         spells = {
-            RAIN_OF_FILTH, 20, Orders.thunderclap, CastType.IMMEDIATE, -- Rain of filth
-            BIG_FART, 25, Orders.stomp, CastType.IMMEDIATE, -- Big fart
-            SUMMON_RAREMON, 10, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon raremon
-            BIG_POOP, 20, Orders.breathoffrost, CastType.POINT -- Big poop
+            3, Orders.thunderclap, CastType.IMMEDIATE, -- Rain of filth
+            4, Orders.stomp, CastType.IMMEDIATE, -- Big fart
+            5, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon raremon
+            1, Orders.thunderclap, CastType.IMMEDIATE, -- Rain of filth
+            3, Orders.breathoffrost, CastType.POINT -- Big poop
         },
         actions = function (u, unitsOnTheField)
+            if GetUnitHPRatio(boss) < 0.3 then
+                BlzEndUnitAbilityCooldown(boss, RAIN_OF_FILTH)
+            end
             if u then
                 if not BossStillCasting(boss) then
                     if math.random(100) <= 30 then

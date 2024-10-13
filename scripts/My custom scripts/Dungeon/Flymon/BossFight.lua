@@ -18,10 +18,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 2,
         forceWall = {gg_dest_Dofv_52785},
-        returnPlace = gg_rct_FlymonReturnPlace,
         inner = gg_rct_FlymonInner,
         entrance = gg_rct_FlymonEntrance,
-        toTeleport = gg_rct_FlymonToReturn,
         spells = {
             1, Orders.charm, CastType.TARGET, -- Stinger
             4, Orders.cyclone, CastType.TARGET, -- Cyclone
@@ -82,13 +80,14 @@ OnInit(function ()
                                         local dist = 250*math.random()
                                         local missile = Missiles:create(posX, posY, posZ, posX + dist*math.cos(angle), posY + dist*math.sin(angle), 0)
                                         missile:arc(35)
+                                        missile:scale(0.5)
                                         missile.owner = owner
                                         missile:speed(900)
                                         missile:model(MISSILE_MODEL)
                                         missile.onFinish = function ()
                                             ForUnitsInRange(missile.x, missile.y, 96, function (u2)
                                                 if IsUnitEnemy(u2, owner) then
-                                                    Damage.apply(boss, u2, 5, false, false, udg_Nature, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
+                                                    Damage.apply(boss, u2, 6, false, false, udg_Nature, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
                                                 end
                                             end)
                                         end
