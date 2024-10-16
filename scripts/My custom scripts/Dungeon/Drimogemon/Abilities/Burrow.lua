@@ -2,13 +2,13 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A02D')
-    local DURATION = 10.
-    local DAMAGE = 75.
+    local DURATION = 4.
+    local DAMAGE = 85.
     local RANGE = 1000.
-    local AREA = 128.
+    local AREA = 110.
     local CASTER_MODEL = "war3mapImported\\Drimogemon.mdl"
     local INTERVAL = 0.02
-    local Z_DIFF = INTERVAL * 160.
+    local Z_DIFF = INTERVAL * 150.
     local PITCH_DIFF = (math.pi/4) * INTERVAL
 
     RegisterSpellEffectEvent(SPELL, function ()

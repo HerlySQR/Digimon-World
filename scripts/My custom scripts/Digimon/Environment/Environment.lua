@@ -39,6 +39,7 @@ OnInit("Environment", function ()
 
     ---@class Environment
     ---@field name string
+    ---@field displayName string
     ---@field minimap string
     ---@field place rect
     ---@field mapPortion framehandle?
@@ -63,6 +64,7 @@ OnInit("Environment", function ()
     end
 
     ---@param name string
+    ---@param displayName string?
     ---@param place rect
     ---@param minimap string
     ---@param mapPortion string?
@@ -71,11 +73,12 @@ OnInit("Environment", function ()
     ---@param soundtrackDay string?
     ---@param soundtrackNight string?
     ---@return Environment
-    function Environment.create(name, place, minimap, mapPortion, glowOffset, id, soundtrackDay, soundtrackNight)
+    function Environment.create(name, displayName, place, minimap, mapPortion, glowOffset, id, soundtrackDay, soundtrackNight)
         if not used[name] then
             local self = setmetatable({}, Environment)
 
             self.name = name
+            self.displayName = displayName or name
             self.place = place
             self.minimap = minimap
             self.soundtrackDay = soundtrackDay
@@ -158,9 +161,11 @@ OnInit("Environment", function ()
             return
         end
 
-        BlzFrameSetVisible(TopMsg, true)
-        BlzFrameSetText(TopMsg, "|cffffff00[" .. env.name .. "]|r")
-        BlzFrameSetAlpha(TopMsg, 255)
+        if env.displayName ~= "" then
+            BlzFrameSetVisible(TopMsg, true)
+            BlzFrameSetText(TopMsg, "|cffffff00[" .. env.displayName .. "]|r")
+            BlzFrameSetAlpha(TopMsg, 255)
+        end
         -- Prevent bad camera bounds if the player has the camera rotated
         local rotation = GetCameraField(CAMERA_FIELD_ROTATION)*bj_RADTODEG
         SetCameraField(CAMERA_FIELD_ROTATION, 90, 0)
@@ -242,7 +247,9 @@ OnInit("Environment", function ()
         end
 
         Timed.call(4.25, function ()
-            FrameFadeOut(TopMsg, 1., p)
+            if env.displayName ~= "" then
+                FrameFadeOut(TopMsg, 1., p)
+            end
         end)
 
         Environments[p] = env
@@ -487,7 +494,7 @@ OnInit("Environment", function ()
         end
     end
 
-    Environment.allMap = Environment.create("", bj_mapInitialPlayableArea, "entireMap.tga")
+    Environment.allMap = Environment.create("", nil, bj_mapInitialPlayableArea, "entireMap.tga")
     BlzChangeMinimapTerrainTex("entireMap.tga")
 
     -- Just to be detected by the extension
@@ -498,7 +505,10 @@ OnInit("Environment", function ()
     Environment.gymArena = {} ---@type Environment[]
     Environment.cosmeticModel = nil ---@type Environment
     Environment.map = nil ---@type Environment
+    Environment.whamonAnimation = nil ---@type Environment
+    Environment.birdramonAnimation = nil ---@type Environment
 
+    udg_DisplayName = nil
     udg_MapPortion = nil
     udg_MapPortionGlowOffset = nil
     udg_MapId = nil
@@ -509,6 +519,7 @@ OnInit("Environment", function ()
     TriggerAddAction(udg_EnvironmentCreate, function ()
         LastCreatedEnvironment = Environment.create(
             udg_Name,
+            udg_DisplayName,
             udg_Place,
             udg_Minimap,
             udg_MapPortion,
@@ -519,6 +530,7 @@ OnInit("Environment", function ()
         )
 
         udg_Name = ""
+        udg_DisplayName = nil
         udg_Place = nil
         udg_Minimap = ""
         udg_MapPortion = nil

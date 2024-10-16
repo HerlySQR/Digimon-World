@@ -57,7 +57,7 @@ OnInit("Menu", function ()
     OnInit.final(check)
     Timed.echo(0.1, check)
 
-    OnInit.final("LeaderboardUI", function ()
+    OnInit.final(function ()
         CreateLeaderboardBJ(bj_FORCE_ALL_PLAYERS, "")
         BlzFrameSetSize(BlzGetFrameByName("Leaderboard", 0), 0, 0)
         BlzFrameSetVisible(BlzGetFrameByName("LeaderboardBackdrop", 0), false)
@@ -370,6 +370,18 @@ OnInit("Menu", function ()
 
         -- Hide Mouse Dead Zone at Command Bar
         BlzFrameSetVisible(BlzFrameGetChild(BlzGetFrameByName("ConsoleUI", 0), 5), false)
+
+        -- Show and move Item on ground info
+        Timed.echo(0.02, function ()
+            local f = BlzGetFrameByName("SimpleInfoPanelItemDetail", 3)
+            if f then
+                BlzFrameClearAllPoints(f)
+                BlzFrameSetPoint(f, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.02, -0.04)
+                BlzFrameSetSize(f, 0.188125, 0.1140625)
+                BlzFrameSetVisible(f, true)
+                return true
+            end
+        end)
     end)
 
     local rightButtons = {} ---@type framehandle[]

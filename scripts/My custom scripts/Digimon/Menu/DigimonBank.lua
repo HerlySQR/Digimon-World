@@ -776,6 +776,7 @@ OnInit("DigimonBank", function ()
                     text = text .. "|cff0000ffIn use|r"
                     BlzFrameSetVisible(DigimonTUsed[i], true)
                     BlzFrameSetAlpha(DigimonTUsed[i], 127)
+                    BlzFrameSetVisible(DigimonTDead[i], false)
                 else
                     if d:isAlive() then
                         text = text .. "|cff00ff00Stored|r"
@@ -1968,7 +1969,12 @@ OnInit("DigimonBank", function ()
                 bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
                 bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
 
-                Timed.call(15., function ()
+                Timed.echo(1., 15., function ()
+                    if dead:isAlive() then
+                        bank.allDead = false
+                        return true
+                    end
+                end, function ()
                     if dead:getTypeId() == 0 then
                         return
                     end

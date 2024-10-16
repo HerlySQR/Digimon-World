@@ -16,6 +16,7 @@ OnInit(function ()
     local MAX_ARENAS = 4
     local MAX_FIGHTERS = 2
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
+    local MUSIC = "war3mapImported\\Out_in_the_Country.mp3"
     local MAX_RANK = 99
     local RANK_UPGRADE = FourCC('R005')
     local RANK_BONUS = FourCC('A0E5')
@@ -259,6 +260,7 @@ OnInit(function ()
                                 BlzFrameSetVisible(FIGHT, false)
                                 TimerDialogDisplay(self.clockWindow, true)
                                 ShowMenu(true)
+                                ChangeMusic(MUSIC)
                             end
                             for _, d in ipairs(paused) do
                                 d:unpause()
@@ -377,6 +379,9 @@ OnInit(function ()
                 if notNeutral then
                     SetPlayerAllianceStateBJ(self.pi[1].p, self.pi[2].p, bj_ALLIANCE_ALLIED_VISION)
                     SetPlayerAllianceStateBJ(self.pi[2].p, self.pi[1].p, bj_ALLIANCE_ALLIED_VISION)
+                end
+                if self:localPlayerCond() then
+                    RestartMusic()
                 end
                 self:clear()
                 UsedArena[self.index] = false
