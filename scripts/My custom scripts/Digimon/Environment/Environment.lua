@@ -47,6 +47,7 @@ OnInit("Environment", function ()
     ---@field id integer?
     ---@field soundtrackDay string?
     ---@field soundtrackNight string?
+    ---@field sky string
     Environment = {}
     Environment.__index = Environment
 
@@ -72,8 +73,9 @@ OnInit("Environment", function ()
     ---@param id integer
     ---@param soundtrackDay string?
     ---@param soundtrackNight string?
+    ---@param sky string
     ---@return Environment
-    function Environment.create(name, displayName, place, minimap, mapPortion, glowOffset, id, soundtrackDay, soundtrackNight)
+    function Environment.create(name, displayName, place, minimap, mapPortion, glowOffset, id, soundtrackDay, soundtrackNight, sky)
         if not used[name] then
             local self = setmetatable({}, Environment)
 
@@ -83,6 +85,7 @@ OnInit("Environment", function ()
             self.minimap = minimap
             self.soundtrackDay = soundtrackDay
             self.soundtrackNight = soundtrackNight
+            self.sky = sky
 
             if mapPortion then
                 FrameLoaderAdd(function ()
@@ -171,6 +174,8 @@ OnInit("Environment", function ()
         SetCameraField(CAMERA_FIELD_ROTATION, 90, 0)
         SetCameraBounds(FixedCameraBounds(env.place))
         SetCameraField(CAMERA_FIELD_ROTATION, rotation, 0)
+
+        SetSkyModel(env.sky)
 
         BlzChangeMinimapTerrainTex(env.minimap)
     end
@@ -526,7 +531,8 @@ OnInit("Environment", function ()
             udg_MapPortionGlowOffset,
             udg_MapId,
             udg_SoundtrackDay,
-            udg_SoundtrackNight
+            udg_SoundtrackNight,
+            udg_Sky
         )
 
         udg_Name = ""
@@ -538,6 +544,7 @@ OnInit("Environment", function ()
         udg_MapId = nil
         udg_SoundtrackDay = nil
         udg_SoundtrackNight = nil
+        udg_Sky = ""
     end)
 
 end)
