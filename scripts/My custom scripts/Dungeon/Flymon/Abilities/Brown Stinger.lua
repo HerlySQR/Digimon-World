@@ -1,3 +1,4 @@
+Debug.beginFile("Flymon\\Abilities\\Brown Stinger")
 OnInit(function ()
     Require "BossFightUtils"
 
@@ -20,17 +21,21 @@ OnInit(function ()
         missile.collision = 32.
         missile.collideZ = true
         missile.onFinish = function ()
-            Damage.apply(caster, target, DAMAGE, true, false, udg_Nature, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
-            -- Poison
-            DummyCast(GetOwningPlayer(caster),
-                GetUnitX(caster), GetUnitY(caster),
-                POISON_SPELL,
-                POISON_ORDER,
-                1,
-                CastType.TARGET,
-                target)
+            ForUnitsInRange(GetUnitX(target), GetUnitY(target), 200., function (u)
+                if IsUnitEnemy(u, missile.owner) then
+                    Damage.apply(caster, u, DAMAGE, true, false, udg_Nature, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
+                    -- Poison
+                    DummyCast(GetOwningPlayer(caster),
+                        GetUnitX(caster), GetUnitY(caster),
+                        POISON_SPELL,
+                        POISON_ORDER,
+                        1,
+                        CastType.TARGET,
+                        u)
+                end
+            end)
         end
         missile:launch()
     end)
-
 end)
+Debug.endFile()

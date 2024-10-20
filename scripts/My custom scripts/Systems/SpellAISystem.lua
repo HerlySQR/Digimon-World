@@ -4,7 +4,7 @@ OnInit("SpellAISystem", function ()
     Require "ZTS"
     Require "UnitEnterEvent"
     Require "AddHook"
-    Require "PlayerUtils"
+    Require "GameStatus"
     Require "Set"
     Require "SyncedTable"
 
@@ -37,7 +37,7 @@ OnInit("SpellAISystem", function ()
     ---@param u unit
     ---@param spell integer
     local function insertSpell(u, spell)
-        if IsPlayerInForce(GetOwningPlayer(u), FORCE_PLAYING) then
+        if IsPlayerInGame(GetOwningPlayer(u)) then
             return
         end
         local set = UnitSpellAIs[u]
