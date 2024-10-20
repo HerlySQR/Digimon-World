@@ -4,7 +4,7 @@ OnInit(function ()
 
     local SPELL = FourCC('A0B9')
     local DAMAGE = 90.
-    local AREA = 175.
+    local AREA = 200.
     local MISSILE_MODEL = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
 
     RegisterSpellEffectEvent(SPELL, function ()

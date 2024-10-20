@@ -2217,7 +2217,6 @@ OnInit("DigimonBank", function ()
         end
         if p == LocalPlayer then
             UpdateMenu()
-            BlzFrameSetVisible(SummonADigimon, true)
         end
     end
 

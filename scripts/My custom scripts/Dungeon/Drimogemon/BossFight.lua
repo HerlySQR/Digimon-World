@@ -17,7 +17,7 @@ OnInit(function ()
         entrance = gg_rct_DrimogemonEntrance,
         toTeleport = gg_rct_DrimogemonToReturn,
         spells = {
-            3, Orders.chainlightning, CastType.TARGET, -- Iron
+            3, Orders.curse, CastType.TARGET, -- Iron drill spin
             2, Orders.battleroar, CastType.TARGET, -- Missile Dash
             0, Orders.earthquake, CastType.POINT, -- Moving Earthquake
             1, Orders.burrow, CastType.IMMEDIATE, -- Burrow

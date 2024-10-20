@@ -40,7 +40,11 @@ OnInit(function ()
             end
         end
         m.onFinish = function ()
-            Damage.apply(caster, target, DAMAGE, false, false, udg_Machine, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+            ForUnitsInRange(GetUnitX(target), GetUnitY(target), 200., function (u)
+                if IsUnitEnemy(u, m.owner) then
+                    Damage.apply(caster, u, DAMAGE, false, false, udg_Machine, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                end
+            end)
             Knockback(
                 target,
                 m:getYaw(),
