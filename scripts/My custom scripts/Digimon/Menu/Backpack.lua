@@ -494,14 +494,14 @@ OnInit("Backpack", function ()
         BlzFrameSetVisible(BackpackSprite, false)
 
         BackpackMenu = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.255, 0.155000)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.0100000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.21000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.01000)
         BlzFrameSetVisible(BackpackMenu, false)
         AddFrameToMenu(BackpackMenu)
 
         BackpackText = BlzCreateFrameByType("TEXT", "name", BackpackMenu, "", 0)
         BlzFrameSetPoint(BackpackText, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.015000)
-        BlzFrameSetPoint(BackpackText, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.11500)
+        BlzFrameSetPoint(BackpackText, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.16000)
         BlzFrameSetText(BackpackText, "Use an item for the focused digimon")
         BlzFrameSetEnable(BackpackText, false)
         BlzFrameSetScale(BackpackText, 1.00)
@@ -509,8 +509,8 @@ OnInit("Backpack", function ()
 
         BackpackDiscard = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
         BlzFrameSetScale(BackpackDiscard, 0.858)
-        BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.1250000, -0.115)
-        BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0075500)
+        BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.095000, -0.16000)
+        BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.015000)
         BlzFrameSetText(BackpackDiscard, "|cffFCD20DDiscard|r")
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, BackpackDiscard, FRAMEEVENT_CONTROL_CLICK)
@@ -519,8 +519,8 @@ OnInit("Backpack", function ()
 
         BackpackDrop = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
         BlzFrameSetScale(BackpackDrop, 0.858)
-        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.0150000, -0.115)
-        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.120000, 0.0075500)
+        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.16000)
+        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.095000, 0.015000)
         BlzFrameSetText(BackpackDrop, "|cffFCD20DDrop|r")
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, BackpackDrop, FRAMEEVENT_CONTROL_CLICK)
@@ -528,18 +528,18 @@ OnInit("Backpack", function ()
         AssignFrame(BackpackDrop, 2)
 
         BackpackItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", BackpackMenu, "", 1)
-        BlzFrameSetPoint(BackpackItems, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.02000, -0.0350000)
-        BlzFrameSetPoint(BackpackItems, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.020000)
+        BlzFrameSetPoint(BackpackItems, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.030000)
+        BlzFrameSetPoint(BackpackItems, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.045000)
         BlzFrameSetTexture(BackpackItems, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         local x, y = {}, {}
         local stepSize = 0.025
 
         local startY = 0
-        for row = 1, 3 do
+        for row = 1, 5 do
             local startX = 0
-            for colum = 1, 7 do
-                local index = 7 * (row - 1) + colum
+            for colum = 1, 5 do
+                local index = 5 * (row - 1) + colum
 
                 x[index] = startX
                 y[index] = startY
@@ -549,7 +549,7 @@ OnInit("Backpack", function ()
             startY = startY - stepSize
         end
 
-        local indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}
+        local indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 34, 35, 36, 37, 38, 39, 40, 41}
         for i = 1, MAX_ITEMS do
             BackpackItemT[i] = BlzCreateFrame("IconButtonTemplate", BackpackItems, 0, 0)
             BlzFrameSetPoint(BackpackItemT[i], FRAMEPOINT_TOPLEFT, BackpackItems, FRAMEPOINT_TOPLEFT, x[i], y[i])
@@ -604,8 +604,8 @@ OnInit("Backpack", function ()
 
     OnChangeDimensions(function ()
         BlzFrameClearAllPoints(BackpackMenu)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.26, 0.150000)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.0100000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.21000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.01000)
     end)
 
     OnLeaderboard(function ()

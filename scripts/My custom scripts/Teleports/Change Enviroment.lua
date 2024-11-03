@@ -1,3 +1,4 @@
+Debug.beginFile("Change environment")
 OnInit(function ()
     Require "Digimon"
 
@@ -102,5 +103,5 @@ OnInit(function ()
         udg_EnvName2 = ""
         udg_FadeOut = false
     end)
-
 end)
+Debug.endFile()

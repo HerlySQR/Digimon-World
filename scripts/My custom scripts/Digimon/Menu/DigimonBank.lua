@@ -1460,9 +1460,10 @@ OnInit("DigimonBank", function ()
 
         -- Saved
 
-        SaveItem = BlzCreateFrame("IconButtonTemplate", SummonADigimon, 0, 0)
+        SaveItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         AddButtonToTheRight(SaveItem, 6)
         AddDefaultTooltip(SaveItem, "Save item", "Saves the selected item in the bank (you have to go to the bank to see it).")
+        AddFrameToMenu(SaveItem)
 
         BackdropSaveItem = BlzCreateFrameByType("BACKDROP", "BackdropSaveItem", SaveItem, "", 0)
         BlzFrameSetAllPoints(BackdropSaveItem, SaveItem)
@@ -1738,9 +1739,10 @@ OnInit("DigimonBank", function ()
         BlzTriggerRegisterFrameEvent(t, BuySlotNo, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, BuySlotNoFunc)
 
-        SellItem = BlzCreateFrame("IconButtonTemplate", SummonADigimon, 0, 0)
+        SellItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         AddButtonToTheRight(SellItem, 4)
         AddDefaultTooltip(SellItem, "Sell item", "Sells the selected item of yours.")
+        AddFrameToMenu(SellItem)
 
         BackdropSellItem = BlzCreateFrameByType("BACKDROP", "BackdropSellItem", SellItem, "", 0)
         BlzFrameSetAllPoints(BackdropSellItem, SellItem)
@@ -2057,6 +2059,22 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetVisible(StockedDigimonsMenu, false)
                 RemoveButtonFromEscStack(SummonADigimon)
             end
+        end
+    end
+
+    ---@param p player
+    ---@param flag boolean
+    function ShowSellItem(p, flag)
+        if p == LocalPlayer then
+            BlzFrameSetVisible(SellItem, flag)
+        end
+    end
+
+    ---@param p player
+    ---@param flag boolean
+    function ShowSaveItem(p, flag)
+        if p == LocalPlayer then
+            BlzFrameSetVisible(SaveItem, flag)
         end
     end
 

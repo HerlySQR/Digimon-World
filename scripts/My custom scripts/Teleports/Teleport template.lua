@@ -1,3 +1,4 @@
+Debug.beginFile("Teleport template")
 OnInit(function ()
     Require "Digimon"
     Require "DigimonBank"
@@ -34,7 +35,9 @@ OnInit(function ()
                 d.environment = innerEnv
             end
 
-            for _, d2 in ipairs(GetUsedDigimons(p)) do
+            local list = GetUsedDigimons(p)
+            for i = #list, 1, -1 do
+                local d2 = list[i]
                 if d2 ~= d then
                     StoreToBank(p, d2, true)
                 end
@@ -67,7 +70,9 @@ OnInit(function ()
                     d.environment = outerEnv
                 end
 
-                for _, d2 in ipairs(GetUsedDigimons(p)) do
+                local list = GetUsedDigimons(p)
+                for i = #list, 1, -1 do
+                    local d2 = list[i]
                     if d2 ~= d then
                         StoreToBank(p, d2, true)
                     end
@@ -99,3 +104,4 @@ OnInit(function ()
         udg_TP_LeaveText = nil
     end)
 end)
+Debug.endFile()

@@ -4,6 +4,7 @@ OnInit.final(function ()
     Require "Environment"
     Require "Backpack"
     Require "Digimon"
+    Require "Stats"
 
     local Menu = DialogCreate() ---@type dialog
     DialogSetMessage(Menu, "Do you wanna do the beginners guide?")
@@ -123,6 +124,7 @@ OnInit.final(function ()
         ShowCosmetics(p, true)
         ShowHelp(p, true)
         ShowMapButton(p, true)
+        ShowStats(p)
 
         local pixie = piximons[p]
         piximons[p] = nil
@@ -585,10 +587,17 @@ OnInit.final(function ()
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is an equipment.", Transmission.SET, 2., true)
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "It helps you to increase your stats.", Transmission.SET, 3., true)
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you are limited in how many you can have at the time.", Transmission.SET, 3.5, true)
+                    tr:AddActions(function ()
+                        ShowStats(p)
+                    end)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can see how many you can have.", Transmission.SET, 2.5, true)
                     tr:AddEnd(function ()
                         dequequeTransmission(p)
                         if d:getTypeId() == 0 then
                             return
+                        end
+                        if tr:WasSkipped() then
+                            ShowStats(p)
                         end
                         AddCompletedTutorial(p)
                         d:unpause()
@@ -727,8 +736,15 @@ OnInit.final(function ()
                                             tr = Transmission.create(Force(p))
                                             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "If you feel confident you can try fight it.", Transmission.SET, 3., true)
                                             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you could flee if you can't.", Transmission.SET, 2., true)
+                                            tr:AddActions(function ()
+                                                ShowStats(p)
+                                            end)
+                                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You need to be aware of your stats.", Transmission.SET, 2., true)
                                             tr:AddEnd(function ()
                                                 dequequeTransmission(p)
+                                                if tr:WasSkipped() then
+                                                    ShowStats(p)
+                                                end
                                             end)
                                             tr:Start()
                                             canFollow[p] = true
@@ -928,16 +944,25 @@ OnInit.final(function ()
                     return
                 end
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Here at the bank you can look at the items you stored.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And also the digimons you decided to save.", Transmission.SET, 2.5, true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "...", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You know how to do it, right?", Transmission.SET, 2.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Here at the bank you the digimons you decided to save.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And also see the items you stored.", Transmission.SET, 2.5, true)
+                tr:AddActions(function ()
+                    ShowSaveItem(p, true)
+                end)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "When you see an item you can pick it up or send it to here", Transmission.SET, 4., true)
+                tr:AddActions(function ()
+                    ShowSellItem(p, true)
+                end)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But if you want, you can just sell it to get digibits.", Transmission.SET, 2.5, true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
                         return
                     end
-                    ShowBank(p, true)
+                    if tr:WasSkipped() then
+                        ShowSellItem(p, true)
+                        ShowSaveItem(p, true)
+                    end
                     AddCompletedTutorial(p)
                     d:unpause()
                     ClearShops(d:getPos())
@@ -1037,6 +1062,8 @@ OnInit.final(function ()
             ShowSave(p, true)
             ShowLoad(p, true)
             ShowBank(p, false)
+            ShowSellItem(p, false)
+            ShowSaveItem(p, false)
             ShowHotkeys(p, false)
             ShowCosmetics(p, false)
             ShowHelp(p, false)
