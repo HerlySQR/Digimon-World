@@ -132,6 +132,10 @@ OnInit("Stats", function ()
         end
     end)
 
+    Digimon.evolutionEvent:register(function (d)
+        d:addAbility(show)
+    end)
+
     -- Remove the see stats ability to destroyed digimon
     Digimon.destroyEvent:register(function (old)
         old:removeAbility(show)

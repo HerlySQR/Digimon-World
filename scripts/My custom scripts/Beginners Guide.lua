@@ -31,6 +31,8 @@ OnInit.final(function ()
     local gymEnter = __jarray(false) ---@type table<player, boolean>
     local trainEnter = __jarray(false) ---@type table<player, boolean>
     local tutorialsDone = __jarray(0) ---@type table<player, integer>
+    local idle = __jarray(0) ---@type table<player, integer>
+    local finish = {} ---@type table<player, function>
     local threads = {} ---@type table<player, thread>
     local piximons = {} ---@type table<player, Digimon>
     local checkForEnemy = nil ---@type fun(p: player)
@@ -116,10 +118,16 @@ OnInit.final(function ()
 
     ---@param p player
     local function FinishTutorial(p)
+        if finish[p] then
+            finish[p]()
+            finish[p] = nil
+        end
         inTutorial[p] = false
         ShowSave(p, true)
         ShowLoad(p, true)
         ShowBank(p, true)
+        ShowSellItem(p, true)
+        ShowSaveItem(p, true)
         ShowHotkeys(p, true)
         ShowCosmetics(p, true)
         ShowHelp(p, true)
@@ -159,6 +167,7 @@ OnInit.final(function ()
 
     ---@param p player
     local function AddCompletedTutorial(p)
+        idle[p] = 20
         tutorialsDone[p] = tutorialsDone[p] + 1
         if tutorialsDone[p] >= MAX_TUTORIALS then
             local tr = Transmission.create(Force(p))
@@ -166,7 +175,8 @@ OnInit.final(function ()
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Well done!", Transmission.SET, 2., true)
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You are now ready to start your journey.", Transmission.SET, 3., true)
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "So you no longer need my help.", Transmission.SET, 3., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Go to explore the Digimon World.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Hope you learned everything! and if you like the game don't forget you can donate to the developers and get special auras to get their appreciation! those are just cosmetic but they look pretty cool! ;D", Transmission.SET, 6., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And now, go to explore the Digimon World.", Transmission.SET, 3., true)
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Good luck!", Transmission.SET, 2., true)
             tr:AddEnd(function ()
                 FinishTutorial(p)
@@ -281,9 +291,11 @@ OnInit.final(function ()
                     end
                 end)
 
+                idle[p] = 15
                 local warnings = 0
                 local scolded = false
-                Timed.echo(3., function ()
+                finish[p] = Timed.echo(3., function ()
+                    idle[p] = idle[p] - 1
                     if not scolded then
                         for _, d2 in ipairs(GetUsedDigimons(p)) do
                             local x, y = d2:getPos()
@@ -303,6 +315,7 @@ OnInit.final(function ()
                                 scolded = true
                                 canFollow[p] = false
                                 warnings = warnings + 1
+                                idle[p] = 15
 
                                 if DistanceBetweenCoords(pixie:getX(), pixie:getY(), d2:getPos()) > 1000. then
                                     MovePixie(pixie, d2:getPos())
@@ -314,7 +327,7 @@ OnInit.final(function ()
                                 local tr = Transmission.create(Force(p))
                                 if warnings == 1 then
                                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Wait!", Transmission.SET, 2., true)
-                                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You don't know all the basics yet to you can explore.", Transmission.SET, 3.5, true)
+                                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You don't know all the basics yet!", Transmission.SET, 3.5, true)
                                 elseif warnings == 2 then
                                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Seriously, you are not ready yet.", Transmission.SET, 3., true)
                                 else
@@ -337,7 +350,53 @@ OnInit.final(function ()
                         end
                     end
 
+                    if idle[p] <= 0 then
+                        idle[p] = 15
+                        local line
+                        if not secondPart[p] then
+                            line = "There is your map to you can see it"
+                        elseif not thirdPart[p] then
+                            line = "Tentomon probably wanna tell you something important"
+                        else
+                            local options = {}
+                            if not restaurantEnter[p] then
+                                table.insert(options, "The restaurant sells delicious and very useful food")
+                            end
+                            if not shopEnter[p] then
+                                table.insert(options, "You can buy powerful items in the shop")
+                            end
+                            if not enemyFound[p] then
+                                table.insert(options, "Outside the city are hostile digimons")
+                            end
+                            if not hospitalEnter[p] then
+                                table.insert(options, "In case your digimons are injured, you can go to the clinic")
+                            end
+                            if not transportFound[p] then
+                                table.insert(options, "This is a big world, there are special digimons to help you to explore")
+                            end
+                            if not bankEnter[p] then
+                                table.insert(options, "The bank is a place where you can store all your stuff")
+                            end
+                            if not gymEnter[p] then
+                                table.insert(options, "In the arena you can show your strength")
+                            end
+                            if not trainEnter[p] then
+                                table.insert(options, "All the digimons have an element, some have an advantage on combat over others")
+                            end
+                            line = options[math.random(#options)]
+                        end
+                        if line then
+                            local tr = Transmission.create(Force(p))
+                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, line, Transmission.SET, 3., true)
+                            tr:AddEnd(function ()
+                                dequequeTransmission(p)
+                            end)
+                            enquequeTransmission(tr, p)
+                        end
+                    end
+
                     if warnings > 2 then
+                        finish[p] = nil
                         return true
                     end
                 end)
@@ -345,9 +404,10 @@ OnInit.final(function ()
                 Timed.call(0.5, function ()
                     local tr = Transmission.create(Force(p))
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Welcome to the File City!", Transmission.SET, 3., true)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is your starting point in the Digimon World.", Transmission.SET, 3., true)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Do you wanna explore it all?", Transmission.SET, 3., true)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can see all the places you visited in your map.", Transmission.SET, 3., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is your starting point in the Digimon World.", Transmission.SET, 3.5, true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Big world to explore, isn't it?", Transmission.SET, 3., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can see all the regions you visited in the world map.", Transmission.SET, 3.5, true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Please open the map to check it out!", Transmission.SET, 3., true)
                     tr:AddEnd(function ()
                         dequequeTransmission(p)
                         ShowMapButton(p, true)
@@ -371,12 +431,14 @@ OnInit.final(function ()
 
             local tr = Transmission.create(Force(p))
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Very good!", Transmission.SET, 2., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the Digimon World are digimons that could need your help.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "We have many places to visit here in the File City!", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Bidra Transport, Green Gym, Grey's Arena, Centaur Clinic, Item shop and the Restaurant!", Transmission.SET, 4., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "By the way, there are a lot of digimons that could need your help.", Transmission.SET, 3.5, true)
             tr:AddActions(1., function ()
                 local angle = math.atan(GetUnitY(Tentomon) - pixie:getY(), GetUnitX(Tentomon) - pixie:getX())
                 pixie:setFacing(math.deg(angle))
             end)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Try talking with Tentomon to see what he needs.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Let's start with Tentomon to see what he needs.", Transmission.SET, 3., true)
             tr:AddEnd(function ()
                 Timed.call(2., function ()
                     if d:getTypeId() == 0 then
@@ -465,7 +527,7 @@ OnInit.final(function ()
                 d:pause()
                 local tr = Transmission.create(Force(p))
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This digimon asked for your help.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can consult to your quest log for more information.", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the quest log you can check for more information.", Transmission.SET, 3.5, true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
@@ -480,11 +542,11 @@ OnInit.final(function ()
                 thirdPart[p] = true
                 d:pause()
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "As you heard, he asked you to talk with other digimons.", Transmission.SET, 3.5, true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can also try interact with them and see what they want.", Transmission.SET, 3.5, true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In that case you can consult to your quest log.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But if you want you can just explore the city.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And remember to return to him when you finish the quest.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "As you heard, let's talk to other digimons.", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Let's start with the ones around here.", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Oh yeah! Some Digimon may require certain conditions to give you the task!", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Try finishing other digimons tasks or getting more levels, then talk to them again!", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And remember some digimons may require you to return to them to finish the quest.", Transmission.SET, 4., true)
 
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
@@ -513,17 +575,17 @@ OnInit.final(function ()
             local tr = Transmission.create(Force(p))
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "It seems that you picked a consummable item.", Transmission.SET, 3., true)
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This type of item goes to your backpack.", Transmission.SET, 3., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "To use that item open your backpack and select to who you wanna use it.", Transmission.SET, 3.5, true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "To use that item open your backpack B hotkey and select to who the Digimon you want to use it.", Transmission.SET, 4., true)
             local extra = nil
             if id == NET then
                 netPicked[p] = true
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "The item you picked is a digimon net.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "The digimon net is used to capture an wild rookie digimon", Transmission.SET, 3.5, true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Is easier capture them when they have low health.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "The item you picked is a digimon gift.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "The digimon gift is used to become friend with a wild rookie digimon", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Is easier to become friend when they have lower health, but it's not 100%!", Transmission.SET, 4., true)
                 tr:AddActions(function ()
                     ShowBank(p, true)
                 end)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Then you can look at them in your menu.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Then you can look for them at the digimon menu.", Transmission.SET, 3., true)
                 extra = function ()
                     if tr:WasSkipped() then
                         ShowBank(p, true)
@@ -543,13 +605,13 @@ OnInit.final(function ()
             netPicked[p] = true
             local pixie = piximons[p]
             local tr = Transmission.create(Force(p))
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is a digimon net.", Transmission.SET, 3., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "the digimon net is used to capture an wild rookie digimon to make it join to your side.", Transmission.SET, 4., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "I recommend you reduce their health before capturing them.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is a digimon gift.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "The digimon gift is used to become friend with a wild rookie digimon", Transmission.SET, 4., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Is easier to become friend when they have lower health, but it's not 100%!", Transmission.SET, 4., true)
             tr:AddActions(function ()
                 ShowBank(p, true)
             end)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Then you can look for them in your digimon menu.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Then you can look for them at the digimon menu.", Transmission.SET, 3., true)
             tr:AddEnd(function ()
                 dequequeTransmission(p)
                 if tr:WasSkipped() then
@@ -585,12 +647,13 @@ OnInit.final(function ()
 
                     local tr = Transmission.create(Force(p))
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is an equipment.", Transmission.SET, 2., true)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "It helps you to increase your stats.", Transmission.SET, 3., true)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you are limited in how many you can have at the time.", Transmission.SET, 3.5, true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "It increases your stats.", Transmission.SET, 3., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you are limited in how many you can use at a time", Transmission.SET, 3.5, true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "1 Weapon, 1 Shield, 2 Accessories, 1 Digivice and 1 Crest, that's the way you can use it!", Transmission.SET, 4., true)
                     tr:AddActions(function ()
                         ShowStats(p)
                     end)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can see how many you can have.", Transmission.SET, 2.5, true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "At the digimon menu you can see what your digimon is using", Transmission.SET, 3., true)
                     tr:AddEnd(function ()
                         dequequeTransmission(p)
                         if d:getTypeId() == 0 then
@@ -630,11 +693,11 @@ OnInit.final(function ()
             Timed.call(0.5, function ()
                 local tr = Transmission.create(Force(p))
                 if not restaurantEnter[p] then
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the Digimon World are places where you can buy items from other digimons.", Transmission.SET, 4., true)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "That is if you have digibits of course.", Transmission.SET, 2., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can find many Merchant digimons selling many usefull items!", Transmission.SET, 4., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Of course you need digibits to buy it.", Transmission.SET, 3., true)
                 end
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In this shop you can buy equipment.", Transmission.SET, 2., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Those items can have special qualities.", Transmission.SET, 2., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the Item shop you can buy equipment, disks and other usefull stuff.", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "All those items can be very usefull sooner or later!", Transmission.SET, 3., true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
@@ -673,11 +736,11 @@ OnInit.final(function ()
                 end
                 local tr = Transmission.create(Force(p))
                 if not shopEnter[p] then
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the Digimon World are places where you can buy items from other digimons.", Transmission.SET, 4., true)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "That is if you have digibits of course.", Transmission.SET, 2., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can find many digimons selling services!", Transmission.SET, 3., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Yes, you need to pay for those services!", Transmission.SET, 3., true)
                 end
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the restaurant they sell you food or drinks that buffs you for a long time.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you can only have one at the time.", Transmission.SET, 2.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the restaurant they sell you food or drinks that buffs you for 30 min.", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Very Usefull! But you can only have one drink and one food at a time.", Transmission.SET, 4., true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
@@ -721,7 +784,7 @@ OnInit.final(function ()
                                 pixie:issueOrder(Orders.move, d2:getPos())
                                 Timed.call(1., function ()
                                     tr = Transmission.create(Force(p))
-                                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "An enemy!", Transmission.SET, 2., true)
+                                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "An wild digimon!", Transmission.SET, 2., true)
                                     tr:AddEnd(function ()
                                         if d:getTypeId() == 0 then
                                             dequequeTransmission(p)
@@ -734,12 +797,12 @@ OnInit.final(function ()
                                                 return
                                             end
                                             tr = Transmission.create(Force(p))
-                                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "If you feel confident you can try fight it.", Transmission.SET, 3., true)
-                                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you could flee if you can't.", Transmission.SET, 2., true)
+                                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "If you feel that you can beat him, go for it.", Transmission.SET, 3., true)
+                                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But you could just run away.", Transmission.SET, 2.5, true)
                                             tr:AddActions(function ()
                                                 ShowStats(p)
                                             end)
-                                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You need to be aware of your stats.", Transmission.SET, 2., true)
+                                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Don't forget to be aware of your stats!", Transmission.SET, 3., true)
                                             tr:AddEnd(function ()
                                                 dequequeTransmission(p)
                                                 if tr:WasSkipped() then
@@ -775,7 +838,8 @@ OnInit.final(function ()
                 enemyKilled[p] = true
                 local pixie = piximons[p]
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "When you win you will get digibits and also experience if he has a similar level as yours", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "When you win a battle you will get digibits and experience if he has a similar level as yours", Transmission.SET, 5., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "If the level difference is higher then 5 you won't get any experience", Transmission.SET, 4.5, true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     AddCompletedTutorial(p)
@@ -795,8 +859,8 @@ OnInit.final(function ()
             digimonDied[p] = true
             local pixie = piximons[p]
             local tr = Transmission.create(Force(p))
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Your digimon died.", Transmission.SET, 3., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Don't worry, after a while it will be ready for action.", Transmission.SET, 3.5, true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Your digimon fainted.", Transmission.SET, 3., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Don't worry, Centarumon will take care of him.", Transmission.SET, 3.5, true)
             tr:AddEnd(function ()
                 dequequeTransmission(p)
             end)
@@ -827,9 +891,9 @@ OnInit.final(function ()
                     return
                 end
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is the Centauromon's hospital.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can come here to heal.", Transmission.SET, 2., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And in case all your crew fall on combat, you will appear here.", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is the Centaur's Clinic.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can come here to recover and heal your fainted digimons.", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And in case all your digimons faint in combat, you will come back here.", Transmission.SET, 4.5, true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
@@ -877,7 +941,7 @@ OnInit.final(function ()
                                         return
                                     end
                                     tr = Transmission.create(Force(p))
-                                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is one of the digimons that can transport to the Digimon World.", Transmission.SET, 4., true)
+                                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is one of the digimons that can transport you around the Digimon World.", Transmission.SET, 4., true)
                                     tr:AddEnd(function ()
                                         if d:getTypeId() == 0 then
                                             dequequeTransmission(p)
@@ -891,7 +955,7 @@ OnInit.final(function ()
                                             end
                                             tr = Transmission.create(Force(p))
                                             if tutorialsDone[p] == MAX_TUTORIALS - 1 then
-                                                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can buy for their services if you are ready to explore.", Transmission.SET, 3., true)
+                                                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can buy a ticket to many diferente places.", Transmission.SET, 3., true)
                                             else
                                                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But I don't recommend that yet, you are not ready.", Transmission.SET, 3., true)
                                             end
@@ -944,16 +1008,16 @@ OnInit.final(function ()
                     return
                 end
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Here at the bank you the digimons you decided to save.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And also see the items you stored.", Transmission.SET, 2.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Here is the bank, you can look at the items you stored in the server.", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And can transfer or swap digimons to the server as you can only bring 8 with you.", Transmission.SET, 4., true)
                 tr:AddActions(function ()
                     ShowSaveItem(p, true)
                 end)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "When you see an item you can pick it up or send it to here", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "When you see an item you can either use it or send it here", Transmission.SET, 3.5, true)
                 tr:AddActions(function ()
                     ShowSellItem(p, true)
                 end)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But if you want, you can just sell it to get digibits.", Transmission.SET, 2.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But if you want, you can just sell it to get digibits.", Transmission.SET, 3.5, true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
@@ -995,9 +1059,10 @@ OnInit.final(function ()
                     return
                 end
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "So you decided to enter the |cffffff00Grey Arena|r.", Transmission.SET, 3., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Where you can fight with the strongest digimons (if you pay of course |cff00ff00;)|r ).", Transmission.SET, 4, true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can also have friendly fights with other adventurers.", Transmission.SET, 2.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "So you decided to enter the Grey Arena.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Here you can fight with the strongest digimons, if you pay of course.", Transmission.SET, 4, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can also have friendly fights with other Tamers or buy some Prizes with Ogremon.", Transmission.SET, 4.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Higher ranks in the arena, higher prizes! Oh and you also get bonus stats for all digimons with a higher rank!", Transmission.SET, 5., true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
@@ -1037,9 +1102,10 @@ OnInit.final(function ()
                     return
                 end
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Maybe you noticed that you have a damage type and defense type.", Transmission.SET, 3.5, true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Some damage types are better to certain armor types than others.", Transmission.SET, 3.5, true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can test it with this targets.", Transmission.SET, 2., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Welcome to the green gym!", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Maybe you noticed that your digimons have damage type and defense type.", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Some damage types are better to certain defenses types and worst to others.", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can train it with those targets.", Transmission.SET, 2., true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
