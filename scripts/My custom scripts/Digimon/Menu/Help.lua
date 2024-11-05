@@ -3,6 +3,7 @@ OnInit("Help", function ()
     Require "Menu"
     Require "FrameLoader"
     Require "FrameEffects"
+    Require "Hotkeys"
 
     local HelpButton = nil ---@type framehandle
     local BackdropHelpButton = nil ---@type framehandle
@@ -35,6 +36,7 @@ OnInit("Help", function ()
         TriggerAddAction(t, ShowImage)
         BlzFrameSetVisible(HelpButton, false)
         AddFrameToMenu(HelpButton)
+        SetFrameHotkey(HelpButton, "X")
         AddDefaultTooltip(HelpButton, "Help", "Press to get help about the UI.")
 
         BackdropHelpButton = BlzCreateFrameByType("BACKDROP", "BackdropHelpButton", HelpButton, "", 0)

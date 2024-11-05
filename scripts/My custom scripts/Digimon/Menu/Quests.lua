@@ -13,6 +13,7 @@ OnInit("Quests", function ()
     Require "EventListener"
     Require "PressSaveOrLoad"
     Require "Serializable"
+    Require "Hotkeys"
 
     local YELLOW = Color.new(255, 255, 0)
     local GREEN = Color.new(0, 255, 255)
@@ -204,6 +205,7 @@ OnInit("Quests", function ()
         TriggerAddAction(t, ShowMenu)
         BlzFrameSetVisible(QuestButton, false)
         AddFrameToMenu(QuestButton)
+        SetFrameHotkey(QuestButton, "L")
         AddDefaultTooltip(QuestButton, "Quest Log", "Look at the progress of your accepted quests.")
 
         BackdropQuestButton = BlzCreateFrameByType("BACKDROP", "BackdropQuestButton", QuestButton, "", 0)

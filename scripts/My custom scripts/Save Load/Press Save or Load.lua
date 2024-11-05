@@ -7,6 +7,7 @@ OnInit("PressSaveOrLoad", function ()
     local FrameList = Require "FrameList" ---@type FrameList
     Require "GetSyncedData"
     Require "Serializable"
+    Require "Hotkeys"
 
     local restartListener = EventListener.create()
     local loadListener = EventListener.create()
@@ -447,6 +448,7 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetScale(SaveButton, 1.00)
         BlzFrameSetVisible(SaveButton, false)
         AddFrameToMenu(SaveButton)
+        SetFrameHotkey(SaveButton, "J")
         AddDefaultTooltip(SaveButton, "Save", "Save your progress.")
 
         BackdropSaveButton = BlzCreateFrameByType("BACKDROP", "BackdropSaveButton", SaveButton, "", 0)
@@ -464,6 +466,7 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetScale(LoadButton, 1.00)
         BlzFrameSetVisible(LoadButton, false)
         AddFrameToMenu(LoadButton)
+        SetFrameHotkey(LoadButton, "K")
         AddDefaultTooltip(LoadButton, "Load", "Load your progress.")
 
         BackdropLoadButton = BlzCreateFrameByType("BACKDROP", "BackdropLoadButton", LoadButton, "", 0)

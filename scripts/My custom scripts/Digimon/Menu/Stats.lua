@@ -6,6 +6,7 @@ OnInit("Stats", function ()
     Require "Timed"
     Require "Color"
     Require "GetMainSelectedUnit"
+    Require "Hotkeys"
 
     local WATER_ICON = "war3mapImported\\ATTWater.blp"
     local MACHINE_ICON = "war3mapImported\\ATTMetal.blp"
@@ -416,6 +417,7 @@ OnInit("Stats", function ()
         AddButtonToTheRight(StatsButton, 0)
         BlzFrameSetVisible(StatsButton, false)
         AddFrameToMenu(StatsButton)
+        SetFrameHotkey(StatsButton, "U")
         AddDefaultTooltip(StatsButton, "Show/Hide stats", "Show/Hide the stats of the digimons you are using.")
 
         BackdropStatsButton = BlzCreateFrameByType("BACKDROP", "BackdropStatsButton", StatsButton, "", 0)

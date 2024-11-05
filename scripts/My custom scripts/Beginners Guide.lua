@@ -354,34 +354,34 @@ OnInit.final(function ()
                         idle[p] = 15
                         local line
                         if not secondPart[p] then
-                            line = "There is your map to you can see it"
+                            line = "This is your map, so you can see the whole world"
                         elseif not thirdPart[p] then
-                            line = "Tentomon probably wanna tell you something important"
+                            line = "Tentomon want to tell you something important"
                         else
                             local options = {}
                             if not restaurantEnter[p] then
-                                table.insert(options, "The restaurant sells delicious and very useful food")
+                                table.insert(options, "The restaurant sells delicious and very useful food, let's go check it")
                             end
                             if not shopEnter[p] then
-                                table.insert(options, "You can buy powerful items in the shop")
+                                table.insert(options, "You can buy powerful items in the shop, let's go check it!")
                             end
                             if not enemyFound[p] then
-                                table.insert(options, "Outside the city are hostile digimons")
+                                table.insert(options, "Outside the city are hostile digimons!")
                             end
                             if not hospitalEnter[p] then
-                                table.insert(options, "In case your digimons are injured, you can go to the clinic")
+                                table.insert(options, "In case your digimons are injured, you can go to Centarumon")
                             end
                             if not transportFound[p] then
-                                table.insert(options, "This is a big world, there are special digimons to help you to explore")
+                                table.insert(options, "This is a big world, a lot of digimons to meet, but we still have some at the city to talk to.")
                             end
                             if not bankEnter[p] then
-                                table.insert(options, "The bank is a place where you can store all your stuff")
+                                table.insert(options, "The bank is a place where you can store items and digimons, let's go see it")
                             end
                             if not gymEnter[p] then
-                                table.insert(options, "In the arena you can show your strength")
+                                table.insert(options, "In the arena you can show your strength, what do you think about a visit there?")
                             end
                             if not trainEnter[p] then
-                                table.insert(options, "All the digimons have an element, some have an advantage on combat over others")
+                                table.insert(options, "All the digimons have different elements, let's check what you are good against at the Green Gym")
                             end
                             line = options[math.random(#options)]
                         end
@@ -404,9 +404,9 @@ OnInit.final(function ()
                 Timed.call(0.5, function ()
                     local tr = Transmission.create(Force(p))
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Welcome to the File City!", Transmission.SET, 3., true)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is your starting point in the Digimon World.", Transmission.SET, 3.5, true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is your starting point in the Digital World.", Transmission.SET, 3.5, true)
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Big world to explore, isn't it?", Transmission.SET, 3., true)
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can see all the regions you visited in the world map.", Transmission.SET, 3.5, true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can see all the regions you visited in your world map.", Transmission.SET, 3.5, true)
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Please open the map to check it out!", Transmission.SET, 3., true)
                     tr:AddEnd(function ()
                         dequequeTransmission(p)
@@ -433,7 +433,7 @@ OnInit.final(function ()
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Very good!", Transmission.SET, 2., true)
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "We have many places to visit here in the File City!", Transmission.SET, 3., true)
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Bidra Transport, Green Gym, Grey's Arena, Centaur Clinic, Item shop and the Restaurant!", Transmission.SET, 4., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "By the way, there are a lot of digimons that could need your help.", Transmission.SET, 3.5, true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "By the way, there are a lot of digimons that could use your help.", Transmission.SET, 3.5, true)
             tr:AddActions(1., function ()
                 local angle = math.atan(GetUnitY(Tentomon) - pixie:getY(), GetUnitX(Tentomon) - pixie:getX())
                 pixie:setFacing(math.deg(angle))
@@ -526,7 +526,7 @@ OnInit.final(function ()
             if secondPartSkipped[p] then
                 d:pause()
                 local tr = Transmission.create(Force(p))
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This digimon asked for your help.", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This digimon gave you a task.", Transmission.SET, 3., true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the quest log you can check for more information.", Transmission.SET, 3.5, true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
@@ -575,7 +575,7 @@ OnInit.final(function ()
             local tr = Transmission.create(Force(p))
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "It seems that you picked a consummable item.", Transmission.SET, 3., true)
             tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This type of item goes to your backpack.", Transmission.SET, 3., true)
-            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "To use that item open your backpack B hotkey and select to who the Digimon you want to use it.", Transmission.SET, 4., true)
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "To use that item open your backpack B hotkey and select the Digimon you want to use it.", Transmission.SET, 4., true)
             local extra = nil
             if id == NET then
                 netPicked[p] = true

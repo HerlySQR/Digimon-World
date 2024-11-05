@@ -13,6 +13,7 @@ OnInit("Backpack", function ()
     Require "Stats"
     Require "PressSaveOrLoad"
     Require "Serializable"
+    Require "Hotkeys"
 
     local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local Backpack = nil ---@type framehandle
@@ -478,6 +479,7 @@ OnInit("Backpack", function ()
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
         AssignFrame(Backpack, 0) -- 0
+        SetFrameHotkey(Backpack, "B")
         AddDefaultTooltip(Backpack, "Backpack", "Look your stored consummable items.")
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)

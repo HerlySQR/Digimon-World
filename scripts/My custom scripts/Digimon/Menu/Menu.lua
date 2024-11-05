@@ -163,7 +163,7 @@ OnInit("Menu", function ()
         local tooltip = BlzCreateFrame("BoxedText", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
         local text = BlzGetFrameByName("BoxedTextValue", 0)
 
-        BlzFrameSetText(BlzGetFrameByName("BoxedTextTitle", 0), title)
+        BlzFrameSetText(BlzGetFrameByName("BoxedTextTitle", 0), title .. " (" .. GetFrameHotkey(frame) .. ")")
 
         BlzFrameSetTextSizeLimit(text, content:len())
         BlzFrameSetText(text, content)

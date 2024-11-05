@@ -8,6 +8,7 @@ OnInit("Cosmetic", function ()
     Require "FrameLoader"
     local FrameList = Require "FrameList" ---@type FrameList
     Require "Menu"
+    Require "Hotkeys"
 
     local MAX_LENGTH_PASSWORD = 200
     local NO_SKIN = FourCC('n000')
@@ -288,6 +289,7 @@ OnInit("Cosmetic", function ()
         AddButtonToTheRight(CosmeticOpen, 2)
         BlzFrameSetVisible(CosmeticOpen, false)
         AddFrameToMenu(CosmeticOpen)
+        SetFrameHotkey(CosmeticOpen, "N")
         AddDefaultTooltip(CosmeticOpen, "Cosmetics", "Look to the effects you can apply to your digimons.")
 
         BackdropCosmeticOpen = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticOpen", CosmeticOpen, "", 0)

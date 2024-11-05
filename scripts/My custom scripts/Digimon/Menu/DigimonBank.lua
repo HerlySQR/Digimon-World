@@ -8,6 +8,7 @@ OnInit("DigimonBank", function ()
     Require "PressSaveOrLoad"
     Require "Serializable"
     Require "Digimon"
+    Require "Hotkeys"
 
     local MAX_STOCK = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
@@ -310,7 +311,7 @@ OnInit("DigimonBank", function ()
         centerY = centerY / max
 
         for _, d in ipairs(list) do
-            if math.sqrt((d:getX() - centerX)^2 + (d:getY() -centerY)^2) > 400. then
+            if math.sqrt((d:getX() - centerX)^2 + (d:getY() - centerY)^2) > 400. then
                 return false
             end
         end
@@ -1295,6 +1296,7 @@ OnInit("DigimonBank", function ()
 
         SummonADigimon = BlzCreateFrame("IconButtonTemplate", OriginFrame,0,0)
         AddButtonToTheRight(SummonADigimon, 1)
+        SetFrameHotkey(SummonADigimon, "D")
         AddDefaultTooltip(SummonADigimon, "Your digimons", "Look your stored digimons.")
         AssignFrame(SummonADigimon, 20)
 
@@ -1462,6 +1464,7 @@ OnInit("DigimonBank", function ()
 
         SaveItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         AddButtonToTheRight(SaveItem, 6)
+        SetFrameHotkey(SaveItem, "C")
         AddDefaultTooltip(SaveItem, "Save item", "Saves the selected item in the bank (you have to go to the bank to see it).")
         AddFrameToMenu(SaveItem)
 
@@ -1741,6 +1744,7 @@ OnInit("DigimonBank", function ()
 
         SellItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         AddButtonToTheRight(SellItem, 4)
+        SetFrameHotkey(SellItem, "F")
         AddDefaultTooltip(SellItem, "Sell item", "Sells the selected item of yours.")
         AddFrameToMenu(SellItem)
 
@@ -1882,6 +1886,14 @@ OnInit("DigimonBank", function ()
             d:setOwner(Digimon.PASSIVE)
             if bank.inUse[index] then
                 bank.inUse[index] = nil
+                for i = #bank.priorities, 1, -1 do
+                    if bank.priorities[i] == d then
+                        table.remove(bank.priorities, i)
+                        break
+                    else
+                        BlzSetUnitRealField(bank.priorities[i].root, UNIT_RF_PRIORITY, MAX_STOCK - i + 1)
+                    end
+                end
             else
                 d:showFromTheCorner(bank.main:getX(), bank.main:getY())
             end

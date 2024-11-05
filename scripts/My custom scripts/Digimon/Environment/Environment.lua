@@ -6,6 +6,7 @@ OnInit("Environment", function ()
     Require "SaveHelper"
     Require "EventListener"
     Require "GetSyncedData"
+    Require "Hotkeys"
 
     local MAX_REGIONS = 30
 
@@ -393,6 +394,7 @@ OnInit("Environment", function ()
         SeeMap = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(SeeMap, 7)
         AddFrameToMenu(SeeMap)
+        SetFrameHotkey(SeeMap, "V")
         AddDefaultTooltip(SeeMap, "See the map", "Look at the places you visited.")
         BlzFrameSetVisible(SeeMap, false)
 
