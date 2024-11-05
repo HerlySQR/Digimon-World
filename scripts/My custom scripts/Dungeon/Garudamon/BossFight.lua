@@ -11,10 +11,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 3,
         forceWall = {gg_dest_Dofw_13138},
-        returnPlace = gg_rct_Great_Cannyon_Tp,
         inner = gg_rct_GarudamonInner,
         entrance = gg_rct_GarudamonEntrance,
-        toTeleport = gg_rct_GarudamonToReturn,
         spells = {
             3, Orders.battleroar, CastType.POINT, -- Dash
             0, Orders.carrionswarm, CastType.POINT, -- Wing blade

@@ -9,10 +9,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 3,
         forceWall = {gg_dest_Dofw_52789},
-        returnPlace = gg_rct_MamemonReturnPlace,
         inner = gg_rct_MamemonInner,
         entrance = gg_rct_MamemonEntrance,
-        toTeleport = gg_rct_MamemonToReturn,
         spells = {
             2, Orders.thunderbolt, CastType.TARGET, -- Knockback punch
             2, Orders.creepthunderbolt, CastType.TARGET, -- Knockup punch

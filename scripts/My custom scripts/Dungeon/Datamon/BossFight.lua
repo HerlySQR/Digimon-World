@@ -166,10 +166,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 3,
         forceWall = {gg_dest_Dofw_52713},
-        returnPlace = gg_rct_DatamonReturnPlace,
         inner = gg_rct_DatamonInner,
         entrance = gg_rct_DatamonEntrance,
-        toTeleport = gg_rct_DatamonToReturn,
         spells = {
             5, Orders.shadowstrike, CastType.TARGET, -- Homming Missile
             3, Orders.clusterrockets, CastType.POINT, -- Missile Barrage

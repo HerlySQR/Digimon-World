@@ -93,18 +93,13 @@ OnInit(function ()
         end)
     end
 
-    local jailOrder = Orders.ensnare
-    local firePillarOrder = Orders.impale
-
     InitBossFight({
         name = "SkullSatamon",
         boss = boss,
         maxPlayers = 3,
         forceWall = {gg_dest_Dofw_31899},
-        returnPlace = gg_rct_Great_Cannyon_Tp,
         inner = gg_rct_SkullSatamonInner,
         entrance = gg_rct_SkullSatamonEntrance,
-        toTeleport = gg_rct_SkullSatamonToReturn,
         spells = {
             3, Orders.carrionswarm, CastType.POINT, -- Nail bone
             2, Orders.ensnare, CastType.TARGET, -- Jail

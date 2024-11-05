@@ -12,10 +12,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 3,
         forceWall = {gg_dest_Dofv_52788},
-        returnPlace = gg_rct_MeramonReturnPlace,
         inner = gg_rct_MeramonInner,
         entrance = gg_rct_MeramonEntrance,
-        toTeleport = gg_rct_MeramonToReturn,
         spells = {
             4, Orders.thunderclap, CastType.IMMEDIATE, -- Scorching heat
             0, Orders.howlofterror, CastType.IMMEDIATE, -- Melt All

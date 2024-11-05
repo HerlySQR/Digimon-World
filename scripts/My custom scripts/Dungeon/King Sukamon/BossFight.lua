@@ -10,10 +10,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 3,
         forceWall = {gg_dest_Dofv_52792, gg_dest_Dofw_12379},
-        returnPlace = gg_rct_KingSukamonReturnPlace,
         inner = gg_rct_KingSukamonInner,
         entrance = gg_rct_KingSukamonEntrance,
-        toTeleport = gg_rct_KingSukamonToReturn,
         spells = {
             3, Orders.firebolt, CastType.TARGET, -- Generic Missile
             4, Orders.healingward, CastType.POINT, -- Ward of damage

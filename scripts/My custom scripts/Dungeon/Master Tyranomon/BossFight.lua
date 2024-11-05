@@ -11,10 +11,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 2,
         forceWall = {gg_dest_Dofv_12250},
-        returnPlace = gg_rct_MasterTyranomonReturnPlace,
         inner = gg_rct_MasterTyranomonInner,
         entrance = gg_rct_MasterTyranomonEntrance,
-        toTeleport = gg_rct_MasterTyranomonToReturn,
         spells = {
             3, Orders.roar, CastType.IMMEDIATE, -- War cry
             0, 852623, CastType.TARGET, -- Hungry

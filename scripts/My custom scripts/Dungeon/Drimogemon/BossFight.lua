@@ -12,10 +12,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 3,
         forceWall = {gg_dest_Dofv_52787},
-        returnPlace = gg_rct_DrimogemonReturnPlace,
         inner = gg_rct_DrimogemonInner,
         entrance = gg_rct_DrimogemonEntrance,
-        toTeleport = gg_rct_DrimogemonToReturn,
         spells = {
             3, Orders.curse, CastType.TARGET, -- Iron drill spin
             2, Orders.battleroar, CastType.TARGET, -- Missile Dash

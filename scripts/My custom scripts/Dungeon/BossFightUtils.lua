@@ -628,6 +628,12 @@ OnInit("BossFightUtils", function ()
                                     end
                                 end
                             end)
+
+                            EnumItemsInRect(data.toTeleport, nil, function (u)
+                                local l = GetRandomLocInRect(data.returnPlace)
+                                SetItemPositionLoc(GetEnumItem(), l)
+                                SetUnitPositionLoc(u, l)
+                            end)
                         end)
                     end
 

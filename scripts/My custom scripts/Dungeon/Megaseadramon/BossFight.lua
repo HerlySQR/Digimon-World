@@ -11,10 +11,8 @@ OnInit(function ()
         boss = boss,
         maxPlayers = 2,
         forceWall = {gg_dest_Dofw_52791},
-        returnPlace = gg_rct_MegaseadramonReturnPlace,
         inner = gg_rct_MegaseadramonInner,
         entrance = gg_rct_MegaseadramonEntrance,
-        toTeleport = gg_rct_MegaseadramonToReturn,
         spells = {
             2, Orders.chainlightning, CastType.TARGET, -- Great lightning
             2, Orders.frostnova, CastType.TARGET, -- Ice prison
