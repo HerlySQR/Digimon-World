@@ -117,6 +117,8 @@ OnInit("DigimonBank", function ()
     ---@field main Digimon
     ---@field spawnPoint {x: number, y: number}
     ---@field allDead boolean
+    ---@field allDeadTimer timer
+    ---@field allDeadWindow timerdialog
     ---@field savedItems item[]
     ---@field savedItemsStock integer
     ---@field wantItemSlot boolean
@@ -154,6 +156,7 @@ OnInit("DigimonBank", function ()
                 y = GetRectCenterY(gg_rct_Player_1_Spawn)
             },
             allDead = false,
+            allDeadTimer = CreateTimer(),
             savedItemsStock = MIN_SAVED_ITEMS,
             wantItemSlot = false,
             savedItems = {},
@@ -541,6 +544,8 @@ OnInit("DigimonBank", function ()
             bank.caster = CreateUnit(Digimon.PASSIVE, ITEM_BANK_CASTER, WorldBounds.maxX, WorldBounds.maxY, 0)
             bank.seller = CreateUnit(Digimon.PASSIVE, ITEM_BANK_SELLER, WorldBounds.maxX, WorldBounds.maxY, 0)
             bank.buyer = CreateUnit(Digimon.PASSIVE, ITEM_BANK_BUYER, WorldBounds.maxX, WorldBounds.maxY, 0)
+            bank.allDeadWindow = CreateTimerDialog(bank.allDeadTimer)
+            TimerDialogSetTitle(bank.allDeadWindow, "Your digimon revive in:")
         end)
         AddItemToStock(CENTAURMON, REVIVE_DIGIMONS, 1, 1)
     end)
@@ -1984,6 +1989,15 @@ OnInit("DigimonBank", function ()
 
                 bank.spawnPoint.x = GetRectCenterX(gg_rct_Hospital)
                 bank.spawnPoint.y = GetRectCenterY(gg_rct_Hospital)
+
+                TimerStart(bank.allDeadTimer, 15., false, function ()
+                    if p == LocalPlayer then
+                        TimerDialogDisplay(bank.allDeadWindow, false)
+                    end
+                end)
+                if p == LocalPlayer then
+                    TimerDialogDisplay(bank.allDeadWindow, true)
+                end
 
                 Timed.echo(1., 15., function ()
                     if dead:isAlive() then

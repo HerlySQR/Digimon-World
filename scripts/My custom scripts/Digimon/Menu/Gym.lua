@@ -779,12 +779,26 @@ OnInit(function ()
 
             BlzFrameSetText(tooltipText,
                 "|cffDAF7A6Rank level " .. rank .. "|r\n" ..
-                (goldCost > 0 and ("|cff828282Digibits:|r |cffffcc00" .. goldCost .. "|r\n") or "") ..
-                (woodCost > 0 and ("|cff6f2583DigiCrystal:|r |cffffcc00" .. woodCost .. "|r\n") or "") ..
+                (goldCost > 0 and ("     |cffffcc00" .. goldCost .. "|r\n") or "") ..
+                (woodCost > 0 and ("     |cffffcc00" .. woodCost .. "|r\n") or "") ..
                 BlzGetAbilityExtendedTooltip(id, 0))
             BlzFrameSetSize(tooltipText, 0.15, 0)
             BlzFrameSetPoint(tooltip, FRAMEPOINT_TOPLEFT, tooltipText, FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
             BlzFrameSetPoint(tooltip, FRAMEPOINT_BOTTOMRIGHT, tooltipText, FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
+
+            if goldCost > 0 then
+                local digibits = BlzCreateFrameByType("BACKDROP", "digibits", tooltipText, "", 0)
+                BlzFrameSetPoint(digibits, FRAMEPOINT_TOPLEFT, tooltipText, FRAMEPOINT_TOPLEFT, 0.003, -0.0095)
+                BlzFrameSetSize(digibits, 0.01, 0.01)
+                BlzFrameSetTexture(digibits, "ReplaceableTextures\\CommandButtons\\BTNINV_Misc_Coin_04.blp", 0, true)
+            end
+
+            if woodCost > 0 then
+                local digicrytals = BlzCreateFrameByType("BACKDROP", "digicrytals", tooltipText, "", 0)
+                BlzFrameSetPoint(digicrytals, FRAMEPOINT_TOPLEFT, tooltipText, FRAMEPOINT_TOPLEFT, 0.003, -0.0195)
+                BlzFrameSetSize(digicrytals, 0.01, 0.01)
+                BlzFrameSetTexture(digicrytals, "ReplaceableTextures\\CommandButtons\\BTNDraenei Crystals.blp", 0, true)
+            end
 
             BlzFrameSetTooltip(RankShopItemT[i], tooltip)
 
