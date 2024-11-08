@@ -1,3 +1,4 @@
+Debug.beginFile("Add player threat units")
 OnInit(function ()
     Require "Digimon"
     Require "ZTS"
@@ -14,6 +15,12 @@ OnInit(function ()
         end
     end)
 
+    Digimon.evolutionEvent:register(function (new)
+        if GetPlayerController(new:getOwner()) == MAP_CONTROL_USER then
+            ZTS_AddPlayerUnit(new.root)
+        end
+    end)
+
     Digimon.destroyEvent:register(function (old)
         if GetPlayerController(old:getOwner()) == MAP_CONTROL_USER then
             ZTS_RemovePlayerUnit(old.root)
@@ -22,3 +29,4 @@ OnInit(function ()
         end
     end)
 end)
+Debug.endFile()

@@ -4,7 +4,7 @@ OnInit("ModifyThreat", function ()
     Require "AbilityUtils"
 
     local DAMAGE_THREAT_FACTOR = 0.75
-    local SPELL_THREAT_FACTOR = 0.5
+    local SPELL_THREAT_ADD = 100
 
     local abilityThreat = {} ---@type table<integer, number>
     local itemModifiers = __jarray(1) ---@type table<integer, number>
@@ -47,7 +47,7 @@ OnInit("ModifyThreat", function ()
         if IsPlayerInGame(GetOwningPlayer(source)) and not IsPlayerInGame(GetOwningPlayer(target)) then
             local threat = udg_DamageEventAmount
             if udg_IsDamageSpell then
-                threat = threat * SPELL_THREAT_FACTOR
+                threat = threat + SPELL_THREAT_ADD
             else
                 threat = threat * DAMAGE_THREAT_FACTOR
             end
@@ -62,7 +62,7 @@ OnInit("ModifyThreat", function ()
         local id = GetSpellAbilityId()
 
         if abilityThreat[id] and IsPlayerInGame(GetOwningPlayer(source)) then
-            local threat = abilityThreat[id] * SPELL_THREAT_FACTOR
+            local threat = abilityThreat[id]
             local g = ZTS_GetAttackers(source)
             while true do
                 local u = FirstOfGroup(g)

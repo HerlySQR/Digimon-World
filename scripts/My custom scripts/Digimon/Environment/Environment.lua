@@ -514,6 +514,7 @@ OnInit("Environment", function ()
     Environment.map = nil ---@type Environment
     Environment.whamonAnimation = nil ---@type Environment
     Environment.birdramonAnimation = nil ---@type Environment
+    Environment.drimogemonAnimation = nil ---@type Environment
 
     udg_DisplayName = nil
     udg_MapPortion = nil

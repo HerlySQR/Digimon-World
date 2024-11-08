@@ -8,7 +8,9 @@ OnInit(function ()
 
     local WHAMON = FourCC('N009')
     local BIRDRAMON = FourCC('N00F')
-    local DummyID = FourCC('n000')
+    local DRIMOGEMON = FourCC('N00L')
+    local DRIMOGEMON_2 = FourCC('N01A')
+    local DUMMY_ID = FourCC('n000')
 
     local whamonCams = {gg_cam_WhamonCam1, gg_cam_WhamonCam2} ---@type camerasetup[]
     local whamonPos = {CameraSetupGetDestPositionLoc(gg_cam_WhamonCam1), CameraSetupGetDestPositionLoc(gg_cam_WhamonCam2)}
@@ -24,6 +26,9 @@ OnInit(function ()
     CameraSetupSetDestPosition(birdramonCam, CameraSetupGetDestPositionX(gg_cam_BirdramonCam), CameraSetupGetDestPositionY(gg_cam_BirdramonCam) + 100., 0.)
     local birdramonStep = 300 * 0.02
     local birdramonShadow = "ShadowFlyer"
+
+    local drimogemonSound = gg_snd_dril ---@type sound
+    local drimogemonCam = gg_cam_SeeTheMap ---@type camerasetup
 
     OnInit.final(function ()
         ForForce(FORCE_PLAYING, function ()
@@ -96,7 +101,7 @@ OnInit(function ()
             elseif typ == BIRDRAMON then
                 local dir = math.random(2)
 
-                local birdramon = CreateUnitAtLoc(Digimon.PASSIVE, DummyID, birdramonPos, dir == 1 and 90. or 270.)
+                local birdramon = CreateUnitAtLoc(Digimon.PASSIVE, DUMMY_ID, birdramonPos, dir == 1 and 90. or 270.)
                 if p == LocalPlayer then
                     BlzSetUnitSkin(birdramon, BIRDRAMON)
                 end
@@ -123,7 +128,7 @@ OnInit(function ()
 
                 PolledWait(1.)
 
-                local shadow = CreateUnit(Digimon.PASSIVE, DummyID, d:getX(), d:getY(), bj_UNIT_FACING)
+                local shadow = CreateUnit(Digimon.PASSIVE, DUMMY_ID, d:getX(), d:getY(), bj_UNIT_FACING)
                 BlzSetUnitStringField(shadow, UNIT_SF_SHADOW_IMAGE_UNIT, birdramonShadow)
                 local size = -75.
                 Timed.echo(0.02, 2., function ()
@@ -133,6 +138,17 @@ OnInit(function ()
                 end, function ()
                     RemoveUnit(shadow)
                 end)
+            elseif typ == DRIMOGEMON or typ == DRIMOGEMON_2 then
+                if p == LocalPlayer then
+                    inTran = true
+                    StartSound(drimogemonSound)
+                    SaveCameraSetup()
+                    HideMenu(true)
+                    EnableUserControl(false)
+                    CameraSetupApplyForceDuration(drimogemonCam, true, 0.)
+                end
+                Environment.drimogemonAnimation:apply(p, true)
+                PolledWait(1.)
             end
             Environment.apply(envName, p, true)
             if p == LocalPlayer then

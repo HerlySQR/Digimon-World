@@ -88,7 +88,7 @@ OnInit("Hotkeys", function ()
                 BlzTriggerRegisterPlayerKeyEvent(t, GetEnumPlayer(), oskeyFromName[hotkey], 0, true)
             end)
             TriggerAddAction(t, function ()
-                if GetTriggerPlayer() == LocalPlayer then
+                if GetTriggerPlayer() == LocalPlayer and BlzFrameIsVisible(frame) then
                     BlzFrameClick(frame)
                 end
             end)

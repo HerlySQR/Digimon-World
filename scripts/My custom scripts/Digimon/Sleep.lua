@@ -61,6 +61,12 @@ OnInit(function ()
         end
     end)
 
+    Digimon.evolutionEvent:register(function (d)
+        if d:getOwner() ~= Digimon.CITY and d:getOwner() ~= Digimon.PASSIVE then
+            d:addAbility(SLEEP)
+        end
+    end)
+
     -- Remove the evolution ability to destroyed digimon
     Digimon.destroyEvent:register(function (old)
         old:removeAbility(SLEEP)
