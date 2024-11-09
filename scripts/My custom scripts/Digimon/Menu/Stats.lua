@@ -223,11 +223,16 @@ OnInit("Stats", function ()
                         BlzFrameSetText(StatsEvasion[i], d.evasionChance .. "\x25")
 
                         local l = GetHeroLevel(u)
-                        if l < 99 then
+
+                        if (d.rank == Rank.ROOKIE and l >= udg_MAX_ROOKIE_LVL)
+                            or (d.rank == Rank.CHAMPION and l >= udg_MAX_CHAMPION_LVL)
+                            or (d.rank == Rank.ULTIMATE and l >= udg_MAX_ULTIMATE_LVL)
+                            or (d.rank == Rank.MEGA and l >= udg_MAX_MEGA_LVL) then
+
+                            BlzFrameSetVisible(StatsExp[i], false)
+                        else
                             BlzFrameSetText(StatsExp[i], "|cff7fb0b0" .. (GetHeroXP(u) - exps[l-1]) .."|r")
                             BlzFrameSetText(StatsMaxExp[i], "|cff7fb0b0" .. reqExps[l] .."|r")
-                        else
-                            BlzFrameSetVisible(StatsExp[i], false)
                         end
                     else
                         name = GetObjectName(GetUnitTypeId(u))

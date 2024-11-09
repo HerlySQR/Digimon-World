@@ -279,6 +279,13 @@ OnInit("Digimon", function ()
         if l < oldLevel then
             UnitStripHeroLevel(self.root, oldLevel - l)
         elseif l > oldLevel then
+            if (self.rank == Rank.ROOKIE and oldLevel >= udg_MAX_ROOKIE_LVL)
+                or (self.rank == Rank.CHAMPION and oldLevel >= udg_MAX_CHAMPION_LVL)
+                or (self.rank == Rank.ULTIMATE and oldLevel >= udg_MAX_ULTIMATE_LVL)
+                or (self.rank == Rank.MEGA and oldLevel >= udg_MAX_MEGA_LVL) then
+
+                return
+            end
             SetHeroLevel(self.root, l, false)
         end
     end
@@ -290,6 +297,17 @@ OnInit("Digimon", function ()
 
     ---@param e integer
     function Digimon:setExp(e)
+        if GetHeroXP(self.root) < e then
+            local oldLevel = GetHeroLevel(self.root)
+
+            if (self.rank == Rank.ROOKIE and oldLevel >= udg_MAX_ROOKIE_LVL)
+                or (self.rank == Rank.CHAMPION and oldLevel >= udg_MAX_CHAMPION_LVL)
+                or (self.rank == Rank.ULTIMATE and oldLevel >= udg_MAX_ULTIMATE_LVL)
+                or (self.rank == Rank.MEGA and oldLevel >= udg_MAX_MEGA_LVL) then
+
+                return
+            end
+        end
         SetHeroXP(self.root, e, true)
     end
 

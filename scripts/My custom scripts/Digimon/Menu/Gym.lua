@@ -204,6 +204,18 @@ OnInit(function ()
                         DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", d:getPos()))
                         info.digimonsInArena:addSingle(d)
                         d:setLevel(self.level)
+                        local act = 0
+                        for _ = 1, self.level do
+                            act = act + 1
+                            if act == 1 then
+                                SelectHeroSkill(d.root, udg_STAMINA_TRAINING)
+                            elseif act == 2 then
+                                SelectHeroSkill(d.root, udg_DEXTERITY_TRAINING)
+                            else
+                                SelectHeroSkill(d.root, udg_WISDOM_TRAINING)
+                                act = 0
+                            end
+                        end
                         d:pause()
                         table.insert(paused, d)
                         d:setIV(15, 15, 15)
@@ -1039,29 +1051,12 @@ OnInit(function ()
         Timed.echo(0.5, function ()
             ForceClear(WannaPvP)
             ForUnitsInRect(LOBBY, function (u)
-                if UnitHasItemOfTypeBJ(u, PVP_TICKET) then
+                if IsPlayerInGame(GetOwningPlayer(u)) then
                     ForceAddPlayer(WannaPvP, GetOwningPlayer(u))
                 end
             end)
         end)
     end)
-
-    do
-        local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_USE_ITEM)
-        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == PVP_TICKET end))
-        TriggerAddAction(t, function ()
-            local p = GetOwningPlayer(GetManipulatingUnit())
-            if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
-                ErrorMessage("You can only use this ticket in the gym lobby.", p)
-                return
-            end
-            AddPlayers(p)
-            if not PlayerOptions[p]:isEmpty() then
-                DialogDisplay(p, SelectPlayer[p], true)
-            end
-        end)
-    end
 
     do
         local t = CreateTrigger()
@@ -1366,26 +1361,37 @@ OnInit(function ()
     do
         local t = CreateTrigger()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == ARENA_TICKET end))
+        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == ARENA_TICKET or GetItemTypeId(GetManipulatedItem()) == PVP_TICKET end))
         TriggerAddAction(t, function ()
             local p = GetOwningPlayer(GetManipulatingUnit())
-            local gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-            local requiredGold = 50 + 50 * GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED)
-            if requiredGold > gold then
-                ErrorMessage("You don't have enough digibits.", p)
-                return
+            if GetItemTypeId(GetManipulatedItem()) == ARENA_TICKET then
+                local gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
+                local requiredGold = 50 + 50 * GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED)
+                if requiredGold > gold then
+                    ErrorMessage("You don't have enough digibits.", p)
+                    return
+                end
+                SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, gold - requiredGold)
+                if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
+                    ErrorMessage("You can only use this ticket in the gym lobby.", p)
+                    return
+                end
+                local i = GetFreeArena()
+                if not i then
+                    DisplayTextToPlayer(p, 0, 0, "All the arenas are being used, you have to wait until they are free.")
+                    return
+                end
+                StartFight(p, Digimon.VILLAIN, i)
+            elseif GetItemTypeId(GetManipulatedItem()) == PVP_TICKET then
+                if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
+                    ErrorMessage("You can only use this ticket in the gym lobby.", p)
+                    return
+                end
+                AddPlayers(p)
+                if not PlayerOptions[p]:isEmpty() then
+                    DialogDisplay(p, SelectPlayer[p], true)
+                end
             end
-            SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, gold - requiredGold)
-            if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
-                ErrorMessage("You can only use this ticket in the gym lobby.", p)
-                return
-            end
-            local i = GetFreeArena()
-            if not i then
-                DisplayTextToPlayer(p, 0, 0, "All the arenas are being used, you have to wait until they are free.")
-                return
-            end
-            StartFight(p, Digimon.VILLAIN, i)
         end)
     end
 
