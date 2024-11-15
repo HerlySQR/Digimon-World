@@ -80,8 +80,7 @@ OnInit("GetMainSelectedUnit", function ()
     end
 
     --init
-    local console = BlzGetFrameByName("ConsoleUI", 0)
-    local bottomUI = BlzFrameGetChild(console, 1)
+    local bottomUI = BlzFrameGetParent(BlzGetFrameByName("SimpleInfoPanelUnitDetail", 0))
     local groupframe = BlzFrameGetChild(bottomUI, 5)
     --globals
     containerFrame = BlzFrameGetChild(groupframe, 0)

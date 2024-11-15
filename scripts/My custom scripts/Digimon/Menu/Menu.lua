@@ -27,6 +27,7 @@ OnInit("Menu", function ()
     local CommandButtonBackDrop = nil ---@type framehandle
     local CommandButton = {} ---@type framehandle[]
     local TopbarBackdrop = nil ---@type framehandle
+    local TextLength = nil ---@type framehandle
 
     local onChangeDimensions = EventListener.create()
     local windowWidth = 1400
@@ -259,6 +260,14 @@ OnInit("Menu", function ()
 
         BlzHideOriginFrames(true)
 
+        -- Reforged 2.0 Fix
+        TopbarBackdrop = BlzGetFrameByName("ConsoleTopBar", 0)
+        BlzFrameSetVisible(TopbarBackdrop, false)
+        BlzFrameSetParent(BlzGetFrameByName("CommandBarFrame", 0), BlzGetFrameByName("ConsoleUI", 0))
+        BlzFrameSetParent(BlzFrameGetParent(BlzGetFrameByName("SimpleInfoPanelUnitDetail", 0)), BlzGetFrameByName("ConsoleUI", 0))
+        BlzFrameSetParent(BlzGetOriginFrame(ORIGIN_FRAME_UBERTOOLTIP , 0), BlzGetFrameByName("ConsoleUI", 0))
+        BlzFrameSetVisible(BlzGetFrameByName("ConsoleBottomBar", 0), false)
+
         -- Hide bottom-center black backdrop
         BlzFrameSetSize(Console, 0.0001, 0.0001)
         -- Show Quests/Menu/Chat/Allies buttons
@@ -273,9 +282,9 @@ OnInit("Menu", function ()
         Clock = BlzFrameGetChild(BlzFrameGetChild(BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 5),0)
         BlzFrameSetVisible(Clock, true)
 
-        TopbarBackdrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
+        --[[TopbarBackdrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
         BlzFrameSetAbsPoint(TopbarBackdrop, FRAMEPOINT_TOPLEFT, -0.0150000, 0.670000)
-        BlzFrameSetAbsPoint(TopbarBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.815000, 0.565000)
+        BlzFrameSetAbsPoint(TopbarBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.815000, 0.565000)]]
 
         -- Move minimap
         MinimapBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
@@ -382,6 +391,10 @@ OnInit("Menu", function ()
                 return true
             end
         end)
+
+        -- To get text length
+        TextLength = BlzCreateFrameByType("TEXT", "name", Console, "", 0)
+        BlzFrameSetVisible(TextLength, false)
     end)
 
     local rightButtons = {} ---@type framehandle[]
@@ -455,6 +468,14 @@ OnInit("Menu", function ()
         end
         oldSelectUnit(whichUnit, flag)
     end)
+
+    ---@param s string
+    ---@return number
+    function GetStringFrameLength(s)
+        BlzFrameSetText(TextLength, s)
+        BlzFrameSetSize(TextLength, 0, 0.01)
+        return BlzFrameGetWidth(TextLength)
+    end
 
     --[[local t = CreateTrigger()
     for i = 0, bj_MAX_PLAYERS do

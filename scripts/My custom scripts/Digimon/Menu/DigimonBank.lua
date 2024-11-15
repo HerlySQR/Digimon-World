@@ -1108,19 +1108,20 @@ OnInit("DigimonBank", function ()
     local function SummonADigimonFunc()
         local p = GetTriggerPlayer()
         local bank = Bank[GetPlayerId(p)]
+        local oldPressed = bank.pressed
+        bank.pressed = -1
         if p == LocalPlayer then
             if not BlzFrameIsVisible(StockedDigimonsMenu) then
                 BlzFrameSetVisible(StockedDigimonsMenu, true)
-                UpdateMenu()
                 AddButtonToEscStack(SummonADigimon)
             else
                 BlzFrameSetVisible(StockedDigimonsMenu, false)
-                BlzFrameSetVisible(DigimonTUsed[bank.pressed], false)
-                BlzFrameSetVisible(DigimonTSelected[bank.pressed], false)
                 RemoveButtonFromEscStack(SummonADigimon)
             end
+            BlzFrameSetVisible(DigimonTUsed[oldPressed], false)
+            BlzFrameSetVisible(DigimonTSelected[oldPressed], false)
+            UpdateMenu()
         end
-        bank.pressed = -1
     end
 
     local function SummonFunc()
@@ -2000,9 +2001,13 @@ OnInit("DigimonBank", function ()
                 end
 
                 Timed.echo(1., 15., function ()
-                    if dead:isAlive() then
-                        bank.allDead = false
-                        return true
+                    for _, d in ipairs(bank.priorities) do
+                        if d:isAlive() and not d:isHidden() then
+                            bank.allDead = false
+                            PauseTimer(bank.allDeadTimer)
+                            TimerDialogDisplay(bank.allDeadWindow, false)
+                            return true
+                        end
                     end
                 end, function ()
                     if dead:getTypeId() == 0 then
@@ -2055,6 +2060,10 @@ OnInit("DigimonBank", function ()
             else
                 DestroyEffect(AddSpecialEffect(CENTAURMON_REVIVE_EFF, GetUnitX(CENTAURMON), GetUnitY(CENTAURMON)))
             end
+
+            if p == LocalPlayer then
+                UpdateMenu()
+            end
         end)
     end
 
@@ -2087,6 +2096,7 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetVisible(StockedDigimonsMenu, false)
                 RemoveButtonFromEscStack(SummonADigimon)
             end
+            UpdateMenu()
         end
     end
 

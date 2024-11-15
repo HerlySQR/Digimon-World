@@ -170,6 +170,9 @@ OnInit("Stats", function ()
 
     local function StatsButtonFunc()
         local p = GetTriggerPlayer()
+        if not GetUsedDigimons(p)[1] then
+            return
+        end
         if p == LocalPlayer then
             allVisible = not allVisible
             changeVisible = true

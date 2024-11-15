@@ -538,6 +538,7 @@ OnInit("Damage", function() Damage = {}
     t1 = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(t1, EVENT_PLAYER_UNIT_DAMAGING)
     TriggerAddCondition(t1, Filter(function()
+        pcall(function ()
         local d = createFromEvent()
         --print("Pre-damage event running for " .. GetUnitName(GetTriggerUnit()))
         if alarmSet then
@@ -568,6 +569,7 @@ OnInit("Damage", function() Damage = {}
             alarmSet = true
             Timed.call(
             function()
+                pcall(function ()
                 alarmSet, dreaming = nil, nil
                 Damage.enable(true)
                 if totem then
@@ -580,6 +582,7 @@ OnInit("Damage", function() Damage = {}
                 onAOEEnd()
                 current = nil
                 --print("Timer wrapped up")
+                end)
             end)
             if _USE_EXTRA then
                 originalSource  = d.source
@@ -593,11 +596,13 @@ OnInit("Damage", function() Damage = {}
             finish()
         end
         totem = not lastInstance or attacksImmune[d.attackType] or damagesImmune[d.damageType] or not CheckUnitType(d.target, UNIT_TYPE_MAGIC_IMMUNE)
+        end)
     end))
     
     t2 = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(t2, EVENT_PLAYER_UNIT_DAMAGED)
     TriggerAddCondition(t2, Filter(function()
+        pcall(function ()
         if not current then
             return
         end
@@ -644,6 +649,7 @@ OnInit("Damage", function() Damage = {}
         SetEventDamage(d.damage)
         eventsRun = true
         if d.damage == 0.00 then finish() end
+        end)
     end))
     
     --Call to enable recursive damage on your trigger.
@@ -670,8 +676,10 @@ OnInit("Damage", function() Damage = {}
     t3 = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(t3, EVENT_PLAYER_UNIT_DAMAGING)
     TriggerAddCondition(t3, Filter(function()
+        pcall(function ()
         addRecursive(createFromEvent(true))
         SetEventDamage(0.00)
+        end)
     end))
     disableT(t3)
     

@@ -789,12 +789,18 @@ OnInit(function ()
             BlzFrameSetScale(tooltipText, 1.00)
             BlzFrameSetTextAlignment(tooltipText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
+            local extraLength = 0
+            if goldCost > 0 and woodCost > 0 then
+                extraLength = GetStringFrameLength("     " .. goldCost)
+            end
+
             BlzFrameSetText(tooltipText,
-                "|cffDAF7A6Rank level " .. rank .. "|r\n" ..
-                (goldCost > 0 and ("     |cffffcc00" .. goldCost .. "|r\n") or "") ..
-                (woodCost > 0 and ("     |cffffcc00" .. woodCost .. "|r\n") or "") ..
+                "|cffffcc00" .. GetObjectName(id) .. "|r | |cffDAF7A6Rank level " .. rank .. "|r\n" ..
+                (goldCost > 0 and ("     |cffffcc00" .. goldCost .. "|r") or "") ..
+                (woodCost > 0 and ("     |cffffcc00" .. woodCost .. "|r") or "") ..
+                "\n" ..
                 BlzGetAbilityExtendedTooltip(id, 0))
-            BlzFrameSetSize(tooltipText, 0.15, 0)
+            BlzFrameSetSize(tooltipText, 0.18, 0)
             BlzFrameSetPoint(tooltip, FRAMEPOINT_TOPLEFT, tooltipText, FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
             BlzFrameSetPoint(tooltip, FRAMEPOINT_BOTTOMRIGHT, tooltipText, FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
 
@@ -807,7 +813,7 @@ OnInit(function ()
 
             if woodCost > 0 then
                 local digicrytals = BlzCreateFrameByType("BACKDROP", "digicrytals", tooltipText, "", 0)
-                BlzFrameSetPoint(digicrytals, FRAMEPOINT_TOPLEFT, tooltipText, FRAMEPOINT_TOPLEFT, 0.003, -0.0195)
+                BlzFrameSetPoint(digicrytals, FRAMEPOINT_TOPLEFT, tooltipText, FRAMEPOINT_TOPLEFT, 0.0035 + extraLength, -0.0095)
                 BlzFrameSetSize(digicrytals, 0.01, 0.01)
                 BlzFrameSetTexture(digicrytals, "ReplaceableTextures\\CommandButtons\\BTNDraenei Crystals.blp", 0, true)
             end
@@ -1087,12 +1093,14 @@ OnInit(function ()
                 AddPlayers(GetEnumPlayer())
             end)
 
-            for _, d in ipairs(GetUsedDigimons(p1)) do
-                StoreToBank(p1, d, true)
+            local list = GetUsedDigimons(p1)
+            for i = #list, 1, -1 do
+                StoreToBank(p1, list[i], true)
             end
 
-            for _, d in ipairs(GetUsedDigimons(p2)) do
-                StoreToBank(p2, d, true)
+            list = GetUsedDigimons(p2)
+            for i = #list, 1, -1 do
+                StoreToBank(p2, list[i], true)
             end
 
             SetPlayerAllianceStateBJ(p1, p2, bj_ALLIANCE_UNALLIED)
@@ -1213,8 +1221,9 @@ OnInit(function ()
                 AddPlayers(GetEnumPlayer())
             end)
 
-            for _, d in ipairs(GetUsedDigimons(p1)) do
-                StoreToBank(p1, d, true)
+            local list = GetUsedDigimons(p1)
+            for i = #list, 1, -1 do
+                StoreToBank(p1, list[i], true)
             end
 
             EnablePvP(p1, p2)
@@ -1339,18 +1348,6 @@ OnInit(function ()
                             DisplayTextToPlayer(LocalPlayer, 0, 0, "All the arenas are being used, you have to wait until they are free.")
                         end
                         return
-                    end
-                    for _, d in ipairs(GetUsedDigimons(p)) do
-                        if UnitHasItemOfTypeBJ(d.root, PVP_TICKET) then
-                            RemoveItem(GetItemOfTypeFromUnitBJ(d.root, PVP_TICKET))
-                            break
-                        end
-                    end
-                    for _, d in ipairs(GetUsedDigimons(toFight)) do
-                        if UnitHasItemOfTypeBJ(d.root, PVP_TICKET) then
-                            RemoveItem(GetItemOfTypeFromUnitBJ(d.root, PVP_TICKET))
-                            break
-                        end
                     end
                     StartFight(p, toFight, i)
                 end
