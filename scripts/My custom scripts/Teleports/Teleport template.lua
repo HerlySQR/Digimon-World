@@ -35,13 +35,7 @@ OnInit(function ()
                 d.environment = innerEnv
             end
 
-            local list = GetUsedDigimons(p)
-            for i = #list, 1, -1 do
-                local d2 = list[i]
-                if d2 ~= d then
-                    StoreToBank(p, d2, true)
-                end
-            end
+            StoreAllDigimons(p, true, d)
 
             if innerEnv:apply(p, true) and p == LocalPlayer then
                 PanCameraToTimed(enterX, enterY, 0)
@@ -70,13 +64,7 @@ OnInit(function ()
                     d.environment = outerEnv
                 end
 
-                local list = GetUsedDigimons(p)
-                for i = #list, 1, -1 do
-                    local d2 = list[i]
-                    if d2 ~= d then
-                        StoreToBank(p, d2, true)
-                    end
-                end
+                StoreAllDigimons(p, true, d)
 
                 if outerEnv:apply(p, true) and p == LocalPlayer then
                     PanCameraToTimed(leaveX, leaveY, 0)

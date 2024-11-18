@@ -1,45 +1,71 @@
 if Debug then Debug.beginFile("Obj2Str") end
 OnInit("Obj2Str", function ()
-    Require "Wc3Type" -- https://www.hiveworkshop.com/threads/debug-utils-ingame-console-etc.330758/
+    Require "UnitEnterEvent"
+    Require "AddHook"
 
     local MAX_DEPTH = 99
-    local h = InitHashtable()
+    local handle2Int = setmetatable({}, {__mode = 'k'}) ---@type table<handle, integer>
+    local int2Handle = setmetatable({}, {__mode = 'v'}) ---@type table<integer, handle>
+    local recycle = __jarray(0) ---@type table<integer, integer>
+    local instanceCount = 0
 
-    ---I do it in this way, because I can't get a general conversion to all these types
-    local Names = {
-        player = "Player",
-        unit = "Unit",
-        destructable = "Destructable",
-        item = "Item",
-        ability = "Ability",
-        force = "Force",
-        group = "Group",
-        trigger = "Trigger",
-        timer = "Timer",
-        location = "Location",
-        region = "Region",
-        rect = "Rect",
-        sound = "Sound",
-        effect = "Effect",
-        fogmodifier = "FogModifier",
-        dialog = "Dialog",
-        button = "Button",
-        timerdialog = "TimerDialog",
-        leaderboard = "Leaderboard",
-        multiboard = "Multiboard",
-        texttag = "TextTag",
-        lightning = "Lightning",
-        image = "Image",
-        ubersplat = "Ubersplat",
-        hashtable = "Hashtable",
-        framehandle = "Frame"
-    }
-
-    setmetatable(Names, {
-        __index = function (t, k)
-            error("Invalid string id: " .. k, 2)
+    ---@param h handle
+    local function allocate(h)
+        if handle2Int[h] then
+            return
         end
-    })
+
+        local new
+
+        if recycle[0] == 0 then
+            instanceCount = instanceCount + 1
+            new = instanceCount
+        else
+            new = recycle[0]
+            recycle[0] = recycle[recycle[0]]
+        end
+
+        handle2Int[h] = new
+        int2Handle[new] = h
+    end
+
+    ---@param h handle
+    local function deallocate(h)
+        if not handle2Int[h] then
+            return
+        end
+
+        local old = handle2Int[h]
+
+        recycle[old] = recycle[0]
+        recycle[0] = old
+
+        int2Handle[handle2Int[h]] = nil
+        handle2Int[h] = nil
+    end
+
+    ---@param f string
+    local function hookAlloc(f)
+        local oldf
+        oldf = AddHook(f, function (...)
+            local h = oldf(...)
+            allocate(h)
+            return h
+        end)
+    end
+
+    ---@param f string
+    local function hookDealloc(f)
+        local oldf
+        oldf = AddHook(f, function (...)
+            local h = oldf(...)
+            allocate(h)
+            return h
+        end)
+    end
+
+    OnUnitEnter(allocate)
+    OnUnitLeave(deallocate)
 
     ---@param t table
     ---@param depth integer
@@ -77,7 +103,7 @@ OnInit("Obj2Str", function ()
         elseif typ == "table" then
             return Tab2Str(o, 0)
         elseif typ == "userdata" then
-            return Wc3Type(o) .. ": " .. GetHandleId(o)
+            return "handle: " .. handle2Int[o]
         end
         error("Invalid object type", 2)
     end
@@ -160,10 +186,7 @@ OnInit("Obj2Str", function ()
             end
             return result
         else
-            local func = _G["Load" .. Names[typ] .. "Handle"]
-
-            SaveFogStateHandle(h, 0, 0, ConvertFogState(tonumber(value)))
-            return func(h, 0, 0)
+            return int2Handle[math.tointeger(value)]
         end
     end
 

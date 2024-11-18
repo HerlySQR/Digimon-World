@@ -1093,15 +1093,8 @@ OnInit(function ()
                 AddPlayers(GetEnumPlayer())
             end)
 
-            local list = GetUsedDigimons(p1)
-            for i = #list, 1, -1 do
-                StoreToBank(p1, list[i], true)
-            end
-
-            list = GetUsedDigimons(p2)
-            for i = #list, 1, -1 do
-                StoreToBank(p2, list[i], true)
-            end
+            StoreAllDigimons(p1, true)
+            StoreAllDigimons(p2, true)
 
             SetPlayerAllianceStateBJ(p1, p2, bj_ALLIANCE_UNALLIED)
             SetPlayerAllianceStateBJ(p2, p1, bj_ALLIANCE_UNALLIED)
@@ -1221,10 +1214,7 @@ OnInit(function ()
                 AddPlayers(GetEnumPlayer())
             end)
 
-            local list = GetUsedDigimons(p1)
-            for i = #list, 1, -1 do
-                StoreToBank(p1, list[i], true)
-            end
+            StoreAllDigimons(p1, true)
 
             EnablePvP(p1, p2)
 

@@ -55,6 +55,7 @@ OnInit.final(function ()
     ---@param tr Transmission
     ---@param p player
     local function enquequeTransmission(tr, p)
+        idle[p] = 20
         if not queue[p] then
             queue[p] = {}
         end
@@ -167,7 +168,6 @@ OnInit.final(function ()
 
     ---@param p player
     local function AddCompletedTutorial(p)
-        idle[p] = 20
         tutorialsDone[p] = tutorialsDone[p] + 1
         if tutorialsDone[p] >= MAX_TUTORIALS then
             local tr = Transmission.create(Force(p))
@@ -360,7 +360,7 @@ OnInit.final(function ()
                         else
                             local options = {}
                             if not restaurantEnter[p] then
-                                table.insert(options, "The restaurant sells delicious and very useful food, let's go check it")
+                                table.insert(options, "The restaurant sells delicious and very usefu food, let's go check it")
                             end
                             if not shopEnter[p] then
                                 table.insert(options, "You can buy powerful items in the shop, let's go check it!")
@@ -643,7 +643,6 @@ OnInit.final(function ()
                 if not equipPicked[p] then
                     equipPicked[p] = true
                     local pixie = piximons[p]
-                    d:pause()
 
                     local tr = Transmission.create(Force(p))
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "This is an equipment.", Transmission.SET, 2., true)
@@ -663,7 +662,6 @@ OnInit.final(function ()
                             ShowStats(p)
                         end
                         AddCompletedTutorial(p)
-                        d:unpause()
                         ClearShops(d:getPos())
                     end)
                     enquequeTransmission(tr, p)
@@ -693,11 +691,11 @@ OnInit.final(function ()
             Timed.call(0.5, function ()
                 local tr = Transmission.create(Force(p))
                 if not restaurantEnter[p] then
-                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can find many Merchant digimons selling many usefull items!", Transmission.SET, 4., true)
+                    tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "You can find many Merchant digimons selling many useful items!", Transmission.SET, 4., true)
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Of course you need digibits to buy it.", Transmission.SET, 3., true)
                 end
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the Item shop you can buy equipment, disks and other usefull stuff.", Transmission.SET, 4., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "All those items can be very usefull sooner or later!", Transmission.SET, 3., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the Item shop you can buy equipment, disks and other useful stuff.", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "All those items can be very useful sooner or later!", Transmission.SET, 3., true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
@@ -740,7 +738,7 @@ OnInit.final(function ()
                     tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Yes, you need to pay for those services!", Transmission.SET, 3., true)
                 end
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In the restaurant they sell you food or drinks that buffs you for 30 min.", Transmission.SET, 4., true)
-                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Very Usefull! But you can only have one drink and one food at a time.", Transmission.SET, 4., true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Very useful! But you can only have one drink and one food at a time.", Transmission.SET, 4., true)
                 tr:AddEnd(function ()
                     dequequeTransmission(p)
                     if d:getTypeId() == 0 then
