@@ -384,6 +384,7 @@ OnInit(function ()
                         notNeutral = false
                     end
                     ShowBank(info.p, true)
+                    ShowBackpack(info.p, true)
                     if i > 1 then
                         DisablePvP(info.p, self.pi[i-1].p)
                     end
@@ -1080,6 +1081,8 @@ OnInit(function ()
     local function StartFight(p1, p2, arena)
         ShowBank(p1, false)
         ShowBank(p2, false)
+        ShowBackpack(p1, false)
+        ShowBackpack(p2, false)
         PunishPlayer(p1, false)
         PunishPlayer(p2, false)
         if p2 ~= Digimon.VILLAIN then
