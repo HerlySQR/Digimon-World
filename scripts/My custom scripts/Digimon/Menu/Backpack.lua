@@ -490,9 +490,11 @@ OnInit("Backpack", function ()
         TriggerAddAction(t, BackpackFunc)
 
         BackpackSprite =  BlzCreateFrameByType("SPRITE", "BackpackSprite", Backpack, "", 0)
-        BlzFrameSetAllPoints(BackpackSprite, Backpack)
         BlzFrameSetModel(BackpackSprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
-        BlzFrameSetScale(BackpackSprite, BlzFrameGetWidth(BackpackSprite)/0.039)
+        BlzFrameClearAllPoints(BackpackSprite)
+        BlzFrameSetPoint(BackpackSprite, FRAMEPOINT_BOTTOMLEFT, Backpack, FRAMEPOINT_BOTTOMLEFT, -0.00125, -0.00375)
+        BlzFrameSetSize(BackpackSprite, 0.00001, 0.00001)
+        BlzFrameSetScale(BackpackSprite, 1.25)
         BlzFrameSetVisible(BackpackSprite, false)
 
         BackpackMenu = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
@@ -747,6 +749,10 @@ OnInit("Backpack", function ()
         if gotItem[p] or bypass then
             if p == LocalPlayer then
                 BlzFrameSetVisible(Backpack, flag)
+                if not flag and BlzFrameIsVisible(BackpackMenu) then
+                    BlzFrameSetVisible(BackpackMenu, false)
+                    RemoveButtonFromEscStack(Backpack)
+                end
             end
             if bypass then
                 gotItem[p] = true

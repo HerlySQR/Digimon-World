@@ -84,6 +84,7 @@ OnInit("Stats", function ()
     local StatsItemTooltipText = {} ---@type framehandle[][]
     local StatsItemDrop = nil ---@type framehandle
     local FocusedUnit = nil ---@type framehandle
+    local SelectedHero = {} ---@type framehandle[]
     local HeroButtons = {} ---@type framehandle[]
     local HeroBuffs = {} ---@type framehandle[][]
 
@@ -359,14 +360,13 @@ OnInit("Stats", function ()
             local pos = GetDigimonPosition(LocalPlayer, Digimon.getInstance(u))
             BlzFrameSetVisible(FocusedUnit, true)
             BlzFrameClearAllPoints(FocusedUnit)
-            BlzFrameSetPoint(FocusedUnit, FRAMEPOINT_BOTTOMLEFT, HeroButtons[pos], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
-            --BlzFrameSetAllPoints(FocusedUnit, HeroButtons[pos])
+            BlzFrameSetPoint(FocusedUnit, FRAMEPOINT_BOTTOMLEFT, HeroButtons[pos-1], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
         else
             BlzFrameSetVisible(FocusedUnit, false)
         end
 
-        for i = 1, 3 do
-            local d = list[i]
+        for i = 0, 2 do
+            local d = list[i+1]
             if d then
                 local j = 0
                 local index = 0
@@ -385,10 +385,12 @@ OnInit("Stats", function ()
                     end
                     index = index + 1
                 end
+                BlzFrameSetVisible(SelectedHero[i], u ~= d.root and IsUnitSelected(d.root, LocalPlayer))
             else
                 for j = 0, 7 do
                     BlzFrameSetVisible(HeroBuffs[i][j], false)
                 end
+                BlzFrameSetVisible(SelectedHero[i], false)
             end
         end
     end)
@@ -741,8 +743,8 @@ OnInit("Stats", function ()
             BlzFrameSetVisible(StatsItemDrop, false)
         end
 
-        for i = 1, 3 do
-            HeroButtons[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i-1)
+        for i = 0, 2 do
+            HeroButtons[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i)
 
             HeroBuffs[i] = {}
             for j = 0, 7 do
@@ -751,6 +753,15 @@ OnInit("Stats", function ()
                 BlzFrameSetSize(HeroBuffs[i][j], 0.0125, 0.0125)
                 BlzFrameSetVisible(HeroBuffs[i][j], false)
             end
+
+            SelectedHero[i] = BlzCreateFrameByType("SPRITE", "SelectedUnit[" .. i .. "]", HeroButtons[i], "", 0)
+            BlzFrameSetModel(SelectedHero[i], "war3mapImported\\cyber_call_sprite.mdx", 0)
+            BlzFrameClearAllPoints(SelectedHero[i])
+            BlzFrameSetPoint(SelectedHero[i], FRAMEPOINT_BOTTOMLEFT, HeroButtons[i], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
+            BlzFrameSetSize(SelectedHero[i], 0.00001, 0.00001)
+            BlzFrameSetScale(SelectedHero[i], 0.75)
+            BlzFrameSetLevel(SelectedHero[i], 10)
+            BlzFrameSetVisible(SelectedHero[i], false)
         end
 
         FocusedUnit = BlzCreateFrameByType("SPRITE", "FocusedUnit", HeroButtons[0], "", 0)
@@ -759,6 +770,7 @@ OnInit("Stats", function ()
         BlzFrameSetPoint(FocusedUnit, FRAMEPOINT_BOTTOMLEFT, HeroButtons[0], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
         BlzFrameSetSize(FocusedUnit, 0.00001, 0.00001)
         BlzFrameSetScale(FocusedUnit, 0.75)
+        BlzFrameSetLevel(FocusedUnit, 5)
         BlzFrameSetVisible(FocusedUnit, false)
     end)
 

@@ -406,9 +406,11 @@ OnInit("Environment", function ()
         TriggerAddAction(t, SeeMapFunc)
 
         Sprite = BlzCreateFrameByType("SPRITE", "Sprite", SeeMap, "", 0)
-        BlzFrameSetAllPoints(Sprite, SeeMap)
         BlzFrameSetModel(Sprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
-        BlzFrameSetScale(Sprite, BlzFrameGetWidth(Sprite)/0.039)
+        BlzFrameClearAllPoints(Sprite)
+        BlzFrameSetPoint(Sprite, FRAMEPOINT_BOTTOMLEFT, SeeMap, FRAMEPOINT_BOTTOMLEFT, -0.00125, -0.00375)
+        BlzFrameSetSize(Sprite, 0.00001, 0.00001)
+        BlzFrameSetScale(Sprite, 1.25)
         BlzFrameSetVisible(Sprite, false)
 
         MapBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), "", 1)

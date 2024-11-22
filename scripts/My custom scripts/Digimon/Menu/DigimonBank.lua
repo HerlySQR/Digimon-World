@@ -819,6 +819,9 @@ OnInit("DigimonBank", function ()
             BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, DigimonTTooltipText[i], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
             BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, DigimonTTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
         end
+        if bank.pressed ~= -1 then
+            BlzFrameClick(DigimonT[bank.pressed])
+        end
     end
 
     -- When the digimon evolves
@@ -1088,17 +1091,18 @@ OnInit("DigimonBank", function ()
             BlzFrameSetVisible(DigimonTSelected[i], true)
             BlzFrameSetEnable(DigimonT[i], false)
             -- Other changes
+            if bank.stocked[i]:isAlive() then
+                BlzFrameSetVisible(Revive, false)
+            else
+                BlzFrameSetVisible(Revive, true)
+                BlzFrameSetVisible(Summon, false)
+                BlzFrameSetVisible(Store, false)
+            end
             if bank.inUse[i] then
                 BlzFrameSetVisible(Summon, false)
                 BlzFrameSetVisible(Store, true)
             else
-                if bank.stocked[i]:isAlive() then
-                    BlzFrameSetVisible(Summon, true)
-                    BlzFrameSetVisible(Revive, false)
-                else
-                    BlzFrameSetVisible(Summon, false)
-                    BlzFrameSetVisible(Revive, true)
-                end
+                BlzFrameSetVisible(Summon, true)
                 BlzFrameSetVisible(Store, false)
             end
         end
@@ -1859,8 +1863,9 @@ OnInit("DigimonBank", function ()
 
     ---@param p player
     ---@param index integer
+    ---@param holdEnv boolean?
     ---@return boolean
-    function SummonDigimon(p, index)
+    function SummonDigimon(p, index, holdEnv)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
         local d = bank.stocked[index] ---@type Digimon
         local b = false
@@ -1886,8 +1891,10 @@ OnInit("DigimonBank", function ()
             if not bank.main then
                 bank.main = d
                 d:showFromTheCorner(bank.spawnPoint.x, bank.spawnPoint.y)
-                if d.environment:apply(p, false) and p == LocalPlayer then
-                    PanCameraToTimed(bank.spawnPoint.x, bank.spawnPoint.y, 0)
+                if not holdEnv then
+                    if d.environment:apply(p, false) and p == LocalPlayer then
+                        PanCameraToTimed(bank.spawnPoint.x, bank.spawnPoint.y, 0)
+                    end
                 end
             else
                 d:showFromTheCorner(bank.main:getX(), bank.main:getY())

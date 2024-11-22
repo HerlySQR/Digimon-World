@@ -226,7 +226,7 @@ OnInit(function ()
                 local m = 0
                 for j in info.selectedDigimons:elements() do
                     m = m + 1
-                    SummonDigimon(info.p, j)
+                    SummonDigimon(info.p, j, true)
                     local d = GetBankDigimon(info.p, j)
                     local angle = math.pi*(m/(n+1) + (i-1))
                     d:setPos(centerX + 500*math.cos(angle), centerY + 500*math.sin(angle))
@@ -1286,6 +1286,7 @@ OnInit(function ()
                 BlzFrameSetText(PlayerName[1], User[p1]:getNameColored())
                 BlzFrameSetText(PlayerName[2], User[p2]:getNameColored())
 
+                local list = DigimonTypes[fight.rank]
                 for i = 0, MAX_DIGIMONS - 1 do
                     local d = GetBankDigimon(p1, i)
                     if d and d:isAlive() then
@@ -1297,7 +1298,11 @@ OnInit(function ()
                     end
                     BlzFrameSetVisible(PlayerDigimonClicked[1][i], false)
 
-                    BlzFrameSetTexture(BackdropPlayerDigimonT[2][i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                    if i < #list then
+                        BlzFrameSetTexture(BackdropPlayerDigimonT[2][i], BlzGetAbilityIcon(list[i+1]), 0, true)
+                    else
+                        BlzFrameSetTexture(BackdropPlayerDigimonT[2][i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                    end
                     BlzFrameSetEnable(PlayerDigimonT[2][i], false)
                     BlzFrameSetVisible(PlayerDigimonClicked[2][i], false)
                     BlzFrameSetVisible(PlayerDigimonSelected[2][i], false)

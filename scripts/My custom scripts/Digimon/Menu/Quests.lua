@@ -213,9 +213,11 @@ OnInit("Quests", function ()
         BlzFrameSetTexture(BackdropQuestButton, "ReplaceableTextures\\CommandButtons\\BTNQuest.blp", 0, true)
 
         QuestButtonSprite =  BlzCreateFrameByType("SPRITE", "QuestButtonSprite", QuestButton, "", 0)
-        BlzFrameSetAllPoints(QuestButtonSprite, QuestButton)
         BlzFrameSetModel(QuestButtonSprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
-        BlzFrameSetScale(QuestButtonSprite, BlzFrameGetWidth(QuestButtonSprite)/0.039)
+        BlzFrameClearAllPoints(QuestButtonSprite)
+        BlzFrameSetPoint(QuestButtonSprite, FRAMEPOINT_BOTTOMLEFT, QuestButton, FRAMEPOINT_BOTTOMLEFT, -0.00125, -0.00375)
+        BlzFrameSetSize(QuestButtonSprite, 0.00001, 0.00001)
+        BlzFrameSetScale(QuestButtonSprite, 1.25)
         BlzFrameSetVisible(QuestButtonSprite, false)
 
         QuestMenu = BlzCreateFrame("EscMenuBackdrop", Origin, 0, 0)
