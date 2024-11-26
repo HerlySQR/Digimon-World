@@ -813,12 +813,29 @@ OnInit("Quests", function ()
     end
 
     ---@param p player
-    ---@param data QuestData
-    function SetQuests(p, data)
-        local have = __jarray(false)
+    function ClearQuests(p)
         if p == LocalPlayer then
             while QuestList:remove() do end
+            PressedQuest = -1
         end
+
+        for i = 0, MAX_QUESTS do
+            if QuestTemplates[i] then
+                PlayerQuests[p][i] = nil
+                if p == LocalPlayer then
+                    if QuestTemplates[i].questMark then
+                        BlzSetSpecialEffectAlpha(QuestTemplates[i].questMark, 255)
+                    end
+                end
+            end
+        end
+    end
+
+    ---@param p player
+    ---@param data QuestData
+    function SetQuests(p, data)
+        ClearQuests(p)
+        local have = __jarray(false)
         for i = 1, data.amount do
             local id = data.id[i]
             if QuestTemplates[id] then
@@ -847,16 +864,6 @@ OnInit("Quests", function ()
                     BlzFrameSetVisible(QuestButton, true)
                 end
                 have[id] = true
-            end
-        end
-        for i = 0, MAX_QUESTS do
-            if not have[i] and QuestTemplates[i] then
-                PlayerQuests[p][i] = nil
-                if p == LocalPlayer then
-                    if QuestTemplates[i].questMark then
-                        BlzSetSpecialEffectAlpha(QuestTemplates[i].questMark, 255)
-                    end
-                end
             end
         end
         if p == LocalPlayer then

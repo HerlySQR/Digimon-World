@@ -54,12 +54,12 @@ OnInit("Help", function ()
 
     FrameLoaderAdd(InitFrames)
 
-    OnChangeDimensions(function ()
+    --[[OnChangeDimensions(function ()
         BlzFrameClearAllPoints(HelpImage)
         BlzFrameSetSize(HelpImage, 0.8, 0.6)
         BlzFrameSetAbsPoint(HelpImage, FRAMEPOINT_TOPRIGHT, GetMaxScreenX() - 0.05, 0)
         BlzFrameSetAbsPoint(HelpImage, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0)
-    end)
+    end)]]
 
     OnInit.final(function ()
         BlzFrameClick(BlzGetFrameByName("UpperButtonBarQuestsButton", 0))

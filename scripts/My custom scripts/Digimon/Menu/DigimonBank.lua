@@ -1424,7 +1424,7 @@ OnInit("DigimonBank", function ()
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Revive, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, ReviveFunc)
-        --AssignFrame(Revive, 30)
+        AssignFrame(Revive, 42)
 
         Free = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
         BlzFrameSetScale(Free, 1.00)
@@ -1871,6 +1871,11 @@ OnInit("DigimonBank", function ()
         local b = false
         if d then
             d:setOwner(p)
+
+            -- To create the hero icon glow
+            UnitModifySkillPoints(d.root, 1)
+            UnitModifySkillPoints(d.root, -1)
+
             local orders = GetHeroButtonPos(p)
             local syncedOrders = GetSyncedData(p, function ()
                 return orders

@@ -15,6 +15,7 @@ OnInit("Environment", function ()
     local MapBackdrop = nil ---@type framehandle
     local Exit = nil ---@type framehandle
     local Sprite = nil ---@type framehandle
+    local DigimonIcons = {} ---@type framehandle[]
 
     local LocalPlayer = GetLocalPlayer()
     local TopMsg = nil ---@type framehandle
@@ -32,9 +33,127 @@ OnInit("Environment", function ()
         vistedPlaces[Player(i)] = {}
     end
 
+    local MAX_DIST = 0.08
+
+    ---@param quantity integer
+    ---@param dist number
+    ---@param center location
+    ---@return number[] xVals, number[] yVals
+    local function createDistribution(quantity, dist, center)
+        if quantity == 0 then
+            error("You are distributing 0 elements")
+        end
+
+        local xVals = __jarray(0)
+        local yVals = __jarray(0)
+
+        if quantity == 1 then
+            table.insert(xVals, GetLocationX(center))
+            table.insert(yVals, GetLocationY(center))
+            return xVals, yVals
+        end
+
+        local rows = __jarray(0)
+        local maxSize = math.floor(MAX_DIST/dist) + 1
+
+        local remain = quantity
+
+        rows[0] = 1
+        remain = remain - 1
+
+        -- Create the distribution
+
+        local rowsNumber = 0
+
+        while remain > 0 do
+            if rows[0] < maxSize then
+                local isSpace = false
+                for i = 0, rowsNumber - 1 do
+                    local nextRow = i+1
+                    if rows[nextRow] < rows[i] - nextRow then
+                        isSpace = true
+                        rows[nextRow] = rows[nextRow] + 1
+                        remain = remain - 1
+                        break
+                    elseif rows[-nextRow] < rows[i] - nextRow then
+                        isSpace = true
+                        rows[-nextRow] = rows[-nextRow] + 1
+                        remain = remain - 1
+                        break
+                    end
+                end
+                if not isSpace then
+                    if rows[rowsNumber + 1] < rows[rowsNumber] - (rowsNumber + 1) then
+                        rowsNumber = rowsNumber + 1
+                    else
+                        rows[0] = rows[0] + 1
+                        remain = remain - 1
+                    end
+                end
+            else
+                for i = 1, rowsNumber do
+                    if rows[i] < rows[i-1] then
+                        rows[i] = rows[i] + 1
+                        remain = remain - 1
+                    elseif rows[-i] < rows[i+1] then
+                        rows[-i] = rows[-i] + 1
+                        remain = remain - 1
+                    else
+                        rowsNumber = rowsNumber + 1
+                    end
+                end
+            end
+        end
+
+        -- Place the locations
+
+        for row = rowsNumber, -rowsNumber, -1 do
+            local size = rows[row]
+            if size ~= 0 then
+                local width = (size - 1) / 2
+                local j = -width - 1.
+                while j < width do
+                    j = j + 1.
+                    table.insert(xVals, dist * j + GetLocationX(center))
+                    table.insert(yVals, dist * row + GetLocationY(center))
+                end
+            end
+        end
+
+        return xVals, yVals
+    end
+
     Timed.echo(0.02, function ()
         if inMenu then
             CameraSetupApplyForceDuration(camera, false, 0)
+        end
+    end)
+
+    Timed.echo(1., function ()
+        if inMenu then
+            for i = 1, udg_MAX_USED_DIGIMONS do
+                BlzFrameSetVisible(DigimonIcons[i], false)
+            end
+
+            local list = GetUsedDigimons(LocalPlayer)
+            local groups = SyncedTable.create() ---@type table<location, Digimon[]>
+
+            for i = 1, #list do
+                local pos = list[i].environment.iconPos
+                if pos then
+                    groups[pos] = groups[pos] or {}
+                    table.insert(groups[pos], list[i])
+                end
+            end
+
+            for pos, digimons in pairs(groups) do
+                local xVals, yVals = createDistribution(#digimons, 0.02, pos)
+                for i = 1, #digimons do
+                    BlzFrameSetAbsPoint(DigimonIcons[i], FRAMEPOINT_CENTER, xVals[i], yVals[i])
+                    BlzFrameSetTexture(DigimonIcons[i], BlzGetAbilityIcon(digimons[i]:getTypeId()), 0, true)
+                    BlzFrameSetVisible(DigimonIcons[i], true)
+                end
+            end
         end
     end)
 
@@ -44,7 +163,7 @@ OnInit("Environment", function ()
     ---@field minimap string
     ---@field place rect
     ---@field mapPortion framehandle?
-    ---@field mapPortionGlow framehandle?
+    ---@field iconPos location?
     ---@field id integer?
     ---@field soundtrackDay string?
     ---@field soundtrackNight string?
@@ -70,7 +189,7 @@ OnInit("Environment", function ()
     ---@param place rect
     ---@param minimap string
     ---@param mapPortion string?
-    ---@param glowOffset location
+    ---@param glowOffset location?
     ---@param id integer
     ---@param soundtrackDay string?
     ---@param soundtrackNight string?
@@ -88,6 +207,22 @@ OnInit("Environment", function ()
             self.soundtrackNight = soundtrackNight
             self.sky = sky
 
+            if glowOffset then
+                for _, env in pairs(used) do
+                    if env.iconPos then
+                        if DistanceBetweenPoints(env.iconPos, glowOffset) < 0.01 then
+                            self.iconPos = env.iconPos
+                            break
+                        end
+                    end
+                end
+                if self.iconPos then
+                    RemoveLocation(glowOffset)
+                else
+                    self.iconPos = glowOffset
+                end
+            end
+
             if mapPortion then
                 FrameLoaderAdd(function ()
                     if not mapPortions[mapPortion] then
@@ -96,14 +231,6 @@ OnInit("Environment", function ()
                         BlzFrameSetPoint(self.mapPortion, FRAMEPOINT_BOTTOMRIGHT, MapBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.0000)
                         BlzFrameSetTexture(self.mapPortion, mapPortion, 0, true)
                         BlzFrameSetVisible(self.mapPortion, false)
-
-                        self.mapPortionGlow = BlzCreateFrameByType("BACKDROP", "BACKDROP", self.mapPortion, "", 1)
-                        BlzFrameSetPoint(self.mapPortionGlow, FRAMEPOINT_CENTER, self.mapPortion, FRAMEPOINT_TOPLEFT, GetLocationX(glowOffset), GetLocationY(glowOffset))
-                        BlzFrameSetSize(self.mapPortionGlow, 0.125, 0.15)
-                        BlzFrameSetTexture(self.mapPortionGlow, "ReplaceableTextures\\Selection\\SelectionCircleLarge.blp", 0, true)
-                        BlzFrameSetVisible(self.mapPortionGlow, false)
-
-                        RemoveLocation(glowOffset)
 
                         mapPortions[mapPortion] = self
 
@@ -115,7 +242,6 @@ OnInit("Environment", function ()
                         canBeVisted[id] = self.mapPortion
                     else
                         self.mapPortion = mapPortions[mapPortion].mapPortion
-                        self.mapPortionGlow = mapPortions[mapPortion].mapPortionGlow
                         self.id = mapPortions[mapPortion].id
                     end
                 end)
@@ -374,6 +500,9 @@ OnInit("Environment", function ()
             ShowMenu(true)
             BlzFrameSetVisible(MapBackdrop, false)
             RestartToPreviousCamera()
+            for i = 1, udg_MAX_USED_DIGIMONS do
+                BlzFrameSetVisible(DigimonIcons[i], false)
+            end
             inMenu = false
         end
         RestartSelectedUnits(p)
@@ -427,6 +556,14 @@ OnInit("Environment", function ()
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, ExitFunc)
+
+        for i = 1, udg_MAX_USED_DIGIMONS do
+            DigimonIcons[i] = BlzCreateFrameByType("BACKDROP", "DigimonIcons[" .. i .. "]", MapBackdrop, "", 1)
+            BlzFrameSetTexture(DigimonIcons[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetLevel(DigimonIcons[i], 10)
+            BlzFrameSetVisible(DigimonIcons[i], false)
+            BlzFrameSetSize(DigimonIcons[i], 0.02, 0.02)
+        end
     end
 
     FrameLoaderAdd(InitFrames)

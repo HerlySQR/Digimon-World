@@ -758,6 +758,9 @@ OnInit.final(function ()
     ---@param p player
     function checkForEnemy(p)
         Timed.echo(1., function ()
+            if not inTutorial[p] then
+                return true
+            end
             if not enemyFound[p] then
                 for _, d in ipairs(GetUsedDigimons(p)) do
                     Digimon.enumInRange(d:getX(), d:getY(), 700., function (d2)
@@ -911,6 +914,9 @@ OnInit.final(function ()
     ---@param p player
     function checkForTransport(p)
         Timed.echo(1., function ()
+            if not inTutorial[p] then
+                return true
+            end
             if not transportFound[p] then
                 for _, d in ipairs(GetUsedDigimons(p)) do
                     Digimon.enumInRange(d:getX(), d:getY(), 400., function (d2)

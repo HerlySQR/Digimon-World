@@ -320,13 +320,13 @@ OnInit("Hotkeys", function ()
         local x2 = {}
         local y2 = {}
 
-        for i = 0, 3 do
-            for j = 0, 1 do
-                local index = i + 4 * j
-                x1[index] = 0.022500 + i * 0.045
-                y1[index] = -0.05 - j * 0.045
-                x2[index] = -0.022500 - (3 - i) * 0.045
-                y2[index] = 0.05 + (1 - j) * 0.045
+        for i = 0, 1 do
+            for j = 0, 3 do
+                local index = i + 2 * j
+                x1[index] = 0.020000 + i * 0.05
+                y1[index] = -0.040000 - j * 0.05
+                x2[index] = -0.070000 + i * 0.05
+                y2[index] = 0.19000 - j * 0.05
             end
         end
 
@@ -345,8 +345,9 @@ OnInit("Hotkeys", function ()
         BlzFrameSetVisible(HotkeyYourDigimonsSubMenu, false)
 
         local HotkeyYourDigimonsSubMenuBackdrop = BlzCreateFrame("EscMenuBackdrop", HotkeyYourDigimonsSubMenu, 0, 0)
-        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, 0.060000, -0.025000)
-        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_BOTTOMRIGHT, 0.020000, 0.045000)
+        BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, 0.020000, 0.0000)
+        BlzFrameSetSize(HotkeyYourDigimonsSubMenuBackdrop, 0.13, 0.27)
+        --BlzFrameSetPoint(HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_BOTTOMRIGHT, -0.11000, -0.010000)
 
         --[[local HotkeyYourDigimonsSubMenuButton = BlzCreateFrame("IconButtonTemplate", HotkeyYourDigimonsSubMenu, 0, 0)
         BlzFrameSetPoint(HotkeyYourDigimonsSubMenuButton, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, 0.0050000, -0.10000)
@@ -372,63 +373,59 @@ OnInit("Hotkeys", function ()
         end
 
         local Text = BlzCreateFrameByType("TEXT", "name", HotkeyYourDigimonsSubMenuBackdrop, "", 0)
-        BlzFrameSetPoint(Text, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.050000, -0.020000)
-        BlzFrameSetPoint(Text, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.050000, 0.14000)
+        BlzFrameSetPoint(Text, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.0050000, -0.015000)
+        BlzFrameSetPoint(Text, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.23500)
         BlzFrameSetText(Text, "|cffFFCC00Choose a Digimon|r")
         BlzFrameSetEnable(Text, false)
         BlzFrameSetTextAlignment(Text, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
-        --BlzFrameSetScale(Text, 0.8)
 
         local Summon = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
-        BlzFrameSetPoint(Summon, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.030000, -0.14500)
-        BlzFrameSetPoint(Summon, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.11000, 0.02000)
+        BlzFrameSetPoint(Summon, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.0050000, -0.23500)
+        BlzFrameSetPoint(Summon, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.065000, 0.010000)
         BlzFrameSetText(Summon, "|cffFCD20DSummon|r")
-        --BlzFrameSetScale(Summon, 0.8)
         AsingHotkey(Summon, 29)
 
         local Store = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
-        BlzFrameSetPoint(Store, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.030000, -0.1700)
-        BlzFrameSetPoint(Store, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.11000, -0.00500)
+        BlzFrameSetPoint(Store, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.065000, -0.23500)
+        BlzFrameSetPoint(Store, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.010000)
         BlzFrameSetText(Store, "|cffFCD20DStore|r")
-        --BlzFrameSetScale(Store, 0.8)
         AsingHotkey(Store, 30)
 
         local Free = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
-        BlzFrameSetPoint(Free, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.11000, -0.14500)
-        BlzFrameSetPoint(Free, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.02000)
+        BlzFrameSetPoint(Free, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.0050000, -0.2600)
+        BlzFrameSetPoint(Free, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.065000, -0.015000)
         BlzFrameSetText(Free, "|cffFCD20DFree|r")
         AsingHotkey(Free, 31)
 
+        local Revive = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
+        BlzFrameSetPoint(Revive, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.065000, -0.2600)
+        BlzFrameSetPoint(Revive, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, -0.015000)
+        BlzFrameSetText(Revive, "|cffFCD20DRevive|r")
+        AsingHotkey(Revive, 42)
+
         local Warning = BlzCreateFrame("QuestButtonBaseTemplate", Free,0,0)
-        BlzFrameSetPoint(Warning, FRAMEPOINT_TOPLEFT, Free, FRAMEPOINT_TOPLEFT, -0.020000, -0.025000)
-        BlzFrameSetPoint(Warning, FRAMEPOINT_BOTTOMRIGHT, Free, FRAMEPOINT_BOTTOMRIGHT, 0.030000, -0.060000)
+        BlzFrameSetPoint(Warning, FRAMEPOINT_TOPLEFT, Revive, FRAMEPOINT_TOPLEFT, 0.050000, 0.025000)
+        BlzFrameSetPoint(Warning, FRAMEPOINT_BOTTOMRIGHT, Revive, FRAMEPOINT_BOTTOMRIGHT, 0.10000, -0.010000)
 
         local AreYouSure = BlzCreateFrameByType("TEXT", "name", Warning, "", 0)
         BlzFrameSetPoint(AreYouSure, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.0050000, -0.0050000)
         BlzFrameSetPoint(AreYouSure, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.025000)
         BlzFrameSetText(AreYouSure, "|cffFFCC00Are you sure you wanna free this digimon?|r")
-        --BlzFrameSetScale(AreYouSure, 0.8)
         BlzFrameSetTextAlignment(AreYouSure, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
         local Yes = BlzCreateFrame("ScriptDialogButton", Warning,0,0)
         BlzFrameSetPoint(Yes, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.010000, -0.035000)
         BlzFrameSetPoint(Yes, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.070000, 0.0050000)
         BlzFrameSetText(Yes, "|cffFCD20DYes|r")
-        --BlzFrameSetScale(Yes, 0.8)
         AsingHotkey(Yes, 32)
 
         local No = BlzCreateFrame("ScriptDialogButton", Warning,0,0)
         BlzFrameSetPoint(No, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.070000, -0.035000)
         BlzFrameSetPoint(No, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0050000)
         BlzFrameSetText(No, "|cffFCD20DNo|r")
-        --BlzFrameSetScale(No, 0.8)
         AsingHotkey(No, 33)
 
-        --BlzFrameSetScale(Warning, 0.8)
-
-        --BlzFrameSetScale(Free, 0.8)
-
-        --BlzFrameSetScale(HotkeyYourDigimonsSubMenuBackdrop, 0.8)
+        BlzFrameSetScale(HotkeyYourDigimonsSubMenuBackdrop, 0.9)
 
 
         HotkeyExit = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
