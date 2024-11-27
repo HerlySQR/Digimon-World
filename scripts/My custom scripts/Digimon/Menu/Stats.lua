@@ -69,6 +69,7 @@ OnInit("Stats", function ()
     local StatsMaxLife = {} ---@type framehandle[]
     local StatsMaxMana = {} ---@type framehandle[]
     local StatsDigimonIcon = {} ---@type framehandle[]
+    local StatsDigimonLevel = {} ---@type framehandle[]
     local StatsCriticalLabel = {} ---@type framehandle[]
     local StatsBlockLabel = {} ---@type framehandle[]
     local StatsEvasionLabel = {} ---@type framehandle[]
@@ -205,6 +206,7 @@ OnInit("Stats", function ()
                         BlzFrameSetVisible(StatsDexterity[i], true)
                         BlzFrameSetVisible(StatsWisdomLabel[i], true)
                         BlzFrameSetVisible(StatsWisdom[i], true)
+                        BlzFrameSetVisible(StatsDigimonLevel[i], true)
 
                         local base = GetHeroStr(u, false)
                         local bonus = GetHeroStr(u, true) - base
@@ -238,6 +240,8 @@ OnInit("Stats", function ()
                             BlzFrameSetText(StatsExp[i], "|cff7fb0b0" .. (GetHeroXP(u) - exps[l-1]) .."|r")
                             BlzFrameSetText(StatsMaxExp[i], "|cff7fb0b0" .. reqExps[l] .."|r")
                         end
+
+                        BlzFrameSetText(StatsDigimonLevel[i], "|cffFFCC00" .. l .. "|r")
                     else
                         name = GetObjectName(GetUnitTypeId(u))
                         BlzFrameSetVisible(StatsHeroIcon[i], false)
@@ -248,6 +252,7 @@ OnInit("Stats", function ()
                         BlzFrameSetVisible(StatsWisdomLabel[i], false)
                         BlzFrameSetVisible(StatsWisdom[i], false)
                         BlzFrameSetVisible(StatsExp[i], false)
+                        BlzFrameSetVisible(StatsDigimonLevel[i], false)
                     end
                     BlzFrameSetText(StatsName[i], "|cffFFCC00" .. name .. "|r")
 
@@ -620,6 +625,14 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsDigimonIcon[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.025000, -0.022500)
             BlzFrameSetPoint(StatsDigimonIcon[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.31250, 0.047500)
             BlzFrameSetTexture(StatsDigimonIcon[i], "CustomFrame.png", 0, true)
+
+            StatsDigimonLevel[i] = BlzCreateFrameByType("TEXT", "name", StatsDigimonIcon[i], "", 0)
+            BlzFrameSetPoint(StatsDigimonLevel[i], FRAMEPOINT_TOPLEFT, StatsDigimonIcon[i], FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+            BlzFrameSetPoint(StatsDigimonLevel[i], FRAMEPOINT_BOTTOMRIGHT, StatsDigimonIcon[i], FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.020000)
+            BlzFrameSetText(StatsDigimonLevel[i], "|cffFFCC0099\n|r")
+            BlzFrameSetEnable(StatsDigimonLevel[i], false)
+            BlzFrameSetScale(StatsDigimonLevel[i], 1.00)
+            BlzFrameSetTextAlignment(StatsDigimonLevel[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
             StatsCriticalLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsCriticalLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.31250, -0.0055000)

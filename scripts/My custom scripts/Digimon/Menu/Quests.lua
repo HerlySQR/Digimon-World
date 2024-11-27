@@ -68,6 +68,7 @@ OnInit("Quests", function ()
     ---@field level integer
     ---@field progress integer
     ---@field completed boolean
+    ---@field canReturn boolean
 
     local PlayerQuests = {} ---@type table<player, Quest[]>
 
@@ -76,6 +77,7 @@ OnInit("Quests", function ()
     ---@field id integer[]
     ---@field prog integer[]
     ---@field comp boolean[]
+    ---@field cret boolean[]
     QuestData = setmetatable({}, Serializable)
     QuestData.__index = QuestData
 
@@ -84,9 +86,10 @@ OnInit("Quests", function ()
     function QuestData.create(p)
         local self = setmetatable({
             amount = 0,
-            id = {},
-            prog = {},
-            comp = {}
+            id = __jarray(0),
+            prog = __jarray(0),
+            comp = __jarray(false),
+            cret = __jarray(false)
         }, QuestData)
         if p then
             for i = 0, MAX_QUESTS do
@@ -96,6 +99,7 @@ OnInit("Quests", function ()
                     self.id[self.amount] = quest.id
                     self.prog[self.amount] = quest.progress
                     self.comp[self.amount] = quest.completed
+                    self.cret[self.amount] = quest.canReturn
                 end
             end
         end
@@ -108,6 +112,7 @@ OnInit("Quests", function ()
             self:addProperty("id" .. i, self.id[i])
             self:addProperty("prog" .. i, self.prog[i])
             self:addProperty("comp" .. i, self.comp[i])
+            self:addProperty("cret" .. i, self.cret[i])
         end
     end
 
@@ -117,6 +122,7 @@ OnInit("Quests", function ()
             self.id[i] = self:getIntProperty("id" .. i)
             self.prog[i] = self:getIntProperty("prog" .. i)
             self.comp[i] = self:getBoolProperty("comp" .. i)
+            self.cret[i] = self:getBoolProperty("cret" .. i)
         end
     end
 
@@ -337,7 +343,8 @@ OnInit("Quests", function ()
             id = id,
             level = QuestTemplates[id].level,
             completed = false,
-            progress = 0
+            progress = 0,
+            canReturn = false
         }
         if QuestTemplates[id].requirements then
             for _, v in ipairs(QuestTemplates[id].requirements) do
@@ -348,7 +355,8 @@ OnInit("Quests", function ()
                     id = v.id,
                     level = v.level,
                     completed = false,
-                    progress = 0
+                    progress = 0,
+                    canReturn = false
                 }
             end
         end
@@ -510,7 +518,7 @@ OnInit("Quests", function ()
         return QuestTemplates[id].maxProgress
     end
 
-    ---@overload fun(p: player)
+    --[[---@overload fun(p: player)
     ---@param p player
     ---@param ids integer[]
     ---@param progresses integer[]
@@ -564,7 +572,7 @@ OnInit("Quests", function ()
                 end
             end
         end
-    end
+    end]]
 
     ---@param id integer
     ---@return string
@@ -618,11 +626,14 @@ OnInit("Quests", function ()
         udg_QuestCanReturn = CreateTrigger()
         TriggerAddAction(udg_QuestCanReturn, function ()
             local id = udg_QuestId
-            if udg_QuestPlayer == LocalPlayer and QuestTemplates[id].questMarkDone then
-                if QuestTemplates[id].onlyOnce then
-                    BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, YELLOW)
-                else
-                    BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, GREEN)
+            if PlayerQuests[udg_QuestPlayer] then
+                PlayerQuests[udg_QuestPlayer][id].canReturn = true
+                if udg_QuestPlayer == LocalPlayer and QuestTemplates[id].questMarkDone then
+                    if QuestTemplates[id].onlyOnce then
+                        BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, YELLOW)
+                    else
+                        BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, GREEN)
+                    end
                 end
             end
         end)
@@ -825,6 +836,7 @@ OnInit("Quests", function ()
                 if p == LocalPlayer then
                     if QuestTemplates[i].questMark then
                         BlzSetSpecialEffectAlpha(QuestTemplates[i].questMark, 255)
+                        BlzSetSpecialEffectAlpha(QuestTemplates[i].questMarkDone, 0)
                     end
                 end
             end
@@ -835,7 +847,7 @@ OnInit("Quests", function ()
     ---@param data QuestData
     function SetQuests(p, data)
         ClearQuests(p)
-        local have = __jarray(false)
+
         for i = 1, data.amount do
             local id = data.id[i]
             if QuestTemplates[id] then
@@ -846,7 +858,8 @@ OnInit("Quests", function ()
                     id = id,
                     level = QuestTemplates[id].level,
                     completed = data.comp[i],
-                    progress = data.prog[i]
+                    progress = data.prog[i],
+                    canReturn = data.cret[i]
                 }
                 if p == LocalPlayer then
                     if not QuestTemplates[id].isRequirement then
@@ -860,14 +873,21 @@ OnInit("Quests", function ()
                     end
                     if QuestTemplates[id].questMark then
                         BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
+                        BlzSetSpecialEffectAlpha(QuestTemplates[id].questMarkDone, 255)
+                        if data.cret[i] then
+                            if QuestTemplates[id].onlyOnce then
+                                BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, YELLOW)
+                            else
+                                BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, GREEN)
+                            end
+                        end
                     end
-                    BlzFrameSetVisible(QuestButton, true)
                 end
-                have[id] = true
             end
         end
         if p == LocalPlayer then
             UpdateMenu()
+            BlzFrameSetVisible(QuestButton, true)
         end
     end
 

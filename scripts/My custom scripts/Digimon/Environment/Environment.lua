@@ -146,12 +146,14 @@ OnInit("Environment", function ()
                 end
             end
 
+            local j = 0
             for pos, digimons in pairs(groups) do
                 local xVals, yVals = createDistribution(#digimons, 0.02, pos)
                 for i = 1, #digimons do
-                    BlzFrameSetAbsPoint(DigimonIcons[i], FRAMEPOINT_CENTER, xVals[i], yVals[i])
-                    BlzFrameSetTexture(DigimonIcons[i], BlzGetAbilityIcon(digimons[i]:getTypeId()), 0, true)
-                    BlzFrameSetVisible(DigimonIcons[i], true)
+                    j = j + 1
+                    BlzFrameSetAbsPoint(DigimonIcons[j], FRAMEPOINT_CENTER, xVals[i], yVals[i])
+                    BlzFrameSetTexture(DigimonIcons[j], BlzGetAbilityIcon(digimons[i]:getTypeId()), 0, true)
+                    BlzFrameSetVisible(DigimonIcons[j], true)
                 end
             end
         end

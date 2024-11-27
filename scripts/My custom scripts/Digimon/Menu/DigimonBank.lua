@@ -95,7 +95,8 @@ OnInit("DigimonBank", function ()
     local CENTAURMON = gg_unit_N004_0002
     local REVIVE_DIGIMONS = FourCC('I05Z')
     local DIGIMON_REVIVE_EFF = "Abilities\\Spells\\Human\\ReviveHuman\\ReviveHuman.mdl"
-    local CENTAURMON_REVIVE_EFF = "Abilities\\Spells\\Other\\Awaken\\Awaken.mdl"
+    local CENTAURMON_REVIVE_EFF_1 = "war3mapImported\\WhHealGreen.mdl"
+    local CENTAURMON_REVIVE_EFF_2 = "war3mapImported\\FirstAidV2.mdl"
 
     IgnoreCommandButton(ITEM_BANK_CASTER)
     IgnoreCommandButton(ITEM_BANK_SELLER)
@@ -1159,7 +1160,8 @@ OnInit("DigimonBank", function ()
 
         bank.reviveItems = bank.reviveItems - 1
         if bank.main then
-            DestroyEffect(AddSpecialEffect(CENTAURMON_REVIVE_EFF, bank.main:getPos()))
+            DestroyEffectTimed(AddSpecialEffect(CENTAURMON_REVIVE_EFF_1, bank.main:getPos()), 1.)
+            DestroyEffectTimed(AddSpecialEffect(CENTAURMON_REVIVE_EFF_2, bank.main:getPos()), 1.)
         end
         if p == LocalPlayer then
             BlzFrameSetVisible(Revive, false)
