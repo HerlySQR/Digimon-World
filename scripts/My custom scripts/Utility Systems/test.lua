@@ -90,11 +90,13 @@ StatsImpactLabel = nil
 TriggerStatsImpactLabel = nil 
 StatsImpact = nil 
 TriggerStatsImpact = nil 
-StatsDigimonLevel = nil 
-TriggerStatsDigimonLevel = nil 
+StatsDigimonLevelBackdrop = nil 
+TriggerStatsDigimonLevelBackdrop = nil 
 StatsItemT = {} 
 BackdropStatsItemT = {} 
 TriggerStatsItemT = {} 
+StatsDigimonLevel = nil 
+TriggerStatsDigimonLevel = nil 
 StatsItemDrop = nil 
 TriggerStatsItemDrop = nil 
 REFORGEDUIMAKER = {}
@@ -925,13 +927,9 @@ BlzFrameSetEnable(StatsImpact, false)
 BlzFrameSetScale(StatsImpact, 1.00)
 BlzFrameSetTextAlignment(StatsImpact, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
-StatsDigimonLevel = BlzCreateFrameByType("TEXT", "name", StatsDigimonIcon, "", 0)
-BlzFrameSetPoint(StatsDigimonLevel, FRAMEPOINT_TOPLEFT, StatsDigimonIcon, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
-BlzFrameSetPoint(StatsDigimonLevel, FRAMEPOINT_BOTTOMRIGHT, StatsDigimonIcon, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.020000)
-BlzFrameSetText(StatsDigimonLevel, "|cffFFCC0099\n|r")
-BlzFrameSetEnable(StatsDigimonLevel, false)
-BlzFrameSetScale(StatsDigimonLevel, 1.00)
-BlzFrameSetTextAlignment(StatsDigimonLevel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+StatsDigimonLevelBackdrop = BlzCreateFrame("OptionsPopupMenuBackdropTemplate", StatsDigimonIcon, 0, 0)
+BlzFrameSetPoint(StatsDigimonLevelBackdrop, FRAMEPOINT_TOPLEFT, StatsDigimonIcon, FRAMEPOINT_TOPLEFT, 0.00050000, -0.00050000)
+BlzFrameSetPoint(StatsDigimonLevelBackdrop, FRAMEPOINT_BOTTOMRIGHT, StatsDigimonIcon, FRAMEPOINT_BOTTOMRIGHT, -0.0095000, 0.019500)
 
 StatsItemT[0] = BlzCreateFrame("IconButtonTemplate", StatsInventoryBackdrop, 0, 0)
 BlzFrameSetPoint(StatsItemT[0], FRAMEPOINT_TOPLEFT, StatsInventoryBackdrop, FRAMEPOINT_TOPLEFT, 0.0050000, -0.0050000)
@@ -998,6 +996,14 @@ BlzFrameSetTexture(BackdropStatsItemT[5], "CustomFrame.png", 0, true)
 TriggerStatsItemT[5] = CreateTrigger() 
 BlzTriggerRegisterFrameEvent(TriggerStatsItemT[5], StatsItemT[5], FRAMEEVENT_CONTROL_CLICK) 
 TriggerAddAction(TriggerStatsItemT[5], REFORGEDUIMAKER.StatsItemT05Func) 
+
+StatsDigimonLevel = BlzCreateFrameByType("TEXT", "name", StatsDigimonLevelBackdrop, "", 0)
+BlzFrameSetPoint(StatsDigimonLevel, FRAMEPOINT_TOPLEFT, StatsDigimonLevelBackdrop, FRAMEPOINT_TOPLEFT, -0.00050000, 0.00050000)
+BlzFrameSetPoint(StatsDigimonLevel, FRAMEPOINT_BOTTOMRIGHT, StatsDigimonLevelBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.0075000, 0.00050000)
+BlzFrameSetText(StatsDigimonLevel, "|cffFFCC0099\n|r")
+BlzFrameSetEnable(StatsDigimonLevel, false)
+BlzFrameSetScale(StatsDigimonLevel, 1.00)
+BlzFrameSetTextAlignment(StatsDigimonLevel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
 StatsItemDrop = BlzCreateFrame("ScriptDialogButton", StatsItemT[0], 0, 0)
 BlzFrameSetPoint(StatsItemDrop, FRAMEPOINT_TOPLEFT, StatsItemT[0], FRAMEPOINT_TOPLEFT, -0.23470, -0.15570)

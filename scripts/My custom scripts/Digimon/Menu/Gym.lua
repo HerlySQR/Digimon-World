@@ -326,7 +326,7 @@ OnInit(function ()
                     if not d:isHidden() then
                         DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", d:getPos()))
                     end
-                    if info.p ~= Digimon.VILLAIN then
+                    if IsPlayerInGame(info.p) then
                         StoreToBank(info.p, d, true)
                     else
                         d:destroy()
@@ -343,7 +343,7 @@ OnInit(function ()
                 local notNeutral = true
                 for i = 1, MAX_FIGHTERS do
                     local info = self.pi[i]
-                    if info.p ~= Digimon.VILLAIN then
+                    if IsPlayerInGame(info.p) then
                         for j = 0, MAX_DIGIMONS - 1 do
                             local d = GetBankDigimon(info.p, j)
                             if d then

@@ -873,12 +873,16 @@ OnInit("Quests", function ()
                     end
                     if QuestTemplates[id].questMark then
                         BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
-                        BlzSetSpecialEffectAlpha(QuestTemplates[id].questMarkDone, 255)
-                        if data.cret[i] then
-                            if QuestTemplates[id].onlyOnce then
-                                BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, YELLOW)
-                            else
-                                BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, GREEN)
+                        if data.comp[i] then
+                            BlzSetSpecialEffectAlpha(QuestTemplates[id].questMarkDone, 0)
+                        else
+                            BlzSetSpecialEffectAlpha(QuestTemplates[id].questMarkDone, 255)
+                            if data.cret[i] then
+                                if QuestTemplates[id].onlyOnce then
+                                    BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, YELLOW)
+                                else
+                                    BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, GREEN)
+                                end
                             end
                         end
                     end

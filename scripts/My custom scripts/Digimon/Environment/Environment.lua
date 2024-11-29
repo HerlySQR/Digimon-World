@@ -320,21 +320,16 @@ OnInit("Environment", function ()
         if Environments[p] == env then
             return false
         end
-        if p == LocalPlayer and env ~= Environment.map and prevEnv[p] and prevEnv[p].mapPortion then
-            BlzFrameSetVisible(prevEnv[p].mapPortionGlow, false)
-        end
 
         prevEnv[p] = env
 
         if p == LocalPlayer then
-            if not notChangeMusic then
-                ClearMapMusic()
-            end
             if GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK then
                 if env.soundtrackDay ~= "inherit" then
                     if actMusic ~= env.soundtrackDay then
                         actMusic = env.soundtrackDay
                         if not notChangeMusic then
+                            ClearMapMusic()
                             StopMusic(false)
                             if actMusic then
                                 PlayMusic(actMusic)
@@ -347,6 +342,7 @@ OnInit("Environment", function ()
                     if actMusic ~= env.soundtrackNight then
                         actMusic = env.soundtrackNight
                         if not notChangeMusic then
+                            ClearMapMusic()
                             StopMusic(false)
                             if actMusic then
                                 PlayMusic(actMusic)

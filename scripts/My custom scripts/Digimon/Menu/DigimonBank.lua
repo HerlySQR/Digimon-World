@@ -94,7 +94,6 @@ OnInit("DigimonBank", function ()
 
     local CENTAURMON = gg_unit_N004_0002
     local REVIVE_DIGIMONS = FourCC('I05Z')
-    local DIGIMON_REVIVE_EFF = "Abilities\\Spells\\Human\\ReviveHuman\\ReviveHuman.mdl"
     local CENTAURMON_REVIVE_EFF_1 = "war3mapImported\\WhHealGreen.mdl"
     local CENTAURMON_REVIVE_EFF_2 = "war3mapImported\\FirstAidV2.mdl"
 
@@ -2065,7 +2064,8 @@ OnInit("DigimonBank", function ()
                         end
                     end
                     SummonDigimon(p, index)
-                    DestroyEffect(AddSpecialEffect(DIGIMON_REVIVE_EFF, dead:getPos()))
+                    DestroyEffectTimed(AddSpecialEffect(CENTAURMON_REVIVE_EFF_1, dead:getPos()), 1.)
+                    DestroyEffectTimed(AddSpecialEffect(CENTAURMON_REVIVE_EFF_2, dead:getPos()), 1.)
                     bank.allDead = false
                 end)
             else
@@ -2099,7 +2099,8 @@ OnInit("DigimonBank", function ()
                 udg_TalkToForce = Force(p)
                 TriggerExecute(udg_TalkRun)
             else
-                DestroyEffect(AddSpecialEffect(CENTAURMON_REVIVE_EFF, GetUnitX(CENTAURMON), GetUnitY(CENTAURMON)))
+                DestroyEffectTimed(AddSpecialEffect(CENTAURMON_REVIVE_EFF_1, GetUnitX(CENTAURMON), GetUnitY(CENTAURMON)), 1.)
+                DestroyEffectTimed(AddSpecialEffect(CENTAURMON_REVIVE_EFF_2, GetUnitX(CENTAURMON), GetUnitY(CENTAURMON)), 1.)
             end
 
             if p == LocalPlayer then

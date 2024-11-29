@@ -69,6 +69,7 @@ OnInit("Stats", function ()
     local StatsMaxLife = {} ---@type framehandle[]
     local StatsMaxMana = {} ---@type framehandle[]
     local StatsDigimonIcon = {} ---@type framehandle[]
+    local StatsDigimonLevelBackdrop = {} ---@type framehandle[]
     local StatsDigimonLevel = {} ---@type framehandle[]
     local StatsCriticalLabel = {} ---@type framehandle[]
     local StatsBlockLabel = {} ---@type framehandle[]
@@ -626,9 +627,12 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsDigimonIcon[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.31250, 0.047500)
             BlzFrameSetTexture(StatsDigimonIcon[i], "CustomFrame.png", 0, true)
 
+            StatsDigimonLevelBackdrop[i] = BlzCreateFrame("OptionsPopupMenuBackdropTemplate", StatsDigimonIcon[i], 0, 0)
+            BlzFrameSetPoint(StatsDigimonLevelBackdrop[i], FRAMEPOINT_TOPLEFT, StatsDigimonIcon[i], FRAMEPOINT_TOPLEFT, 0.00050000, -0.00050000)
+            BlzFrameSetPoint(StatsDigimonLevelBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, StatsDigimonIcon[i], FRAMEPOINT_BOTTOMRIGHT, -0.0095000, 0.019500)
+
             StatsDigimonLevel[i] = BlzCreateFrameByType("TEXT", "name", StatsDigimonIcon[i], "", 0)
-            BlzFrameSetPoint(StatsDigimonLevel[i], FRAMEPOINT_TOPLEFT, StatsDigimonIcon[i], FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
-            BlzFrameSetPoint(StatsDigimonLevel[i], FRAMEPOINT_BOTTOMRIGHT, StatsDigimonIcon[i], FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.020000)
+            BlzFrameSetAllPoints(StatsDigimonLevel[i], StatsDigimonLevelBackdrop[i])
             BlzFrameSetText(StatsDigimonLevel[i], "|cffFFCC0099\n|r")
             BlzFrameSetEnable(StatsDigimonLevel[i], false)
             BlzFrameSetScale(StatsDigimonLevel[i], 1.00)
