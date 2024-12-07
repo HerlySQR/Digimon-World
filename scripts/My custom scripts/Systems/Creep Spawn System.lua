@@ -311,17 +311,21 @@ OnInit(function ()
                         end
                     end
                 end
-                if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
-                    local dist = GetRandomReal(128, 384)
-                    local angle = GetRandomReal(0, 2*math.pi)
-                    local x, y = creep:getX() + dist * math.cos(angle), creep:getY() + dist * math.sin(angle)
 
-                    bossNearby = false
-                    ForUnitsInRange(x, y, 1000., checkBoss)
+                bossNearby = false
+                ForUnitsInRange(creep:getX(), creep:getY(), 1000., checkBoss)
 
-                    if not bossNearby and IsTerrainWalkable(x, y) then
-                        creep:issueOrder(Orders.attack, x, y)
+                if not bossNearby then
+                    if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
+                        local dist = GetRandomReal(128, 384)
+                        local angle = GetRandomReal(0, 2*math.pi)
+                        local x, y = creep:getX() + dist * math.cos(angle), creep:getY() + dist * math.sin(angle)
+                        if IsTerrainWalkable(x, y) then
+                            creep:issueOrder(Orders.attack, x, y)
+                        end
                     end
+                else
+                    creep:issueOrder(Orders.smart, regionData.spawnpoint.x, regionData.spawnpoint.y)
                 end
             end
             PlayersInRegion:clear()

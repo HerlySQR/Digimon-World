@@ -2010,11 +2010,9 @@ OnInit("DigimonBank", function ()
             bank.allDead = allDead
 
             bank:storeDigimon(index, false)
-            Timed.call(function () dead:setOwner(Digimon.PASSIVE) end) -- Just to not be detected by the auto-recycler
+            Timed.call(function () dead:setOwner(Digimon.PASSIVE) end)
             -- Hide after 2 seconds to not do it automatically
-            Timed.call(2., function ()
-                bank:storeDigimon(index, true)
-            end)
+            Timed.call(2., function () dead:hideInTheCorner() end)
 
             if p == LocalPlayer then
                 UpdateMenu()

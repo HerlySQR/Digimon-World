@@ -82,13 +82,11 @@ OnInit(function ()
                 local loaded = false
                 local user = users[i]
                 local p = user.handle
-                SaveHelper.SetUserLoading(user, true)
                 for slot = 1, 5 do
                     loaded = LoadPlayerData(p, slot) or loaded
                 end
                 LoadHotkeys(p)
                 LoadUnlockedCosmetics(p)
-                SaveHelper.SetUserLoading(user, false)
                 if not user.isPlaying then
                     BlzFrameSetText(PlayerStatus[i], "|cffffff00Left the game|r")
                 elseif not loaded then

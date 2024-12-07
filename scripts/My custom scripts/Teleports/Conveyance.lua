@@ -6,7 +6,13 @@ OnInit(function ()
 
     local LocalPlayer = GetLocalPlayer()
 
-    local WHAMON = FourCC('N009')
+    local WHAMON = {
+        [FourCC('N009')] = true,
+        [FourCC('N02W')] = true,
+        [FourCC('N02X')] = true,
+        [FourCC('N02Y')] = true,
+        [FourCC('N02V')] = true,
+    }
     local BIRDRAMON = FourCC('N00F')
     local DRIMOGEMON = FourCC('N00L')
     local DRIMOGEMON_2 = FourCC('N01A')
@@ -42,7 +48,8 @@ OnInit(function ()
     ---@param envName string
     ---@param level integer
     ---@param noLevelDialog integer
-    local function Create(ticket, receiver, envName, level, noLevelDialog)
+    ---@param goldCost integer
+    local function Create(ticket, receiver, envName, level, noLevelDialog, goldCost)
         local t = CreateTrigger()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SELL_ITEM)
         TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetSoldItem()) == ticket end))
@@ -51,9 +58,9 @@ OnInit(function ()
             local p = d:getOwner()
 
             if level > 0 and d:getLevel() < level then
+                SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + goldCost)
                 if noLevelDialog > 0 then
                     udg_TalkId = noLevelDialog
-                    udg_TalkTo = d.root
                     udg_TalkToForce = Force(p)
                     TriggerExecute(udg_TalkRun)
                 end
@@ -66,7 +73,7 @@ OnInit(function ()
             d:hide()
             d:setLoc(receiver)
             d.environment = Environment.get(envName)
-            if typ == WHAMON then
+            if WHAMON[typ] then
                 local pos1 = math.random(2)
                 local pos2 = pos1 == 1 and 2 or 1
 
@@ -172,13 +179,15 @@ OnInit(function ()
             udg_ConveyanceReceiver,
             udg_ConveyanceNewEnvName,
             udg_ConveyanceLevel,
-            udg_ConveyanceNoLevelDialog
+            udg_ConveyanceNoLevelDialog,
+            udg_ConveyanceGoldCost
         )
         udg_ConveyanceTicket = 0
         udg_ConveyanceReceiver = nil
         udg_ConveyanceNewEnvName = ""
         udg_ConveyanceLevel = 0
         udg_ConveyanceNoLevelDialog = 0
+        udg_ConveyanceGoldCost = 0
     end)
 end)
 Debug.endFile()
