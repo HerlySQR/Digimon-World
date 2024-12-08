@@ -24,29 +24,29 @@ OnInit(function ()
     { ---@type {equips: integer?, damage: integer?, defense: number?, health: integer?, energy: integer?}[]
         [1] =   {equips = nil,    damage = 1,     defense = nil,      health = nil,   energy = nil},
         [2] =   {equips = nil,    damage = 1,     defense = 0.5,      health = nil,   energy = nil},
-        [3] =   {equips = 2,      damage = 1,     defense = 0.5,      health = 10,    energy = nil},
+        [3] =   {equips = nil,    damage = 1,     defense = 0.5,      health = 10,    energy = nil},
         [4] =   {equips = nil,    damage = 1,     defense = 0.5,      health = 10,    energy = 5},
-        [5] =   {equips = nil,    damage = 2,     defense = 1,        health = 20,    energy = 10},
+        [5] =   {equips = 3,      damage = 2,     defense = 1,        health = 20,    energy = 10},
         [6] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 30,    energy = 15},
-        [7] =   {equips = 2,      damage = 3,     defense = 1.5,      health = 30,    energy = 15},
+        [7] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 30,    energy = 15},
         [8] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 30,    energy = 15},
         [9] =   {equips = nil,    damage = 3,     defense = 1.5,      health = 30,    energy = 15},
-        [10] =  {equips = nil,    damage = 4,     defense = 2,        health = 40,    energy = 20},
+        [10] =  {equips = 3,      damage = 4,     defense = 2,        health = 40,    energy = 20},
         [11] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 50,    energy = 25},
-        [12] =  {equips = 2,      damage = 5,     defense = 2.5,      health = 50,    energy = 25},
+        [12] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 50,    energy = 25},
         [13] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 50,    energy = 25},
         [14] =  {equips = nil,    damage = 5,     defense = 2.5,      health = 50,    energy = 25},
-        [15] =  {equips = nil,    damage = 6,     defense = 3,        health = 60,    energy = 30},
+        [15] =  {equips = 3,      damage = 6,     defense = 3,        health = 60,    energy = 30},
         [16] =  {equips = nil,    damage = 7,     defense = 3.5,      health = 70,    energy = 35},
         [17] =  {equips = nil,    damage = 7,     defense = 3.5,      health = 70,    energy = 35},
-        [18] =  {equips = 2,      damage = 7,     defense = 3.5,      health = 70,    energy = 35},
+        [18] =  {equips = nil,    damage = 7,     defense = 3.5,      health = 70,    energy = 35},
         [19] =  {equips = nil,    damage = 7,     defense = 3.5,      health = 70,    energy = 35},
-        [20] =  {equips = nil,    damage = 8,     defense = 4,        health = 80,    energy = 40},
+        [20] =  {equips = 3,      damage = 8,     defense = 4,        health = 80,    energy = 40},
         [21] =  {equips = nil,    damage = 9,     defense = 4.5,      health = 90,    energy = 45},
         [22] =  {equips = nil,    damage = 9,     defense = 4.5,      health = 90,    energy = 45},
         [23] =  {equips = nil,    damage = 9,     defense = 4.5,      health = 90,    energy = 45},
         [24] =  {equips = nil,    damage = 9,     defense = 4.5,      health = 90,    energy = 45},
-        [25] =  {equips = 3,      damage = 10,     defense = 5,       health = 100,   energy = 50}
+        [25] =  {equips = nil,    damage = 10,     defense = 5,       health = 100,   energy = 50}
     }
 
     local GymMenu = nil ---@type framehandle

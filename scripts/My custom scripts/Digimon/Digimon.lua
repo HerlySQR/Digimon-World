@@ -550,6 +550,15 @@ OnInit("Digimon", function ()
                     udg_DamageEventArmorT = udg_ARMOR_TYPE_NONE
                     udg_DamageEventWeaponT = udg_WEAPON_TYPE_NONE
                     udg_DamageEventType = udg_DamageTypeBlocked
+
+                    udg_PositionUnit = udg_DamageEventTarget
+                    udg_Red = 100.00
+                    udg_Green = 100.00
+                    udg_Blue = 100.00
+                    udg_Text = "miss"
+                    udg_Size = 10.00
+                    udg_ZOffset = 0.00
+                    TriggerExecute(gg_trg_Display_Damage_Ex)
                 else
                     if 100*math.random() < source.critcalChance then
                         if source.critcalAmount > 1. then
