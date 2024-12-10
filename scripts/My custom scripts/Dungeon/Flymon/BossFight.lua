@@ -11,7 +11,7 @@ OnInit(function ()
     UnitRemoveAbility(boss, CROW_FORM_ID)
 
     local flying = false
-    local waitFlying = 4
+    local waitFlying = 5
 
     InitBossFight({
         name = "Flymon",

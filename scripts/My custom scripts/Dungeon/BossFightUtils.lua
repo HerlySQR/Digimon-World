@@ -69,6 +69,24 @@ OnInit("BossFightUtils", function ()
         canLeave[boss] = flag
     end
 
+    ---@param name string
+    ---@return rect[]
+    function GetRects(name)
+        local numRect = 1
+        local rects = {}
+        while true do
+            local r = rawget(_G, "gg_rct_" .. name .. "_" .. numRect) -- To not display the error message
+            if r then
+                rects[numRect] = r
+            else
+                break
+            end
+            numRect = numRect + 1
+        end
+        numRect = numRect - 1
+        return rects
+    end
+
     ---@param boss unit
     ---@param x number
     ---@param y number
@@ -336,17 +354,8 @@ OnInit("BossFightUtils", function ()
             SetTextTagVisibility(advice, false)
         end
 
-        local numRect = 1
-        while true do
-            local r = rawget(_G, "gg_rct_" .. data.name .. "_" .. numRect) -- To not display the error message
-            if r then
-                battlefield[data.boss][numRect] = r
-            else
-                break
-            end
-            numRect = numRect + 1
-        end
-        numRect = numRect - 1
+        battlefield[data.boss] = GetRects(data.name)
+        local numRect = #battlefield[data.boss]
 
         local unitsInTheField = Set.create()
         local attacking = false

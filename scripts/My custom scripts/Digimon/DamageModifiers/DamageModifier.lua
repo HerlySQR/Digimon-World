@@ -82,26 +82,22 @@ OnInit("DamageModifier", function ()
                     end
                 end
                 -- Abilities
+                for j = #prevData.spells, 1, -1 do
+                    local line = prevData.spells[j]:find("-")
+                    local id = math.tointeger(prevData.spells[j]:sub(line+1)) or 0
+                    local lvl = math.tointeger(prevData.spells[j]:sub(1, line-1)) or 0
+                    modify(d, abilConds[id][lvl], true)
+                    table.remove(prevData.spells, j)
+                end
                 local index = 0
-                local n = #prevData.spells
                 while true do
                     local abil = BlzGetUnitAbilityByIndex(d.root, index)
-                    if not abil and index >= n then break end
+                    if not abil then break end
                     local id = BlzGetAbilityId(abil)
                     local lvl = d:getAbilityLevel(id)
-                    if prevData.spells[index] ~= lvl .. id then
-                        local spell = math.tointeger(prevData.spells[index]:sub(2)) or 0
-                        if abilConds[spell][lvl] then
-                            modify(d, abilConds[spell][lvl], true)
-                        end
-                        if abilConds[id][lvl] then
-                            modify(d, abilConds[id][lvl])
-                        end
-                        if abil then
-                            prevData.spells[index] = lvl .. id
-                        else
-                            prevData.spells[index] = nil
-                        end
+                    if abilConds[id][lvl] then
+                        modify(d, abilConds[id][lvl])
+                        table.insert(prevData.spells, lvl .. "-".. id)
                     end
                     index = index + 1
                 end
