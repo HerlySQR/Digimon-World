@@ -3,7 +3,7 @@ OnInit(function ()
     Require "AbilityUtils"
 
     local SPELL = FourCC('A0B4')
-    local DAMAGE = 100.
+    local DAMAGE = 60.
     local FLY_DIST = 600.
     local SPEED = 70.
     local AREA = 200.

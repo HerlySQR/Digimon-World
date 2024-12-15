@@ -129,7 +129,7 @@ OnInit("Environment", function ()
         end
     end)
 
-    Timed.echo(1., function ()
+    local function UpdateDigimons()
         if inMenu then
             for i = 1, udg_MAX_USED_DIGIMONS do
                 BlzFrameSetVisible(DigimonIcons[i], false)
@@ -157,7 +157,9 @@ OnInit("Environment", function ()
                 end
             end
         end
-    end)
+    end
+
+    Timed.echo(1., UpdateDigimons)
 
     ---@class Environment
     ---@field name string
@@ -486,6 +488,7 @@ OnInit("Environment", function ()
             HideMenu(true)
             BlzFrameSetVisible(MapBackdrop, true)
             inMenu = true
+            UpdateDigimons()
         end
         onSeeMapClicked:run(p)
     end

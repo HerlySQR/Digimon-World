@@ -82,9 +82,9 @@ OnInit(function ()
     local LOBBY = gg_rct_Gym_Lobby ---@type rect
     local VENDOR = gg_unit_N01O_0120 ---@type unit
     local OPEN_SHOP = FourCC('I05X')
-    local MAX_ITEM_PER_ROW = 4
+    local MAX_ITEM_PER_COLUM = 3
 
-    local actualRow = MAX_ITEM_PER_ROW
+    local actualColum = MAX_ITEM_PER_COLUM
     local actualContainer = nil ---@type framehandle
     local UsedArena = __jarray(false) ---@type boolean[]
 
@@ -385,10 +385,8 @@ OnInit(function ()
                     end
                     ShowBank(info.p, true)
                     ShowBackpack(info.p, true)
-                    if i > 1 then
-                        DisablePvP(info.p, self.pi[i-1].p)
-                    end
                 end
+                DisablePvP(self.pi[1].p, self.pi[2].p)
                 if notNeutral then
                     SetPlayerAllianceStateBJ(self.pi[1].p, self.pi[2].p, bj_ALLIANCE_ALLIED_VISION)
                     SetPlayerAllianceStateBJ(self.pi[2].p, self.pi[1].p, bj_ALLIANCE_ALLIED_VISION)
@@ -748,20 +746,20 @@ OnInit(function ()
 
         local i = #RankItems
 
-        if actualRow >= MAX_ITEM_PER_ROW then
-            actualRow = 0
+        if actualColum >= MAX_ITEM_PER_COLUM then
+            actualColum = 0
             FrameLoaderAdd(function ()
                 actualContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RankShopItems, "", 1)
                 BlzFrameSetPoint(actualContainer, FRAMEPOINT_TOPLEFT, RankShopItems, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
-                BlzFrameSetSize(actualContainer, 0.25000, 0.06667)
+                BlzFrameSetSize(actualContainer, 0.06667, 0.20000)
                 BlzFrameSetTexture(actualContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
             end)
         end
 
         FrameLoaderAdd(function ()
             RankShopItemT[i] = BlzCreateFrame("IconButtonTemplate", actualContainer, 0, 0)
-            BlzFrameSetPoint(RankShopItemT[i], FRAMEPOINT_TOPLEFT, actualContainer, FRAMEPOINT_TOPLEFT, 0.06667 * actualRow, 0.0000)
-            BlzFrameSetPoint(RankShopItemT[i], FRAMEPOINT_BOTTOMRIGHT, actualContainer, FRAMEPOINT_BOTTOMRIGHT, -0.20000 + 0.06667 * actualRow, 0.01667)
+            BlzFrameSetPoint(RankShopItemT[i], FRAMEPOINT_TOPLEFT, actualContainer, FRAMEPOINT_TOPLEFT, 0.0000, -0.066667 * actualColum)
+            BlzFrameSetPoint(RankShopItemT[i], FRAMEPOINT_BOTTOMRIGHT, actualContainer, FRAMEPOINT_BOTTOMRIGHT, -0.016667, 0.15000 - 0.06667 * actualColum)
             BlzFrameSetEnable(RankShopItemT[i], false)
 
             BackdropRankShopItemT[i] = BlzCreateFrameByType("BACKDROP", "BackdropRankShopItemT[" .. i .. "]", RankShopItemT[i], "", 0)
@@ -821,12 +819,12 @@ OnInit(function ()
 
             BlzFrameSetTooltip(RankShopItemT[i], tooltip)
 
-            if actualRow == 0 then
+            if actualColum == 0 then
                 RankShopList:add(actualContainer)
             end
         end)
 
-        actualRow = actualRow + 1
+        actualColum = actualColum + 1
     end
 
     do
@@ -964,30 +962,31 @@ OnInit(function ()
         BlzFrameSetVisible(FIGHT, false)
 
         RankShopMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 0, 0)
-        BlzFrameSetAbsPoint(RankShopMenu, FRAMEPOINT_TOPLEFT, 0.260000, 0.480000)
+        BlzFrameSetAbsPoint(RankShopMenu, FRAMEPOINT_TOPLEFT, 0.260000, 0.500000)
         BlzFrameSetAbsPoint(RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, 0.560000, 0.190000)
         BlzFrameSetVisible(RankShopMenu, false)
 
         RankShopItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", RankShopMenu, "", 1)
-        BlzFrameSetPoint(RankShopItems, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, 0.03000, -0.033333)
-        BlzFrameSetPoint(RankShopItems, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.02000, 0.023333)
+        BlzFrameSetPoint(RankShopItems, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, -0.008333, -0.055000)
+        BlzFrameSetPoint(RankShopItems, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.058333, 0.055000)
         BlzFrameSetTexture(RankShopItems, "war3mapImported\\EmptyBTN.blp", 0, true)
 
-        RankShopList = FrameList.create(false, RankShopItems)
+        RankShopList = FrameList.create(true, RankShopItems)
         BlzFrameSetPoint(RankShopList.Frame, FRAMEPOINT_TOPLEFT, RankShopItems, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
-        RankShopList:setSize(0.25, 0.233334)
+        RankShopList:setSize(0.283333, 0.20000)
+        BlzFrameSetSize(RankShopList.Slider, 0.25, 0.012)
 
         RankShopText = BlzCreateFrameByType("TEXT", "name", RankShopMenu, "", 0)
         BlzFrameSetScale(RankShopText, 1.57)
         BlzFrameSetPoint(RankShopText, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, 0.040000, -0.020000)
-        BlzFrameSetPoint(RankShopText, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.24000)
+        BlzFrameSetPoint(RankShopText, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.26000)
         BlzFrameSetText(RankShopText, "|cffFFCC00Click to buy an item|r")
         BlzFrameSetEnable(RankShopText, false)
         BlzFrameSetTextAlignment(RankShopText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         RankShopExit = BlzCreateFrame("ScriptDialogButton", RankShopMenu, 0, 0)
-        BlzFrameSetPoint(RankShopExit, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, 0.10000, -0.25500)
-        BlzFrameSetPoint(RankShopExit, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.0050000)
+        BlzFrameSetPoint(RankShopExit, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, 0.10000, -0.26500)
+        BlzFrameSetPoint(RankShopExit, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.015000)
         BlzFrameSetText(RankShopExit, "|cffFCD20DClose|r")
         BlzFrameSetScale(RankShopExit, 1.00)
         t = CreateTrigger()
@@ -1298,7 +1297,7 @@ OnInit(function ()
                     end
                     BlzFrameSetVisible(PlayerDigimonClicked[1][i], false)
 
-                    if i < #list then
+                    if i+1 < #list then
                         BlzFrameSetTexture(BackdropPlayerDigimonT[2][i], BlzGetAbilityIcon(list[i+1]), 0, true)
                     else
                         BlzFrameSetTexture(BackdropPlayerDigimonT[2][i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)

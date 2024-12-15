@@ -142,7 +142,7 @@ OnInit("FrameList", function ()
         table.insert(self.Content, frame)
         BlzFrameSetParent(frame, self.Frame)
         BlzFrameSetMinMaxValue(self.Slider, 1, #self.Content)
-        BlzFrameSetValue(frame, #self.Content)
+        BlzFrameSetValue(self.Slider, #self.Content-1)
         self:setContentPoints()
     end
 

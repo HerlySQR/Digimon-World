@@ -50,6 +50,12 @@ OnInit("DigimonEvolution", function ()
         end
     end
 
+    ---@param id integer
+    ---@return EvolutionCondition[]
+    function GetEvolutionConditions(id)
+        return EvolutionConditions[id]
+    end
+
     ---@param evolve Digimon
     ---@param toEvolve integer
     local function RemovePossibleEvolution(evolve, toEvolve)

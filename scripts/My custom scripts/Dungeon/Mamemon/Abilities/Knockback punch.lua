@@ -3,7 +3,7 @@ OnInit(function ()
     Require "AbilityUtils"
 
     local SPELL = FourCC('A0B3')
-    local DAMAGE = 100.
+    local DAMAGE = 35.
     local PUSH_DIST = 300.
     local AREA = 200.
     local PUNCH_EFFECT = "Abilities\\Spells\\Human\\ThunderClap\\ThunderClapCaster.mdl"

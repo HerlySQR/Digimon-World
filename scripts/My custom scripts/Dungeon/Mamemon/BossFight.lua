@@ -12,9 +12,9 @@ OnInit(function ()
         inner = gg_rct_MamemonInner,
         entrance = gg_rct_MamemonEntrance,
         spells = {
-            2, Orders.thunderbolt, CastType.TARGET, -- Knockback punch
-            2, Orders.creepthunderbolt, CastType.TARGET, -- Knockup punch
-            2, Orders.roar, CastType.IMMEDIATE, -- Increase Damage
+            3, Orders.thunderbolt, CastType.TARGET, -- Knockback punch
+            3, Orders.creepthunderbolt, CastType.TARGET, -- Knockup punch
+            3, Orders.roar, CastType.IMMEDIATE, -- Increase Damage
             6, Orders.inferno, CastType.POINT -- Smiley bomb
         },
         actions = function (u)

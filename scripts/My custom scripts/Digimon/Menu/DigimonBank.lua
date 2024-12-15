@@ -20,6 +20,7 @@ OnInit("DigimonBank", function ()
     local NEW_DIGIMON_SLOT_COST_BITS = 3500
     local NEW_DIGIMON_SLOT_COST_CRYSTALS = 4
     local REVIVE_ITEM = udg_REVIVE_ITEM
+    local REVIVE_COOLDOWN = 90.
 
     local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
 
@@ -131,6 +132,7 @@ OnInit("DigimonBank", function ()
     ---@field priorities Digimon[]
     ---@field punish boolean
     ---@field reviveItems integer
+    ---@field reviveCooldown number
     local Bank = {}
     Bank.__index = Bank
 
@@ -167,7 +169,8 @@ OnInit("DigimonBank", function ()
             seller = nil,
             priorities = {},
             punish = true,
-            reviveItems = 0
+            reviveItems = 0,
+            reviveCooldown = 0.
         }, Bank)
     end
 
@@ -179,6 +182,7 @@ OnInit("DigimonBank", function ()
     ---@field sItms integer[]
     ---@field sItmsCha integer[]
     ---@field rItms integer
+    ---@field rCd number
     BankData = setmetatable({}, Serializable)
     BankData.__index = BankData
 
@@ -192,7 +196,8 @@ OnInit("DigimonBank", function ()
             sItmsSto = MIN_SAVED_ITEMS,
             sItms = {},
             sItmsCha = {},
-            rItms = 0
+            rItms = 0,
+            rCd = 0.,
         }
         if main then
             for i = 0, MAX_STOCK - 1 do
@@ -214,6 +219,7 @@ OnInit("DigimonBank", function ()
                 end
             end
             self.rItms = main.reviveItems
+            self.rCd = main.reviveCooldown
         end
         return setmetatable(self, BankData)
     end
@@ -238,6 +244,7 @@ OnInit("DigimonBank", function ()
             end
         end
         self:addProperty("rItms", self.rItms)
+        self:addProperty("rCd", self.rCd)
     end
 
     function BankData:deserializeProperties()
@@ -265,6 +272,7 @@ OnInit("DigimonBank", function ()
             end
         end
         self.rItms = self:getIntProperty("rItms")
+        self.rCd = self:getRealProperty("rCd")
     end
 
     -- Conditions
@@ -324,7 +332,7 @@ OnInit("DigimonBank", function ()
 
     ---@return boolean
     function Bank:reviveDigimonConditions()
-        if self.pressed == -1 or self.reviveItems <= 0 then
+        if self.pressed == -1 or self.reviveItems <= 0 or self.reviveCooldown > 0 then
             return false
         end
 
@@ -799,7 +807,7 @@ OnInit("DigimonBank", function ()
 
                 BlzFrameSetVisible(DigimonTIsMain[i], bank.main == d)
 
-                BlzFrameSetText(Revive, "|cffFCD20DRevive (" .. bank.reviveItems .. ")|r")
+                BlzFrameSetText(Revive, (bank.reviveCooldown > 0 and ("[" .. math.floor(bank.reviveCooldown) .. "] ") or "") .. "|cffFCD20DRevive (" .. bank.reviveItems .. ")|r")
             else
                 -- Button
                 BlzFrameSetEnable(DigimonT[i], false)
@@ -819,7 +827,7 @@ OnInit("DigimonBank", function ()
             BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_TOPLEFT, DigimonTTooltipText[i], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
             BlzFrameSetPoint(DigimonTTooltip[i], FRAMEPOINT_BOTTOMRIGHT, DigimonTTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
         end
-        if bank.pressed ~= -1 then
+        if bank.pressed ~= -1 and BlzFrameGetEnable(DigimonT[bank.pressed]) then
             BlzFrameClick(DigimonT[bank.pressed])
         end
     end
@@ -1154,10 +1162,21 @@ OnInit("DigimonBank", function ()
 
         local d = bank.stocked[bank.pressed]
         d:revive(d:getPos())
-        SetUnitLifePercentBJ(d.root, 1)
-        SetUnitManaPercentBJ(d.root, 0)
+        SetUnitLifePercentBJ(d.root, 5)
+        SetUnitManaPercentBJ(d.root, 5)
 
         bank.reviveItems = bank.reviveItems - 1
+        bank.reviveCooldown = REVIVE_COOLDOWN
+        Timed.echo(1., function ()
+            if bank.reviveCooldown <= 0 then
+                return true
+            end
+            bank.reviveCooldown = bank.reviveCooldown - 1.
+            if p == LocalPlayer then
+                UpdateMenu()
+            end
+        end)
+
         if bank.main then
             DestroyEffectTimed(AddSpecialEffect(CENTAURMON_REVIVE_EFF_1, bank.main:getPos()), 1.)
             DestroyEffectTimed(AddSpecialEffect(CENTAURMON_REVIVE_EFF_2, bank.main:getPos()), 1.)
@@ -1396,7 +1415,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetTextAlignment(Text, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
         Summon = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
-        BlzFrameSetScale(Summon, 1.00)
+        BlzFrameSetScale(Summon, 0.80)
         BlzFrameSetPoint(Summon, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.0050000, -0.23500)
         BlzFrameSetPoint(Summon, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.065000, 0.010000)
         BlzFrameSetText(Summon, "|cffFCD20DSummon|r")
@@ -1406,7 +1425,7 @@ OnInit("DigimonBank", function ()
         AssignFrame(Summon, 29)
 
         Store = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
-        BlzFrameSetScale(Store, 1.00)
+        BlzFrameSetScale(Store, 0.80)
         BlzFrameSetPoint(Store, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.0050000, -0.23500)
         BlzFrameSetPoint(Store, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.065000, 0.010000)
         BlzFrameSetText(Store, "|cffFCD20DStore|r")
@@ -1417,7 +1436,7 @@ OnInit("DigimonBank", function ()
         AssignFrame(Store, 30)
 
         Revive = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
-        BlzFrameSetScale(Revive, 1.00)
+        BlzFrameSetScale(Revive, 0.80)
         BlzFrameSetPoint(Revive, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.0050000, -0.23500)
         BlzFrameSetPoint(Revive, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.065000, 0.010000)
         BlzFrameSetText(Revive, "|cffFCD20DRevive|r")
@@ -1428,7 +1447,7 @@ OnInit("DigimonBank", function ()
         AssignFrame(Revive, 42)
 
         Free = BlzCreateFrame("ScriptDialogButton", StockedDigimonsMenu,0,0)
-        BlzFrameSetScale(Free, 1.00)
+        BlzFrameSetScale(Free, 0.80)
         BlzFrameSetPoint(Free, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.065000, -0.23500)
         BlzFrameSetPoint(Free, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.010000)
         BlzFrameSetText(Free, "|cffFCD20DFree|r")
@@ -2435,6 +2454,7 @@ OnInit("DigimonBank", function ()
         end
 
         bank.reviveItems = data.rItms
+        bank.reviveCooldown = data.rCd
 
         if p == LocalPlayer then
             UpdateMenu()
