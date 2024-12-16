@@ -12,6 +12,13 @@ OnInit("DigimonEvolution", function ()
     local EvolveClicked = __jarray(-1) ---@type table<player, integer>
     local EvolveOption = {} ---@type table<player, button>[]
 
+    local evolveCondEvent = EventListener.create()
+
+    ---@param func fun(d: Digimon, toEvolve: integer, cond: "level"|"place"|"stone"|"onlyDay"|"onlyNight"|"str"|"agi"|"int")
+    function OnEvolveCond(func)
+        evolveCondEvent:register(func)
+    end
+
     -- Evolution abilities
 
     EvolveAbil = FourCC('A02H')
@@ -84,31 +91,64 @@ OnInit("DigimonEvolution", function ()
                 if EvolutionConditions[initial] then
                     for _, cond in ipairs(EvolutionConditions[initial]) do
                         local canEvolve = true
+                        local meet = false
                         -- Check lvl
-                        canEvolve = canEvolve and (d:getLevel() >= cond.level)
+                        meet = d:getLevel() >= cond.level
+                        if meet then
+                            evolveCondEvent:run(d, cond.toEvolve, "level")
+                        end
+                        canEvolve = canEvolve and meet
                         -- Check place
                         if cond.place then
-                            canEvolve = canEvolve and RectContainsUnit(cond.place, d.root)
+                            meet = RectContainsUnit(cond.place, d.root)
+                            if meet then
+                                evolveCondEvent:run(d, cond.toEvolve, "place")
+                            end
+                            canEvolve = canEvolve and meet
                         end
                         -- Check stone
                         if cond.stone then
-                            canEvolve = canEvolve and (UnitHasItemOfTypeBJ(d.root, cond.stone) or UnitHasItemOfTypeBJ(d.root, MULTICOLOR_DIGIVICE))
+                            meet = (UnitHasItemOfTypeBJ(d.root, cond.stone) or UnitHasItemOfTypeBJ(d.root, MULTICOLOR_DIGIVICE))
+                            if meet then
+                                evolveCondEvent:run(d, cond.toEvolve, "stone")
+                            end
+                            canEvolve = canEvolve and meet
                         end
                         -- Check day/night
                         if cond.onlyDay then
-                            canEvolve = canEvolve and (GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK)
+                            meet = (GetTimeOfDay() >= bj_TOD_DAWN and GetTimeOfDay() < bj_TOD_DUSK)
+                            if meet then
+                                evolveCondEvent:run(d, cond.toEvolve, "onlyDay")
+                            end
+                            canEvolve = canEvolve and meet
                         elseif cond.onlyNight then
-                            canEvolve = canEvolve and (GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK)
+                            meet = (GetTimeOfDay() < bj_TOD_DAWN or GetTimeOfDay() >= bj_TOD_DUSK)
+                            if meet then
+                                evolveCondEvent:run(d, cond.toEvolve, "onlyNight")
+                            end
+                            canEvolve = canEvolve and meet
                         end
                         -- Check stats
                         if cond.str then
-                            canEvolve = canEvolve and (GetHeroStr(d.root, true) >= cond.str)
+                            meet = (GetHeroStr(d.root, true) >= cond.str)
+                            if meet then
+                                evolveCondEvent:run(d, cond.toEvolve, "str")
+                            end
+                            canEvolve = canEvolve and meet
                         end
                         if cond.agi then
-                            canEvolve = canEvolve and (GetHeroAgi(d.root, true) >= cond.agi)
+                            meet = (GetHeroAgi(d.root, true) >= cond.agi)
+                            if meet then
+                                evolveCondEvent:run(d, cond.toEvolve, "agi")
+                            end
+                            canEvolve = canEvolve and meet
                         end
                         if cond.int then
-                            canEvolve = canEvolve and (GetHeroInt(d.root, true) >= cond.int)
+                            meet = (GetHeroInt(d.root, true) >= cond.int)
+                            if meet then
+                                evolveCondEvent:run(d, cond.toEvolve, "int")
+                            end
+                            canEvolve = canEvolve and meet
                         end
 
                         if canEvolve then

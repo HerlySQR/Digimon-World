@@ -386,9 +386,6 @@ OnInit("Environment", function ()
 
         Environments[p] = env
         if not _spect and env.mapPortion then
-            if p == LocalPlayer then
-                BlzFrameSetVisible(env.mapPortionGlow, true)
-            end
             if not vistedPlaces[p][env.id] then
                 vistedPlaces[p][env.id] = env.mapPortion
                 if p == LocalPlayer then

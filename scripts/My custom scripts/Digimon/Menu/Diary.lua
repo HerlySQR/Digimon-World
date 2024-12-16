@@ -31,6 +31,8 @@ OnInit("Diary", function ()
     local DigimonEvolveOptions = nil ---@type framehandle
     local DigimonWhere = nil ---@type framehandle
     local DigimonEvolvesToOption = {} ---@type framehandle[]
+    local DigimonEvolvesToOptionButton = {} ---@type framehandle[]
+    local DigimonEvolvesToOptionSprite = {} ---@type framehandle[]
     local DigimonEvolveRequirementsText = {} ---@type framehandle[]
 
     local MAX_DIGIMON_TYPE_PER_ROW = 10
@@ -39,7 +41,15 @@ OnInit("Diary", function ()
 
     ---@class EvolveCond
     ---@field label string
-    ---@field tooltip string
+    ---@field toEvolve integer
+    ---@field level integer
+    ---@field place rect?
+    ---@field stone integer?
+    ---@field onlyDay boolean
+    ---@field onlyNight boolean
+    ---@field str integer?
+    ---@field agi integer?
+    ---@field int integer?
 
     ---@class DigimonInfo
     ---@field name string
@@ -49,14 +59,25 @@ OnInit("Diary", function ()
     ---@field evolveOptions EvolveCond[]
     ---@field whereToBeFound Environment[]
     ---@field button framehandle
+    ---@field sprite framehandle
 
     local infos = {} ---@type table<integer, DigimonInfo>
+
+    ---@class EvolveUnlockedCond
+    ---@field level boolean
+    ---@field place boolean
+    ---@field stone boolean
+    ---@field onlyDay boolean
+    ---@field onlyNight boolean
+    ---@field str boolean
+    ---@field agi boolean
+    ---@field int boolean
 
     ---@class DigimonUnlockedInfo : Serializable
     ---@field staPerLvl boolean
     ---@field dexPerLvl boolean
     ---@field wisPerLvl boolean
-    ---@field evolveOptions table<integer, boolean>
+    ---@field evolveOptions table<integer, EvolveUnlockedCond>
     ---@field whereToBeFound table<string, boolean>
     local DigimonUnlockedInfo = setmetatable({}, Serializable)
     DigimonUnlockedInfo.__index = DigimonUnlockedInfo
@@ -71,7 +92,7 @@ OnInit("Diary", function ()
             staPerLvl = false,
             dexPerLvl = false,
             wisPerLvl = false,
-            evolveOptions = __jarray(false),
+            evolveOptions = {},
             whereToBeFound = __jarray(false)
         }, DigimonUnlockedInfo)
     end
@@ -84,7 +105,14 @@ OnInit("Diary", function ()
         for id, unlocked in pairs(self.evolveOptions) do
             evoAmt = evoAmt + 1
             self:addProperty("eid" .. evoAmt, id)
-            self:addProperty("ueid" .. evoAmt, unlocked)
+            self:addProperty("ueidl" .. evoAmt, unlocked.level)
+            self:addProperty("ueidp" .. evoAmt, unlocked.place)
+            self:addProperty("ueids" .. evoAmt, unlocked.stone)
+            self:addProperty("ueidstr" .. evoAmt, unlocked.str)
+            self:addProperty("ueidagi" .. evoAmt, unlocked.agi)
+            self:addProperty("ueidint" .. evoAmt, unlocked.int)
+            self:addProperty("ueidod" .. evoAmt, unlocked.onlyDay)
+            self:addProperty("ueidon" .. evoAmt, unlocked.onlyNight)
         end
         self:addProperty("evoAmt", evoAmt)
         local envAmt = 0
@@ -102,7 +130,16 @@ OnInit("Diary", function ()
         self.wisPerLvl = self:getBoolProperty("wPL")
         local evoAmt = self:getIntProperty("evoAmt")
         for i = 1, evoAmt do
-            self.evolveOptions[self:getIntProperty("eid" .. i)] = self:getBoolProperty("ueid" .. i)
+            local id = self:getIntProperty("eid" .. i)
+            self.evolveOptions[id] = __jarray(false)
+            self.evolveOptions[id].level = self:getBoolProperty("ueidl" .. i)
+            self.evolveOptions[id].place = self:getBoolProperty("ueidp" .. i)
+            self.evolveOptions[id].stone = self:getBoolProperty("ueids" .. i)
+            self.evolveOptions[id].str = self:getBoolProperty("ueidstr" .. i)
+            self.evolveOptions[id].agi = self:getBoolProperty("ueidagi" .. i)
+            self.evolveOptions[id].int = self:getBoolProperty("ueidint" .. i)
+            self.evolveOptions[id].onlyDay = self:getBoolProperty("ueidod" .. i)
+            self.evolveOptions[id].onlyNight = self:getBoolProperty("ueidon" .. i)
         end
         local envAmt = self:getIntProperty("envAmt")
         for i = 1, envAmt do
@@ -157,11 +194,12 @@ OnInit("Diary", function ()
     local actualRow = __jarray(MAX_DIGIMON_TYPE_PER_ROW) ---@type table<FrameList, integer>
 
     local function UpdateInformation()
-        if digimonSelected ~= -1 then
+        if digimonSelected ~= -1 and infos[digimonSelected] then
             local info = infos[digimonSelected]
             local unlockedInfo = unlockedInfos[LocalPlayer][digimonSelected]
 
             BlzFrameSetVisible(DigimonInformation, true)
+            BlzFrameSetVisible(info.sprite, false)
 
             BlzFrameSetText(DigimonName, "|cffFFCC00" .. info.name .. "|r")
             BlzFrameSetText(DigimonStamina, "|cffff7d00Stamina per level: |r" .. (unlockedInfo.staPerLvl and info.staPerLvl or "???"))
@@ -169,14 +207,47 @@ OnInit("Diary", function ()
             BlzFrameSetText(DigimonWisdom, "|cff004ec8Wisdom per level: |r" .. (unlockedInfo.wisPerLvl and info.wisPerLvl or "???"))
 
             local conds = info.evolveOptions
+            local unlockedConds = unlockedInfo.evolveOptions
             for i = 1, 7 do
                 if conds[i] then
-                    BlzFrameSetText(DigimonEvolvesToOption[i], conds[i].label)
-                    BlzFrameSetText(DigimonEvolveRequirementsText[i], conds[i].tooltip)
+                    local cond = conds[i]
+                    local unlockedCond = unlockedConds[cond.toEvolve]
+                    if unlockedCond then
+                        BlzFrameSetText(DigimonEvolvesToOption[i], cond.label)
+                        local result = "- " .. (unlockedCond.level and ("Have level " .. cond.level) or "???")
+                        if cond.stone then
+                            result = result .. "\n- " .. (unlockedCond.stone and ("Hold the " .. GetObjectName(cond.stone) .. " item.") or "???")
+                        end
+                        if cond.place then
+                            result = result .. "\n- " .. (unlockedCond.place and ("Stay on " .. rectNames[cond.place] .. ".") or "???")
+                        end
+                        if cond.str then
+                            result = result .. "\n- " .. (unlockedCond.str and ("Get " .. cond.str .. " stamina.") or "???")
+                        end
+                        if cond.agi then
+                            result = result .. "\n- " .. (unlockedCond.agi and ("Get " .. cond.agi .. " dexterity.") or "???")
+                        end
+                        if cond.int then
+                            result = result .. "\n- " .. (unlockedCond.int and ("Get " .. cond.int .. " wisdom.") or "???")
+                        end
+                        if cond.onlyDay then
+                            result = result .. "\n- " .. (unlockedCond.onlyDay and ("Only during day.") or "???")
+                        elseif cond.onlyNight then
+                            result = result .. "\n- " .. (unlockedCond.onlyNight and ("Only during night.") or "???")
+                        end
+                        BlzFrameSetText(DigimonEvolveRequirementsText[i], result)
+                        BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], true)
+                    else
+                        BlzFrameSetText(DigimonEvolvesToOption[i], "???")
+                        BlzFrameSetText(DigimonEvolveRequirementsText[i], "???")
+                        BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], false)
+                    end
+
                     BlzFrameSetSize(DigimonEvolveRequirementsText[i], 0.17, 0)
                     BlzFrameSetVisible(DigimonEvolvesToOption[i], true)
                 else
                     BlzFrameSetVisible(DigimonEvolvesToOption[i], false)
+                    BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], false)
                 end
             end
 
@@ -239,6 +310,15 @@ OnInit("Diary", function ()
             BlzFrameSetPoint(button, FRAMEPOINT_TOPLEFT, actContainer, FRAMEPOINT_TOPLEFT, 0.04 * actualRow[list], 0.0000)
             BlzFrameSetSize(button, 0.04, 0.04)
 
+            local sprite =  BlzCreateFrameByType("SPRITE", "sprite", button, "", 0)
+            BlzFrameSetModel(sprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
+            BlzFrameClearAllPoints(sprite)
+            BlzFrameSetPoint(sprite, FRAMEPOINT_BOTTOMLEFT, button, FRAMEPOINT_BOTTOMLEFT, -0.001, -0.00175)
+            BlzFrameSetSize(sprite, 0.00001, 0.00001)
+            BlzFrameSetScale(sprite, 1.1)
+            BlzFrameSetLevel(sprite, 10)
+            BlzFrameSetVisible(sprite, false)
+
             local backdrop = BlzCreateFrameByType("BACKDROP", "DigimonType[" .. id .. "]", button, "", 0)
             BlzFrameSetAllPoints(backdrop, button)
             BlzFrameSetTexture(backdrop, BlzGetAbilityIcon(id), 0, true)
@@ -257,7 +337,8 @@ OnInit("Diary", function ()
                         wisPerLvl = BlzGetUnitRealField(u, UNIT_RF_INTELLIGENCE_PER_LEVEL),
                         evolveOptions = {},
                         whereToBeFound = {},
-                        button = button
+                        button = button,
+                        sprite = sprite
                     }
                     RemoveUnit(u)
 
@@ -265,32 +346,17 @@ OnInit("Diary", function ()
                         local u2 = CreateUnit(Digimon.NEUTRAL, cond.toEvolve, WorldBounds.minX, WorldBounds.minY, 0)
                         infos[id].evolveOptions[i] = {
                             label = GetHeroProperName(u2),
-                            tooltip = "- Have level " .. cond.level
+                            toEvolve = cond.toEvolve,
+                            level = cond.level,
+                            stone = cond.stone,
+                            place = cond.place,
+                            str = cond.str,
+                            agi = cond.agi,
+                            int = cond.int,
+                            onlyDay = cond.onlyDay,
+                            onlyNight = cond.onlyNight
                         }
                         RemoveUnit(u2)
-
-                        local result = infos[id].evolveOptions[i].tooltip
-                        if cond.stone then
-                            result = result .. "\n- Hold the " .. GetObjectName(cond.stone) .. " item."
-                        end
-                        if cond.place then
-                            result = result .. "\n- Stay on " .. rectNames[cond.place] .. "."
-                        end
-                        if cond.str then
-                            result = result .. "\n- Get " .. cond.str .. " stamina."
-                        end
-                        if cond.agi then
-                            result = result .. "\n- Get " .. cond.agi .. " dexterity."
-                        end
-                        if cond.int then
-                            result = result .. "\n- Get " .. cond.int .. " wisdom."
-                        end
-                        if cond.onlyDay then
-                            result = result .. "\n- Only during day."
-                        elseif cond.onlyNight then
-                            result = result .. "\n- Only during night."
-                        end
-                        infos[id].evolveOptions[i].tooltip = result
                     end
                     for i = 1, #whereToBeFound do
                         infos[id].whereToBeFound[i] = Environment.get(whereToBeFound[i])
@@ -484,9 +550,17 @@ OnInit("Diary", function ()
             BlzFrameSetEnable(DigimonEvolvesToOption[i], false)
             BlzFrameSetTextAlignment(DigimonEvolvesToOption[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-            local dummyButton = BlzCreateFrame("IconButtonTemplate", DigimonEvolvesToOption[i], 0, 0)
-            BlzFrameSetAllPoints(dummyButton, DigimonEvolvesToOption[i])
-            BlzFrameSetEnable(dummyButton, false)
+            DigimonEvolvesToOptionButton[i] = BlzCreateFrame("IconButtonTemplate", DigimonEvolvesToOption[i], 0, 0)
+            BlzFrameSetAllPoints(DigimonEvolvesToOptionButton[i], DigimonEvolvesToOption[i])
+            BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], false)
+            local t = CreateTrigger()
+            BlzTriggerRegisterFrameEvent(t, DigimonEvolvesToOptionButton[i], FRAMEEVENT_CONTROL_CLICK)
+            TriggerAddAction(t, function ()
+                if GetTriggerPlayer() == LocalPlayer then
+                    digimonSelected = infos[digimonSelected].evolveOptions[i].toEvolve
+                    UpdateInformation()
+                end
+            end)
 
             local tooltip = BlzCreateFrame("QuestButtonBaseTemplate", DigimonEvolvesToOption[i], 0, 0)
 
@@ -500,7 +574,7 @@ OnInit("Diary", function ()
             BlzFrameSetPoint(tooltip, FRAMEPOINT_TOPLEFT, DigimonEvolveRequirementsText[i], FRAMEPOINT_TOPLEFT, -0.0150000, 0.0150000)
             BlzFrameSetPoint(tooltip, FRAMEPOINT_BOTTOMRIGHT, DigimonEvolveRequirementsText[i], FRAMEPOINT_BOTTOMRIGHT, 0.0150000, -0.0150000)
 
-            BlzFrameSetTooltip(dummyButton, tooltip)
+            BlzFrameSetTooltip(DigimonEvolvesToOptionButton[i], tooltip)
         end
 
         DigimonWhere = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
@@ -538,6 +612,42 @@ OnInit("Diary", function ()
         rectNames[udg_DigimonRect] = udg_DigimonRectName
         udg_DigimonRect = nil
         udg_DigimonRectName = ""
+    end)
+
+    Digimon.levelUpEvent:register(function (d)
+        local id = d:getTypeId()
+        if not infos[id] then
+            return
+        end
+        local owner = d:getOwner()
+
+        local unlockedInfo = unlockedInfos[owner][id]
+        unlockedInfo.staPerLvl = true
+        unlockedInfo.dexPerLvl = true
+        unlockedInfo.wisPerLvl = true
+
+        if owner == LocalPlayer then
+            BlzFrameSetVisible(infos[id].sprite, true)
+            UpdateInformation()
+        end
+    end)
+
+    OnEvolveCond(function (d, toEvolve, condL)
+        local id = d:getTypeId()
+        if not infos[id] then
+            return
+        end
+
+        local owner = d:getOwner()
+        local unlockedInfo = unlockedInfos[owner][id]
+
+        unlockedInfo.evolveOptions[toEvolve] = unlockedInfo.evolveOptions[toEvolve] or __jarray(false)
+        unlockedInfo.evolveOptions[toEvolve][condL] = true
+
+        if owner == LocalPlayer then
+            BlzFrameSetVisible(infos[id].sprite, true)
+            UpdateInformation()
+        end
     end)
 end)
 Debug.endFile()

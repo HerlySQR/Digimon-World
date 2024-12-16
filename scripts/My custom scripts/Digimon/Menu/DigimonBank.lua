@@ -2315,7 +2315,7 @@ OnInit("DigimonBank", function ()
     ---@param u unit | Digimon
     function AddToBank(p, u)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
-        local d = Debug.wc3Type(u) == "unit" and Digimon.getInstance(u) or u
+        local d = (Debug.wc3Type(u) == "unit") and Digimon.getInstance(u) or u
         if d then
             for i = 0, MAX_STOCK - 1 do
                 if not bank.stocked[i] then
