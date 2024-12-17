@@ -32,7 +32,6 @@ OnInit("Diary", function ()
     local DigimonWhere = nil ---@type framehandle
     local DigimonEvolvesToOption = {} ---@type framehandle[]
     local DigimonEvolvesToOptionButton = {} ---@type framehandle[]
-    local DigimonEvolvesToOptionSprite = {} ---@type framehandle[]
     local DigimonEvolveRequirementsText = {} ---@type framehandle[]
 
     local MAX_DIGIMON_TYPE_PER_ROW = 10
@@ -451,6 +450,7 @@ OnInit("Diary", function ()
         BlzFrameSetPoint(RookiesList.Frame, FRAMEPOINT_TOPLEFT, RookiesContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
         BlzFrameSetPoint(RookiesList.Frame, FRAMEPOINT_TOPRIGHT, RookiesContainer, FRAMEPOINT_TOPRIGHT, 0.0060000, 0.000000)
         RookiesList:setSize(BlzFrameGetWidth(RookiesList.Frame), BlzFrameGetHeight(RookiesList.Frame))
+        BlzFrameSetSize(RookiesList.Slider, 0.012, 0.08)
 
         ChampionsText = BlzCreateFrameByType("TEXT", "name", Backdrop, "", 0)
         BlzFrameSetScale(ChampionsText, 2.00)
@@ -465,6 +465,12 @@ OnInit("Diary", function ()
         BlzFrameSetPoint(ChampionsContainer, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.29000)
         BlzFrameSetTexture(ChampionsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
+        ChampionsList = FrameList.create(false, ChampionsContainer)
+        BlzFrameSetPoint(ChampionsList.Frame, FRAMEPOINT_TOPLEFT, ChampionsContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
+        BlzFrameSetPoint(ChampionsList.Frame, FRAMEPOINT_TOPRIGHT, ChampionsContainer, FRAMEPOINT_TOPRIGHT, 0.0060000, 0.000000)
+        ChampionsList:setSize(BlzFrameGetWidth(ChampionsList.Frame), BlzFrameGetHeight(ChampionsList.Frame))
+        BlzFrameSetSize(ChampionsList.Slider, 0.012, 0.08)
+
         UltimatesText = BlzCreateFrameByType("TEXT", "name", Backdrop, "", 0)
         BlzFrameSetScale(UltimatesText, 2.00)
         BlzFrameSetPoint(UltimatesText, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.32000)
@@ -478,6 +484,12 @@ OnInit("Diary", function ()
         BlzFrameSetPoint(UltimatesContainer, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.17000)
         BlzFrameSetTexture(UltimatesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
+        UltimatesList = FrameList.create(false, UltimatesContainer)
+        BlzFrameSetPoint(UltimatesList.Frame, FRAMEPOINT_TOPLEFT, UltimatesContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
+        BlzFrameSetPoint(UltimatesList.Frame, FRAMEPOINT_TOPRIGHT, UltimatesContainer, FRAMEPOINT_TOPRIGHT, 0.0060000, 0.000000)
+        UltimatesList:setSize(BlzFrameGetWidth(UltimatesList.Frame), BlzFrameGetHeight(UltimatesList.Frame))
+        BlzFrameSetSize(UltimatesList.Slider, 0.012, 0.08)
+
         MegasText = BlzCreateFrameByType("TEXT", "name", Backdrop, "", 0)
         BlzFrameSetScale(MegasText, 2.00)
         BlzFrameSetPoint(MegasText, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020320, -0.43948)
@@ -490,6 +502,12 @@ OnInit("Diary", function ()
         BlzFrameSetPoint(MegasContainer, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.47000)
         BlzFrameSetPoint(MegasContainer, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.050000)
         BlzFrameSetTexture(MegasContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        MegasList = FrameList.create(false, MegasContainer)
+        BlzFrameSetPoint(MegasList.Frame, FRAMEPOINT_TOPLEFT, MegasContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
+        BlzFrameSetPoint(MegasList.Frame, FRAMEPOINT_TOPRIGHT, MegasContainer, FRAMEPOINT_TOPRIGHT, 0.0060000, 0.000000)
+        MegasList:setSize(BlzFrameGetWidth(MegasList.Frame), BlzFrameGetHeight(MegasList.Frame))
+        BlzFrameSetSize(MegasList.Slider, 0.012, 0.08)
 
         DigimonInformation = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
         BlzFrameSetAbsPoint(DigimonInformation, FRAMEPOINT_TOPLEFT, 0.510000, 0.490000)
