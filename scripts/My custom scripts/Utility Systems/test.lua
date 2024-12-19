@@ -43,6 +43,9 @@ DigimonEvolveOptions = nil
 TriggerDigimonEvolveOptions = nil 
 DigimonWhere = nil 
 TriggerDigimonWhere = nil 
+DigimonAbilityT = {} 
+BackdropDigimonAbilityT = {} 
+TriggerDigimonAbilityT = {} 
 DigimonEvolvesToOptionT = {} 
 TriggerDigimonEvolvesToOptionT = {} 
 DigimonEvolveRequirements = nil 
@@ -73,6 +76,21 @@ end
 REFORGEDUIMAKER.DigimonTypeFunc = function() 
 BlzFrameSetEnable(DigimonType, false) 
 BlzFrameSetEnable(DigimonType, true) 
+end 
+ 
+REFORGEDUIMAKER.DigimonAbilityT00Func = function() 
+BlzFrameSetEnable(DigimonAbilityT[0], false) 
+BlzFrameSetEnable(DigimonAbilityT[0], true) 
+end 
+ 
+REFORGEDUIMAKER.DigimonAbilityT01Func = function() 
+BlzFrameSetEnable(DigimonAbilityT[1], false) 
+BlzFrameSetEnable(DigimonAbilityT[1], true) 
+end 
+ 
+REFORGEDUIMAKER.DigimonAbilityT02Func = function() 
+BlzFrameSetEnable(DigimonAbilityT[2], false) 
+BlzFrameSetEnable(DigimonAbilityT[2], true) 
 end 
  
 REFORGEDUIMAKER.Initialize = function()
@@ -172,8 +190,8 @@ BlzFrameSetPoint(MegasContainer, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BO
 BlzFrameSetTexture(MegasContainer, "CustomFrame.png", 0, true)
 
 DigimonInformation = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
-BlzFrameSetAbsPoint(DigimonInformation, FRAMEPOINT_TOPLEFT, 0.510000, 0.490000)
-BlzFrameSetAbsPoint(DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, 0.770000, 0.250000)
+BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.50978, -0.11000)
+BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.030220, 0.21000)
 BlzFrameSetTexture(DigimonInformation, "CustomFrame.png", 0, true)
 
 DigimonType = BlzCreateFrame("IconButtonTemplate", RookiesContainer, 0, 0)
@@ -189,7 +207,7 @@ TriggerAddAction(TriggerDigimonType, REFORGEDUIMAKER.DigimonTypeFunc)
 
 DigimonName = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
 BlzFrameSetPoint(DigimonName, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.010000)
-BlzFrameSetPoint(DigimonName, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.21000)
+BlzFrameSetPoint(DigimonName, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.25000)
 BlzFrameSetText(DigimonName, "|cffFFCC00Agumon|r")
 BlzFrameSetEnable(DigimonName, false)
 BlzFrameSetScale(DigimonName, 1.14)
@@ -197,7 +215,7 @@ BlzFrameSetTextAlignment(DigimonName, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
 DigimonStamina = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
 BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)
-BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.19000)
+BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.23000)
 BlzFrameSetText(DigimonStamina, "|cffff7d00Stamina per level: |r")
 BlzFrameSetEnable(DigimonStamina, false)
 BlzFrameSetScale(DigimonStamina, 1.14)
@@ -205,7 +223,7 @@ BlzFrameSetTextAlignment(DigimonStamina, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
 DigimonDexterity = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
 BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.050000)
-BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.17000)
+BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.21000)
 BlzFrameSetText(DigimonDexterity, "|cff007d20Dexterity per level: |r")
 BlzFrameSetEnable(DigimonDexterity, false)
 BlzFrameSetScale(DigimonDexterity, 1.14)
@@ -213,7 +231,7 @@ BlzFrameSetTextAlignment(DigimonDexterity, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
 DigimonWisdom = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
 BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.070000)
-BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.15000)
+BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.19000)
 BlzFrameSetText(DigimonWisdom, "|cff004ec8Wisdom per level: \n|r")
 BlzFrameSetEnable(DigimonWisdom, false)
 BlzFrameSetScale(DigimonWisdom, 1.14)
@@ -221,7 +239,7 @@ BlzFrameSetTextAlignment(DigimonWisdom, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
 DigimonEvolvesToLabel = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
 BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.090000)
-BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.13000)
+BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.17000)
 BlzFrameSetText(DigimonEvolvesToLabel, "|cffffcc00Evolves to:|r")
 BlzFrameSetEnable(DigimonEvolvesToLabel, false)
 BlzFrameSetScale(DigimonEvolvesToLabel, 1.14)
@@ -229,16 +247,49 @@ BlzFrameSetTextAlignment(DigimonEvolvesToLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_L
 
 DigimonEvolveOptions = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonInformation, "", 1)
 BlzFrameSetPoint(DigimonEvolveOptions, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.11000)
-BlzFrameSetPoint(DigimonEvolveOptions, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.060000)
+BlzFrameSetPoint(DigimonEvolveOptions, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.10000)
 BlzFrameSetTexture(DigimonEvolveOptions, "CustomFrame.png", 0, true)
 
 DigimonWhere = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
 BlzFrameSetPoint(DigimonWhere, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.19000)
-BlzFrameSetPoint(DigimonWhere, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
-BlzFrameSetText(DigimonWhere, "|cffffcc00Can be found on: Native Forest, Acient Dino Region, Gear Savanna.|r")
+BlzFrameSetPoint(DigimonWhere, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.070000)
+BlzFrameSetText(DigimonWhere, "|cffffcc00Can be found on: Native Forest.|r")
 BlzFrameSetEnable(DigimonWhere, false)
 BlzFrameSetScale(DigimonWhere, 1.14)
 BlzFrameSetTextAlignment(DigimonWhere, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+DigimonAbilityT[0] = BlzCreateFrame("IconButtonTemplate", DigimonInformation, 0, 0)
+BlzFrameSetPoint(DigimonAbilityT[0], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.020000, -0.22000)
+BlzFrameSetPoint(DigimonAbilityT[0], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.19000, 0.010000)
+
+BackdropDigimonAbilityT[0] = BlzCreateFrameByType("BACKDROP", "BackdropDigimonAbilityT[0]", DigimonAbilityT[0], "", 0)
+BlzFrameSetAllPoints(BackdropDigimonAbilityT[0], DigimonAbilityT[0])
+BlzFrameSetTexture(BackdropDigimonAbilityT[0], "CustomFrame.png", 0, true)
+TriggerDigimonAbilityT[0] = CreateTrigger() 
+BlzTriggerRegisterFrameEvent(TriggerDigimonAbilityT[0], DigimonAbilityT[0], FRAMEEVENT_CONTROL_CLICK) 
+TriggerAddAction(TriggerDigimonAbilityT[0], REFORGEDUIMAKER.DigimonAbilityT00Func) 
+
+DigimonAbilityT[1] = BlzCreateFrame("IconButtonTemplate", DigimonInformation, 0, 0)
+BlzFrameSetPoint(DigimonAbilityT[1], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.10500, -0.22000)
+BlzFrameSetPoint(DigimonAbilityT[1], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.10500, 0.010000)
+
+BackdropDigimonAbilityT[1] = BlzCreateFrameByType("BACKDROP", "BackdropDigimonAbilityT[1]", DigimonAbilityT[1], "", 0)
+BlzFrameSetAllPoints(BackdropDigimonAbilityT[1], DigimonAbilityT[1])
+BlzFrameSetTexture(BackdropDigimonAbilityT[1], "CustomFrame.png", 0, true)
+TriggerDigimonAbilityT[1] = CreateTrigger() 
+BlzTriggerRegisterFrameEvent(TriggerDigimonAbilityT[1], DigimonAbilityT[1], FRAMEEVENT_CONTROL_CLICK) 
+TriggerAddAction(TriggerDigimonAbilityT[1], REFORGEDUIMAKER.DigimonAbilityT01Func) 
+
+DigimonAbilityT[2] = BlzCreateFrame("IconButtonTemplate", DigimonInformation, 0, 0)
+BlzFrameSetPoint(DigimonAbilityT[2], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.19000, -0.22000)
+BlzFrameSetPoint(DigimonAbilityT[2], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.010000)
+
+BackdropDigimonAbilityT[2] = BlzCreateFrameByType("BACKDROP", "BackdropDigimonAbilityT[2]", DigimonAbilityT[2], "", 0)
+BlzFrameSetAllPoints(BackdropDigimonAbilityT[2], DigimonAbilityT[2])
+BlzFrameSetTexture(BackdropDigimonAbilityT[2], "CustomFrame.png", 0, true)
+TriggerDigimonAbilityT[2] = CreateTrigger() 
+BlzTriggerRegisterFrameEvent(TriggerDigimonAbilityT[2], DigimonAbilityT[2], FRAMEEVENT_CONTROL_CLICK) 
+TriggerAddAction(TriggerDigimonAbilityT[2], REFORGEDUIMAKER.DigimonAbilityT02Func) 
 
 DigimonEvolvesToOptionT[0] = BlzCreateFrameByType("TEXT", "name", DigimonEvolveOptions, "", 0)
 BlzFrameSetPoint(DigimonEvolvesToOptionT[0], FRAMEPOINT_TOPLEFT, DigimonEvolveOptions, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
@@ -297,7 +348,7 @@ BlzFrameSetScale(DigimonEvolvesToOptionT[6], 1.00)
 BlzFrameSetTextAlignment(DigimonEvolvesToOptionT[6], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
 DigimonEvolveRequirements = BlzCreateFrame("QuestButtonBaseTemplate", DigimonEvolvesToOptionT[0], 0, 0)
-BlzFrameSetPoint(DigimonEvolveRequirements, FRAMEPOINT_TOPLEFT, DigimonEvolvesToOptionT[0], FRAMEPOINT_TOPLEFT, 0.050000, 0.095000)
+BlzFrameSetPoint(DigimonEvolveRequirements, FRAMEPOINT_TOPLEFT, DigimonEvolvesToOptionT[0], FRAMEPOINT_TOPLEFT, 0.050000, 0.096490)
 BlzFrameSetPoint(DigimonEvolveRequirements, FRAMEPOINT_BOTTOMRIGHT, DigimonEvolvesToOptionT[0], FRAMEPOINT_BOTTOMRIGHT, -0.080000, 0.0050000)
 
 TooltipDigimonEvolveRequirements = BlzCreateFrameByType("FRAME", "", DigimonEvolvesToOptionT[0], "", 0)
@@ -305,7 +356,7 @@ BlzFrameSetAllPoints(TooltipDigimonEvolveRequirements, DigimonEvolvesToOptionT[0
 BlzFrameSetTooltip(TooltipDigimonEvolveRequirements, DigimonEvolveRequirements)
 
 DigimonEvolveRequirementsText = BlzCreateFrameByType("TEXT", "name", DigimonEvolveRequirements, "", 0)
-BlzFrameSetPoint(DigimonEvolveRequirementsText, FRAMEPOINT_TOPLEFT, DigimonEvolveRequirements, FRAMEPOINT_TOPLEFT, 0.0050000, -0.0050000)
+BlzFrameSetPoint(DigimonEvolveRequirementsText, FRAMEPOINT_TOPLEFT, DigimonEvolveRequirements, FRAMEPOINT_TOPLEFT, 0.0050000, -0.0064900)
 BlzFrameSetPoint(DigimonEvolveRequirementsText, FRAMEPOINT_BOTTOMRIGHT, DigimonEvolveRequirements, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.0050000)
 BlzFrameSetText(DigimonEvolveRequirementsText, "|cffFFCC00Requires:\n- Level 20\n- Common Digivice\n- Stay on Acient Dino Region|r")
 BlzFrameSetEnable(DigimonEvolveRequirementsText, false)
