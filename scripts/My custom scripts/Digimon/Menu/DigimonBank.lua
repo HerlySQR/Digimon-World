@@ -1325,7 +1325,7 @@ OnInit("DigimonBank", function ()
         end
 
         SummonADigimon = BlzCreateFrame("IconButtonTemplate", OriginFrame,0,0)
-        AddButtonToTheRight(SummonADigimon, 1)
+        AddButtonToTheRight(SummonADigimon, 0)
         SetFrameHotkey(SummonADigimon, "D")
         AddDefaultTooltip(SummonADigimon, "Your digimons", "Look your stored digimons.")
         AssignFrame(SummonADigimon, 20)

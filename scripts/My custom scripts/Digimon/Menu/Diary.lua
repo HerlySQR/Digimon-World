@@ -5,8 +5,15 @@ OnInit("Diary", function ()
     Require "Environment"
     Require "Serializable"
 
-    local Backdrop = nil ---@type framehandle
+    local LocalPlayer = GetLocalPlayer()
+
+    local Diary = nil ---@type framehandle
+    local BackdropDiary = nil ---@type framehandle
     local Exit = nil ---@type framehandle
+    local Backdrop = nil ---@type framehandle
+
+    -- Digimons
+    local DigimonsBackdrop = nil ---@type framehandle
     local DigimonsButton = nil ---@type framehandle
     local ItemsButton = nil ---@type framehandle
     local MapButton = nil ---@type framehandle
@@ -37,11 +44,20 @@ OnInit("Diary", function ()
     local BackdropDigimonAbilityT = {} ---@type framehandle[]
     local DigimonAbilityTooltip = {} ---@type framehandle[]
 
+    -- Map
+    local MapBackdrop = nil ---@type framehandle
+    local Sprite = nil ---@type framehandle
+    local DigimonIcons = {} ---@type framehandle[]
+
+    local actMenu = 0
+
     local MAX_DIGIMON_TYPE_PER_ROW = 10
     local REQUIRED_KILLS_1 = 50
     local REQUIRED_KILLS_2 = 100
     local REQUIRED_KILLS_3 = 150
     local REQUIRED_DEATHS = 5
+
+    local MAX_REGIONS = 30
 
     local rectNames = __jarray("") ---@type table<rect, string>
 
@@ -93,11 +109,217 @@ OnInit("Diary", function ()
     local unlockedInfos = {} ---@type table<player, table<integer, DigimonUnlockedInfo>>
     local kills = {} ---@type table<player, table<integer, integer>>
     local deaths = {} ---@type table<player, table<integer, integer>>
+
+    ---@class MapPortion
+    ---@field root string
+    ---@field map framehandle
+    ---@field id integer
+    ---@field iconPos location
+
+    local mapPortions = {} ---@type table<string, MapPortion>
+    local vistedPlaces = {} ---@type table<player, table<integer, framehandle>>
+    local canBeVisted = {} ---@type table<integer, framehandle>
+    local camera = gg_cam_SeeTheMap ---@type camerasetup
+    local inMenu = false
+    local onSeeMapClicked = EventListener.create()
+    local onSeeMapClosed = EventListener.create()
+
     for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
         unlockedInfos[Player(i)] = {}
         kills[Player(i)] = __jarray(0)
         deaths[Player(i)] = __jarray(0)
+        vistedPlaces[Player(i)] = {}
     end
+
+    local MAX_DIST = 0.08
+
+    ---@param quantity integer
+    ---@param dist number
+    ---@param center location
+    ---@return number[] xVals, number[] yVals
+    local function createDistribution(quantity, dist, center)
+        if quantity == 0 then
+            error("You are distributing 0 elements")
+        end
+
+        local xVals = __jarray(0)
+        local yVals = __jarray(0)
+
+        if quantity == 1 then
+            table.insert(xVals, GetLocationX(center))
+            table.insert(yVals, GetLocationY(center))
+            return xVals, yVals
+        end
+
+        local rows = __jarray(0)
+        local maxSize = math.floor(MAX_DIST/dist) + 1
+
+        local remain = quantity
+
+        rows[0] = 1
+        remain = remain - 1
+
+        -- Create the distribution
+
+        local rowsNumber = 0
+
+        while remain > 0 do
+            if rows[0] < maxSize then
+                local isSpace = false
+                for i = 0, rowsNumber - 1 do
+                    local nextRow = i+1
+                    if rows[nextRow] < rows[i] - nextRow then
+                        isSpace = true
+                        rows[nextRow] = rows[nextRow] + 1
+                        remain = remain - 1
+                        break
+                    elseif rows[-nextRow] < rows[i] - nextRow then
+                        isSpace = true
+                        rows[-nextRow] = rows[-nextRow] + 1
+                        remain = remain - 1
+                        break
+                    end
+                end
+                if not isSpace then
+                    if rows[rowsNumber + 1] < rows[rowsNumber] - (rowsNumber + 1) then
+                        rowsNumber = rowsNumber + 1
+                    else
+                        rows[0] = rows[0] + 1
+                        remain = remain - 1
+                    end
+                end
+            else
+                for i = 1, rowsNumber do
+                    if rows[i] < rows[i-1] then
+                        rows[i] = rows[i] + 1
+                        remain = remain - 1
+                    elseif rows[-i] < rows[i+1] then
+                        rows[-i] = rows[-i] + 1
+                        remain = remain - 1
+                    else
+                        rowsNumber = rowsNumber + 1
+                    end
+                end
+            end
+        end
+
+        -- Place the locations
+
+        for row = rowsNumber, -rowsNumber, -1 do
+            local size = rows[row]
+            if size ~= 0 then
+                local width = (size - 1) / 2
+                local j = -width - 1.
+                while j < width do
+                    j = j + 1.
+                    table.insert(xVals, dist * j + GetLocationX(center))
+                    table.insert(yVals, dist * row + GetLocationY(center))
+                end
+            end
+        end
+
+        return xVals, yVals
+    end
+
+    Timed.echo(0.02, function ()
+        if inMenu then
+            CameraSetupApplyForceDuration(camera, false, 0)
+        end
+    end)
+
+    ---@param name string
+    ---@param mapPortion string
+    ---@param id integer
+    ---@param glowOffset location
+    local function CreateMapPortion(name, mapPortion, id, glowOffset)
+        local self = {} ---@type MapPortion
+
+        for _, env in pairs(mapPortions) do
+            if env.iconPos then
+                if DistanceBetweenPoints(env.iconPos, glowOffset) < 0.01 then
+                    self.iconPos = env.iconPos
+                    break
+                end
+            end
+        end
+        if self.iconPos then
+            RemoveLocation(glowOffset)
+        else
+            self.iconPos = glowOffset
+        end
+
+        FrameLoaderAdd(function ()
+            if not mapPortions[mapPortion] then
+                self.map = BlzCreateFrameByType("BACKDROP", "BACKDROP", MapBackdrop, "", 1)
+                BlzFrameSetPoint(self.map, FRAMEPOINT_TOPLEFT, MapBackdrop, FRAMEPOINT_TOPLEFT, 0.10000, 0.0000)
+                BlzFrameSetPoint(self.map, FRAMEPOINT_BOTTOMRIGHT, MapBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.0000)
+                BlzFrameSetTexture(self.map, mapPortion, 0, true)
+                BlzFrameSetVisible(self.map, false)
+
+                mapPortions[mapPortion] = self
+
+                self.id = id
+
+                if canBeVisted[id] then
+                    error("You are re-using the id: " .. id .. " in " .. name)
+                end
+                canBeVisted[id] = self.map
+            else
+                self.map = mapPortions[mapPortion].map
+                self.id = mapPortions[mapPortion].id
+            end
+        end)
+
+        OnEnvApplied(name, function (p, _spect)
+            if not _spect and self.map then
+                if not vistedPlaces[p][id] then
+                    vistedPlaces[p][id] = self.map
+                    if p == LocalPlayer then
+                        BlzFrameSetVisible(Sprite, true)
+                        BlzFrameSetSpriteAnimate(Sprite, 1, 0)
+                        BlzFrameSetVisible(self.map, true)
+                    end
+                    Timed.call(8., function ()
+                        if p == LocalPlayer then
+                            BlzFrameSetVisible(Sprite, false)
+                        end
+                    end)
+                end
+            end
+        end)
+    end
+
+    local function UpdateDigimons()
+        if inMenu then
+            for i = 1, udg_MAX_USED_DIGIMONS do
+                BlzFrameSetVisible(DigimonIcons[i], false)
+            end
+
+            local list = GetUsedDigimons(LocalPlayer)
+            local groups = SyncedTable.create() ---@type table<location, Digimon[]>
+
+            for i = 1, #list do
+                local pos = list[i].environment.iconPos
+                if pos then
+                    groups[pos] = groups[pos] or {}
+                    table.insert(groups[pos], list[i])
+                end
+            end
+
+            local j = 0
+            for pos, digimons in pairs(groups) do
+                local xVals, yVals = createDistribution(#digimons, 0.02, pos)
+                for i = 1, #digimons do
+                    j = j + 1
+                    BlzFrameSetAbsPoint(DigimonIcons[j], FRAMEPOINT_CENTER, xVals[i], yVals[i])
+                    BlzFrameSetTexture(DigimonIcons[j], BlzGetAbilityIcon(digimons[i]:getTypeId()), 0, true)
+                    BlzFrameSetVisible(DigimonIcons[j], true)
+                end
+            end
+        end
+    end
+
+    Timed.echo(1., UpdateDigimons)
 
     ---@param p player
     ---@param id integer
@@ -241,7 +463,6 @@ OnInit("Diary", function ()
         end
     end
 
-    local LocalPlayer = GetLocalPlayer()
     local digimonSelected = -1
     local actualContainer = {} ---@type table<FrameList, framehandle>
     local actualRow = __jarray(MAX_DIGIMON_TYPE_PER_ROW) ---@type table<FrameList, integer>
@@ -470,75 +691,153 @@ OnInit("Diary", function ()
         actualRow[list] = actualRow[list] + 1
     end
 
-    local function ExitFunc()
-        
+    local function OpenMenu()
+        if actMenu == 0 then
+            BlzFrameSetVisible(DigimonsBackdrop, true)
+            BlzFrameSetVisible(MapBackdrop, false)
+        elseif actMenu == 1 then
+            BlzFrameSetVisible(DigimonsBackdrop, false)
+            BlzFrameSetVisible(MapBackdrop, false)
+        elseif actMenu == 2 then
+            BlzFrameSetVisible(DigimonsBackdrop, false)
+            BlzFrameSetVisible(MapBackdrop, true)
+            UpdateDigimons()
+        end
     end
 
     local function DigimonsButtonFunc()
-        
+        local p = GetTriggerPlayer()
+        if p == LocalPlayer then
+            actMenu = 0
+            OpenMenu()
+        end
     end
 
     local function ItemsButtonFunc()
-        
+        local p = GetTriggerPlayer()
+        if p == LocalPlayer then
+            actMenu = 1
+            OpenMenu()
+        end
     end
 
     local function MapButtonFunc()
-        
+        local p = GetTriggerPlayer()
+        if p == LocalPlayer then
+            actMenu = 2
+            OpenMenu()
+        end
+        onSeeMapClicked:run(p)
+    end
+
+    local function DiaryFunc()
+        local p = GetTriggerPlayer()
+        if p == LocalPlayer then
+            SaveCameraSetup()
+        end
+        local oldEnv = GetPlayerEnviroment(p)
+        Environment.map:apply(p)
+        LockEnvironment(p, true)
+        oldEnv:apply(p)
+        SaveSelectedUnits(p)
+        if p == LocalPlayer then
+            AddButtonToEscStack(Exit)
+            HideMenu(true)
+            BlzFrameSetVisible(Backdrop, true)
+            OpenMenu()
+            inMenu = true
+        end
+    end
+
+    local function ExitFunc()
+        local p = GetTriggerPlayer()
+        LockEnvironment(p, false)
+        if p == LocalPlayer then
+            RemoveButtonFromEscStack(Exit)
+            ShowMenu(true)
+            BlzFrameSetVisible(MapBackdrop, false)
+            RestartToPreviousCamera()
+            inMenu = false
+            BlzFrameSetVisible(Backdrop, false)
+        end
+        RestartSelectedUnits(p)
+        onSeeMapClosed:run(p)
     end
 
     FrameLoaderAdd(function ()
+        Diary = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
+        AddButtonToTheRight(Diary, 7)
+        AddFrameToMenu(Diary)
+        SetFrameHotkey(Diary, "V")
+        AddDefaultTooltip(Diary, "See the map", "Look at the places you visited.")
+        BlzFrameSetVisible(Diary, false)
+
+        BackdropDiary = BlzCreateFrameByType("BACKDROP", "BackdropSeeMap", Diary, "", 0)
+        BlzFrameSetAllPoints(BackdropDiary, Diary)
+        BlzFrameSetTexture(BackdropDiary, "ReplaceableTextures\\CommandButtons\\BTNMap.blp", 0, true)
+        local t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, Diary, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, DiaryFunc)
+
+        Sprite = BlzCreateFrameByType("SPRITE", "Sprite", Diary, "", 0)
+        BlzFrameSetModel(Sprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
+        BlzFrameClearAllPoints(Sprite)
+        BlzFrameSetPoint(Sprite, FRAMEPOINT_BOTTOMLEFT, Diary, FRAMEPOINT_BOTTOMLEFT, -0.00125, -0.00375)
+        BlzFrameSetSize(Sprite, 0.00001, 0.00001)
+        BlzFrameSetScale(Sprite, 1.25)
+        BlzFrameSetVisible(Sprite, false)
+
         Backdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), "", 1)
         BlzFrameSetAbsPoint(Backdrop, FRAMEPOINT_TOPLEFT, 0.00000, 0.600000)
         BlzFrameSetAbsPoint(Backdrop, FRAMEPOINT_BOTTOMRIGHT, 0.800000, 0.00000)
         BlzFrameSetTexture(Backdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
+        BlzFrameSetVisible(Backdrop, false)
 
         Exit = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.71000, -0.030000)
         BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.54000)
         BlzFrameSetText(Exit, "|cffFCD20DExit|r")
-        BlzFrameSetScale(Exit, 1.00)
-        TriggerExit = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerExit, Exit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerExit, ExitFunc)
+        BlzFrameSetLevel(Exit, 3)
+        t = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(t, ExitFunc)
+
+        -- Digimons
+
+        DigimonsBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
+        BlzFrameSetAllPoints(DigimonsBackdrop, Backdrop)
+        BlzFrameSetTexture(DigimonsBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
+        BlzFrameSetLevel(DigimonsBackdrop, 2)
 
         DigimonsButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(DigimonsButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.030000)
         BlzFrameSetPoint(DigimonsButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.71000, 0.54000)
         BlzFrameSetText(DigimonsButton, "|cffFCD20DDigimons|r")
-        BlzFrameSetScale(DigimonsButton, 1.00)
+        BlzFrameSetLevel(DigimonsButton, 3)
         TriggerDigimonsButton = CreateTrigger()
         BlzTriggerRegisterFrameEvent(TriggerDigimonsButton, DigimonsButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(TriggerDigimonsButton, DigimonsButtonFunc)
 
-        ItemsButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
-        BlzFrameSetPoint(ItemsButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.10000, -0.030000)
-        BlzFrameSetPoint(ItemsButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.63000, 0.54000)
+        ItemsButton = BlzCreateFrame("ScriptDialogButton", DigimonsBackdrop, 0, 0)
+        BlzFrameSetPoint(ItemsButton, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.10000, -0.030000)
+        BlzFrameSetPoint(ItemsButton, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.63000, 0.54000)
         BlzFrameSetText(ItemsButton, "|cffFCD20DItems|r")
-        BlzFrameSetScale(ItemsButton, 1.00)
+        BlzFrameSetLevel(ItemsButton, 3)
         TriggerItemsButton = CreateTrigger()
         BlzTriggerRegisterFrameEvent(TriggerItemsButton, ItemsButton, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(TriggerItemsButton, ItemsButtonFunc)
 
-        MapButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
-        BlzFrameSetPoint(MapButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.18000, -0.030000)
-        BlzFrameSetPoint(MapButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.55000, 0.54000)
-        BlzFrameSetText(MapButton, "|cffFCD20DMap|r")
-        BlzFrameSetScale(MapButton, 1.00)
-        TriggerMapButton = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerMapButton, MapButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerMapButton, MapButtonFunc)
-
-        RookiesText = BlzCreateFrameByType("TEXT", "name", Backdrop, "", 0)
+        RookiesText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(RookiesText, 2.00)
-        BlzFrameSetPoint(RookiesText, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.080000)
-        BlzFrameSetPoint(RookiesText, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.50000)
+        BlzFrameSetPoint(RookiesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.080000)
+        BlzFrameSetPoint(RookiesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.50000)
         BlzFrameSetText(RookiesText, "|cffFFCC00Rookies|r")
         BlzFrameSetEnable(RookiesText, false)
         BlzFrameSetTextAlignment(RookiesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-        RookiesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
-        BlzFrameSetPoint(RookiesContainer, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.11000)
-        BlzFrameSetPoint(RookiesContainer, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.41000)
+        RookiesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
+        BlzFrameSetPoint(RookiesContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.11000)
+        BlzFrameSetPoint(RookiesContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.41000)
         BlzFrameSetTexture(RookiesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         RookiesList = FrameList.create(false, RookiesContainer)
@@ -547,17 +846,17 @@ OnInit("Diary", function ()
         RookiesList:setSize(BlzFrameGetWidth(RookiesList.Frame), BlzFrameGetHeight(RookiesList.Frame))
         BlzFrameSetSize(RookiesList.Slider, 0.012, 0.08)
 
-        ChampionsText = BlzCreateFrameByType("TEXT", "name", Backdrop, "", 0)
+        ChampionsText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(ChampionsText, 2.00)
-        BlzFrameSetPoint(ChampionsText, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.20000)
-        BlzFrameSetPoint(ChampionsText, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.38000)
+        BlzFrameSetPoint(ChampionsText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.20000)
+        BlzFrameSetPoint(ChampionsText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.38000)
         BlzFrameSetText(ChampionsText, "|cffFFCC00Champions|r")
         BlzFrameSetEnable(ChampionsText, false)
         BlzFrameSetTextAlignment(ChampionsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-        ChampionsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
-        BlzFrameSetPoint(ChampionsContainer, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.23000)
-        BlzFrameSetPoint(ChampionsContainer, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.29000)
+        ChampionsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
+        BlzFrameSetPoint(ChampionsContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.23000)
+        BlzFrameSetPoint(ChampionsContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.29000)
         BlzFrameSetTexture(ChampionsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         ChampionsList = FrameList.create(false, ChampionsContainer)
@@ -566,17 +865,17 @@ OnInit("Diary", function ()
         ChampionsList:setSize(BlzFrameGetWidth(ChampionsList.Frame), BlzFrameGetHeight(ChampionsList.Frame))
         BlzFrameSetSize(ChampionsList.Slider, 0.012, 0.08)
 
-        UltimatesText = BlzCreateFrameByType("TEXT", "name", Backdrop, "", 0)
+        UltimatesText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(UltimatesText, 2.00)
-        BlzFrameSetPoint(UltimatesText, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.32000)
-        BlzFrameSetPoint(UltimatesText, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.26000)
+        BlzFrameSetPoint(UltimatesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.32000)
+        BlzFrameSetPoint(UltimatesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.26000)
         BlzFrameSetText(UltimatesText, "|cffFFCC00Ultimates|r")
         BlzFrameSetEnable(UltimatesText, false)
         BlzFrameSetTextAlignment(UltimatesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-        UltimatesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
-        BlzFrameSetPoint(UltimatesContainer, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.35000)
-        BlzFrameSetPoint(UltimatesContainer, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.17000)
+        UltimatesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
+        BlzFrameSetPoint(UltimatesContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.35000)
+        BlzFrameSetPoint(UltimatesContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.17000)
         BlzFrameSetTexture(UltimatesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         UltimatesList = FrameList.create(false, UltimatesContainer)
@@ -585,17 +884,17 @@ OnInit("Diary", function ()
         UltimatesList:setSize(BlzFrameGetWidth(UltimatesList.Frame), BlzFrameGetHeight(UltimatesList.Frame))
         BlzFrameSetSize(UltimatesList.Slider, 0.012, 0.08)
 
-        MegasText = BlzCreateFrameByType("TEXT", "name", Backdrop, "", 0)
+        MegasText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(MegasText, 2.00)
-        BlzFrameSetPoint(MegasText, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020320, -0.43948)
-        BlzFrameSetPoint(MegasText, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.63968, 0.14052)
+        BlzFrameSetPoint(MegasText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020320, -0.43948)
+        BlzFrameSetPoint(MegasText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.63968, 0.14052)
         BlzFrameSetText(MegasText, "|cffFFCC00Megas|r")
         BlzFrameSetEnable(MegasText, false)
         BlzFrameSetTextAlignment(MegasText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-        MegasContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
-        BlzFrameSetPoint(MegasContainer, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.47000)
-        BlzFrameSetPoint(MegasContainer, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.050000)
+        MegasContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
+        BlzFrameSetPoint(MegasContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.47000)
+        BlzFrameSetPoint(MegasContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.050000)
         BlzFrameSetTexture(MegasContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         MegasList = FrameList.create(false, MegasContainer)
@@ -604,9 +903,9 @@ OnInit("Diary", function ()
         MegasList:setSize(BlzFrameGetWidth(MegasList.Frame), BlzFrameGetHeight(MegasList.Frame))
         BlzFrameSetSize(MegasList.Slider, 0.012, 0.08)
 
-        DigimonInformation = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
-        BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.50978, -0.11000)
-        BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.030220, 0.21000)
+        DigimonInformation = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
+        BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.50978, -0.11000)
+        BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.030220, 0.21000)
         BlzFrameSetTexture(DigimonInformation, "war3mapImported\\EmptyBTN.blp", 0, true)
         BlzFrameSetVisible(DigimonInformation, false)
 
@@ -666,9 +965,9 @@ OnInit("Diary", function ()
             DigimonEvolvesToOptionButton[i] = BlzCreateFrame("IconButtonTemplate", DigimonEvolvesToOption[i], 0, 0)
             BlzFrameSetAllPoints(DigimonEvolvesToOptionButton[i], DigimonEvolvesToOption[i])
             BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], false)
-            local t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, DigimonEvolvesToOptionButton[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function ()
+            local t2 = CreateTrigger()
+            BlzTriggerRegisterFrameEvent(t2, DigimonEvolvesToOptionButton[i], FRAMEEVENT_CONTROL_CLICK)
+            TriggerAddAction(t2, function ()
                 if GetTriggerPlayer() == LocalPlayer then
                     digimonSelected = infos[digimonSelected].evolveOptions[i].toEvolve
                     UpdateInformation()
@@ -722,6 +1021,31 @@ OnInit("Diary", function ()
             BlzFrameSetPoint(tooltip, FRAMEPOINT_BOTTOMRIGHT, DigimonAbilityTooltip[i], FRAMEPOINT_BOTTOMRIGHT, 0.0150000, -0.0150000)
 
             BlzFrameSetTooltip(DigimonAbilityT[i], tooltip)
+        end
+
+        -- Map
+
+        MapButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
+        BlzFrameSetPoint(MapButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.18000, -0.030000)
+        BlzFrameSetPoint(MapButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.55000, 0.54000)
+        BlzFrameSetText(MapButton, "|cffFCD20DMap|r")
+        BlzFrameSetLevel(MapButton, 3)
+        TriggerMapButton = CreateTrigger()
+        BlzTriggerRegisterFrameEvent(TriggerMapButton, MapButton, FRAMEEVENT_CONTROL_CLICK)
+        TriggerAddAction(TriggerMapButton, MapButtonFunc)
+
+        MapBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
+        BlzFrameSetAllPoints(MapBackdrop, Backdrop)
+        BlzFrameSetTexture(MapBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
+        BlzFrameSetVisible(MapBackdrop, false)
+        BlzFrameSetLevel(MapBackdrop, 2)
+
+        for i = 1, udg_MAX_USED_DIGIMONS do
+            DigimonIcons[i] = BlzCreateFrameByType("BACKDROP", "DigimonIcons[" .. i .. "]", MapBackdrop, "", 1)
+            BlzFrameSetTexture(DigimonIcons[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetLevel(DigimonIcons[i], 10)
+            BlzFrameSetVisible(DigimonIcons[i], false)
+            BlzFrameSetSize(DigimonIcons[i], 0.02, 0.02)
         end
     end)
 
@@ -850,6 +1174,56 @@ OnInit("Diary", function ()
                 end
             end
         end
+    end)
+
+    ---@param p player
+    ---@param flag boolean
+    function ShowMapButton(p, flag)
+        if p == LocalPlayer then
+            BlzFrameSetVisible(Diary, flag)
+        end
+    end
+
+    ---@param p player
+    ---@return boolean[]
+    function GetVisitedPlaces(p)
+        local list = {}
+        for i = 1, MAX_REGIONS do
+            list[i] = vistedPlaces[p][i] ~= nil
+        end
+        return list
+    end
+
+    ---@param p player
+    ---@param list boolean[]
+    function ApplyVisitedPlaces(p, list)
+        for i = 1, MAX_REGIONS do
+            if list[i] then
+                vistedPlaces[p][i] = canBeVisted[i]
+                BlzFrameSetVisible(canBeVisted[i], true)
+            else
+                BlzFrameSetVisible(canBeVisted[i], false)
+            end
+        end
+    end
+
+    ---@param func fun(p: player)
+    function OnSeeMapClicked(func)
+        onSeeMapClicked:register(func)
+    end
+
+    ---@param func fun(p: player)
+    function OnSeeMapClosed(func)
+        onSeeMapClosed:register(func)
+    end
+
+    udg_DigimonMapAdd = CreateTrigger()
+    TriggerAddAction(udg_DigimonMapAdd, function ()
+        CreateMapPortion(udg_DigimonRectName, udg_MapPortion, udg_MapId, udg_MapPortionGlowOffset)
+        udg_DigimonRectName = ""
+        udg_MapPortion = nil
+        udg_MapId = nil
+        udg_MapPortionGlowOffset = nil
     end)
 end)
 Debug.endFile()

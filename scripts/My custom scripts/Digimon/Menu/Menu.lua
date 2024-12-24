@@ -258,7 +258,7 @@ OnInit("Menu", function ()
     FrameLoaderAdd(function ()
         local frame ---@type framehandle 
 
-        BlzHideOriginFrames(true)
+        BlzEnableUIAutoPosition(false)
 
         -- Reforged 2.0 Fix
         TopbarBackdrop = BlzGetFrameByName("ConsoleTopBar", 0)
@@ -286,6 +286,10 @@ OnInit("Menu", function ()
         BlzFrameSetAbsPoint(TopbarBackdrop, FRAMEPOINT_TOPLEFT, -0.0150000, 0.670000)
         BlzFrameSetAbsPoint(TopbarBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.815000, 0.565000)]]
 
+        -- Hide map buttons
+        for i = 0, 4 do
+            BlzFrameSetVisible(BlzGetOriginFrame(ORIGIN_FRAME_MINIMAP_BUTTON, i), false)
+        end
         -- Move minimap
         MinimapBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
         BlzFrameSetAbsPoint(MinimapBackDrop, FRAMEPOINT_TOPLEFT, minX, 0.180000)
@@ -300,6 +304,9 @@ OnInit("Menu", function ()
         CommandButtonBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
         BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.180000)
         BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.41, 0.00000)
+
+        -- Hide portrait
+        BlzFrameSetVisible(BlzGetOriginFrame(ORIGIN_FRAME_PORTRAIT, 0), false)
 
         -- Hide inventory
         frame = BlzFrameGetParent(BlzFrameGetParent(BlzGetFrameByName("InventoryButton_0", 0)))

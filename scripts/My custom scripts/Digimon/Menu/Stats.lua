@@ -430,7 +430,7 @@ OnInit("Stats", function ()
 
     FrameLoaderAdd(function ()
         StatsButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        AddButtonToTheRight(StatsButton, 0)
+        AddButtonToTheRight(StatsButton, 1)
         BlzFrameSetVisible(StatsButton, false)
         AddFrameToMenu(StatsButton)
         SetFrameHotkey(StatsButton, "U")

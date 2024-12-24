@@ -18,9 +18,10 @@ OnInit(function ()
     local RANGE_LEVEL_2         ---@type number
     local NEIGHBOURHOOD         ---@type number
     local INTERVAL              ---@type number
-    local CHANCE_UNCOMMON       ---@type integer
-    local CHANCE_RARE           ---@type integer
-    local CHANCE_LEGENDARY      ---@type integer
+    local CHANCE_COMMON = 0.5
+    local CHANCE_UNCOMMON       ---@type number
+    local CHANCE_RARE           ---@type number
+    local CHANCE_LEGENDARY      ---@type number
     local ITEM_DROP_CHANCE      ---@type integer
 
     ---@class Creep : Digimon
@@ -36,6 +37,7 @@ OnInit(function ()
     ---@field rectID table
     ---@field spawnpoint {x: number, y: number}
     ---@field types unitpool
+    ---@field weight number
     ---@field inDay boolean
     ---@field inNight boolean
     ---@field minLevel integer
@@ -48,19 +50,22 @@ OnInit(function ()
     ---@field sameRegion Set
     ---@field someoneClose boolean
     ---@field itemTable integer[]
+    ---@field queued boolean
+    ---@field storedLvl integer
+    ---@field storedPlayerInRegion integer
 
-    ---@param pool unitpool
-    ---@param pos {x: number, y: number}
+    ---@param rd RegionData
     ---@return Creep
-    local function CreateCreep(pool, pos)
-        local creep = Digimon.add(PlaceRandomUnit(pool, Digimon.NEUTRAL, pos.x, pos.y, bj_UNIT_FACING)) ---@type Creep
+    local function CreateCreep(rd)
+        local creep = Digimon.add(PlaceRandomUnit(rd.types, Digimon.NEUTRAL, rd.spawnpoint.x, rd.spawnpoint.y, bj_UNIT_FACING)) ---@type Creep
 
         creep.captured = false
         creep.reduced = false
         creep.returning = false
         creep.remaining = LIFE_SPAN
-        creep.spawnpoint = pos
+        creep.spawnpoint = rd.spawnpoint
         creep.patrolling = true
+        creep.rd = rd
 
         ZTS_AddThreatUnit(creep.root, true)
 
@@ -69,12 +74,13 @@ OnInit(function ()
 
     -- The system
 
-    local All = LinkedList.create()
+    local All = {} ---@type RegionData[]
 
     ---@param types integer[]
-    ---@return unitpool
+    ---@return unitpool, number
     local function GenerateCreepPool(types)
         local pool = CreateUnitPool()
+        local weight = 0
 
         local commons = {}
         local uncommons = {}
@@ -86,12 +92,16 @@ OnInit(function ()
             local rarity = Digimon.getRarity(id)
 
             if rarity == Rarity.COMMON then
+                weight = weight + CHANCE_COMMON
                 table.insert(commons, id)
             elseif rarity == Rarity.UNCOMMON then
+                weight = weight + CHANCE_UNCOMMON
                 table.insert(uncommons, id)
             elseif rarity == Rarity.RARE then
+                weight = weight + CHANCE_RARE
                 table.insert(rares, id)
             elseif rarity == Rarity.LEGENDARY then
+                weight = weight + CHANCE_LEGENDARY
                 table.insert(legendaries, id)
             end
         end
@@ -119,7 +129,7 @@ OnInit(function ()
             UnitPoolAddUnitType(pool, v, chanceCommon/#commons)
         end
 
-        return pool
+        return pool, weight
     end
 
     ---@param re rect
@@ -133,10 +143,12 @@ OnInit(function ()
     local function Create(re, types, inDay, inNight, minLevel, maxLevel, itemTable)
         assert(re, "You are trying to create an spawn in a nil region")
         local x, y = GetRectCenterX(re), GetRectCenterY(re)
+        local typs, weight = GenerateCreepPool(types)
         local this = { ---@type RegionData
             rectID = re,
             spawnpoint = {x = x, y = y},
-            types = GenerateCreepPool(types),
+            types = typs,
+            weight = weight,
             inDay = inDay,
             inNight = inNight,
             minLevel = minLevel,
@@ -149,13 +161,15 @@ OnInit(function ()
             creeps = {},
             neighbourhood = Set.create(),
             sameRegion = Set.create(),
-            someoneClose = false
+            someoneClose = false,
+            queued = false,
+            storedLvl = 1
         }
 
-        All:insert(this)
+        table.insert(All, this)
 
-        for node in All:loop() do
-            local r = node.value ---@type RegionData
+        for i = 1, #All do
+            local r = All[i]
             if DistanceBetweenCoords(x, y, r.spawnpoint.x, r.spawnpoint.y) <= NEIGHBOURHOOD then
                 this.neighbourhood:addSingle(r)
                 r.neighbourhood:addSingle(this)
@@ -186,7 +200,32 @@ OnInit(function ()
         end
 
         if #list > 0 then
-            return list[math.random(#list)]
+            if #list == 1 then
+                local j = 1
+                for n in r.neighbourhood:elements() do
+                    j = j + 1
+                end
+                return list[1]
+            else
+                local weights = {}
+                local maxWeight = 0.
+
+                for i = 1, #list do
+                    maxWeight = maxWeight + list[i].weight
+                    weights[i] = maxWeight
+                end
+
+                local rand = maxWeight * math.random()
+                local l = 1
+                for i = 1, #list-1 do
+                    if rand > weights[i] then
+                        l = l + 1
+                    else
+                        break
+                    end
+                end
+                return list[l]
+            end
         end
     end
 
@@ -224,60 +263,43 @@ OnInit(function ()
     end
 
     local PlayersInRegion = Set.create()
-    local regionData, lvl, bossNearby ---@type RegionData, integer, boolean
-    local function checkForUnit(u)
-        if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-            regionData.someoneClose = true
-            regionData.inregion = true
-            PlayersInRegion:addSingle(GetOwningPlayer(u))
-            lvl = math.max(lvl, GetHeroLevel(u))
-        end
-    end
-
-    local function checkNearby(u)
-        if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-            regionData.someoneClose = true
-        end
-    end
-
-    local function checkBoss(u)
-        if GetOwningPlayer(u) == Digimon.VILLAIN then
-            bossNearby = true
-        end
-    end
+    local spawnQueue = {} ---@type RegionData[] 
 
     local function Update()
-        for node in All:loop() do
-            regionData = node.value ---@type RegionData
+        for node = 1, #All do
+            local regionData = All[node]
             -- Check if the unit nearby the spawn region belongs to a player
             regionData.inregion = false
-            lvl = 1
-            ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, checkForUnit)
+            local lvl = 1
+            ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, function (u)
+                if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+                    regionData.someoneClose = true
+                    regionData.inregion = true
+                    PlayersInRegion:addSingle(GetOwningPlayer(u))
+                    lvl = math.max(lvl, GetHeroLevel(u))
+                end
+            end)
             -- Check if a unit is still nearby the spawn region
             regionData.someoneClose = true
             -- Control the creep or the spawn
             if regionData.inregion then
-                regionData.delay = regionData.delay - INTERVAL
-                regionData.waitToSpawn = regionData.waitToSpawn - INTERVAL
-                if regionData.delay <= 0. then
-                    -- Spawn per neighbourhood instead per region
-                    local r = GetFreeNeighbour(regionData, math.min(CREEPS_PER_REGION, CREEPS_PER_PLAYER * PlayersInRegion:size())) -- If don't have neighbours, then just use the same region
-                    if r then
-                        local creep = CreateCreep(r.types, r.spawnpoint)
-                        creep:setLevel(GetProccessedLevel(lvl, r.minLevel, r.maxLevel))
-                        creep.rd = regionData
-                        for r2 in r.sameRegion:elements() do
-                            table.insert(r2.creeps, creep)
-                        end
-                        -- They share the same delay
-                        for n in regionData.neighbourhood:elements() do
-                            n.waitToSpawn = math.max(DELAY_SPAWN, n.waitToSpawn)
-                        end
+                if not regionData.queued and regionData.delay <= 0. then
+                    table.insert(spawnQueue, regionData)
+                    for r in regionData.neighbourhood:elements() do
+                        r.storedLvl = lvl
+                        r.storedPlayerInRegion = PlayersInRegion:size()
+                        r.queued = true
                     end
                 end
+                regionData.delay = regionData.delay - INTERVAL
+                regionData.waitToSpawn = regionData.waitToSpawn - INTERVAL
             else
                 regionData.someoneClose = false
-                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, checkNearby)
+                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, function (u)
+                    if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+                        regionData.someoneClose = true
+                    end
+                end)
                 regionData.delay = math.max(regionData.delay, DELAY_NORMAL)
             end
 
@@ -297,7 +319,7 @@ OnInit(function ()
             end
 
             for i = #regionData.creeps, 1, -1 do
-                local creep = regionData.creeps[i] ---@type Creep
+                local creep = regionData.creeps[i]
                 if creep.rd == regionData then
                     if creep.captured or creep.remaining <= 0. then
                         if creep.remaining <= 0. then
@@ -312,8 +334,12 @@ OnInit(function ()
                     end
                 end
 
-                bossNearby = false
-                ForUnitsInRange(creep:getX(), creep:getY(), 1000., checkBoss)
+                local bossNearby = false
+                ForUnitsInRange(creep:getX(), creep:getY(), 1000., function (u)
+                    if GetOwningPlayer(u) == Digimon.VILLAIN then
+                        bossNearby = true
+                    end
+                end)
 
                 if not bossNearby then
                     if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
@@ -328,7 +354,30 @@ OnInit(function ()
                     creep:issueOrder(Orders.smart, regionData.spawnpoint.x, regionData.spawnpoint.y)
                 end
             end
-            PlayersInRegion:clear()
+            if not PlayersInRegion:isEmpty() then
+                PlayersInRegion:clear()
+            end
+        end
+
+        while true do
+            local regionData = table.remove(spawnQueue)
+            if not regionData then break end
+            for r in regionData.neighbourhood:elements() do
+                r.queued = false
+            end
+            -- Spawn per neighbourhood instead per region
+            local r = GetFreeNeighbour(regionData, math.min(CREEPS_PER_REGION, CREEPS_PER_PLAYER * regionData.storedPlayerInRegion)) -- If don't have neighbours, then just use the same region
+            if r then
+                local creep = CreateCreep(r)
+                creep:setLevel(GetProccessedLevel(regionData.storedLvl, r.minLevel, r.maxLevel))
+                for r2 in r.sameRegion:elements() do
+                    table.insert(r2.creeps, creep)
+                end
+                -- They share the same delay
+                for n in regionData.neighbourhood:elements() do
+                    n.waitToSpawn = math.max(DELAY_SPAWN, n.waitToSpawn)
+                end
+            end
         end
     end
 
@@ -346,9 +395,9 @@ OnInit(function ()
         RANGE_LEVEL_2 = udg_RANGE_LEVEL_2
         INTERVAL = udg_UPDATE_INTERVAL
         NEIGHBOURHOOD = udg_NEIGHBOURHOOD
-        CHANCE_UNCOMMON = udg_CHANCE_UNCOMMON
-        CHANCE_RARE = udg_CHANCE_RARE
-        CHANCE_LEGENDARY = udg_CHANCE_LEGENDARY
+        CHANCE_UNCOMMON = math.max(udg_CHANCE_UNCOMMON, 0.001)
+        CHANCE_RARE = math.max(udg_CHANCE_RARE, 0.001)
+        CHANCE_LEGENDARY = math.max(udg_CHANCE_LEGENDARY, 0.001)
         ITEM_DROP_CHANCE = udg_ITEM_DROP_CHANCE
 
         -- Clear
