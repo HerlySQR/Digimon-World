@@ -248,27 +248,29 @@ OnInit("Diary", function ()
             self.iconPos = glowOffset
         end
 
-        FrameLoaderAdd(function ()
-            if not mapPortions[mapPortion] then
-                self.map = BlzCreateFrameByType("BACKDROP", "BACKDROP", MapBackdrop, "", 1)
-                BlzFrameSetPoint(self.map, FRAMEPOINT_TOPLEFT, MapBackdrop, FRAMEPOINT_TOPLEFT, 0.10000, 0.0000)
-                BlzFrameSetPoint(self.map, FRAMEPOINT_BOTTOMRIGHT, MapBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.0000)
-                BlzFrameSetTexture(self.map, mapPortion, 0, true)
-                BlzFrameSetVisible(self.map, false)
+        if mapPortion then
+            FrameLoaderAdd(function ()
+                if not mapPortions[mapPortion] then
+                    self.map = BlzCreateFrameByType("BACKDROP", "BACKDROP", MapBackdrop, "", 1)
+                    BlzFrameSetPoint(self.map, FRAMEPOINT_TOPLEFT, MapBackdrop, FRAMEPOINT_TOPLEFT, 0.10000, 0.0000)
+                    BlzFrameSetPoint(self.map, FRAMEPOINT_BOTTOMRIGHT, MapBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.0000)
+                    BlzFrameSetTexture(self.map, mapPortion, 0, true)
+                    BlzFrameSetVisible(self.map, false)
 
-                mapPortions[mapPortion] = self
+                    mapPortions[mapPortion] = self
 
-                self.id = id
+                    self.id = id
 
-                if canBeVisted[id] then
-                    error("You are re-using the id: " .. id .. " in " .. name)
+                    if canBeVisted[id] then
+                        error("You are re-using the id: " .. id .. " in " .. name)
+                    end
+                    canBeVisted[id] = self.map
+                else
+                    self.map = mapPortions[mapPortion].map
+                    self.id = mapPortions[mapPortion].id
                 end
-                canBeVisted[id] = self.map
-            else
-                self.map = mapPortions[mapPortion].map
-                self.id = mapPortions[mapPortion].id
-            end
-        end)
+            end)
+        end
 
         OnEnvApplied(name, function (p, _spect)
             if not _spect and self.map then
