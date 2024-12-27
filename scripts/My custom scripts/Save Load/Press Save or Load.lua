@@ -29,6 +29,7 @@ OnInit("PressSaveOrLoad", function ()
     ---@field date osdate
     ---@field vistedPlaces boolean[]
     ---@field vistedPlaceCount integer
+    ---@field unlockedInfo UnlockedInfoData
     PlayerData = setmetatable({}, Serializable)
     PlayerData.__index = PlayerData
 
@@ -122,6 +123,7 @@ OnInit("PressSaveOrLoad", function ()
         DigimonDatas[p][slot] = SaveDigimons(p, slot)
         BackpackDatas[p][slot] = SaveBackpack(p, slot)
         QuestDatas[p][slot] = SaveQuests(p, slot)
+        data.unlockedInfo = SaveDiary(p, slot)
     end
 
     ---@param p player
@@ -147,6 +149,7 @@ OnInit("PressSaveOrLoad", function ()
         DigimonDatas[p][slot] = LoadDigimons(p, slot)
         BackpackDatas[p][slot] = LoadBackpack(p, slot)
         QuestDatas[p][slot] = LoadQuests(p, slot)
+        data.unlockedInfo = LoadDiary(p, slot)
 
         loadListener:run(p)
 
@@ -160,6 +163,7 @@ OnInit("PressSaveOrLoad", function ()
             SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, data.lumber)
             SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, data.food)
             ApplyVisitedPlaces(p, data.vistedPlaces)
+            data.unlockedInfo:apply()
         end
         if DigimonDatas[p][slot] then
             SetBank(p, DigimonDatas[p][slot])

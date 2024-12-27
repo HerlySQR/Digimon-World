@@ -93,6 +93,11 @@ BlzFrameSetEnable(DigimonAbilityT[2], false)
 BlzFrameSetEnable(DigimonAbilityT[2], true) 
 end 
  
+REFORGEDUIMAKER.DigimonAbilityT03Func = function() 
+BlzFrameSetEnable(DigimonAbilityT[3], false) 
+BlzFrameSetEnable(DigimonAbilityT[3], true) 
+end 
+ 
 REFORGEDUIMAKER.Initialize = function()
 
 
@@ -259,8 +264,8 @@ BlzFrameSetScale(DigimonWhere, 1.14)
 BlzFrameSetTextAlignment(DigimonWhere, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
 DigimonAbilityT[0] = BlzCreateFrame("IconButtonTemplate", DigimonInformation, 0, 0)
-BlzFrameSetPoint(DigimonAbilityT[0], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.020000, -0.22000)
-BlzFrameSetPoint(DigimonAbilityT[0], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.19000, 0.010000)
+BlzFrameSetPoint(DigimonAbilityT[0], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.015000, -0.22000)
+BlzFrameSetPoint(DigimonAbilityT[0], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.20500, 0.020000)
 
 BackdropDigimonAbilityT[0] = BlzCreateFrameByType("BACKDROP", "BackdropDigimonAbilityT[0]", DigimonAbilityT[0], "", 0)
 BlzFrameSetAllPoints(BackdropDigimonAbilityT[0], DigimonAbilityT[0])
@@ -270,8 +275,8 @@ BlzTriggerRegisterFrameEvent(TriggerDigimonAbilityT[0], DigimonAbilityT[0], FRAM
 TriggerAddAction(TriggerDigimonAbilityT[0], REFORGEDUIMAKER.DigimonAbilityT00Func) 
 
 DigimonAbilityT[1] = BlzCreateFrame("IconButtonTemplate", DigimonInformation, 0, 0)
-BlzFrameSetPoint(DigimonAbilityT[1], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.10500, -0.22000)
-BlzFrameSetPoint(DigimonAbilityT[1], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.10500, 0.010000)
+BlzFrameSetPoint(DigimonAbilityT[1], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.077500, -0.22000)
+BlzFrameSetPoint(DigimonAbilityT[1], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.14250, 0.020000)
 
 BackdropDigimonAbilityT[1] = BlzCreateFrameByType("BACKDROP", "BackdropDigimonAbilityT[1]", DigimonAbilityT[1], "", 0)
 BlzFrameSetAllPoints(BackdropDigimonAbilityT[1], DigimonAbilityT[1])
@@ -281,8 +286,8 @@ BlzTriggerRegisterFrameEvent(TriggerDigimonAbilityT[1], DigimonAbilityT[1], FRAM
 TriggerAddAction(TriggerDigimonAbilityT[1], REFORGEDUIMAKER.DigimonAbilityT01Func) 
 
 DigimonAbilityT[2] = BlzCreateFrame("IconButtonTemplate", DigimonInformation, 0, 0)
-BlzFrameSetPoint(DigimonAbilityT[2], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.19000, -0.22000)
-BlzFrameSetPoint(DigimonAbilityT[2], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.010000)
+BlzFrameSetPoint(DigimonAbilityT[2], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.14000, -0.22000)
+BlzFrameSetPoint(DigimonAbilityT[2], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.080000, 0.020000)
 
 BackdropDigimonAbilityT[2] = BlzCreateFrameByType("BACKDROP", "BackdropDigimonAbilityT[2]", DigimonAbilityT[2], "", 0)
 BlzFrameSetAllPoints(BackdropDigimonAbilityT[2], DigimonAbilityT[2])
@@ -290,6 +295,17 @@ BlzFrameSetTexture(BackdropDigimonAbilityT[2], "CustomFrame.png", 0, true)
 TriggerDigimonAbilityT[2] = CreateTrigger() 
 BlzTriggerRegisterFrameEvent(TriggerDigimonAbilityT[2], DigimonAbilityT[2], FRAMEEVENT_CONTROL_CLICK) 
 TriggerAddAction(TriggerDigimonAbilityT[2], REFORGEDUIMAKER.DigimonAbilityT02Func) 
+
+DigimonAbilityT[3] = BlzCreateFrame("IconButtonTemplate", DigimonInformation, 0, 0)
+BlzFrameSetPoint(DigimonAbilityT[3], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.20250, -0.22000)
+BlzFrameSetPoint(DigimonAbilityT[3], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.017500, 0.020000)
+
+BackdropDigimonAbilityT[3] = BlzCreateFrameByType("BACKDROP", "BackdropDigimonAbilityT[3]", DigimonAbilityT[3], "", 0)
+BlzFrameSetAllPoints(BackdropDigimonAbilityT[3], DigimonAbilityT[3])
+BlzFrameSetTexture(BackdropDigimonAbilityT[3], "CustomFrame.png", 0, true)
+TriggerDigimonAbilityT[3] = CreateTrigger() 
+BlzTriggerRegisterFrameEvent(TriggerDigimonAbilityT[3], DigimonAbilityT[3], FRAMEEVENT_CONTROL_CLICK) 
+TriggerAddAction(TriggerDigimonAbilityT[3], REFORGEDUIMAKER.DigimonAbilityT03Func) 
 
 DigimonEvolvesToOptionT[0] = BlzCreateFrameByType("TEXT", "name", DigimonEvolveOptions, "", 0)
 BlzFrameSetPoint(DigimonEvolvesToOptionT[0], FRAMEPOINT_TOPLEFT, DigimonEvolveOptions, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)

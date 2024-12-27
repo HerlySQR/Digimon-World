@@ -386,10 +386,10 @@ OnInit(function ()
                     ShowBank(info.p, true)
                     ShowBackpack(info.p, true)
                 end
-                DisablePvP(self.pi[1].p, self.pi[2].p)
                 if notNeutral then
                     SetPlayerAllianceStateBJ(self.pi[1].p, self.pi[2].p, bj_ALLIANCE_ALLIED_VISION)
                     SetPlayerAllianceStateBJ(self.pi[2].p, self.pi[1].p, bj_ALLIANCE_ALLIED_VISION)
+                    DisablePvP(self.pi[1].p, self.pi[2].p)
                 end
                 if self:localPlayerCond() then
                     RestartMusic()
