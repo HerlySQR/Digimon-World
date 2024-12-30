@@ -104,6 +104,7 @@ OnInit("PressSaveOrLoad", function ()
                 RemoveItem(GetEnumItem())
             end
         end)
+        ClearDiary(p)
 
         restartListener:run(p)
     end
@@ -564,6 +565,29 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetEnable(TooltipFood, false)
         BlzFrameSetTextAlignment(TooltipFood, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
+        TooltipUsing = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
+        BlzFrameSetPoint(TooltipUsing, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.050000)
+        BlzFrameSetPoint(TooltipUsing, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.38500, 0.45000)
+        BlzFrameSetText(TooltipUsing, "|cff00eeffUsing:|r")
+        BlzFrameSetEnable(TooltipUsing, false)
+        BlzFrameSetTextAlignment(TooltipUsing, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+        TooltipSaved = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
+        BlzFrameSetPoint(TooltipSaved, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.25000)
+        BlzFrameSetPoint(TooltipSaved, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.38500, 0.25000)
+        BlzFrameSetText(TooltipSaved, "|cff00eeffSaved:|r")
+        BlzFrameSetEnable(TooltipSaved, false)
+        BlzFrameSetTextAlignment(TooltipSaved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+        TooltipSavedDigimonsBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Information, "", 1)
+        BlzFrameSetPoint(TooltipSavedDigimonsBackdrop, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.015000, -0.27050)
+        BlzFrameSetPoint(TooltipSavedDigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.12950)
+        BlzFrameSetTexture(TooltipSavedDigimonsBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        TooltipSavedDigimons = FrameList.create(false, TooltipSavedDigimonsBackdrop)
+        BlzFrameSetPoint(TooltipSavedDigimons.Frame, FRAMEPOINT_TOPLEFT, TooltipSavedDigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.000, 0.00000)
+        TooltipSavedDigimons:setSize(0.47, 0.126)
+
         local x1 = {}
         local y1 = {}
         local x2 = {}
@@ -581,11 +605,30 @@ OnInit("PressSaveOrLoad", function ()
             end
         end
 
+        local amount = 3
+        local row
+
         for i = 0, MAX_DIGIMONS + MAX_SAVED - 1 do
-            TooltipDigimonT[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", Information, "", 1)
             if i < MAX_DIGIMONS then
+                TooltipDigimonT[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", Information, "", 1)
                 BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, x1[i], y1[i])
                 BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, x2[i], y2[i])
+            else
+                if amount >= 3 then
+                    amount = 0
+                    row = BlzCreateFrameByType("BACKDROP", "row", TooltipSavedDigimonsBackdrop, "", 1)
+                    BlzFrameSetSize(row, 0.47000, 0.06000)
+                    BlzFrameSetTexture(row, "war3mapImported\\EmptyBTN.blp", 0, true)
+                end
+
+                TooltipDigimonT[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", row, "", 1)
+                BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, row, FRAMEPOINT_TOPLEFT, amount*0.16500, 0.0000)
+                BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, row, FRAMEPOINT_BOTTOMRIGHT, -0.33 + amount*0.16500, 0.0150)
+
+                if amount == 0 then
+                    TooltipSavedDigimons:add(row)
+                end
+                amount = amount + 1
             end
             BlzFrameSetTexture(TooltipDigimonT[i], "war3mapImported\\EmptyBTN.blp", 0, true)
 
@@ -607,7 +650,6 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetPoint(TooltipDigimonLevelT[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.10625, 0.0000)
             BlzFrameSetText(TooltipDigimonLevelT[i], "|cffFFCC00Level 0|r")
             BlzFrameSetEnable(TooltipDigimonLevelT[i], false)
-            BlzFrameSetScale(TooltipDigimonLevelT[i], 1.00)
             BlzFrameSetTextAlignment(TooltipDigimonLevelT[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
             TooltipDigimonStamina[i] = BlzCreateFrameByType("TEXT", "name", TooltipDigimonT[i], "", 0)
@@ -633,50 +675,6 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetText(TooltipDigimonWisdom[i], "")
             BlzFrameSetEnable(TooltipDigimonWisdom[i], false)
             BlzFrameSetTextAlignment(TooltipDigimonWisdom[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
-        end
-
-        TooltipUsing = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
-        BlzFrameSetPoint(TooltipUsing, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.050000)
-        BlzFrameSetPoint(TooltipUsing, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.38500, 0.45000)
-        BlzFrameSetText(TooltipUsing, "|cff00eeffUsing:|r")
-        BlzFrameSetEnable(TooltipUsing, false)
-        BlzFrameSetTextAlignment(TooltipUsing, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
-
-        TooltipSaved = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
-        BlzFrameSetPoint(TooltipSaved, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.25000)
-        BlzFrameSetPoint(TooltipSaved, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.38500, 0.25000)
-        BlzFrameSetText(TooltipSaved, "|cff00eeffSaved:|r")
-        BlzFrameSetEnable(TooltipSaved, false)
-        BlzFrameSetTextAlignment(TooltipSaved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
-
-        TooltipSavedDigimonsBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Information, "", 1)
-        BlzFrameSetPoint(TooltipSavedDigimonsBackdrop, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.015000, -0.27050)
-        BlzFrameSetPoint(TooltipSavedDigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.12950)
-        BlzFrameSetTexture(TooltipSavedDigimonsBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
-
-        TooltipSavedDigimons = FrameList.create(false, TooltipSavedDigimonsBackdrop)
-        BlzFrameSetPoint(TooltipSavedDigimons.Frame, FRAMEPOINT_TOPLEFT, TooltipSavedDigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.000, 0.00000)
-        BlzFrameSetPoint(TooltipSavedDigimons.Frame, FRAMEPOINT_BOTTOMRIGHT, TooltipSavedDigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.000, 0.0000)
-        TooltipSavedDigimons:setSize(BlzFrameGetWidth(TooltipSavedDigimons.Frame), BlzFrameGetHeight(TooltipSavedDigimons.Frame))
-
-        local amount = 3
-        local row
-        for i = MAX_DIGIMONS, MAX_DIGIMONS + MAX_SAVED - 1 do
-            if amount >= 3 then
-                amount = 0
-                row = BlzCreateFrameByType("BACKDROP", "row", TooltipSavedDigimonsBackdrop, "", 1)
-                BlzFrameSetSize(row, 0.47000, 0.06000)
-                BlzFrameSetTexture(row, "war3mapImported\\EmptyBTN.blp", 0, true)
-            end
-
-            BlzFrameSetParent(TooltipDigimonT[i], row)
-            BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, row, FRAMEPOINT_TOPLEFT, amount*0.16500, 0.0000)
-            BlzFrameSetPoint(TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, row, FRAMEPOINT_BOTTOMRIGHT, -0.33 + amount*0.16500, 0.0150)
-
-            if amount == 0 then
-                TooltipSavedDigimons:add(row)
-            end
-            amount = amount + 1
         end
 
         TooltipBackpack = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
@@ -727,6 +725,14 @@ OnInit("PressSaveOrLoad", function ()
 
     OnLeaderboard(function ()
         BlzFrameSetParent(SaveLoadMenu, BlzGetFrameByName("Leaderboard", 0))
+    end)
+
+    OnInit.final(function ()
+        -- I don't know why I should add this
+        local buffer =  BlzCreateFrameByType("BACKDROP", "row", TooltipSavedDigimonsBackdrop, "", 1)
+        BlzFrameSetSize(buffer, 0.47000, 0.06000)
+        BlzFrameSetTexture(buffer, "war3mapImported\\EmptyBTN.blp", 0, true)
+        TooltipSavedDigimons:add(buffer)
     end)
 
     -- Functions to use

@@ -81,8 +81,8 @@ OnInit("Diary", function ()
 
     local MAX_DIGIMON_TYPE_PER_ROW = 10
     local REQUIRED_KILLS_1 = 50
-    local REQUIRED_KILLS_2 = 100
-    local REQUIRED_KILLS_3 = 150
+    local REQUIRED_KILLS_2 = 101
+    local REQUIRED_KILLS_3 = 152
     local REQUIRED_DEATHS = 5
 
     local MAX_REGIONS = 30
@@ -527,6 +527,10 @@ OnInit("Diary", function ()
     function UnlockedInfoData:apply()
         for i = 1, self.amount do
             unlockedDigiInfos[self.p][self.ids[i]] = self.infos[i]
+            if self.p == LocalPlayer then
+                BlzFrameSetTexture(digiInfos[self.ids[i]].backdrop, BlzGetAbilityIcon(self.ids[i]), 0, true)
+                BlzFrameSetEnable(digiInfos[self.ids[i]].button, true)
+            end
         end
         for i = 1, self.killAmt do
             kills[self.p][self.killWho[i]] = self.killCount[i]
@@ -536,6 +540,10 @@ OnInit("Diary", function ()
         end
         for i = 1, self.itemsUnlocked do
             unlockedItems[self.p][self.items[i]] = true
+            if self.p == LocalPlayer then
+                BlzFrameSetTexture(BackdropItemTypes[self.items[i]], BlzGetAbilityIcon(self.items[i]), 0, true)
+                BlzFrameSetEnable(ItemTypes[self.items[i]], true)
+            end
         end
     end
 
@@ -642,13 +650,13 @@ OnInit("Diary", function ()
     ---@param p player
     ---@param id integer
     local function UnlockButton(p, id)
-        DigimonUnlockedInfo.create(p, id)
-        if p == LocalPlayer and digiInfos[id] and not BlzFrameGetEnable(digiInfos[id].button) then
+        if p == LocalPlayer and digiInfos[id] and not unlockedDigiInfos[p][id] then
             spriteRemain = 8
             BlzFrameSetTexture(digiInfos[id].backdrop, BlzGetAbilityIcon(id), 0, true)
             BlzFrameSetEnable(digiInfos[id].button, true)
             BlzFrameSetVisible(digiInfos[id].sprite, true)
         end
+        DigimonUnlockedInfo.create(p, id)
     end
 
     ---@param id integer
@@ -1464,14 +1472,16 @@ OnInit("Diary", function ()
         local owner = d:getOwner()
 
         local unlockedInfo = unlockedDigiInfos[owner][id]
-        unlockedInfo.staPerLvl = true
-        unlockedInfo.dexPerLvl = true
-        unlockedInfo.wisPerLvl = true
+        if not unlockedInfo.staPerLvl then
+            unlockedInfo.staPerLvl = true
+            unlockedInfo.dexPerLvl = true
+            unlockedInfo.wisPerLvl = true
 
-        if owner == LocalPlayer then
-            spriteRemain = 8
-            BlzFrameSetVisible(digiInfos[id].sprite, true)
-            UpdateInformation()
+            if owner == LocalPlayer then
+                spriteRemain = 8
+                BlzFrameSetVisible(digiInfos[id].sprite, true)
+                UpdateInformation()
+            end
         end
     end)
 
@@ -1484,15 +1494,17 @@ OnInit("Diary", function ()
         local owner = d:getOwner()
         local unlockedInfo = unlockedDigiInfos[owner][id]
 
-        unlockedInfo.evolveOptions[toEvolve] = unlockedInfo.evolveOptions[toEvolve] or __jarray(false)
-        unlockedInfo.evolveOptions[toEvolve][condL] = true
+        if not unlockedInfo.evolveOptions[toEvolve] then
+            unlockedInfo.evolveOptions[toEvolve] = __jarray(false)
+            unlockedInfo.evolveOptions[toEvolve][condL] = true
 
-        UnlockButton(owner, toEvolve)
+            UnlockButton(owner, toEvolve)
 
-        if owner == LocalPlayer then
-            spriteRemain = 8
-            BlzFrameSetVisible(digiInfos[id].sprite, true)
-            UpdateInformation()
+            if owner == LocalPlayer then
+                spriteRemain = 8
+                BlzFrameSetVisible(digiInfos[id].sprite, true)
+                UpdateInformation()
+            end
         end
     end)
 
@@ -1528,10 +1540,13 @@ OnInit("Diary", function ()
                     show = true
                 end
 
-                if show and owner == LocalPlayer then
-                    spriteRemain = 8
-                    BlzFrameSetVisible(digiInfos[kId].sprite, true)
-                    UpdateInformation()
+                if show then
+                    kills[owner][kId] = kills[owner][kId] + 1
+                    if owner == LocalPlayer then
+                        spriteRemain = 8
+                        BlzFrameSetVisible(digiInfos[kId].sprite, true)
+                        UpdateInformation()
+                    end
                 end
             end
 
@@ -1631,6 +1646,21 @@ OnInit("Diary", function ()
         end
 
         return data
+    end
+
+    function ClearDiary(p)
+        unlockedDigiInfos[p] = {}
+        kills[p] = __jarray(0)
+        deaths[p] = __jarray(0)
+        unlockedItems[p] = {}
+
+        if p == LocalPlayer then
+            digimonSelected = -1
+            itemSelected = -1
+            UpdateDigimons()
+            UpdateInformation()
+            UpdateItemInfo()
+        end
     end
 
     ---@param func fun(p: player)
