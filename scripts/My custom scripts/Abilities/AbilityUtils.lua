@@ -6,6 +6,7 @@ OnInit("AbilityUtils", function ()
     Require "Knockback"
     local MCT = Require "MCT" ---@type MCT
     Require "NewBonus"
+    Require "MDTable"
 
     LOCUST_ID = FourCC('Aloc')
     CROW_FORM_ID = FourCC('Arav')
@@ -363,9 +364,54 @@ OnInit("AbilityUtils", function ()
         return result
     end
 
+    ---@param u unit
+    ---@return boolean
     function UnitCanAttack(u)
         return BlzGetUnitWeaponBooleanField(u, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0) or
                BlzGetUnitWeaponBooleanField(u, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1)
+    end
+
+    local POISON_DURATION = 5.
+    local POISON_DAMAGE = 3.
+    local timers = __jarray(0) ---@type table<unit, integer>
+    local counters = MDTable.create(2, 0) ---@type table<unit, table<unit, integer>>
+
+    ---@param source unit
+    ---@param target unit
+    function PoisonUnit(source, target)
+        if not UnitAlive(target) then
+            return
+        end
+
+        if timers[target] <= 0 then
+            DummyCast(GetOwningPlayer(source),
+                      GetUnitX(source), GetUnitY(source),
+                      POISON_SPELL,
+                      POISON_ORDER,
+                      1,
+                      CastType.TARGET,
+                      target)
+            Timed.echo(1., function ()
+                if timers[target] <= 0 then
+                    timers[target] = 0
+                    UnitRemoveAbility(target, POISON_BUFF)
+                    return true
+                end
+            end)
+        end
+
+        if counters[source][target] <= 0 then
+            timers[target] = timers[target] + 1
+            Timed.echo(1., function ()
+                Damage.apply(source, target, POISON_DAMAGE, true, false, udg_Nature, DAMAGE_TYPE_POISON, WEAPON_TYPE_WHOKNOWS)
+                counters[source][target] = counters[source][target] - 1
+                if counters[source][target] <= 0 or not UnitAlive(target) then
+                    timers[target] = timers[target] - 1
+                    return true
+                end
+            end)
+        end
+        counters[source][target] = POISON_DURATION
     end
 
 end)
