@@ -7,6 +7,7 @@ OnInit("Stats", function ()
     Require "Color"
     Require "GetMainSelectedUnit"
     Require "Hotkeys"
+    Require "GlobalRemap"
 
     local WATER_ICON = "war3mapImported\\ATTWater.blp"
     local MACHINE_ICON = "war3mapImported\\ATTMetal.blp"
@@ -818,6 +819,28 @@ OnInit("Stats", function ()
         buffIcons[udg_StatsBuff] = udg_StatsBuffIcon
         udg_StatsBuff = 0
         udg_StatsBuffIcon = ""
+    end)
+
+    local holyDamages = {}
+
+    local oldBlzGetUnitWeaponIntegerField
+    oldBlzGetUnitWeaponIntegerField = AddHook("BlzGetUnitWeaponIntegerField", function (u, field, index)
+        if field == UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE and holyDamages[GetUnitTypeId(u)] then
+            return udg_HolyAsInt
+        end
+        return oldBlzGetUnitWeaponIntegerField(u, field, index)
+    end)
+
+    local t = CreateTrigger()
+    TriggerRegisterVariableEvent(t, "udg_ArmorDamageEvent", EQUAL, 1)
+    TriggerAddAction(t, function ()
+        if udg_IsDamageAttack and holyDamages[GetUnitTypeId(udg_DamageEventSource)] then
+            udg_DamageEventAttackT = udg_HolyAsInt
+        end
+    end)
+
+    GlobalRemap("udg_SetHolyAttack", nil, function (value)
+        holyDamages[value] = true
     end)
 end)
 Debug.endFile()
