@@ -1442,8 +1442,7 @@ OnInit("Diary", function ()
 
         ShieldsList = FrameList.create(true, ShieldsContainer)
         BlzFrameSetPoint(ShieldsList.Frame, FRAMEPOINT_TOPLEFT, ShieldsContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(ShieldsList.Frame, FRAMEPOINT_BOTTOMRIGHT, ShieldsContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        ShieldsList:setSize(BlzFrameGetWidth(ShieldsList.Frame), BlzFrameGetHeight(ShieldsList.Frame))
+        ShieldsList:setSize(0.56, 0.04)
         BlzFrameSetSize(ShieldsList.Slider, 0.56, 0.012)
 
         WeaponsText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
@@ -1461,8 +1460,7 @@ OnInit("Diary", function ()
 
         WeaponsList = FrameList.create(true, WeaponsContainer)
         BlzFrameSetPoint(WeaponsList.Frame, FRAMEPOINT_TOPLEFT, WeaponsContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(WeaponsList.Frame, FRAMEPOINT_BOTTOMRIGHT, WeaponsContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        WeaponsList:setSize(BlzFrameGetWidth(WeaponsList.Frame), BlzFrameGetHeight(WeaponsList.Frame))
+        WeaponsList:setSize(0.56, 0.04)
         BlzFrameSetSize(WeaponsList.Slider, 0.56, 0.012)
 
         AccesoriesText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
@@ -1480,8 +1478,7 @@ OnInit("Diary", function ()
 
         AccesoriesList = FrameList.create(true, AccesoriesContainer)
         BlzFrameSetPoint(AccesoriesList.Frame, FRAMEPOINT_TOPLEFT, AccesoriesContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(AccesoriesList.Frame, FRAMEPOINT_BOTTOMRIGHT, AccesoriesContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        AccesoriesList:setSize(BlzFrameGetWidth(AccesoriesList.Frame), BlzFrameGetHeight(AccesoriesList.Frame))
+        AccesoriesList:setSize(0.56, 0.04)
         BlzFrameSetSize(AccesoriesList.Slider, 0.56, 0.012)
 
         DigivicesText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
@@ -1499,8 +1496,7 @@ OnInit("Diary", function ()
 
         DigivicesList = FrameList.create(true, DigivicesContainer)
         BlzFrameSetPoint(DigivicesList.Frame, FRAMEPOINT_TOPLEFT, DigivicesContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(DigivicesList.Frame, FRAMEPOINT_BOTTOMRIGHT, DigivicesContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        DigivicesList:setSize(BlzFrameGetWidth(DigivicesList.Frame), BlzFrameGetHeight(DigivicesList.Frame))
+        DigivicesList:setSize(0.56, 0.04)
         BlzFrameSetSize(DigivicesList.Slider, 0.56, 0.012)
 
         CrestsText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
@@ -1518,8 +1514,7 @@ OnInit("Diary", function ()
 
         CrestsList = FrameList.create(true, CrestsContainer)
         BlzFrameSetPoint(CrestsList.Frame, FRAMEPOINT_TOPLEFT, CrestsContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(CrestsList.Frame, FRAMEPOINT_BOTTOMRIGHT, CrestsContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        CrestsList:setSize(BlzFrameGetWidth(CrestsList.Frame), BlzFrameGetHeight(CrestsList.Frame))
+        CrestsList:setSize(0.56, 0.04)
         BlzFrameSetSize(CrestsList.Slider, 0.56, 0.012)
 
         ItemInformation = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
