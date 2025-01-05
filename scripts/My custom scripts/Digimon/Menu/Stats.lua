@@ -770,6 +770,7 @@ OnInit("Stats", function ()
                 BlzFrameSetPoint(HeroBuffs[i][j], FRAMEPOINT_BOTTOMLEFT, HeroButtons[i], FRAMEPOINT_BOTTOMRIGHT, 0.01 + j*0.0125, 0)
                 BlzFrameSetSize(HeroBuffs[i][j], 0.0125, 0.0125)
                 BlzFrameSetVisible(HeroBuffs[i][j], false)
+                AddFrameToMenu(HeroBuffs[i][j])
             end
 
             SelectedHero[i] = BlzCreateFrameByType("SPRITE", "SelectedUnit[" .. i .. "]", HeroButtons[i], "", 0)
