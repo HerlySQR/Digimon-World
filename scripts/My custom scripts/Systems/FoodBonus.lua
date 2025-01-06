@@ -1,5 +1,5 @@
 Debug.beginFile("FoodBonus")
-OnInit(function ()
+OnInit("FoodBonus", function ()
     Require "NewBonus"
     Require "Timed"
     Require "MDTable"
@@ -151,6 +151,24 @@ OnInit(function ()
             end
         end
     end)
+
+    ---@param id integer
+    ---@return boolean
+    function IsItemFood(id)
+        if bonuses[id] then
+            return not bonuses[id].isDrink
+        end
+        return false
+    end
+
+    ---@param id integer
+    ---@return boolean
+    function IsItemDrink(id)
+        if bonuses[id] then
+            return bonuses[id].isDrink
+        end
+        return false
+    end
 
     OnInit.trig(function ()
         udg_FoodBonusAmountInt = nil
