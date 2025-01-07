@@ -45,13 +45,7 @@ OnInit("ModifyThreat", function ()
         local target = udg_DamageEventTarget ---@type unit
 
         if IsPlayerInGame(GetOwningPlayer(source)) and not IsPlayerInGame(GetOwningPlayer(target)) then
-            local threat = udg_DamageEventAmount
-            if udg_IsDamageSpell then
-                threat = threat + SPELL_THREAT_ADD
-            else
-                threat = threat * DAMAGE_THREAT_FACTOR
-            end
-            ZTS_ModifyThreat(source, target, applyModifiers(source, threat), true)
+            ZTS_ModifyThreat(source, target, applyModifiers(source, udg_DamageEventAmount * DAMAGE_THREAT_FACTOR), true)
         end
     end)
 

@@ -4,6 +4,7 @@ OnInit("Diary", function ()
     Require "DigimonEvolution"
     Require "Environment"
     Require "Serializable"
+    Require "FoodBonus"
 
     local LocalPlayer = GetLocalPlayer()
 
@@ -31,12 +32,16 @@ OnInit("Diary", function ()
     local MegasList = nil ---@type FrameList
     local DigimonInformation = nil ---@type framehandle
     local DigimonName = nil ---@type framehandle
+    local DigimonAttackTypeIcon = nil ---@type framehandle
+    local DigimonDefenseTypeIcon = nil ---@type framehandle
+    local DigimonAttackTypeLabel = nil ---@type framehandle
+    local DigimonDefenseTypeLabel = nil ---@type framehandle
     local DigimonStamina = nil ---@type framehandle
     local DigimonDexterity = nil ---@type framehandle
     local DigimonWisdom = nil ---@type framehandle
     local DigimonEvolvesToLabel = nil ---@type framehandle
     local DigimonEvolveOptions = nil ---@type framehandle
-    local DigimonWhere = nil ---@type framehandle
+    --local DigimonWhere = nil ---@type framehandle
     local DigimonEvolvesToOption = {} ---@type framehandle[]
     local DigimonEvolvesToOptionButton = {} ---@type framehandle[]
     local DigimonEvolveRequirementsText = {} ---@type framehandle[]
@@ -51,8 +56,15 @@ OnInit("Diary", function ()
     local BackdropItemTypes= {} ---@type framehandle[]
     local ItemsSprite = {} ---@type framehandle[]
     local ConsumablesText = nil ---@type framehandle
-    local ConsumablesContainer = nil ---@type framehandle
-    local ConsumablesList = nil ---@type FrameList
+    local MiscText = nil ---@type framehandle
+    local MiscsContainer = nil ---@type framehandle
+    local MiscsList = nil ---@type FrameList
+    local FoodText = nil ---@type framehandle
+    local FoodsContainer = nil ---@type framehandle
+    local FoodsList = nil ---@type FrameList
+    local DrinkText = nil ---@type framehandle
+    local DrinksContainer = nil ---@type framehandle
+    local DrinksList = nil ---@type FrameList
     local EquipmentsText = nil ---@type framehandle
     local ShieldsText = nil ---@type framehandle
     local ShieldsContainer = nil ---@type framehandle
@@ -79,15 +91,47 @@ OnInit("Diary", function ()
 
     local actMenu = 0
 
-    local MAX_DIGIMON_TYPE_PER_ROW = 10
+    local MAX_DIGIMON_TYPE_PER_ROW = 14
+    local MAX_ITEM_TYPE_PER_ROW = 4
     local REQUIRED_KILLS_1 = 50
-    local REQUIRED_KILLS_2 = 100
-    local REQUIRED_KILLS_3 = 150
+    local REQUIRED_KILLS_2 = 101
+    local REQUIRED_KILLS_3 = 152
     local REQUIRED_DEATHS = 5
 
     local MAX_REGIONS = 30
 
+    local WATER_ICON = "war3mapImported\\ATTWater.blp"
+    local MACHINE_ICON = "war3mapImported\\ATTMetal.blp"
+    local BEAST_ICON = "war3mapImported\\ATTBEast.blp"
+    local FIRE_ICON = "war3mapImported\\ATTFlame.blp"
+    local NATURE_ICON = "war3mapImported\\ATTNature.blp"
+    local AIR_ICON = "war3mapImported\\ATTAir.blp"
+    local DARK_ICON = "war3mapImported\\ATTShadow.blp"
+    local HOLY_ICON = "war3mapImported\\ATTHoly.blp"
+    local HERO_ICON = "war3mapImported\\ATTSystemMed.blp"
+
+    local armorEquiv = {
+        [0] = GetHandleId(udg_Holy),
+        [1] = GetHandleId(udg_Water),
+        [2] = GetHandleId(udg_Machine),
+        [3] = GetHandleId(udg_Beast),
+        [4] = GetHandleId(udg_Nature),
+        [5] = GetHandleId(udg_Air),
+        [6] = GetHandleId(udg_Dark),
+        [7] = GetHandleId(udg_Fire)
+    }
+
     local rectNames = __jarray("") ---@type table<rect, string>
+    local NO_SKIN = FourCC('n000')
+    local model = CreateUnit(Digimon.PASSIVE, NO_SKIN, GetRectCenterX(gg_rct_DiaryModel), GetRectCenterY(gg_rct_DiaryModel), 270)
+    local glow = AddSpecialEffect("war3mapImported\\GeneralHeroGlow.mdx", GetRectCenterX(gg_rct_DiaryModel), GetRectCenterY(gg_rct_DiaryModel))
+    BlzSetSpecialEffectColorByPlayer(glow, Player(GetHandleId(PLAYER_COLOR_SNOW)))
+    BlzSetSpecialEffectScale(glow, 0.5)
+    BlzSetSpecialEffectHeight(glow, BlzGetLocalSpecialEffectZ(glow) - 7.5)
+    BlzSetSpecialEffectAlpha(glow, 200)
+
+    local NO_SKIN_ITEM = FourCC('I07L')
+    local itemModel = CreateItem(NO_SKIN_ITEM, GetRectCenterX(gg_rct_DiaryModel), GetRectCenterY(gg_rct_DiaryModel))
 
     ---@class EvolveCond
     ---@field label string
@@ -103,6 +147,8 @@ OnInit("Diary", function ()
 
     ---@class DigimonInfo
     ---@field name string
+    ---@field attackIcon string
+    ---@field defenseIcon string
     ---@field staPerLvl integer
     ---@field dexPerLvl integer
     ---@field wisPerLvl integer
@@ -160,6 +206,12 @@ OnInit("Diary", function ()
         vistedPlaces[Player(i)] = {}
         unlockedItems[Player(i)] = {}
     end
+
+    Timed.echo(0.02, function ()
+        if inMenu then
+            CameraSetupApplyForceDuration(camera, true, 0)
+        end
+    end)
 
     ---@class ItemInfo
     ---@field name string
@@ -335,7 +387,7 @@ OnInit("Diary", function ()
     end
 
     local function UpdateDigimons()
-        if inMenu then
+        if inMenu and BlzFrameIsVisible(MapBackdrop) then
             for i = 1, udg_MAX_USED_DIGIMONS do
                 BlzFrameSetVisible(DigimonIcons[i], false)
             end
@@ -527,6 +579,10 @@ OnInit("Diary", function ()
     function UnlockedInfoData:apply()
         for i = 1, self.amount do
             unlockedDigiInfos[self.p][self.ids[i]] = self.infos[i]
+            if self.p == LocalPlayer then
+                BlzFrameSetTexture(digiInfos[self.ids[i]].backdrop, BlzGetAbilityIcon(self.ids[i]), 0, true)
+                BlzFrameSetEnable(digiInfos[self.ids[i]].button, true)
+            end
         end
         for i = 1, self.killAmt do
             kills[self.p][self.killWho[i]] = self.killCount[i]
@@ -536,6 +592,10 @@ OnInit("Diary", function ()
         end
         for i = 1, self.itemsUnlocked do
             unlockedItems[self.p][self.items[i]] = true
+            if self.p == LocalPlayer then
+                BlzFrameSetTexture(BackdropItemTypes[self.items[i]], BlzGetAbilityIcon(self.items[i]), 0, true)
+                BlzFrameSetEnable(ItemTypes[self.items[i]], true)
+            end
         end
     end
 
@@ -552,6 +612,8 @@ OnInit("Diary", function ()
             BlzFrameSetVisible(info.sprite, false)
 
             BlzFrameSetText(DigimonName, "|cffFFCC00" .. info.name .. "|r")
+            BlzFrameSetTexture(DigimonAttackTypeIcon, info.attackIcon, 0, true)
+            BlzFrameSetTexture(DigimonDefenseTypeIcon, info.defenseIcon, 0, true)
             BlzFrameSetText(DigimonStamina, "|cffff7d00Stamina per level: |r" .. (unlockedInfo.staPerLvl and info.staPerLvl or "???"))
             BlzFrameSetText(DigimonDexterity, "|cff007d20Dexterity per level: |r" .. (unlockedInfo.dexPerLvl and info.dexPerLvl or "???"))
             BlzFrameSetText(DigimonWisdom, "|cff004ec8Wisdom per level: |r" .. (unlockedInfo.wisPerLvl and info.wisPerLvl or "???"))
@@ -607,7 +669,7 @@ OnInit("Diary", function ()
                 BlzFrameSetVisible(DigimonEvolveOptions, false)
             end
 
-            BlzFrameSetText(DigimonWhere, "|cffffcc00Can be found on: |r" .. (info.whereToBeFound and (unlockedInfo.whereToBeFound and rectNames[info.whereToBeFound] or "???") or "No specific"))
+            --BlzFrameSetText(DigimonWhere, "|cffffcc00Can be found on: |r" .. (info.whereToBeFound and (unlockedInfo.whereToBeFound and rectNames[info.whereToBeFound] or "???") or "No specific"))
 
             for i = 1, 3 do
                 if info.abilities[i] then
@@ -619,36 +681,48 @@ OnInit("Diary", function ()
                     BlzFrameSetVisible(DigimonAbilityT[i], false)
                 end
             end
+
+            BlzSetUnitSkin(model, digimonSelected)
+            SetUnitScale(model, 0.5*BlzGetUnitRealField(model, UNIT_RF_SCALING_VALUE), 0, 0)
+            BlzSetSpecialEffectAlpha(glow, 200)
         else
             BlzFrameSetVisible(DigimonInformation, false)
+            BlzSetUnitSkin(model, NO_SKIN)
+            BlzSetSpecialEffectAlpha(glow, 0)
         end
     end
 
     local itemSelected = -1
-    local actualItemContainer ---@type framehandle
-    local actualItemRow = MAX_DIGIMON_TYPE_PER_ROW
+    local actualItemContainer = {} ---@type table<FrameList, framehandle>
+    local actualItemRow = __jarray(MAX_ITEM_TYPE_PER_ROW) ---@type table<FrameList, integer>
 
     local function UpdateItemInfo()
+        BlzSetItemSkin(itemModel, NO_SKIN_ITEM) -- To reset the scale
         if itemSelected ~= -1 then
             BlzFrameSetVisible(ItemsSprite[itemSelected], false)
             BlzFrameSetText(ItemName, "|cffFFCC00" .. GetObjectName(itemSelected) .. "|r")
             BlzFrameSetText(ItemDescription, BlzGetAbilityExtendedTooltip(itemSelected, 0))
             BlzFrameSetVisible(ItemInformation, true)
+
+            BlzSetItemSkin(itemModel, itemSelected)
+            BlzSetItemRealField(itemModel, ITEM_RF_SCALING_VALUE, 0.5*BlzGetItemRealField(itemModel, ITEM_RF_SCALING_VALUE))
+            BlzSetSpecialEffectAlpha(glow, 200)
         else
             BlzFrameSetVisible(ItemInformation, false)
+            BlzSetSpecialEffectAlpha(glow, 0)
         end
     end
 
     ---@param p player
     ---@param id integer
     local function UnlockButton(p, id)
-        DigimonUnlockedInfo.create(p, id)
-        if p == LocalPlayer and digiInfos[id] and not BlzFrameGetEnable(digiInfos[id].button) then
+        if p == LocalPlayer and digiInfos[id] and not unlockedDigiInfos[p][id] then
             spriteRemain = 8
             BlzFrameSetTexture(digiInfos[id].backdrop, BlzGetAbilityIcon(id), 0, true)
             BlzFrameSetEnable(digiInfos[id].button, true)
             BlzFrameSetVisible(digiInfos[id].sprite, true)
         end
+        DigimonUnlockedInfo.create(p, id)
     end
 
     ---@param id integer
@@ -744,6 +818,53 @@ OnInit("Diary", function ()
                         index = index + 1
                     end
 
+                    local typ = BlzGetUnitWeaponIntegerField(u, UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE, 0)
+                    local root
+                    if typ == udg_WaterAsInt then
+                        root = WATER_ICON
+                    elseif typ == udg_MachineAsInt then
+                        root = MACHINE_ICON
+                    elseif typ == udg_BeastAsInt then
+                        root = BEAST_ICON
+                    elseif typ == udg_FireAsInt then
+                        root = FIRE_ICON
+                    elseif typ == udg_NatureAsInt then
+                        root = NATURE_ICON
+                    elseif typ == udg_AirAsInt then
+                        root = AIR_ICON
+                    elseif typ == udg_DarkAsInt then
+                        root = DARK_ICON
+                    elseif typ == udg_HolyAsInt then
+                        root = HOLY_ICON
+                    else
+                        root = "war3mapImported\\EmptyBTN.blp"
+                    end
+
+                    digiInfos[id].attackIcon = root
+
+                    typ = armorEquiv[BlzGetUnitIntegerField(u, UNIT_IF_DEFENSE_TYPE)]
+                    if typ == udg_WaterAsInt then
+                        root = WATER_ICON
+                    elseif typ == udg_MachineAsInt then
+                        root = MACHINE_ICON
+                    elseif typ == udg_BeastAsInt then
+                        root = BEAST_ICON
+                    elseif typ == udg_FireAsInt then
+                        root = FIRE_ICON
+                    elseif typ == udg_NatureAsInt then
+                        root = NATURE_ICON
+                    elseif typ == udg_AirAsInt then
+                        root = AIR_ICON
+                    elseif typ == udg_DarkAsInt then
+                        root = DARK_ICON
+                    elseif typ == udg_HolyAsInt then
+                        root = HOLY_ICON
+                    else
+                        root = "war3mapImported\\EmptyBTN.blp"
+                    end
+
+                    digiInfos[id].defenseIcon = root
+
                     digiInfos[id].name = GetHeroProperName(u)
                     digiInfos[id].staPerLvl = BlzGetUnitRealField(u, UNIT_RF_STRENGTH_PER_LEVEL)
                     digiInfos[id].dexPerLvl = BlzGetUnitRealField(u, UNIT_RF_AGILITY_PER_LEVEL)
@@ -787,21 +908,34 @@ OnInit("Diary", function ()
 
     ---@param id integer
     local function AddItemToList(id)
+        local list
+        local container
+
         udg_BackpackItem = id
-        if udg_GoesToBackpack then
-            if actualItemRow >= MAX_DIGIMON_TYPE_PER_ROW then
-                actualItemRow = 0
+        if udg_GoesToBackpack or IsItemFood(id) or IsItemDrink(id) then
+            if udg_GoesToBackpack then
+                list = MiscsList
+                container = MiscsContainer
+            elseif IsItemFood(id) then
+                list = FoodsList
+                container = FoodsContainer
+            else
+                list = DrinksList
+                container = DrinksContainer
+            end
+            if actualItemRow[list] >= MAX_ITEM_TYPE_PER_ROW then
+                actualItemRow[list] = 0
                 FrameLoaderAdd(function ()
-                    actualItemContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ConsumablesContainer, "", 1)
-                    BlzFrameSetPoint(actualItemContainer, FRAMEPOINT_TOPLEFT, ConsumablesContainer, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
-                    BlzFrameSetSize(actualItemContainer, 0.04*MAX_DIGIMON_TYPE_PER_ROW, 0.04)
-                    BlzFrameSetTexture(actualItemContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+                    actualItemContainer[list] = BlzCreateFrameByType("BACKDROP", "BACKDROP", container, "", 1)
+                    BlzFrameSetPoint(actualItemContainer[list], FRAMEPOINT_TOPLEFT, container, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+                    BlzFrameSetSize(actualItemContainer[list], 0.04*MAX_ITEM_TYPE_PER_ROW, 0.04)
+                    BlzFrameSetTexture(actualItemContainer[list], "war3mapImported\\EmptyBTN.blp", 0, true)
                 end)
             end
 
             FrameLoaderAdd(function ()
-                ItemTypes[id] = BlzCreateFrame("IconButtonTemplate", actualItemContainer, 0, 0)
-                BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_TOPLEFT, actualItemContainer, FRAMEPOINT_TOPLEFT, 0.04 * actualItemRow, 0.0000)
+                ItemTypes[id] = BlzCreateFrame("IconButtonTemplate", actualItemContainer[list], 0, 0)
+                BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_TOPLEFT, actualItemContainer[list], FRAMEPOINT_TOPLEFT, 0.04 * actualItemRow[list], 0.0000)
                 BlzFrameSetSize(ItemTypes[id], 0.04, 0.04)
                 BlzFrameSetEnable(ItemTypes[id], false)
 
@@ -830,14 +964,12 @@ OnInit("Diary", function ()
                     end
                 end)
 
-                if actualItemRow == 0 then
-                    ConsumablesList:add(actualItemContainer)
+                if actualItemRow[list] == 0 then
+                    list:add(actualItemContainer[list])
                 end
             end)
-            actualItemRow = actualItemRow + 1
+            actualItemRow[list] = actualItemRow[list] + 1
         else
-            local list
-            local container
             local itm = CreateItem(id, 0, 0)
             local which = GetItemType(itm)
             RemoveItem(itm)
@@ -896,13 +1028,20 @@ OnInit("Diary", function ()
         if actMenu == 0 then
             BlzFrameSetVisible(DigimonsBackdrop, true)
             BlzFrameSetVisible(ItemsBackdrop, false)
+            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
             BlzFrameSetVisible(MapBackdrop, false)
+            UpdateInformation()
         elseif actMenu == 1 then
             BlzFrameSetVisible(DigimonsBackdrop, false)
+            BlzSetUnitSkin(model, NO_SKIN)
             BlzFrameSetVisible(ItemsBackdrop, true)
             BlzFrameSetVisible(MapBackdrop, false)
+            UpdateItemInfo()
         elseif actMenu == 2 then
             BlzFrameSetVisible(DigimonsBackdrop, false)
+            BlzSetUnitSkin(model, NO_SKIN)
+            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
+            BlzSetSpecialEffectAlpha(glow, 0)
             BlzFrameSetVisible(ItemsBackdrop, false)
             BlzFrameSetVisible(MapBackdrop, true)
             UpdateDigimons()
@@ -934,11 +1073,36 @@ OnInit("Diary", function ()
         onSeeMapClicked:run(p)
     end
 
+    do
+        local t = CreateTrigger()
+        ForForce(bj_FORCE_ALL_PLAYERS, function ()
+            BlzTriggerRegisterPlayerKeyEvent(t, GetEnumPlayer(), OSKEY_TAB, 0, true)
+            BlzTriggerRegisterPlayerKeyEvent(t, GetEnumPlayer(), OSKEY_TAB, 1, true)
+        end)
+        TriggerAddAction(t, function ()
+            if GetTriggerPlayer() == LocalPlayer and inMenu then
+                if BlzGetTriggerPlayerMetaKey() == 1 then
+                    actMenu = actMenu - 1
+                    if actMenu < 0 then
+                        actMenu = 2
+                    end
+                else
+                    actMenu = actMenu + 1
+                    if actMenu > 2 then
+                        actMenu = 0
+                    end
+                end
+                OpenMenu()
+            end
+        end)
+    end
+
     local function DiaryFunc()
         local p = GetTriggerPlayer()
         if p == LocalPlayer then
             SaveCameraSetup()
         end
+        UnitShareVision(model, p, true)
         local oldEnv = GetPlayerEnviroment(p)
         Environment.map:apply(p)
         LockEnvironment(p, true)
@@ -956,6 +1120,7 @@ OnInit("Diary", function ()
 
     local function ExitFunc()
         local p = GetTriggerPlayer()
+        UnitShareVision(model, p, false)
         LockEnvironment(p, false)
         if p == LocalPlayer then
             RemoveButtonFromEscStack(Exit)
@@ -1025,125 +1190,149 @@ OnInit("Diary", function ()
 
         RookiesText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(RookiesText, 2.00)
-        BlzFrameSetPoint(RookiesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.080000)
-        BlzFrameSetPoint(RookiesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.50000)
+        BlzFrameSetPoint(RookiesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.080000)
+        BlzFrameSetPoint(RookiesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.50000)
         BlzFrameSetText(RookiesText, "|cffFFCC00Rookies|r")
         BlzFrameSetEnable(RookiesText, false)
         BlzFrameSetTextAlignment(RookiesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         RookiesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
-        BlzFrameSetPoint(RookiesContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.11000)
-        BlzFrameSetPoint(RookiesContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.41000)
+        BlzFrameSetPoint(RookiesContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.11000)
+        BlzFrameSetPoint(RookiesContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.41000)
         BlzFrameSetTexture(RookiesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         RookiesList = FrameList.create(false, RookiesContainer)
         BlzFrameSetPoint(RookiesList.Frame, FRAMEPOINT_TOPLEFT, RookiesContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        RookiesList:setSize(0.4, 0.086)
+        RookiesList:setSize(0.56, 0.086)
         BlzFrameSetSize(RookiesList.Slider, 0.012, 0.08)
 
         ChampionsText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(ChampionsText, 2.00)
-        BlzFrameSetPoint(ChampionsText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.20000)
-        BlzFrameSetPoint(ChampionsText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.38000)
+        BlzFrameSetPoint(ChampionsText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.20000)
+        BlzFrameSetPoint(ChampionsText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.38000)
         BlzFrameSetText(ChampionsText, "|cffFFCC00Champions|r")
         BlzFrameSetEnable(ChampionsText, false)
         BlzFrameSetTextAlignment(ChampionsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         ChampionsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
-        BlzFrameSetPoint(ChampionsContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.23000)
-        BlzFrameSetPoint(ChampionsContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.29000)
+        BlzFrameSetPoint(ChampionsContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.23000)
+        BlzFrameSetPoint(ChampionsContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.29000)
         BlzFrameSetTexture(ChampionsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         ChampionsList = FrameList.create(false, ChampionsContainer)
         BlzFrameSetPoint(ChampionsList.Frame, FRAMEPOINT_TOPLEFT, ChampionsContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        ChampionsList:setSize(0.4, 0.086)
+        ChampionsList:setSize(0.56, 0.086)
         BlzFrameSetSize(ChampionsList.Slider, 0.012, 0.08)
 
         UltimatesText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(UltimatesText, 2.00)
-        BlzFrameSetPoint(UltimatesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.32000)
-        BlzFrameSetPoint(UltimatesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.26000)
+        BlzFrameSetPoint(UltimatesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.32000)
+        BlzFrameSetPoint(UltimatesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.26000)
         BlzFrameSetText(UltimatesText, "|cffFFCC00Ultimates|r")
         BlzFrameSetEnable(UltimatesText, false)
         BlzFrameSetTextAlignment(UltimatesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         UltimatesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
-        BlzFrameSetPoint(UltimatesContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.35000)
-        BlzFrameSetPoint(UltimatesContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.17000)
+        BlzFrameSetPoint(UltimatesContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.35000)
+        BlzFrameSetPoint(UltimatesContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.17000)
         BlzFrameSetTexture(UltimatesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         UltimatesList = FrameList.create(false, UltimatesContainer)
         BlzFrameSetPoint(UltimatesList.Frame, FRAMEPOINT_TOPLEFT, UltimatesContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        UltimatesList:setSize(0.4, 0.086)
+        UltimatesList:setSize(0.56, 0.086)
         BlzFrameSetSize(UltimatesList.Slider, 0.012, 0.08)
 
         MegasText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(MegasText, 2.00)
-        BlzFrameSetPoint(MegasText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020320, -0.43948)
-        BlzFrameSetPoint(MegasText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.63968, 0.14052)
+        BlzFrameSetPoint(MegasText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.44000)
+        BlzFrameSetPoint(MegasText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.14000)
         BlzFrameSetText(MegasText, "|cffFFCC00Megas|r")
         BlzFrameSetEnable(MegasText, false)
         BlzFrameSetTextAlignment(MegasText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         MegasContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
-        BlzFrameSetPoint(MegasContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.47000)
-        BlzFrameSetPoint(MegasContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.050000)
+        BlzFrameSetPoint(MegasContainer, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.47000)
+        BlzFrameSetPoint(MegasContainer, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.050000)
         BlzFrameSetTexture(MegasContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         MegasList = FrameList.create(false, MegasContainer)
         BlzFrameSetPoint(MegasList.Frame, FRAMEPOINT_TOPLEFT, MegasContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        MegasList:setSize(0.4, 0.086)
+        MegasList:setSize(0.56, 0.086)
         BlzFrameSetSize(MegasList.Slider, 0.012, 0.08)
 
         DigimonInformation = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonsBackdrop, "", 1)
-        BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.50978, -0.11000)
-        BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.030220, 0.21000)
+        BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.61000, -0.070000)
+        BlzFrameSetPoint(DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
         BlzFrameSetTexture(DigimonInformation, "war3mapImported\\EmptyBTN.blp", 0, true)
         BlzFrameSetVisible(DigimonInformation, false)
 
         DigimonName = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
-        BlzFrameSetScale(DigimonName, 1.14)
+        BlzFrameSetScale(DigimonName, 1.57)
         BlzFrameSetPoint(DigimonName, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.010000)
-        BlzFrameSetPoint(DigimonName, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.25000)
+        BlzFrameSetPoint(DigimonName, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.49000)
         BlzFrameSetText(DigimonName, "|cffFFCC00Agumon|r")
         BlzFrameSetEnable(DigimonName, false)
         BlzFrameSetTextAlignment(DigimonName, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
+        DigimonAttackTypeIcon = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonInformation, "", 1)
+        BlzFrameSetPoint(DigimonAttackTypeIcon, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.11000, -0.030000)
+        BlzFrameSetPoint(DigimonAttackTypeIcon, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.46000)
+        BlzFrameSetTexture(DigimonAttackTypeIcon, "", 0, true)
+
+        DigimonDefenseTypeIcon = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonInformation, "", 1)
+        BlzFrameSetPoint(DigimonDefenseTypeIcon, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.14000, -0.030000)
+        BlzFrameSetPoint(DigimonDefenseTypeIcon, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.46000)
+        BlzFrameSetTexture(DigimonDefenseTypeIcon, "", 0, true)
+
+        DigimonAttackTypeLabel = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
+        BlzFrameSetPoint(DigimonAttackTypeLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.11000, -0.060000)
+        BlzFrameSetPoint(DigimonAttackTypeLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.45000)
+        BlzFrameSetText(DigimonAttackTypeLabel, "|cffffcc00Att|r")
+        BlzFrameSetEnable(DigimonAttackTypeLabel, false)
+        BlzFrameSetTextAlignment(DigimonAttackTypeLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+
+        DigimonDefenseTypeLabel = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
+        BlzFrameSetPoint(DigimonDefenseTypeLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.14000, -0.060000)
+        BlzFrameSetPoint(DigimonDefenseTypeLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.45000)
+        BlzFrameSetText(DigimonDefenseTypeLabel, "|cffffcc00Def|r")
+        BlzFrameSetEnable(DigimonDefenseTypeLabel, false)
+        BlzFrameSetTextAlignment(DigimonDefenseTypeLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+
         DigimonStamina = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
-        BlzFrameSetScale(DigimonStamina, 1.14)
-        BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)
-        BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.23000)
+        BlzFrameSetScale(DigimonStamina, 1.43)
+        BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.35000)
+        BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.15000)
         BlzFrameSetText(DigimonStamina, "|cffff7d00Stamina per level: |r")
         BlzFrameSetEnable(DigimonStamina, false)
         BlzFrameSetTextAlignment(DigimonStamina, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         DigimonDexterity = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
-        BlzFrameSetScale(DigimonDexterity, 1.14)
-        BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.050000)
-        BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.21000)
+        BlzFrameSetScale(DigimonDexterity, 1.43)
+        BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.37000)
+        BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.13000)
         BlzFrameSetText(DigimonDexterity, "|cff007d20Dexterity per level: |r")
         BlzFrameSetEnable(DigimonDexterity, false)
         BlzFrameSetTextAlignment(DigimonDexterity, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         DigimonWisdom = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
-        BlzFrameSetScale(DigimonWisdom, 1.14)
-        BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.070000)
-        BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.19000)
+        BlzFrameSetScale(DigimonWisdom, 1.43)
+        BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.39000)
+        BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.11000)
         BlzFrameSetText(DigimonWisdom, "|cff004ec8Wisdom per level: |r")
         BlzFrameSetEnable(DigimonWisdom, false)
         BlzFrameSetTextAlignment(DigimonWisdom, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         DigimonEvolvesToLabel = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
-        BlzFrameSetScale(DigimonEvolvesToLabel, 1.14)
-        BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.090000)
-        BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.17000)
+        BlzFrameSetScale(DigimonEvolvesToLabel, 1.57)
+        BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.42000)
+        BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.080000)
         BlzFrameSetText(DigimonEvolvesToLabel, "|cffffcc00Evolves to:|r")
         BlzFrameSetEnable(DigimonEvolvesToLabel, false)
         BlzFrameSetTextAlignment(DigimonEvolvesToLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         DigimonEvolveOptions = BlzCreateFrameByType("BACKDROP", "BACKDROP", DigimonInformation, "", 1)
-        BlzFrameSetPoint(DigimonEvolveOptions, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.11000)
-        BlzFrameSetPoint(DigimonEvolveOptions, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.10000)
+        BlzFrameSetPoint(DigimonEvolveOptions, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.44000)
+        BlzFrameSetPoint(DigimonEvolveOptions, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
         BlzFrameSetTexture(DigimonEvolveOptions, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         for i = 1, 7 do
@@ -1181,18 +1370,18 @@ OnInit("Diary", function ()
             BlzFrameSetTooltip(DigimonEvolvesToOptionButton[i], tooltip)
         end
 
-        DigimonWhere = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
+        --[[DigimonWhere = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
         BlzFrameSetScale(DigimonWhere, 1.14)
         BlzFrameSetPoint(DigimonWhere, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.19000)
         BlzFrameSetPoint(DigimonWhere, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.070000)
         BlzFrameSetText(DigimonWhere, "|cffffcc00Can be found on: Native Forest, Acient Dino Region, Gear Savanna.|r")
         BlzFrameSetEnable(DigimonWhere, false)
-        BlzFrameSetTextAlignment(DigimonWhere, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+        BlzFrameSetTextAlignment(DigimonWhere, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)]]
 
         for i = 1, 4 do
             DigimonAbilityT[i] = BlzCreateFrame("IconButtonTemplate", DigimonInformation, 0, 0)
-            BlzFrameSetPoint(DigimonAbilityT[i], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.015000 + (i-1)*0.0625, -0.22000)
-            BlzFrameSetPoint(DigimonAbilityT[i], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.20500 + (i-1)*0.0625, 0.020000)
+            BlzFrameSetPoint(DigimonAbilityT[i], FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000 + (i-1)*0.04, -0.30000)
+            BlzFrameSetPoint(DigimonAbilityT[i], FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.13000 + (i-1)*0.04, 0.18000)
 
             BackdropDigimonAbilityT[i] = BlzCreateFrameByType("BACKDROP", "BackdropDigimonAbilityT[" .. i .. "]", DigimonAbilityT[i], "", 0)
             BlzFrameSetAllPoints(BackdropDigimonAbilityT[i], DigimonAbilityT[i])
@@ -1234,143 +1423,182 @@ OnInit("Diary", function ()
 
         ConsumablesText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
         BlzFrameSetScale(ConsumablesText, 2.00)
-        BlzFrameSetPoint(ConsumablesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.080000)
-        BlzFrameSetPoint(ConsumablesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.50000)
+        BlzFrameSetPoint(ConsumablesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.070000)
+        BlzFrameSetPoint(ConsumablesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.51000)
         BlzFrameSetText(ConsumablesText, "|cffFFCC00Consumables|r")
         BlzFrameSetEnable(ConsumablesText, false)
         BlzFrameSetTextAlignment(ConsumablesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-        ConsumablesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
-        BlzFrameSetPoint(ConsumablesContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.11000)
-        BlzFrameSetPoint(ConsumablesContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.41000)
-        BlzFrameSetTexture(ConsumablesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+        MiscText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
+        BlzFrameSetScale(MiscText, 1.43)
+        BlzFrameSetPoint(MiscText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.10000)
+        BlzFrameSetPoint(MiscText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.48500)
+        BlzFrameSetText(MiscText, "|cff00ffffMiscellaneous|r")
+        BlzFrameSetEnable(MiscText, false)
+        BlzFrameSetTextAlignment(MiscText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
-        ConsumablesList = FrameList.create(false, ConsumablesContainer)
-        BlzFrameSetPoint(ConsumablesList.Frame, FRAMEPOINT_TOPLEFT, ConsumablesContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        ConsumablesList:setSize(0.4, 0.086)
-        BlzFrameSetSize(ConsumablesList.Slider, 0.012, 0.08)
+        MiscsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
+        BlzFrameSetPoint(MiscsContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.10000)
+        BlzFrameSetPoint(MiscsContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.42000)
+        BlzFrameSetTexture(MiscsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        MiscsList = FrameList.create(false, MiscsContainer)
+        BlzFrameSetPoint(MiscsList.Frame, FRAMEPOINT_TOPLEFT, MiscsContainer, FRAMEPOINT_TOPLEFT, 0.0100000, -0.0200000)
+        MiscsList:setSize(0.16, 0.086)
+        BlzFrameSetSize(MiscsList.Slider, 0.012, 0.08)
+
+        FoodText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
+        BlzFrameSetScale(FoodText, 1.43)
+        BlzFrameSetPoint(FoodText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.20000, -0.10000)
+        BlzFrameSetPoint(FoodText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.46000, 0.48500)
+        BlzFrameSetText(FoodText, "|cff00ffffFoods|r")
+        BlzFrameSetEnable(FoodText, false)
+        BlzFrameSetTextAlignment(FoodText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        FoodsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
+        BlzFrameSetPoint(FoodsContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.20000, -0.10000)
+        BlzFrameSetPoint(FoodsContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.44000, 0.42000)
+        BlzFrameSetTexture(FoodsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        FoodsList = FrameList.create(false, FoodsContainer)
+        BlzFrameSetPoint(FoodsList.Frame, FRAMEPOINT_TOPLEFT, FoodsContainer, FRAMEPOINT_TOPLEFT, 0.0100000, -0.0200000)
+        FoodsList:setSize(0.16, 0.086)
+        BlzFrameSetSize(FoodsList.Slider, 0.012, 0.08)
+
+        DrinkText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
+        BlzFrameSetScale(DrinkText, 1.43)
+        BlzFrameSetPoint(DrinkText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.39000, -0.10000)
+        BlzFrameSetPoint(DrinkText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.27000, 0.48500)
+        BlzFrameSetText(DrinkText, "|cff00ffffDrinks|r")
+        BlzFrameSetEnable(DrinkText, false)
+        BlzFrameSetTextAlignment(DrinkText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        DrinksContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
+        BlzFrameSetPoint(DrinksContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.39000, -0.10000)
+        BlzFrameSetPoint(DrinksContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.25000, 0.42000)
+        BlzFrameSetTexture(DrinksContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        DrinksList = FrameList.create(false, DrinksContainer)
+        BlzFrameSetPoint(DrinksList.Frame, FRAMEPOINT_TOPLEFT, DrinksContainer, FRAMEPOINT_TOPLEFT, 0.0100000, -0.0200000)
+        DrinksList:setSize(0.16, 0.086)
+        BlzFrameSetSize(DrinksList.Slider, 0.012, 0.08)
 
         EquipmentsText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
         BlzFrameSetScale(EquipmentsText, 2.00)
-        BlzFrameSetPoint(EquipmentsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.20000)
-        BlzFrameSetPoint(EquipmentsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.38000)
+        BlzFrameSetPoint(EquipmentsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.21500)
+        BlzFrameSetPoint(EquipmentsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.36500)
         BlzFrameSetText(EquipmentsText, "|cffFFCC00Equipments|r")
         BlzFrameSetEnable(EquipmentsText, false)
         BlzFrameSetTextAlignment(EquipmentsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         ShieldsText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
-        BlzFrameSetScale(ShieldsText, 1.86)
-        BlzFrameSetPoint(ShieldsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.23000)
-        BlzFrameSetPoint(ShieldsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.35000)
+        BlzFrameSetScale(ShieldsText, 1.43)
+        BlzFrameSetPoint(ShieldsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.24500)
+        BlzFrameSetPoint(ShieldsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.34000)
         BlzFrameSetText(ShieldsText, "|cff00ffffShields|r")
         BlzFrameSetEnable(ShieldsText, false)
         BlzFrameSetTextAlignment(ShieldsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         ShieldsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
-        BlzFrameSetPoint(ShieldsContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.25000)
-        BlzFrameSetPoint(ShieldsContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.31000)
+        BlzFrameSetPoint(ShieldsContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.26000)
+        BlzFrameSetPoint(ShieldsContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.30000)
         BlzFrameSetTexture(ShieldsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         ShieldsList = FrameList.create(true, ShieldsContainer)
-        BlzFrameSetPoint(ShieldsList.Frame, FRAMEPOINT_TOPLEFT, ShieldsContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(ShieldsList.Frame, FRAMEPOINT_BOTTOMRIGHT, ShieldsContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        ShieldsList:setSize(BlzFrameGetWidth(ShieldsList.Frame), BlzFrameGetHeight(ShieldsList.Frame))
-        BlzFrameSetSize(ShieldsList.Slider, 0.4, 0.012)
+        BlzFrameSetPoint(ShieldsList.Frame, FRAMEPOINT_TOPLEFT, ShieldsContainer, FRAMEPOINT_TOPLEFT, -0.0400000, -0.000000)
+        ShieldsList:setSize(0.6, 0.052)
+        BlzFrameSetSize(ShieldsList.Slider, 0.56, 0.012)
 
         WeaponsText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
-        BlzFrameSetScale(WeaponsText, 1.86)
-        BlzFrameSetPoint(WeaponsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.30550)
-        BlzFrameSetPoint(WeaponsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.27450)
+        BlzFrameSetScale(WeaponsText, 1.43)
+        BlzFrameSetPoint(WeaponsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.31550)
+        BlzFrameSetPoint(WeaponsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.26950)
         BlzFrameSetText(WeaponsText, "|cff00ffffWeapons|r")
         BlzFrameSetEnable(WeaponsText, false)
         BlzFrameSetTextAlignment(WeaponsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         WeaponsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
-        BlzFrameSetPoint(WeaponsContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.32500)
-        BlzFrameSetPoint(WeaponsContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.23500)
+        BlzFrameSetPoint(WeaponsContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.33000)
+        BlzFrameSetPoint(WeaponsContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.23000)
         BlzFrameSetTexture(WeaponsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         WeaponsList = FrameList.create(true, WeaponsContainer)
-        BlzFrameSetPoint(WeaponsList.Frame, FRAMEPOINT_TOPLEFT, WeaponsContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(WeaponsList.Frame, FRAMEPOINT_BOTTOMRIGHT, WeaponsContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        WeaponsList:setSize(BlzFrameGetWidth(WeaponsList.Frame), BlzFrameGetHeight(WeaponsList.Frame))
-        BlzFrameSetSize(WeaponsList.Slider, 0.4, 0.012)
+        BlzFrameSetPoint(WeaponsList.Frame, FRAMEPOINT_TOPLEFT, WeaponsContainer, FRAMEPOINT_TOPLEFT, -0.0400000, -0.000000)
+        WeaponsList:setSize(0.6, 0.052)
+        BlzFrameSetSize(WeaponsList.Slider, 0.56, 0.012)
 
         AccesoriesText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
-        BlzFrameSetScale(AccesoriesText, 1.86)
-        BlzFrameSetPoint(AccesoriesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.38100)
-        BlzFrameSetPoint(AccesoriesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.19900)
+        BlzFrameSetScale(AccesoriesText, 1.43)
+        BlzFrameSetPoint(AccesoriesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.38600)
+        BlzFrameSetPoint(AccesoriesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.19900)
         BlzFrameSetText(AccesoriesText, "|cff00ffffAccesories|r")
         BlzFrameSetEnable(AccesoriesText, false)
         BlzFrameSetTextAlignment(AccesoriesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         AccesoriesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
-        BlzFrameSetPoint(AccesoriesContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.40000)
-        BlzFrameSetPoint(AccesoriesContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.16000)
+        BlzFrameSetPoint(AccesoriesContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.40000)
+        BlzFrameSetPoint(AccesoriesContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.16000)
         BlzFrameSetTexture(AccesoriesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         AccesoriesList = FrameList.create(true, AccesoriesContainer)
-        BlzFrameSetPoint(AccesoriesList.Frame, FRAMEPOINT_TOPLEFT, AccesoriesContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(AccesoriesList.Frame, FRAMEPOINT_BOTTOMRIGHT, AccesoriesContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        AccesoriesList:setSize(BlzFrameGetWidth(AccesoriesList.Frame), BlzFrameGetHeight(AccesoriesList.Frame))
-        BlzFrameSetSize(AccesoriesList.Slider, 0.4, 0.012)
+        BlzFrameSetPoint(AccesoriesList.Frame, FRAMEPOINT_TOPLEFT, AccesoriesContainer, FRAMEPOINT_TOPLEFT, -0.0400000, -0.000000)
+        AccesoriesList:setSize(0.6, 0.052)
+        BlzFrameSetSize(AccesoriesList.Slider, 0.56, 0.012)
 
         DigivicesText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
-        BlzFrameSetScale(DigivicesText, 1.86)
-        BlzFrameSetPoint(DigivicesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.45650)
-        BlzFrameSetPoint(DigivicesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.12350)
+        BlzFrameSetScale(DigivicesText, 1.43)
+        BlzFrameSetPoint(DigivicesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.45650)
+        BlzFrameSetPoint(DigivicesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.12850)
         BlzFrameSetText(DigivicesText, "|cff00ffffDigivices|r")
         BlzFrameSetEnable(DigivicesText, false)
         BlzFrameSetTextAlignment(DigivicesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         DigivicesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
-        BlzFrameSetPoint(DigivicesContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.47500)
-        BlzFrameSetPoint(DigivicesContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.085000)
+        BlzFrameSetPoint(DigivicesContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.47000)
+        BlzFrameSetPoint(DigivicesContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.090000)
         BlzFrameSetTexture(DigivicesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         DigivicesList = FrameList.create(true, DigivicesContainer)
-        BlzFrameSetPoint(DigivicesList.Frame, FRAMEPOINT_TOPLEFT, DigivicesContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(DigivicesList.Frame, FRAMEPOINT_BOTTOMRIGHT, DigivicesContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        DigivicesList:setSize(BlzFrameGetWidth(DigivicesList.Frame), BlzFrameGetHeight(DigivicesList.Frame))
-        BlzFrameSetSize(DigivicesList.Slider, 0.4, 0.012)
+        BlzFrameSetPoint(DigivicesList.Frame, FRAMEPOINT_TOPLEFT, DigivicesContainer, FRAMEPOINT_TOPLEFT, -0.0400000, -0.000000)
+        DigivicesList:setSize(0.6, 0.052)
+        BlzFrameSetSize(DigivicesList.Slider, 0.56, 0.012)
 
         CrestsText = BlzCreateFrameByType("TEXT", "name", ItemsBackdrop, "", 0)
-        BlzFrameSetScale(CrestsText, 1.86)
-        BlzFrameSetPoint(CrestsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.53200)
-        BlzFrameSetPoint(CrestsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.64000, 0.048000)
+        BlzFrameSetScale(CrestsText, 1.43)
+        BlzFrameSetPoint(CrestsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.52700)
+        BlzFrameSetPoint(CrestsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.058000)
         BlzFrameSetText(CrestsText, "|cff00ffffCrests|r")
         BlzFrameSetEnable(CrestsText, false)
         BlzFrameSetTextAlignment(CrestsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         CrestsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
-        BlzFrameSetPoint(CrestsContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.55000)
-        BlzFrameSetPoint(CrestsContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.38000, 0.010000)
+        BlzFrameSetPoint(CrestsContainer, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.54000)
+        BlzFrameSetPoint(CrestsContainer, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.020000)
         BlzFrameSetTexture(CrestsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
 
         CrestsList = FrameList.create(true, CrestsContainer)
-        BlzFrameSetPoint(CrestsList.Frame, FRAMEPOINT_TOPLEFT, CrestsContainer, FRAMEPOINT_TOPLEFT, 0.0000000, -0.000000)
-        BlzFrameSetPoint(CrestsList.Frame, FRAMEPOINT_BOTTOMRIGHT, CrestsContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000000, -0.0120000)
-        CrestsList:setSize(BlzFrameGetWidth(CrestsList.Frame), BlzFrameGetHeight(CrestsList.Frame))
-        BlzFrameSetSize(CrestsList.Slider, 0.4, 0.012)
+        BlzFrameSetPoint(CrestsList.Frame, FRAMEPOINT_TOPLEFT, CrestsContainer, FRAMEPOINT_TOPLEFT, -0.0400000, -0.000000)
+        CrestsList:setSize(0.6, 0.052)
+        BlzFrameSetSize(CrestsList.Slider, 0.56, 0.012)
 
         ItemInformation = BlzCreateFrameByType("BACKDROP", "BACKDROP", ItemsBackdrop, "", 1)
-        BlzFrameSetPoint(ItemInformation, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.51000, -0.11000)
-        BlzFrameSetPoint(ItemInformation, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.21000)
+        BlzFrameSetPoint(ItemInformation, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.61000, -0.11000)
+        BlzFrameSetPoint(ItemInformation, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.17000)
         BlzFrameSetTexture(ItemInformation, "war3mapImported\\EmptyBTN.blp", 0, true)
         BlzFrameSetVisible(ItemInformation, false)
 
         ItemName = BlzCreateFrameByType("TEXT", "name", ItemInformation, "", 0)
-        BlzFrameSetScale(ItemName, 1.14)
+        BlzFrameSetScale(ItemName, 1.71)
         BlzFrameSetPoint(ItemName, FRAMEPOINT_TOPLEFT, ItemInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.010000)
-        BlzFrameSetPoint(ItemName, FRAMEPOINT_BOTTOMRIGHT, ItemInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.25000)
+        BlzFrameSetPoint(ItemName, FRAMEPOINT_BOTTOMRIGHT, ItemInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.29000)
         BlzFrameSetText(ItemName, "|cffFFCC00Agumon|r")
         BlzFrameSetEnable(ItemName, false)
         BlzFrameSetTextAlignment(ItemName, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         ItemDescription = BlzCreateFrameByType("TEXT", "name", ItemInformation, "", 0)
-        BlzFrameSetScale(ItemDescription, 1.14)
-        BlzFrameSetPoint(ItemDescription, FRAMEPOINT_TOPLEFT, ItemInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)
-        BlzFrameSetPoint(ItemDescription, FRAMEPOINT_BOTTOMRIGHT, ItemInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.15000)
+        BlzFrameSetScale(ItemDescription, 1.43)
+        BlzFrameSetPoint(ItemDescription, FRAMEPOINT_TOPLEFT, ItemInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.22000)
+        BlzFrameSetPoint(ItemDescription, FRAMEPOINT_BOTTOMRIGHT, ItemInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
         BlzFrameSetText(ItemDescription, "|cffffffffStamina per level: |r")
         BlzFrameSetEnable(ItemDescription, false)
         BlzFrameSetTextAlignment(ItemDescription, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
@@ -1427,11 +1655,13 @@ OnInit("Diary", function ()
                 BlzFrameSetTexture(buffer, "war3mapImported\\EmptyBTN.blp", 0, true)
                 list:add(buffer)
             end
-            local buffer = BlzCreateFrameByType("BACKDROP", "BACKDROP", BlzFrameGetParent(ConsumablesList.Frame), "", 1)
-            BlzFrameSetPoint(buffer, FRAMEPOINT_TOPLEFT, BlzFrameGetParent(ConsumablesList.Frame), FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
-            BlzFrameSetSize(buffer, 0.23000, 0.05750)
-            BlzFrameSetTexture(buffer, "war3mapImported\\EmptyBTN.blp", 0, true)
-            ConsumablesList:add(buffer)
+            for _, list in ipairs({MiscsList, FoodsList, DrinksList}) do
+                local buffer = BlzCreateFrameByType("BACKDROP", "BACKDROP", BlzFrameGetParent(list.Frame), "", 1)
+                BlzFrameSetPoint(buffer, FRAMEPOINT_TOPLEFT, BlzFrameGetParent(list.Frame), FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+                BlzFrameSetSize(buffer, 0.16000, 0.05750)
+                BlzFrameSetTexture(buffer, "war3mapImported\\EmptyBTN.blp", 0, true)
+                list:add(buffer)
+            end
         end)
     end)
 
@@ -1464,14 +1694,16 @@ OnInit("Diary", function ()
         local owner = d:getOwner()
 
         local unlockedInfo = unlockedDigiInfos[owner][id]
-        unlockedInfo.staPerLvl = true
-        unlockedInfo.dexPerLvl = true
-        unlockedInfo.wisPerLvl = true
+        if not unlockedInfo.staPerLvl then
+            unlockedInfo.staPerLvl = true
+            unlockedInfo.dexPerLvl = true
+            unlockedInfo.wisPerLvl = true
 
-        if owner == LocalPlayer then
-            spriteRemain = 8
-            BlzFrameSetVisible(digiInfos[id].sprite, true)
-            UpdateInformation()
+            if owner == LocalPlayer then
+                spriteRemain = 8
+                BlzFrameSetVisible(digiInfos[id].sprite, true)
+                UpdateInformation()
+            end
         end
     end)
 
@@ -1484,16 +1716,27 @@ OnInit("Diary", function ()
         local owner = d:getOwner()
         local unlockedInfo = unlockedDigiInfos[owner][id]
 
-        unlockedInfo.evolveOptions[toEvolve] = unlockedInfo.evolveOptions[toEvolve] or __jarray(false)
-        unlockedInfo.evolveOptions[toEvolve][condL] = true
+        if not unlockedInfo.evolveOptions[toEvolve] then
+            unlockedInfo.evolveOptions[toEvolve] = __jarray(false)
+            unlockedInfo.evolveOptions[toEvolve][condL] = true
 
-        UnlockButton(owner, toEvolve)
+            UnlockButton(owner, toEvolve)
 
-        if owner == LocalPlayer then
-            spriteRemain = 8
-            BlzFrameSetVisible(digiInfos[id].sprite, true)
-            UpdateInformation()
+            if owner == LocalPlayer then
+                spriteRemain = 8
+                BlzFrameSetVisible(digiInfos[id].sprite, true)
+                UpdateInformation()
+            end
         end
+    end)
+
+    Digimon.evolutionEvent:register(function (d)
+        local id = d:getTypeId()
+        if not digiInfos[id] then
+            return
+        end
+
+        UnlockButton(d:getOwner(), id)
     end)
 
     Digimon.killEvent:register(function (info)
@@ -1528,10 +1771,13 @@ OnInit("Diary", function ()
                     show = true
                 end
 
-                if show and owner == LocalPlayer then
-                    spriteRemain = 8
-                    BlzFrameSetVisible(digiInfos[kId].sprite, true)
-                    UpdateInformation()
+                if show then
+                    kills[owner][kId] = kills[owner][kId] + 1
+                    if owner == LocalPlayer then
+                        spriteRemain = 8
+                        BlzFrameSetVisible(digiInfos[kId].sprite, true)
+                        UpdateInformation()
+                    end
                 end
             end
 
@@ -1631,6 +1877,21 @@ OnInit("Diary", function ()
         end
 
         return data
+    end
+
+    function ClearDiary(p)
+        unlockedDigiInfos[p] = {}
+        kills[p] = __jarray(0)
+        deaths[p] = __jarray(0)
+        unlockedItems[p] = {}
+
+        if p == LocalPlayer then
+            digimonSelected = -1
+            itemSelected = -1
+            UpdateDigimons()
+            UpdateInformation()
+            UpdateItemInfo()
+        end
     end
 
     ---@param func fun(p: player)
