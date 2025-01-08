@@ -364,7 +364,7 @@ OnInit("Stats", function ()
         local u = GetMainSelectedUnitEx()
         if u and Digimon.getInstance(u) and GetOwningPlayer(u) == LocalPlayer then
             local pos = GetDigimonPosition(LocalPlayer, Digimon.getInstance(u))
-            BlzFrameSetVisible(FocusedUnit, true)
+            BlzFrameSetVisible(FocusedUnit, BlzFrameIsVisible(HeroButtons[pos-1]))
             BlzFrameClearAllPoints(FocusedUnit)
             BlzFrameSetPoint(FocusedUnit, FRAMEPOINT_BOTTOMLEFT, HeroButtons[pos-1], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
         else
@@ -383,15 +383,15 @@ OnInit("Stats", function ()
                         j = j + 1
                     else
                         local id = BlzGetAbilityId(abil)
-                        if math.floor(id / 16777216) == 66 and buffIcons[id] ~= "" then -- The first character of the four-char id is 'B'
-                            BlzFrameSetVisible(HeroBuffs[i][j], true)
+                        if id // 0x1000000 == 66 and buffIcons[id] ~= "" then -- The first character of the four-char id is 'B'
+                            BlzFrameSetVisible(HeroBuffs[i][j], BlzFrameIsVisible(HeroButtons[i]))
                             BlzFrameSetTexture(HeroBuffs[i][j], buffIcons[id], 0, true)
                             j = j + 1
                         end
                     end
                     index = index + 1
                 end
-                BlzFrameSetVisible(SelectedHero[i], u ~= d.root and IsUnitSelected(d.root, LocalPlayer))
+                BlzFrameSetVisible(SelectedHero[i], BlzFrameIsVisible(HeroButtons[i]) and u ~= d.root and IsUnitSelected(d.root, LocalPlayer))
             else
                 for j = 0, 7 do
                     BlzFrameSetVisible(HeroBuffs[i][j], false)
@@ -400,7 +400,14 @@ OnInit("Stats", function ()
             end
         end
     end)
-
+    function BlzFourCC2S(value)
+        local result = ""
+        for _=1,4 do
+            result = string.char(ModuloInteger(value, 256)) .. result
+            value = value // 256
+        end
+        return result
+    end
     OnBankUpdated(function (p, _)
         if p == LocalPlayer and BlzFrameIsVisible(StatsBackdrop[0]) and not seeOnly[p] then
             changeVisible = true
@@ -771,7 +778,7 @@ OnInit("Stats", function ()
                 BlzFrameSetVisible(HeroBuffs[i][j], false)
             end
 
-            SelectedHero[i] = BlzCreateFrameByType("SPRITE", "SelectedUnit[" .. i .. "]", HeroButtons[i], "", 0)
+            SelectedHero[i] = BlzCreateFrameByType("SPRITE", "SelectedUnit[" .. i .. "]", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
             BlzFrameSetModel(SelectedHero[i], "war3mapImported\\cyber_call_sprite.mdx", 0)
             BlzFrameClearAllPoints(SelectedHero[i])
             BlzFrameSetPoint(SelectedHero[i], FRAMEPOINT_BOTTOMLEFT, HeroButtons[i], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)

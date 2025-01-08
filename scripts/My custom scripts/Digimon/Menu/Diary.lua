@@ -153,7 +153,7 @@ OnInit("Diary", function ()
     ---@field dexPerLvl integer
     ---@field wisPerLvl integer
     ---@field evolveOptions EvolveCond[]
-    ---@field whereToBeFound rect
+    -----@field whereToBeFound rect
     ---@field abilities integer[]
     ---@field button framehandle
     ---@field backdrop framehandle
@@ -176,7 +176,7 @@ OnInit("Diary", function ()
     ---@field dexPerLvl boolean
     ---@field wisPerLvl boolean
     ---@field evolveOptions table<integer, EvolveUnlockedCond>
-    ---@field whereToBeFound boolean
+    -----@field whereToBeFound boolean
     local DigimonUnlockedInfo = setmetatable({}, Serializable)
     DigimonUnlockedInfo.__index = DigimonUnlockedInfo
 
@@ -219,7 +219,7 @@ OnInit("Diary", function ()
     ---@field dexPerLvl integer
     ---@field wisPerLvl integer
     ---@field evolveOptions EvolveCond[]
-    ---@field whereToBeFound rect
+    -----@field whereToBeFound rect
     ---@field abilities integer[]
     ---@field button framehandle
     ---@field backdrop framehandle
@@ -425,8 +425,8 @@ OnInit("Diary", function ()
             staPerLvl = false,
             dexPerLvl = false,
             wisPerLvl = false,
-            evolveOptions = {},
-            whereToBeFound = false
+            evolveOptions = {}--,
+            --whereToBeFound = false
         }, DigimonUnlockedInfo)
     end
 
@@ -438,17 +438,17 @@ OnInit("Diary", function ()
         for id, unlocked in pairs(self.evolveOptions) do
             evoAmt = evoAmt + 1
             self:addProperty("eid" .. evoAmt, id)
-            self:addProperty("ueidl" .. evoAmt, unlocked.level)
-            self:addProperty("ueidp" .. evoAmt, unlocked.place)
-            self:addProperty("ueids" .. evoAmt, unlocked.stone)
-            self:addProperty("ueidstr" .. evoAmt, unlocked.str)
-            self:addProperty("ueidagi" .. evoAmt, unlocked.agi)
-            self:addProperty("ueidint" .. evoAmt, unlocked.int)
-            self:addProperty("ueidod" .. evoAmt, unlocked.onlyDay)
-            self:addProperty("ueidon" .. evoAmt, unlocked.onlyNight)
+            self:addProperty("ueidl" .. evoAmt, unlocked.level or false)
+            self:addProperty("ueidp" .. evoAmt, unlocked.place or false)
+            self:addProperty("ueids" .. evoAmt, unlocked.stone or false)
+            self:addProperty("ueidstr" .. evoAmt, unlocked.str or false)
+            self:addProperty("ueidagi" .. evoAmt, unlocked.agi or false)
+            self:addProperty("ueidint" .. evoAmt, unlocked.int or false)
+            self:addProperty("ueidod" .. evoAmt, unlocked.onlyDay or false)
+            self:addProperty("ueidon" .. evoAmt, unlocked.onlyNight or false)
         end
         self:addProperty("evoAmt", evoAmt)
-        self:addProperty("uenid", self.whereToBeFound)
+        --self:addProperty("uenid", self.whereToBeFound)
     end
 
     function DigimonUnlockedInfo:deserializeProperties()
@@ -468,7 +468,7 @@ OnInit("Diary", function ()
             self.evolveOptions[id].onlyDay = self:getBoolProperty("ueidod" .. i)
             self.evolveOptions[id].onlyNight = self:getBoolProperty("ueidon" .. i)
         end
-        self.whereToBeFound = self:getBoolProperty("uenid")
+        --self.whereToBeFound = self:getBoolProperty("uenid")
     end
 
     ---@class UnlockedInfoData : Serializable
