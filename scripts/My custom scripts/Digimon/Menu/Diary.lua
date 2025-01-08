@@ -960,7 +960,7 @@ OnInit("Diary", function ()
 
                     if p == LocalPlayer then
                         itemSelected = id
-                        UpdateInformation()
+                        UpdateItemInfo()
                     end
                 end)
 

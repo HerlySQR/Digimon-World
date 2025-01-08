@@ -683,7 +683,7 @@ OnInit("Backpack", function ()
                 UnitAddItem(u, newItem)
             end
 
-            RemoveItem(m)
+            Timed.call(function () RemoveItem(m) end)
 
             if p == LocalPlayer then
                 UpdateMenu()
