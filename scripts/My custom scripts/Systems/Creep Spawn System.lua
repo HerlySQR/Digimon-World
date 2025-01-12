@@ -18,7 +18,7 @@ OnInit(function ()
     local RANGE_LEVEL_2         ---@type number
     local NEIGHBOURHOOD         ---@type number
     local INTERVAL              ---@type number
-    local CHANCE_COMMON = 0.5
+    local CHANCE_COMMON = 1.
     local CHANCE_UNCOMMON       ---@type number
     local CHANCE_RARE           ---@type number
     local CHANCE_LEGENDARY      ---@type number
@@ -105,6 +105,7 @@ OnInit(function ()
                 table.insert(legendaries, id)
             end
         end
+        weight = weight/#types
 
         local chanceCommon = 1
         if CHANCE_LEGENDARY > 0 and #legendaries > 0 then

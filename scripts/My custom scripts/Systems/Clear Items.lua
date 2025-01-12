@@ -19,12 +19,6 @@ OnInit("Clear Items", function ()
         EnumItemsInRect(WorldBounds.rect, callback)
     end)
 
-    local t = CreateTrigger()
-    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DROP_ITEM)
-    TriggerAddAction(t, function ()
-        lifeSpans[GetManipulatedItem()] = DEFAULT_LIFE
-    end)
-
     ---@param m item
     ---@param life number?
     function SetItemLifeSpan(m, life)

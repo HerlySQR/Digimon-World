@@ -323,7 +323,7 @@ OnInit("Diary", function ()
 
     local spriteRemain = 0
 
-    Timed.echo(1., function ()
+    Timed.echo(1.96, function ()
         BlzFrameSetVisible(Sprite, spriteRemain > 0)
         spriteRemain = spriteRemain - 1
     end)
@@ -416,7 +416,7 @@ OnInit("Diary", function ()
         end
     end
 
-    Timed.echo(1., UpdateDigimons)
+    Timed.echo(1.46, UpdateDigimons)
 
     ---@param p player
     ---@param id integer
@@ -1144,7 +1144,7 @@ OnInit("Diary", function ()
 
         BackdropDiary = BlzCreateFrameByType("BACKDROP", "BackdropSeeMap", Diary, "", 0)
         BlzFrameSetAllPoints(BackdropDiary, Diary)
-        BlzFrameSetTexture(BackdropDiary, "ReplaceableTextures\\CommandButtons\\BTNMap.blp", 0, true)
+        BlzFrameSetTexture(BackdropDiary, "ReplaceableTextures\\CommandButtons\\BTNDigiWikiIcon.blp", 0, true)
         local t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Diary, FRAMEEVENT_CONTROL_CLICK)
         TriggerAddAction(t, DiaryFunc)
