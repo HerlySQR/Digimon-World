@@ -4,13 +4,14 @@ OnInit(function ()
     Require "RegisterSpellEffectEvent"
     Require "ErrorMessage"
     Require "FrameLoader"
+    Require "Menu"
 
     local ROD = FourCC('I07M')
     local FISHING = FourCC('A0IL')
     local FISH = FourCC('I07N')
     local RED_LINE_STEPS = 48
-    local GREEN_AREA_START = 22
-    local GREEN_AREA_END = 27
+    local GREEN_AREA_START = 23
+    local GREEN_AREA_END = 25
 
     ---@alias catchState
     ---| 0 # None
@@ -79,18 +80,18 @@ OnInit(function ()
             if p == LocalPlayer then
                 index = usedRedLine[u]
                 BlzFrameSetVisible(FishBackdrop, true)
-                BlzFrameSetPoint(RedLines[index], FRAMEPOINT_LEFT, ProgressBar, FRAMEPOINT_LEFT,  0.000, 0.00000)
+                BlzFrameSetPoint(RedLines[index], FRAMEPOINT_CENTER, ProgressBar, FRAMEPOINT_LEFT,  0.000, 0.00000)
                 BlzFrameSetVisible(RedLines[index], true)
             end
             linePos[u] = 0
-            Timed.echo(0.02, 0.02 * RED_LINE_STEPS, function ()
+            Timed.echo(0.03, 0.03 * RED_LINE_STEPS, function ()
                 if lines[u] ~= line then
                     return true
                 end
 
                 linePos[u] = linePos[u] + 1
                 if p == LocalPlayer then
-                    BlzFrameSetPoint(RedLines[index], FRAMEPOINT_LEFT, ProgressBar, FRAMEPOINT_LEFT,  0.0100 * linePos[u], 0.00000)
+                    BlzFrameSetPoint(RedLines[index], FRAMEPOINT_CENTER, ProgressBar, FRAMEPOINT_LEFT,  0.0100 * linePos[u], 0.00000)
                 end
 
                 if catch[u] ~= 0 then
@@ -275,6 +276,7 @@ OnInit(function ()
         BlzFrameSetAbsPoint(FishBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.660000, 0.180000)
         BlzFrameSetTexture(FishBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
         BlzFrameSetVisible(FishBackdrop, false)
+        AddFrameToMenu(FishBackdrop)
 
         ProgressBar = BlzCreateFrame("QuestButtonBaseTemplate", FishBackdrop, 0, 0)
         BlzFrameSetPoint(ProgressBar, FRAMEPOINT_TOPLEFT, FishBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.13000)
@@ -293,8 +295,8 @@ OnInit(function ()
 
         for i = 1, udg_MAX_USED_DIGIMONS do
             RedLines[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", ProgressBar, "", 1)
-            BlzFrameSetPoint(RedLines[i], FRAMEPOINT_LEFT, ProgressBar, FRAMEPOINT_LEFT, 0.00000, 0.00000)
-            BlzFrameSetSize(RedLines[i], 0.01000, 0.10000)
+            BlzFrameSetPoint(RedLines[i], FRAMEPOINT_CENTER, ProgressBar, FRAMEPOINT_LEFT, 0.00000, 0.00000)
+            BlzFrameSetSize(RedLines[i], 0.00500, 0.10000)
             BlzFrameSetTexture(RedLines[i], "war3mapImported\\red.blp", 0, true)
             BlzFrameSetLevel(RedLines[i], 2)
             BlzFrameSetVisible(RedLines[i], false)
@@ -306,8 +308,8 @@ OnInit(function ()
         end
 
         GreenArea = BlzCreateFrameByType("BACKDROP", "BACKDROP", ProgressBar, "", 1)
-        BlzFrameSetPoint(GreenArea, FRAMEPOINT_TOPLEFT, ProgressBar, FRAMEPOINT_TOPLEFT, 0.21000, 0.0000)
-        BlzFrameSetPoint(GreenArea, FRAMEPOINT_BOTTOMRIGHT, ProgressBar, FRAMEPOINT_BOTTOMRIGHT, -0.21000, 0.0000)
+        BlzFrameSetPoint(GreenArea, FRAMEPOINT_TOPLEFT, ProgressBar, FRAMEPOINT_TOPLEFT, 0.22000, 0.0000)
+        BlzFrameSetPoint(GreenArea, FRAMEPOINT_BOTTOMRIGHT, ProgressBar, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.0000)
         BlzFrameSetTexture(GreenArea, "CustomFrame.png", 0, true)
         BlzFrameSetLevel(GreenArea, 1)
     end)
