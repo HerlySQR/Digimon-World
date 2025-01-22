@@ -484,12 +484,14 @@ OnInit("Diary", function ()
     ---@field deathCount integer[]
     ---@field itemsUnlocked integer
     ---@field items integer[]
+    ---@field slot integer
     UnlockedInfoData = setmetatable({}, Serializable)
     UnlockedInfoData.__index = UnlockedInfoData
 
     ---@param p player?
+    ---@param slot integer
     ---@return UnlockedInfoData
-    function UnlockedInfoData.create(p)
+    function UnlockedInfoData.create(p, slot)
         local self = setmetatable({
             p = p,
             amount = 0,
@@ -504,6 +506,12 @@ OnInit("Diary", function ()
             itemsUnlocked = 0,
             items = {},
         }, UnlockedInfoData)
+
+        if type(p) == "number" then
+            slot = p
+            p = nil
+        end
+        self.slot = slot
 
         if p then
             for id, info in pairs(unlockedDigiInfos[p]) do
@@ -550,9 +558,14 @@ OnInit("Diary", function ()
         for i = 1, self.itemsUnlocked do
             self:addProperty("itms" .. i, self.items[i])
         end
+        self:addProperty("slot", self.slot)
     end
 
     function UnlockedInfoData:deserializeProperties()
+        if self.slot ~= self:getIntProperty("slot") then
+            error("The slot is not the same.")
+            return
+        end
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
             self.ids[i] = self:getIntProperty("id" .. i)
@@ -1847,8 +1860,8 @@ OnInit("Diary", function ()
     ---@param slot integer
     ---@return UnlockedInfoData
     function SaveDiary(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Diary")
-        local data = UnlockedInfoData.create(p)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_DIARY_ROOT)
+        local data = UnlockedInfoData.create(p, slot)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then
@@ -1860,20 +1873,19 @@ OnInit("Diary", function ()
 
     ---@param p player
     ---@param slot integer
-    ---@return UnlockedInfoData
+    ---@return UnlockedInfoData?
     function LoadDiary(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Diary")
-        local data = UnlockedInfoData.create()
+        local fileRoot = SaveFile.getPath2(p, slot, udg_DIARY_ROOT)
+        local data = UnlockedInfoData.create(slot)
         data.p = p
         local code = GetSyncedData(p, FileIO.Read, fileRoot)
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode then
+            if not success or not decode or not pcall(data.deserialize, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
-                return data
+                return
             end
-            data:deserialize(decode)
         end
 
         return data

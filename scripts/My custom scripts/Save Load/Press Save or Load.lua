@@ -30,15 +30,23 @@ OnInit("PressSaveOrLoad", function ()
     ---@field vistedPlaces boolean[]
     ---@field vistedPlaceCount integer
     ---@field unlockedInfo UnlockedInfoData
+    ---@field slot integer
     PlayerData = setmetatable({}, Serializable)
     PlayerData.__index = PlayerData
 
     ---@param p player?
+    ---@param slot integer
     ---@return PlayerData|Serializable
-    function PlayerData.create(p)
+    function PlayerData.create(p, slot)
         local self = setmetatable({
             vistedPlaces = __jarray(false)
         }, PlayerData)
+        if type(p) == "number" then
+            slot = p
+            p = nil
+        end
+        assert(type(slot) == "number", "The slot must be a number.")
+        self.slot = slot
         if p then
             self.gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
             self.lumber = GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)
@@ -59,9 +67,14 @@ OnInit("PressSaveOrLoad", function ()
         for i = 1, self.vistedPlaceCount do
             self:addProperty("vp" .. i, self.vistedPlaces[i])
         end
+        self:addProperty("slot", self.slot)
     end
 
     function PlayerData:deserializeProperties()
+        if self.slot ~= self:getIntProperty("slot") then
+            error("The slot is not the same.")
+            return
+        end
         self.gold = self:getIntProperty("gold")
         self.lumber = self:getIntProperty("lumber")
         self.food = self:getIntProperty("food")
@@ -112,8 +125,8 @@ OnInit("PressSaveOrLoad", function ()
     ---@param p player
     ---@param slot integer
     function SavePlayerData(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "PlayerData")
-        local data = PlayerData.create(p)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_PLAYER_DATA_ROOT)
+        local data = PlayerData.create(p, slot)
         local code = EncodeString(p, data:serialize())
 
         if p == GetLocalPlayer() then
@@ -131,28 +144,45 @@ OnInit("PressSaveOrLoad", function ()
     ---@param slot integer
     ---@return boolean
     function LoadPlayerData(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "PlayerData")
-        local data = PlayerData.create()
+        local fileRoot = SaveFile.getPath2(p, slot, udg_PLAYER_DATA_ROOT)
+        local data = PlayerData.create(slot)
         local code = GetSyncedData(p, FileIO.Read, fileRoot)
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode then
+            if not success or not decode or not pcall(data.deserialize, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
                 return false
             end
-            data:deserialize(decode)
         else
             return false
         end
 
-        PlayerDatas[p][slot] = data
-        DigimonDatas[p][slot] = LoadDigimons(p, slot)
-        BackpackDatas[p][slot] = LoadBackpack(p, slot)
-        QuestDatas[p][slot] = LoadQuests(p, slot)
-        data.unlockedInfo = LoadDiary(p, slot)
 
-        loadListener:run(p)
+        local bdata = LoadDigimons(p, slot)
+        if not bdata then
+            return false
+        end
+
+        local pdata = LoadBackpack(p, slot)
+        if not pdata then
+            return false
+        end
+
+        local qdata = LoadQuests(p, slot)
+        if not qdata then
+            return false
+        end
+
+        data.unlockedInfo = LoadDiary(p, slot)
+        if not data.unlockedInfo then
+            return false
+        end
+
+        PlayerDatas[p][slot] = data
+        DigimonDatas[p][slot] = bdata
+        BackpackDatas[p][slot] = pdata
+        QuestDatas[p][slot] = qdata
 
         return true
     end
@@ -175,6 +205,8 @@ OnInit("PressSaveOrLoad", function ()
         if QuestDatas[p][slot] then
             SetQuests(p, QuestDatas[p][slot])
         end
+
+        loadListener:run(p)
     end
 
     local MAX_DIGIMONS = udg_MAX_DIGIMONS

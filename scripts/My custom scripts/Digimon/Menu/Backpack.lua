@@ -65,18 +65,26 @@ OnInit("Backpack", function ()
     ---@field id integer[]
     ---@field charges integer[]
     ---@field slot integer[]
+    ---@field sslot integer
     BackpackData = setmetatable({}, Serializable)
     BackpackData.__index = BackpackData
 
     ---@param backpack? Backpack
+    ---@param sslot integer
     ---@return Serializable
-    function BackpackData.create(backpack)
+    function BackpackData.create(backpack, sslot)
         local self = setmetatable({
             amount = 0,
             id = {},
             charges = {},
             slot = {},
         }, BackpackData)
+
+        if type(backpack) == "number" then
+            sslot = backpack
+            backpack = nil
+        end
+        self.sslot = sslot
 
         if backpack then
             for i, data in ipairs(backpack.items) do
@@ -97,9 +105,14 @@ OnInit("Backpack", function ()
             self:addProperty("charges" .. i, self.charges[i])
             self:addProperty("slot" .. i, self.slot[i])
         end
+        self:addProperty("sslot", self.sslot)
     end
 
     function BackpackData:deserializeProperties()
+        if self.sslot ~= self:getIntProperty("sslot") then
+            error("The slot is not the same.")
+            return
+        end
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
             self.id[i] = self:getIntProperty("id" .. i)
@@ -905,8 +918,8 @@ OnInit("Backpack", function ()
     ---@param slot integer
     ---@return BackpackData
     function SaveBackpack(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Backpack")
-        local data = BackpackData.create(Backpacks[p])
+        local fileRoot = SaveFile.getPath2(p, slot, udg_BACKPACK_ROOT)
+        local data = BackpackData.create(Backpacks[p], slot)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then
@@ -920,17 +933,16 @@ OnInit("Backpack", function ()
     ---@param slot integer
     ---@return BackpackData?
     function LoadBackpack(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Backpack")
-        local data = BackpackData.create()
+        local fileRoot = SaveFile.getPath2(p, slot, udg_BACKPACK_ROOT)
+        local data = BackpackData.create(slot)
         local code = GetSyncedData(p, FileIO.Read, fileRoot)
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode then
+            if not success or not decode or not pcall(data.deserialize, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
                 return
             end
-            data:deserialize(decode)
         end
 
         return data

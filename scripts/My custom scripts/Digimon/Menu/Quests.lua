@@ -78,12 +78,14 @@ OnInit("Quests", function ()
     ---@field prog integer[]
     ---@field comp boolean[]
     ---@field cret boolean[]
+    ---@field slot integer
     QuestData = setmetatable({}, Serializable)
     QuestData.__index = QuestData
 
     ---@param p player?
+    ---@param slot integer
     ---@return QuestData | Serializable
-    function QuestData.create(p)
+    function QuestData.create(p, slot)
         local self = setmetatable({
             amount = 0,
             id = __jarray(0),
@@ -91,6 +93,11 @@ OnInit("Quests", function ()
             comp = __jarray(false),
             cret = __jarray(false)
         }, QuestData)
+        if type(p) == "number" then
+            slot = p
+            p = nil
+        end
+        self.slot = slot
         if p then
             for i = 0, MAX_QUESTS do
                 local quest = PlayerQuests[p][i]
@@ -114,9 +121,14 @@ OnInit("Quests", function ()
             self:addProperty("comp" .. i, self.comp[i])
             self:addProperty("cret" .. i, self.cret[i])
         end
+        self:addProperty("slot", self.slot)
     end
 
     function QuestData:deserializeProperties()
+        if self.slot ~= self:getIntProperty("slot") then
+            error("The slot is not the same.")
+            return
+        end
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
             self.id[i] = self:getIntProperty("id" .. i)
@@ -792,8 +804,8 @@ OnInit("Quests", function ()
     ---@param slot integer
     ---@return QuestData
     function SaveQuests(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Quests")
-        local data = QuestData.create(p)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_QUEST_ROOT)
+        local data = QuestData.create(p, slot)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then
@@ -807,17 +819,16 @@ OnInit("Quests", function ()
     ---@param slot integer
     ---@return QuestData?
     function LoadQuests(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Quests")
-        local data = QuestData.create()
+        local fileRoot = SaveFile.getPath2(p, slot, udg_QUEST_ROOT)
+        local data = QuestData.create(slot)
         local code = GetSyncedData(p, FileIO.Read, fileRoot)
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode then
+            if not success or not decode or not pcall(data.deserialize, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
                 return
             end
-            data:deserialize(decode)
         end
 
         return data

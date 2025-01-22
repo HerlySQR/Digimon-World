@@ -183,12 +183,14 @@ OnInit("DigimonBank", function ()
     ---@field sItmsCha integer[]
     ---@field rItms integer
     ---@field rCd number
+    ---@field slot integer
     BankData = setmetatable({}, Serializable)
     BankData.__index = BankData
 
     ---@param main? Bank
+    ---@param slot integer
     ---@return BankData|Serializable
-    function BankData.create(main)
+    function BankData.create(main, slot)
         local self = {
             stocked = {},
             maxSaved = 0,
@@ -199,6 +201,11 @@ OnInit("DigimonBank", function ()
             rItms = 0,
             rCd = 0.,
         }
+        if type(main) == "number" then
+            slot = main
+            main = nil
+        end
+        self.slot = slot
         if main then
             for i = 0, MAX_STOCK - 1 do
                 if main.stocked[i] then
@@ -245,9 +252,14 @@ OnInit("DigimonBank", function ()
         end
         self:addProperty("rItms", self.rItms)
         self:addProperty("rCd", self.rCd)
+        self:addProperty("slot", self.slot)
     end
 
     function BankData:deserializeProperties()
+        if self.slot ~= self:getIntProperty("slot") then
+            error("The slot is not the same.")
+            return
+        end
         for i = 0, MAX_STOCK - 1 do
             local stocked = self:getStringProperty("stocked" .. i)
             if stocked ~= "" then
@@ -2386,8 +2398,8 @@ OnInit("DigimonBank", function ()
     ---@param slot integer
     ---@return BankData
     function SaveDigimons(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Digimons")
-        local data = BankData.create(Bank[GetPlayerId(p)])
+        local fileRoot = SaveFile.getPath2(p, slot, udg_DIGIMON_BANK_ROOT)
+        local data = BankData.create(Bank[GetPlayerId(p)], slot)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then
@@ -2401,17 +2413,16 @@ OnInit("DigimonBank", function ()
     ---@param slot integer
     ---@return BankData?
     function LoadDigimons(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Digimons")
-        local data = BankData.create()
+        local fileRoot = SaveFile.getPath2(p, slot, udg_DIGIMON_BANK_ROOT)
+        local data = BankData.create(slot)
         local code = GetSyncedData(p, FileIO.Read, fileRoot)
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode then
+            if not success or not decode or not pcall(data.deserialize, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
                 return
             end
-            data:deserialize(decode)
         end
 
         return data
