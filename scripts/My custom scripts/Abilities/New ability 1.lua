@@ -1,34 +1,23 @@
+Debug.beginFile("Grand Cross")
 OnInit(function ()
-    Require "AbilityUtils"
+    Require "SpellsTemplate"
 
-    local Spell = FourCC('A03T')
-    local StrDmgFactor = 0.15
-    local AgiDmgFactor = 0.15
-    local IntDmgFactor = 0.15
-    local AttackFactor = 0.5
-
-    RegisterSpellEffectEvent(Spell, function ()
-        xpcall(function ()
-        local caster = GetSpellAbilityUnit()
-        -- Calculating the damage
-        local damage = GetAttributeDamage(caster, StrDmgFactor, AgiDmgFactor, IntDmgFactor) +
-                       GetAvarageAttack(caster) * AttackFactor
-        -- Create the missile
-        local missile = Missiles:create(GetUnitX(caster), GetUnitY(caster), 25, GetSpellTargetX(), GetSpellTargetY(), 25)
-        missile.source = caster
-        missile.owner = GetOwningPlayer(caster)
-        missile.damage = damage
-        missile:model("Abilities\\Weapons\\FireBallMissile\\FireBallMissile.mdl")
-        missile:speed(1000.)
-        missile:arc(0)
-        missile.collision = 32.
-        missile.collideZ = true
-        missile.onHit = function (u)
-            Damage.apply(caster, u, damage, true, false, udg_Fire, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
-            return true
-        end
-        missile:launch()
-                
-        end, print)
-    end)
+    CreateSingleMissileSpell({
+        spell = FourCC('A04L'),
+        strDmgFactor = 0.2,
+        agiDmgFactor = 0.1,
+        intDmgFactor = 0.9,
+        attackFactor = 1.2,
+        missileModel = "",
+        targetEffect = "Abilities\\Spells\\Human\\HolyBolt\\HolyBoltSpecialArt.mdl",
+        zOffsetSource = 50,
+        zOffsetTarget = 50,
+        scale = 0.1,
+        speed = 1000.,
+        arc = 10.,
+        pColor = 4,
+        attType = udg_Holy,
+        dmgType = DAMAGE_TYPE_NORMAL
+    })
 end)
+Debug.endFile()
