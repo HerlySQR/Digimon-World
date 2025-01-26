@@ -92,7 +92,7 @@ OnInit("SpellsTemplate", function ()
         end)
     end
 
-    ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, missileCount: integer, missileModel: string, zOffsetSource: number, zOffsetTarget: number, area: number, scale: number, speed: number, arc: number, pColor: integer?, attType: attacktype, dmgType: damagetype, targetEffect: string?, buffType: BuffSpell?}
+    ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, missileCount: integer, missileModel: string, zOffsetSource: number, zOffsetTarget: number, scale: number, speed: number, arc: number, pColor: integer?, attType: attacktype, dmgType: damagetype, targetEffect: string?, buffType: BuffSpell?, buffLevel: integer?}
     function CreateMultipleMissilesSpell(data)
         data.strDmgFactor = data.strDmgFactor or 0
         data.agiDmgFactor = data.strDmgFactor or 0
@@ -106,16 +106,17 @@ OnInit("SpellsTemplate", function ()
             local cy = GetUnitY(caster)
             local x = GetSpellTargetX()
             local y = GetSpellTargetY()
+            local area = BlzGetAbilityRealLevelField(BlzGetUnitAbility(caster, data.spell), ABILITY_RLF_AREA_OF_EFFECT, GetUnitAbilityLevel(caster, data.spell) - 1)
             -- Calculating the damage
             local damage = (GetAttributeDamage(caster, data.strDmgFactor, data.agiDmgFactor, data.intDmgFactor) +
                            GetAvarageAttack(caster) * data.attackFactor)
             -- --
-            damage = damage * 2 / data.missileCount
+            damage = damage / data.missileCount
             local counter = data.missileCount
             Timed.echo(0.125, function ()
                 if counter == 0 or GetUnitCurrentOrder(caster) ~= Orders.clusterrockets then return true end
                 local angle = 2 * math.pi * math.random()
-                local dist = data.area * math.random()
+                local dist = area * math.random()
                 local tx = x + dist * math.cos(angle)
                 local ty = y + dist * math.sin(angle)
                 local missile = Missiles:create(cx, cy, data.zOffsetSource, tx, ty, data.zOffsetTarget)
@@ -127,7 +128,7 @@ OnInit("SpellsTemplate", function ()
                 missile:speed(data.speed)
                 missile:arc(data.arc)
                 missile.onFinish = function ()
-                    ForUnitsInRange(missile.x, missile.y, data.area, function (u)
+                    ForUnitsInRange(missile.x, missile.y, area, function (u)
                         if IsUnitEnemy(u, missile.owner) then
                             Damage.apply(caster, u, damage, true, false, data.attType, data.dmgType, WEAPON_TYPE_WHOKNOWS)
                             if data.targetEffect then
@@ -166,7 +167,7 @@ OnInit("SpellsTemplate", function ()
                                         spell = PURGE_SPELL
                                         order = PURGE_ORDER
                                     end
-                                    DummyCast(missile.owner,GetUnitX(caster), GetUnitY(caster), spell, order, data.buffLevel, CastType.TARGET, target)
+                                    DummyCast(missile.owner,GetUnitX(caster), GetUnitY(caster), spell, order, data.buffLevel, CastType.TARGET, u)
                                 end
                             end
                         end

@@ -1,23 +1,24 @@
-Debug.beginFile("Grand Cross")
+Debug.beginFile("Nitro Stinger")
 OnInit(function ()
     Require "SpellsTemplate"
 
-    CreateSingleMissileSpell({
-        spell = FourCC('A04L'),
-        strDmgFactor = 0.2,
-        agiDmgFactor = 0.1,
-        intDmgFactor = 0.9,
-        attackFactor = 1.2,
-        missileModel = "",
-        targetEffect = "Abilities\\Spells\\Human\\HolyBolt\\HolyBoltSpecialArt.mdl",
-        zOffsetSource = 50,
-        zOffsetTarget = 50,
-        scale = 0.1,
-        speed = 1000.,
-        arc = 10.,
-        pColor = 4,
-        attType = udg_Holy,
-        dmgType = DAMAGE_TYPE_NORMAL
+    CreateMultipleMissilesSpell({
+        spell = FourCC('A08D'),
+        strDmgFactor = 0.7,
+        agiDmgFactor = 0.75,
+        intDmgFactor = 0.15,
+        attackFactor = 1.6,
+        missileModel = "Missile\\Firebrand Shot Yellow.mdx",
+        missileCount = 8,
+        zOffsetSource = 150,
+        zOffsetTarget = 0,
+        scale = 0.5,
+        speed = 700.,
+        arc = 20.,
+        attType = udg_Air,
+        dmgType = DAMAGE_TYPE_NORMAL,
+        buffType = BuffSpell.PURGE,
+        buffLevel = 2
     })
 end)
 Debug.endFile()
