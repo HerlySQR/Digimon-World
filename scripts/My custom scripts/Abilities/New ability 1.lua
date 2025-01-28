@@ -1,24 +1,16 @@
-Debug.beginFile("Nitro Stinger")
+Debug.beginFile("Death Behind")
 OnInit(function ()
     Require "SpellsTemplate"
 
-    CreateMultipleMissilesSpell({
-        spell = FourCC('A08D'),
-        strDmgFactor = 0.7,
-        agiDmgFactor = 0.75,
-        intDmgFactor = 0.15,
-        attackFactor = 1.6,
-        missileModel = "Missile\\Firebrand Shot Yellow.mdx",
-        missileCount = 8,
-        zOffsetSource = 150,
-        zOffsetTarget = 0,
-        scale = 0.5,
-        speed = 700.,
-        arc = 20.,
-        attType = udg_Air,
-        dmgType = DAMAGE_TYPE_NORMAL,
-        buffType = BuffSpell.PURGE,
-        buffLevel = 2
+    CreateImmediateAreaTargetSpell({
+        spell = FourCC('A0FI'),
+        strDmgFactor = 0.65,
+        agiDmgFactor = 0.45,
+        intDmgFactor = 0.3,
+        attackFactor = 1.5,
+        finalDmgFactor = 0.95,
+        attType = udg_Machine,
+        dmgType = DAMAGE_TYPE_NORMAL
     })
 end)
 Debug.endFile()
