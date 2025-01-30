@@ -15,6 +15,8 @@ OnInit("SpellsTemplate", function ()
         PURGE = 8
     }
 
+    local SLOW_ALTER = FourCC('A0IJ')
+
     ---@param data table
     ---@param missile table
     ---@param target unit
@@ -35,20 +37,32 @@ OnInit("SpellsTemplate", function ()
                     spell = ICE_SPELL
                     order = ICE_ORDER
                 elseif data.buffType == BuffSpell.FREEZE then
-                    spell = FREEZE_SPELL
-                    order = FREEZE_ORDER
+                    if IsUnitType(target, UNIT_TYPE_GIANT) then
+                        spell = ICE_SPELL
+                        order = ICE_ORDER
+                    else
+                        spell = FREEZE_SPELL
+                        order = FREEZE_ORDER
+                    end
                 elseif data.buffType == BuffSpell.STUN then
-                    spell = STUN_SPELL
-                    order = STUN_ORDER
-                elseif data.buffType == BuffSpell.POISON then
-                    spell = POISON_SPELL
-                    order = POISON_ORDER
+                    if IsUnitType(target, UNIT_TYPE_GIANT) then
+                        spell = SLOW_ALTER
+                        order = SLOW_ORDER
+                    else
+                        spell = STUN_SPELL
+                        order = STUN_ORDER
+                    end
                 elseif data.buffType == BuffSpell.CURSE then
                     spell = CURSE_SPELL
                     order = CURSE_ORDER
                 elseif data.buffType == BuffSpell.SLEEP then
-                    spell = SLEEP_SPELL
-                    order = SLEEP_ORDER
+                    if IsUnitType(target, UNIT_TYPE_GIANT) then
+                        spell = CURSE_SPELL
+                        order = CURSE_ORDER
+                    else
+                        spell = SLEEP_SPELL
+                        order = SLEEP_ORDER
+                    end
                 elseif data.buffType == BuffSpell.SLOW then
                     spell = SLOW_SPELL
                     order = SLOW_ORDER
@@ -120,36 +134,42 @@ OnInit("SpellsTemplate", function ()
         baseSingleMissileSpell(data)
     end
 
-    ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, finalDmgFactor: number?, dmgPerSecFactor: number, missileModel: string, zOffsetSource: number, zOffsetTarget: number, scale: number, speed: number, arc: number, pColor: integer?, attType: attacktype, dmgType: damagetype, casterEffect: string?, targetEffect: string?, fragmentsEffect: string?, buffType: BuffSpell?, buffLevel: integer?, onFinish: fun(missile: Missiles)?}
+    ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, finalDmgFactor: number?, dmgPerSecFactor: number, missileModel: string, zOffsetSource: number, zOffsetTarget: number, scale: number, speed: number, arc: number, fragmentsOffset: number, pColor: integer?, attType: attacktype, dmgType: damagetype, casterEffect: string?, targetEffect: string?, fragmentsEffect: string?, buffType: BuffSpell?, buffLevel: integer?, onFinish: fun(missile: Missiles)?}
     function CreateFragmentsSpell(data)
+        data.dmgPerSecFactor = data.dmgPerSecFactor or 0
         data.onFinish = function (missile)
+            local affected = {}
             local area = BlzGetAbilityRealLevelField(BlzGetUnitAbility(missile.source, data.spell), ABILITY_RLF_AREA_OF_EFFECT, GetUnitAbilityLevel(missile.source, data.spell) - 1)
             ForUnitsInRange(missile.x, missile.y, area, function (u)
                 if IsUnitEnemy(u, missile.owner) then
                     Damage.apply(missile.source, u, missile.damage, true, false, data.attType, data.dmgType, WEAPON_TYPE_WHOKNOWS)
+                    affected[u] = true
                 end
             end)
             -- Start the spell
             local mx = missile.x
             local my = missile.y
             local dur = 1
-            local offset = area * 0.75
+            local offset = area * data.fragmentsOffset
             local dmgPerSec = missile.damage * data.dmgPerSecFactor
             Timed.echo(1., function ()
                 if dur > 0 then
                     dur = dur - 1
                     -- Effects
-                    DestroyEffect(AddSpecialEffect(data.fragmentsEffect, mx, my))
-                    for i = 1, 6 do
-                        local angle = (math.pi / 3) * i
-                        local x = mx + offset * math.cos(angle)
-                        local y = my + offset * math.sin(angle)
-                        DestroyEffect(AddSpecialEffect(data.fragmentsEffect, x, y))
+                    if data.fragmentsEffect then
+                        DestroyEffect(AddSpecialEffect(data.fragmentsEffect, mx, my))
+                        for i = 1, 6 do
+                            local angle = (math.pi / 3) * i
+                            local x = mx + offset * math.cos(angle)
+                            local y = my + offset * math.sin(angle)
+                            DestroyEffect(AddSpecialEffect(data.fragmentsEffect, x, y))
+                        end
                     end
                     -- Enum the enemies
                     ForUnitsInRange(mx, my, area, function (u)
-                        if IsUnitEnemy(u, missile.owner) then
+                        if IsUnitEnemy(u, missile.owner) and not affected[u] then
                             Damage.apply(missile.source, u, dmgPerSec, true, false, data.attType, data.dmgType, WEAPON_TYPE_WHOKNOWS)
+                            affected[u] = true
                         end
                     end)
                 else
@@ -293,40 +313,3 @@ OnInit("SpellsTemplate", function ()
     end
 end)
 Debug.endFile()
--- Protect Grenade
-OnInit(function ()
-    Require "AbilityUtils"
-
-    local Spell = FourCC('A064')
-    local StrDmgFactor = 0.65
-    local AgiDmgFactor = 0.1
-    local IntDmgFactor = 0.65
-    local AttackFactor = 1.3
-    local DmgPerSecFactor = 0.15
-    local MissileModel = "Abilities\\Weapons\\Mortar\\MortarMissile.mdl"
-    -- The same as it is in the object editor
-    local Area = 200.
-
-    RegisterSpellEffectEvent(Spell, function ()
-        local caster = GetSpellAbilityUnit()
-        local owner = GetOwningPlayer(caster)
-        -- Calculating the damage
-        local damage = (GetAttributeDamage(caster, StrDmgFactor, AgiDmgFactor, IntDmgFactor) +
-                       GetAvarageAttack(caster) * AttackFactor)
-        -- Create the missile
-        local missile = Missiles:create(GetUnitX(caster), GetUnitY(caster), 25, GetSpellTargetX(), GetSpellTargetY(), 0)
-        missile.source = caster
-        missile.owner = owner
-        missile.damage = damage
-        missile:scale(0.5)
-        missile:model(MissileModel)
-        missile:speed(900.)
-        missile:arc(25.)
-        missile.collision = 96.
-        missile.collideZ = true
-        missile.onFinish = function ()
-        end
-        missile:launch()
-    end)
-
-end)

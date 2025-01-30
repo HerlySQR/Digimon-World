@@ -32,8 +32,8 @@ if Debug then Debug.beginFile "FileIO" end
     Updated: 8 Mar 2023
 --]]
 OnInit("FileIO", function()
-    local RAW_PREFIX = ']]i([['
-    local RAW_SUFFIX = ']])--[['
+    local RAW_PREFIX = ']]i("'
+    local RAW_SUFFIX = '")--[['
     local RAW_SIZE = 256 - #RAW_PREFIX - #RAW_SUFFIX
     local LOAD_ABILITY = FourCC('ANdc')
     local LOAD_EMPTY_KEY = '!@#$, empty data'
