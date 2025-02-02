@@ -6,9 +6,69 @@ OnInit(function ()
     Require "FrameLoader"
     Require "Menu"
 
-    local ROD = FourCC('I07M')
     local FISHING = FourCC('A0IL')
-    local FISH = FourCC('I07N')
+    local ROD = {
+        FourCC('I07W'),
+        FourCC('I07M'),
+        FourCC('I07Y'),
+        FourCC('I07X')
+    }
+    local FISHES = {
+        [1] = {
+            [FourCC('I07N')] = 1, -- DigiAnchovy
+            [FourCC('I07P')] = 1, -- DigiSeabass
+            [FourCC('I07Q')] = 1, -- DigiSnapper
+            [FourCC('I07S')] = 1, -- DigiTrout
+            [FourCC('I07T')] = 1  -- DigiTuna
+        },
+        [2] = {
+            [FourCC('I07N')] = 0.85, -- DigiAnchovy
+            [FourCC('I07P')] = 0.85, -- DigiSeabass
+            [FourCC('I07O')] = 0.13, -- DigiSpearFish
+            [FourCC('I07Q')] = 0.85, -- DigiSnapper
+            [FourCC('I07S')] = 0.85, -- DigiTrout
+            [FourCC('I07R')] = 0.13, -- DigiCarp
+            [FourCC('I07T')] = 0.85, -- DigiTuna
+            [FourCC('I07U')] = 0.01  -- DigiDragonFish
+        },
+        [3] = {
+            [FourCC('I07N')] = 0.75, -- DigiAnchovy
+            [FourCC('I07P')] = 0.75, -- DigiSeabass
+            [FourCC('I07O')] = 0.20, -- DigiSpearFish
+            [FourCC('I07Q')] = 0.75, -- DigiSnapper
+            [FourCC('I07S')] = 0.75, -- DigiTrout
+            [FourCC('I07R')] = 0.20, -- DigiCarp
+            [FourCC('I07T')] = 0.75, -- DigiTuna
+            [FourCC('I07U')] = 0.025 -- DigiDragonFish
+        },
+        [4] = {
+            [FourCC('I07N')] = 0.6, -- DigiAnchovy
+            [FourCC('I07P')] = 0.6, -- DigiSeabass
+            [FourCC('I07O')] = 0.3, -- DigiSpearFish
+            [FourCC('I07Q')] = 0.6, -- DigiSnapper
+            [FourCC('I07S')] = 0.6, -- DigiTrout
+            [FourCC('I07R')] = 0.3, -- DigiCarp
+            [FourCC('I07T')] = 0.6, -- DigiTuna
+            [FourCC('I07U')] = 0.04 -- DigiDragonFish
+        }
+    }
+    local PLACES = {
+        ["All"] = {FourCC('I07U')},
+        ["File City"] = {FourCC('I07N'), FourCC('I07O')},
+        ["Gear Savanna"] = {FourCC('I07P'), FourCC('I07O')},
+        ["Tropical Jungle"] = {FourCC('I07P'), FourCC('I07O')},
+        ["Ancient Dino Region"] = {FourCC('I07Q'), FourCC('I07R')},
+        ["Freezeland"] = {FourCC('I07S'), FourCC('I07R')},
+        ["Bettleland"] = {FourCC('I07T')},
+        ["Geko Swamp"] = {FourCC('I07Q'), FourCC('I07R')}
+    }
+    PLACES["Native Forest"] = PLACES["File City"]
+    local NOT_AVAILABLE_FISHES = {
+        [1] = {[FourCC('I07O')] = true, [FourCC('I07R')] = true, [FourCC('I07U')] = true},
+        [2] = {},
+        [3] = {},
+        [4] = {}
+    }
     local RED_LINE_STEPS = 48
     local GREEN_AREA_START = 23
     local GREEN_AREA_END = 25
@@ -37,6 +97,59 @@ OnInit(function ()
 
     for i = 0, bj_MAX_PLAYERS - 1 do
         fishers[Player(i)] = {}
+    end
+
+    ---@param u unit
+    ---@return integer?
+    local function getRod(u)
+        for i = 1, #ROD do
+            if UnitHasItemOfTypeBJ(u, ROD[i]) then
+                return i
+            end
+        end
+    end
+
+    ---@param u unit
+    ---@return integer?
+    local function getRandomFish(u)
+        local whatRod = getRod(u)
+
+        if whatRod then
+            local env = Digimon.getInstance(u) and Digimon.getInstance(u).environment
+            if not env then
+                return
+            end
+
+            local fishes = Set.create()
+            for _, fish in ipairs(PLACES[env.name]) do
+                if not NOT_AVAILABLE_FISHES[whatRod][fish] then
+                    fishes:addSingle(fish)
+                end
+            end
+            for _, fish in ipairs(PLACES["All"]) do
+                if not NOT_AVAILABLE_FISHES[whatRod][fish] then
+                    fishes:addSingle(fish)
+                end
+            end
+
+            local chances = {}
+            local whatFishes = {}
+            local maxWeight = 0
+            local i = 0
+            for fish in fishes:elements() do
+                i = i + 1
+                maxWeight = maxWeight + FISHES[whatRod][fish]
+                whatFishes[i] = fish
+                chances[i] = maxWeight
+            end
+
+            local r = maxWeight * math.random()
+            for j = 1, i do
+                if r <= chances[j] then
+                    return whatFishes[j]
+                end
+            end
+        end
     end
 
     ---@param u unit
@@ -115,23 +228,54 @@ OnInit(function ()
         end)
     end
 
+    local hasRod = Condition(function ()
+        for i = 1, #ROD do
+            if GetItemTypeId(GetManipulatedItem()) == ROD[i] then
+                return true
+            end
+        end
+        return false
+    end)
+
     do
         local t = CreateTrigger()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == ROD end))
+        TriggerAddCondition(t, hasRod)
         TriggerAddAction(t, function ()
-            UnitAddAbility(GetManipulatingUnit(), FISHING)
+            local u = GetManipulatingUnit()
+            local m = GetManipulatedItem()
+            local typ = GetItemTypeId(m)
+            local uHasRod = false
+            for i = 1, #ROD do
+                if typ ~= ROD[i] and UnitHasItemOfTypeBJ(u, ROD[i]) then
+                    uHasRod = true
+                    break
+                end
+            end
+            if uHasRod then
+                ErrorMessage("You already have a fishing rod", GetOwningPlayer(u))
+                UnitRemoveItem(u, m)
+            else
+                UnitAddAbility(u, FISHING)
+            end
         end)
     end
 
     do
         local t = CreateTrigger()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DROP_ITEM)
-        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == ROD end))
+        TriggerAddCondition(t, hasRod)
         TriggerAddAction(t, function ()
             local u = GetManipulatingUnit()
             Timed.call(function ()
-                if not UnitHasItemOfTypeBJ(u, ROD) then
+                local doesntHaveRod = true
+                for i = 1, #ROD do
+                    if UnitHasItemOfTypeBJ(u, ROD[i]) then
+                        doesntHaveRod = false
+                        break
+                    end
+                end
+                if doesntHaveRod then
                     UnitRemoveAbility(u, FISHING)
                     abortFish(u)
                 end
@@ -217,7 +361,7 @@ OnInit(function ()
                         if math.random(1, 50) == 1 then
                             local angle2 = math.random() * 2 * math.pi
                             DestroyEffectTimed(AddSpecialEffect("Doodads\\Ruins\\Water\\BubbleGeyser\\BubbleGeyser.mdl", actX + 50.*math.random() * math.cos(angle2), actY + 50.*math.random() * math.sin(angle2)), 1.)
-                        end 
+                        end
                     elseif catch[u] == 1 then
                         actX = actX - stepX
                         actY = actY - stepY
@@ -225,7 +369,10 @@ OnInit(function ()
                         MoveLightningEx(line, true, GetUnitX(u), GetUnitY(u), GetUnitZ(u, true) + 50., actX, actY, actZ)
 
                         if DistanceBetweenCoordsSq(actX, actY, GetUnitX(u), GetUnitY(u)) < 2500 then
-                            CreateItem(FISH, GetUnitX(u), GetUnitY(u))
+                            local whatFish = getRandomFish(u)
+                            if whatFish then
+                                CreateItem(whatFish, GetUnitX(u), GetUnitY(u))
+                            end
                             abortFish(u)
                         end
                     end
@@ -304,13 +451,13 @@ OnInit(function ()
             Fisher[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", RedLines[i], "", 1)
             BlzFrameSetPoint(Fisher[i], FRAMEPOINT_TOPLEFT, RedLines[i], FRAMEPOINT_TOPLEFT, -0.010000, -0.10000)
             BlzFrameSetPoint(Fisher[i], FRAMEPOINT_BOTTOMRIGHT, RedLines[i], FRAMEPOINT_BOTTOMRIGHT, 0.010000, -0.030000)
-            BlzFrameSetTexture(Fisher[i], "CustomFrame.png", 0, true)
+            BlzFrameSetTexture(Fisher[i], "", 0, true)
         end
 
         GreenArea = BlzCreateFrameByType("BACKDROP", "BACKDROP", ProgressBar, "", 1)
         BlzFrameSetPoint(GreenArea, FRAMEPOINT_TOPLEFT, ProgressBar, FRAMEPOINT_TOPLEFT, 0.22000, 0.0000)
         BlzFrameSetPoint(GreenArea, FRAMEPOINT_BOTTOMRIGHT, ProgressBar, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.0000)
-        BlzFrameSetTexture(GreenArea, "CustomFrame.png", 0, true)
+        BlzFrameSetTexture(GreenArea, "war3mapImported\\GreenArea.blp", 0, true)
         BlzFrameSetLevel(GreenArea, 1)
     end)
 end)
