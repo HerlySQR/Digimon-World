@@ -6,6 +6,15 @@ OnInit(function ()
     Require "FrameLoader"
     Require "Menu"
 
+    local DIGI_ANCHOVY = FourCC('I07N')
+    local DIGI_SEABASS = FourCC('I07P')
+    local DIGI_SPEAR_FISH = FourCC('I07O')
+    local DIGI_SNAPPER = FourCC('I07Q')
+    local DIGI_TROUT = FourCC('I07S')
+    local DIGI_CARP = FourCC('I07R')
+    local DIGI_TUNA = FourCC('I07T')
+    local DIGI_DRAGON_FISH = FourCC('I07U')
+
     local FISHING = FourCC('A0IL')
     local ROD = {
         FourCC('I07W'),
@@ -15,74 +24,74 @@ OnInit(function ()
     }
     local FISHES = {
         [1] = {
-            [FourCC('I07N')] = 1, -- DigiAnchovy
-            [FourCC('I07P')] = 1, -- DigiSeabass
-            [FourCC('I07Q')] = 1, -- DigiSnapper
-            [FourCC('I07S')] = 1, -- DigiTrout
-            [FourCC('I07T')] = 1  -- DigiTuna
+            [DIGI_ANCHOVY] = 1,
+            [DIGI_SEABASS] = 1,
+            [DIGI_SNAPPER] = 1,
+            [DIGI_TROUT] = 1,
+            [DIGI_TUNA] = 1
         },
         [2] = {
-            [FourCC('I07N')] = 0.85, -- DigiAnchovy
-            [FourCC('I07P')] = 0.85, -- DigiSeabass
-            [FourCC('I07O')] = 0.13, -- DigiSpearFish
-            [FourCC('I07Q')] = 0.85, -- DigiSnapper
-            [FourCC('I07S')] = 0.85, -- DigiTrout
-            [FourCC('I07R')] = 0.13, -- DigiCarp
-            [FourCC('I07T')] = 0.85, -- DigiTuna
-            [FourCC('I07U')] = 0.01  -- DigiDragonFish
+            [DIGI_ANCHOVY] = 0.85,
+            [DIGI_SEABASS] = 0.85,
+            [DIGI_SPEAR_FISH] = 0.13,
+            [DIGI_SNAPPER] = 0.85,
+            [DIGI_TROUT] = 0.85,
+            [DIGI_CARP] = 0.13,
+            [DIGI_TUNA] = 0.85,
+            [DIGI_DRAGON_FISH] = 0.01
         },
         [3] = {
-            [FourCC('I07N')] = 0.75, -- DigiAnchovy
-            [FourCC('I07P')] = 0.75, -- DigiSeabass
-            [FourCC('I07O')] = 0.20, -- DigiSpearFish
-            [FourCC('I07Q')] = 0.75, -- DigiSnapper
-            [FourCC('I07S')] = 0.75, -- DigiTrout
-            [FourCC('I07R')] = 0.20, -- DigiCarp
-            [FourCC('I07T')] = 0.75, -- DigiTuna
-            [FourCC('I07U')] = 0.025 -- DigiDragonFish
+            [DIGI_ANCHOVY] = 0.75,
+            [DIGI_SEABASS] = 0.75,
+            [DIGI_SPEAR_FISH] = 0.20,
+            [DIGI_SNAPPER] = 0.75,
+            [DIGI_TROUT] = 0.75,
+            [DIGI_CARP] = 0.20,
+            [DIGI_TUNA] = 0.75,
+            [DIGI_DRAGON_FISH] = 0.025
         },
         [4] = {
-            [FourCC('I07N')] = 0.6, -- DigiAnchovy
-            [FourCC('I07P')] = 0.6, -- DigiSeabass
-            [FourCC('I07O')] = 0.3, -- DigiSpearFish
-            [FourCC('I07Q')] = 0.6, -- DigiSnapper
-            [FourCC('I07S')] = 0.6, -- DigiTrout
-            [FourCC('I07R')] = 0.3, -- DigiCarp
-            [FourCC('I07T')] = 0.6, -- DigiTuna
-            [FourCC('I07U')] = 0.04 -- DigiDragonFish
+            [DIGI_ANCHOVY] = 0.6,
+            [DIGI_SEABASS] = 0.6,
+            [DIGI_SPEAR_FISH] = 0.3,
+            [DIGI_SNAPPER] = 0.6,
+            [DIGI_TROUT] = 0.6,
+            [DIGI_CARP] = 0.3,
+            [DIGI_TUNA] = 0.6,
+            [DIGI_DRAGON_FISH] = 0.04
         }
     }
     local PLACES = {
-        ["All"] = {FourCC('I07U')},
-        ["File City"] = {FourCC('I07N'), FourCC('I07O')},
-        ["Gear Savanna"] = {FourCC('I07P'), FourCC('I07O')},
-        ["Tropical Jungle"] = {FourCC('I07P'), FourCC('I07O')},
-        ["Ancient Dino Region"] = {FourCC('I07Q'), FourCC('I07R')},
-        ["Freezeland"] = {FourCC('I07S'), FourCC('I07R')},
-        ["Bettleland"] = {FourCC('I07T')},
-        ["Geko Swamp"] = {FourCC('I07Q'), FourCC('I07R')}
+        ["All"] = {DIGI_DRAGON_FISH},
+        ["File City"] = {DIGI_ANCHOVY, DIGI_SPEAR_FISH},
+        ["Gear Savanna"] = {DIGI_SEABASS, DIGI_SPEAR_FISH},
+        ["Tropical Jungle"] = {DIGI_SEABASS, DIGI_SPEAR_FISH},
+        ["Ancient Dino Region"] = {DIGI_SNAPPER, DIGI_CARP},
+        ["Freezeland"] = {DIGI_TROUT, DIGI_CARP},
+        ["Bettleland"] = {DIGI_TUNA},
+        ["Geko Swamp"] = {DIGI_SNAPPER, DIGI_CARP}
     }
     PLACES["Native Forest"] = PLACES["File City"]
-    local NOT_AVAILABLE_FISHES = {
-        [1] = {[FourCC('I07O')] = true, [FourCC('I07R')] = true, [FourCC('I07U')] = true},
-        [2] = {},
-        [3] = {},
-        [4] = {}
-    }
-    local RED_LINE_STEPS = 48
-    local GREEN_AREA_START = 23
-    local GREEN_AREA_END = 25
+    local CATCH_AREA_LENGTH = 0.48
+    local GREEN_AREA_START = 0.21
+    local GREEN_AREA_END = 0.27
+    local YELLOW_AREA_START = 0.23
+    local YELLOW_AREA_END = 0.25
+    local RED_LINE_INTERVAL = 0.02 -- seconds
+    local RED_LINE_SPEED = 0.57 * CATCH_AREA_LENGTH * RED_LINE_INTERVAL
+    local CATCH_TIME = (CATCH_AREA_LENGTH/RED_LINE_SPEED) * RED_LINE_INTERVAL
 
     ---@alias catchState
     ---| 0 # None
     ---| 1 # Success
     ---| 2 # Fail
+    ---| 3 # SuccessEx
 
     local LocalPlayer = GetLocalPlayer()
     local fishers = {} ---@type table<player, unit[]>
     local fishing = __jarray(false) ---@type table<unit, boolean>
     local lines = {} ---@type table<unit, lightning>
-    local linePos = __jarray(0) ---@type table<unit, integer>
+    local linePos = __jarray(0) ---@type table<unit, number>
     local catch = __jarray(0) ---@type table<unit, catchState>
     local usedRedLine = __jarray(0) ---@type table<unit, integer>
     local allowedRedLine = __jarray(true) ---@type table<integer, boolean>
@@ -94,6 +103,7 @@ OnInit(function ()
     local RedLines = {} ---@type framehandle[]
     local Fisher = {} ---@type framehandle[]
     local GreenArea = nil ---@type framehandle
+    local YellowArea = nil ---@type framehandle
 
     for i = 0, bj_MAX_PLAYERS - 1 do
         fishers[Player(i)] = {}
@@ -122,12 +132,12 @@ OnInit(function ()
 
             local fishes = Set.create()
             for _, fish in ipairs(PLACES[env.name]) do
-                if not NOT_AVAILABLE_FISHES[whatRod][fish] then
+                if FISHES[whatRod][fish] then
                     fishes:addSingle(fish)
                 end
             end
             for _, fish in ipairs(PLACES["All"]) do
-                if not NOT_AVAILABLE_FISHES[whatRod][fish] then
+                if FISHES[whatRod][fish] then
                     fishes:addSingle(fish)
                 end
             end
@@ -138,7 +148,11 @@ OnInit(function ()
             local i = 0
             for fish in fishes:elements() do
                 i = i + 1
-                maxWeight = maxWeight + FISHES[whatRod][fish]
+                local weight = FISHES[whatRod][fish]
+                if weight < 0.5 and catch[u] == 3 then
+                    weight = weight * 2
+                end
+                maxWeight = maxWeight + weight
                 whatFishes[i] = fish
                 chances[i] = maxWeight
             end
@@ -193,18 +207,19 @@ OnInit(function ()
             if p == LocalPlayer then
                 index = usedRedLine[u]
                 BlzFrameSetVisible(FishBackdrop, true)
-                BlzFrameSetPoint(RedLines[index], FRAMEPOINT_CENTER, ProgressBar, FRAMEPOINT_LEFT,  0.000, 0.00000)
+                BlzFrameSetPoint(RedLines[index], FRAMEPOINT_CENTER, ProgressBar, FRAMEPOINT_LEFT, 0.000, 0.00000)
                 BlzFrameSetVisible(RedLines[index], true)
+                BlzFrameSetVisible(YellowArea, getRod(u) > 1)
             end
-            linePos[u] = 0
-            Timed.echo(0.03, 0.03 * RED_LINE_STEPS, function ()
+            linePos[u] = 0.
+            Timed.echo(RED_LINE_INTERVAL, CATCH_TIME, function ()
                 if lines[u] ~= line then
                     return true
                 end
 
-                linePos[u] = linePos[u] + 1
+                linePos[u] = linePos[u] + RED_LINE_SPEED
                 if p == LocalPlayer then
-                    BlzFrameSetPoint(RedLines[index], FRAMEPOINT_CENTER, ProgressBar, FRAMEPOINT_LEFT,  0.0100 * linePos[u], 0.00000)
+                    BlzFrameSetPoint(RedLines[index], FRAMEPOINT_CENTER, ProgressBar, FRAMEPOINT_LEFT, linePos[u], 0.00000)
                 end
 
                 if catch[u] ~= 0 then
@@ -362,7 +377,7 @@ OnInit(function ()
                             local angle2 = math.random() * 2 * math.pi
                             DestroyEffectTimed(AddSpecialEffect("Doodads\\Ruins\\Water\\BubbleGeyser\\BubbleGeyser.mdl", actX + 50.*math.random() * math.cos(angle2), actY + 50.*math.random() * math.sin(angle2)), 1.)
                         end
-                    elseif catch[u] == 1 then
+                    elseif catch[u] == 1 or catch[u] == 3 then
                         actX = actX - stepX
                         actY = actY - stepY
                         actZ = actZ - stepZ
@@ -390,7 +405,7 @@ OnInit(function ()
 
         for i = 1, #fishers[p] do
             local u = fishers[p][i]
-            if linePos[u] < RED_LINE_STEPS then
+            if linePos[u] < CATCH_AREA_LENGTH then
                 local tt = CreateTextTag()
                 SetTextTagPosUnit(tt, u, 128)
                 SetTextTagPermanent(tt, false)
@@ -398,11 +413,20 @@ OnInit(function ()
                 SetTextTagVisibility(tt, p == LocalPlayer)
 
                 if linePos[u] >= GREEN_AREA_START and linePos[u] <= GREEN_AREA_END then
-                    catch[u] = 1
-                    SetTextTagText(tt, "Success!", 0.023)
-                    SetTextTagColor(tt, 0, 255, 0, 255)
-                    if p == LocalPlayer then
-                        StartSound(bj_questItemAcquiredSound)
+                    if getRod(u) > 1 and linePos[u] >= YELLOW_AREA_START and linePos[u] <= YELLOW_AREA_END then
+                        catch[u] = 3
+                        SetTextTagText(tt, "Success!", 0.030)
+                        SetTextTagColor(tt, 255, 127, 0, 255)
+                        if p == LocalPlayer then
+                            StartSound(bj_questHintSound)
+                        end
+                    else
+                        catch[u] = 1
+                        SetTextTagText(tt, "Success!", 0.023)
+                        SetTextTagColor(tt, 0, 255, 0, 255)
+                        if p == LocalPlayer then
+                            StartSound(bj_questItemAcquiredSound)
+                        end
                     end
                 else
                     catch[u] = 2
@@ -427,7 +451,7 @@ OnInit(function ()
 
         ProgressBar = BlzCreateFrame("QuestButtonBaseTemplate", FishBackdrop, 0, 0)
         BlzFrameSetPoint(ProgressBar, FRAMEPOINT_TOPLEFT, FishBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.13000)
-        BlzFrameSetPoint(ProgressBar, FRAMEPOINT_BOTTOMRIGHT, FishBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.13000)
+        BlzFrameSetSize(ProgressBar, CATCH_AREA_LENGTH, 0.03)
 
         Ready = BlzCreateFrame("IconButtonTemplate", FishBackdrop, 0, 0)
         BlzFrameSetPoint(Ready, FRAMEPOINT_TOPLEFT, FishBackdrop, FRAMEPOINT_TOPLEFT, 0.22500, -0.21000)
@@ -445,7 +469,7 @@ OnInit(function ()
             BlzFrameSetPoint(RedLines[i], FRAMEPOINT_CENTER, ProgressBar, FRAMEPOINT_LEFT, 0.00000, 0.00000)
             BlzFrameSetSize(RedLines[i], 0.00500, 0.10000)
             BlzFrameSetTexture(RedLines[i], "war3mapImported\\red.blp", 0, true)
-            BlzFrameSetLevel(RedLines[i], 2)
+            BlzFrameSetLevel(RedLines[i], 3)
             BlzFrameSetVisible(RedLines[i], false)
 
             Fisher[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", RedLines[i], "", 1)
@@ -455,10 +479,16 @@ OnInit(function ()
         end
 
         GreenArea = BlzCreateFrameByType("BACKDROP", "BACKDROP", ProgressBar, "", 1)
-        BlzFrameSetPoint(GreenArea, FRAMEPOINT_TOPLEFT, ProgressBar, FRAMEPOINT_TOPLEFT, 0.22000, 0.0000)
-        BlzFrameSetPoint(GreenArea, FRAMEPOINT_BOTTOMRIGHT, ProgressBar, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.0000)
+        BlzFrameSetPoint(GreenArea, FRAMEPOINT_TOPLEFT, ProgressBar, FRAMEPOINT_TOPLEFT, GREEN_AREA_START, 0.0000)
+        BlzFrameSetSize(GreenArea, GREEN_AREA_END - GREEN_AREA_START, 0.03)
         BlzFrameSetTexture(GreenArea, "war3mapImported\\GreenArea.blp", 0, true)
         BlzFrameSetLevel(GreenArea, 1)
+
+        YellowArea = BlzCreateFrameByType("BACKDROP", "BACKDROP", ProgressBar, "", 1)
+        BlzFrameSetPoint(YellowArea, FRAMEPOINT_TOPLEFT, ProgressBar, FRAMEPOINT_TOPLEFT, YELLOW_AREA_START, 0.0000)
+        BlzFrameSetSize(YellowArea, YELLOW_AREA_END - YELLOW_AREA_START, 0.03)
+        BlzFrameSetTexture(YellowArea, "war3mapImported\\YellowArea.blp", 0, true)
+        BlzFrameSetLevel(YellowArea, 2)
     end)
 end)
 Debug.endFile()
