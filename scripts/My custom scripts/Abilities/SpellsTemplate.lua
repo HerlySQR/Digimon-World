@@ -186,6 +186,10 @@ OnInit("SpellsTemplate", function ()
         data.agiDmgFactor = data.strDmgFactor or 0
         data.intDmgFactor = data.strDmgFactor or 0
         data.attackFactor = data.attackFactor or 0
+        data.finalDmgFactor = data.finalDmgFactor or 1
+        if data.buffType then
+            data.buffLevel = data.buffLevel or 1
+        end
 
         RegisterSpellEffectEvent(data.spell, function ()
             local caster = GetSpellAbilityUnit()
@@ -235,6 +239,9 @@ OnInit("SpellsTemplate", function ()
         data.intDmgFactor = data.strDmgFactor or 0
         data.attackFactor = data.attackFactor or 0
         data.finalDmgFactor = data.finalDmgFactor or 1
+        if data.buffType then
+            data.buffLevel = data.buffLevel or 1
+        end
 
         --[[
             Grow the wave up to the double of the original size
@@ -288,6 +295,9 @@ OnInit("SpellsTemplate", function ()
         data.intDmgFactor = data.strDmgFactor or 0
         data.attackFactor = data.attackFactor or 0
         data.finalDmgFactor = data.finalDmgFactor or 1
+        if data.buffType then
+            data.buffLevel = data.buffLevel or 1
+        end
 
         RegisterSpellEffectEvent(data.spell, function ()
             local caster = GetSpellAbilityUnit()
