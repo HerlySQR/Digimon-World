@@ -183,7 +183,7 @@ OnInit("Stats", function ()
         seeOnly[p] = nil
     end
 
-    Timed.echo(0.1, function ()
+    Timed.echo(0.16, function ()
         local list = GetUsedDigimons(LocalPlayer)
         for i = 0, 2 do
             if allVisible or seeOnly[LocalPlayer] then
@@ -825,6 +825,28 @@ OnInit("Stats", function ()
         buffIcons[udg_StatsBuff] = udg_StatsBuffIcon
         udg_StatsBuff = 0
         udg_StatsBuffIcon = ""
+    end)
+
+    local holyDamages = {}
+
+    local oldBlzGetUnitWeaponIntegerField
+    oldBlzGetUnitWeaponIntegerField = AddHook("BlzGetUnitWeaponIntegerField", function (u, field, index)
+        if field == UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE and holyDamages[GetUnitTypeId(u)] then
+            return udg_HolyAsInt
+        end
+        return oldBlzGetUnitWeaponIntegerField(u, field, index)
+    end)
+
+    local t = CreateTrigger()
+    TriggerRegisterVariableEvent(t, "udg_ArmorDamageEvent", EQUAL, 1)
+    TriggerAddAction(t, function ()
+        if udg_IsDamageAttack and holyDamages[GetUnitTypeId(udg_DamageEventSource)] then
+            udg_DamageEventAttackT = udg_HolyAsInt
+        end
+    end)
+
+    GlobalRemap("udg_SetHolyAttack", nil, function (value)
+        holyDamages[value] = true
     end)
 end)
 Debug.endFile()
