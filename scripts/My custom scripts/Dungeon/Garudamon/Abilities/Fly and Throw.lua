@@ -3,8 +3,8 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A0BO')
-    local DAMAGE = 100.
-    local AREA = 150.
+    local DAMAGE = 350.
+    local AREA = 190.
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()

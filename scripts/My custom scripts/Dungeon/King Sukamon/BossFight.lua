@@ -13,10 +13,10 @@ OnInit(function ()
         inner = gg_rct_KingSukamonInner,
         entrance = gg_rct_KingSukamonEntrance,
         spells = {
-            3, Orders.firebolt, CastType.TARGET, -- Generic Missile
-            4, Orders.healingward, CastType.POINT, -- Ward of damage
-            0, Orders.spiritwolf, CastType.IMMEDIATE, -- Healing Minions
-            5, Orders.blackarrow, CastType.POINT -- Poop Chaos
+            FourCC('A0B9'), 3, Orders.firebolt, CastType.TARGET, -- Generic Missile
+            FourCC('A0BB'), 4, Orders.healingward, CastType.POINT, -- Ward of damage
+            FourCC('A0B8'), 0, Orders.spiritwolf, CastType.IMMEDIATE, -- Healing Minions
+            FourCC('A0D4'), 5, Orders.blackarrow, CastType.POINT -- Poop Chaos
         },
         actions = function (u)
             if GetUnitHPRatio(boss) < 0.5 then

@@ -15,16 +15,13 @@ OnInit(function ()
         inner = gg_rct_DrimogemonInner,
         entrance = gg_rct_DrimogemonEntrance,
         spells = {
-            3, Orders.curse, CastType.TARGET, -- Iron drill spin
-            2, Orders.battleroar, CastType.TARGET, -- Missile Dash
-            0, Orders.earthquake, CastType.POINT, -- Moving Earthquake
-            1, Orders.burrow, CastType.IMMEDIATE, -- Burrow
-            3, Orders.submerge, CastType.IMMEDIATE -- Hunger
+            FourCC('A05W'), 3, Orders.curse, CastType.TARGET, -- Iron drill spin
+            FourCC('A02E'), 2, Orders.battleroar, CastType.TARGET, -- Missile Dash
+            FourCC('A02F'), 0, Orders.earthquake, CastType.POINT, -- Moving Earthquake
+            FourCC('A02D'), 1, Orders.burrow, CastType.IMMEDIATE, -- Burrow
+            FourCC('A0AG'), 3, 852623, CastType.IMMEDIATE -- Hunger
         },
         actions = function (u)
-            --if GetUnitCurrentOrder(boss) == 0 then
-                --IssuePointOrderById(boss, Orders.attack, GetUnitX(u), GetUnitY(u))
-            --end
             if GetUnitHPRatio(boss) < 0.5 then
                 UnitAddAbility(boss, movingEarthquake)
                 UnitAddAbility(boss, hunger)

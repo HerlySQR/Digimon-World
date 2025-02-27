@@ -4,19 +4,19 @@ OnInit(function ()
     local ProgressBar = Require "ProgressBar" ---@type ProgressBar
 
     local SPELL = FourCC('A0DJ')
-    local DISTANCE = 500.
-    local DAMAGE = 175.
+    local DISTANCE = 600.
+    local DAMAGE = 1500.
     local DELAY = 2. -- Same as object editor
     local ORDER = Orders.breathoffrost
-    local EFFECT_CASTER = "war3mapImported\\DetroitSmash_BunosEffect.mdx"
+    local EFFECT_CASTER = "Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathMissile.mdl"
     local EFFECT_TARGET = "war3mapImported\\DetroitSmash_Effect.mdx"
 
     RegisterSpellChannelEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
         local bar = ProgressBar.create()
         bar:setColor(PLAYER_COLOR_AQUA)
-        bar:setZOffset(300)
-        bar:setSize(1.3)
+        bar:setZOffset(250)
+        bar:setSize(1.5)
         bar:setTargetUnit(caster)
 
         BossIsCasting(caster, true)
@@ -59,7 +59,7 @@ OnInit(function ()
 
         Timed.call(0.4, function ()
             local eff = AddSpecialEffect(EFFECT_TARGET, x, y)
-            BlzSetSpecialEffectPosition(eff, x + 50*math.cos(angle - math.pi/6), y + 50*math.sin(angle - math.pi/6), 125.)
+            BlzSetSpecialEffectPosition(eff, x + 50*math.cos(angle - math.pi/6), y + 50*math.sin(angle - math.pi/6), 165.)
             BlzSetSpecialEffectYaw(eff, angle)
             BlzSetSpecialEffectColor(eff, 0, 209, 255)
             DestroyEffect(eff)

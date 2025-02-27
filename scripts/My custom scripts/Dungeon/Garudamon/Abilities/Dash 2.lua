@@ -4,7 +4,7 @@ OnInit(function ()
 
     local SPELL = FourCC('A0BN')
     local MAX_DIST = 700.
-    local DAMAGE = 75.
+    local DAMAGE = 270.
     local COLLISION = 192.
     local INTERVAL = 0.03125
 

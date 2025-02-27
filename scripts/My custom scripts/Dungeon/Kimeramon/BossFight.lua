@@ -237,12 +237,12 @@ OnInit(function ()
         entrance = gg_rct_KimeramonEntrance,
         toTeleport = gg_rct_Ancient_Speedy_Zone,
         spells = {
-            3, Orders.howlofterror, CastType.IMMEDIATE, -- Howl
-            4, Orders.tornado, CastType.POINT, -- Cyclone Clap
-            0, Orders.impale, CastType.TARGET, -- Impale
-            5, Orders.clusterrockets, CastType.POINT, -- Heat viper
-            6, Orders.impale, CastType.TARGET, -- Impale
-            3, Orders.creepthunderclap, CastType.IMMEDIATE, -- Fire Ray
+            FourCC('A07F'), 3, Orders.howlofterror, CastType.IMMEDIATE, -- Howl
+            FourCC('A0GC'), 4, Orders.tornado, CastType.POINT, -- Cyclone Clap
+            FourCC('A0GB'), 0, Orders.impale, CastType.TARGET, -- Impale
+            FourCC('A0F3'), 5, Orders.clusterrockets, CastType.POINT, -- Heat viper
+            FourCC('A0GB'), 6, Orders.impale, CastType.TARGET, -- Impale
+            FIRE_RAY, 3, Orders.creepthunderclap, CastType.IMMEDIATE, -- Fire Ray
         },
         castCondition = function ()
             return not flying

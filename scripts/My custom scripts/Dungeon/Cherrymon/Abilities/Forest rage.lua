@@ -5,8 +5,8 @@ OnInit(function ()
     local SPELL = FourCC('A0DH')
     local WOODMON = FourCC('h04R')
     local QUANTITY = 4
-    local DURATION = 15.
-    local HEAL_LIFE_FACTOR = 0.2
+    local DURATION = 60.
+    local HEAL_LIFE_FACTOR = 0.02
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
@@ -27,7 +27,7 @@ OnInit(function ()
 
         Timed.echo(1., DURATION, function ()
             SetUnitState(caster, UNIT_STATE_LIFE, GetUnitState(caster, UNIT_STATE_LIFE) + heal)
-            DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Orc\\HealingWave\\HealingWaveTarget.mdl", caster, "origin"))
+            DestroyEffect(AddSpecialEffectTarget("Model\\BrownRoots.mdx", caster, "origin"))
             for i = #minions, 1, -1 do
                 if not UnitAlive(minions[i]) then
                     table.remove(minions, i)

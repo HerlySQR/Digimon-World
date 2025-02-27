@@ -5,9 +5,9 @@ OnInit(function ()
 
     local SPELL = FourCC('A0DN')
     local MIN_DIST = 300.
-    local MAX_DIST = 600.
-    local DAMAGE = 50.
-    local DAMAGE_PER_SEC = 10.
+    local MAX_DIST = 500.
+    local DAMAGE = 350.
+    local DAMAGE_PER_SEC = 50.
     local DURATION = 5. -- same as object editor
     local EFFECT = "Abilities\\Spells\\Human\\Thunderclap\\ThunderClapCaster.mdl"
 
@@ -40,7 +40,7 @@ OnInit(function ()
             if contains and IsTerrainWalkable(checkX, checkY) then
                 toX, toY = checkX, checkY
                 break
-            end
+            end 
         end
 
         if not toX then

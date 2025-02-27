@@ -4,9 +4,9 @@ OnInit(function ()
 
     local SPELL = FourCC('A0BG')
     local RANGE = 900.
-    local DAMAGE = 70.
-    local DISTANCE_PUSH = 250.
-    local AREA = 250.
+    local DAMAGE = 220.
+    local DISTANCE_PUSH = 200.
+    local AREA = 200.
     local MISSILE_MODEL = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
     local PUSH_MODEL = "Abilities\\Spells\\Human\\Feedback\\SpellBreakerAttack.mdl"
 

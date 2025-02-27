@@ -39,11 +39,11 @@ OnInit(function ()
         entrance = gg_rct_PlatinumNumemonEntrance,
         toTeleport = gg_rct_Sewers,
         spells = {
-            3, Orders.thunderclap, CastType.IMMEDIATE, -- Rain of filth
-            4, Orders.stomp, CastType.IMMEDIATE, -- Big fart
-            5, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon raremon
-            1, Orders.thunderclap, CastType.IMMEDIATE, -- Rain of filth
-            3, Orders.breathoffrost, CastType.POINT -- Big poop
+            FourCC('A0G4'), 3, Orders.thunderclap, CastType.IMMEDIATE, -- Rain of filth
+            FourCC('A0G6'), 4, Orders.stomp, CastType.IMMEDIATE, -- Big fart
+            FourCC('A0G7'), 5, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon raremon
+            FourCC('A0G4'), 1, Orders.thunderclap, CastType.IMMEDIATE, -- Rain of filth
+            FourCC('A0G1'), 3, Orders.breathoffrost, CastType.POINT -- Big poop
         },
         actions = function (u, unitsOnTheField)
             if GetUnitHPRatio(boss) < 0.3 then

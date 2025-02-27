@@ -4,9 +4,9 @@ OnInit(function ()
     Require "UnitEnterEvent"
 
     local SPELL = FourCC('A0DC')
-    local DAMAGE = 5.
-    local RANGE = 600. -- Same as object editor
-    local CASTER_MODEL = "Abilities\\Spells\\Human\\CloudOfFog\\CloudOfFog.mdl"
+    local DAMAGE = 7.
+    local RANGE = 1600. -- Same as object editor
+    local CASTER_MODEL = "Doodad\\EerieFog.mdx"
 
     local effects = {} ---@type table<unit, effect>
 

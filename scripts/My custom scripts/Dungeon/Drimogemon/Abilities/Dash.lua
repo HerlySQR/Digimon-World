@@ -3,9 +3,9 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A02E')
-    local MAX_DIST = 1000.
-    local KB_DIST = 256.
-    local DAMAGE = 75.
+    local MAX_DIST = 400.
+    local KB_DIST = 150.
+    local DAMAGE = 85.
     local COLLISION = 192.
     local INTERVAL = 0.03125
 

@@ -15,11 +15,11 @@ OnInit(function ()
         inner = gg_rct_TonosamaGekomonInner,
         entrance = gg_rct_TonosamaGekomonEntrance,
         spells = {
-            3, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon Gekomon
-            0, Orders.howlofterror, CastType.IMMEDIATE, -- Howl
-            3, Orders.inferno, CastType.POINT, -- Big leap
-            4, Orders.summonwareagle, CastType.IMMEDIATE, -- Summon Otamamon
-            4, Orders.shockwave, CastType.TARGET -- Sonic wave
+            FourCC('A0BH'), 3, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon Gekomon
+            FourCC('A07F'), 0, Orders.howlofterror, CastType.IMMEDIATE, -- Howl
+            FourCC('A0BK'), 3, Orders.inferno, CastType.POINT, -- Big leap
+            FourCC('A0BJ'), 4, Orders.summonwareagle, CastType.IMMEDIATE, -- Summon Otamamon
+            FourCC('A0BG'), 4, Orders.shockwave, CastType.TARGET -- Sonic wave
         },
         actions = function (u)
             if GetUnitHPRatio(boss) < 0.5 then

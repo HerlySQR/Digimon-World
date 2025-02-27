@@ -1,4 +1,4 @@
-Debug.beginFile("King Sukamon\\Abilities\\Healling Minions")
+Debug.beginFile("King Sukamon\\Abilities\\Healing Minions")
 OnInit(function ()
     Require "BossFightUtils"
 

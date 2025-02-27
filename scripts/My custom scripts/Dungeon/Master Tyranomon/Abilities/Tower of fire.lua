@@ -3,10 +3,10 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A0B1')
-    local FIRE_MODEL = "Doodads\\Cinematic\\FireTrapUp\\FireTrapUp.mdl"
+    local FIRE_MODEL = "Effects\\FireShield.mdx"
     local DISTANCE = 300.
-    local AREA = 200.
-    local DAMAGE = 5.
+    local AREA = 300.
+    local DAMAGE = 30.
     local DURATION = 3.
 
     local towerOfFireOrder = Orders.roar
@@ -19,10 +19,10 @@ OnInit(function ()
         local face = GetUnitFacing(caster) * bj_DEGTORAD
         local newX, newY = x + DISTANCE * math.cos(face), y + DISTANCE * math.sin(face)
         local fire = AddSpecialEffect(FIRE_MODEL, newX, newY)
-        BlzSetSpecialEffectScale(fire, 5)
-        BlzSetSpecialEffectTimeScale(fire, 4)
+        BlzSetSpecialEffectScale(fire, 2)
+        BlzSetSpecialEffectTimeScale(fire, 1)
 
-        Timed.echo(0.1, DURATION, function ()
+        Timed.echo(0.3, DURATION, function ()
             ForUnitsInRange(newX, newY, AREA, function (u)
                 if UnitAlive(u) and IsUnitEnemy(u, owner) and not IsUnitType(u, UNIT_TYPE_MAGIC_IMMUNE) then
                     Damage.apply(caster, u, DAMAGE, true, false, udg_Fire, DAMAGE_TYPE_LIGHTNING, WEAPON_TYPE_WHOKNOWS)

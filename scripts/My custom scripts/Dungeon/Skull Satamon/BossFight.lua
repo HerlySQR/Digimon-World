@@ -101,11 +101,11 @@ OnInit(function ()
         inner = gg_rct_SkullSatamonInner,
         entrance = gg_rct_SkullSatamonEntrance,
         spells = {
-            3, Orders.carrionswarm, CastType.POINT, -- Nail bone
-            2, Orders.ensnare, CastType.TARGET, -- Jail
-            4, Orders.cripple, CastType.TARGET, -- Cripple
-            4, Orders.thunderclap, CastType.IMMEDIATE, -- Thunderclap
-            3, Orders.ensnare, CastType.TARGET, -- Jail
+            FourCC('A09E'), 3, Orders.carrionswarm, CastType.POINT, -- Nail bone
+            FourCC('A0DX'), 2, Orders.ensnare, CastType.TARGET, -- Jail
+            FourCC('A07H'), 4, Orders.cripple, CastType.TARGET, -- Cripple
+            FourCC('A0DW'), 4, Orders.thunderclap, CastType.IMMEDIATE, -- Thunderclap
+            FourCC('A0DX'), 3, Orders.ensnare, CastType.TARGET, -- Jail
         },
         actions = function (u)
             if not phase[1] then

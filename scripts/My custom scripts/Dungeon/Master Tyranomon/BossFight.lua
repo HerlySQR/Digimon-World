@@ -14,11 +14,12 @@ OnInit(function ()
         inner = gg_rct_MasterTyranomonInner,
         entrance = gg_rct_MasterTyranomonEntrance,
         spells = {
-            3, Orders.roar, CastType.IMMEDIATE, -- War cry
-            0, 852623, CastType.TARGET, -- Hungry
-            3, Orders.firebolt, CastType.TARGET, -- Fire ball
-            4, Orders.spiritwolf, CastType.IMMEDIATE, -- Tower of fire
-            3, 25, Orders.flamestrike, CastType.TARGET, -- Flame wave
+            FourCC('A07L'), 3, Orders.roar, CastType.IMMEDIATE, -- War cry
+            FourCC('A0AG'), 0, 852623, CastType.TARGET, -- Hungry
+            FourCC('A02A'), 3, Orders.firebolt, CastType.TARGET, -- Fire ball
+            FourCC('A0B2'), 4, Orders.spiritwolf, CastType.IMMEDIATE, -- Summon Tyranomon
+            FourCC('A0B1'), 4, Orders.roar, CastType.IMMEDIATE, -- Tower of fire
+            FourCC('A0E3'), 3, Orders.flamestrike, CastType.TARGET, -- Flame wave
         },
         actions = function (u)
             if GetUnitHPRatio(boss) < 0.5 then

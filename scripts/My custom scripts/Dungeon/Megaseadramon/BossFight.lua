@@ -14,12 +14,12 @@ OnInit(function ()
         inner = gg_rct_MegaseadramonInner,
         entrance = gg_rct_MegaseadramonEntrance,
         spells = {
-            2, Orders.chainlightning, CastType.TARGET, -- Great lightning
-            2, Orders.frostnova, CastType.TARGET, -- Ice prison
-            0, Orders.frostnova, CastType.TARGET, -- Ice prison
-            2, Orders.chainlightning, CastType.TARGET, -- Great lightning
-            2, Orders.monsoon, CastType.POINT, -- Spontaneous storm
-            3, Orders.stampede, CastType.IMMEDIATE -- Cold storm
+            FourCC('A00Y'), 2, Orders.chainlightning, CastType.TARGET, -- Great lightning
+            FourCC('A00W'), 2, Orders.frostnova, CastType.TARGET, -- Ice prison
+            FourCC('A00W'), 0, Orders.frostnova, CastType.TARGET, -- Ice prison
+            FourCC('A00Y'), 2, Orders.chainlightning, CastType.TARGET, -- Great lightning
+            FourCC('A00X'), 2, Orders.monsoon, CastType.POINT, -- Spontaneous storm
+            FourCC('A00Z'), 3, Orders.stampede, CastType.IMMEDIATE -- Cold storm
         },
         actions = function (u)
             if GetUnitHPRatio(boss) < 0.7 then

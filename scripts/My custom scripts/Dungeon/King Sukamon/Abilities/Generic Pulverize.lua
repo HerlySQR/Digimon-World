@@ -3,10 +3,10 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A0BA')
-    local DAMAGE_PER_INT = 4.
-    local AREA = 200.
+    local DAMAGE_PER_INT = 60.
+    local AREA = 250.
     local CLOUD_MODEL = "Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl"
-    local INTERVAL = 0.1
+    local INTERVAL = 1
     local CHANCE = 40
 
     Digimon.postDamageEvent:register(function (info)
@@ -21,7 +21,7 @@ OnInit(function ()
                 Timed.echo(INTERVAL, 1, function ()
                     ForUnitsInRange(x, y, AREA, function (u)
                         if IsUnitEnemy(u, owner) then
-                            Damage.apply(caster, u, DAMAGE_PER_INT, true, false, udg_Nature, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
+                            Damage.apply(caster, u, DAMAGE_PER_INT, true, false, udg_Dark, DAMAGE_TYPE_MIND, WEAPON_TYPE_WHOKNOWS)
                         end
                     end)
                 end)

@@ -15,12 +15,12 @@ OnInit(function ()
         inner = gg_rct_PanjyamonInner,
         entrance = gg_rct_PanjyamonEntrance,
         spells = {
-            6, Orders.shadowstrike, CastType.TARGET, -- Cat jump
-            2, Orders.berserk, CastType.IMMEDIATE, -- Punch rush
-            0, Orders.breathoffrost, CastType.POINT, -- Ice fist
-            5, Orders.shadowstrike, CastType.TARGET, -- Cat jump
-            0, Orders.stomp, CastType.IMMEDIATE, -- Ice stomp
-            2, Orders.breathoffire, CastType.POINT -- Mammothmon rush
+            FourCC('A0DN'), 6, Orders.shadowstrike, CastType.TARGET, -- Cat jump
+            FourCC('A0DL'), 2, Orders.berserk, CastType.IMMEDIATE, -- Punch rush
+            FourCC('A0DJ'), 0, Orders.breathoffrost, CastType.POINT, -- Ice fist
+            FourCC('A0DN'), 5, Orders.shadowstrike, CastType.TARGET, -- Cat jump
+            FourCC('A0DK'), 0, Orders.stomp, CastType.IMMEDIATE, -- Ice stomp
+            FourCC('A0DM'), 2, Orders.breathoffire, CastType.POINT -- Mammothmon rush
         },
         actions = function (u)
             if GetUnitHPRatio(boss) < 0.5 then

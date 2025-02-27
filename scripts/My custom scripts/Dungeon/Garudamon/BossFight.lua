@@ -14,12 +14,12 @@ OnInit(function ()
         inner = gg_rct_GarudamonInner,
         entrance = gg_rct_GarudamonEntrance,
         spells = {
-            3, Orders.battleroar, CastType.POINT, -- Dash
-            0, Orders.carrionswarm, CastType.POINT, -- Wing blade
-            3, Orders.firebolt, CastType.TARGET, -- Fire ball
-            4, Orders.flamestrike, CastType.TARGET, -- Bird of Fire
-            4, Orders.avengerform, CastType.TARGET, -- Fly and Throw
-            1, Orders.curse, CastType.TARGET -- Ashes
+            FourCC('A0BN'), 3, Orders.battleroar, CastType.POINT, -- Dash
+            FourCC('A08L'), 0, Orders.carrionswarm, CastType.POINT, -- Wing blade
+            FourCC('A02A'), 3, Orders.firebolt, CastType.TARGET, -- Fire ball
+            FourCC('A0BM'), 4, Orders.flamestrike, CastType.TARGET, -- Bird of Fire
+            FourCC('A0BO'), 4, Orders.avengerform, CastType.TARGET, -- Fly and Throw
+            FourCC('A01B'), 1, Orders.curse, CastType.TARGET -- Ashes
         },
         actions = function (u)
             if GetUnitHPRatio(boss) < 0.5 then

@@ -21,11 +21,11 @@ OnInit(function ()
         inner = gg_rct_FlymonInner,
         entrance = gg_rct_FlymonEntrance,
         spells = {
-            1, Orders.charm, CastType.TARGET, -- Stinger
-            4, Orders.cyclone, CastType.TARGET, -- Cyclone
-            0, Orders.blackarrow, CastType.POINT, -- Stinger Shots
-            3, Orders.berserk, CastType.IMMEDIATE, -- Berserk
-            3, Orders.cloudoffog, CastType.TARGET -- Poison Powder
+            FourCC('A06Z'), 1, Orders.charm, CastType.TARGET, -- Stinger
+            FourCC('A0AB'), 4, Orders.cyclone, CastType.TARGET, -- Cyclone
+            FourCC('A06Y'), 0, Orders.blackarrow, CastType.POINT, -- Stinger Shots
+            FourCC('A07A'), 3, Orders.berserk, CastType.IMMEDIATE, -- Berserk
+            FourCC('A070'), 3, Orders.cloudoffog, CastType.TARGET -- Poison Powder
         },
         actions = function (u)
             if not (BossStillCasting(boss) or flying) then
@@ -87,7 +87,7 @@ OnInit(function ()
                                         missile.onFinish = function ()
                                             ForUnitsInRange(missile.x, missile.y, 96, function (u2)
                                                 if IsUnitEnemy(u2, owner) then
-                                                    Damage.apply(boss, u2, 6, false, false, udg_Nature, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
+                                                    Damage.apply(boss, u2, 10, false, false, udg_Nature, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
                                                 end
                                             end)
                                         end

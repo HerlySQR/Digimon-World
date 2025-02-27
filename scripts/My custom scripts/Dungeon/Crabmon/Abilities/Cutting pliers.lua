@@ -3,7 +3,7 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A0GV')
-    local DAMAGE = 50.
+    local DAMAGE = 40.
     local DISTANCE = 250.
     local SPEED = DISTANCE * 0.12
     local EFFECT = "war3mapImported\\ChargerWindCasterArt.mdx"

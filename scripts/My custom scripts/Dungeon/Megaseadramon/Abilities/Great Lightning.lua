@@ -4,8 +4,8 @@ OnInit(function ()
 
     local SPELL = FourCC('A00Y')
     local BOLT_MODEL = "war3mapImported\\Great Lightning.mdl"
-    local AREA = 200.
-    local DAMAGE = 75.
+    local AREA = 170.
+    local DAMAGE = 100.
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()

@@ -3,10 +3,10 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A0DE')
-    local AREA = 300.
+    local AREA = 350.
     local ENTANGLE = FourCC('A0DF')
-    local DAMAGE = 10.
-    local DURATION = 2. -- Same as object editor
+    local DAMAGE = 100.
+    local DURATION = 3. -- Same as object editor
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()

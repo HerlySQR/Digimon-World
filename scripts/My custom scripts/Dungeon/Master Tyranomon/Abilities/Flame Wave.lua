@@ -1,12 +1,12 @@
-Debug.beginFile("Garudamon\\Abilities\\Bird of Fire")
+Debug.beginFile("Master T\\Abilities\\Flame Wave")
 OnInit(function ()
     Require "BossFightUtils"
     local ProgressBar = Require "ProgressBar" ---@type ProgressBar
 
-    local SPELL = FourCC('A0BM')
-    local DISTANCE = 600. -- The same as in the object editor
-    local DAMAGE = 950.
-    local DAMAGE_PER_SEC = 30.
+    local SPELL = FourCC('A0E3')
+    local DISTANCE = 700. -- The same as in the object editor
+    local DAMAGE = 550.
+    local DAMAGE_PER_SEC = 40.
     local AREA = 156.
     local DELAY = 2. -- Same as object editor
     local birdOfFireOrder = Orders.flamestrike
@@ -44,9 +44,9 @@ OnInit(function ()
         local ty = GetSpellTargetY()
         local angle = math.atan(ty - y, tx - x)
         local missile = Missiles:create(x, y, 50., x + DISTANCE * math.cos(angle), y + DISTANCE * math.sin(angle), 50.)
-        missile:model("Missile\\SpiritDragonMissile(Red).mdx")
+        missile:model("Abilities\\Weapons\\FireBallMissile\\FireBallMissile.mdl")
         missile:speed(800.)
-        missile:scale(3.)
+        missile:scale(1.)
         missile.source = caster
         missile.owner = GetOwningPlayer(caster)
         missile.collision = AREA

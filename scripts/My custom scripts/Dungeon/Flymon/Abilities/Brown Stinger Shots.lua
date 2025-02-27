@@ -3,10 +3,10 @@ OnInit(function ()
     local ProgressBar = Require "ProgressBar" ---@type ProgressBar
 
     local SPELL = FourCC('A06Y')
-    local DELAY = 2.
-    local DAMAGE_PER_SHOT = 15.
-    local MAX_SHOTS = 20
-    local AREA = 300.
+    local DELAY = 2.5
+    local DAMAGE_PER_SHOT = 48.
+    local MAX_SHOTS = 14
+    local AREA = 170.
     local MISSILE_MODEL = "Abilities\\Weapons\\HarpyMissile\\HarpyMissile.mdl"
     local INTERVAL = 0.03125
 

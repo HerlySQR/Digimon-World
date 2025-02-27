@@ -3,9 +3,9 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A0DY')
-    local FIRE_MODEL = "Doodads\\Cinematic\\FireTrapUp\\FireTrapUp.mdl"
-    local AREA = 150.
-    local DAMAGE = 40.
+    local FIRE_MODEL = "Doodads\\Cinematic\\TownBurningFireEmitter\\TownBurningFireEmitter"
+    local AREA = 350.
+    local DAMAGE = 550.
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()

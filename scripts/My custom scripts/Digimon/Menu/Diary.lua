@@ -421,8 +421,9 @@ OnInit("Diary", function ()
 
     ---@param p player
     ---@param id integer
+    ---@return DigimonUnlockedInfo
     function DigimonUnlockedInfo.create(p, id)
-        unlockedDigiInfos[p][id] = unlockedDigiInfos[p][id] or setmetatable({
+        return setmetatable({
             staPerLvl = false,
             dexPerLvl = false,
             wisPerLvl = false,
@@ -570,8 +571,7 @@ OnInit("Diary", function ()
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
             self.ids[i] = self:getIntProperty("id" .. i)
-            DigimonUnlockedInfo.create(self.p, self.ids[i])
-            self.infos[i] = unlockedDigiInfos[self.p][self.ids[i]]
+            self.infos[i] = DigimonUnlockedInfo.create(self.p, self.ids[i])
             self.infos[i]:deserialize(self:getStringProperty("info"..i))
         end
         self.killAmt = self:getIntProperty("killAmt")
@@ -663,7 +663,7 @@ OnInit("Diary", function ()
                                 result = result .. "\n- " .. (unlockedCond.onlyNight and ("Only during night.") or "???")
                             end
                             BlzFrameSetText(DigimonEvolveRequirementsText[i], result)
-                            BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], true)
+                            BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], unlockedDigiInfos[LocalPlayer][digimonSelected] ~= nil)
                         else
                             BlzFrameSetText(DigimonEvolvesToOption[i], "???")
                             BlzFrameSetText(DigimonEvolveRequirementsText[i], "???")
@@ -736,7 +736,7 @@ OnInit("Diary", function ()
             BlzFrameSetEnable(digiInfos[id].button, true)
             BlzFrameSetVisible(digiInfos[id].sprite, true)
         end
-        DigimonUnlockedInfo.create(p, id)
+        unlockedDigiInfos[p][id] = DigimonUnlockedInfo.create(p, id)
     end
 
     ---@param id integer
@@ -1364,8 +1364,15 @@ OnInit("Diary", function ()
             BlzTriggerRegisterFrameEvent(t2, DigimonEvolvesToOptionButton[i], FRAMEEVENT_CONTROL_CLICK)
             TriggerAddAction(t2, function ()
                 if GetTriggerPlayer() == LocalPlayer then
-                    digimonSelected = digiInfos[digimonSelected].evolveOptions[i].toEvolve
-                    UpdateInformation()
+                    local id = digiInfos[digimonSelected].evolveOptions[i].toEvolve
+                    if digiInfos[id].name then
+                        digimonSelected = id
+                        UpdateInformation()
+                    else
+                        if BlzFrameGetEnable(digiInfos[id].button) and BlzFrameIsVisible(digiInfos[id].button) then
+                            BlzFrameClick(digiInfos[id].button)
+                        end
+                    end
                 end
             end)
 
@@ -1733,8 +1740,6 @@ OnInit("Diary", function ()
         if not unlockedInfo.evolveOptions[toEvolve] then
             unlockedInfo.evolveOptions[toEvolve] = __jarray(false)
             unlockedInfo.evolveOptions[toEvolve][condL] = true
-
-            UnlockButton(owner, toEvolve)
 
             if owner == LocalPlayer then
                 spriteRemain = 8

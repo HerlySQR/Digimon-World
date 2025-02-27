@@ -4,7 +4,7 @@ OnInit(function ()
 
     local SPELL = FourCC('A02F')
     local AREA = 300.
-    local DURATION = 14.
+    local DURATION = 22.
     local ROCK_ID = FourCC('o063')
 
     local nodes = GetRects("MovingEarthQuakeNode")

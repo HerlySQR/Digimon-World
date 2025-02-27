@@ -3,10 +3,10 @@ OnInit(function ()
 
     local SPELL = FourCC('A070')
     local DAMAGE_PER_SEC = 15.
-    local DURATION = 10.
-    local AREA = 200.
+    local DURATION = 8.
+    local AREA = 300.
     local CLOUD_MODEL = "Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl"
-    local INTERVAL = 0.03125
+    local INTERVAL = 1.0
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
@@ -21,13 +21,7 @@ OnInit(function ()
                     Damage.apply(caster, u, DAMAGE_PER_SEC, true, false, udg_Nature, DAMAGE_TYPE_NORMAL, WEAPON_TYPE_WHOKNOWS)
                     -- Poison
                     if not UnitHasBuffBJ(u, POISON_BUFF) then
-                        DummyCast(GetOwningPlayer(caster),
-                            GetUnitX(caster), GetUnitY(caster),
-                            POISON_SPELL,
-                            POISON_ORDER,
-                            1,
-                            CastType.TARGET,
-                            u)
+                        PoisonUnit(caster, u)
                     end
                 end
             end)

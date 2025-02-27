@@ -1,12 +1,12 @@
-Debug.beginFile("Garudamon\\Abilities\\Bird of Fire")
+Debug.beginFile("Master T\\Abilities\\Flame Wave")
 OnInit(function ()
     Require "BossFightUtils"
     local ProgressBar = Require "ProgressBar" ---@type ProgressBar
 
-    local SPELL = FourCC('A0BM')
-    local DISTANCE = 600. -- The same as in the object editor
-    local DAMAGE = 950.
-    local DAMAGE_PER_SEC = 30.
+    local SPELL = FourCC('A0E4')
+    local DISTANCE = 700. -- The same as in the object editor
+    local DAMAGE = 650.
+    local DAMAGE_PER_SEC = 20.
     local AREA = 156.
     local DELAY = 2. -- Same as object editor
     local birdOfFireOrder = Orders.flamestrike
@@ -44,16 +44,16 @@ OnInit(function ()
         local ty = GetSpellTargetY()
         local angle = math.atan(ty - y, tx - x)
         local missile = Missiles:create(x, y, 50., x + DISTANCE * math.cos(angle), y + DISTANCE * math.sin(angle), 50.)
-        missile:model("Missile\\SpiritDragonMissile(Red).mdx")
+        missile:model("Missile\\SoundWave.mdx")
         missile:speed(800.)
-        missile:scale(3.)
+        missile:scale(1.)
         missile.source = caster
         missile.owner = GetOwningPlayer(caster)
         missile.collision = AREA
         missile.onHit = function (u)
             if IsUnitEnemy(caster, GetOwningPlayer(u)) then
                 UnitDamageTarget(caster, u, DAMAGE, true, false, udg_Fire, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
-                local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\BreathOfFire\\BreathOfFireDamage.mdl", u, "chest")
+                local eff = AddSpecialEffectTarget("Effect\\SparkleStampedeMissileDeath.mdx", u, "chest")
                 Timed.echo(1., 4., function ()
                     UnitDamageTarget(caster, u, DAMAGE_PER_SEC, true, false, udg_Fire, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
                 end, function ()

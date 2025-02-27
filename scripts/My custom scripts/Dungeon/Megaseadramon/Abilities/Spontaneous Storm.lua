@@ -4,11 +4,11 @@ OnInit(function ()
     local Color = Require "Color" ---@type Color
 
     local SPELL = FourCC('A00X')
-    local CLOUD_MODEL = "war3mapImported\\NoxCloudMissile.mdl"
-    local DURATION = 10.
+    local CLOUD_MODEL = "Abilities\\Spells\\Human\\CloudOfFog\\CloudOfFog.mdl"
+    local DURATION = 8.
     local COLOR = Color.new(0, 224, 255)
-    local AREA = 200.
-    local DAMAGE = 5.
+    local AREA = 300.
+    local DAMAGE = 25.
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
@@ -19,7 +19,7 @@ OnInit(function ()
         BlzSetSpecialEffectZ(cloud, 200.)
         BlzSetSpecialEffectColor(cloud, COLOR)
         BlzSetSpecialEffectScale(cloud, 2.5)
-        Timed.echo(0.2, DURATION, function ()
+        Timed.echo(0.3, DURATION, function ()
             ForUnitsInRange(x, y, AREA, function (u)
                 if UnitAlive(u) and IsUnitEnemy(u, owner) and not IsUnitType(u, UNIT_TYPE_MAGIC_IMMUNE) then
                     Damage.apply(caster, u, DAMAGE, true, false, udg_Air, DAMAGE_TYPE_COLD, WEAPON_TYPE_WHOKNOWS)

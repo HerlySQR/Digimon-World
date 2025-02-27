@@ -4,7 +4,7 @@ OnInit(function ()
 
     local SPELL = FourCC('A0BH')
     local SUMMON_EFFECT = "Abilities\\Spells\\Items\\TomeOfRetraining\\TomeOfRetrainingCaster.mdl"
-    local GEKOMON_ID = FourCC('O017')
+    local GEKOMON_ID = FourCC('O01A')
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()

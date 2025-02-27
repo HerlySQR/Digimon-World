@@ -4,10 +4,10 @@ OnInit(function ()
     Require "JumpSystem"
 
     local SPELL = FourCC('A0DK')
-    local DAMAGE = 100.
-    local AREA = 225.
+    local DAMAGE = 350.
+    local AREA = 255.
     local DURATION = 1.
-    local HEIGHT = 100.^2
+    local HEIGHT = 120.^2
     local SPEED = math.sqrt(2)*DURATION
     local EFFECT = "Abilities\\Weapons\\FrostWyrmMissile\\FrostWyrmMissile.mdl"
 

@@ -3,10 +3,10 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A02B')
-    local DURATION = 5. -- seconds
+    local DURATION = 7. -- seconds
     local DAMAGE = 40. -- per explosion
     local MIN_DIST = 50.
-    local AREA = 185.
+    local AREA = 650.
     local AREA_EXP = 125.
     local INTERVAL = 0.5
 
