@@ -26,6 +26,12 @@ OnInit("Hotkeys", function ()
 
     local MAX_KEYS = 0xFF
 
+    local oskeyName = {} ---@type table<oskeytype, string>
+    local oskeyConverted = {} ---@type table<integer, oskeytype>
+    local oskeyFromName = {} ---@type table<string, oskeytype>
+    local frameHotkeys = {} ---@type table<framehandle, string>
+    local oskeyIsUsed = {} ---@type table<oskeytype, boolean>
+
     ---@param key oskeytype
     ---@return boolean
     local function IsBannedKey(key)
@@ -45,14 +51,11 @@ OnInit("Hotkeys", function ()
             return true
         elseif key == OSKEY_LMETA then
             return true
+        elseif oskeyIsUsed[key] then
+            return true
         end
         return false
     end
-
-    local oskeyName = {} ---@type table<oskeytype, string>
-    local oskeyConverted = {} ---@type table<integer, oskeytype>
-    local oskeyFromName = {} ---@type table<string, oskeytype>
-    local frameHotkeys = {} ---@type table<framehandle, string>
 
     -- These values are different for each player
     local LocalPlayer = GetLocalPlayer()
@@ -88,10 +91,11 @@ OnInit("Hotkeys", function ()
                 BlzTriggerRegisterPlayerKeyEvent(t, GetEnumPlayer(), oskeyFromName[hotkey], 0, true)
             end)
             TriggerAddAction(t, function ()
-                if GetTriggerPlayer() == LocalPlayer and BlzFrameIsVisible(frame) then
+                if GetTriggerPlayer() == LocalPlayer and BlzFrameIsVisible(frame) and BlzFrameGetEnable(frame) then
                     BlzFrameClick(frame)
                 end
             end)
+            oskeyIsUsed[oskeyFromName[hotkey]] = true
         end)
     end
 
@@ -452,10 +456,14 @@ OnInit("Hotkeys", function ()
     OnInit.final(function ()
         local t = CreateTrigger()
         for k, v in pairs(_G) do
-            if Debug.wc3Type(v) == "oskeytype" and not IsBannedKey(v) then
+            if Debug.wc3Type(v) == "oskeytype" then
                 ForForce(FORCE_PLAYING, function ()
-                    for meta = 0, 15 do
-                        BlzTriggerRegisterPlayerKeyEvent(t, GetEnumPlayer(), v, meta, true)
+                    if IsBannedKey(v) then
+                        BlzTriggerRegisterPlayerKeyEvent(t, GetEnumPlayer(), v, 0, true)
+                    else
+                        for meta = 0, 15 do
+                            BlzTriggerRegisterPlayerKeyEvent(t, GetEnumPlayer(), v, meta, true)
+                        end
                     end
                 end)
                 oskeyName[v] = string.sub(k, 7)
@@ -468,24 +476,28 @@ OnInit("Hotkeys", function ()
                 local key = BlzGetTriggerPlayerKey()
                 local meta = BlzGetTriggerPlayerMetaKey()
                 if selectingKey then
-                    local frame = frames[frameSelected]
-                    if frame then
-                        selectingKey = false
-                        if not edits[key] then
-                            edits[key] = {}
+                    if IsBannedKey(key) then
+                        BlzFrameSetText(HotkeyMessage, "|cffff0000Invalid key|r")
+                    else
+                        local frame = frames[frameSelected]
+                        if frame then
+                            selectingKey = false
+                            if not edits[key] then
+                                edits[key] = {}
+                            end
+
+                            local index = edits[key][meta] or (frameWithKey[key] and frameWithKey[key][meta])
+                            if index then
+                                BlzFrameSetText(hotkeyText[index], "")
+                            end
+
+                            edits[key][meta] = frameSelected
+
+                            BlzFrameSetText(hotkeyText[frameSelected], ((meta ~= 0) and (OskeyMeta[meta] .. " + ") or "") .. oskeyName[key])
+                            BlzFrameSetText(HotkeyMessage, "")
                         end
-
-                        local index = edits[key][meta] or (frameWithKey[key] and frameWithKey[key][meta])
-                        if index then
-                            BlzFrameSetText(hotkeyText[index], "")
-                        end
-
-                        edits[key][meta] = frameSelected
-
-                        BlzFrameSetText(hotkeyText[frameSelected], ((meta ~= 0) and (OskeyMeta[meta] .. " + ") or "") .. oskeyName[key])
-                        BlzFrameSetText(HotkeyMessage, "")
+                        frameSelected = -1
                     end
-                    frameSelected = -1
                 else
                     local id = frameWithKey[key] and frameWithKey[key][meta]
                     if id and frames[id] and BlzFrameIsVisible(frames[id]) and BlzFrameGetEnable(frames[id]) then

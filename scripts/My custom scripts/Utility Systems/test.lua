@@ -1,20 +1,24 @@
-Backdrop01 = nil 
-TriggerBackdrop01 = nil 
-Fisher = nil 
-TriggerFisher = nil 
-REFORGEDUIMAKER = {}
-REFORGEDUIMAKER.Initialize = function()
-BlzHideOriginFrames(true) 
-BlzFrameSetSize(BlzGetFrameByName("ConsoleUIBackdrop",0), 0, 0.0001)
+Debug.beginFile("Pummel Peck")
+OnInit(function ()
+    Require "SpellsTemplate"
 
-
-Backdrop01 = BlzCreateFrameByType("BACKDROP", "BACKDROP", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), "", 1)
-BlzFrameSetAbsPoint(Backdrop01, FRAMEPOINT_TOPLEFT, 0.250000, 0.350000)
-BlzFrameSetAbsPoint(Backdrop01, FRAMEPOINT_BOTTOMRIGHT, 0.260000, 0.250000)
-BlzFrameSetTexture(Backdrop01, "CustomFrame.png", 0, true)
-
-Fisher = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop01, "", 1)
-BlzFrameSetPoint(Fisher, FRAMEPOINT_TOPLEFT, Backdrop01, FRAMEPOINT_TOPLEFT, -0.010000, -0.10000)
-BlzFrameSetPoint(Fisher, FRAMEPOINT_BOTTOMRIGHT, Backdrop01, FRAMEPOINT_BOTTOMRIGHT, 0.010000, -0.030000)
-BlzFrameSetTexture(Fisher, "CustomFrame.png", 0, true)
-end
+    CreateMultipleMissilesSpell({
+        spell = FourCC('A06A'),
+        strDmgFactor = 0.3,
+        agiDmgFactor = 0.6,
+        intDmgFactor = 0.5,
+        attackFactor = 1.2,
+        missileModel = "war3mapImported\\Kiwimon.mdx",
+        missileCount = 6,
+        zOffsetSource = 100,
+        zOffsetTarget = 0,
+        scale = 0.001,
+        speed = 700.,
+        arc = 15.,
+        attType = udg_Nature,
+        dmgType = DAMAGE_TYPE_ENHANCED,
+        buffType = BuffSpell.STUN,
+        buffLevel = 2
+    })
+end)
+Debug.endFile()

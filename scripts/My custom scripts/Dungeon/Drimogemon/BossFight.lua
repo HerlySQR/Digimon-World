@@ -22,9 +22,9 @@ OnInit(function ()
             3, Orders.submerge, CastType.IMMEDIATE -- Hunger
         },
         actions = function (u)
-            if GetUnitCurrentOrder(boss) == 0 then
-                IssuePointOrderById(boss, Orders.attack, GetUnitX(u), GetUnitY(u))
-            end
+            --if GetUnitCurrentOrder(boss) == 0 then
+                --IssuePointOrderById(boss, Orders.attack, GetUnitX(u), GetUnitY(u))
+            --end
             if GetUnitHPRatio(boss) < 0.5 then
                 UnitAddAbility(boss, movingEarthquake)
                 UnitAddAbility(boss, hunger)

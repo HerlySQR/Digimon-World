@@ -13,6 +13,17 @@ OnInit("Digimon", function ()
 
     local LocalPlayer = GetLocalPlayer() ---@type player
 
+    -- Init damage types
+    udg_WaterAsInt = udg_ATTACK_TYPE_CHAOS
+    udg_BeastAsInt = udg_ATTACK_TYPE_MAGIC
+    udg_MachineAsInt = udg_ATTACK_TYPE_HERO
+    udg_AirAsInt = udg_ATTACK_TYPE_PIERCE
+    udg_DarkAsInt = udg_ATTACK_TYPE_SIEGE
+    udg_FireAsInt = udg_ATTACK_TYPE_NORMAL
+    udg_NatureAsInt = udg_ATTACK_TYPE_SPELLS
+    udg_HolyAsInt = 7
+    udg_Holy = ConvertAttackType(udg_HolyAsInt)
+
     local STAMINA_TRAINING = FourCC('A0CU')
     local DEXTERITY_TRAINING = FourCC('A0CT')
     local WISDOM_TRAINING = FourCC('A0CV')

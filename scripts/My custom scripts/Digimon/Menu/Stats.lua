@@ -838,10 +838,15 @@ OnInit("Stats", function ()
     end)
 
     local t = CreateTrigger()
-    TriggerRegisterVariableEvent(t, "udg_ArmorDamageEvent", EQUAL, 1)
+    TriggerRegisterVariableEvent(t, "udg_PreDamageEvent", EQUAL, 1)
     TriggerAddAction(t, function ()
         if udg_IsDamageAttack and holyDamages[GetUnitTypeId(udg_DamageEventSource)] then
             udg_DamageEventAttackT = udg_HolyAsInt
+        end
+        -- Holy vs Fire
+        if udg_DamageEventAttackT == udg_HolyAsInt and BlzGetUnitIntegerField(udg_DamageEventTarget, UNIT_IF_DEFENSE_TYPE) == 7 then
+            udg_ByPass = true
+            udg_DamageByPass = udg_DamageEventAmount
         end
     end)
 

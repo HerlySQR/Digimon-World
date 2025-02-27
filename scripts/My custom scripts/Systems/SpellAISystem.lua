@@ -102,7 +102,7 @@ OnInit("SpellAISystem", function ()
                 if enemyTarget then
                     local maxThreat = -1
                     ForUnitsInRange(GetUnitX(u), GetUnitY(u), range, function (u2)
-                        if not BlzIsUnitInvulnerable(u) then
+                        if not BlzIsUnitInvulnerable(u2) and UnitAlive(u2) then
                             local threat = ZTS_GetThreatUnitAmount(u, u2)
                             if threat > maxThreat then
                                 target = u2
@@ -113,7 +113,7 @@ OnInit("SpellAISystem", function ()
                 end
                 if allyTarget then
                     target = GetRandomUnitOnRange(GetUnitX(u), GetUnitY(u), range, function (u2)
-                        return IsUnitAlly(u, GetOwningPlayer(u2))
+                        return IsUnitAlly(u, GetOwningPlayer(u2)) and UnitAlive(u2)
                     end)
                 end
                 if target then
@@ -126,7 +126,7 @@ OnInit("SpellAISystem", function ()
                     return IssuePointOrderById(u, order, x, y)
                 else
                     local random = GetRandomUnitOnRange(GetUnitX(u), GetUnitY(u), range, function (u2)
-                        return ((enemyTarget and IsUnitEnemy(u, GetOwningPlayer(u2)) and not BlzIsUnitInvulnerable(u)) or (allyTarget and IsUnitAlly(u, GetOwningPlayer(u2))))
+                        return ((enemyTarget and UnitAlive(u2) and IsUnitEnemy(u, GetOwningPlayer(u2)) and not BlzIsUnitInvulnerable(u2)) or (allyTarget and IsUnitAlly(u, GetOwningPlayer(u2))))
                     end)
                     if random then
                         return IssuePointOrderById(u, order, GetUnitX(random), GetUnitY(random))
@@ -135,10 +135,10 @@ OnInit("SpellAISystem", function ()
             elseif hasNoTarget then
                 local count = 0
                 ForUnitsInRange(GetUnitX(u), GetUnitY(u), area, function (u2)
-                    if enemyTarget and (not IsUnitEnemy(u, GetOwningPlayer(u2)) or BlzIsUnitInvulnerable(u)) then
+                    if enemyTarget and (not IsUnitEnemy(u, GetOwningPlayer(u2)) or BlzIsUnitInvulnerable(u2)) and UnitAlive(u2) then
                         return
                     end
-                    if allyTarget and not IsUnitAlly(u, GetOwningPlayer(u2)) then
+                    if allyTarget and not IsUnitAlly(u, GetOwningPlayer(u2)) and UnitAlive(u2) then
                         return
                     end
                     count = count + 1

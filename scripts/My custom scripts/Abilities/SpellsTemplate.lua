@@ -21,7 +21,7 @@ OnInit("SpellsTemplate", function ()
     ---@param missile table
     ---@param target unit
     local function applyEffects(data, missile, target)
-        Damage.apply(missile.source, target, missile.damage, true, false, data.attType, data.dmgType, WEAPON_TYPE_WHOKNOWS)
+        Damage.apply(missile.source, target, missile.damage, false, false, data.attType, data.dmgType, WEAPON_TYPE_WHOKNOWS)
         if data.targetEffect then
             DestroyEffect(AddSpecialEffect(data.targetEffect, GetUnitX(target), GetUnitY(target)))
         end
@@ -89,11 +89,17 @@ OnInit("SpellsTemplate", function ()
         RegisterSpellEffectEvent(data.spell, function ()
             local caster = GetSpellAbilityUnit()
             local target = GetSpellTargetUnit()
+            local targetX, targetY
+            if target then
+                targetX, targetY = GetUnitX(target), GetUnitY(target)
+            else
+                targetX, targetY = GetSpellTargetX(), GetSpellTargetY()
+            end
             -- Calculating the damage
             local damage = (GetAttributeDamage(caster, data.strDmgFactor, data.agiDmgFactor, data.intDmgFactor) +
                            GetAvarageAttack(caster) * data.attackFactor)*data.finalDmgFactor
             -- Create the missile
-            local missile = Missiles:create(GetUnitX(caster), GetUnitY(caster), data.zOffsetSource, GetUnitX(target), GetUnitY(target), data.zOffsetTarget)
+            local missile = Missiles:create(GetUnitX(caster), GetUnitY(caster), data.zOffsetSource, targetX, targetY, data.zOffsetTarget)
             missile.source = caster
             missile.owner = GetOwningPlayer(caster)
             missile.target = target
@@ -215,8 +221,8 @@ OnInit("SpellsTemplate", function ()
                 missile.source = caster
                 missile.owner = owner
                 missile.damage = damage
-                missile:scale(data.scale)
                 missile:model(data.missileModel)
+                missile:scale(data.scale)
                 missile:speed(data.speed)
                 missile:arc(data.arc)
                 missile.onFinish = function ()

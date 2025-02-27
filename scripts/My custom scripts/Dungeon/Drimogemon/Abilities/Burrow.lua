@@ -1,10 +1,11 @@
+Debug.beginFile("Drimogemon\\Abilities\\Burrow")
 OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A02D')
     local DURATION = 4.
-    local DAMAGE = 85.
-    local RANGE = 1000.
+    local DAMAGE = 105.
+    local RANGE = 600.
     local AREA = 110.
     local CASTER_MODEL = "war3mapImported\\Drimogemon.mdl"
     local INTERVAL = 0.02
@@ -16,7 +17,6 @@ OnInit(function ()
         local owner = GetOwningPlayer(caster)
         local x, y = GetUnitX(caster), GetUnitY(caster)
 
-
         -- Burrow effect
         ShowUnitHide(caster)
         BossIsCasting(caster, true)
@@ -26,6 +26,7 @@ OnInit(function ()
         DestroyEffect(dust)
 
         local eff = AddSpecialEffect(CASTER_MODEL, x, y)
+        BlzSetSpecialEffectScale(eff, BlzGetUnitRealField(caster, UNIT_RF_SCALING_VALUE))
         local yaw = GetUnitFacing(caster) * bj_DEGTORAD
         BlzSetSpecialEffectOrientation(eff, yaw, 0, 0)
         BlzSpecialEffectAddSubAnimation(eff, SUBANIM_TYPE_TWO)
@@ -102,7 +103,7 @@ OnInit(function ()
                 BlzSetSpecialEffectScale(dust, 2.)
                 DestroyEffect(dust)
 
-                BlzSetSpecialEffectScale(eff, 1.)
+                BlzSetSpecialEffectScale(eff, BlzGetUnitRealField(caster, UNIT_RF_SCALING_VALUE))
                 pitch = -pitch
                 BlzSetSpecialEffectOrientation(eff, yaw, pitch, 0)
                 Timed.echo(INTERVAL, 1., function ()
@@ -121,5 +122,5 @@ OnInit(function ()
             end)
         end)
     end)
-
 end)
+Debug.endFile()

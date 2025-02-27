@@ -169,9 +169,9 @@ OnInit(function ()
         inner = gg_rct_DatamonInner,
         entrance = gg_rct_DatamonEntrance,
         spells = {
-            5, Orders.shadowstrike, CastType.TARGET, -- Homming Missile
-            3, Orders.clusterrockets, CastType.POINT, -- Missile Barrage
-            2, Orders.avengerform, CastType.IMMEDIATE, -- Move
+            FourCC('A0DZ'), 5, Orders.shadowstrike, CastType.TARGET, -- Homming Missile
+            FourCC('A0E0'), 3, Orders.clusterrockets, CastType.POINT, -- Missile Barrage
+            FourCC('A0H5'), 2, Orders.avengerform, CastType.IMMEDIATE, -- Move
         },
         actions = function (u, unitsInTheField)
             --BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)

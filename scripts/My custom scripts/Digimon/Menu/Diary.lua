@@ -128,7 +128,7 @@ OnInit("Diary", function ()
     BlzSetSpecialEffectColorByPlayer(glow, Player(GetHandleId(PLAYER_COLOR_SNOW)))
     BlzSetSpecialEffectScale(glow, 0.5)
     BlzSetSpecialEffectHeight(glow, BlzGetLocalSpecialEffectZ(glow) - 7.5)
-    BlzSetSpecialEffectAlpha(glow, 200)
+    BlzSetSpecialEffectAlpha(glow, 0)
 
     local NO_SKIN_ITEM = FourCC('I07L')
     local itemModel = CreateItem(NO_SKIN_ITEM, GetRectCenterX(gg_rct_DiaryModel), GetRectCenterY(gg_rct_DiaryModel))
@@ -323,7 +323,7 @@ OnInit("Diary", function ()
 
     local spriteRemain = 0
 
-    Timed.echo(1.96, function ()
+    Timed.echo(1., function ()
         BlzFrameSetVisible(Sprite, spriteRemain > 0)
         spriteRemain = spriteRemain - 1
     end)
@@ -347,6 +347,7 @@ OnInit("Diary", function ()
             RemoveLocation(glowOffset)
         else
             self.iconPos = glowOffset
+            Environment.get(name).iconPos = glowOffset
         end
 
         if mapPortion then

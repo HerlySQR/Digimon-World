@@ -1,12 +1,13 @@
+-- Lava explosions
 OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A02B')
-    local DURATION = 10. -- seconds
-    local DAMAGE = 25. -- per explosion
-    local MIN_DIST = 128.
-    local AREA = 500.
-    local AREA_EXP = 150.
+    local DURATION = 5. -- seconds
+    local DAMAGE = 40. -- per explosion
+    local MIN_DIST = 50.
+    local AREA = 185.
+    local AREA_EXP = 125.
     local INTERVAL = 0.5
 
     RegisterSpellEffectEvent(SPELL, function ()
@@ -24,7 +25,7 @@ OnInit(function ()
 
                 ForUnitsInRange(x, y, AREA_EXP, function (u)
                     if IsUnitEnemy(caster, GetOwningPlayer(u)) then
-                        UnitDamageTarget(caster, u, DAMAGE, true, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
+                        UnitDamageTarget(caster, u, DAMAGE, true, false, udg_Fire, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
                     end
                 end)
             end

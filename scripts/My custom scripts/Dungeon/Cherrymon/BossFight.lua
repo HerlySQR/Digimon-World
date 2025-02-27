@@ -14,10 +14,10 @@ OnInit(function ()
         inner = gg_rct_CherrymonInner,
         entrance = gg_rct_CherrymonEntrance,
         spells = {
-            4, Orders.clusterrockets, CastType.POINT, -- Pit Pelter
-            0, Orders.entanglingroots, CastType.TARGET, -- Entangle
-            5, Orders.spiritwolf, CastType.IMMEDIATE, -- Forest Rage
-            3, Orders.stomp, CastType.IMMEDIATE -- Entangle Branches
+            FourCC('A0DD'), 4, Orders.clusterrockets, CastType.POINT, -- Pit Pelter
+            FourCC('A0DG'), 0, Orders.entanglingroots, CastType.TARGET, -- Entangle
+            FourCC('A0DH'), 5, Orders.spiritwolf, CastType.IMMEDIATE, -- Forest Rage
+            FourCC('A0DE'), 3, Orders.stomp, CastType.IMMEDIATE -- Entangle Branches
         },
         actions = function (u)
             if GetUnitHPRatio(boss) < 0.5 then

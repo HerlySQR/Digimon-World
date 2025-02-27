@@ -45,6 +45,9 @@ OnInit("DigimonBank", function ()
     local AreYouSure = nil ---@type framehandle
     local Yes = nil ---@type framehandle
     local No = nil ---@type framehandle
+    local ReviveItems = nil ---@type framehandle
+    local ReviveItemsChargesBackdrop = nil ---@type framehandle
+    local ReviveItemsCharges = nil ---@type framehandle
     -- Saved
     local SavedDigimons = nil ---@type framehandle
     local Using = nil ---@type framehandle
@@ -353,7 +356,11 @@ OnInit("DigimonBank", function ()
 
     ---@return boolean
     function Bank:freeDigimonConditions()
-        return self:used() > 1
+        if self.pressed == -1 then
+            return false
+        end
+
+        return self:used() > 1 and self.stocked[self.pressed]:isAlive()
     end
 
     ---@return boolean
@@ -523,6 +530,9 @@ OnInit("DigimonBank", function ()
         self.priorities = {}
         self.spawnPoint.x = GetRectCenterX(gg_rct_Player_1_Spawn)
         self.spawnPoint.y = GetRectCenterY(gg_rct_Player_1_Spawn)
+        self.reviveItems = 0
+        self.punish = false
+        self.maxUsable = MAX_USED
     end
 
     function Bank:clearItems()
@@ -775,6 +785,18 @@ OnInit("DigimonBank", function ()
         bank.savedClicked = -1
     end
 
+    -- Update frames
+
+    local function UpdateButtons()
+        local bank = Bank[GetPlayerId(LocalPlayer)] ---@type Bank
+        BlzFrameSetEnable(Summon, bank:useDigimonConditions() and bank:avaible(bank.pressed))
+        BlzFrameSetEnable(Store, bank:storeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
+        BlzFrameSetEnable(Free, bank:freeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
+        BlzFrameSetEnable(Revive, bank:reviveDigimonConditions())
+    end
+
+    Timed.echo(0.1, UpdateButtons)
+
     -- Always use this function in a "if player == GetLocalPlayer() then" block
     local function UpdateMenu()
         local bank = Bank[GetPlayerId(LocalPlayer)] ---@type Bank
@@ -819,7 +841,14 @@ OnInit("DigimonBank", function ()
 
                 BlzFrameSetVisible(DigimonTIsMain[i], bank.main == d)
 
-                BlzFrameSetText(Revive, (bank.reviveCooldown > 0 and ("[" .. math.floor(bank.reviveCooldown) .. "] ") or "") .. "|cffFCD20DRevive (" .. bank.reviveItems .. ")|r")
+                BlzFrameSetText(Revive, (bank.reviveCooldown > 0 and ("[" .. math.floor(bank.reviveCooldown) .. "] ") or "") .. "|cffFCD20DRevive|r")
+
+                if bank.reviveItems > 0 then
+                    BlzFrameSetVisible(ReviveItems, true)
+                    BlzFrameSetText(ReviveItemsCharges, tostring(bank.reviveItems))
+                else
+                    BlzFrameSetVisible(ReviveItems, false)
+                end
             else
                 -- Button
                 BlzFrameSetEnable(DigimonT[i], false)
@@ -842,6 +871,7 @@ OnInit("DigimonBank", function ()
         if bank.pressed ~= -1 and BlzFrameGetEnable(DigimonT[bank.pressed]) then
             BlzFrameClick(DigimonT[bank.pressed])
         end
+        UpdateButtons()
     end
 
     -- When the digimon evolves
@@ -1103,6 +1133,7 @@ OnInit("DigimonBank", function ()
 
     local function PressedActions(i)
         local bank = Bank[GetPlayerId(GetTriggerPlayer())] ---@type Bank
+
         if GetTriggerPlayer() == LocalPlayer then
             -- Refresh the last pressed button
             BlzFrameSetVisible(DigimonTSelected[bank.pressed], false)
@@ -1111,11 +1142,17 @@ OnInit("DigimonBank", function ()
             BlzFrameSetVisible(DigimonTSelected[i], true)
             BlzFrameSetEnable(DigimonT[i], false)
             -- Other changes
-            if bank.stocked[i]:isAlive() then
-                BlzFrameSetVisible(Revive, false)
+            if bank.stocked[i] then -- Error proof
+                if bank.stocked[i]:isAlive() then
+                    BlzFrameSetVisible(Revive, false)
+                else
+                    BlzFrameSetVisible(Revive, true)
+                    BlzFrameSetVisible(Summon, false)
+                    BlzFrameSetVisible(Store, false)
+                end
             else
-                BlzFrameSetVisible(Revive, true)
-                BlzFrameSetVisible(Summon, false)
+                BlzFrameSetVisible(Revive, false)
+                BlzFrameSetVisible(Summon, true)
                 BlzFrameSetVisible(Store, false)
             end
             if bank.inUse[i] then
@@ -1125,8 +1162,14 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetVisible(Summon, true)
                 BlzFrameSetVisible(Store, false)
             end
+            UpdateButtons()
         end
-        bank.pressed = i
+
+        if bank.stocked[i] then
+            bank.pressed = i
+        else
+            bank.pressed = -1
+        end
     end
 
     local function SummonADigimonFunc()
@@ -1150,11 +1193,12 @@ OnInit("DigimonBank", function ()
 
     local function SummonFunc()
         local p = GetTriggerPlayer()
+        SummonDigimon(p, Bank[GetPlayerId(p)].pressed)
         if p == LocalPlayer then
             BlzFrameSetVisible(Summon, false)
             BlzFrameSetVisible(Store, true)
+            UpdateButtons()
         end
-        SummonDigimon(p, Bank[GetPlayerId(p)].pressed)
     end
 
     local function StoreFunc()
@@ -1502,6 +1546,23 @@ OnInit("DigimonBank", function ()
         TriggerAddAction(t, NoFunc)
         AssignFrame(No, 33)
 
+        ReviveItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", StockedDigimonsMenu, "", 1)
+        BlzFrameSetPoint(ReviveItems, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.13000, -0.23250)
+        BlzFrameSetPoint(ReviveItems, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, 0.030000, 0.0075000)
+        BlzFrameSetTexture(ReviveItems, "ReplaceableTextures\\CommandButtons\\BTNHealButton.blp", 0, true)
+        BlzFrameSetVisible(ReviveItems, false)
+
+        ReviveItemsChargesBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", ReviveItems, "", 1)
+        BlzFrameSetPoint(ReviveItemsChargesBackdrop, FRAMEPOINT_TOPLEFT, ReviveItems, FRAMEPOINT_TOPLEFT, 0.015000, -0.015000)
+        BlzFrameSetPoint(ReviveItemsChargesBackdrop, FRAMEPOINT_BOTTOMRIGHT, ReviveItems, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.0000)
+        BlzFrameSetTexture(ReviveItemsChargesBackdrop, "UI\\Widgets\\EscMenu\\Human\\blank-background.blp", 0, true)
+
+        ReviveItemsCharges = BlzCreateFrameByType("TEXT", "name", ReviveItemsChargesBackdrop, "", 0)
+        BlzFrameSetPoint(ReviveItemsCharges, FRAMEPOINT_TOPLEFT, ReviveItemsChargesBackdrop, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000)
+        BlzFrameSetPoint(ReviveItemsCharges, FRAMEPOINT_BOTTOMRIGHT, ReviveItemsChargesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.0010000, 0.0000)
+        BlzFrameSetText(ReviveItemsCharges, "99")
+        BlzFrameSetTextAlignment(ReviveItemsCharges, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_RIGHT)
+
         -- Saved
 
         SaveItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
@@ -1809,19 +1870,10 @@ OnInit("DigimonBank", function ()
     end)
 
     OnLeaderboard(function ()
-        BlzFrameSetParent(StockedDigimonsMenu, BlzGetFrameByName("Leaderboard", 0))
+        --BlzFrameSetParent(StockedDigimonsMenu, BlzGetFrameByName("Leaderboard", 0))
         BlzFrameSetParent(SavedDigimons, BlzGetFrameByName("Leaderboard", 0))
         BlzFrameSetParent(ItemMenu, BlzGetFrameByName("Leaderboard", 0))
         BlzFrameSetParent(BuySlotMenu, BlzGetFrameByName("Leaderboard", 0))
-    end)
-
-    -- Update frames
-    Timed.echo(0.1, function ()
-        local bank = Bank[GetPlayerId(LocalPlayer)] ---@type Bank
-        BlzFrameSetEnable(Summon, bank:useDigimonConditions() and bank:avaible(bank.pressed))
-        BlzFrameSetEnable(Store, bank:storeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
-        BlzFrameSetEnable(Free, bank:freeDigimonConditions() and bank.inUse[bank.pressed] ~= nil)
-        BlzFrameSetEnable(Revive, bank:reviveDigimonConditions())
     end)
 
     -- Functions to use
@@ -1899,8 +1951,13 @@ OnInit("DigimonBank", function ()
     ---@return boolean
     function SummonDigimon(p, index, holdEnv)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
+        if bank:used() >= bank.maxUsable then
+            return false
+        end
+
         local d = bank.stocked[index] ---@type Digimon
         local b = false
+
         if d then
             d:setOwner(p)
 
@@ -1949,6 +2006,22 @@ OnInit("DigimonBank", function ()
         if d then
             digimonUpdateEvent:run(p, d)
         end
+        Timed.call(function ()
+            local count = 0
+            ForUnitsOfPlayer(p, function (u)
+                if IsUnitType(u, UNIT_TYPE_HERO) then
+                    count = count + 1
+                end
+            end)
+            if count > MAX_USED then
+                DisplayTextToPlayer(p, 0, 0, "|cffff0000Warning:|r You are using more digimons than the " .. MAX_USED .. " allowed, so to prevent further bugs your digimons will be 'outlived'.\n We recommend to reload or restart the game and report it to the Discord server.")
+                ForUnitsOfPlayer(p, function (u)
+                    if IsUnitType(u, UNIT_TYPE_HERO) and not IsMainDigimon(p, Digimon.getInstance(u)) then
+                        KillUnit(u)
+                    end
+                end)
+            end
+        end)
         return b
     end
 
@@ -1963,6 +2036,12 @@ OnInit("DigimonBank", function ()
             bank.stocked[index] = nil
             d.owner = nil
             d:setOwner(Digimon.PASSIVE)
+            for i = 0, 5 do
+                local m = UnitItemInSlot(d.root, i)
+                if m then
+                    UnitRemoveItem(d.root, m)
+                end
+            end
             if bank.inUse[index] then
                 bank.inUse[index] = nil
                 for i = #bank.priorities, 1, -1 do
@@ -2038,12 +2117,17 @@ OnInit("DigimonBank", function ()
                 end
             end
 
-            bank.allDead = allDead
-
-            bank:storeDigimon(index, false)
             Timed.call(function () dead:setOwner(Digimon.PASSIVE) end)
             -- Hide after 2 seconds to not do it automatically
             Timed.call(2., function () dead:hideInTheCorner() end)
+
+            if index == -1 then
+                return
+            end
+
+            bank.allDead = allDead
+
+            bank:storeDigimon(index, false)
 
             if p == LocalPlayer then
                 UpdateMenu()
@@ -2167,7 +2251,6 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetVisible(StockedDigimonsMenu, false)
                 RemoveButtonFromEscStack(SummonADigimon)
             end
-            UpdateMenu()
         end
     end
 
@@ -2213,7 +2296,7 @@ OnInit("DigimonBank", function ()
     ---@return boolean
     function CanStockDigimons(p)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
-        for i = 0, MAX_STOCK do
+        for i = 0, MAX_STOCK - 1 do
             if not bank.stocked[i] then
                 return true
             end

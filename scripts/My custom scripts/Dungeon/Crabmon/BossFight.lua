@@ -15,10 +15,10 @@ OnInit(function ()
         inner = gg_rct_CrabmonInner,
         entrance = gg_rct_CrabmonEntrance,
         spells = {
-            1, Orders.chainlightning, CastType.TARGET, -- Scissor Magic
-            3, Orders.berserk, CastType.IMMEDIATE, -- Berserk
-            2, Orders.clusterrockets, CastType.POINT, -- Scissor Magic Chaos
-            3, Orders.breathoffire, CastType.TARGET, -- Cutting pliers
+            FourCC('A0H6'), 1, Orders.chainlightning, CastType.TARGET, -- Scissor Magic
+            FourCC('A074'), 3, Orders.berserk, CastType.IMMEDIATE, -- Berserk
+            FourCC('A0C4'), 2, Orders.clusterrockets, CastType.POINT, -- Scissor Magic Chaos
+            FourCC('A0GV'), 3, Orders.breathoffire, CastType.TARGET, -- Cutting pliers
         },
         actions = function (u)
             if not BossStillCasting(boss) and GetUnitAbilityLevel(boss, aquaMagicBuff) == 0 and GetUnitHPRatio(boss) < 0.5 then

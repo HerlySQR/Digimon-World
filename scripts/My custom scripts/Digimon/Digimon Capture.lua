@@ -62,9 +62,11 @@ OnInit("Digimon Capture", function ()
                     end
                 else
                     DisplayTextToPlayer(p, 0, 0, "You can't have more digimons.")
+                    UnitAbortCurrentOrder(caster)
                 end
             else
                 DisplayTextToPlayer(p, 0, 0, "You can't capture this digimon.")
+                UnitAbortCurrentOrder(caster)
             end
         end)
     end

@@ -5,7 +5,7 @@ OnInit(function ()
     local SPELL = FourCC('A0H4')
     local MELT_SPELL = FourCC('A07D')
     local MELT_ORDER = Orders.faeriefire
-    local AREA = 300. -- Same as object editor
+    local AREA = 1500. -- Same as object editor
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
