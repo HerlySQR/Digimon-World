@@ -507,11 +507,6 @@ OnInit("BossFightUtils", function ()
                             end
                         end
                     end
-                    -- Reset aggro for units that left the battlefield
-                    for u in whoWereHere:except(unitsInTheField):elements() do
-                        ZTS_RemovePlayerUnit(u)
-                        ZTS_AddPlayerUnit(u)
-                    end
                     -- The chances of casting increases when has low hp
                     interval = getInterval(playersOnField:size(), GetUnitHPRatio(data.boss) < 0.5)
 
@@ -565,7 +560,7 @@ OnInit("BossFightUtils", function ()
                                                         actSpell = 1
                                                     end
                                                 end
-                                            else
+                                            elseif extraSpells then
                                                 local options = {}
                                                 for i = 1, #extraSpells do
                                                     local spell = extraSpells[i].id
@@ -620,6 +615,21 @@ OnInit("BossFightUtils", function ()
                 -- If the boss is not doing anything, set attacking state to false
                 if GetUnitCurrentOrder(data.boss) == 0 then
                     attacking = false
+                end
+
+                -- Remove all the units if someone left the battlefield
+                for u in whoWereHere:except(unitsInTheField):elements() do
+                    if UnitAlive(u) and IsPlayerInGame(GetOwningPlayer(u)) then
+                        for u2 in unitsInTheField:elements() do
+                            SetUnitPosition(u2, GetRectCenterX(data.entrance), GetRectCenterY(data.entrance))
+                            DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdl", GetUnitX(u2), GetUnitY(u2)))
+                        end
+                        if playersOnField:contains(LocalPlayer) then
+                            DisplayTextToPlayer(LocalPlayer, 0, 0, "Someone just left the battlefield, the boss was reseted.")
+                            PanCameraToTimed(GetRectCenterX(data.entrance), GetRectCenterY(data.entrance), 0.)
+                        end
+                        break
+                    end
                 end
             else
                 if not dead then
@@ -719,6 +729,7 @@ OnInit("BossFightUtils", function ()
                     end
                 end
             end
+
             if current >= interval then
                 current = 0
             end

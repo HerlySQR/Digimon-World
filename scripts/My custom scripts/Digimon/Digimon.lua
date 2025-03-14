@@ -1,9 +1,8 @@
 Debug.beginFile("Digimon")
 OnInit("Digimon", function ()
     Require "UnitEnum"
-    Require "EventListener"
     Require "Damage"
-    Require "Environment"
+    --[[Require "Environment"]]
     Require "GlobalRemap"
     Require "NewBonus"
     Require "PlayerUtils"

@@ -78,8 +78,8 @@ OnInit("SpellsTemplate", function ()
     ---@param data table
     local function baseSingleMissileSpell(data)
         data.strDmgFactor = data.strDmgFactor or 0
-        data.agiDmgFactor = data.strDmgFactor or 0
-        data.intDmgFactor = data.strDmgFactor or 0
+        data.agiDmgFactor = data.agiDmgFactor or 0
+        data.intDmgFactor = data.intDmgFactor or 0
         data.attackFactor = data.attackFactor or 0
         data.finalDmgFactor = data.finalDmgFactor or 1
         if data.buffType then
@@ -189,8 +189,8 @@ OnInit("SpellsTemplate", function ()
     ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, finalDmgFactor: number?, missileCount: integer, missileModel: string, zOffsetSource: number, zOffsetTarget: number, scale: number, speed: number, arc: number, pColor: integer?, attType: attacktype, dmgType: damagetype, casterEffect: string?, targetEffect: string?, buffType: BuffSpell?, buffLevel: integer?}
     function CreateMultipleMissilesSpell(data)
         data.strDmgFactor = data.strDmgFactor or 0
-        data.agiDmgFactor = data.strDmgFactor or 0
-        data.intDmgFactor = data.strDmgFactor or 0
+        data.agiDmgFactor = data.agiDmgFactor or 0
+        data.intDmgFactor = data.intDmgFactor or 0
         data.attackFactor = data.attackFactor or 0
         data.finalDmgFactor = data.finalDmgFactor or 1
         if data.buffType then
@@ -241,8 +241,8 @@ OnInit("SpellsTemplate", function ()
     ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, finalDmgFactor: number?, maxRange: number, collision: number, missileModel: string, zOffsetSource: number, zOffsetTarget: number, scale: number, speed: number, arc: number, pColor: integer?, attType: attacktype, dmgType: damagetype, casterEffect: string?, targetEffect: string?, buffType: BuffSpell?, buffLevel: integer?}
     function CreateWaveSpell(data)
         data.strDmgFactor = data.strDmgFactor or 0
-        data.agiDmgFactor = data.strDmgFactor or 0
-        data.intDmgFactor = data.strDmgFactor or 0
+        data.agiDmgFactor = data.agiDmgFactor or 0
+        data.intDmgFactor = data.intDmgFactor or 0
         data.attackFactor = data.attackFactor or 0
         data.finalDmgFactor = data.finalDmgFactor or 1
         if data.buffType then
@@ -297,8 +297,8 @@ OnInit("SpellsTemplate", function ()
     ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, finalDmgFactor: number?, attType: attacktype, dmgType: damagetype, casterEffect: string?, targetEffect: string?, buffType: BuffSpell?, buffLevel: integer?}
     function CreateImmediateAreaTargetSpell(data)
         data.strDmgFactor = data.strDmgFactor or 0
-        data.agiDmgFactor = data.strDmgFactor or 0
-        data.intDmgFactor = data.strDmgFactor or 0
+        data.agiDmgFactor = data.agiDmgFactor or 0
+        data.intDmgFactor = data.intDmgFactor or 0
         data.attackFactor = data.attackFactor or 0
         data.finalDmgFactor = data.finalDmgFactor or 1
         if data.buffType then

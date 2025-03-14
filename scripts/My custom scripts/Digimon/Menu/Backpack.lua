@@ -166,6 +166,10 @@ OnInit("Backpack", function ()
             noConsummable = AllowedItems[itemId].noConsummable
         }
         itemData.spellCooldown = math.floor(BlzGetAbilityCooldown(itemData.spell, itemData.level - 1))
+        local i = itemData.description:find("|n|cffffff00This item will go to the backpack.|r")
+        if i then
+            itemData.description = itemData.description:sub(1, i - 1)
+        end
 
         return itemData
     end

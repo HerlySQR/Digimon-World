@@ -1,6 +1,6 @@
 Debug.beginFile("AbilityUtils")
 OnInit("AbilityUtils", function ()
-    Require "Digimon"
+    --Require "Digimon"
     Require "RegisterSpellEvent"
     Require "Missiles"
     Require "Knockback"
@@ -43,11 +43,11 @@ OnInit("AbilityUtils", function ()
 
     -- Remove sleep when is attacked
     local SLEEP_BUFF = FourCC('B005')
-    Digimon.postDamageEvent:register(function (info)
+    --[[Digimon.postDamageEvent:register(function (info)
         if info.target:hasAbility(SLEEP_BUFF) and not udg_IsDamageCode then
             info.target:removeAbility(SLEEP_BUFF)
         end
-    end)
+    end)]]
 
     ---Return a damage based in the hero attributes
     ---@param caster unit
