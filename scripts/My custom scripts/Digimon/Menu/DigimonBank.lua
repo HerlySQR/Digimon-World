@@ -567,6 +567,10 @@ OnInit("DigimonBank", function ()
         DisplayTextToPlayer(LocalPlayer, 0, 0, GetPlayerName(p) .. " was afk for too long, all its digimons were stored.")
     end)
 
+    local dummyHeros = {}
+    for i = 1, 3 do
+        dummyHeros[i] = CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), FourCC('Hpal'), WorldBounds.maxX, WorldBounds.maxY, 0)
+    end
     OnInit.final(function ()
         ForForce(bj_FORCE_ALL_PLAYERS, function ()
             local p = GetEnumPlayer()
@@ -576,9 +580,15 @@ OnInit("DigimonBank", function ()
             bank.buyer = CreateUnit(Digimon.PASSIVE, ITEM_BANK_BUYER, WorldBounds.maxX, WorldBounds.maxY, 0)
             bank.allDeadWindow = CreateTimerDialog(bank.allDeadTimer)
             TimerDialogSetTitle(bank.allDeadWindow, "Your digimon revive in:")
+            for j = 1, 3 do
+                SetUnitOwner(dummyHeros[j], p, false)
+            end
         end)
         AddItemToStock(CENTAURMON, REVIVE_DIGIMONS, 1, 1)
     end)
+    for i = 1, 3 do
+        RemoveUnit(dummyHeros[i])
+    end
 
     -- Always use this function in a "if player == GetLocalPlayer() then" block
     local function UpdateItems()
@@ -2465,6 +2475,24 @@ OnInit("DigimonBank", function ()
     end
 
     ---@param owner player
+    ---@return integer
+    function GetAllDigimonCount(owner)
+        local bank = Bank[GetPlayerId(owner)] ---@type Bank
+        local count = 0
+        for i = 0, MAX_STOCK - 1 do
+            if bank.stocked[i] then
+                count = count + 1
+            end
+        end
+        for i = 0, bank.savedDigimonsStock - 1 do
+            if bank.saved[i] then
+                count = count + 1
+            end
+        end
+        return count
+    end
+
+    ---@param owner player
     ---@param d Digimon
     ---@return integer
     function GetDigimonPosition(owner, d)
@@ -2571,11 +2599,11 @@ OnInit("DigimonBank", function ()
         end)
 
         -- To prevent crashes
-        for i = 0, #heros - 1 do
+        --[[for i = 0, #heros - 1 do
             if BlzFrameGetChildrenCount(BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i)) < 3 then
                 return orders
             end
-        end
+        end]]
 
         if #heros == 1 then -- The only 1
             orders[0] = heros[1]

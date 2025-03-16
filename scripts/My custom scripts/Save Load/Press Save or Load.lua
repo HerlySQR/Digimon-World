@@ -253,26 +253,20 @@ OnInit("PressSaveOrLoad", function ()
 
     local NotOnline = false
     local QuestsAdded = {}
-
-    OnInit.final(function ()
-        NotOnline = GameStatus.get() ~= GameStatus.ONLINE and not udg_SaveOnSinglePlayer
-
-        PolledWait(1.)
-
-        if NotOnline then
-            print("You are in single player, save data is disabled.")
-            BlzFrameSetEnable(AbsoluteSave, false)
-        end
-    end)
+    local paused = __jarray(true)
 
     ---This function always should be in a "if player == GetLocalPlayer() then" block
     local function UpdateMenu()
         local list = PlayerDatas[LocalPlayer]
-        for i = 1, 5 do
-            if list[i] then
-                BlzFrameSetText(SaveSlotT[i-1], "|cffFCD20DSaved Slot " .. i .. "|r")
+        for i = 1, 6 do
+            if i == 6 then
+                BlzFrameSetText(SaveSlotT[i-1], "|cffFCD20DAuto-save|r")
             else
-                BlzFrameSetText(SaveSlotT[i-1], "|cffFCD20DEmpty|r")
+                if list[i] then
+                    BlzFrameSetText(SaveSlotT[i-1], "|cffFCD20DSaved Slot " .. i .. "|r")
+                else
+                    BlzFrameSetText(SaveSlotT[i-1], "|cffFCD20DEmpty|r")
+                end
             end
         end
     end
@@ -405,6 +399,45 @@ OnInit("PressSaveOrLoad", function ()
         end
     end
 
+    OnInit.final(function ()
+        NotOnline = GameStatus.get() ~= GameStatus.ONLINE and not udg_SaveOnSinglePlayer
+
+        PolledWait(1.)
+
+        if NotOnline then
+            print("You are in single player, save data is disabled.")
+            BlzFrameSetEnable(AbsoluteSave, false)
+        else
+            -- Auto-save
+            local interval = 10.
+            local timers = __jarray(0)
+            ForForce(FORCE_PLAYING, function ()
+                local p = GetEnumPlayer()
+                timers[p] = interval
+
+                Timed.echo(1., function ()
+                    if not paused[p] and GetAllDigimonCount(p) > 0 then
+                        timers[p] = timers[p] - 1.
+                    end
+
+                    if timers[p] <= 0. then
+                        timers[p] = interval
+
+                        if IsPlayerInGame(p) then
+                            SavePlayerData(p, 6)
+                            if p == LocalPlayer then
+                                UpdateMenu()
+                                UpdateInformation()
+                            end
+                        else
+                            return true
+                        end
+                    end
+                end)
+            end)
+        end
+    end)
+
     local function SaveLoadActions(slot)
         local p = GetTriggerPlayer()
         local oldSlot = Pressed[p] - 1
@@ -413,24 +446,27 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetEnable(SaveSlotT[oldSlot], true)
             BlzFrameSetEnable(SaveSlotT[slot], false)
             BlzFrameSetVisible(Information, true)
-            BlzFrameSetEnable(AbsoluteSave, BlzFrameIsVisible(AbsoluteSave) and not NotOnline)
+            BlzFrameSetEnable(AbsoluteSave, slot ~= 5 and BlzFrameIsVisible(AbsoluteSave) and not NotOnline)
             BlzFrameSetEnable(AbsoluteLoad, BlzFrameIsVisible(AbsoluteLoad))
             UpdateInformation()
         end
     end
 
     local function ExitFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+        local p = GetTriggerPlayer()
+        if p == LocalPlayer then
             BlzFrameSetEnable(SaveSlotT[Pressed[LocalPlayer] - 1], true)
             BlzFrameSetVisible(Information, false)
             BlzFrameSetVisible(SaveLoadMenu, false)
             RemoveButtonFromEscStack(Exit)
         end
+        paused[p] = false
     end
 
     local function SaveFunc()
+        local p = GetTriggerPlayer()
         ExitFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+        if p == LocalPlayer then
             if not BlzFrameIsVisible(SaveLoadMenu) then
                 AddButtonToEscStack(Exit)
             end
@@ -440,11 +476,13 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetVisible(AbsoluteLoad, false)
             UpdateMenu()
         end
+        paused[p] = true
     end
 
     local function LoadFunc()
+        local p = GetTriggerPlayer()
         ExitFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+        if p == LocalPlayer then
             if not BlzFrameIsVisible(SaveLoadMenu) then
                 AddButtonToEscStack(Exit)
             end
@@ -454,6 +492,7 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetEnable(AbsoluteLoad, false)
             UpdateMenu()
         end
+        paused[p] = true
     end
 
     local function AbsoluteSaveFunc()
@@ -515,23 +554,27 @@ OnInit("PressSaveOrLoad", function ()
 
         SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.27, 0.535000)
-        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.315000)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.280000)
         BlzFrameSetVisible(SaveLoadMenu, false)
         AddFrameToMenu(SaveLoadMenu)
 
-        for i = 0, 4 do
+        for i = 0, 5 do
             SaveSlotT[i] = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
             BlzFrameSetPoint(SaveSlotT[i], FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.01000 - i * 0.035)
-            BlzFrameSetPoint(SaveSlotT[i], FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.18000 - i * 0.035)
-            BlzFrameSetText(SaveSlotT[i], "|cffFCD20DEmpty|r")
+            BlzFrameSetPoint(SaveSlotT[i], FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.21500 - i * 0.035)
+            if i == 5 then
+                BlzFrameSetText(SaveSlotT[i], "|cffFCD20DAuto-save|r")
+            else
+                BlzFrameSetText(SaveSlotT[i], "|cffFCD20DEmpty|r")
+            end
             t = CreateTrigger()
             BlzTriggerRegisterFrameEvent(t, SaveSlotT[i], FRAMEEVENT_CONTROL_CLICK)
             TriggerAddAction(t, function () SaveLoadActions(i) end) -- :D
         end
 
         AbsoluteSave = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
-        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.18000)
-        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.010000)
+        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.22000)
+        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.0050000)
         BlzFrameSetText(AbsoluteSave, "|cffFCD20DSave|r")
         BlzFrameSetVisible(AbsoluteSave, false)
         t = CreateTrigger()
@@ -539,8 +582,8 @@ OnInit("PressSaveOrLoad", function ()
         TriggerAddAction(t, AbsoluteSaveFunc)
 
         AbsoluteLoad = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
-        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.18000)
-        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.010000)
+        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.22000)
+        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.0050000)
         BlzFrameSetText(AbsoluteLoad, "|cffFCD20DLoad|r")
         BlzFrameSetVisible(AbsoluteLoad, false)
         t = CreateTrigger()
@@ -548,8 +591,8 @@ OnInit("PressSaveOrLoad", function ()
         TriggerAddAction(t, AbsoluteLoadFunc)
 
         Exit = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
-        BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.12000, -0.18000)
-        BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.010000)
+        BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.12000, -0.22000)
+        BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.0050000)
         BlzFrameSetText(Exit, "|cffFCD20DExit|r")
         t = CreateTrigger()
         BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
@@ -558,8 +601,8 @@ OnInit("PressSaveOrLoad", function ()
         -- Tooltip
 
         Information = BlzCreateFrame("CheckListBox", SaveLoadMenu, 0, 0)
-        BlzFrameSetPoint(Information, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, -0.50000, 0.0000)
-        BlzFrameSetPoint(Information, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.22000, -0.30000)
+        BlzFrameSetPoint(Information, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, -0.50000, 0.0050000)
+        BlzFrameSetPoint(Information, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.22000, -0.26000)
         BlzFrameSetLevel(Information, 100)
 
         TooltipName = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
@@ -752,7 +795,7 @@ OnInit("PressSaveOrLoad", function ()
     OnChangeDimensions(function ()
         BlzFrameClearAllPoints(SaveLoadMenu)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.27, 0.535000)
-        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.315000)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.280000)
     end)
 
     OnLeaderboard(function ()

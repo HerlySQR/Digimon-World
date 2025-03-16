@@ -277,7 +277,7 @@ OnInit("Menu", function ()
         ResourceBar = BlzGetFrameByName("ResourceBarFrame", 0)
         BlzFrameSetVisible(frame, true)
         -- Hide Upkeep label
-        BlzFrameSetAbsPoint(BlzGetFrameByName("ResourceBarUpkeepText", 0), FRAMEPOINT_TOPRIGHT, 0.4, 0.9)
+        BlzFrameSetAbsPoint(BlzGetFrameByName("ResourceBarUpkeepText", 0), FRAMEPOINT_TOPRIGHT, 999, 999)
         -- Show day clock
         Clock = BlzFrameGetChild(BlzFrameGetChild(BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), 5),0)
         BlzFrameSetVisible(Clock, true)
@@ -338,11 +338,11 @@ OnInit("Menu", function ()
 
         -- Hide buff bar and label
         frame = BlzGetOriginFrame(ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR, 0)
-        BlzFrameSetAbsPoint(frame, FRAMEPOINT_BOTTOMRIGHT, 0.4, 0.9)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_BOTTOMRIGHT, 999, 999)
 
         frame = BlzGetOriginFrame(ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR_LABEL, 0)
         BlzFrameClearAllPoints(frame)
-        BlzFrameSetAbsPoint(frame, FRAMEPOINT_CENTER, 0.1, 0.9)
+        BlzFrameSetAbsPoint(frame, FRAMEPOINT_CENTER, 999, 999)
 
         -- Hide multiple unit selection frame
         Timed.call(function ()

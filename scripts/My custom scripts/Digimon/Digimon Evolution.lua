@@ -226,7 +226,7 @@ OnInit("DigimonEvolution", function ()
                 RemoveUnit(u2)
             end
         end
-        DialogAddButton(EvolveDialog[p], "Cancel", 0)
+        DialogAddButton(EvolveDialog[p], "Cancel", 0x1B)
 
         DialogDisplay(p, EvolveDialog[p], true)
     end)

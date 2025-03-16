@@ -351,7 +351,7 @@ OnInit("Stats", function ()
                     end
                 end
             else
-                if (changeVisible or (i == 0 and not seeOnly)) and BlzFrameIsVisible(StatsBackdrop[i]) then
+                if (changeVisible or (i == 0 and not seeOnly[LocalPlayer])) and BlzFrameIsVisible(StatsBackdrop[i]) then
                     BlzFrameSetVisible(StatsBackdrop[i], false)
                 end
             end
