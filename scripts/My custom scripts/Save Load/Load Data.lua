@@ -82,7 +82,7 @@ OnInit(function ()
                 local loaded = false
                 local user = users[i]
                 local p = user.handle
-                for slot = 1, 5 do
+                for slot = 1, 6 do
                     loaded = LoadPlayerData(p, slot) or loaded
                 end
                 LoadHotkeys(p)

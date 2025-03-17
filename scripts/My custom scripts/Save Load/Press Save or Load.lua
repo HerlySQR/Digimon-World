@@ -409,7 +409,7 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetEnable(AbsoluteSave, false)
         else
             -- Auto-save
-            local interval = 10.
+            local interval = 300.
             local timers = __jarray(0)
             ForForce(FORCE_PLAYING, function ()
                 local p = GetEnumPlayer()

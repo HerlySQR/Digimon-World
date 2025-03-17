@@ -451,7 +451,7 @@ OnInit("BossFightUtils", function ()
                 -- Check if are units in the battlefield
                 for i = 1, numRect do
                     ForUnitsInRect(battlefield[data.boss][i], function (u)
-                        if u ~= data.boss and UnitAlive(u) and IsPlayerInGame(GetOwningPlayer(u)) then
+                        if u ~= data.boss and UnitAlive(u) and not IsUnitIllusion(u) and IsPlayerInGame(GetOwningPlayer(u)) then
                             unitsInTheField:addSingle(u)
                             playersOnField:addSingle(GetOwningPlayer(u))
                         end

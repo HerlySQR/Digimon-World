@@ -50,5 +50,23 @@ OnInit("FrameLoader", function ()
         end
         return frame
     end)
+
+    local LocalPlayer = GetLocalPlayer()
+    local Console = BlzGetFrameByName("ConsoleUIBackdrop", 0)
+    local original = 0.0001
+    local actualRatio = 1.
+    local waitToMessage = 10
+
+    Timed.echo(1., function ()
+        actualRatio = original/BlzFrameGetWidth(Console)
+        if math.abs(actualRatio - 1.) > 0.0001 then
+            waitToMessage = waitToMessage - 1
+            if waitToMessage <= 0 then
+                waitToMessage = 45
+                DisplayTextToPlayer(LocalPlayer, 0, 0, "|cff00ffccHelp: |r if the UI looks messed up, try setting the HUD size to 100 in the options menu.")
+                StartSound(bj_questHintSound)
+            end
+        end
+    end)
 end)
 if Debug then Debug.endFile() end
