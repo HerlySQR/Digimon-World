@@ -4,13 +4,12 @@ OnInit("DamageModifier", function ()
     Require "MDTable"
 
     ---@class DamageModifier
-    ---@field amt number
     ---@field add boolean
-    ---@field criticalChance boolean
-    ---@field critcalAmount boolean
-    ---@field blockAmount boolean
-    ---@field evasionChance boolean
-    ---@field trueAttack boolean
+    ---@field criticalChance number?
+    ---@field critcalAmount number?
+    ---@field blockAmount number?
+    ---@field evasionChance number?
+    ---@field trueAttack number?
 
     ---@class PrevData
     ---@field sta integer
@@ -29,17 +28,21 @@ OnInit("DamageModifier", function ()
     ---@param dmgMod DamageModifier
     ---@param sub boolean?
     local function modify(d, dmgMod, sub)
-        local amt = sub and -dmgMod.amt or dmgMod.amt
+        local sc = sub and -1 or 1
         if dmgMod.criticalChance then
-            d:addCriticalChance(amt, dmgMod.add)
-        elseif dmgMod.critcalAmount then
-            d:addCriticalAmount(amt, dmgMod.add)
-        elseif dmgMod.blockAmount then
-            d:addBlockAmount(amt, dmgMod.add)
-        elseif dmgMod.evasionChance then
-            d:addEvasionChance(amt, dmgMod.add)
-        elseif dmgMod.trueAttack then
-            d:addTrueAttack(amt)
+            d:addCriticalChance(sc * dmgMod.criticalChance, dmgMod.add)
+        end
+        if dmgMod.critcalAmount then
+            d:addCriticalAmount(sc * dmgMod.critcalAmount, dmgMod.add)
+        end
+        if dmgMod.blockAmount then
+            d:addBlockAmount(sc * dmgMod.blockAmount, dmgMod.add)
+        end
+        if dmgMod.evasionChance then
+            d:addEvasionChance(sc * dmgMod.evasionChance, dmgMod.add)
+        end
+        if dmgMod.trueAttack then
+            d:addTrueAttack(sc * dmgMod.trueAttack)
         end
     end
 
@@ -136,26 +139,38 @@ OnInit("DamageModifier", function ()
     ---@param abilCond integer
     ---@param abilLevelCond integer
     local function Create(amt, add, criticalChance, critcalAmount, blockAmount, evasionChance, trueAttack, unitCond, itemCond, abilCond, abilLevelCond)
-        if unitCond == 0 and itemCond == 0 and abilCond == 0 then
-            error("You didn't set a condition for the buff")
-        end
-        local dmgMod = {
-            amt = amt,
-            add = add,
-            criticalChance = criticalChance,
-            critcalAmount = critcalAmount,
-            blockAmount = blockAmount,
-            evasionChance = evasionChance,
-            trueAttack = trueAttack
-        }
+        local dmgMod
         if unitCond ~= 0 then
+            dmgMod = unitConds[unitCond] or {}
             unitConds[unitCond] = dmgMod
         end
         if itemCond ~= 0 then
+            dmgMod = itemConds[itemCond] or {}
             itemConds[itemCond] = dmgMod
         end
         if abilCond ~= 0 then
+            dmgMod = abilConds[abilCond][abilLevelCond] or {}
             abilConds[abilCond][abilLevelCond] = dmgMod
+        end
+        if not dmgMod then
+            error("You didn't set a condition for the buff")
+        end
+
+        dmgMod.add = add
+        if criticalChance then
+            dmgMod.criticalChance = amt
+        end
+        if critcalAmount then
+            dmgMod.critcalAmount = amt
+        end
+        if blockAmount then
+            dmgMod.blockAmount = amt
+        end
+        if evasionChance then
+            dmgMod.evasionChance = amt
+        end
+        if trueAttack then
+            dmgMod.trueAttack = amt
         end
     end
 

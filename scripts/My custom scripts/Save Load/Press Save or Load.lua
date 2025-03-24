@@ -110,14 +110,14 @@ OnInit("PressSaveOrLoad", function ()
         SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, 0)
         SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, 0)
         SetBank(p, BankData.create())
-        SetBackpack(p, BackpackData.create())
-        SetQuests(p, QuestData.create())
+        --SetBackpack(p, BackpackData.create())
+        --SetQuests(p, QuestData.create())
         EnumItemsInRect(WorldBounds.rect, nil, function ()
             if GetItemPlayer(GetEnumItem()) == p then
                 RemoveItem(GetEnumItem())
             end
         end)
-        ClearDiary(p)
+        --ClearDiary(p)
 
         restartListener:run(p)
     end
@@ -135,9 +135,9 @@ OnInit("PressSaveOrLoad", function ()
 
         PlayerDatas[p][slot] = data
         DigimonDatas[p][slot] = SaveDigimons(p, slot)
-        BackpackDatas[p][slot] = SaveBackpack(p, slot)
-        QuestDatas[p][slot] = SaveQuests(p, slot)
-        data.unlockedInfo = SaveDiary(p, slot)
+        --BackpackDatas[p][slot] = SaveBackpack(p, slot)
+        --QuestDatas[p][slot] = SaveQuests(p, slot)
+        --data.unlockedInfo = SaveDiary(p, slot)
     end
 
     ---@param p player
@@ -164,7 +164,7 @@ OnInit("PressSaveOrLoad", function ()
             return false
         end
 
-        local pdata = LoadBackpack(p, slot)
+        --[[local pdata = LoadBackpack(p, slot)
         if not pdata then
             return false
         end
@@ -172,17 +172,17 @@ OnInit("PressSaveOrLoad", function ()
         local qdata = LoadQuests(p, slot)
         if not qdata then
             return false
-        end
+        end]]
 
-        data.unlockedInfo = LoadDiary(p, slot)
+        --[[data.unlockedInfo = LoadDiary(p, slot)
         if not data.unlockedInfo then
             return false
-        end
+        end]]
 
         PlayerDatas[p][slot] = data
         DigimonDatas[p][slot] = bdata
-        BackpackDatas[p][slot] = pdata
-        QuestDatas[p][slot] = qdata
+        --BackpackDatas[p][slot] = pdata
+        --QuestDatas[p][slot] = qdata
 
         return true
     end
@@ -193,18 +193,18 @@ OnInit("PressSaveOrLoad", function ()
             SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, data.gold)
             SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, data.lumber)
             SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, data.food)
-            ApplyVisitedPlaces(p, data.vistedPlaces)
-            data.unlockedInfo:apply()
+            --ApplyVisitedPlaces(p, data.vistedPlaces)
+            --data.unlockedInfo:apply()
         end
         if DigimonDatas[p][slot] then
             SetBank(p, DigimonDatas[p][slot])
         end
-        if BackpackDatas[p][slot] then
+        --[[if BackpackDatas[p][slot] then
             SetBackpack(p, BackpackDatas[p][slot])
         end
         if QuestDatas[p][slot] then
             SetQuests(p, QuestDatas[p][slot])
-        end
+        end]]
 
         loadListener:run(p)
     end

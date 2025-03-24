@@ -567,10 +567,13 @@ OnInit("DigimonBank", function ()
         DisplayTextToPlayer(LocalPlayer, 0, 0, GetPlayerName(p) .. " was afk for too long, all its digimons were stored.")
     end)
 
-    local dummyHeros = {}
+    local dummyHeros = {} ---@type unit[]
+    local heroGlows = {} ---@type framehandle[]
+
     for i = 1, 3 do
         dummyHeros[i] = CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), FourCC('Hpal'), WorldBounds.maxX, WorldBounds.maxY, 0)
     end
+
     OnInit.final(function ()
         ForForce(bj_FORCE_ALL_PLAYERS, function ()
             local p = GetEnumPlayer()
@@ -580,15 +583,18 @@ OnInit("DigimonBank", function ()
             bank.buyer = CreateUnit(Digimon.PASSIVE, ITEM_BANK_BUYER, WorldBounds.maxX, WorldBounds.maxY, 0)
             bank.allDeadWindow = CreateTimerDialog(bank.allDeadTimer)
             TimerDialogSetTitle(bank.allDeadWindow, "Your digimon revive in:")
-            for j = 1, 3 do
-                SetUnitOwner(dummyHeros[j], p, false)
+            for i = 1, 3 do
+                SetUnitOwner(dummyHeros[i], p, false)
             end
         end)
         AddItemToStock(CENTAURMON, REVIVE_DIGIMONS, 1, 1)
+        for i = 0, 2 do
+            heroGlows[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i)
+        end
+        for i = 1, 3 do
+            RemoveUnit(dummyHeros[i])
+        end
     end)
-    for i = 1, 3 do
-        RemoveUnit(dummyHeros[i])
-    end
 
     -- Always use this function in a "if player == GetLocalPlayer() then" block
     local function UpdateItems()
@@ -805,7 +811,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetEnable(Revive, bank:reviveDigimonConditions())
     end
 
-    Timed.echo(0.1, UpdateButtons)
+    --Timed.echo(0.1, UpdateButtons)
 
     -- Always use this function in a "if player == GetLocalPlayer() then" block
     local function UpdateMenu()
@@ -1142,9 +1148,10 @@ OnInit("DigimonBank", function ()
     end
 
     local function PressedActions(i)
-        local bank = Bank[GetPlayerId(GetTriggerPlayer())] ---@type Bank
+        local p = GetTriggerPlayer()
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
 
-        if GetTriggerPlayer() == LocalPlayer then
+        if p == LocalPlayer then
             -- Refresh the last pressed button
             BlzFrameSetVisible(DigimonTSelected[bank.pressed], false)
             BlzFrameSetEnable(DigimonT[bank.pressed], true)
@@ -1172,13 +1179,16 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetVisible(Summon, true)
                 BlzFrameSetVisible(Store, false)
             end
-            UpdateButtons()
         end
 
         if bank.stocked[i] then
             bank.pressed = i
         else
             bank.pressed = -1
+        end
+
+        if p == LocalPlayer then
+            UpdateButtons()
         end
     end
 
@@ -1965,15 +1975,22 @@ OnInit("DigimonBank", function ()
             return false
         end
 
+        if index == 1 then
+            local count = 0
+            Timed.echo(0.02, function ()
+                count = count + 0.02
+                print(count)
+                if count > 0.4 then
+                    return true
+                end
+            end)
+        end
+
         local d = bank.stocked[index] ---@type Digimon
         local b = false
 
         if d then
             d:setOwner(p)
-
-            -- To create the hero icon glow
-            UnitModifySkillPoints(d.root, 1)
-            UnitModifySkillPoints(d.root, -1)
 
             local orders = GetHeroButtonPos(p)
             local syncedOrders = GetSyncedData(p, function ()
@@ -2606,7 +2623,9 @@ OnInit("DigimonBank", function ()
         end]]
 
         if #heros == 1 then -- The only 1
-            orders[0] = heros[1]
+            if p == LocalPlayer then
+                orders[0] = heros[1]
+            end
         elseif #heros > 1 then
             local prevSkillPoints = __jarray(0) ---@type table<unit, integer>
             for i = 1, #heros do
@@ -2617,12 +2636,14 @@ OnInit("DigimonBank", function ()
             if #heros == 2 then -- Check who has it visible or not
                 UnitModifySkillPoints(heros[1], 1)
 
-                if BlzFrameIsVisible(BlzFrameGetChild(BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, 0), 2)) then
-                    orders[0] = heros[1]
-                    orders[1] = heros[2]
-                else
-                    orders[0] = heros[2]
-                    orders[1] = heros[1]
+                if p == LocalPlayer then
+                    if BlzFrameIsVisible(BlzFrameGetChild(heroGlows[0], 2)) then
+                        orders[0] = heros[1]
+                        orders[1] = heros[2]
+                    else
+                        orders[0] = heros[2]
+                        orders[1] = heros[1]
+                    end
                 end
 
                 UnitModifySkillPoints(heros[1], -1)
@@ -2634,18 +2655,20 @@ OnInit("DigimonBank", function ()
 
                 local noVisible = -1
 
-                for i = 0, 2 do
-                    if not BlzFrameIsVisible(BlzFrameGetChild(BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i), 2)) then
-                        noVisible = i
+                if p == LocalPlayer then
+                    for i = 0, 2 do
+                        if not BlzFrameIsVisible(BlzFrameGetChild(heroGlows[i], 2)) then
+                            noVisible = i
+                        end
                     end
-                end
 
-                orders[noVisible] = heros[3]
+                    orders[noVisible] = heros[3]
 
-                for i = 3, 1, -1 do
-                    if indices[i] == noVisible then
-                        table.remove(indices, i)
-                        break
+                    for i = 3, 1, -1 do
+                        if indices[i] == noVisible then
+                            table.remove(indices, i)
+                            break
+                        end
                     end
                 end
 
@@ -2654,16 +2677,18 @@ OnInit("DigimonBank", function ()
 
                 local visible = -1
 
-                for i = 1, 2 do
-                    if not BlzFrameIsVisible(BlzFrameGetChild(BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, indices[i]), 2)) then
-                        noVisible = indices[i]
-                    else
-                        visible = indices[i]
+                if p == LocalPlayer then
+                    for i = 1, 2 do
+                        if not BlzFrameIsVisible(BlzFrameGetChild(heroGlows[indices[i]], 2)) then
+                            noVisible = indices[i]
+                        else
+                            visible = indices[i]
+                        end
                     end
-                end
 
-                orders[visible] = heros[1]
-                orders[noVisible] = heros[2]
+                    orders[visible] = heros[1]
+                    orders[noVisible] = heros[2]
+                end
 
                 UnitModifySkillPoints(heros[1], -1)
             end

@@ -86,7 +86,7 @@ OnInit(function ()
                     loaded = LoadPlayerData(p, slot) or loaded
                 end
                 LoadHotkeys(p)
-                LoadUnlockedCosmetics(p)
+                --LoadUnlockedCosmetics(p)
                 if not user.isPlaying then
                     BlzFrameSetText(PlayerStatus[i], "|cffffff00Left the game|r")
                 elseif not loaded then
