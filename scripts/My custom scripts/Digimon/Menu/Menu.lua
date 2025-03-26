@@ -24,7 +24,7 @@ OnInit("Menu", function ()
     local HeroButton = {} ---@type framehandle[]
     local HeroHealth = {} ---@type framehandle[]
     local HeroMana = {} ---@type framehandle[]
-    local CommandButtonBackDrop = nil ---@type framehandle
+    CommandButtonBackDrop = nil ---@type framehandle
     local CommandButton = {} ---@type framehandle[]
     local TopbarBackdrop = nil ---@type framehandle
     local TextLength = nil ---@type framehandle
@@ -55,8 +55,8 @@ OnInit("Menu", function ()
     end
 
     check()
-    --OnInit.final(check)
-    --Timed.echo(0.1, check)
+    OnInit.final(check)
+    Timed.echo(0.1, check)
 
     OnInit.final(function ()
         CreateLeaderboardBJ(bj_FORCE_ALL_PLAYERS, "")
@@ -258,7 +258,7 @@ OnInit("Menu", function ()
     FrameLoaderAdd(function ()
         local frame ---@type framehandle 
 
-        --[=[BlzEnableUIAutoPosition(false)
+        BlzEnableUIAutoPosition(false)
 
         -- Reforged 2.0 Fix
         TopbarBackdrop = BlzGetFrameByName("ConsoleTopBar", 0)
@@ -329,7 +329,7 @@ OnInit("Menu", function ()
 
             HeroHealth[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_HP_BAR, i)
             BlzFrameClearAllPoints(HeroHealth[i])
-            BlzFrameSetPoint(HeroHealth[i], FRAMEPOINT_TOPLEFT, HeroButton[i], FRAMEPOINT_TOPRIGHT, 0.010000, 0.00000)
+            BlzFrameSetPoint(HeroHealth[i], FRAMEPOINT_BOTTOMLEFT, HeroButton[i], FRAMEPOINT_RIGHT, 0.010000, 0.00000)
             BlzFrameSetSize(HeroHealth[i], 0.1, 0.01)
 
             HeroMana[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_MANA_BAR, i)
@@ -397,7 +397,7 @@ OnInit("Menu", function ()
                 BlzFrameSetVisible(f, true)
                 return true
             end
-        end)]=]
+        end)
 
         -- To get text length
         TextLength = BlzCreateFrameByType("TEXT", "name", Console, "", 0)

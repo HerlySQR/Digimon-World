@@ -811,7 +811,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetEnable(Revive, bank:reviveDigimonConditions())
     end
 
-    --Timed.echo(0.1, UpdateButtons)
+    Timed.echo(0.1, UpdateButtons)
 
     -- Always use this function in a "if player == GetLocalPlayer() then" block
     local function UpdateMenu()
@@ -1975,7 +1975,7 @@ OnInit("DigimonBank", function ()
             return false
         end
 
-        if index == 1 then
+        --[[if index == 1 then
             local count = 0
             Timed.echo(0.02, function ()
                 count = count + 0.02
@@ -1984,7 +1984,7 @@ OnInit("DigimonBank", function ()
                     return true
                 end
             end)
-        end
+        end]]
 
         local d = bank.stocked[index] ---@type Digimon
         local b = false
@@ -1992,7 +1992,7 @@ OnInit("DigimonBank", function ()
         if d then
             d:setOwner(p)
 
-            local orders = GetHeroButtonPos(p)
+            --[[local orders = GetHeroButtonPos(p)
             local syncedOrders = GetSyncedData(p, function ()
                 return orders
             end)
@@ -2005,11 +2005,21 @@ OnInit("DigimonBank", function ()
                 if syncedOrders[i] then
                     table.insert(bank.priorities, Digimon.getInstance(syncedOrders[i]))
                 end
+            end]]
+            local noAdded = true
+            for i = 1, #bank.priorities do
+                if bank.priorities[i] == d then
+                    noAdded = false
+                    break
+                end
+            end
+            if noAdded then
+                table.insert(bank.priorities, d)
             end
             for i = 1, #bank.priorities do
                 BlzSetUnitRealField(bank.priorities[i].root, UNIT_RF_PRIORITY, MAX_STOCK - i)
             end
-            if not bank.main then
+            if not bank.main or bank.main == d then
                 bank.main = d
                 d:showFromTheCorner(bank.spawnPoint.x, bank.spawnPoint.y)
                 if not holdEnv then

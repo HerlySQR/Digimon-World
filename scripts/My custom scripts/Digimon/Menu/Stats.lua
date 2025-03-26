@@ -89,6 +89,7 @@ OnInit("Stats", function ()
     local SelectedHero = {} ---@type framehandle[]
     local HeroButtons = {} ---@type framehandle[]
     local HeroBuffs = {} ---@type framehandle[][]
+    local OtherStats = nil ---@type framehandle
 
     local LocalPlayer = GetLocalPlayer()
 
@@ -361,7 +362,7 @@ OnInit("Stats", function ()
             BlzFrameSetVisible(StatsItemDrop, false)
         end
 
-        local u = GetMainSelectedUnitEx()
+        --[[local u = GetMainSelectedUnitEx()
         if u and Digimon.getInstance(u) and GetOwningPlayer(u) == LocalPlayer then
             local pos = GetDigimonPosition(LocalPlayer, Digimon.getInstance(u))
             BlzFrameSetVisible(FocusedUnit, BlzFrameIsVisible(HeroButtons[pos-1]))
@@ -369,7 +370,7 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(FocusedUnit, FRAMEPOINT_BOTTOMLEFT, HeroButtons[pos-1], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
         else
             BlzFrameSetVisible(FocusedUnit, false)
-        end
+        end]]
 
         for i = 0, 2 do
             local d = list[i+1]
@@ -384,14 +385,14 @@ OnInit("Stats", function ()
                     else
                         local id = BlzGetAbilityId(abil)
                         if id // 0x1000000 == 66 and buffIcons[id] ~= "" then -- The first character of the four-char id is 'B'
-                            BlzFrameSetVisible(HeroBuffs[i][j], BlzFrameIsVisible(HeroButtons[i]))
+                            BlzFrameSetVisible(HeroBuffs[i][j], true)--BlzFrameIsVisible(HeroButtons[i]))
                             BlzFrameSetTexture(HeroBuffs[i][j], buffIcons[id], 0, true)
                             j = j + 1
                         end
                     end
                     index = index + 1
                 end
-                BlzFrameSetVisible(SelectedHero[i], BlzFrameIsVisible(HeroButtons[i]) and u ~= d.root and IsUnitSelected(d.root, LocalPlayer))
+                BlzFrameSetVisible(SelectedHero[i], true)--BlzFrameIsVisible(HeroButtons[i]) and u ~= d.root and IsUnitSelected(d.root, LocalPlayer))
             else
                 for j = 0, 7 do
                     BlzFrameSetVisible(HeroBuffs[i][j], false)
@@ -399,7 +400,55 @@ OnInit("Stats", function ()
                 BlzFrameSetVisible(SelectedHero[i], false)
             end
         end
+
+        local selected = GetMainSelectedUnitEx()
+        if not selected
+            or not UnitAlive(selected)
+            or IsUnitHidden(selected)
+            or GetOwningPlayer(selected) == LocalPlayer
+            or GetOwningPlayer(selected) == Digimon.CITY then
+
+            BlzFrameSetVisible(OtherStats, false)
+            return
+        end
+        local d = Digimon.getInstance(selected)
+        if not d then
+            BlzFrameSetVisible(OtherStats, false)
+            return
+        end
+
+        local text = ""
+
+        text = text .. "|cff00ff00HP:|r " .. math.floor(GetUnitState(selected, UNIT_STATE_LIFE)) .. " \\ " .. math.floor(GetUnitState(selected, UNIT_STATE_MAX_LIFE)) .. "\n"
+        text = text .. "|cff007fffMP:|r " .. math.floor(GetUnitState(selected, UNIT_STATE_MANA)) .. " \\ " .. math.floor(GetUnitState(selected, UNIT_STATE_MAX_MANA)) .. "\n"
+
+
+        local base = GetHeroStr(selected, false)
+        local bonus = GetHeroStr(selected, true) - base
+        text = text .. "|cffff7d00STA:|r " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "") .. "\n"
+
+        base = GetHeroAgi(selected, false)
+        bonus = GetHeroAgi(selected, true) - base
+        text = text .. "|cff007d20DEX:|r " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "") .. "\n"
+
+        base = GetHeroInt(selected, false)
+        bonus = GetHeroInt(selected, true) - base
+        text = text .. "|cff004ec8WIS:|r " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "")
+
+        BlzFrameSetText(OtherStats, text)
+        BlzFrameSetVisible(OtherStats, true)
     end)
+    do
+        local t = CreateTrigger()
+        ForForce(bj_FORCE_ALL_PLAYERS, function ()
+            TriggerRegisterPlayerSelectionEventBJ(t, GetEnumPlayer(), false)
+        end)
+        TriggerAddAction(t, function ()
+            if GetLocalPlayer() == GetTriggerPlayer() then
+                BlzFrameSetVisible(OtherStats, false)
+            end
+        end)
+    end
     function BlzFourCC2S(value)
         local result = ""
         for _=1,4 do
@@ -772,14 +821,17 @@ OnInit("Stats", function ()
 
             HeroBuffs[i] = {}
             for j = 0, 7 do
-                HeroBuffs[i][j] = BlzCreateFrameByType("BACKDROP", "HeroBuffs[" .. i .. "][" .. j .. "]", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
-                BlzFrameSetPoint(HeroBuffs[i][j], FRAMEPOINT_BOTTOMLEFT, HeroButtons[i], FRAMEPOINT_BOTTOMRIGHT, 0.01 + j*0.0125, 0)
-                BlzFrameSetSize(HeroBuffs[i][j], 0.0125, 0.0125)
+                --HeroBuffs[i][j] = BlzCreateFrameByType("BACKDROP", "HeroBuffs[" .. i .. "][" .. j .. "]", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
+                --BlzFrameSetPoint(HeroBuffs[i][j], FRAMEPOINT_BOTTOMLEFT, HeroButtons[i], FRAMEPOINT_BOTTOMRIGHT, 0.01 + j*0.0125, 0)
+                HeroBuffs[i][j] = BlzCreateFrameByType("BACKDROP", "HeroBuffs[" .. i .. "][" .. j .. "]", StatsBackdrop[i], "", 0)
+                BlzFrameSetPoint(HeroBuffs[i][j], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, -0.017500, 0.0000 - j*0.0125)
+                BlzFrameSetPoint(HeroBuffs[i][j], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.37250, 0.087500 - j*0.0125)
                 BlzFrameSetVisible(HeroBuffs[i][j], false)
             end
 
-            SelectedHero[i] = BlzCreateFrameByType("SPRITE", "SelectedUnit[" .. i .. "]", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
-            BlzFrameSetModel(SelectedHero[i], "war3mapImported\\cyber_call_sprite.mdx", 0)
+            SelectedHero[i] = BlzCreateFrameByType("SPRITE", "SelectedHero[" .. i .. "]", CommandButtonBackDrop--[[BlzGetFrameByName("ConsoleUIBackdrop", 0)]], "", 0)
+            --BlzFrameSetModel(SelectedHero[i], "war3mapImported\\cyber_call_sprite.mdx", 0)
+            BlzFrameSetModel(SelectedHero[i], "war3mapImported\\crystallid_sprite.mdx", 0)
             BlzFrameClearAllPoints(SelectedHero[i])
             BlzFrameSetPoint(SelectedHero[i], FRAMEPOINT_BOTTOMLEFT, HeroButtons[i], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
             BlzFrameSetSize(SelectedHero[i], 0.00001, 0.00001)
@@ -788,14 +840,22 @@ OnInit("Stats", function ()
             BlzFrameSetVisible(SelectedHero[i], false)
         end
 
-        FocusedUnit = BlzCreateFrameByType("SPRITE", "FocusedUnit", HeroButtons[0], "", 0)
+        --[[FocusedUnit = BlzCreateFrameByType("SPRITE", "FocusedUnit", HeroButtons[0], "", 0)
         BlzFrameSetModel(FocusedUnit, "war3mapImported\\crystallid_sprite.mdx", 0)
         BlzFrameClearAllPoints(FocusedUnit)
         BlzFrameSetPoint(FocusedUnit, FRAMEPOINT_BOTTOMLEFT, HeroButtons[0], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
         BlzFrameSetSize(FocusedUnit, 0.00001, 0.00001)
         BlzFrameSetScale(FocusedUnit, 0.75)
         BlzFrameSetLevel(FocusedUnit, 5)
-        BlzFrameSetVisible(FocusedUnit, false)
+        BlzFrameSetVisible(FocusedUnit, false)]]
+
+        OtherStats = BlzCreateFrameByType("TEXT", "name", CommandButtonBackDrop, "", 0)
+        BlzFrameSetScale(OtherStats, 1.43)
+        BlzFrameSetPoint(OtherStats, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.018720, -0.010200)
+        BlzFrameSetPoint(OtherStats, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.021280, 0.0098000)
+        BlzFrameSetText(OtherStats, "|cffFFCC00HP: 999/999\nMP: 999/999\nSTA: 999 (+999)\nDEX: 999 (+999)\nWIS: 999 (+999)|r")
+        BlzFrameSetTextAlignment(OtherStats, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+        BlzFrameSetVisible(OtherStats, false)
     end)
 
     OnChangeDimensions(function ()
@@ -809,8 +869,9 @@ OnInit("Stats", function ()
     OnLeaderboard(function ()
         for i = 0, 2 do
             BlzFrameSetParent(StatsBackdrop[i], BlzGetFrameByName("Leaderboard", 0))
+            BlzFrameSetParent(SelectedHero[i], BlzGetFrameByName("Leaderboard", 0))
         end
-        BlzFrameSetParent(FocusedUnit, BlzGetFrameByName("Leaderboard", 0))
+        --BlzFrameSetParent(FocusedUnit, BlzGetFrameByName("Leaderboard", 0))
     end)
 
     ---@param p player

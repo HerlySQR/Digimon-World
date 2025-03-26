@@ -420,6 +420,24 @@ OnInit.final(function ()
         end
     end)
 
+    local function dontWannaTalkWithTentomon(p)
+        if not inTutorial[p] then
+            return
+        end
+
+        if not thirdPart[p] then
+            thirdPart[p] = true
+            secondPartSkipped[p] = true
+            local pixie = piximons[p]
+            local tr = Transmission.create(Force(p))
+            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Fine, I see you more interested in other things.", Transmission.SET, 3.5, true)
+            tr:AddActions(1., function ()
+                dequequeTransmission(p)
+            end)
+            enquequeTransmission(tr, p)
+        end
+    end
+
     -- Player closes the map menu
     OnSeeMapClosed(function (p)
         if not inTutorial[p] then
@@ -453,11 +471,11 @@ OnInit.final(function ()
                 local howMany = 0
 
                 Timed.echo(3., function ()
+                    if not inTutorial[p] or thirdPart[p] then
+                        return true
+                    end
                     if not scolded then
                         if DistanceBetweenCoords(GetUnitX(Tentomon), GetUnitY(Tentomon), d:getPos()) > 400. then
-                            if thirdPart[p] then
-                                return true
-                            end
                             if d:getTypeId() == 0 then
                                 return true
                             end
@@ -571,6 +589,7 @@ OnInit.final(function ()
             return
         end
 
+        dontWannaTalkWithTentomon(p)
         if not itemPicked[p] then
             itemPicked[p] = true
             local pixie = piximons[p]
@@ -640,6 +659,7 @@ OnInit.final(function ()
 
         local m = GetManipulatedItem()
 
+        dontWannaTalkWithTentomon(p)
         Timed.call(function ()
             if UnitHasItem(d.root, m) then
                 if not equipPicked[p] then
@@ -685,6 +705,7 @@ OnInit.final(function ()
             return
         end
 
+        dontWannaTalkWithTentomon(p)
         if not shopEnter[p] then
             shopEnter[p] = true
             local pixie = piximons[p]
@@ -725,6 +746,7 @@ OnInit.final(function ()
             return
         end
 
+        dontWannaTalkWithTentomon(p)
         if not restaurantEnter[p] then
             restaurantEnter[p] = true
             local pixie = piximons[p]
@@ -884,6 +906,7 @@ OnInit.final(function ()
             return
         end
 
+        dontWannaTalkWithTentomon(p)
         if not hospitalEnter[p] then
             hospitalEnter[p] = true
             local pixie = piximons[p]
@@ -924,6 +947,7 @@ OnInit.final(function ()
                     Digimon.enumInRange(d:getX(), d:getY(), 400., function (d2)
                         if not transportFound[p] and d2:getTypeId() == WHAMON or d2:getTypeId() == BIRDRAMON then
                             transportFound[p] = true
+                            dontWannaTalkWithTentomon(p)
                             local pixie = piximons[p]
                             canFollow[p] = false
 
@@ -1004,6 +1028,7 @@ OnInit.final(function ()
             return
         end
 
+        dontWannaTalkWithTentomon(p)
         if not bankEnter[p] then
             bankEnter[p] = true
             local pixie = piximons[p]
@@ -1057,6 +1082,7 @@ OnInit.final(function ()
             return
         end
 
+        dontWannaTalkWithTentomon(p)
         if not gymEnter[p] then
             gymEnter[p] = true
             local pixie = piximons[p]
@@ -1098,6 +1124,7 @@ OnInit.final(function ()
             return
         end
 
+        dontWannaTalkWithTentomon(p)
         if not trainEnter[p] then
             trainEnter[p] = true
             canFollow[p] = false

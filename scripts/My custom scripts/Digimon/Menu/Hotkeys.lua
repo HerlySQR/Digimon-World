@@ -96,6 +96,18 @@ OnInit("Hotkeys", function ()
                 end
             end)
             oskeyIsUsed[oskeyFromName[hotkey]] = true
+
+            local hotkeyFrame = BlzCreateFrameByType("BACKDROP", "BACKDROP", frame, "", 1)
+            BlzFrameSetPoint(hotkeyFrame, FRAMEPOINT_TOPLEFT, frame, FRAMEPOINT_TOPLEFT, 0.0025000, -0.0025000)
+            BlzFrameSetPoint(hotkeyFrame, FRAMEPOINT_BOTTOMRIGHT, frame, FRAMEPOINT_BOTTOMRIGHT, -0.032500, 0.032500)
+            BlzFrameSetTexture(hotkeyFrame, "war3mapImported\\BlackBackdrop.blp", 0, true)
+
+            local text = BlzCreateFrameByType("TEXT", "name", hotkeyFrame, "", 0)
+            BlzFrameSetScale(text, 0.858)
+            BlzFrameSetAllPoints(text, hotkeyFrame)
+            BlzFrameSetText(text, hotkey)
+            BlzFrameSetEnable(text, false)
+            BlzFrameSetTextAlignment(text, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
         end)
     end
 
