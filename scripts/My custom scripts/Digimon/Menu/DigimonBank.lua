@@ -260,6 +260,7 @@ OnInit("DigimonBank", function ()
 
     function BankData:deserializeProperties()
         if self.slot ~= self:getIntProperty("slot") then
+            print("bank", self:getIntProperty("slot"))
             error("The slot is not the same.")
             return
         end
@@ -438,13 +439,15 @@ OnInit("DigimonBank", function ()
     ---@param d Digimon
     ---@return integer
     function Bank:saveDigimon(d)
-        for i = 0, self.savedDigimonsStock - 1 do
-            if not self.saved[i] then
-                self.saved[i] = d
-                d.saved = true
-                d:setOwner(Digimon.PASSIVE)
-                d:hideInTheCorner()
-                return i
+        if not self:isSaved(d) then
+            for i = 0, self.savedDigimonsStock - 1 do
+                if not self.saved[i] then
+                    self.saved[i] = d
+                    d.saved = true
+                    d:setOwner(Digimon.PASSIVE)
+                    d:hideInTheCorner()
+                    return i
+                end
             end
         end
         return -1
@@ -556,6 +559,28 @@ OnInit("DigimonBank", function ()
             BlzFrameSetEnable(SaveItem, true)
             BlzFrameSetEnable(SellItem, true)
         end
+    end
+
+    ---@param d Digimon
+    ---@return boolean
+    function Bank:isStocked(d)
+        for i = 0, MAX_STOCK - 1 do
+            if self.stocked[i] == d then
+                return true
+            end
+        end
+        return false
+    end
+
+    ---@param d Digimon
+    ---@return boolean
+    function Bank:isSaved(d)
+        for i = 0, MAX_STOCK - 1 do
+            if self.saved[i] == d then
+                return true
+            end
+        end
+        return false
     end
 
     -- Store all the digimon in case of AFK
@@ -673,6 +698,9 @@ OnInit("DigimonBank", function ()
                 SetUnitPosition(bank.seller, x, y)
                 SetUnitPosition(bank.buyer,  x, y)
                 UnitDropItemTarget(bank.seller, target, bank.buyer)
+                Timed.call(function ()
+                    SetUnitOwner(bank.seller, Digimon.PASSIVE)
+                end)
             end
         end
 
@@ -1917,21 +1945,28 @@ OnInit("DigimonBank", function ()
     function SendToBank(p, d)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
         local index = -1
-        for i = 0, MAX_STOCK - 1 do
-            if not bank.stocked[i] then
-                bank.stocked[i] = d
-                d.owner = p
-                d:setOwner(Digimon.PASSIVE)
-                d:hideInTheCorner()
-                if bank.main == d then
-                    bank:searchMain()
-                end
-                index = i
 
-                digimonUpdateEvent:run(p, d)
-                break
+        if not bank:isStocked(d) then
+            for i = 0, MAX_STOCK - 1 do
+                if not bank.stocked[i] then
+                    bank.stocked[i] = d
+                    index = i
+                    break
+                end
             end
+        else
+            index = GetBankIndex(p, d)
         end
+
+        d.owner = p
+        d:setOwner(Digimon.PASSIVE)
+        d:hideInTheCorner()
+        if bank.main == d then
+            bank:searchMain()
+        end
+
+        digimonUpdateEvent:run(p, d)
+
         if p == LocalPlayer then
             SelectUnit(d.root, false)
             UpdateMenu()
@@ -2448,7 +2483,7 @@ OnInit("DigimonBank", function ()
     function AddToBank(p, u)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
         local d = (Debug.wc3Type(u) == "unit") and Digimon.getInstance(u) or u
-        if d then
+        if d and not bank:isStocked(d) then
             for i = 0, MAX_STOCK - 1 do
                 if not bank.stocked[i] then
                     bank.stocked[i] = d
@@ -2557,7 +2592,7 @@ OnInit("DigimonBank", function ()
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode or not pcall(data.deserialize, data, decode) then
+            if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
                 return
             end

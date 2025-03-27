@@ -109,6 +109,10 @@ StatsItemDrop = nil
 TriggerStatsItemDrop = nil 
 OtherStats = nil 
 TriggerOtherStats = nil 
+SelectedDigimonIcon = nil 
+TriggerSelectedDigimonIcon = nil 
+SelectedDigimonName = nil 
+TriggerSelectedDigimonName = nil 
 REFORGEDUIMAKER = {}
 REFORGEDUIMAKER.Button03T00Func = function() 
 BlzFrameSetEnable(Button03T[0], false) 
@@ -979,7 +983,7 @@ BlzFrameSetTexture(HeroBuffsT[7], "CustomFrame.png", 0, true)
 
 hotkeyFrame = BlzCreateFrameByType("BACKDROP", "BACKDROP", Button05T[0], "", 1)
 BlzFrameSetPoint(hotkeyFrame, FRAMEPOINT_TOPLEFT, Button05T[0], FRAMEPOINT_TOPLEFT, 0.0025000, -0.0025000)
-BlzFrameSetPoint(hotkeyFrame, FRAMEPOINT_BOTTOMRIGHT, Button05T[0], FRAMEPOINT_BOTTOMRIGHT, -0.032500, 0.032500)
+BlzFrameSetPoint(hotkeyFrame, FRAMEPOINT_BOTTOMRIGHT, Button05T[0], FRAMEPOINT_BOTTOMRIGHT, -0.032500, 0.027500)
 BlzFrameSetTexture(hotkeyFrame, "CustomFrame.png", 0, true)
 
 StatsDigimonLevelBackdrop = BlzCreateFrame("OptionsPopupMenuBackdropTemplate", StatsDigimonIcon, 0, 0)
@@ -1053,12 +1057,12 @@ BlzTriggerRegisterFrameEvent(TriggerStatsItemT[5], StatsItemT[5], FRAMEEVENT_CON
 TriggerAddAction(TriggerStatsItemT[5], REFORGEDUIMAKER.StatsItemT05Func) 
 
 CommandButtonBackDrop = BlzCreateFrame("EscMenuBackdrop", HeroBuffsT[0], 0, 0)
-BlzFrameSetPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, HeroBuffsT[0], FRAMEPOINT_TOPLEFT, -0.053720, -0.14230)
-BlzFrameSetPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, HeroBuffsT[0], FRAMEPOINT_BOTTOMRIGHT, 0.16378, -0.30980)
+BlzFrameSetPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, HeroBuffsT[0], FRAMEPOINT_TOPLEFT, -0.055000, -0.11750)
+BlzFrameSetPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, HeroBuffsT[0], FRAMEPOINT_BOTTOMRIGHT, 0.16250, -0.31000)
 
 text = BlzCreateFrameByType("TEXT", "name", hotkeyFrame, "", 0)
 BlzFrameSetAbsPoint(text, FRAMEPOINT_TOPLEFT, 0.0725000, 0.412500)
-BlzFrameSetAbsPoint(text, FRAMEPOINT_BOTTOMRIGHT, 0.0825000, 0.402500)
+BlzFrameSetAbsPoint(text, FRAMEPOINT_BOTTOMRIGHT, 0.0825000, 0.397500)
 BlzFrameSetText(text, "|cffffffffA|r")
 BlzFrameSetEnable(text, false)
 BlzFrameSetScale(text, 0.858)
@@ -1082,10 +1086,23 @@ BlzTriggerRegisterFrameEvent(TriggerStatsItemDrop, StatsItemDrop, FRAMEEVENT_CON
 TriggerAddAction(TriggerStatsItemDrop, REFORGEDUIMAKER.StatsItemDropFunc) 
 
 OtherStats = BlzCreateFrameByType("TEXT", "name", CommandButtonBackDrop, "", 0)
-BlzFrameSetPoint(OtherStats, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.018720, -0.010200)
-BlzFrameSetPoint(OtherStats, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.021280, 0.0098000)
+BlzFrameSetPoint(OtherStats, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.035000)
+BlzFrameSetPoint(OtherStats, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.010000)
 BlzFrameSetText(OtherStats, "|cffFFCC00HP: 999/999\nMP: 999/999\nSTA: 999 (+999)\nDEX: 999 (+999)\nWIS: 999 (+999)|r")
 BlzFrameSetEnable(OtherStats, false)
 BlzFrameSetScale(OtherStats, 1.43)
 BlzFrameSetTextAlignment(OtherStats, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+
+SelectedDigimonIcon = BlzCreateFrameByType("BACKDROP", "BACKDROP", CommandButtonBackDrop, "", 1)
+BlzFrameSetPoint(SelectedDigimonIcon, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.015000)
+BlzFrameSetPoint(SelectedDigimonIcon, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.19000, 0.17000)
+BlzFrameSetTexture(SelectedDigimonIcon, "CustomFrame.png", 0, true)
+
+SelectedDigimonName = BlzCreateFrameByType("TEXT", "name", CommandButtonBackDrop, "", 0)
+BlzFrameSetPoint(SelectedDigimonName, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.040000, -0.015000)
+BlzFrameSetPoint(SelectedDigimonName, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.17000)
+BlzFrameSetText(SelectedDigimonName, "|cffFFCC00Agumon|r")
+BlzFrameSetEnable(SelectedDigimonName, false)
+BlzFrameSetScale(SelectedDigimonName, 1.29)
+BlzFrameSetTextAlignment(SelectedDigimonName, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 end

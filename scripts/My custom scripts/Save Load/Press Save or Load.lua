@@ -118,6 +118,9 @@ OnInit("PressSaveOrLoad", function ()
             end
         end)
         ClearDiary(p)
+        if p == GetLocalPlayer() then
+            RestartMusic()
+        end
 
         restartListener:run(p)
     end
@@ -150,7 +153,7 @@ OnInit("PressSaveOrLoad", function ()
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode or not pcall(data.deserialize, data, decode) then
+            if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
                 return false
             end
@@ -188,6 +191,11 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     function SetPlayerData(p, slot)
+        EnumItemsInRect(WorldBounds.rect, nil, function ()
+            if GetItemPlayer(GetEnumItem()) == p then
+                RemoveItem(GetEnumItem())
+            end
+        end)
         if PlayerDatas[p][slot] then
             local data = PlayerDatas[p][slot]
             SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, data.gold)
@@ -204,6 +212,9 @@ OnInit("PressSaveOrLoad", function ()
         end
         if QuestDatas[p][slot] then
             SetQuests(p, QuestDatas[p][slot])
+        end
+        if p == GetLocalPlayer() then
+            RestartMusic()
         end
 
         loadListener:run(p)

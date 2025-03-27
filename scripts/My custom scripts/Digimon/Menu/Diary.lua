@@ -565,6 +565,7 @@ OnInit("Diary", function ()
 
     function UnlockedInfoData:deserializeProperties()
         if self.slot ~= self:getIntProperty("slot") then
+            print("diary", self:getIntProperty("slot"))
             error("The slot is not the same.")
             return
         end
@@ -1129,6 +1130,10 @@ OnInit("Diary", function ()
             OpenMenu()
             inMenu = true
             spriteRemain = 0
+
+            if MenuWasHidden() then
+                ForceUICancel()
+            end
         end
     end
 
@@ -1888,7 +1893,7 @@ OnInit("Diary", function ()
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode or not pcall(data.deserialize, data, decode) then
+            if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
                 return
             end

@@ -99,7 +99,7 @@ OnInit("Hotkeys", function ()
 
             local hotkeyFrame = BlzCreateFrameByType("BACKDROP", "BACKDROP", frame, "", 1)
             BlzFrameSetPoint(hotkeyFrame, FRAMEPOINT_TOPLEFT, frame, FRAMEPOINT_TOPLEFT, 0.0025000, -0.0025000)
-            BlzFrameSetPoint(hotkeyFrame, FRAMEPOINT_BOTTOMRIGHT, frame, FRAMEPOINT_BOTTOMRIGHT, -0.032500, 0.032500)
+            BlzFrameSetPoint(hotkeyFrame, FRAMEPOINT_BOTTOMRIGHT, frame, FRAMEPOINT_BOTTOMRIGHT, -0.032500, 0.027500)
             BlzFrameSetTexture(hotkeyFrame, "war3mapImported\\BlackBackdrop.blp", 0, true)
 
             local text = BlzCreateFrameByType("TEXT", "name", hotkeyFrame, "", 0)

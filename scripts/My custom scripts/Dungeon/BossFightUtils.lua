@@ -456,6 +456,15 @@ OnInit("BossFightUtils", function ()
                             playersOnField:addSingle(GetOwningPlayer(u))
                         end
                     end)
+                    -- Add hidden units
+                    for p in whoAlreadyAre:elements() do
+                        ForUnitsOfPlayer(p, function (u)
+                            if IsUnitHidden(u) and RectContainsUnit(battlefield[data.boss][i], u) then
+                                unitsInTheField:addSingle(u)
+                                playersOnField:addSingle(GetOwningPlayer(u))
+                            end
+                        end)
+                    end
                     isInBattlefield = isInBattlefield or RectContainsUnit(battlefield[data.boss][i], data.boss)
                 end
 
@@ -478,33 +487,31 @@ OnInit("BossFightUtils", function ()
                     reset()
                     IssuePointOrderById(data.boss, Orders.smart, initialPosX, initialPosY)
                 else
-                    if playersOnField:size() >= data.maxPlayers then
-                        if playersOnField:size() > data.maxPlayers then
-                            whoAlreadyAre = playersOnField:except(whoAlreadyAre)
-                            for _ = 1, (playersOnField:size() - data.maxPlayers) do
-                                local p = whoAlreadyAre:random()
-                                if p then
-                                    playersOnField:removeSingle(p)
-                                    whoAlreadyAre:removeSingle(p)
-                                    for u in unitsInTheField:elements() do
-                                        if GetOwningPlayer(u) == p then
-                                            SetUnitPosition(u, GetRectCenterX(data.entrance), GetRectCenterY(data.entrance))
-                                        elseif whoAlreadyAre:contains(GetOwningPlayer(u)) then
-                                            SetUnitPosition(u, GetRectCenterX(data.inner), GetRectCenterY(data.inner))
-                                        end
-                                        unitsInTheField:removeSingle(u)
+                    if playersOnField:size() > data.maxPlayers then
+                        if playersOnField:contains(LocalPlayer) then
+                            DisplayTextToPlayer(LocalPlayer, 0, 0, "There are too many players on the battlefield.")
+                        end
+                        whoAlreadyAre = playersOnField:except(whoAlreadyAre)
+                        for _ = 1, (playersOnField:size() - data.maxPlayers) do
+                            local p = whoAlreadyAre:random()
+                            if p then
+                                playersOnField:removeSingle(p)
+                                whoAlreadyAre:removeSingle(p)
+                                for u in unitsInTheField:elements() do
+                                    if GetOwningPlayer(u) == p then
+                                        SetUnitPosition(u, GetRectCenterX(data.entrance), GetRectCenterY(data.entrance))
+                                    elseif whoAlreadyAre:contains(GetOwningPlayer(u)) then
+                                        SetUnitPosition(u, GetRectCenterX(data.inner), GetRectCenterY(data.inner))
                                     end
+                                    unitsInTheField:removeSingle(u)
                                 end
                             end
                         end
                         for _, d in ipairs(data.forceWall) do
                             ModifyGateBJ(bj_GATEOPERATION_CLOSE, d)
-                        end
-                    elseif playersOnField:size() < data.maxPlayers then
-                        if IsDestructableAliveBJ(data.forceWall[1]) then
-                            for _, d in ipairs(data.forceWall) do
+                            Timed.call(2., function ()
                                 ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
-                            end
+                            end)
                         end
                     end
                     -- The chances of casting increases when has low hp
@@ -522,7 +529,7 @@ OnInit("BossFightUtils", function ()
                                 ZTS_AddPlayerUnit(u2)
                             else
                                 local threat = ZTS_GetThreatUnitAmount(data.boss, u2)
-                                if threat > maxThreat then
+                                if not IsUnitHidden(u2) and threat > maxThreat then
                                     u = u2
                                     maxThreat = threat
                                 end

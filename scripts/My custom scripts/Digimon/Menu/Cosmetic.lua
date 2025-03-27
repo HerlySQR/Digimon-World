@@ -172,6 +172,12 @@ OnInit("Cosmetic", function ()
             AddButtonToEscStack(CosmeticExit)
         end
         UpdateModel(p)
+
+        if p == LocalPlayer then
+            if MenuWasHidden() then
+                ForceUICancel()
+            end
+        end
     end
 
     local function CosmeticAcceptFunc()
@@ -211,8 +217,6 @@ OnInit("Cosmetic", function ()
 
         UnitShareVision(model, p, false)
 
-        RestartSelectedUnits(p)
-
         if p == LocalPlayer then
             ShowMenu(true)
             BlzFrameSetVisible(CosmeticMenu, false)
@@ -229,6 +233,7 @@ OnInit("Cosmetic", function ()
             BlzFrameSetText(CosmeticUnlockText, "|cffFFCC00Enter a code to unlock a cosmetic|r")
             BlzFrameSetText(CosmeticUnlockCode, "")
         end
+        RestartSelectedUnits(p)
         UpdateModel(p)
     end
 

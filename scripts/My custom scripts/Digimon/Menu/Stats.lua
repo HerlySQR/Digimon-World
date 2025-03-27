@@ -90,6 +90,8 @@ OnInit("Stats", function ()
     local HeroButtons = {} ---@type framehandle[]
     local HeroBuffs = {} ---@type framehandle[][]
     local OtherStats = nil ---@type framehandle
+    local SelectedDigimonIcon = nil ---@type framehandle
+    local SelectedDigimonName = nil ---@type framehandle
 
     local LocalPlayer = GetLocalPlayer()
 
@@ -196,6 +198,9 @@ OnInit("Stats", function ()
                     BlzFrameSetVisible(StatsBackdrop[i], false)
                 else
                     local d = seeOnly[LocalPlayer] == nil and list[i+1] or Digimon.getInstance(seeOnly[LocalPlayer])
+                    if not d then
+                        break
+                    end
                     local u = d.root
                     local name
                     if IsUnitType(u, UNIT_TYPE_HERO) then
@@ -357,6 +362,7 @@ OnInit("Stats", function ()
                 end
             end
         end
+
         if changeVisible then
             changeVisible = false
             BlzFrameSetVisible(StatsItemDrop, false)
@@ -401,19 +407,33 @@ OnInit("Stats", function ()
             end
         end
 
+        BlzFrameSetVisible(OtherStats, false)
+        BlzFrameSetVisible(SelectedDigimonIcon, false)
+        BlzFrameSetVisible(SelectedDigimonName, false)
+
         local selected = GetMainSelectedUnitEx()
         if not selected
             or not UnitAlive(selected)
-            or IsUnitHidden(selected)
-            or GetOwningPlayer(selected) == LocalPlayer
-            or GetOwningPlayer(selected) == Digimon.CITY then
+            or IsUnitHidden(selected) then
 
-            BlzFrameSetVisible(OtherStats, false)
             return
         end
+
+        BlzFrameSetTexture(SelectedDigimonIcon, BlzGetAbilityIcon(GetUnitTypeId(selected)), 0, true)
+        BlzFrameSetVisible(SelectedDigimonIcon, true)
+
+        BlzFrameSetText(SelectedDigimonName, "|cffFFCC00" .. (IsUnitType(selected, UNIT_TYPE_HERO) and GetHeroProperName(selected) or GetUnitName(selected)) .. "|r")
+        BlzFrameSetVisible(SelectedDigimonName, true)
+
         local d = Digimon.getInstance(selected)
         if not d then
-            BlzFrameSetVisible(OtherStats, false)
+            return
+        end
+
+        if GetOwningPlayer(selected) == LocalPlayer
+            or GetOwningPlayer(selected) == Digimon.CITY
+            or GetOwningPlayer(selected) == Digimon.PASSIVE then
+
             return
         end
 
@@ -851,11 +871,25 @@ OnInit("Stats", function ()
 
         OtherStats = BlzCreateFrameByType("TEXT", "name", CommandButtonBackDrop, "", 0)
         BlzFrameSetScale(OtherStats, 1.43)
-        BlzFrameSetPoint(OtherStats, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.018720, -0.010200)
-        BlzFrameSetPoint(OtherStats, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.021280, 0.0098000)
+        BlzFrameSetPoint(OtherStats, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.035000)
+        BlzFrameSetPoint(OtherStats, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.010000)
         BlzFrameSetText(OtherStats, "|cffFFCC00HP: 999/999\nMP: 999/999\nSTA: 999 (+999)\nDEX: 999 (+999)\nWIS: 999 (+999)|r")
         BlzFrameSetTextAlignment(OtherStats, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
         BlzFrameSetVisible(OtherStats, false)
+
+        SelectedDigimonIcon = BlzCreateFrameByType("BACKDROP", "BACKDROP", CommandButtonBackDrop, "", 1)
+        BlzFrameSetPoint(SelectedDigimonIcon, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.015000)
+        BlzFrameSetPoint(SelectedDigimonIcon, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.19000, 0.17000)
+        BlzFrameSetTexture(SelectedDigimonIcon, "", 0, true)
+        BlzFrameSetVisible(SelectedDigimonIcon, false)
+
+        SelectedDigimonName = BlzCreateFrameByType("TEXT", "name", CommandButtonBackDrop, "", 0)
+        BlzFrameSetScale(SelectedDigimonName, 1.29)
+        BlzFrameSetPoint(SelectedDigimonName, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.040000, -0.015000)
+        BlzFrameSetPoint(SelectedDigimonName, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.17000)
+        BlzFrameSetText(SelectedDigimonName, "|cffFFCC00Agumon|r")
+        BlzFrameSetTextAlignment(SelectedDigimonName, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+        BlzFrameSetVisible(SelectedDigimonName, false)
     end)
 
     OnChangeDimensions(function ()

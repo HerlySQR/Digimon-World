@@ -480,10 +480,16 @@ OnInit(function ()
 
     OnRestart(function (p)
         BlzDecPlayerTechResearched(p, RANK_UPGRADE, GetPlayerTechCount(p, RANK_UPGRADE, true))
+        ForForce(FORCE_PLAYING, function ()
+            DisablePvP(p, GetEnumPlayer())
+        end)
     end)
 
     OnLoad(function (p)
         SetPlayerTechResearched(p, RANK_UPGRADE, GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED))
+        ForForce(FORCE_PLAYING, function ()
+            DisablePvP(p, GetEnumPlayer())
+        end)
     end)
 
     local FightInfos = {} ---@type FightInfo[]
@@ -583,7 +589,7 @@ OnInit(function ()
         elseif info2.p == LocalPlayer then
             local i = info2.clicked
             if info2.clickedGroup == 2 then
-                BlzFrameSetEnable(Select, not info2.bannedDigimons:contains(i) and info2.aliveDigimons > 3 and (info2.selectedDigimons:contains(i) or info2.availableSelects == 0))
+                BlzFrameSetEnable(Select, not info2.bannedDigimons:contains(i) and info2.aliveDigimons > 3 and (info2.selectedDigimons:contains(i) or info2.availableSelects > 0))
                 BlzFrameSetEnable(Ban, false)
                 BlzFrameSetText(Select, "|cffFCD20D" .. (info2.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
             elseif info2.clickedGroup == 1 then
@@ -1175,6 +1181,7 @@ OnInit(function ()
             end)
 
             if p1 == LocalPlayer or p2 == LocalPlayer then
+                ForceUICancel() -- In case another menu was opened
                 HideMenu(true)
 
                 BlzFrameSetText(Remaining, "Remain: " .. math.floor(fight.selectTime))
@@ -1278,6 +1285,7 @@ OnInit(function ()
             end)
 
             if p1 == LocalPlayer then
+                ForceUICancel() -- In case another menu was opened
                 HideMenu(true)
 
                 BlzFrameSetText(Remaining, "Remain: " .. math.floor(fight.selectTime))

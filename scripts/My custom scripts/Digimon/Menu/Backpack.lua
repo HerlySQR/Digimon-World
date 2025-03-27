@@ -110,6 +110,7 @@ OnInit("Backpack", function ()
 
     function BackpackData:deserializeProperties()
         if self.sslot ~= self:getIntProperty("sslot") then
+            print("backpack", self:getIntProperty("slot"))
             error("The slot is not the same.")
             return
         end
@@ -943,7 +944,7 @@ OnInit("Backpack", function ()
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode or not pcall(data.deserialize, data, decode) then
+            if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
                 return
             end

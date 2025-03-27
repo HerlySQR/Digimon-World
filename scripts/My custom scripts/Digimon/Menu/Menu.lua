@@ -7,7 +7,8 @@ OnInit("Menu", function ()
     Require "GameStatus"
 
     local Frames = {} ---@type framehandle[]
-    local WasVisible = __jarray(false) ---@type boolean[]
+    local WasVisible = __jarray(false) ---@type table<framehandle, boolean>
+    local PartOfMenu = __jarray(false) ---@type table<framehandle, boolean>
     local LocalPlayer = GetLocalPlayer()
     local Console = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local MenuStack = {} ---@type framehandle[]
@@ -76,66 +77,77 @@ OnInit("Menu", function ()
         return maxX
     end
 
-    local onFrameChangeVisible = EventListener.create()
-
-    ---@param func fun(frame: framehandle, flag: boolean)
-    function OnFrameChangeVisible(func)
-        onFrameChangeVisible:register(func)
-    end
+    local hideStack = 0
 
     local oldFrameSetVisible
     oldFrameSetVisible = AddHook("BlzFrameSetVisible", function (frame, flag)
-        for i, f in ipairs(Frames) do
-            if frame == f then
-                WasVisible[i] = flag
-                break
+        if PartOfMenu[frame] then
+            WasVisible[frame] = flag
+            if flag then
+                if hideStack <= 0 then
+                    oldFrameSetVisible(frame, true)
+                end
+            else
+                oldFrameSetVisible(frame, false)
             end
+        else
+            oldFrameSetVisible(frame, flag)
         end
-        oldFrameSetVisible(frame, flag)
-        onFrameChangeVisible:run(frame, flag)
     end)
 
     ---@param showOriginFrames boolean?
     function ShowMenu(showOriginFrames)
-        for i, frame in ipairs(Frames) do
-            oldFrameSetVisible(frame, WasVisible[i])
-        end
-        if showOriginFrames then
-            oldFrameSetVisible(UpperButton, true)
-            oldFrameSetVisible(ResourceBar, true)
-            oldFrameSetVisible(Clock, true)
-            oldFrameSetVisible(TopbarBackdrop, true)
-            oldFrameSetVisible(Minimap, true)
-            oldFrameSetVisible(MinimapBackDrop, true)
-            oldFrameSetVisible(HeroBar, true)
-            oldFrameSetVisible(CommandButtonBackDrop, true)
+        hideStack = hideStack - 1
+        if hideStack <= 0 then
+            for _, frame in ipairs(Frames) do
+                oldFrameSetVisible(frame, WasVisible[frame])
+            end
+            if showOriginFrames then
+                oldFrameSetVisible(UpperButton, true)
+                oldFrameSetVisible(ResourceBar, true)
+                oldFrameSetVisible(Clock, true)
+                oldFrameSetVisible(TopbarBackdrop, true)
+                oldFrameSetVisible(Minimap, true)
+                oldFrameSetVisible(MinimapBackDrop, true)
+                oldFrameSetVisible(HeroBar, true)
+                oldFrameSetVisible(CommandButtonBackDrop, true)
+            end
         end
     end
 
     ---@param hideOriginFrames boolean?
     function HideMenu(hideOriginFrames)
-        for i, frame in ipairs(Frames) do
-            WasVisible[i] = BlzFrameIsVisible(frame)
-            oldFrameSetVisible(frame, false)
+        if hideStack <= 0 then
+            for _, frame in ipairs(Frames) do
+                WasVisible[frame] = BlzFrameIsVisible(frame)
+                oldFrameSetVisible(frame, false)
+            end
+            if hideOriginFrames then
+                ClearSelection()
+                oldFrameSetVisible(UpperButton, false)
+                oldFrameSetVisible(ResourceBar, false)
+                oldFrameSetVisible(Clock, false)
+                oldFrameSetVisible(TopbarBackdrop, false)
+                oldFrameSetVisible(Minimap, false)
+                oldFrameSetVisible(MinimapBackDrop, false)
+                oldFrameSetVisible(HeroBar, false)
+                oldFrameSetVisible(CommandButtonBackDrop, false)
+            end
         end
-        if hideOriginFrames then
-            ClearSelection()
-            oldFrameSetVisible(UpperButton, false)
-            oldFrameSetVisible(ResourceBar, false)
-            oldFrameSetVisible(Clock, false)
-            oldFrameSetVisible(TopbarBackdrop, false)
-            oldFrameSetVisible(Minimap, false)
-            oldFrameSetVisible(MinimapBackDrop, false)
-            oldFrameSetVisible(HeroBar, false)
-            oldFrameSetVisible(CommandButtonBackDrop, false)
-        end
+        hideStack = hideStack + 1
+    end
+
+    ---@return boolean
+    function MenuWasHidden()
+        return hideStack > 1
     end
 
     ---@param frame framehandle
     function AddFrameToMenu(frame)
         assert(frame, "You are adding a nil frame to the menu")
         table.insert(Frames, frame)
-        WasVisible[#Frames] = BlzFrameIsVisible(frame)
+        WasVisible[frame] = BlzFrameIsVisible(frame)
+        PartOfMenu[frame] = true
     end
 
     ---@param frame framehandle
@@ -176,11 +188,14 @@ OnInit("Menu", function ()
         BlzFrameSetTooltip(frame, tooltip)
     end
 
+    for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
+        selectedUnits[Player(i)] = CreateGroup()
+    end
+
     OnInit.final(function ()
         local t = CreateTrigger()
         ForForce(bj_FORCE_ALL_PLAYERS, function ()
             TriggerRegisterPlayerEvent(t, GetEnumPlayer(), EVENT_PLAYER_END_CINEMATIC)
-            selectedUnits[GetEnumPlayer()] = CreateGroup()
         end)
         TriggerAddAction(t, function ()
             if GetTriggerPlayer() == LocalPlayer then
@@ -302,7 +317,7 @@ OnInit("Menu", function ()
         BlzFrameSetVisible(Minimap, true)
 
         CommandButtonBackDrop = BlzCreateFrame("EscMenuBackdrop", Console, 0, 0)
-        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.180000)
+        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.205000)
         BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.41, 0.00000)
 
         -- Hide portrait
@@ -473,7 +488,15 @@ OnInit("Menu", function ()
                 end
             end
         end
-        oldSelectUnit(whichUnit, flag)
+        if flag then
+            if hideStack <= 0 then
+                oldSelectUnit(whichUnit, true)
+            else
+                GroupAddUnit(selectedUnits[LocalPlayer], whichUnit)
+            end
+        else
+            oldSelectUnit(whichUnit, false)
+        end
     end)
 
     ---@param s string
