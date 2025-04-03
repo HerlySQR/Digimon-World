@@ -305,7 +305,6 @@ OnInit("Savecode", function ()
         local inputhash = self:Decode(HASHN())
 
         self:Clean()
-        print(inputhash, self:Hash())
 
         return inputhash == self:Hash()
     end

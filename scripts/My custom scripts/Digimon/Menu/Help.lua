@@ -15,9 +15,7 @@ OnInit("Help", function ()
 
     local DISCORD_LINK = "https://discord.gg/RZVSYWzA7b"
 
-    local function ShowImage()
-        local p = GetTriggerPlayer()
-
+    local function ShowImage(p)
         if p == GetLocalPlayer() then
             BlzFrameSetVisible(HelpImage, true)
             BlzFrameSetAlpha(HelpImage, 255)
@@ -31,9 +29,7 @@ OnInit("Help", function ()
         HelpButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(HelpButton, 11)
         BlzFrameSetVisible(HelpButton, false)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, HelpButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ShowImage)
+        OnClickEvent(HelpButton, ShowImage)
         BlzFrameSetVisible(HelpButton, false)
         AddFrameToMenu(HelpButton)
         SetFrameHotkey(HelpButton, "X")

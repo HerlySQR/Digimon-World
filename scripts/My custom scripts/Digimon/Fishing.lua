@@ -14,6 +14,17 @@ OnInit(function ()
     local DIGI_CARP = FourCC('I07R')
     local DIGI_TUNA = FourCC('I07T')
     local DIGI_DRAGON_FISH = FourCC('I07U')
+    local DIGI_DRAGON_FISH_OTHER = FourCC('I08K')
+
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == DIGI_DRAGON_FISH_OTHER end))
+        TriggerAddAction(t, function ()
+            UnitAddItemById(GetManipulatingUnit(), DIGI_DRAGON_FISH)
+            RemoveItem(GetManipulatedItem())
+        end)
+    end
 
     local FISHING = FourCC('A0IL')
     local ROD = {
@@ -38,7 +49,7 @@ OnInit(function ()
             [DIGI_TROUT] = 0.85,
             [DIGI_CARP] = 0.13,
             [DIGI_TUNA] = 0.85,
-            [DIGI_DRAGON_FISH] = 0.01
+            [DIGI_DRAGON_FISH_OTHER] = 0.01
         },
         [3] = {
             [DIGI_ANCHOVY] = 0.75,
@@ -48,7 +59,7 @@ OnInit(function ()
             [DIGI_TROUT] = 0.75,
             [DIGI_CARP] = 0.20,
             [DIGI_TUNA] = 0.75,
-            [DIGI_DRAGON_FISH] = 0.025
+            [DIGI_DRAGON_FISH_OTHER] = 0.025
         },
         [4] = {
             [DIGI_ANCHOVY] = 0.6,
@@ -58,11 +69,11 @@ OnInit(function ()
             [DIGI_TROUT] = 0.6,
             [DIGI_CARP] = 0.3,
             [DIGI_TUNA] = 0.6,
-            [DIGI_DRAGON_FISH] = 0.04
+            [DIGI_DRAGON_FISH_OTHER] = 0.04
         }
     }
     local PLACES = {
-        ["All"] = {DIGI_DRAGON_FISH},
+        ["All"] = {DIGI_DRAGON_FISH_OTHER},
         ["File City"] = {DIGI_ANCHOVY, DIGI_SPEAR_FISH},
         ["Gear Savanna"] = {DIGI_SEABASS, DIGI_SPEAR_FISH},
         ["Tropical Jungle"] = {DIGI_SEABASS, DIGI_SPEAR_FISH},
@@ -399,8 +410,7 @@ OnInit(function ()
         end
     end)
 
-    local function ReadyFunc()
-        local p = GetTriggerPlayer()
+    local function ReadyFunc(p)
         table.sort(fishers[p], function (a, b) return linePos[a] > linePos[b] end)
 
         for i = 1, #fishers[p] do
@@ -460,9 +470,7 @@ OnInit(function ()
         BackdropReady = BlzCreateFrameByType("BACKDROP", "BackdropReady", Ready, "", 0)
         BlzFrameSetAllPoints(BackdropReady, Ready)
         BlzFrameSetTexture(BackdropReady, "ReplaceableTextures\\CommandButtons\\BTNFishing1.blp", 0, true)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Ready, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ReadyFunc)
+        OnClickEvent(Ready, ReadyFunc)
 
         for i = 1, udg_MAX_USED_DIGIMONS do
             RedLines[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", ProgressBar, "", 1)

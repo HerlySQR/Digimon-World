@@ -565,7 +565,6 @@ OnInit("Diary", function ()
 
     function UnlockedInfoData:deserializeProperties()
         if self.slot ~= self:getIntProperty("slot") then
-            print("diary", self:getIntProperty("slot"))
             error("The slot is not the same.")
             return
         end
@@ -804,11 +803,7 @@ OnInit("Diary", function ()
                 sprite = sprite
             }
 
-            local t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, button, FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function ()
-                local p = GetTriggerPlayer()
-
+            OnClickEvent(button, function (p)
                 if not digiInfos[id].name then
                     local conds = GetEvolutionConditions(id)
                     local u = CreateUnit(Digimon.NEUTRAL, id, WorldBounds.minX, WorldBounds.minY, 0)
@@ -967,10 +962,7 @@ OnInit("Diary", function ()
                 BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
                 BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
 
-                local t = CreateTrigger()
-                BlzTriggerRegisterFrameEvent(t, ItemTypes[id], FRAMEEVENT_CONTROL_CLICK)
-                TriggerAddAction(t, function ()
-                    local p = GetTriggerPlayer()
+                OnClickEvent(ItemTypes[id], function (p)
                     unlockedItems[p][id] = true
 
                     if p == LocalPlayer then
@@ -1023,11 +1015,7 @@ OnInit("Diary", function ()
                 BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
                 BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
 
-                local t = CreateTrigger()
-                BlzTriggerRegisterFrameEvent(t, ItemTypes[id], FRAMEEVENT_CONTROL_CLICK)
-                TriggerAddAction(t, function ()
-                    local p = GetTriggerPlayer()
-
+                OnClickEvent(ItemTypes[id], function (p)
                     if p == LocalPlayer then
                         itemSelected = id
                         UpdateItemInfo()
@@ -1063,24 +1051,21 @@ OnInit("Diary", function ()
         end
     end
 
-    local function DigimonsButtonFunc()
-        local p = GetTriggerPlayer()
+    local function DigimonsButtonFunc(p)
         if p == LocalPlayer then
             actMenu = 0
             OpenMenu()
         end
     end
 
-    local function ItemsButtonFunc()
-        local p = GetTriggerPlayer()
+    local function ItemsButtonFunc(p)
         if p == LocalPlayer then
             actMenu = 1
             OpenMenu()
         end
     end
 
-    local function MapButtonFunc()
-        local p = GetTriggerPlayer()
+    local function MapButtonFunc(p)
         if p == LocalPlayer then
             actMenu = 2
             OpenMenu()
@@ -1112,8 +1097,7 @@ OnInit("Diary", function ()
         end)
     end
 
-    local function DiaryFunc()
-        local p = GetTriggerPlayer()
+    local function DiaryFunc(p)
         if p == LocalPlayer then
             SaveCameraSetup()
         end
@@ -1137,8 +1121,7 @@ OnInit("Diary", function ()
         end
     end
 
-    local function ExitFunc()
-        local p = GetTriggerPlayer()
+    local function ExitFunc(p)
         UnitShareVision(model, p, false)
         LockEnvironment(p, false)
         if p == LocalPlayer then
@@ -1164,9 +1147,7 @@ OnInit("Diary", function ()
         BackdropDiary = BlzCreateFrameByType("BACKDROP", "BackdropSeeMap", Diary, "", 0)
         BlzFrameSetAllPoints(BackdropDiary, Diary)
         BlzFrameSetTexture(BackdropDiary, "ReplaceableTextures\\CommandButtons\\BTNDigiWikiIcon.blp", 0, true)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Diary, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, DiaryFunc)
+        OnClickEvent(Diary, DiaryFunc)
 
         Sprite = BlzCreateFrameByType("SPRITE", "Sprite", Diary, "", 0)
         BlzFrameSetModel(Sprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
@@ -1187,9 +1168,7 @@ OnInit("Diary", function ()
         BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.54000)
         BlzFrameSetText(Exit, "|cffFCD20DExit|r")
         BlzFrameSetLevel(Exit, 3)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ExitFunc)
+        OnClickEvent(Exit, ExitFunc)
 
         -- Digimons
 
@@ -1203,9 +1182,7 @@ OnInit("Diary", function ()
         BlzFrameSetPoint(DigimonsButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.71000, 0.54000)
         BlzFrameSetText(DigimonsButton, "|cffFCD20DDigimons|r")
         BlzFrameSetLevel(DigimonsButton, 3)
-        TriggerDigimonsButton = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerDigimonsButton, DigimonsButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerDigimonsButton, DigimonsButtonFunc)
+        OnClickEvent(DigimonsButton, DigimonsButtonFunc)
 
         RookiesText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(RookiesText, 2.00)
@@ -1365,10 +1342,8 @@ OnInit("Diary", function ()
             DigimonEvolvesToOptionButton[i] = BlzCreateFrame("IconButtonTemplate", DigimonEvolvesToOption[i], 0, 0)
             BlzFrameSetAllPoints(DigimonEvolvesToOptionButton[i], DigimonEvolvesToOption[i])
             BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], false)
-            local t2 = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t2, DigimonEvolvesToOptionButton[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t2, function ()
-                if GetTriggerPlayer() == LocalPlayer then
+            OnClickEvent(DigimonEvolvesToOptionButton[i], function (p)
+                if p == LocalPlayer then
                     local id = digiInfos[digimonSelected].evolveOptions[i].toEvolve
                     if digiInfos[id].name then
                         digimonSelected = id
@@ -1437,9 +1412,7 @@ OnInit("Diary", function ()
         BlzFrameSetPoint(ItemsButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.63000, 0.54000)
         BlzFrameSetText(ItemsButton, "|cffFCD20DItems|r")
         BlzFrameSetLevel(ItemsButton, 3)
-        TriggerItemsButton = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerItemsButton, ItemsButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerItemsButton, ItemsButtonFunc)
+        OnClickEvent(ItemsButton, ItemsButtonFunc)
 
         ItemsBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
         BlzFrameSetAllPoints(ItemsBackdrop, Backdrop)
@@ -1636,9 +1609,7 @@ OnInit("Diary", function ()
         BlzFrameSetPoint(MapButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.55000, 0.54000)
         BlzFrameSetText(MapButton, "|cffFCD20DMap|r")
         BlzFrameSetLevel(MapButton, 3)
-        TriggerMapButton = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerMapButton, MapButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerMapButton, MapButtonFunc)
+        OnClickEvent(MapButton, MapButtonFunc)
 
         MapBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
         BlzFrameSetAllPoints(MapBackdrop, Backdrop)

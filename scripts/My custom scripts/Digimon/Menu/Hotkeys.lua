@@ -61,7 +61,7 @@ OnInit("Hotkeys", function ()
     local LocalPlayer = GetLocalPlayer()
     local selectingKey = false
     local frames = {} ---@type table<integer, framehandle>
-    local referenceFrame = {} ---@type table<framehandle, integer>
+    --local referenceFrame = {} ---@type table<framehandle, integer>
     local hotkeyText = {} ---@type table<integer, framehandle>
     local frameSelected = -1
     local frameWithKey = {} ---@type table<oskeytype, table<integer, integer>>
@@ -128,29 +128,22 @@ OnInit("Hotkeys", function ()
         end
     end
 
-    local function SetHotkey()
-        if GetTriggerPlayer() == LocalPlayer then
-            local frame = BlzGetTriggerFrame()
-            local id = referenceFrame[frame]
-            if id and frames[id] then
-                selectingKey = true
-                frameSelected = id
-                BlzFrameSetText(HotkeyMessage, "|cffFFCC00Press a key to set the hotkey|r")
-            else
-                BlzFrameSetText(HotkeyMessage, "|cffFF0000Error|r")
-            end
-        end
-    end
-
-    local trig = CreateTrigger()
-
     ---@param frame framehandle
     ---@param id integer
     local function AsingHotkey(frame, id)
-        BlzTriggerRegisterFrameEvent(trig, frame, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(trig, SetHotkey)
+        OnClickEvent(frame, function (p)
+            if p == LocalPlayer then
+                if frames[id] then
+                    selectingKey = true
+                    frameSelected = id
+                    BlzFrameSetText(HotkeyMessage, "|cffFFCC00Press a key to set the hotkey|r")
+                else
+                    BlzFrameSetText(HotkeyMessage, "|cffFF0000Error|r")
+                end
+            end
+        end)
 
-        referenceFrame[frame] = id
+        --referenceFrame[frame] = id
 
         local text = BlzCreateFrameByType("TEXT", "name", frame, "", 0)
         BlzFrameSetAllPoints(text, frame)
@@ -162,24 +155,24 @@ OnInit("Hotkeys", function ()
         hotkeyText[id] = text
     end
 
-    local function HotkeyBackpackFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function HotkeyBackpackFunc(p)
+        if p == LocalPlayer then
             BlzFrameSetVisible(visibleMenu, false)
             BlzFrameSetVisible(HotkeyBackpackSubMenu, true)
             visibleMenu = HotkeyBackpackSubMenu
         end
     end
 
-    local function HotkeyYourDigimonsFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function HotkeyYourDigimonsFunc(p)
+        if p == LocalPlayer then
             BlzFrameSetVisible(visibleMenu, false)
             BlzFrameSetVisible(HotkeyYourDigimonsSubMenu, true)
             visibleMenu = HotkeyYourDigimonsSubMenu
         end
     end
 
-    local function HotkeyExitFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function HotkeyExitFunc(p)
+        if p == LocalPlayer then
             BlzFrameSetVisible(HotkeyMenu, false)
             BlzFrameSetVisible(visibleMenu, false)
             BlzFrameSetEnable(HotkeyButton, true)
@@ -191,8 +184,8 @@ OnInit("Hotkeys", function ()
         end
     end
 
-    local function HotkeySaveFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function HotkeySaveFunc(p)
+        if p == LocalPlayer then
             for key, list in pairs(edits) do
                 for meta, id in pairs(list) do
                     local pair = referencePair[id]
@@ -206,11 +199,11 @@ OnInit("Hotkeys", function ()
             edits = {}
             BlzFrameSetText(HotkeyMessage, "|cff00FF00Hotkeys saved|r")
         end
-        SaveHotkeys(GetTriggerPlayer())
+        SaveHotkeys(p)
     end
 
-    local function ShowMenu()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function ShowMenu(p)
+        if p == LocalPlayer then
             BlzFrameSetVisible(HotkeyMenu, true)
             BlzFrameSetEnable(HotkeyButton, false)
             AddButtonToEscStack(HotkeyExit)
@@ -219,13 +212,9 @@ OnInit("Hotkeys", function ()
     end
 
     local function InitFrames()
-        local t = nil ---@type trigger
-
         HotkeyButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(HotkeyButton, 3)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, HotkeyButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ShowMenu)
+        OnClickEvent(HotkeyButton, ShowMenu)
         BlzFrameSetVisible(HotkeyButton, false)
         AddFrameToMenu(HotkeyButton)
         SetFrameHotkey(HotkeyButton, "G")
@@ -253,9 +242,7 @@ OnInit("Hotkeys", function ()
         BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.080000)
         BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.22000)
         BlzFrameSetText(HotkeyBackpack, "|cffFCD20DBackpack|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, HotkeyBackpack, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, HotkeyBackpackFunc)
+        OnClickEvent(HotkeyBackpack, HotkeyBackpackFunc)
 
         HotkeyBackpackSubMenu = BlzCreateFrameByType("BACKDROP", "BACKDROP", HotkeyMenu, "", 1)
         BlzFrameSetPoint(HotkeyBackpackSubMenu, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.23000, -0.030000)
@@ -350,9 +337,7 @@ OnInit("Hotkeys", function ()
         BlzFrameSetPoint(HotkeyYourDigimons, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.040000)
         BlzFrameSetPoint(HotkeyYourDigimons, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.26000)
         BlzFrameSetText(HotkeyYourDigimons, "|cffFCD20DYour digimons|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, HotkeyYourDigimons, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, HotkeyYourDigimonsFunc)
+        OnClickEvent(HotkeyYourDigimons, HotkeyYourDigimonsFunc)
 
         HotkeyYourDigimonsSubMenu = BlzCreateFrameByType("BACKDROP", "BACKDROP", HotkeyMenu, "", 1)
         BlzFrameSetPoint(HotkeyYourDigimonsSubMenu, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.23000, -0.030000)
@@ -449,18 +434,14 @@ OnInit("Hotkeys", function ()
         BlzFrameSetPoint(HotkeyExit, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.34000, -0.30000)
         BlzFrameSetPoint(HotkeyExit, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.010000)
         BlzFrameSetText(HotkeyExit, "|cffFCD20DExit|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, HotkeyExit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, HotkeyExitFunc)
+        OnClickEvent(HotkeyExit, HotkeyExitFunc)
 
         HotkeySave = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
         BlzFrameSetScale(HotkeySave, 1.00)
         BlzFrameSetPoint(HotkeySave, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.10000, -0.30000)
         BlzFrameSetPoint(HotkeySave, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.34000, 0.010000)
         BlzFrameSetText(HotkeySave, "|cffFCD20DSave|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, HotkeySave, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, HotkeySaveFunc)
+        OnClickEvent(HotkeySave, HotkeySaveFunc)
     end
 
     FrameLoaderAdd(InitFrames)

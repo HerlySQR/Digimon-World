@@ -50,10 +50,8 @@ OnInit.final(function ()
                     BlzFrameSetLevel(button, 4)
                     BlzFrameSetVisible(button, GetPlayerController(slots[GetLocalPlayer()][i]) == MAP_CONTROL_USER)
 
-                    local tr = CreateTrigger()
-                    BlzTriggerRegisterFrameEvent(tr, button, FRAMEEVENT_CONTROL_CLICK)
-                    TriggerAddAction(tr, function ()
-                        Environment.spect(GetTriggerPlayer(), slots[GetTriggerPlayer()][i])
+                    OnClickEvent(button, function (p)
+                        Environment.spect(p, slots[p][i])
                     end)
 
                     TriggerRegisterPlayerEvent(leave, Player(i), EVENT_PLAYER_LEAVE)

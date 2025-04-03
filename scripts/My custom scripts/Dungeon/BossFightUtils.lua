@@ -401,6 +401,11 @@ OnInit("BossFightUtils", function ()
                         ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
                     end
                 end
+                if data.spells then
+                    hitsDealt = 0
+                    actSpell = 1
+                end
+
                 if data.onReset then
                     data.onReset()
                 end

@@ -608,8 +608,7 @@ OnInit(function ()
         BlzFrameSetText(PlayerBans[2], "Bans: " .. info2.availableBans)
     end
 
-    local function SelectFunc()
-        local p = GetTriggerPlayer()
+    local function SelectFunc(p)
         local fight = FightInfos[p]
         local info = fight:getPlayerInfo(p)
 
@@ -628,8 +627,7 @@ OnInit(function ()
         end
     end
 
-    local function BanFunc()
-        local p = GetTriggerPlayer()
+    local function BanFunc(p)
         local fight = FightInfos[p]
         local info = fight:getPlayerInfo(p)
 
@@ -649,8 +647,7 @@ OnInit(function ()
         end
     end
 
-    local function ReadyFunc()
-        local p = GetTriggerPlayer()
+    local function ReadyFunc(p)
         local fight = FightInfos[p]
         local info = fight:getPlayerInfo(p)
 
@@ -690,10 +687,10 @@ OnInit(function ()
         end
     end
 
+    ---@param p player
     ---@param i integer
     ---@param j integer
-    local function PlayerDigimonFunc(i, j)
-        local p = GetTriggerPlayer()
+    local function PlayerDigimonFunc(p, i, j)
         local fight = FightInfos[p]
         local info = fight:getPlayerInfo(p)
 
@@ -771,10 +768,7 @@ OnInit(function ()
             BackdropRankShopItemT[i] = BlzCreateFrameByType("BACKDROP", "BackdropRankShopItemT[" .. i .. "]", RankShopItemT[i], "", 0)
             BlzFrameSetAllPoints(BackdropRankShopItemT[i], RankShopItemT[i])
             BlzFrameSetTexture(BackdropRankShopItemT[i], BlzGetAbilityIcon(id):gsub("Buttons\\BTN", "ButtonsDisabled\\DISBTN"), 0, true)
-            local t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, RankShopItemT[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function ()
-                local p = GetTriggerPlayer()
+            OnClickEvent(RankShopItemT[i], function (p)
                 RankBuyItem(p, i)
                 if p == LocalPlayer then
                     BlzFrameSetEnable(RankShopItemT[i], false)
@@ -846,8 +840,8 @@ OnInit(function ()
         end)
     end
 
-    local function RankShopExitFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function RankShopExitFunc(p)
+        if p == LocalPlayer then
             BlzFrameSetVisible(RankShopMenu, false)
             RemoveButtonFromEscStack(RankShopExit)
         end
@@ -864,27 +858,21 @@ OnInit(function ()
         BlzFrameSetPoint(Select, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.27500, 0.035000)
         BlzFrameSetText(Select, "|cffFCD20DSelect|r")
         BlzFrameSetScale(Select, 1.29)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Select, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, SelectFunc)
+        OnClickEvent(Select, SelectFunc)
 
         Ban = BlzCreateFrame("ScriptDialogButton", GymMenu, 0, 0)
         BlzFrameSetPoint(Ban, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.28500, -0.27500)
         BlzFrameSetPoint(Ban, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.15500, 0.035000)
         BlzFrameSetText(Ban, "|cffFCD20DBan|r")
         BlzFrameSetScale(Ban, 1.29)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Ban, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, BanFunc)
+        OnClickEvent(Ban, BanFunc)
 
         Ready = BlzCreateFrame("ScriptDialogButton", GymMenu, 0, 0)
         BlzFrameSetPoint(Ready, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.40500, -0.27500)
         BlzFrameSetPoint(Ready, FRAMEPOINT_BOTTOMRIGHT, GymMenu, FRAMEPOINT_BOTTOMRIGHT, -0.035000, 0.035000)
         BlzFrameSetText(Ready, "|cffFCD20DI'm ready|r")
         BlzFrameSetScale(Ready, 1.29)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Ready, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ReadyFunc)
+        OnClickEvent(Ready, ReadyFunc)
 
         Remaining = BlzCreateFrameByType("TEXT", "name", GymMenu, "", 0)
         BlzFrameSetPoint(Remaining, FRAMEPOINT_TOPLEFT, GymMenu, FRAMEPOINT_TOPLEFT, 0.040000, -0.27500)
@@ -934,9 +922,7 @@ OnInit(function ()
                 BackdropPlayerDigimonT[j][i] = BlzCreateFrameByType("BACKDROP", "BackdropPlayerDigimonT[" .. j .. "][" .. i .. "]", PlayerDigimonT[j][i], "", 0)
                 BlzFrameSetAllPoints(BackdropPlayerDigimonT[j][i], PlayerDigimonT[j][i])
                 BlzFrameSetTexture(BackdropPlayerDigimonT[j][i], "CustomFrame.png", 0, true)
-                t = CreateTrigger()
-                BlzTriggerRegisterFrameEvent(t, PlayerDigimonT[j][i], FRAMEEVENT_CONTROL_CLICK)
-                TriggerAddAction(t, function () PlayerDigimonFunc(i, j) end)
+                OnClickEvent(PlayerDigimonT[j][i], function (p) PlayerDigimonFunc(p, i, j) end)
 
                 PlayerDigimonClicked[j][i] = BlzCreateFrameByType("BACKDROP", "PlayerDigimonClicked[" .. j .. "][" .. i .. "]", PlayerDigimonT[j][i], "", 1)
                 BlzFrameSetAllPoints(PlayerDigimonClicked[j][i], PlayerDigimonT[j][i])
@@ -995,9 +981,7 @@ OnInit(function ()
         BlzFrameSetPoint(RankShopExit, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.015000)
         BlzFrameSetText(RankShopExit, "|cffFCD20DClose|r")
         BlzFrameSetScale(RankShopExit, 1.00)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, RankShopExit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, RankShopExitFunc)
+        OnClickEvent(RankShopExit, RankShopExitFunc)
     end
 
     FrameLoaderAdd(InitFrames)

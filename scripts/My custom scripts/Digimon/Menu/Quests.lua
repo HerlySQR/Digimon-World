@@ -126,7 +126,6 @@ OnInit("Quests", function ()
 
     function QuestData:deserializeProperties()
         if self.slot ~= self:getIntProperty("slot") then
-            print("quest", self:getIntProperty("slot"))
             error("The slot is not the same.")
             return
         end
@@ -186,8 +185,8 @@ OnInit("Quests", function ()
         end
     end
 
-    local function ShowInformation(i)
-        if GetTriggerPlayer() == LocalPlayer then
+    local function ShowInformation(p, i)
+        if p == LocalPlayer then
             if PressedQuest ~= i then
                 BlzFrameSetVisible(QuestInformation, true)
                 PressedQuest = i
@@ -199,8 +198,8 @@ OnInit("Quests", function ()
         end
     end
 
-    local function ShowMenu()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function ShowMenu(p)
+        if p == LocalPlayer then
             if BlzFrameIsVisible(QuestMenu) then
                 RemoveButtonFromEscStack(QuestButton)
             else
@@ -219,9 +218,7 @@ OnInit("Quests", function ()
 
         QuestButton = BlzCreateFrame("IconButtonTemplate", Origin, 0, 0)
         AddButtonToTheRight(QuestButton, 5)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, QuestButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ShowMenu)
+        OnClickEvent(QuestButton, ShowMenu)
         BlzFrameSetVisible(QuestButton, false)
         AddFrameToMenu(QuestButton)
         SetFrameHotkey(QuestButton, "L")
@@ -292,9 +289,7 @@ OnInit("Quests", function ()
             BlzFrameSetScale(QuestOptionT[i], 1.00)
             BlzFrameSetEnable(QuestOptionT[i], false)
             BlzFrameSetVisible(QuestOptionT[i], false)
-            t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, QuestOptionT[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function () ShowInformation(i) end)
+            OnClickEvent(QuestOptionT[i], function (p) ShowInformation(p, i) end)
 
             QuestOptionText[i] = BlzCreateFrameByType("TEXT", "name", QuestOptionT[i], "", 0)
             BlzFrameSetPoint(QuestOptionText[i], FRAMEPOINT_TOPLEFT, QuestOptionT[i], FRAMEPOINT_TOPLEFT, 0.0050000, -0.0050000)

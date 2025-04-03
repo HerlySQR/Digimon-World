@@ -449,11 +449,10 @@ OnInit("PressSaveOrLoad", function ()
         end
     end)
 
-    local function SaveLoadActions(slot)
-        local p = GetTriggerPlayer()
+    local function SaveLoadActions(p, slot)
         local oldSlot = Pressed[p] - 1
         Pressed[p] = slot + 1
-        if GetTriggerPlayer() == LocalPlayer then
+        if p == LocalPlayer then
             BlzFrameSetEnable(SaveSlotT[oldSlot], true)
             BlzFrameSetEnable(SaveSlotT[slot], false)
             BlzFrameSetVisible(Information, true)
@@ -463,8 +462,7 @@ OnInit("PressSaveOrLoad", function ()
         end
     end
 
-    local function ExitFunc()
-        local p = GetTriggerPlayer()
+    local function ExitFunc(p)
         if p == LocalPlayer then
             BlzFrameSetEnable(SaveSlotT[Pressed[LocalPlayer] - 1], true)
             BlzFrameSetVisible(Information, false)
@@ -474,9 +472,8 @@ OnInit("PressSaveOrLoad", function ()
         paused[p] = false
     end
 
-    local function SaveFunc()
-        local p = GetTriggerPlayer()
-        ExitFunc()
+    local function SaveFunc(p)
+        ExitFunc(p)
         if p == LocalPlayer then
             if not BlzFrameIsVisible(SaveLoadMenu) then
                 AddButtonToEscStack(Exit)
@@ -490,9 +487,8 @@ OnInit("PressSaveOrLoad", function ()
         paused[p] = true
     end
 
-    local function LoadFunc()
-        local p = GetTriggerPlayer()
-        ExitFunc()
+    local function LoadFunc(p)
+        ExitFunc(p)
         if p == LocalPlayer then
             if not BlzFrameIsVisible(SaveLoadMenu) then
                 AddButtonToEscStack(Exit)
@@ -506,8 +502,7 @@ OnInit("PressSaveOrLoad", function ()
         paused[p] = true
     end
 
-    local function AbsoluteSaveFunc()
-        local p = GetTriggerPlayer()
+    local function AbsoluteSaveFunc(p)
         SavePlayerData(p, Pressed[p])
         if p == LocalPlayer then
             UpdateMenu()
@@ -515,11 +510,10 @@ OnInit("PressSaveOrLoad", function ()
         end
     end
 
-    local function AbsoluteLoadFunc()
-        local p = GetTriggerPlayer()
+    local function AbsoluteLoadFunc(p)
         TriggerExecute(gg_trg_Absolute_Load)
         SetPlayerData(p, Pressed[p])
-        ExitFunc()
+        ExitFunc(p)
     end
 
     local function InitFrames()
@@ -540,9 +534,7 @@ OnInit("PressSaveOrLoad", function ()
         BackdropSaveButton = BlzCreateFrameByType("BACKDROP", "BackdropSaveButton", SaveButton, "", 0)
         BlzFrameSetAllPoints(BackdropSaveButton, SaveButton)
         BlzFrameSetTexture(BackdropSaveButton, "ReplaceableTextures\\CommandButtons\\BTNSave.blp", 0, true)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, SaveButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, SaveFunc)
+        OnClickEvent(SaveButton, SaveFunc)
 
         -- Load Button
 
@@ -557,9 +549,7 @@ OnInit("PressSaveOrLoad", function ()
         BackdropLoadButton = BlzCreateFrameByType("BACKDROP", "BackdropLoadButton", LoadButton, "", 0)
         BlzFrameSetAllPoints(BackdropLoadButton, LoadButton)
         BlzFrameSetTexture(BackdropLoadButton, "ReplaceableTextures\\CommandButtons\\BTNLoad.blp", 0, true)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, LoadButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, LoadFunc)
+        OnClickEvent(LoadButton, LoadFunc)
 
         -- Menu
 
@@ -578,9 +568,7 @@ OnInit("PressSaveOrLoad", function ()
             else
                 BlzFrameSetText(SaveSlotT[i], "|cffFCD20DEmpty|r")
             end
-            t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, SaveSlotT[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function () SaveLoadActions(i) end) -- :D
+            OnClickEvent(SaveSlotT[i], function (p) SaveLoadActions(p, i) end) -- :D
         end
 
         AbsoluteSave = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
@@ -588,26 +576,20 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.0050000)
         BlzFrameSetText(AbsoluteSave, "|cffFCD20DSave|r")
         BlzFrameSetVisible(AbsoluteSave, false)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, AbsoluteSave, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, AbsoluteSaveFunc)
+        OnClickEvent(AbsoluteSave, AbsoluteSaveFunc)
 
         AbsoluteLoad = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
         BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.22000)
         BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.0050000)
         BlzFrameSetText(AbsoluteLoad, "|cffFCD20DLoad|r")
         BlzFrameSetVisible(AbsoluteLoad, false)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, AbsoluteLoad, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, AbsoluteLoadFunc)
+        OnClickEvent(AbsoluteLoad, AbsoluteLoadFunc)
 
         Exit = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
         BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.12000, -0.22000)
         BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.0050000)
         BlzFrameSetText(Exit, "|cffFCD20DExit|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ExitFunc)
+        OnClickEvent(Exit, ExitFunc)
 
         -- Tooltip
 

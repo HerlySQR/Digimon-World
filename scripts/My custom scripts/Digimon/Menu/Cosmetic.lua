@@ -135,16 +135,14 @@ OnInit("Cosmetic", function ()
         end
     end
 
+    ---@param p player
     ---@param id integer
-    local function CosmeticActions(id)
-        local p = GetTriggerPlayer()
+    local function CosmeticActions(p, id)
         clickedEffect[p] = id
         UpdateModel(p)
     end
 
-    local function CosmeticOpenFunc()
-        local p = GetTriggerPlayer()
-
+    local function CosmeticOpenFunc(p)
         if p == LocalPlayer then
             SaveCameraSetup()
         end
@@ -180,8 +178,7 @@ OnInit("Cosmetic", function ()
         end
     end
 
-    local function CosmeticAcceptFunc()
-        local p = GetTriggerPlayer()
+    local function CosmeticAcceptFunc(p)
         if clickedEffect[p] == -1 then
             return
         end
@@ -203,9 +200,7 @@ OnInit("Cosmetic", function ()
         end)
     end
 
-    local function CosmeticExitFunc()
-        local p = GetTriggerPlayer()
-
+    local function CosmeticExitFunc(p)
         LockEnvironment(p, false)
         clickedEffect[p] = -1
 
@@ -250,8 +245,7 @@ OnInit("Cosmetic", function ()
         inputCode[GetTriggerPlayer()] = BlzGetTriggerFrameText()
     end
 
-    local function CosmeticUnlockYesFunc()
-        local p = GetTriggerPlayer()
+    local function CosmeticUnlockYesFunc(p)
         UnlockCosmetic(p, inputCode[p])
         if p == LocalPlayer then
             BlzFrameSetText(CosmeticUnlockCode, "")
@@ -273,15 +267,13 @@ OnInit("Cosmetic", function ()
         end)
     end
 
-    local function CosmeticPreviousDigimonFunc()
-        local p = GetTriggerPlayer()
+    local function CosmeticPreviousDigimonFunc(p)
         local actDigi = selectedDigimon[p]
         selectedDigimon[p] = actDigi <= 1 and #digimonTypes[p] or actDigi - 1
         UpdateModel(p)
     end
 
-    local function CosmeticNextDigimonFunc()
-        local p = GetTriggerPlayer()
+    local function CosmeticNextDigimonFunc(p)
         local actDigi = selectedDigimon[p]
         selectedDigimon[p] = actDigi >= #digimonTypes[p] and 1 or actDigi + 1
         UpdateModel(p)
@@ -300,9 +292,7 @@ OnInit("Cosmetic", function ()
         BackdropCosmeticOpen = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticOpen", CosmeticOpen, "", 0)
         BlzFrameSetAllPoints(BackdropCosmeticOpen, CosmeticOpen)
         BlzFrameSetTexture(BackdropCosmeticOpen, "ReplaceableTextures\\CommandButtons\\BTNAura.blp", 0, true)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticOpen, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticOpenFunc)
+        OnClickEvent(CosmeticOpen, CosmeticOpenFunc)
 
         CosmeticMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         BlzFrameSetAbsPoint(CosmeticMenu, FRAMEPOINT_TOPLEFT, 0.500000, 0.490000)
@@ -323,18 +313,14 @@ OnInit("Cosmetic", function ()
         BlzFrameSetText(CosmeticAccept, "|cffFCD20DAccept|r")
         BlzFrameSetScale(CosmeticAccept, 1.00)
         BlzFrameSetEnable(CosmeticAccept, false)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticAccept, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticAcceptFunc)
+        OnClickEvent(CosmeticAccept, CosmeticAcceptFunc)
 
         CosmeticExit = BlzCreateFrame("ScriptDialogButton", CosmeticMenu, 0, 0)
         BlzFrameSetPoint(CosmeticExit, FRAMEPOINT_TOPLEFT, CosmeticMenu, FRAMEPOINT_TOPLEFT, 0.15000, -0.22000)
         BlzFrameSetPoint(CosmeticExit, FRAMEPOINT_BOTTOMRIGHT, CosmeticMenu, FRAMEPOINT_BOTTOMRIGHT, -0.050000, 0.010000)
         BlzFrameSetText(CosmeticExit, "|cffFCD20DExit|r")
         BlzFrameSetScale(CosmeticExit, 1.00)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticExit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticExitFunc)
+        OnClickEvent(CosmeticExit, CosmeticExitFunc)
 
         CosmeticEffects = BlzCreateFrameByType("BACKDROP", "BACKDROP", CosmeticMenu, "", 1)
         BlzFrameSetPoint(CosmeticEffects, FRAMEPOINT_TOPLEFT, CosmeticMenu, FRAMEPOINT_TOPLEFT, 0.020000, -0.050000)
@@ -372,27 +358,21 @@ OnInit("Cosmetic", function ()
         BlzFrameSetPoint(CosmeticUnlockYes, FRAMEPOINT_TOPLEFT, CosmeticUnlock, FRAMEPOINT_TOPLEFT, 0.22000, -0.030000)
         BlzFrameSetPoint(CosmeticUnlockYes, FRAMEPOINT_BOTTOMRIGHT, CosmeticUnlock, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.010000)
         BlzFrameSetText(CosmeticUnlockYes, "|cffFCD20DYes|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticUnlockYes, FRAMEEVENT_CONTROL_CLICK) 
-        TriggerAddAction(t, CosmeticUnlockYesFunc)
+        OnClickEvent(CosmeticUnlockYes, CosmeticUnlockYesFunc)
 
         CosmeticPreviousDigimon = BlzCreateFrame("ScriptDialogButton", CosmeticMenu, 0, 0)
         BlzFrameSetAbsPoint(CosmeticPreviousDigimon, FRAMEPOINT_TOPLEFT, 0.0800000, 0.420000)
         BlzFrameSetAbsPoint(CosmeticPreviousDigimon, FRAMEPOINT_BOTTOMRIGHT, 0.110000, 0.380000)
         BlzFrameSetText(CosmeticPreviousDigimon, "|cffFCD20D<|r")
         BlzFrameSetScale(CosmeticPreviousDigimon, 1.00)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticPreviousDigimon, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticPreviousDigimonFunc)
+        OnClickEvent(CosmeticPreviousDigimon, CosmeticPreviousDigimonFunc)
 
         CosmeticNextDigimon = BlzCreateFrame("ScriptDialogButton", CosmeticMenu, 0, 0)
         BlzFrameSetAbsPoint(CosmeticNextDigimon, FRAMEPOINT_TOPLEFT, 0.370000, 0.420000)
         BlzFrameSetAbsPoint(CosmeticNextDigimon, FRAMEPOINT_BOTTOMRIGHT, 0.400000, 0.380000)
         BlzFrameSetText(CosmeticNextDigimon, "|cffFCD20D>|r")
         BlzFrameSetScale(CosmeticNextDigimon, 1.00)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticNextDigimon, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticNextDigimonFunc)
+        OnClickEvent(CosmeticNextDigimon, CosmeticNextDigimonFunc)
     end
 
     FrameLoaderAdd(InitFrames)
@@ -447,9 +427,7 @@ OnInit("Cosmetic", function ()
             local backdrop = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticEffect[" .. id .. "]", button, "", 0)
             BlzFrameSetAllPoints(backdrop, button)
             BlzFrameSetTexture(backdrop, icon, 0, true)
-            local t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, button, FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function () CosmeticActions(id) end)
+            OnClickEvent(button, function (p) CosmeticActions(p, id) end)
 
             if unlockDesc then
                 local lockButton = BlzCreateFrame("IconButtonTemplate", actualContainer, 0, 0)

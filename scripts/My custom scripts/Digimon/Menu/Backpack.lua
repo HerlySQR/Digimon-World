@@ -110,7 +110,6 @@ OnInit("Backpack", function ()
 
     function BackpackData:deserializeProperties()
         if self.sslot ~= self:getIntProperty("sslot") then
-            print("backpack", self:getIntProperty("slot"))
             error("The slot is not the same.")
             return
         end
@@ -212,8 +211,7 @@ OnInit("Backpack", function ()
         UpdateCooldowns()
     end
 
-    local function BackpackFunc()
-        local p = GetTriggerPlayer()
+    local function BackpackFunc(p)
         Backpacks[p].discardMode = false
         if p == LocalPlayer then
             -- To unfocus the button
@@ -232,8 +230,7 @@ OnInit("Backpack", function ()
         end
     end
 
-    local function UseItem(i)
-        local p = GetTriggerPlayer()
+    local function UseItem(p, i)
         local backpack = Backpacks[p]
         if backpack.discardMode then
             backpack.discardMode = false
@@ -457,9 +454,8 @@ OnInit("Backpack", function ()
         end)
     end)
 
-    local function BackpackDiscardFunc()
-        local p = GetTriggerPlayer()
-        local backpack = Backpacks[GetTriggerPlayer()]
+    local function BackpackDiscardFunc(p)
+        local backpack = Backpacks[p]
         if not backpack.discardMode then
             backpack.discardMode = true
             if p == LocalPlayer then
@@ -473,9 +469,8 @@ OnInit("Backpack", function ()
         end
     end
 
-    local function BackpackDropFunc()
-        local p = GetTriggerPlayer()
-        local backpack = Backpacks[GetTriggerPlayer()]
+    local function BackpackDropFunc(p)
+        local backpack = Backpacks[p]
         if not backpack.dropMode then
             backpack.dropMode = true
             if p == LocalPlayer then
@@ -490,8 +485,6 @@ OnInit("Backpack", function ()
     end
 
     local function InitFrames()
-        local t = nil ---@type trigger
-
         Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         AddButtonToTheRight(Backpack, 8)
         BlzFrameSetVisible(Backpack, false)
@@ -503,9 +496,7 @@ OnInit("Backpack", function ()
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
         BlzFrameSetAllPoints(BackdropBackpack, Backpack)
         BlzFrameSetTexture(BackdropBackpack, "ReplaceableTextures\\CommandButtons\\BTNBag.blp", 0, true)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Backpack, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, BackpackFunc)
+        OnClickEvent(Backpack, BackpackFunc)
 
         BackpackSprite =  BlzCreateFrameByType("SPRITE", "BackpackSprite", Backpack, "", 0)
         BlzFrameSetModel(BackpackSprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
@@ -534,9 +525,7 @@ OnInit("Backpack", function ()
         BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.095000, -0.16000)
         BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.015000)
         BlzFrameSetText(BackpackDiscard, "|cffFCD20DDiscard|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, BackpackDiscard, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, BackpackDiscardFunc)
+        OnClickEvent(BackpackDiscard, BackpackDiscardFunc)
         AssignFrame(BackpackDiscard, 1)
 
         BackpackDrop = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
@@ -544,9 +533,7 @@ OnInit("Backpack", function ()
         BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.16000)
         BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.095000, 0.015000)
         BlzFrameSetText(BackpackDrop, "|cffFCD20DDrop|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, BackpackDrop, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, BackpackDropFunc)
+        OnClickEvent(BackpackDrop, BackpackDropFunc)
         AssignFrame(BackpackDrop, 2)
 
         BackpackItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", BackpackMenu, "", 1)
@@ -582,9 +569,7 @@ OnInit("Backpack", function ()
             BackdropBackpackItemT[i] = BlzCreateFrameByType("BACKDROP", "BackdropBackpackItemT[" .. i .. "]", BackpackItemT[i], "", 0)
             BlzFrameSetAllPoints(BackdropBackpackItemT[i], BackpackItemT[i])
             BlzFrameSetTexture(BackdropBackpackItemT[i], "", 0, true)
-            t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, BackpackItemT[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function () UseItem(i) end)
+            OnClickEvent(BackpackItemT[i], function (p) UseItem(p, i) end)
 
             BackPackItemChargesBackdrop[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", BackpackItemT[i], "", 1)
             BlzFrameSetPoint(BackPackItemChargesBackdrop[i], FRAMEPOINT_TOPLEFT, BackpackItemT[i], FRAMEPOINT_TOPLEFT, 0.015000, -0.015000)
@@ -944,7 +929,7 @@ OnInit("Backpack", function ()
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
+            if not success or not decode or not pcall(data.deserialize, data, decode) then
                 DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
                 return
             end

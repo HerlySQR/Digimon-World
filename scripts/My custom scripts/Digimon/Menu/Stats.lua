@@ -174,8 +174,7 @@ OnInit("Stats", function ()
         end)
     end
 
-    local function StatsButtonFunc()
-        local p = GetTriggerPlayer()
+    local function StatsButtonFunc(p)
         if not GetUsedDigimons(p)[1] then
             return
         end
@@ -343,7 +342,12 @@ OnInit("Stats", function ()
                         if m then
                             BlzFrameSetEnable(StatsItemT[i][j], true)
                             BlzFrameSetTexture(BackdropStatsItemT[i][j], BlzGetAbilityIcon(GetItemTypeId(m)), 0, true)
-                            BlzFrameSetText(StatsItemTooltipText[i][j], GetItemName(m) .. "\n" .. BlzGetItemDescription(m))
+                            local desc = BlzGetItemDescription(m)
+                            local _, final = desc:find("Can only use \x25d+ \x25a+ at a time.|n")
+                            if final then
+                                desc = desc:sub(final+1)
+                            end
+                            BlzFrameSetText(StatsItemTooltipText[i][j], GetItemName(m) .. "\n" .. desc)
                             BlzFrameSetSize(StatsItemTooltipText[i][j], 0.15, 0)
                         else
                             BlzFrameSetEnable(StatsItemT[i][j], false)
@@ -414,6 +418,7 @@ OnInit("Stats", function ()
         local selected = GetMainSelectedUnitEx()
         if not selected
             or not UnitAlive(selected)
+            or IsCommandButtonIgnore(GetUnitTypeId(selected))
             or IsUnitHidden(selected) then
 
             return
@@ -483,8 +488,7 @@ OnInit("Stats", function ()
         end
     end)
 
-    local function StatsItemFunc(i, j)
-        local p = GetTriggerPlayer()
+    local function StatsItemFunc(p, i, j)
         dropItemI[p] = i
         dropItemJ[p] = j
         if p == LocalPlayer then
@@ -495,8 +499,7 @@ OnInit("Stats", function ()
         end
     end
 
-    local function StatsItemDropFunc()
-        local p = GetTriggerPlayer()
+    local function StatsItemDropFunc(p)
         local d = seeOnly[p] == nil and GetUsedDigimons(p)[dropItemI[p]+1] or Digimon.getInstance(seeOnly[p])
         UnitDropItemPoint(d.root, UnitItemInSlot(d.root, dropItemJ[p]), d:getPos())
         if p == LocalPlayer then
@@ -515,9 +518,7 @@ OnInit("Stats", function ()
         BackdropStatsButton = BlzCreateFrameByType("BACKDROP", "BackdropStatsButton", StatsButton, "", 0)
         BlzFrameSetAllPoints(BackdropStatsButton, StatsButton)
         BlzFrameSetTexture(BackdropStatsButton, "ReplaceableTextures\\CommandButtons\\BTNCharacteristic.blp", 0, true)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, StatsButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, StatsButtonFunc)
+        OnClickEvent(StatsButton, StatsButtonFunc)
 
         for i = 0, 2 do
             StatsBackdrop[i] = BlzCreateFrameByType("BACKDROP", "StatsBackdrop[" .. i .. "]", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
@@ -804,10 +805,8 @@ OnInit("Stats", function ()
                 BackdropStatsItemT[i][j] = BlzCreateFrameByType("BACKDROP", "BackdropStatsItemT[" .. i .. "][" .. j .. "]", StatsItemT[i][j], "", 0)
                 BlzFrameSetAllPoints(BackdropStatsItemT[i][j], StatsItemT[i][j])
                 BlzFrameSetTexture(BackdropStatsItemT[i][j], icons[j], 0, true)
-                t = CreateTrigger()
-                BlzTriggerRegisterFrameEvent(t, StatsItemT[i][j], FRAMEEVENT_CONTROL_CLICK)
-                TriggerAddAction(t, function ()
-                    StatsItemFunc(i, j)
+                OnClickEvent(StatsItemT[i][j], function (p)
+                    StatsItemFunc(p, i, j)
                 end)
 
                 StatsItemTooltip[i][j] = BlzCreateFrame("QuestButtonBaseTemplate", StatsItemT[i][j], 0, 0)
@@ -830,9 +829,7 @@ OnInit("Stats", function ()
             BlzFrameSetText(StatsItemDrop, "|cffFCD20DDrop|r")
             BlzFrameSetScale(StatsItemDrop, 1.00)
             BlzFrameSetLevel(StatsItemDrop, 100)
-            t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, StatsItemDrop, FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, StatsItemDropFunc)
+            OnClickEvent(StatsItemDrop, StatsItemDropFunc)
             BlzFrameSetVisible(StatsItemDrop, false)
         end
 

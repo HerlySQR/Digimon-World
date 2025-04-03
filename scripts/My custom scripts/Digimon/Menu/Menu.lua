@@ -165,6 +165,27 @@ OnInit("Menu", function ()
         end
     end
 
+    local clickListener = {} ---@type table<framehandle, fun(p: player)>
+    local clickTrigger = CreateTrigger()
+    TriggerAddAction(clickTrigger, function ()
+        RunClickEvent(BlzGetTriggerFrame(), GetTriggerPlayer())
+    end)
+
+    ---@param frame framehandle
+    ---@param callback fun(p: player)
+    function OnClickEvent(frame, callback)
+        clickListener[frame] = callback
+        BlzTriggerRegisterFrameEvent(clickTrigger, frame, FRAMEEVENT_CONTROL_CLICK)
+    end
+
+    ---@param frame framehandle
+    ---@param p player
+    function RunClickEvent(frame, p)
+        if clickListener[frame] then
+            clickListener[frame](p)
+        end
+    end
+
     if not BlzLoadTOCFile("Templates.toc") then
         print("Loading Templates Toc file failed")
     end
@@ -491,8 +512,6 @@ OnInit("Menu", function ()
         if flag then
             if hideStack <= 0 then
                 oldSelectUnit(whichUnit, true)
-            else
-                GroupAddUnit(selectedUnits[LocalPlayer], whichUnit)
             end
         else
             oldSelectUnit(whichUnit, false)
@@ -530,6 +549,12 @@ OnInit("Menu", function ()
     ---@param uType integer
     function IgnoreCommandButton(uType)
         ignore[uType] = true
+    end
+
+    ---@param uType integer
+    ---@return boolean
+    function IsCommandButtonIgnore(uType)
+        return ignore[uType]
     end
 
     ---@param func function
