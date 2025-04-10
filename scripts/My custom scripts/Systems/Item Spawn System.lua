@@ -46,8 +46,10 @@ OnInit(function ()
     end
 
     local function Update()
-        for _, itemSpawn in ipairs(All) do
-            for _, where in ipairs(itemSpawn.rectInfos) do
+        for i = 1, #All do
+            local itemSpawn = All[i]
+            for j = 1, #itemSpawn.rectInfos do
+                local where = itemSpawn.rectInfos[j]
                 -- Only create an item if didn't surpassed their max
                 if itemSpawn.count < itemSpawn.maxItems then
                     -- Create an item in a random position of the rect

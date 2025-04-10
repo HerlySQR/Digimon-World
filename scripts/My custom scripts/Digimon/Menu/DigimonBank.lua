@@ -329,7 +329,8 @@ OnInit("DigimonBank", function ()
         local centerX, centerY = 0, 0
         local list = self.priorities
 
-        for _, d in ipairs(list) do
+        for i = 1, #list do
+            local d = list[i]
             centerX = centerX + d:getX()
             centerY = centerY + d:getY()
         end
@@ -337,7 +338,8 @@ OnInit("DigimonBank", function ()
         centerX = centerX / max
         centerY = centerY / max
 
-        for _, d in ipairs(list) do
+        for i = 1, #list do
+            local d = list[i]
             if math.sqrt((d:getX() - centerX)^2 + (d:getY() - centerY)^2) > 400. then
                 return false
             end
@@ -945,6 +947,11 @@ OnInit("DigimonBank", function ()
                     ForceUIKey(key)
                 end
                 return true
+            end
+        end, function ()
+            SyncSelections()
+            if not IsUnitSelected(bank.caster, p) then
+                bank:resetCaster()
             end
         end)
         bank.usingCaster = true
@@ -1598,7 +1605,7 @@ OnInit("DigimonBank", function ()
         BackdropSaveItem = BlzCreateFrameByType("BACKDROP", "BackdropSaveItem", SaveItem, "", 0)
         BlzFrameSetAllPoints(BackdropSaveItem, SaveItem)
         BlzFrameSetTexture(BackdropSaveItem, "ReplaceableTextures\\CommandButtons\\BTNStore.blp", 0, true)
-        OnClickEvent(SaveItem, function (p) UseCaster(p, "Q") end)
+        OnClickEvent(SaveItem, function (p) UseCaster(p, "Z") end)
 
         SavedDigimons = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.195000, 0.510000)
@@ -1857,7 +1864,7 @@ OnInit("DigimonBank", function ()
         BackdropSellItem = BlzCreateFrameByType("BACKDROP", "BackdropSellItem", SellItem, "", 0)
         BlzFrameSetAllPoints(BackdropSellItem, SellItem)
         BlzFrameSetTexture(BackdropSellItem, "ReplaceableTextures\\CommandButtons\\BTNSell.blp", 0, true)
-        OnClickEvent(SellItem, function (p) UseCaster(p, "W") end)
+        OnClickEvent(SellItem, function (p) UseCaster(p, "A") end)
     end
 
     FrameLoaderAdd(InitFrames)

@@ -321,7 +321,7 @@ OnInit("Stats", function ()
 
                     if not BlzIsUnitInvulnerable(u) then
                         BlzFrameSetText(StatsArmor[i], tostring(math.floor(BlzGetUnitArmor(u))))
-                        local col = (red:lerp(green, GetUnitHPRatio(u))):toHexString()
+                        local col = LerpColors(red, GetUnitHPRatio(u), green)
                         BlzFrameSetText(StatsLife[i], "|c" .. col .. math.floor(GetUnitState(u, UNIT_STATE_LIFE)) .. "|r")
                         BlzFrameSetText(StatsLifeSlash[i], "|c" .. col .. "/" .. "|r")
                         BlzFrameSetText(StatsMaxLife[i], "|c" .. col .. math.floor(GetUnitState(u, UNIT_STATE_MAX_LIFE)) .. "|r")

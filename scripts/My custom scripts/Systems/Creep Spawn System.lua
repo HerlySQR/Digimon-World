@@ -265,21 +265,36 @@ OnInit(function ()
 
     local PlayersInRegion = Set.create()
     local spawnQueue = {} ---@type RegionData[] 
+    local regionData, lvl, bossNearby
+
+    local function checkForPlayerUnits(u)
+        if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+            regionData.someoneClose = true
+            regionData.inregion = true
+            PlayersInRegion:addSingle(GetOwningPlayer(u))
+            lvl = math.max(lvl, GetHeroLevel(u))
+        end
+    end
+
+    local function checkForSomeoneClose(u)
+        if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+            regionData.someoneClose = true
+        end
+    end
+
+    local function checkForBossNearby(u)
+        if GetOwningPlayer(u) == Digimon.VILLAIN then
+            bossNearby = true
+        end
+    end
 
     local function Update()
         for node = 1, #All do
-            local regionData = All[node]
+            regionData = All[node]
             -- Check if the unit nearby the spawn region belongs to a player
             regionData.inregion = false
-            local lvl = 1
-            ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, function (u)
-                if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-                    regionData.someoneClose = true
-                    regionData.inregion = true
-                    PlayersInRegion:addSingle(GetOwningPlayer(u))
-                    lvl = math.max(lvl, GetHeroLevel(u))
-                end
-            end)
+            lvl = 1
+            ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, checkForPlayerUnits)
             -- Check if a unit is still nearby the spawn region
             regionData.someoneClose = true
             -- Control the creep or the spawn
@@ -296,11 +311,7 @@ OnInit(function ()
                 regionData.waitToSpawn = regionData.waitToSpawn - INTERVAL
             else
                 regionData.someoneClose = false
-                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, function (u)
-                    if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-                        regionData.someoneClose = true
-                    end
-                end)
+                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, checkForSomeoneClose)
                 regionData.delay = math.max(regionData.delay, DELAY_NORMAL)
             end
 
@@ -335,12 +346,8 @@ OnInit(function ()
                     end
                 end
 
-                local bossNearby = false
-                ForUnitsInRange(creep:getX(), creep:getY(), 1000., function (u)
-                    if GetOwningPlayer(u) == Digimon.VILLAIN then
-                        bossNearby = true
-                    end
-                end)
+                bossNearby = false
+                ForUnitsInRange(creep:getX(), creep:getY(), 1000., checkForBossNearby)
 
                 if not bossNearby then
                     if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
@@ -361,7 +368,7 @@ OnInit(function ()
         end
 
         while true do
-            local regionData = table.remove(spawnQueue)
+            regionData = table.remove(spawnQueue)
             if not regionData then break end
             for r in regionData.neighbourhood:elements() do
                 r.queued = false

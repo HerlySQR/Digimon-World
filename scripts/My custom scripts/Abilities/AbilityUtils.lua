@@ -7,6 +7,7 @@ OnInit("AbilityUtils", function ()
     local MCT = Require "MCT" ---@type MCT
     Require "NewBonus"
     Require "MDTable"
+    Require "Color"
 
     LOCUST_ID = FourCC('Aloc')
     CROW_FORM_ID = FourCC('Arav')
@@ -214,6 +215,31 @@ OnInit("AbilityUtils", function ()
     ---@return number
     function Lerp(n1, alpha, n2)
         return n1 * (1 - alpha) + (n2 * alpha)
+    end
+
+    ---Integer linear interpolation
+    ---@param n1 integer
+    ---@param alpha number
+    ---@param n2 integer
+    ---@return integer
+    function ILerp(n1, alpha, n2)
+        return math.round(Lerp(n1, alpha, n2))
+    end
+
+    ---Color linear interpolation
+    ---@param col1 Color
+    ---@param alpha number
+    ---@param col2 Color
+    ---@return string
+    function LerpColors(col1, alpha, col2)
+        return Hex2Str(
+            BlzConvertColor(
+                ILerp(col1.alpha, alpha, col2.alpha),
+                ILerp(col1.red, alpha, col2.red),
+                ILerp(col1.green, alpha, col2.green),
+                ILerp(col1.blue, alpha, col2.blue)
+            )
+        )
     end
 
     ---Return if all the units in the group are alive

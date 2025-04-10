@@ -292,6 +292,8 @@ OnInit("Backpack", function ()
             UnitAddAbility(caster, itemData.spell)
             backpack.actualItemData = itemData
 
+            itemData.stopped = true -- This will set to false if is casts
+
             if p == LocalPlayer then
                 SelectUnitSingle(caster)
             end
@@ -314,7 +316,7 @@ OnInit("Backpack", function ()
         TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetTriggerUnit()) == DUMMY_CASTER end))
         TriggerAddAction(t, function ()
             if GetTriggerPlayer() == LocalPlayer then
-                ForceUIKey("Q")
+                ForceUIKey("Z")
             end
         end)
     end
@@ -348,13 +350,13 @@ OnInit("Backpack", function ()
     TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_CAST)
     TriggerAddAction(trig, function ()
         local caster = GetSpellAbilityUnit()
+        if not caster then
+            return
+        end
         local p = GetOwningPlayer(caster)
         local itemData = Backpacks[p].actualItemData
 
         if itemData and itemData.spell == GetSpellAbilityId() then
-
-            itemData.stopped = true -- This will set to false if is casts
-
             local target = GetSpellTargetUnit()
             local x = target and GetUnitX(target) or GetSpellTargetX()
             local y = target and GetUnitY(target) or GetSpellTargetY()

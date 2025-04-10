@@ -1043,14 +1043,15 @@ OnInit(function ()
     end
 
     OnInit.final(function ()
+        local function check(u)
+            if IsPlayerInGame(GetOwningPlayer(u)) then
+                ForceAddPlayer(WannaPvP, GetOwningPlayer(u))
+            end
+        end
         -- Check players in lobby
-        Timed.echo(0.5, function ()
+        Timed.echo(1., function ()
             ForceClear(WannaPvP)
-            ForUnitsInRect(LOBBY, function (u)
-                if IsPlayerInGame(GetOwningPlayer(u)) then
-                    ForceAddPlayer(WannaPvP, GetOwningPlayer(u))
-                end
-            end)
+            ForUnitsInRect(LOBBY, check)
         end)
     end)
 

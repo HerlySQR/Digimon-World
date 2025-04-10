@@ -178,7 +178,16 @@ OnInit.final(function ()
         end)
     end
 
-    Timed.echo(1., function ()
+    local function check(d)
+        local p = d.owner
+        if IsPlayerInGame(p) and IsUnitType(d.root, UNIT_TYPE_HERO) then
+            actHeros:addSingle(d)
+            players:addSingle(p)
+            heros[p] = heros[p] + 1
+        end
+    end
+
+    Timed.echo(1.5, function ()
         -- Set time
         local time = TimerGetRemaining(tm)
         if time > 0 then
@@ -194,16 +203,11 @@ OnInit.final(function ()
             heros[p] = 0
         end
 
-        players:clear()
+        if not players:isEmpty() then
+            players:clear()
+        end
 
-        Digimon.enumInRect(place, function (d)
-            local p = d.owner
-            if IsPlayerInGame(p) and IsUnitType(d.root, UNIT_TYPE_HERO) then
-                actHeros:addSingle(d)
-                players:addSingle(p)
-                heros[p] = heros[p] + 1
-            end
-        end)
+        Digimon.enumInRect(place, check)
 
         local newHeros = actHeros:except(prevHeros)
         for d in newHeros:elements() do
@@ -222,9 +226,9 @@ OnInit.final(function ()
             end
         end
 
-        if UnitAlive(boss) then
+        --if UnitAlive(boss) then
             --TimerDialogDisplay(window, players:contains(GetLocalPlayer()))
-        end
+        --end
 
         if not started and players:size() > 0 then
             startSewers()
@@ -325,9 +329,13 @@ OnInit.final(function ()
             end
         end
 
-        prevHeros:clear()
-        prevHeros:addAll(actHeros)
-        actHeros:clear()
+        if not prevHeros:isEmpty() then
+            prevHeros:clear()
+        end
+        if not actHeros:isEmpty() then
+            prevHeros:addAll(actHeros)
+            actHeros:clear()
+        end
     end)
 
     local attractionPoints = SyncedTable.create() ---@type table<Digimon, {remain: number, x: number, y: number}>
@@ -347,7 +355,7 @@ OnInit.final(function ()
         end)
     end)
 
-    Timed.echo(0.5, function ()
+    Timed.echo(1.5, function ()
         for d, data in pairs(attractionPoints) do
             d:issueOrder(Orders.move, data.x, data.y)
             data.remain = data.remain - 0.5
@@ -361,7 +369,7 @@ OnInit.final(function ()
 
     local inRange = MDTable.create(2, false) ---@type table<unit, table<unit, boolean>>
 
-    Timed.echo(1., function ()
+    Timed.echo(2., function ()
         for i = #dragomons, 1, -1 do
             if UnitAlive(dragomons[i]) then
                 local x, y = GetLocationX(dragomonsPos[dragomons[i]]), GetLocationY(dragomonsPos[dragomons[i]])
@@ -409,8 +417,8 @@ OnInit.final(function ()
 
     -- Frenzy
 
-    Timed.echo(1., function ()
-        ForUnitsInRect(place, function (u)
+    Timed.echo(2., function ()
+        local function checkFrenzy(u)
             if GetUnitTypeId(u) == BLACK_KING_NUMEMON then
                 if GetUnitHPRatio(u) < 0.55 then
                     if GetUnitAbilityLevel(u, FRENZY) == 0 then
@@ -422,7 +430,9 @@ OnInit.final(function ()
                     end
                 end
             end
-        end)
+        end
+
+        ForUnitsInRect(place, checkFrenzy)
     end)
 
     do

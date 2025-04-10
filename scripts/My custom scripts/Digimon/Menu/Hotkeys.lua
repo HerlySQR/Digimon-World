@@ -505,7 +505,7 @@ OnInit("Hotkeys", function ()
     ---@param id integer
     function AssignFrame(frame, id)
         frames[id] = frame
-        referenceFrame[frame] = id
+        --referenceFrame[frame] = id
     end
 
     ---@param p player

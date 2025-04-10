@@ -128,7 +128,7 @@ Timed = {
             TimerStart(timerList.timer, timeout, true, function()
                 local top=#timerList
                 for i=top,1,-1 do
-                    local _, remove = pcall(timerList[i])
+                    local _, remove = xpcall(timerList[i], print)
                     if remove then --The userFunc is to be removed:
                         if i~=top then
                             timerList[i]=timerList[top]

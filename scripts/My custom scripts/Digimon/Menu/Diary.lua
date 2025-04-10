@@ -227,25 +227,23 @@ OnInit("Diary", function ()
 
     local MAX_DIST = 0.08
 
+    local xVals = __jarray(0)
+    local yVals = __jarray(0)
+    local rows = __jarray(0)
+
     ---@param quantity integer
     ---@param dist number
     ---@param center location
-    ---@return number[] xVals, number[] yVals
     local function createDistribution(quantity, dist, center)
         if quantity == 0 then
             error("You are distributing 0 elements")
         end
 
-        local xVals = __jarray(0)
-        local yVals = __jarray(0)
-
         if quantity == 1 then
             table.insert(xVals, GetLocationX(center))
             table.insert(yVals, GetLocationY(center))
-            return xVals, yVals
+            return
         end
-
-        local rows = __jarray(0)
         local maxSize = math.floor(MAX_DIST/dist) + 1
 
         local remain = quantity
@@ -310,9 +308,8 @@ OnInit("Diary", function ()
                     table.insert(yVals, dist * row + GetLocationY(center))
                 end
             end
+            rows[row] = nil
         end
-
-        return xVals, yVals
     end
 
     Timed.echo(0.02, function ()
@@ -406,12 +403,14 @@ OnInit("Diary", function ()
 
             local j = 0
             for pos, digimons in pairs(groups) do
-                local xVals, yVals = createDistribution(#digimons, 0.02, pos)
+                createDistribution(#digimons, 0.02, pos)
                 for i = 1, #digimons do
                     j = j + 1
                     BlzFrameSetAbsPoint(DigimonIcons[j], FRAMEPOINT_CENTER, xVals[i], yVals[i])
                     BlzFrameSetTexture(DigimonIcons[j], BlzGetAbilityIcon(digimons[i]:getTypeId()), 0, true)
                     BlzFrameSetVisible(DigimonIcons[j], true)
+                    xVals[i] = nil
+                    yVals[i] = nil
                 end
             end
         end
@@ -419,10 +418,8 @@ OnInit("Diary", function ()
 
     Timed.echo(1.46, UpdateDigimons)
 
-    ---@param p player
-    ---@param id integer
     ---@return DigimonUnlockedInfo
-    function DigimonUnlockedInfo.create(p, id)
+    function DigimonUnlockedInfo.create()
         return setmetatable({
             staPerLvl = false,
             dexPerLvl = false,
@@ -571,7 +568,7 @@ OnInit("Diary", function ()
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
             self.ids[i] = self:getIntProperty("id" .. i)
-            self.infos[i] = DigimonUnlockedInfo.create(self.p, self.ids[i])
+            self.infos[i] = DigimonUnlockedInfo.create()
             self.infos[i]:deserialize(self:getStringProperty("info"..i))
         end
         self.killAmt = self:getIntProperty("killAmt")
@@ -730,13 +727,15 @@ OnInit("Diary", function ()
     ---@param p player
     ---@param id integer
     local function UnlockButton(p, id)
-        if p == LocalPlayer and digiInfos[id] and not unlockedDigiInfos[p][id] then
-            spriteRemain = 8
-            BlzFrameSetTexture(digiInfos[id].backdrop, BlzGetAbilityIcon(id), 0, true)
-            BlzFrameSetEnable(digiInfos[id].button, true)
-            BlzFrameSetVisible(digiInfos[id].sprite, true)
+        if digiInfos[id] and not unlockedDigiInfos[p][id] then
+            if p == LocalPlayer then
+                spriteRemain = 8
+                BlzFrameSetTexture(digiInfos[id].backdrop, BlzGetAbilityIcon(id), 0, true)
+                BlzFrameSetEnable(digiInfos[id].button, true)
+                BlzFrameSetVisible(digiInfos[id].sprite, true)
+            end
+            unlockedDigiInfos[p][id] = DigimonUnlockedInfo.create()
         end
-        unlockedDigiInfos[p][id] = DigimonUnlockedInfo.create(p, id)
     end
 
     ---@param id integer
@@ -1715,13 +1714,13 @@ OnInit("Diary", function ()
 
         if not unlockedInfo.evolveOptions[toEvolve] then
             unlockedInfo.evolveOptions[toEvolve] = __jarray(false)
-            unlockedInfo.evolveOptions[toEvolve][condL] = true
+        end
+        unlockedInfo.evolveOptions[toEvolve][condL] = true
 
-            if owner == LocalPlayer then
-                spriteRemain = 8
-                BlzFrameSetVisible(digiInfos[id].sprite, true)
-                UpdateInformation()
-            end
+        if owner == LocalPlayer then
+            spriteRemain = 8
+            BlzFrameSetVisible(digiInfos[id].sprite, true)
+            UpdateInformation()
         end
     end)
 

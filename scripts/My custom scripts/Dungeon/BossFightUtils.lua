@@ -464,7 +464,7 @@ OnInit("BossFightUtils", function ()
                     -- Add hidden units
                     for p in whoAlreadyAre:elements() do
                         ForUnitsOfPlayer(p, function (u)
-                            if IsUnitHidden(u) and RectContainsUnit(battlefield[data.boss][i], u) then
+                            if (IsUnitHidden(u) or BlzIsUnitInvulnerable(u)) and not IsUnitIllusion(u) and RectContainsUnit(battlefield[data.boss][i], u) then
                                 unitsInTheField:addSingle(u)
                                 playersOnField:addSingle(GetOwningPlayer(u))
                             end
