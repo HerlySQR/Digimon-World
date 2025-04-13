@@ -12,20 +12,16 @@ OnInit(function ()
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
-        local owner = GetOwningPlayer(caster)
         local x, y = GetUnitX(caster), GetUnitY(caster)
         local angle = 0
-        -- Create the Gekomon
+        -- Create the Otamamon
         for _ = 1, 2 do
             angle = angle + math.pi + math.random() * math.pi/2
-            local minion = CreateUnit(owner, MINION, x + DISTANCE*math.cos(angle), y + DISTANCE*math.sin(angle), bj_UNIT_FACING)
-            DestroyEffect(AddSpecialEffect(SUMMON_EFFECT, GetUnitX(minion), GetUnitY(minion)))
+            local minion = SummonMinion(caster, MINION, x + DISTANCE*math.cos(angle), y + DISTANCE*math.sin(angle), bj_UNIT_FACING)
+            DestroyEffect(AddSpecialEffect(SUMMON_EFFECT, minion:getX(), minion:getY()))
             Timed.echo(INTERVAL, function ()
-                if not UnitAlive(caster) then
-                    KillUnit(minion)
-                end
-                if UnitAlive(minion) then
-                    IssueTargetOrderById(minion, Orders.heal, caster)
+                if minion:isAlive() then
+                    minion:issueOrder(Orders.heal, caster)
                 else
                     return true
                 end

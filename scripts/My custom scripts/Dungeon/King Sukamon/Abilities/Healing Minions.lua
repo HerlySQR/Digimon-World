@@ -13,27 +13,23 @@ OnInit(function ()
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
-        local owner = GetOwningPlayer(caster)
         local x, y = GetUnitX(caster), GetUnitY(caster)
         local angle = 0
         for _ = 1, 2 do
             angle = angle + math.pi + math.random() * math.pi/2
-            local minion = CreateUnit(owner, MINION, x + DISTANCE*math.cos(angle), y + DISTANCE*math.sin(angle), bj_UNIT_FACING)
-            DestroyEffect(AddSpecialEffect(SUMMON_EFFECT, GetUnitX(minion), GetUnitY(minion)))
-            local chain = AddLightningEx(LIGHTNING_MODEL, true, GetUnitX(minion), GetUnitY(minion), GetUnitZ(minion) + 50, x, y, GetUnitZ(caster) + 75)
+            local minion = SummonMinion(caster, MINION, x + DISTANCE*math.cos(angle), y + DISTANCE*math.sin(angle), bj_UNIT_FACING)
+            DestroyEffect(AddSpecialEffect(SUMMON_EFFECT, minion:getPos()))
+            local chain = AddLightningEx(LIGHTNING_MODEL, true, minion:getX(), minion:getY(), minion:getZ() + 50, x, y, GetUnitZ(caster) + 75)
             local counter = 0
             Timed.echo(INTERVAL, function ()
-                if not UnitAlive(caster) then
-                    KillUnit(minion)
-                end
-                if UnitAlive(minion) then
-                    SetUnitFacing(minion, math.deg(math.atan(GetUnitY(caster) - GetUnitY(minion), GetUnitX(caster) - GetUnitX(minion))))
+                if minion:isAlive() then
+                    minion:setFacing(math.deg(math.atan(GetUnitY(caster) - minion:getY(), GetUnitX(caster) - minion:getX())))
                     counter = counter + INTERVAL
                     if counter >= HEAL_INTERVAL then
                         counter = 0
                         SetUnitState(caster, UNIT_STATE_LIFE, GetUnitState(caster, UNIT_STATE_LIFE) + HEAL_FACTOR * GetUnitState(caster, UNIT_STATE_MAX_LIFE))
                     end
-                    MoveLightningEx(chain, true, GetUnitX(minion), GetUnitY(minion), GetUnitZ(minion) + 50, GetUnitX(caster), GetUnitY(caster), GetUnitZ(caster) + 75)
+                    MoveLightningEx(chain, true, minion:getX(), minion:getY(), minion:getZ() + 50, GetUnitX(caster), GetUnitY(caster), GetUnitZ(caster) + 75)
                 else
                     DestroyLightning(chain)
                     return true

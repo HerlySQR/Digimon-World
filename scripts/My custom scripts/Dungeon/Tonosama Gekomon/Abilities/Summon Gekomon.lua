@@ -8,21 +8,12 @@ OnInit(function ()
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
-        local owner = GetOwningPlayer(caster)
         local x, y = GetUnitX(caster), GetUnitY(caster)
         -- Create the Gekomon
-        for _ = 1, 2 do
-            local d = Digimon.create(owner, GEKOMON_ID, x, y, GetUnitFacing(caster))
+        for _ = 1, 3 do
+            local d = SummonMinion(caster, GEKOMON_ID, x, y, GetUnitFacing(caster))
             DestroyEffect(AddSpecialEffect(SUMMON_EFFECT, d:getX(), d:getY()))
-            d.isSummon = true
             d:setLevel(GetHeroLevel(caster))
-
-            Timed.echo(1., function ()
-                if not UnitAlive(caster) then
-                    d:kill()
-                    return true
-                end
-            end)
         end
     end)
 

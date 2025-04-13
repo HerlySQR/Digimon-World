@@ -69,14 +69,13 @@ OnInit(function ()
         end)
         for i = 1, math.min(#spawns, math.round(4.235*math.exp(0.166*amount))) do
             local x, y = GetRectCenterX(spawns[options[i][1]]), GetRectCenterY(spawns[options[i][1]])
-            local d = Digimon.create(Digimon.VILLAIN, METEORMON, x, y, options[i][3])
+            local d = SummonMinion(boss, METEORMON, x, y, options[i][3])
             table.insert(summons, d)
             d:setLevel(95)
             AddUnitBonus(d.root, BONUS_STRENGTH, math.floor(GetHeroStr(d.root, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(d.root, BONUS_AGILITY, math.floor(GetHeroAgi(d.root, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(d.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(d.root, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(d.root, BONUS_DAMAGE, math.floor(GetAvarageAttack(d.root) * EXTRA_DMG_FACTOR))
-            d.isSummon = true
             DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", x, y))
             ZTS_AddThreatUnit(d.root, false)
             if options[i][4] then
@@ -156,7 +155,7 @@ OnInit(function ()
             Timed.call(0.5, function ()
                 DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Volcano\\VolcanoDeath.mdl", actX, actY))
                 Timed.call(1., function ()
-                    local d = Digimon.create(Digimon.VILLAIN, VOLCAMON, actX, actY, bj_UNIT_FACING)
+                    local d = SummonMinion(boss, VOLCAMON, actX, actY, bj_UNIT_FACING)
                     table.insert(summons, d)
                     d:setLevel(95)
                     AddUnitBonus(d.root, BONUS_STRENGTH, math.floor(GetHeroStr(d.root, false) * EXTRA_HEALTH_FACTOR))
@@ -326,34 +325,31 @@ OnInit(function ()
                     SetUnitAnimation(boss, "spell")
                     local face = math.rad(GetUnitFacing(boss))
 
-                    local tornado = CreateUnit(Digimon.VILLAIN, TORNADO, GetUnitX(boss) + 400.*math.cos(face), GetUnitY(boss) + 400.*math.sin(face), bj_UNIT_FACING)
-                    DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\GryphonRiderMissile\\GryphonRiderMissileTarget.mdl", GetUnitX(tornado), GetUnitY(tornado)))
-                    SetUnitScale(tornado, 0.1, 0, 0)
+                    local tornado = SummonMinion(boss, TORNADO, GetUnitX(boss) + 400.*math.cos(face), GetUnitY(boss) + 400.*math.sin(face), bj_UNIT_FACING, 120.)
+                    DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\GryphonRiderMissile\\GryphonRiderMissileTarget.mdl", tornado:getPos()))
+                    SetUnitScale(tornado.root, 0.1, 0, 0)
                     local scale = 0.1
                     Timed.echo(0.02, 1, function ()
                         scale = scale + 0.018
-                        SetUnitScale(tornado, scale, 0, 0)
+                        SetUnitScale(tornado.root, scale, 0, 0)
                     end)
 
                     local xDir = math.cos(-face)
                     local yDir = math.sin(-face)
 
-                    Timed.echo(0.02, 120., function ()
-                        SetUnitX(tornado, GetUnitX(tornado) + 2 * xDir)
-                        SetUnitY(tornado, GetUnitY(tornado) + 2 * yDir)
-
-                        if GetUnitX(tornado) > GetRectMaxX(tornadoPlace) or GetUnitX(tornado) < GetRectMinX(tornadoPlace) then
-                            xDir = -xDir
-                        end
-                        if GetUnitY(tornado) > GetRectMaxY(tornadoPlace) or GetUnitY(tornado) < GetRectMinY(tornadoPlace) then
-                            yDir = -yDir
-                        end
-                        if not UnitAlive(boss) then
-                            KillUnit(tornado)
+                    Timed.echo(0.02, function ()
+                        if not tornado:isAlive() then
                             return true
                         end
-                    end, function ()
-                        KillUnit(tornado)
+                        tornado:setX(tornado:getX() + 2 * xDir)
+                        tornado:setY(tornado:getY() + 2 * yDir)
+
+                        if tornado:getX() > GetRectMaxX(tornadoPlace) or tornado:getX() < GetRectMinX(tornadoPlace) then
+                            xDir = -xDir
+                        end
+                        if tornado:getY() > GetRectMaxY(tornadoPlace) or tornado:getY() < GetRectMinY(tornadoPlace) then
+                            yDir = -yDir
+                        end
                     end)
                 end
             end

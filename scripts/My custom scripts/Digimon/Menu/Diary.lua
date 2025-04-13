@@ -1715,12 +1715,14 @@ OnInit("Diary", function ()
         if not unlockedInfo.evolveOptions[toEvolve] then
             unlockedInfo.evolveOptions[toEvolve] = __jarray(false)
         end
-        unlockedInfo.evolveOptions[toEvolve][condL] = true
+        if not unlockedInfo.evolveOptions[toEvolve][condL] then
+            unlockedInfo.evolveOptions[toEvolve][condL] = true
 
-        if owner == LocalPlayer then
-            spriteRemain = 8
-            BlzFrameSetVisible(digiInfos[id].sprite, true)
-            UpdateInformation()
+            if owner == LocalPlayer then
+                spriteRemain = 8
+                BlzFrameSetVisible(digiInfos[id].sprite, true)
+                UpdateInformation()
+            end
         end
     end)
 

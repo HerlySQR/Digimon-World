@@ -14,6 +14,8 @@ OnInit("BossFightUtils", function ()
     local originalTargetsAllowed = {} ---@type table<unit, integer>
     local originalBaseDamage = {} ---@type table<unit, integer>
     local canLeave = __jarray(false) ---@type table<unit, boolean>
+    local summons = {} ---@type table<unit, Digimon[]>
+    local summonDuration = __jarray(math.Inf) ---@type table<Digimon, number>
 
     local DASH_EFFECT = "war3mapImported\\Valiant Charge Royal.mdl"
     local TELEPORT_CASTER_EFFECT = "war3mapImported\\Blink Purple Caster.mdl"
@@ -85,6 +87,23 @@ OnInit("BossFightUtils", function ()
         end
         numRect = numRect - 1
         return rects
+    end
+
+    ---@param boss unit
+    ---@param id integer
+    ---@param x number
+    ---@param y number
+    ---@param face number
+    ---@param duration number?
+    ---@return Digimon
+    function SummonMinion(boss, id, x, y, face, duration)
+        local minion = Digimon.create(GetOwningPlayer(boss), id, x, y, face)
+        minion.isSummon = true
+        if duration then
+            summonDuration[minion] = duration
+        end
+        table.insert(summons[boss], minion)
+        return minion
     end
 
     ---@param boss unit
@@ -327,6 +346,7 @@ OnInit("BossFightUtils", function ()
         local interval = 3.
         local hitChance = 1.
         battlefield[data.boss] = {}
+        summons[data.boss] = {}
         local playersOnField = Set.create()
 
         local hitsDealt
@@ -410,6 +430,13 @@ OnInit("BossFightUtils", function ()
                     data.onReset()
                 end
                 ignored[data.boss] = __jarray(false)
+
+                for i = #summons[data.boss], 1, -1 do
+                    if summons[data.boss][i]:isAlive() then
+                        summons[data.boss][i]:kill()
+                    end
+                    table.remove(summons[data.boss], i)
+                end
             end
         end
 
@@ -464,7 +491,7 @@ OnInit("BossFightUtils", function ()
                     -- Add hidden units
                     for p in whoAlreadyAre:elements() do
                         ForUnitsOfPlayer(p, function (u)
-                            if (IsUnitHidden(u) or BlzIsUnitInvulnerable(u)) and not IsUnitIllusion(u) and RectContainsUnit(battlefield[data.boss][i], u) then
+                            if (IsUnitHidden(u) or BlzIsUnitInvulnerable(u)) and UnitAlive(u) and not IsUnitIllusion(u) and RectContainsUnit(battlefield[data.boss][i], u) then
                                 unitsInTheField:addSingle(u)
                                 playersOnField:addSingle(GetOwningPlayer(u))
                             end
@@ -629,6 +656,15 @@ OnInit("BossFightUtils", function ()
                     attacking = false
                 end
 
+                for i = #summons[data.boss], 1, -1 do
+                    local minion = summons[data.boss][i]
+                    summonDuration[minion] = summonDuration[minion] - 0.5
+                    if not minion:isAlive() or summonDuration[minion] <= 0 then
+                        minion:kill()
+                        table.remove(summons[data.boss], i)
+                    end
+                end
+
                 -- Remove all the units if someone left the battlefield
                 for u in whoWereHere:except(unitsInTheField):elements() do
                     if UnitAlive(u) and IsPlayerInGame(GetOwningPlayer(u)) then
@@ -652,6 +688,13 @@ OnInit("BossFightUtils", function ()
                             playing = false
                             RestartMusic()
                         end
+                    end
+
+                    for i = #summons[data.boss], 1, -1 do
+                        if summons[data.boss][i]:isAlive() then
+                            summons[data.boss][i]:kill()
+                        end
+                        table.remove(summons[data.boss], i)
                     end
 
                     isCasting[data.boss] = false

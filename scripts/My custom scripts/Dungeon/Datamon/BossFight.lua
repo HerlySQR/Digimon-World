@@ -222,8 +222,7 @@ OnInit(function ()
 
                     for j = 1, minions do
                         local l = GetRandomLocInRect(returnPlace)
-                        guardromons[j] = Digimon.create(Digimon.VILLAIN, GUARDROMON, GetLocationX(l), GetLocationY(l), bj_UNIT_FACING)
-                        guardromons[j].isSummon = true
+                        guardromons[j] = SummonMinion(boss, GUARDROMON, GetLocationX(l), GetLocationY(l), bj_UNIT_FACING)
                         guardromons[j]:setLevel(GetHeroLevel(boss))
                         DestroyEffect(AddSpecialEffectLoc(GUARDROMON_EFFECT, l))
                         RemoveLocation(l)

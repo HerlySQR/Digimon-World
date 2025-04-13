@@ -346,6 +346,11 @@ OnInit("Digimon", function ()
         return GetUnitY(self.root)
     end
 
+    ---@return number
+    function Digimon:getZ()
+        return GetUnitZ(self.root)
+    end
+
     ---@param y number
     function Digimon:setY(y)
         return SetUnitY(self.root, y)

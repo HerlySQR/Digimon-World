@@ -96,7 +96,7 @@ OnInit(function ()
                                             end
                                         end
 
-                                        local w = Digimon.create(Digimon.VILLAIN, WARUMONZEAMON, GetLocationX(l), GetLocationY(l), 360*math.random())
+                                        local w = SummonMinion(boss, WARUMONZEAMON, GetLocationX(l), GetLocationY(l), 360*math.random(), 100.)
                                         RemoveLocation(l)
 
                                         w:hide()
@@ -110,21 +110,12 @@ OnInit(function ()
                                         end)
 
                                         w:setLevel(90)
-                                        w.isSummon = true
                                         w:pause()
                                         ZTS_AddThreatUnit(w.root, false)
                                         AddUnitBonus(w.root, BONUS_STRENGTH, math.floor(GetHeroStr(w.root, false) * EXTRA_HEALTH_FACTOR))
                                         AddUnitBonus(w.root, BONUS_AGILITY, math.floor(GetHeroAgi(w.root, false) * EXTRA_HEALTH_FACTOR))
                                         AddUnitBonus(w.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(w.root, false) * EXTRA_HEALTH_FACTOR))
                                         AddUnitBonus(w.root, BONUS_DAMAGE, math.floor(GetAvarageAttack(w.root) * EXTRA_DMG_FACTOR))
-                                        Timed.echo(1., 100., function ()
-                                            if not UnitAlive(boss) then
-                                                w:destroy()
-                                                return true
-                                            end
-                                        end, function ()
-                                            w:destroy()
-                                        end)
                                         Timed.call(1.5, function ()
                                             w:unpause()
                                         end)
@@ -388,10 +379,9 @@ OnInit(function ()
             elseif spell == SUMMON_RAREMON then
                 for i = 1, #RAREMON_PLACES do
                     for _ = 1, 2 do
-                        local d = Digimon.create(Digimon.VILLAIN, RAREMON, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i]), GetRandomReal(160, 200))
+                        local d = SummonMinion(boss, RAREMON, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i]), GetRandomReal(160, 200))
                         DestroyEffect(AddSpecialEffect(RAREMON_SUMMON_EFFECT, GetRectCenterX(RAREMON_PLACES[i]), GetRectCenterY(RAREMON_PLACES[i])))
 
-                        d.isSummon = true
                         d:setLevel(90)
                         SetUnitMoveSpeed(d.root, 275)
                         ZTS_AddThreatUnit(d.root, false)
