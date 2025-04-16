@@ -343,6 +343,7 @@ OnInit(function ()
                         for r2 in regionData.sameRegion:elements() do
                             table.remove(r2.creeps, i)
                         end
+                        creep.rd = nil
                     end
                 end
 
@@ -455,6 +456,19 @@ OnInit(function ()
             end
         end
     end)
+
+    function RerollCreepItem(creep)
+        if creep.rd then
+            ZTS_RemoveThreatUnit(creep.root)
+            creep.captured = true
+            local itm = creep.rd.itemTable[math.random(#creep.rd.itemTable)]
+            if itm then
+                if math.random(100) <= ITEM_DROP_CHANCE then
+                    CreateItem(itm, creep:getPos())
+                end
+            end
+        end
+    end
 
     -- For GUI
     udg_CreepSpawnCreate = CreateTrigger()

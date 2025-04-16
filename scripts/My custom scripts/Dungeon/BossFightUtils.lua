@@ -793,7 +793,12 @@ OnInit("BossFightUtils", function ()
         do
             local t = CreateTrigger()
             TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
-            TriggerAddCondition(t, Condition(function () return GetTriggerUnit() == data.boss end))
+            TriggerAddCondition(t, Condition(function ()
+                if not UnitAlive(data.boss) then
+                    return false
+                end
+                return GetTriggerUnit() == data.boss
+            end))
             TriggerAddAction(t, function ()
                 local u = GetAttacker()
                 if IsUnitType(u, UNIT_TYPE_HERO) and u ~= data.boss and not unitsInTheField:contains(u) then
@@ -807,10 +812,13 @@ OnInit("BossFightUtils", function ()
             local t = CreateTrigger()
             TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_CAST)
             TriggerAddCondition(t, Condition(function ()
+                if not UnitAlive(data.boss) then
+                    return false
+                end
                 local u = GetSpellTargetUnit()
                 if u then
                     return u == data.boss
-                else
+                elseif not GetSpellTargetItem() and not GetSpellTargetDestructable() then
                     local x, y = GetSpellTargetX(), GetSpellTargetY()
                     for _, r in ipairs(battlefield[data.boss]) do
                         if RectContainsCoords(r, x, y) then

@@ -30,6 +30,7 @@ OnInit.final(function ()
     local bankEnter = __jarray(false) ---@type table<player, boolean>
     local gymEnter = __jarray(false) ---@type table<player, boolean>
     local trainEnter = __jarray(false) ---@type table<player, boolean>
+    local fishEnter = __jarray(false) ---@type table<player, boolean>
     local tutorialsDone = __jarray(0) ---@type table<player, integer>
     local idle = __jarray(0) ---@type table<player, integer>
     local finish = {} ---@type table<player, function>
@@ -38,7 +39,7 @@ OnInit.final(function ()
     local checkForEnemy = nil ---@type fun(p: player)
     local checkForTransport = nil ---@type fun(p: player)
 
-    local MAX_TUTORIALS = 12
+    local MAX_TUTORIALS = 13
     local DIGITAMA = FourCC('n00A')
     local PIXIMON = FourCC('O06U')
     local WHAMON = FourCC('N009')
@@ -47,6 +48,8 @@ OnInit.final(function ()
     local NET = FourCC('I000')
     local TELEPORT_CASTER_EFFECT = "war3mapImported\\Blink Purple Caster.mdx"
     local TELEPORT_TARGET_EFFECT = "war3mapImported\\Blink Purple Target.mdx"
+    local SAVE_ITEM = FourCC('A0C6')
+    local SELL_ITEM = FourCC('A0F4')
 
     local Tentomon = gg_unit_N01F_0075
 
@@ -83,6 +86,8 @@ OnInit.final(function ()
         d.environment = Environment.jijimon
         d:hide()
         DialogDisplay(p, Menu, true)
+        SetPlayerAbilityAvailable(p, SAVE_ITEM, false)
+        SetPlayerAbilityAvailable(p, SELL_ITEM, false)
         coroutine.yield()
     end
 
@@ -127,8 +132,11 @@ OnInit.final(function ()
         ShowSave(p, true)
         ShowLoad(p, true)
         ShowBank(p, true)
-        ShowSellItem(p, true)
-        ShowSaveItem(p, true)
+        --ShowSellItem(p, true)
+        --ShowSaveItem(p, true)
+        SetPlayerAbilityAvailable(p, SAVE_ITEM, true)
+        SetPlayerAbilityAvailable(p, SELL_ITEM, true)
+        ShowFish(p, true)
         ShowHotkeys(p, true)
         ShowCosmetics(p, true)
         ShowHelp(p, true)
@@ -382,6 +390,9 @@ OnInit.final(function ()
                             end
                             if not trainEnter[p] then
                                 table.insert(options, "All the digimons have different elements, let's check what you are good against at the Green Gym")
+                            end
+                            if not fishEnter[p] then
+                                table.insert(options, "Have you ever though about fishing?")
                             end
                             line = options[math.random(#options)]
                         end
@@ -1042,12 +1053,14 @@ OnInit.final(function ()
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Here is the bank, you can look at the items you stored in the server.", Transmission.SET, 4., true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "And can transfer or swap digimons to the server as you can only bring 8 with you.", Transmission.SET, 4., true)
                 tr:AddActions(function ()
-                    ShowSaveItem(p, true)
+                    --ShowSaveItem(p, true)
+                    SetPlayerAbilityAvailable(p, SAVE_ITEM, true)
                 end)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "When you see an item you can either use it or send it here.", Transmission.SET, 3.5, true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "To send the item here, there is a Store Button", Transmission.SET, 3.5, true)
                 tr:AddActions(function ()
-                    ShowSellItem(p, true)
+                    --ShowSellItem(p, true)
+                    SetPlayerAbilityAvailable(p, SELL_ITEM, true)
                 end)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "But if you want, you can just sell it to get digibits.", Transmission.SET, 3.5, true)
                 tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "To sell it just use the sell button and select the item", Transmission.SET, 3.5, true)
@@ -1057,8 +1070,10 @@ OnInit.final(function ()
                         return
                     end
                     if tr:WasSkipped() then
-                        ShowSellItem(p, true)
-                        ShowSaveItem(p, true)
+                        --ShowSellItem(p, true)
+                        --ShowSaveItem(p, true)
+                        SetPlayerAbilityAvailable(p, SAVE_ITEM, true)
+                        SetPlayerAbilityAvailable(p, SELL_ITEM, true)
                     end
                     AddCompletedTutorial(p)
                     d:unpause()
@@ -1156,6 +1171,52 @@ OnInit.final(function ()
         end
     end)
 
+    -- Player gets close to the fisher
+    t = CreateTrigger()
+    TriggerRegisterEnterRectSimple(t, gg_rct_FishingZone)
+    TriggerAddAction(t, function ()
+        local d = Digimon.getInstance(GetEnteringUnit())
+        if not d then
+            return
+        end
+        local p = d:getOwner()
+        if not inTutorial[p] then
+            return
+        end
+
+        dontWannaTalkWithTentomon(p)
+        if not fishEnter[p] then
+            fishEnter[p] = true
+            canFollow[p] = false
+            local pixie = piximons[p]
+            MovePixie(pixie, d:getPos())
+            d:pause()
+
+            Timed.call(0.5, function ()
+                if d:getTypeId() == 0 then
+                    return
+                end
+                local tr = Transmission.create(Force(p))
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "There are plenty of fish in the sea.", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "They can be very useful for you.", Transmission.SET, 3.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "If you wanna you can get a fish rod to catch as much as you want.", Transmission.SET, 4.5, true)
+                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Of course you need patience to do that.", Transmission.SET, 3.5, true)
+                tr:AddEnd(function ()
+                    dequequeTransmission(p)
+                    if d:getTypeId() == 0 then
+                        return
+                    end
+                    canFollow[p] = true
+                    ShowFish(p, true)
+                    AddCompletedTutorial(p)
+                    d:unpause()
+                    ClearShops(d:getPos())
+                end)
+                enquequeTransmission(tr, p)
+            end)
+        end
+    end)
+
     -- Finish tutorial if a player restarts
     OnRestart(function (p)
         if inTutorial[p] then
@@ -1163,8 +1224,11 @@ OnInit.final(function ()
             ShowSave(p, true)
             ShowLoad(p, true)
             ShowBank(p, false)
-            ShowSellItem(p, false)
-            ShowSaveItem(p, false)
+            SetPlayerAbilityAvailable(p, SAVE_ITEM, false)
+            SetPlayerAbilityAvailable(p, SELL_ITEM, false)
+            --ShowSellItem(p, false)
+            --ShowSaveItem(p, false)
+            ShowFish(p, false)
             ShowHotkeys(p, false)
             ShowCosmetics(p, false)
             ShowHelp(p, false)

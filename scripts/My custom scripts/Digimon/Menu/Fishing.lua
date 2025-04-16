@@ -5,6 +5,7 @@ OnInit(function ()
     Require "ErrorMessage"
     Require "FrameLoader"
     Require "Menu"
+    Require "Hotkeys"
 
     local DIGI_ANCHOVY = FourCC('I07N')
     local DIGI_SEABASS = FourCC('I07P')
@@ -26,7 +27,7 @@ OnInit(function ()
         end)
     end
 
-    local FISHING = FourCC('A0IL')
+    --local FISHING = FourCC('A0IL')
     local ROD = {
         FourCC('I07W'),
         FourCC('I07M'),
@@ -107,6 +108,8 @@ OnInit(function ()
     local usedRedLine = __jarray(0) ---@type table<unit, integer>
     local allowedRedLine = __jarray(true) ---@type table<integer, boolean>
 
+    local Fish = nil ---@type framehandle
+    local BackdropFish ---@type framehandle
     local FishBackdrop = nil ---@type framehandle
     local ProgressBar = nil ---@type framehandle
     local Ready = nil ---@type framehandle
@@ -128,6 +131,7 @@ OnInit(function ()
                 return i
             end
         end
+        return -1
     end
 
     ---@param u unit
@@ -281,13 +285,13 @@ OnInit(function ()
             if uHasRod then
                 ErrorMessage("You already have a fishing rod", GetOwningPlayer(u))
                 UnitRemoveItem(u, m)
-            else
-                UnitAddAbility(u, FISHING)
+            --else
+                --UnitAddAbility(u, FISHING)
             end
         end)
     end
 
-    do
+    --[[do
         local t = CreateTrigger()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DROP_ITEM)
         TriggerAddCondition(t, hasRod)
@@ -307,7 +311,7 @@ OnInit(function ()
                 end
             end)
         end)
-    end
+    end]]
 
     do
         local t = CreateTrigger()
@@ -317,11 +321,13 @@ OnInit(function ()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER)
         TriggerAddCondition(t, Condition(function () return fishing[GetOrderedUnit()] end))
         TriggerAddAction(t, function ()
-            abortFish(GetOrderedUnit())
+            if GetIssuedOrderId() ~= Orders.holdposition then
+                abortFish(GetOrderedUnit())
+            end
         end)
     end
 
-    RegisterSpellEffectEvent(FISHING, function ()
+    --[[RegisterSpellEffectEvent(FISHING, function ()
         local u = GetSpellAbilityUnit()
 
         abortFish(u)
@@ -408,7 +414,112 @@ OnInit(function ()
         else
             ErrorMessage("No fishing spot found", GetOwningPlayer(u))
         end
-    end)
+    end)]]
+
+    local function FishFunc(p)
+        local list = GetUsedDigimons(p)
+        local success = false
+
+        for i = 1, #list do
+            local u = list[i].root
+
+            local uHasRod = false
+            for j = 1, #ROD do
+                if UnitHasItemOfTypeBJ(u, ROD[j]) then
+                    uHasRod = true
+                    break
+                end
+            end
+
+            if uHasRod then
+                local targetX, targetY
+                ForEachCellInArea(GetUnitX(u), GetUnitY(u), 128, function (x, y)
+                    if not IsTerrainPathable(x, y, PATHING_TYPE_FLOATABILITY) and not IsTerrainWalkable(x, y) then
+                        targetX, targetY = x, y
+                    end
+                end)
+                if targetX then
+                    fishing[u] = true
+                    table.insert(fishers[p], u)
+
+                    IssueImmediateOrderById(u, Orders.holdposition)
+
+                    local angle = math.atan(targetY - GetUnitY(u), targetX - GetUnitX(u))
+                    SetUnitFacing(u, math.deg(angle))
+
+                    local actX = GetUnitX(u)
+                    local actY = GetUnitY(u)
+                    local actZ = GetUnitZ(u, true) + 50.
+
+                    local step = DistanceBetweenCoords(GetUnitX(u), GetUnitY(u), targetX, targetY) / 50
+                    local stepX = step * math.cos(angle) * 1.25
+                    local stepY = step * math.sin(angle) * 1.25
+                    local stepZ = (GetPosZ(targetX, targetY) - actZ) / 40
+
+                    local line = AddLightningEx( "LEAS", true, actX, actY, actZ, actX, actY, actZ)
+                    SetLightningColor(line, 0.5, 1., 1., 1.)
+
+                    Timed.echo(0.02, 1., function ()
+                        if lines[u] ~= line then
+                            return true
+                        end
+                        actX = actX + stepX
+                        actY = actY + stepY
+                        actZ = actZ + stepZ
+                        MoveLightningEx(line, true, GetUnitX(u), GetUnitY(u), GetUnitZ(u, true) + 50., actX, actY, actZ)
+                    end, function ()
+                        if p == LocalPlayer then
+                            local index = 0
+                            for j = 1, #RedLines do
+                                if allowedRedLine[j] then
+                                    index = j
+                                    break
+                                end
+                            end
+                            usedRedLine[u] = index
+                            allowedRedLine[index] = false
+                            BlzFrameSetTexture(Fisher[index], BlzGetAbilityIcon(GetUnitTypeId(u)), 0, true)
+                        end
+
+                        startFishing(u, p, line)
+
+                        Timed.echo(0.02, function ()
+                            if lines[u] ~= line then
+                                return true
+                            end
+                            if DistanceBetweenCoordsSq(actX, actY, GetUnitX(u), GetUnitY(u)) > 90000. then
+                                abortFish(u)
+                            end
+                            if catch[u] == 0 then
+                                if math.random(1, 50) == 1 then
+                                    local angle2 = math.random() * 2 * math.pi
+                                    DestroyEffectTimed(AddSpecialEffect("Doodads\\Ruins\\Water\\BubbleGeyser\\BubbleGeyser.mdl", actX + 50.*math.random() * math.cos(angle2), actY + 50.*math.random() * math.sin(angle2)), 1.)
+                                end
+                            elseif catch[u] == 1 or catch[u] == 3 then
+                                actX = actX - stepX
+                                actY = actY - stepY
+                                actZ = actZ - stepZ
+                                MoveLightningEx(line, true, GetUnitX(u), GetUnitY(u), GetUnitZ(u, true) + 50., actX, actY, actZ)
+
+                                if DistanceBetweenCoordsSq(actX, actY, GetUnitX(u), GetUnitY(u)) < 2500 then
+                                    local whatFish = getRandomFish(u)
+                                    if whatFish then
+                                        CreateItem(whatFish, GetUnitX(u), GetUnitY(u))
+                                    end
+                                    abortFish(u)
+                                end
+                            end
+                        end)
+                    end)
+                    lines[u] = line
+                    success = true
+                end
+            end
+        end
+        if not success then
+            ErrorMessage("No digimon available to fish", p)
+        end
+    end
 
     local function ReadyFunc(p)
         table.sort(fishers[p], function (a, b) return linePos[a] > linePos[b] end)
@@ -452,6 +563,18 @@ OnInit(function ()
     end
 
     FrameLoaderAdd(function ()
+        Fish = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop",  0), 0, 0)
+        AddButtonToTheRight(Fish, 4)
+        SetFrameHotkey(Fish, "C")
+        AddDefaultTooltip(Fish, "Fish", "Makes all the digimons that has a rod and is nearby deep water to fish.")
+        AddFrameToMenu(Fish)
+        BlzFrameSetVisible(Fish, false)
+
+        BackdropFish = BlzCreateFrameByType("BACKDROP", "BackdropFish", Fish, "", 0)
+        BlzFrameSetAllPoints(BackdropFish, Fish)
+        BlzFrameSetTexture(BackdropFish, "ReplaceableTextures\\CommandButtons\\BTNFishN.blp", 0, true)
+        OnClickEvent(Fish, FishFunc)
+
         FishBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI, 0), "", 1)
         BlzFrameSetAbsPoint(FishBackdrop, FRAMEPOINT_TOPLEFT, 0.160000, 0.460000)
         BlzFrameSetAbsPoint(FishBackdrop, FRAMEPOINT_BOTTOMRIGHT, 0.660000, 0.180000)
@@ -498,5 +621,11 @@ OnInit(function ()
         BlzFrameSetTexture(YellowArea, "war3mapImported\\YellowArea.blp", 0, true)
         BlzFrameSetLevel(YellowArea, 2)
     end)
+
+    function ShowFish(p, flag)
+        if p == LocalPlayer then
+            BlzFrameSetVisible(Fish, flag)
+        end
+    end
 end)
 Debug.endFile()

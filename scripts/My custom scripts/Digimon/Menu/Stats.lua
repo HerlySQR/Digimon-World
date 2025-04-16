@@ -8,14 +8,14 @@ OnInit("Stats", function ()
     Require "GetMainSelectedUnit"
     Require "Hotkeys"
 
-    local WATER_ICON = "war3mapImported\\ATTWater.blp"
-    local MACHINE_ICON = "war3mapImported\\ATTMetal.blp"
-    local BEAST_ICON = "war3mapImported\\ATTBEast.blp"
-    local FIRE_ICON = "war3mapImported\\ATTFlame.blp"
-    local NATURE_ICON = "war3mapImported\\ATTNature.blp"
-    local AIR_ICON = "war3mapImported\\ATTAir.blp"
-    local DARK_ICON = "war3mapImported\\ATTShadow.blp"
-    local HOLY_ICON = "war3mapImported\\ATTHoly.blp"
+    local WATER_ICON = "war3mapImported\\ATTAqua.blp"
+    local MACHINE_ICON = "war3mapImported\\ATTOre.blp"
+    local BEAST_ICON = "war3mapImported\\ATTBeastN.blp"
+    local FIRE_ICON = "war3mapImported\\ATTFlame2.blp"
+    local NATURE_ICON = "war3mapImported\\ATTNatureN.blp"
+    local AIR_ICON = "war3mapImported\\ATTAirN.blp"
+    local DARK_ICON = "war3mapImported\\ATTDark.blp"
+    local HOLY_ICON = "war3mapImported\\ATTLight.blp"
     local HERO_ICON = "war3mapImported\\ATTSystemMed.blp"
 
     local SHIELD_ICON = "ReplaceableTextures\\CommandButtons\\PASShieldBag.blp"
@@ -125,12 +125,12 @@ OnInit("Stats", function ()
 
     local allVisible = false
     local changeVisible = false
-    local seeOnly = {} ---@type table<player, unit>
+    --local seeOnly = {} ---@type table<player, unit>
     local dropItemI = __jarray(0) ---@type table<player, integer>
     local dropItemJ = __jarray(0) ---@type table<player, integer>
     local buffIcons = __jarray("") ---@type table<integer, string>
 
-    local show = FourCC('A0GR')
+    --[[local show = FourCC('A0GR')
 
     -- Add the see stats ability to the new digimon
     Digimon.createEvent:register(function (new)
@@ -172,7 +172,7 @@ OnInit("Stats", function ()
             end
             IssueImmediateOrderById(u, Orders.unimmolation)
         end)
-    end
+    end]]
 
     local function StatsButtonFunc(p)
         if not GetUsedDigimons(p)[1] then
@@ -182,21 +182,21 @@ OnInit("Stats", function ()
             allVisible = not allVisible
             changeVisible = true
         end
-        seeOnly[p] = nil
+        --seeOnly[p] = nil
     end
 
     Timed.echo(0.16, function ()
         local list = GetUsedDigimons(LocalPlayer)
         for i = 0, 2 do
-            if allVisible or seeOnly[LocalPlayer] then
+            if allVisible --[[or seeOnly[LocalPlayer] ]]then
                 if changeVisible and not BlzFrameIsVisible(StatsBackdrop[i]) then
                     BlzFrameSetVisible(StatsBackdrop[i], true)
                 end
 
-                if not list[i+1] or (seeOnly[LocalPlayer] and i ~= 0) then
+                if not list[i+1] --[[or (seeOnly[LocalPlayer] and i ~= 0)]] then
                     BlzFrameSetVisible(StatsBackdrop[i], false)
                 else
-                    local d = seeOnly[LocalPlayer] == nil and list[i+1] or Digimon.getInstance(seeOnly[LocalPlayer])
+                    local d = --[[seeOnly[LocalPlayer] == nil and]] list[i+1]--[[ or Digimon.getInstance(seeOnly[LocalPlayer])]]
                     if not d then
                         break
                     end
@@ -365,7 +365,7 @@ OnInit("Stats", function ()
                     end
                 end
             else
-                if (changeVisible or (i == 0 and not seeOnly[LocalPlayer])) and BlzFrameIsVisible(StatsBackdrop[i]) then
+                if (changeVisible --[[or (i == 0 and not seeOnly[LocalPlayer])]]) and BlzFrameIsVisible(StatsBackdrop[i]) then
                     BlzFrameSetVisible(StatsBackdrop[i], false)
                 end
             end
@@ -487,7 +487,7 @@ OnInit("Stats", function ()
         return result
     end
     OnBankUpdated(function (p, _)
-        if p == LocalPlayer and BlzFrameIsVisible(StatsBackdrop[0]) and not seeOnly[p] then
+        if p == LocalPlayer and BlzFrameIsVisible(StatsBackdrop[0])--[[ and not seeOnly[p] ]] then
             changeVisible = true
         end
     end)
@@ -504,7 +504,7 @@ OnInit("Stats", function ()
     end
 
     local function StatsItemDropFunc(p)
-        local d = seeOnly[p] == nil and GetUsedDigimons(p)[dropItemI[p]+1] or Digimon.getInstance(seeOnly[p])
+        local d = --[[seeOnly[p] == nil and]] GetUsedDigimons(p)[dropItemI[p]+1] --or Digimon.getInstance(seeOnly[p])
         UnitDropItemPoint(d.root, UnitItemInSlot(d.root, dropItemJ[p]), d:getPos())
         if p == LocalPlayer then
             BlzFrameSetVisible(StatsItemDrop, false)

@@ -77,12 +77,12 @@ OnInit("DigimonBank", function ()
     local BackdropSavedItemT = {} ---@type framehandle[]
     local SavedItemTSelected = {} ---@type framehandle[]
     local SaveItemLocked = {} ---@type framehandle[]
-    local SaveItem = nil ---@type framehandle
-    local BackdropSaveItem = nil ---@type framehandle
+    --local SaveItem = nil ---@type framehandle
+    --local BackdropSaveItem = nil ---@type framehandle
     local SaveItemTooltip = {} ---@type framehandle[]
     local SaveItemTooltipText = {} ---@type framehandle[]
-    local SellItem = nil ---@type framehandle
-    local BackdropSellItem = nil ---@type framehandle
+    --local SellItem = nil ---@type framehandle
+    --local BackdropSellItem = nil ---@type framehandle
 
     local BuySlotMenu = nil ---@type framehandle
     local BuySlotMessage = nil ---@type framehandle
@@ -549,7 +549,7 @@ OnInit("DigimonBank", function ()
         self.itemClicked = -1
     end
 
-    function Bank:resetCaster()
+    --[[function Bank:resetCaster()
         SetUnitOwner(self.caster, Digimon.PASSIVE, false)
         if self.p == LocalPlayer then
             ClearSelection()
@@ -561,7 +561,7 @@ OnInit("DigimonBank", function ()
             BlzFrameSetEnable(SaveItem, true)
             BlzFrameSetEnable(SellItem, true)
         end
-    end
+    end]]
 
     ---@param d Digimon
     ---@return boolean
@@ -670,6 +670,18 @@ OnInit("DigimonBank", function ()
         BlzFrameSetEnable(SaveItemDrop, bank.itemClicked ~= -1)
     end
 
+    Digimon.createEvent:register(function (d)
+        if IsPlayerInGame(d.owner) then
+            d:addAbility(SAVE_ITEM)
+            d:addAbility(SELL_ITEM)
+        end
+    end)
+
+    Digimon.capturedEvent:register(function (info)
+        info.target:addAbility(SAVE_ITEM)
+        info.target:addAbility(SELL_ITEM)
+    end)
+
     local trig = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
     TriggerAddCondition(trig, Condition(function () return GetSpellAbilityId() == SAVE_ITEM or GetSpellAbilityId() == SELL_ITEM end))
@@ -680,9 +692,9 @@ OnInit("DigimonBank", function ()
         local target = GetSpellTargetItem()
         local x, y = GetItemX(target), GetItemY(target)
 
-        if not GetRandomUnitOnRange(x, y, MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
+        --[[if not GetRandomUnitOnRange(x, y, MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
             ErrorMessage("A digimon should be nearby the item", p)
-        elseif GetPlayerController(GetItemPlayer(target)) == MAP_CONTROL_USER and GetItemPlayer(target) ~= p then
+        else]]if GetPlayerController(GetItemPlayer(target)) == MAP_CONTROL_USER and GetItemPlayer(target) ~= p then
             ErrorMessage("This item belongs to another player", p)
         else
             if GetSpellAbilityId() == SAVE_ITEM then
@@ -706,7 +718,7 @@ OnInit("DigimonBank", function ()
             end
         end
 
-        bank:resetCaster()
+        --bank:resetCaster()
     end)
 
     -- Always use this function in a "if player == GetLocalPlayer() then" block
@@ -928,7 +940,7 @@ OnInit("DigimonBank", function ()
         end
     end)
 
-    ---@param p player
+    --[[---@param p player
     ---@param key string
     local function UseCaster(p, key)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
@@ -955,7 +967,7 @@ OnInit("DigimonBank", function ()
             end
         end)
         bank.usingCaster = true
-    end
+    end]]
 
     OnInit.final(function ()
         trig = CreateTrigger()
@@ -1595,7 +1607,7 @@ OnInit("DigimonBank", function ()
 
         -- Saved
 
-        SaveItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
+        --[[SaveItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         AddButtonToTheRight(SaveItem, 6)
         SetFrameHotkey(SaveItem, "C")
         AddDefaultTooltip(SaveItem, "Save item", "Saves the selected item in the bank (you have to go to the bank to see it).")
@@ -1605,7 +1617,7 @@ OnInit("DigimonBank", function ()
         BackdropSaveItem = BlzCreateFrameByType("BACKDROP", "BackdropSaveItem", SaveItem, "", 0)
         BlzFrameSetAllPoints(BackdropSaveItem, SaveItem)
         BlzFrameSetTexture(BackdropSaveItem, "ReplaceableTextures\\CommandButtons\\BTNStore.blp", 0, true)
-        OnClickEvent(SaveItem, function (p) UseCaster(p, "Z") end)
+        OnClickEvent(SaveItem, function (p) UseCaster(p, "Z") end)]]
 
         SavedDigimons = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.195000, 0.510000)
@@ -1854,7 +1866,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetText(BuySlotNo, "|cffFCD20DNo|r")
         OnClickEvent(BuySlotNo, BuySlotNoFunc)
 
-        SellItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
+        --[[SellItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         AddButtonToTheRight(SellItem, 4)
         SetFrameHotkey(SellItem, "F")
         AddDefaultTooltip(SellItem, "Sell item", "Sells the selected item of yours.")
@@ -1864,7 +1876,7 @@ OnInit("DigimonBank", function ()
         BackdropSellItem = BlzCreateFrameByType("BACKDROP", "BackdropSellItem", SellItem, "", 0)
         BlzFrameSetAllPoints(BackdropSellItem, SellItem)
         BlzFrameSetTexture(BackdropSellItem, "ReplaceableTextures\\CommandButtons\\BTNSell.blp", 0, true)
-        OnClickEvent(SellItem, function (p) UseCaster(p, "A") end)
+        OnClickEvent(SellItem, function (p) UseCaster(p, "A") end)]]
     end
 
     FrameLoaderAdd(InitFrames)
@@ -2317,7 +2329,7 @@ OnInit("DigimonBank", function ()
         end
     end
 
-    ---@param p player
+    --[[---@param p player
     ---@param flag boolean
     function ShowSellItem(p, flag)
         if p == LocalPlayer then
@@ -2331,7 +2343,7 @@ OnInit("DigimonBank", function ()
         if p == LocalPlayer then
             BlzFrameSetVisible(SaveItem, flag)
         end
-    end
+    end]]
 
     ---@param p player
     ---@param x number
