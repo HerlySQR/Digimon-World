@@ -27,6 +27,7 @@ OnInit.final(function ()
     local digimonDied = __jarray(false) ---@type table<player, boolean>
     local hospitalEnter = __jarray(false) ---@type table<player, boolean>
     local transportFound = __jarray(false) ---@type table<player, boolean>
+    local resourceFound = __jarray(false) ---@type table<player, boolean>
     local bankEnter = __jarray(false) ---@type table<player, boolean>
     local gymEnter = __jarray(false) ---@type table<player, boolean>
     local trainEnter = __jarray(false) ---@type table<player, boolean>
@@ -38,6 +39,7 @@ OnInit.final(function ()
     local piximons = {} ---@type table<player, Digimon>
     local checkForEnemy = nil ---@type fun(p: player)
     local checkForTransport = nil ---@type fun(p: player)
+    local checkForResource = nil ---@type fun(p: player)
 
     local MAX_TUTORIALS = 13
     local DIGITAMA = FourCC('n00A')
@@ -137,6 +139,7 @@ OnInit.final(function ()
         SetPlayerAbilityAvailable(p, SAVE_ITEM, true)
         SetPlayerAbilityAvailable(p, SELL_ITEM, true)
         ShowFish(p, true)
+        ShowMaterials(p, true)
         ShowHotkeys(p, true)
         ShowCosmetics(p, true)
         ShowHelp(p, true)
@@ -168,6 +171,7 @@ OnInit.final(function ()
         digimonDied[p] = false
         hospitalEnter[p] = false
         transportFound[p] = false
+        resourceFound[p] = false
         bankEnter[p] = false
         gymEnter[p] = false
         trainEnter[p] = false
@@ -249,6 +253,7 @@ OnInit.final(function ()
 
             checkForEnemy(p)
             checkForTransport(p)
+            checkForResource(p)
         else
             coroutine.resume(threads[p])
         end
@@ -382,6 +387,9 @@ OnInit.final(function ()
                             if not transportFound[p] then
                                 table.insert(options, "This is a big world, a lot of digimons to meet, but we still have some at the city to talk to.")
                             end
+                            --if not resourceFound[p] then
+                            --    table.insert(options, ".")
+                            --end
                             if not bankEnter[p] then
                                 table.insert(options, "The bank is a place where you can store items and digimons, let's go see it")
                             end
@@ -1026,6 +1034,77 @@ OnInit.final(function ()
         end)
     end
 
+    -- Player gets closer to a resource
+
+    ---@param p player
+    function checkForResource(p)
+        Timed.echo(1., function ()
+            if not inTutorial[p] then
+                return true
+            end
+            if not resourceFound[p] then
+                for _, d in ipairs(GetUsedDigimons(p)) do
+                    ForUnitsInRange(d:getX(), d:getY(), 400., function (r)
+                        if not resourceFound[p] and GetOwningPlayer(r) == Digimon.RESOURCE then
+                            resourceFound[p] = true
+                            dontWannaTalkWithTentomon(p)
+                            local pixie = piximons[p]
+                            canFollow[p] = false
+
+                            if DistanceBetweenCoords(pixie:getX(), pixie:getY(), GetUnitX(r), GetUnitY(r)) > 1000. then
+                                MovePixie(pixie, GetUnitX(r), GetUnitY(r))
+                            else
+                                pixie:issueOrder(Orders.move, GetUnitX(r), GetUnitY(r))
+                            end
+
+                            pixie:issueOrder(Orders.move, GetUnitX(r), GetUnitY(r))
+                            Timed.call(1., function ()
+                                if d:getTypeId() == 0 then
+                                    return
+                                end
+                                local tr = Transmission.create(Force(p))
+                                tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "In this world you can find special resources.", Transmission.SET, 4., true)
+                                tr:AddEnd(function ()
+                                    if d:getTypeId() == 0 then
+                                        dequequeTransmission(p)
+                                        return
+                                    end
+                                    pixie:issueOrder(Orders.move, d:getPos())
+                                    Timed.call(1., function ()
+                                        if d:getTypeId() == 0 then
+                                            dequequeTransmission(p)
+                                            return
+                                        end
+                                        tr = Transmission.create(Force(p))
+                                        if equipPicked[p] then
+                                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "These can be used to upgrade your equipment.", Transmission.SET, 3., true)
+                                        else
+                                            tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Once you get an equipment you can use it to improve it.", Transmission.SET, 3., true)
+                                        end
+                                        tr:AddLine(pixie.root, nil, "MarineAngemon", nil, "Attack it to make it drop the materials.", Transmission.SET, 3., true)
+                                        tr:AddEnd(function ()
+                                            dequequeTransmission(p)
+                                            canFollow[p] = true
+                                            ClearShops(d:getPos())
+                                            AddCompletedTutorial(p)
+                                        end)
+                                        tr:Start()
+                                    end)
+                                end)
+                                tr:Start()
+                            end)
+                        end
+                    end)
+                    if resourceFound[p] then
+                        break
+                    end
+                end
+            else
+                return true
+            end
+        end)
+    end
+
     -- Player enters in the bank
     t = CreateTrigger()
     TriggerRegisterEnterRectSimple(t, gg_rct_Bank_Inner)
@@ -1229,6 +1308,7 @@ OnInit.final(function ()
             --ShowSellItem(p, false)
             --ShowSaveItem(p, false)
             ShowFish(p, false)
+            ShowMaterials(p, false)
             ShowHotkeys(p, false)
             ShowCosmetics(p, false)
             ShowHelp(p, false)

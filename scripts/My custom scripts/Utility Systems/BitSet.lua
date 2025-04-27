@@ -3,7 +3,7 @@ OnInit("BitSet", function ()
     ---A bitset is a set of small integers represented by a single int
     ---@class BitSet
     ---@field private val integer
-    local BitSet = {}
+    BitSet = {}
     BitSet.__index = BitSet
 
     ---Returns a bitset
@@ -92,7 +92,5 @@ OnInit("BitSet", function ()
         assert(testAdd(), "Failed testAdd")
         assert(testRemove(), "Failed testRemove")
     end)
-
-    return BitSet
 end)
 if Debug then Debug.endFile() end

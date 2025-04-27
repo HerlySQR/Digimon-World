@@ -423,96 +423,98 @@ OnInit(function ()
         for i = 1, #list do
             local u = list[i].root
 
-            local uHasRod = false
-            for j = 1, #ROD do
-                if UnitHasItemOfTypeBJ(u, ROD[j]) then
-                    uHasRod = true
-                    break
-                end
-            end
-
-            if uHasRod then
-                local targetX, targetY
-                ForEachCellInArea(GetUnitX(u), GetUnitY(u), 128, function (x, y)
-                    if not IsTerrainPathable(x, y, PATHING_TYPE_FLOATABILITY) and not IsTerrainWalkable(x, y) then
-                        targetX, targetY = x, y
+            if not fishing[u] then
+                local uHasRod = false
+                for j = 1, #ROD do
+                    if UnitHasItemOfTypeBJ(u, ROD[j]) then
+                        uHasRod = true
+                        break
                     end
-                end)
-                if targetX then
-                    fishing[u] = true
-                    table.insert(fishers[p], u)
+                end
 
-                    IssueImmediateOrderById(u, Orders.holdposition)
-
-                    local angle = math.atan(targetY - GetUnitY(u), targetX - GetUnitX(u))
-                    SetUnitFacing(u, math.deg(angle))
-
-                    local actX = GetUnitX(u)
-                    local actY = GetUnitY(u)
-                    local actZ = GetUnitZ(u, true) + 50.
-
-                    local step = DistanceBetweenCoords(GetUnitX(u), GetUnitY(u), targetX, targetY) / 50
-                    local stepX = step * math.cos(angle) * 1.25
-                    local stepY = step * math.sin(angle) * 1.25
-                    local stepZ = (GetPosZ(targetX, targetY) - actZ) / 40
-
-                    local line = AddLightningEx( "LEAS", true, actX, actY, actZ, actX, actY, actZ)
-                    SetLightningColor(line, 0.5, 1., 1., 1.)
-
-                    Timed.echo(0.02, 1., function ()
-                        if lines[u] ~= line then
-                            return true
+                if uHasRod then
+                    local targetX, targetY
+                    ForEachCellInArea(GetUnitX(u), GetUnitY(u), 128, function (x, y)
+                        if not IsTerrainPathable(x, y, PATHING_TYPE_FLOATABILITY) and not IsTerrainWalkable(x, y) then
+                            targetX, targetY = x, y
                         end
-                        actX = actX + stepX
-                        actY = actY + stepY
-                        actZ = actZ + stepZ
-                        MoveLightningEx(line, true, GetUnitX(u), GetUnitY(u), GetUnitZ(u, true) + 50., actX, actY, actZ)
-                    end, function ()
-                        if p == LocalPlayer then
-                            local index = 0
-                            for j = 1, #RedLines do
-                                if allowedRedLine[j] then
-                                    index = j
-                                    break
-                                end
-                            end
-                            usedRedLine[u] = index
-                            allowedRedLine[index] = false
-                            BlzFrameSetTexture(Fisher[index], BlzGetAbilityIcon(GetUnitTypeId(u)), 0, true)
-                        end
+                    end)
+                    if targetX then
+                        fishing[u] = true
+                        table.insert(fishers[p], u)
 
-                        startFishing(u, p, line)
+                        IssueImmediateOrderById(u, Orders.holdposition)
 
-                        Timed.echo(0.02, function ()
+                        local angle = math.atan(targetY - GetUnitY(u), targetX - GetUnitX(u))
+                        SetUnitFacing(u, math.deg(angle))
+
+                        local actX = GetUnitX(u)
+                        local actY = GetUnitY(u)
+                        local actZ = GetUnitZ(u, true) + 50.
+
+                        local step = DistanceBetweenCoords(GetUnitX(u), GetUnitY(u), targetX, targetY) / 50
+                        local stepX = step * math.cos(angle) * 1.25
+                        local stepY = step * math.sin(angle) * 1.25
+                        local stepZ = (GetPosZ(targetX, targetY) - actZ) / 40
+
+                        local line = AddLightningEx( "LEAS", true, actX, actY, actZ, actX, actY, actZ)
+                        SetLightningColor(line, 0.5, 1., 1., 1.)
+
+                        Timed.echo(0.02, 1., function ()
                             if lines[u] ~= line then
                                 return true
                             end
-                            if DistanceBetweenCoordsSq(actX, actY, GetUnitX(u), GetUnitY(u)) > 90000. then
-                                abortFish(u)
-                            end
-                            if catch[u] == 0 then
-                                if math.random(1, 50) == 1 then
-                                    local angle2 = math.random() * 2 * math.pi
-                                    DestroyEffectTimed(AddSpecialEffect("Doodads\\Ruins\\Water\\BubbleGeyser\\BubbleGeyser.mdl", actX + 50.*math.random() * math.cos(angle2), actY + 50.*math.random() * math.sin(angle2)), 1.)
-                                end
-                            elseif catch[u] == 1 or catch[u] == 3 then
-                                actX = actX - stepX
-                                actY = actY - stepY
-                                actZ = actZ - stepZ
-                                MoveLightningEx(line, true, GetUnitX(u), GetUnitY(u), GetUnitZ(u, true) + 50., actX, actY, actZ)
-
-                                if DistanceBetweenCoordsSq(actX, actY, GetUnitX(u), GetUnitY(u)) < 2500 then
-                                    local whatFish = getRandomFish(u)
-                                    if whatFish then
-                                        CreateItem(whatFish, GetUnitX(u), GetUnitY(u))
+                            actX = actX + stepX
+                            actY = actY + stepY
+                            actZ = actZ + stepZ
+                            MoveLightningEx(line, true, GetUnitX(u), GetUnitY(u), GetUnitZ(u, true) + 50., actX, actY, actZ)
+                        end, function ()
+                            if p == LocalPlayer then
+                                local index = 0
+                                for j = 1, #RedLines do
+                                    if allowedRedLine[j] then
+                                        index = j
+                                        break
                                     end
+                                end
+                                usedRedLine[u] = index
+                                allowedRedLine[index] = false
+                                BlzFrameSetTexture(Fisher[index], BlzGetAbilityIcon(GetUnitTypeId(u)), 0, true)
+                            end
+
+                            startFishing(u, p, line)
+
+                            Timed.echo(0.02, function ()
+                                if lines[u] ~= line then
+                                    return true
+                                end
+                                if DistanceBetweenCoordsSq(actX, actY, GetUnitX(u), GetUnitY(u)) > 90000. then
                                     abortFish(u)
                                 end
-                            end
+                                if catch[u] == 0 then
+                                    if math.random(1, 50) == 1 then
+                                        local angle2 = math.random() * 2 * math.pi
+                                        DestroyEffectTimed(AddSpecialEffect("Doodads\\Ruins\\Water\\BubbleGeyser\\BubbleGeyser.mdl", actX + 50.*math.random() * math.cos(angle2), actY + 50.*math.random() * math.sin(angle2)), 1.)
+                                    end
+                                elseif catch[u] == 1 or catch[u] == 3 then
+                                    actX = actX - stepX
+                                    actY = actY - stepY
+                                    actZ = actZ - stepZ
+                                    MoveLightningEx(line, true, GetUnitX(u), GetUnitY(u), GetUnitZ(u, true) + 50., actX, actY, actZ)
+
+                                    if DistanceBetweenCoordsSq(actX, actY, GetUnitX(u), GetUnitY(u)) < 2500 then
+                                        local whatFish = getRandomFish(u)
+                                        if whatFish then
+                                            CreateItem(whatFish, GetUnitX(u), GetUnitY(u))
+                                        end
+                                        abortFish(u)
+                                    end
+                                end
+                            end)
                         end)
-                    end)
-                    lines[u] = line
-                    success = true
+                        lines[u] = line
+                        success = true
+                    end
                 end
             end
         end

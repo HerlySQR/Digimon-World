@@ -857,7 +857,7 @@ OnInit("Quests", function ()
 
         for i = 1, data.amount do
             local id = data.id[i]
-            if QuestTemplates[id] then
+            if QuestTemplates[id] and (QuestTemplates[id].onlyOnce or not data.comp[i]) then
                 PlayerQuests[p][id] = {
                     name = QuestTemplates[id].name,
                     description = QuestTemplates[id].description,

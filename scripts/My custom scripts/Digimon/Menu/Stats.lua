@@ -185,7 +185,7 @@ OnInit("Stats", function ()
         --seeOnly[p] = nil
     end
 
-    Timed.echo(0.16, function ()
+    Timed.echo(0.08, function ()
         local list = GetUsedDigimons(LocalPlayer)
         for i = 0, 2 do
             if allVisible --[[or seeOnly[LocalPlayer] ]]then

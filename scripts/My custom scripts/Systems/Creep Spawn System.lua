@@ -23,6 +23,7 @@ OnInit(function ()
     local CHANCE_RARE           ---@type number
     local CHANCE_LEGENDARY      ---@type number
     local ITEM_DROP_CHANCE      ---@type integer
+    local PARTITIONS = 4
 
     ---@class Creep : Digimon
     ---@field remaining number
@@ -288,8 +289,8 @@ OnInit(function ()
         end
     end
 
-    local function Update()
-        for node = 1, #All do
+    local function Update(start, finish)
+        for node = start, finish do
             regionData = All[node]
             -- Check if the unit nearby the spawn region belongs to a player
             regionData.inregion = false
@@ -434,7 +435,38 @@ OnInit(function ()
     end)
 
     OnInit.final(function ()
-        Timed.echo(INTERVAL, Update)
+        if #All < PARTITIONS then
+            Timed.echo(INTERVAL, function ()
+                Update(1, #All)
+            end)
+        else
+            local delay = INTERVAL / PARTITIONS
+            local delta = #All//PARTITIONS
+            local parts = {
+                1, delta,
+                delta+1, 2*delta,
+                2*delta+1, 3*delta,
+                3*delta+1, #All
+            }
+            TimerStart(CreateTimer(), INTERVAL, true, function ()
+                Update(parts[1], parts[2])
+            end)
+            Timed.call(delay, function ()
+                TimerStart(CreateTimer(), INTERVAL, true, function ()
+                    Update(parts[3], parts[4])
+                end)
+                Timed.call(delay, function ()
+                    TimerStart(CreateTimer(), INTERVAL, true, function ()
+                        Update(parts[5], parts[6])
+                    end)
+                    Timed.call(delay, function ()
+                        TimerStart(CreateTimer(), INTERVAL, true, function ()
+                            Update(parts[7], parts[8])
+                        end)
+                    end)
+                end)
+            end)
+        end
     end)
 
     Digimon.capturedEvent:register(function (info)

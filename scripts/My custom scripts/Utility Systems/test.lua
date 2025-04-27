@@ -1,48 +1,37 @@
-Debug.beginFile("Tonosama Gekomon\\Abilities\\Summon Otamamon")
+Debug.beginFile("Abilities\\New Illusion")
 OnInit(function ()
-    Require "BossFightUtils"
+    Require "AbilityUtils"
 
-    local SPELL = FourCC('A0BJ')
-    local SUMMON_EFFECT = "Abilities\\Spells\\Items\\TomeOfRetraining\\TomeOfRetrainingCaster.mdl"
-    local MINION = FourCC('h01T')
-    local HEAL = FourCC('A0BI')
-    local HEAL_FACTOR = 0.05
-    local INTERVAL = 6.
-    local DISTANCE = 270.
+    local SPELL = FourCC('A0JB')
+    local DURATION = 15.
+    local DMG_DEALT = 1.
+    local DMG_TAKEN = 1.5
+    local AOE = 170.
+    local NUMBER_OF_IMG = 2
+    local DUMMY_ILLUSION = FourCC('A0JC')
+    local ORDER = Orders.wandOfIllusion
+    local DummyID = FourCC('n000')
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
-        local x, y = GetUnitX(caster), GetUnitY(caster)
-        local angle = 0
-        -- Create the Otamamon
-        for _ = 1, 2 do
-            angle = angle + math.pi + math.random() * math.pi/2
-            local minion = SummonMinion(caster, MINION, x + DISTANCE*math.cos(angle), y + DISTANCE*math.sin(angle), bj_UNIT_FACING)
-            DestroyEffect(AddSpecialEffect(SUMMON_EFFECT, minion:getX(), minion:getY()))
-            Timed.echo(INTERVAL, function ()
-                if minion:isAlive() then
-                    minion:issueOrder(Orders.heal, caster)
-                else
-                    return true
-                end
-            end)
+        local owner = GetOwningPlayer(caster)
+
+        for _ = 1, NUMBER_OF_IMG do
+            local dummy = CreateUnit(owner, DummyID, GetUnitX(caster), GetUnitY(caster), 0)
+            UnitAddAbility(dummy, DUMMY_ILLUSION)
+            local abil = BlzGetUnitAbility(dummy, DUMMY_ILLUSION)
+
+            BlzSetAbilityRealLevelField(abil, ABILITY_RLF_DURATION_NORMAL, 0, DURATION)
+            BlzSetAbilityRealLevelField(abil, ABILITY_RLF_DURATION_HERO, 0, DURATION)
+            BlzSetAbilityRealLevelField(abil, ABILITY_RLF_AREA_OF_EFFECT, 0, AOE)
+            BlzSetAbilityRealLevelField(abil, ABILITY_RLF_DAMAGE_DEALT_PERCENT_OF_NORMAL, 0, DMG_DEALT)
+            BlzSetAbilityRealLevelField(abil, ABILITY_RLF_DAMAGE_RECEIVED_MULTIPLIER, 0, DMG_TAKEN)
+
+            IssueTargetOrderById(dummy, ORDER, caster)
+
+            UnitApplyTimedLife(dummy, FourCC("BTLF"), 5.)
         end
     end)
-
-    do
-        local t = CreateTrigger()
-        TriggerRegisterVariableEvent(t, "udg_PreDamageEvent", EQUAL, 1.00)
-        TriggerAddAction(t, function ()
-            if GetUnitTypeId(udg_DamageEventTarget) == MINION then
-                udg_DamageEventAmount = 1.
-            end
-        end)
-    end
-
-    RegisterSpellEffectEvent(HEAL, function ()
-        local target = GetSpellTargetUnit()
-        SetUnitState(target, UNIT_STATE_LIFE, GetUnitState(target, UNIT_STATE_LIFE) + HEAL_FACTOR * GetUnitState(target, UNIT_STATE_MAX_LIFE))
-    end)
-
+    
 end)
 Debug.endFile()

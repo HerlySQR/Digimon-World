@@ -978,6 +978,7 @@ OnInit("Digimon", function ()
     Digimon.PASSIVE = Player(PLAYER_NEUTRAL_PASSIVE)
     Digimon.VILLAIN = Player(13)
     Digimon.CITY = Player(14)
+    Digimon.RESOURCE = Player(15)
 
     ---@param p player
     ---@return boolean

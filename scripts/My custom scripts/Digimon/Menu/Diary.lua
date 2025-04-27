@@ -5,6 +5,7 @@ OnInit("Diary", function ()
     Require "Environment"
     Require "Serializable"
     Require "FoodBonus"
+    Require "BitSet"
 
     local LocalPlayer = GetLocalPlayer()
 
@@ -430,42 +431,80 @@ OnInit("Diary", function ()
     end
 
     function DigimonUnlockedInfo:serializeProperties()
-        self:addProperty("sPL", self.staPerLvl)
-        self:addProperty("dPL", self.dexPerLvl)
-        self:addProperty("wPL", self.wisPerLvl)
+        self:addProperty("hstats", self.staPerLvl)
+
         local evoAmt = 0
         for id, unlocked in pairs(self.evolveOptions) do
             evoAmt = evoAmt + 1
             self:addProperty("eid" .. evoAmt, id)
-            self:addProperty("ueidl" .. evoAmt, unlocked.level or false)
-            self:addProperty("ueidp" .. evoAmt, unlocked.place or false)
-            self:addProperty("ueids" .. evoAmt, unlocked.stone or false)
-            self:addProperty("ueidstr" .. evoAmt, unlocked.str or false)
-            self:addProperty("ueidagi" .. evoAmt, unlocked.agi or false)
-            self:addProperty("ueidint" .. evoAmt, unlocked.int or false)
-            self:addProperty("ueidod" .. evoAmt, unlocked.onlyDay or false)
-            self:addProperty("ueidon" .. evoAmt, unlocked.onlyNight or false)
+
+            local bitSet = BitSet.create(0)
+            if unlocked.level then
+                bitSet:set(0)
+            end
+            if unlocked.place then
+                bitSet:set(1)
+            end
+            if unlocked.stone then
+                bitSet:set(2)
+            end
+            if unlocked.str then
+                bitSet:set(3)
+            end
+            if unlocked.agi then
+                bitSet:set(4)
+            end
+            if unlocked.int then
+                bitSet:set(5)
+            end
+            if unlocked.onlyDay then
+                bitSet:set(6)
+            end
+            if unlocked.onlyNight then
+                bitSet:set(7)
+            end
+            self:addProperty("edata" .. evoAmt, bitSet:toInt())
         end
         self:addProperty("evoAmt", evoAmt)
         --self:addProperty("uenid", self.whereToBeFound)
     end
 
     function DigimonUnlockedInfo:deserializeProperties()
-        self.staPerLvl = self:getBoolProperty("sPL")
-        self.dexPerLvl = self:getBoolProperty("dPL")
-        self.wisPerLvl = self:getBoolProperty("wPL")
-        local evoAmt = self:getIntProperty("evoAmt")
-        for i = 1, evoAmt do
-            local id = self:getIntProperty("eid" .. i)
-            self.evolveOptions[id] = __jarray(false)
-            self.evolveOptions[id].level = self:getBoolProperty("ueidl" .. i)
-            self.evolveOptions[id].place = self:getBoolProperty("ueidp" .. i)
-            self.evolveOptions[id].stone = self:getBoolProperty("ueids" .. i)
-            self.evolveOptions[id].str = self:getBoolProperty("ueidstr" .. i)
-            self.evolveOptions[id].agi = self:getBoolProperty("ueidagi" .. i)
-            self.evolveOptions[id].int = self:getBoolProperty("ueidint" .. i)
-            self.evolveOptions[id].onlyDay = self:getBoolProperty("ueidod" .. i)
-            self.evolveOptions[id].onlyNight = self:getBoolProperty("ueidon" .. i)
+        if self:getBoolProperty("hstats") then
+            self.staPerLvl = self:getBoolProperty("hstats")
+            self.dexPerLvl = self:getBoolProperty("hstats")
+            self.wisPerLvl = self:getBoolProperty("hstats")
+            local evoAmt = self:getIntProperty("evoAmt")
+            for i = 1, evoAmt do
+                local id = self:getIntProperty("eid" .. i)
+                local bitSet = BitSet.create(self:getIntProperty("edata" .. i))
+                self.evolveOptions[id] = __jarray(false)
+                self.evolveOptions[id].level = bitSet:get(0)
+                self.evolveOptions[id].place = bitSet:get(1)
+                self.evolveOptions[id].stone = bitSet:get(2)
+                self.evolveOptions[id].str = bitSet:get(3)
+                self.evolveOptions[id].agi = bitSet:get(4)
+                self.evolveOptions[id].int = bitSet:get(5)
+                self.evolveOptions[id].onlyDay = bitSet:get(6)
+                self.evolveOptions[id].onlyNight = bitSet:get(7)
+            end
+        else -- Backwards compatibility
+            self.staPerLvl = self:getBoolProperty("sPL")
+            self.dexPerLvl = self:getBoolProperty("dPL")
+            self.wisPerLvl = self:getBoolProperty("wPL")
+            local evoAmt = self:getIntProperty("evoAmt")
+            for i = 1, evoAmt do
+                local id = self:getIntProperty("eid" .. i)
+                self.evolveOptions[id] = __jarray(false)
+                self.evolveOptions[id].level = self:getBoolProperty("ueidl" .. i)
+                self.evolveOptions[id].place = self:getBoolProperty("ueidp" .. i)
+                self.evolveOptions[id].stone = self:getBoolProperty("ueids" .. i)
+                self.evolveOptions[id].str = self:getBoolProperty("ueidstr" .. i)
+                self.evolveOptions[id].agi = self:getBoolProperty("ueidagi" .. i)
+                self.evolveOptions[id].int = self:getBoolProperty("ueidint" .. i)
+                self.evolveOptions[id].onlyDay = self:getBoolProperty("ueidod" .. i)
+                self.evolveOptions[id].onlyNight = self:getBoolProperty("ueidon" .. i)
+            end
         end
         --self.whereToBeFound = self:getBoolProperty("uenid")
     end
@@ -475,11 +514,7 @@ OnInit("Diary", function ()
     ---@field amount integer
     ---@field ids integer[]
     ---@field infos DigimonUnlockedInfo[]
-    ---@field killAmt integer
-    ---@field killWho integer[]
     ---@field killCount integer[]
-    ---@field deathAmt integer
-    ---@field deathWho integer[]
     ---@field deathCount integer[]
     ---@field itemsUnlocked integer
     ---@field items integer[]
@@ -496,11 +531,7 @@ OnInit("Diary", function ()
             amount = 0,
             ids = {},
             infos = {},
-            killAmt = 0,
-            killWho = {},
             killCount = {},
-            deathAmt = 0,
-            deathWho = {},
             deathCount = {},
             itemsUnlocked = 0,
             items = {},
@@ -517,16 +548,8 @@ OnInit("Diary", function ()
                 self.amount = self.amount + 1
                 self.ids[self.amount] = id
                 self.infos[self.amount] = info
-            end
-            for id, count in pairs(kills[p]) do
-                self.killAmt = self.killAmt + 1
-                self.killWho[self.killAmt] = id
-                self.killCount[self.killAmt] = count
-            end
-            for id, count in pairs(deaths[p]) do
-                self.deathAmt = self.deathAmt + 1
-                self.deathWho[self.deathAmt] = id
-                self.deathCount[self.deathAmt] = count
+                self.killCount[self.amount] = kills[p][id]
+                self.deathCount[self.amount] = deaths[p][id]
             end
             for id, _ in pairs(unlockedItems[p]) do
                 self.itemsUnlocked = self.itemsUnlocked + 1
@@ -542,16 +565,12 @@ OnInit("Diary", function ()
         for i = 1, self.amount do
             self:addProperty("id" .. i, self.ids[i])
             self:addProperty("info"..i, self.infos[i]:serialize())
-        end
-        self:addProperty("killAmt", self.killAmt)
-        for i = 1, self.killAmt do
-            self:addProperty("kw" .. i, self.killWho[i])
-            self:addProperty("kc" .. i, self.killCount[i])
-        end
-        self:addProperty("deathAmt", self.deathAmt)
-        for i = 1, self.deathAmt do
-            self:addProperty("dw" .. i, self.deathWho[i])
-            self:addProperty("dc" .. i, self.deathCount[i])
+            if self.killCount[i] > 0 then
+                self:addProperty("kc" .. i, self.killCount[i])
+            end
+            if self.deathCount[i] > 0 then
+                self:addProperty("dc" .. i, self.deathCount[i])
+            end
         end
         self:addProperty("iU", self.itemsUnlocked)
         for i = 1, self.itemsUnlocked do
@@ -570,15 +589,7 @@ OnInit("Diary", function ()
             self.ids[i] = self:getIntProperty("id" .. i)
             self.infos[i] = DigimonUnlockedInfo.create()
             self.infos[i]:deserialize(self:getStringProperty("info"..i))
-        end
-        self.killAmt = self:getIntProperty("killAmt")
-        for i = 1, self.killAmt do
-            self.killWho[i] = self:getIntProperty("kw" .. i)
             self.killCount[i] = self:getIntProperty("kc" .. i)
-        end
-        self.deathAmt = self:getIntProperty("deathAmt")
-        for i = 1, self.deathAmt do
-            self.deathWho[i] = self:getIntProperty("dw" .. i)
             self.deathCount[i] = self:getIntProperty("dc" .. i)
         end
         self.itemsUnlocked = self:getIntProperty("iU")
@@ -594,12 +605,8 @@ OnInit("Diary", function ()
                 BlzFrameSetTexture(digiInfos[self.ids[i]].backdrop, BlzGetAbilityIcon(self.ids[i]), 0, true)
                 BlzFrameSetEnable(digiInfos[self.ids[i]].button, true)
             end
-        end
-        for i = 1, self.killAmt do
-            kills[self.p][self.killWho[i]] = self.killCount[i]
-        end
-        for i = 1, self.deathAmt do
-            deaths[self.p][self.deathWho[i]] = self.deathCount[i]
+            kills[self.p][self.ids[i]] = self.killCount[i]
+            deaths[self.p][self.ids[i]] = self.deathCount[i]
         end
         for i = 1, self.itemsUnlocked do
             unlockedItems[self.p][self.items[i]] = true
@@ -1752,7 +1759,7 @@ OnInit("Diary", function ()
 
         if IsPlayerInGame(owner) then
             if digiInfos[kId] then
-                local killCount = kills[owner][kId] + 1
+                local killCount = math.min(kills[owner][kId] + 1, REQUIRED_KILLS_3)
                 kills[owner][kId] = killCount
 
                 local show = false
@@ -1778,7 +1785,7 @@ OnInit("Diary", function ()
             end
 
             if digiInfos[dId] then
-                local deathCount = deaths[owner][dId] + 1
+                local deathCount = math.min(deaths[owner][dId] + 1, REQUIRED_DEATHS)
                 deaths[owner][dId] = deathCount
 
                 if deathCount >= REQUIRED_DEATHS then

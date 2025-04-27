@@ -21,7 +21,6 @@ OnInit("DigimonBank", function ()
     local NEW_DIGIMON_SLOT_COST_CRYSTALS = 4
     local REVIVE_ITEM = udg_REVIVE_ITEM
     local REVIVE_COOLDOWN = 90.
-    local MAX_DEAD_HEROS = 7
 
     local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
 
@@ -354,7 +353,7 @@ OnInit("DigimonBank", function ()
             return false
         end
 
-        return not self.stocked[self.pressed]:isAlive()
+        return not self.allDead and not self.stocked[self.pressed]:isAlive()
     end
 
     ---@return boolean
@@ -473,6 +472,10 @@ OnInit("DigimonBank", function ()
 
             self.stocked[index1] = old2
             self.saved[index2] = old1
+
+            if self.pressed == index1 then
+                self.pressed = -1
+            end
         end
     end
 
@@ -680,6 +683,11 @@ OnInit("DigimonBank", function ()
     Digimon.capturedEvent:register(function (info)
         info.target:addAbility(SAVE_ITEM)
         info.target:addAbility(SELL_ITEM)
+    end)
+
+    Digimon.evolutionEvent:register(function (d)
+        d:addAbility(SAVE_ITEM)
+        d:addAbility(SELL_ITEM)
     end)
 
     local trig = CreateTrigger()
@@ -967,7 +975,7 @@ OnInit("DigimonBank", function ()
             end
         end)
         bank.usingCaster = true
-    end]]
+    end
 
     OnInit.final(function ()
         trig = CreateTrigger()
@@ -995,7 +1003,7 @@ OnInit("DigimonBank", function ()
                 bank:resetCaster()
             end
         end)
-    end)
+    end)]]
 
     local function SaveItemDropFunc(p)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
@@ -1272,6 +1280,19 @@ OnInit("DigimonBank", function ()
         end
     end
 
+    Timed.echo(1., function ()
+        ForForce(FORCE_PLAYING, function ()
+            local p = GetEnumPlayer()
+            local bank = Bank[GetPlayerId(p)] ---@type Bank
+            if bank.reviveCooldown > 0 then
+                bank.reviveCooldown = bank.reviveCooldown - 1.
+                if p == LocalPlayer then
+                    UpdateMenu()
+                end
+            end
+        end)
+    end)
+
     local function ReviveFunc(p)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
 
@@ -1282,15 +1303,6 @@ OnInit("DigimonBank", function ()
 
         bank.reviveItems = bank.reviveItems - 1
         bank.reviveCooldown = REVIVE_COOLDOWN
-        Timed.echo(1., function ()
-            if bank.reviveCooldown <= 0 then
-                return true
-            end
-            bank.reviveCooldown = bank.reviveCooldown - 1.
-            if p == LocalPlayer then
-                UpdateMenu()
-            end
-        end)
 
         if bank.main then
             DestroyEffectTimed(AddSpecialEffect(CENTAURMON_REVIVE_EFF_1, bank.main:getPos()), 1.)
@@ -2190,10 +2202,8 @@ OnInit("DigimonBank", function ()
             Timed.call(2., function ()
                 dead:hideInTheCorner()
                 -- Hero gets deleted if there are more than 7 dead heros
-                if deads >= MAX_DEAD_HEROS then
-                    isDead[dead.root] = true
-                    oldReviveHero(dead.root, dead:getX(), dead:getY(), false)
-                end
+                isDead[dead.root] = true
+                oldReviveHero(dead.root, dead:getX(), dead:getY(), false)
             end)
 
             if index == -1 then

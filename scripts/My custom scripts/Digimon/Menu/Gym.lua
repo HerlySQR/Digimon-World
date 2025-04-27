@@ -732,7 +732,12 @@ OnInit(function ()
         SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, actGold - itm.goldCost)
         SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, actWood - itm.woodCost)
 
-        SetItemPlayer(CreateItem(itm.id, GetUnitX(VENDOR), GetUnitY(VENDOR)), p, true)
+        local d = GetMainDigimon(p)
+        if d then
+            SetItemPlayer(CreateItem(itm.id, d:getPos()), p, true)
+        else
+            SetItemPlayer(CreateItem(itm.id, GetUnitX(VENDOR), GetUnitY(VENDOR)), p, true)
+        end
     end
 
     ---@param id integer
@@ -1055,6 +1060,10 @@ OnInit(function ()
         end)
     end)
 
+    local waitTimers = {}
+    local waitWindows = {}
+    local cantPvE = __jarray(false) ---@type table<player, boolean>
+
     do
         local t = CreateTrigger()
         TriggerRegisterLeaveRectSimple(t, LOBBY)
@@ -1062,8 +1071,19 @@ OnInit(function ()
             ForForce(WannaPvP, function ()
                 AddPlayers(GetEnumPlayer())
             end)
+            TimerDialogDisplay(waitWindows[GetOwningPlayer(GetLeavingUnit())], false)
+            cantPvE[GetOwningPlayer(GetLeavingUnit())] = false
         end)
     end
+
+    OnInit.final(function ()
+        ForForce(bj_FORCE_ALL_PLAYERS, function ()
+            local p = GetEnumPlayer()
+            waitTimers[p] = CreateTimer()
+            waitWindows[p] = CreateTimerDialog(waitTimers[p])
+            TimerDialogSetTitle(waitWindows[p], "Waiting a player:")
+        end)
+    end)
 
     ---@param p1 player
     ---@param p2 player
@@ -1075,6 +1095,10 @@ OnInit(function ()
         ShowBackpack(p2, false)
         PunishPlayer(p1, false)
         PunishPlayer(p2, false)
+        PauseTimer(waitTimers[p1])
+        PauseTimer(waitTimers[p2])
+        TimerDialogDisplay(waitWindows[p1], false)
+        TimerDialogDisplay(waitWindows[p2], false)
         if p2 ~= Digimon.VILLAIN then
             DisplayTextToForce(WannaPvP, User[p1]:getNameColored() .. " and " .. User[p2]:getNameColored() .. " will fight.")
             PlayerSelected[p1] = nil
@@ -1352,28 +1376,56 @@ OnInit(function ()
         TriggerAddAction(t, function ()
             local p = GetOwningPlayer(GetManipulatingUnit())
             if GetItemTypeId(GetManipulatedItem()) == ARENA_TICKET then
-                local gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-                local requiredGold = 50 + 50 * GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED)
-                if requiredGold > gold then
-                    ErrorMessage("You don't have enough digibits.", p)
-                    return
+                if cantPvE[p] then
+                    ErrorMessage("You can't go to arena when trying to fight a player.", p)
+                else
+                    local gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
+                    local requiredGold = 50 + 50 * GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED)
+                    if requiredGold > gold then
+                        ErrorMessage("You don't have enough digibits.", p)
+                        return
+                    end
+                    SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, gold - requiredGold)
+                    if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
+                        ErrorMessage("You can only use this ticket in the gym lobby.", p)
+                        return
+                    end
+                    local i = GetFreeArena()
+                    if not i then
+                        DisplayTextToPlayer(p, 0, 0, "All the arenas are being used, you have to wait until they are free.")
+                        return
+                    end
+                    ForForce(WannaPvP, function ()
+                        local p2 = GetEnumPlayer()
+                        if PlayerSelected[p2] == p then
+                            PlayerSelected[p2] = nil
+                        end
+                        AddPlayers(p2)
+                    end)
+                    StartFight(p, Digimon.VILLAIN, i)
                 end
-                SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, gold - requiredGold)
-                if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
-                    ErrorMessage("You can only use this ticket in the gym lobby.", p)
-                    return
-                end
-                local i = GetFreeArena()
-                if not i then
-                    DisplayTextToPlayer(p, 0, 0, "All the arenas are being used, you have to wait until they are free.")
-                    return
-                end
-                StartFight(p, Digimon.VILLAIN, i)
             elseif GetItemTypeId(GetManipulatedItem()) == PVP_TICKET then
                 if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
                     ErrorMessage("You can only use this ticket in the gym lobby.", p)
                     return
                 end
+                if not cantPvE[p] then
+                    TimerDialogDisplay(waitWindows[p], LocalPlayer == p)
+                    TimerStart(waitTimers[p], 30., false, function ()
+                        TimerDialogDisplay(waitWindows[p], false)
+
+                        cantPvE[p] = false
+                        PlayerSelected[p] = nil
+                        ForForce(WannaPvP, function ()
+                            local p2 = GetEnumPlayer()
+                            if PlayerSelected[p2] == p then
+                                PlayerSelected[p2] = nil
+                            end
+                            AddPlayers(p2)
+                        end)
+                    end)
+                end
+                cantPvE[p] = true
                 AddPlayers(p)
                 if not PlayerOptions[p]:isEmpty() then
                     DialogDisplay(p, SelectPlayer[p], true)
