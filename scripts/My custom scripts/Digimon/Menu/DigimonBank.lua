@@ -2442,6 +2442,24 @@ OnInit("DigimonBank", function ()
     end
 
     ---@param p player
+    ---@return boolean
+    function SearchNewMainDigimon(p)
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
+        local prevMain = bank.main
+
+        if prevMain then
+            for i = 0, MAX_STOCK - 1 do
+                if bank.inUse[i] and prevMain ~= bank.inUse[i] then
+                    bank.main = bank.inUse[i]
+                    return true
+                end
+            end
+        end
+
+        return false
+    end
+
+    ---@param p player
     ---@return integer[] items, integer[] charges, integer stock
     function GetBankItems(p)
         local bank = Bank[GetPlayerId(p)] ---@type Bank

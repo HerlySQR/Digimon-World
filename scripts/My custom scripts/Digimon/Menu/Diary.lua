@@ -101,14 +101,14 @@ OnInit("Diary", function ()
 
     local MAX_REGIONS = 30
 
-    local WATER_ICON = "war3mapImported\\ATTWater.blp"
-    local MACHINE_ICON = "war3mapImported\\ATTMetal.blp"
-    local BEAST_ICON = "war3mapImported\\ATTBEast.blp"
-    local FIRE_ICON = "war3mapImported\\ATTFlame.blp"
-    local NATURE_ICON = "war3mapImported\\ATTNature.blp"
-    local AIR_ICON = "war3mapImported\\ATTAir.blp"
-    local DARK_ICON = "war3mapImported\\ATTShadow.blp"
-    local HOLY_ICON = "war3mapImported\\ATTHoly.blp"
+    local WATER_ICON = "war3mapImported\\ATTAqua.blp"
+    local MACHINE_ICON = "war3mapImported\\ATTOre.blp"
+    local BEAST_ICON = "war3mapImported\\ATTBeastN.blp"
+    local FIRE_ICON = "war3mapImported\\ATTFlame2.blp"
+    local NATURE_ICON = "war3mapImported\\ATTNatureN.blp"
+    local AIR_ICON = "war3mapImported\\ATTAirN.blp"
+    local DARK_ICON = "war3mapImported\\ATTDark.blp"
+    local HOLY_ICON = "war3mapImported\\ATTLight.blp"
     local HERO_ICON = "war3mapImported\\ATTSystemMed.blp"
 
     local armorEquiv = {

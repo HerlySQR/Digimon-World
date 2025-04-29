@@ -950,5 +950,17 @@ OnInit("PressSaveOrLoad", function ()
 
     hookReal("GetItemCharges")
     hookReal("GetHeroXP")
+
+    local oldGetOwningPlayer
+    oldGetOwningPlayer = AddHook("GetOwningPlayer", function (whichUnit)
+        if not whichUnit then
+            error("You are trying to get the owner of no unit.", 2)
+        end
+        local p = oldGetOwningPlayer(whichUnit)
+        if not p then
+            error("It wasn't possible to get the owner of this unit.", 2)
+        end
+        return p
+    end)
 end)
 Debug.endFile()

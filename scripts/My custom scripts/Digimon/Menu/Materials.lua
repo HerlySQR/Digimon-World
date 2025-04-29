@@ -6,6 +6,33 @@ OnInit(function ()
 
     local Materials = {} ---@type table<player, table<string, integer>>
 
+    ---@class Material
+    ---@field name string
+    ---@field source integer
+    ---@field itm integer
+
+    local MaterialFromName = {} ---@type table<string, Material>
+    local MaterialFromSource = {} ---@type table<integer, Material>
+    local MaterialFromItem = {} ---@type table<string, Material>
+
+    ---@param name string
+    ---@return Material
+    function GetMaterialFromName(name)
+        return MaterialFromName[name]
+    end
+
+    ---@param source integer
+    ---@return Material
+    function GetMaterialFromSource(source)
+        return MaterialFromSource[source]
+    end
+
+    ---@param itm integer
+    ---@return Material
+    function GetMaterialFromItem(itm)
+        return MaterialFromItem[itm]
+    end
+
     ---@class MaterialData : Serializable
     ---@field names string[]
     ---@field amounts integer[]
@@ -166,9 +193,18 @@ OnInit(function ()
     ---@param name string
     ---@param itm integer -- item type
     ---@param source integer -- unit type
-    ---@param dropChance number
-    local function InitMaterial(name, itm, source, dropChance)
+    local function InitMaterial(name, itm, source)
         IgnoreCommandButton(source)
+
+        local material = {
+            name = name,
+            source = source,
+            itm = itm
+        }
+
+        MaterialFromName[name] = material
+        MaterialFromSource[source] = material
+        MaterialFromItem[itm] = material
 
         local t = CreateTrigger()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
@@ -188,11 +224,33 @@ OnInit(function ()
         TriggerAddCondition(t, Condition(function () return GetUnitTypeId(udg_DamageEventTarget) == source end))
         TriggerAddAction(t, function ()
             udg_DamageEventAmount = 0
-            if math.random() <= dropChance then
-                local angle = GetRandomReal(0, 2*math.pi)
-                local dist = GetRandomReal(32, 64)
-                CreateItem(itm, GetUnitX(udg_DamageEventTarget) + dist*math.cos(angle), GetUnitY(udg_DamageEventTarget) + dist*math.sin(angle))
-            end
+            local u = udg_DamageEventTarget
+            Timed.call(function ()
+                SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE) - 1)
+            end)
+        end)
+
+        t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
+        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetDyingUnit()) == source end))
+        TriggerAddAction(t, function ()
+            local x, y = GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit())
+            CreateItem(itm, x, y)
+
+            local delay = udg_MATERIAL_REFILL_DELAY
+
+            local tt = CreateTextTag()
+            SetTextTagPos(tt, x, y, 128.)
+            SetTextTagText(tt, "Restore in: " .. math.floor(delay), 0.023)
+            SetTextTagVisibility(tt, IsVisibleToPlayer(x, y, LocalPlayer))
+            Timed.echo(0.02, udg_MATERIAL_REFILL_DELAY, function ()
+                delay = delay - 0.02
+                SetTextTagText(tt, "Restore in: " .. math.floor(delay), 0.023)
+                SetTextTagVisibility(tt, IsVisibleToPlayer(x, y, LocalPlayer))
+            end, function ()
+                DestroyTextTag(tt)
+                CreateUnit(Digimon.RESOURCE, source, x, y, bj_UNIT_FACING)
+            end)
         end)
     end
 
@@ -215,13 +273,11 @@ OnInit(function ()
         InitMaterial(
             udg_MaterialName,
             udg_MaterialItem,
-            udg_MaterialSource,
-            udg_MaterialChance
+            udg_MaterialSource
         )
         udg_MaterialName = ""
         udg_MaterialItem = 0
         udg_MaterialSource = 0
-        udg_MaterialChance = 0.
     end)
 end)
 Debug.endFile()

@@ -108,13 +108,26 @@ OnInit(function ()
         TriggerAddAction(t, function ()
             if not canTrap and (GetDyingUnit() == boss or (RectContainsUnit(generatorRect, GetDyingUnit()) and (allGeneratorUnitsDead() or allGeneratorsDead()))) then
                 Timed.call(2., function ()
+                    local unitToTeleportTo = {}
+                    ForUnitsInRect(gg_rct_Datamon_1, function (u2)
+                        if not unitToTeleportTo[GetOwningPlayer(u2)] then
+                            unitToTeleportTo[GetOwningPlayer(u2)] = u2
+                        end
+                    end)
                     for u2 in generatorUnits:elements() do
                         if UnitAlive(u2) then
                             DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT, GetUnitX(u2), GetUnitY(u2)))
-                            local l = GetRandomLocInRect(returnPlace)
-                            SetUnitPositionLoc(u2, l)
-                            DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
-                            RemoveLocation(l)
+                            local toTp = unitToTeleportTo[GetOwningPlayer(u2)]
+                            if toTp then
+                                local toX, toY = GetUnitX(toTp), GetUnitY(toTp)
+                                SetUnitPosition(u2, toX, toY)
+                                DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT_TARGET, toX, toY))
+                            else
+                                local l = GetRandomLocInRect(returnPlace)
+                                SetUnitPositionLoc(u2, l)
+                                DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
+                                RemoveLocation(l)
+                            end
                         end
                     end
                     generatorUnits:clear()
@@ -188,12 +201,17 @@ OnInit(function ()
                             list[GetOwningPlayer(u2)] = u2
                         end
                     end
-                    for _, u2 in pairs(list) do
+                    for p, u2 in pairs(list) do
                         DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT, GetUnitX(u2), GetUnitY(u2)))
                         local l = GetRandomLocInRect(generatorRect)
                         SetUnitPositionLoc(u2, l)
                         DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
                         RemoveLocation(l)
+
+                        if GetMainDigimon(p) == Digimon.getInstance(u2) then
+                            SearchNewMainDigimon(p)
+                        end
+
                         if u == u2 then
                             IssuePointOrderById(boss, Orders.attack, GetUnitX(boss), GetUnitY(boss))
                         end
@@ -216,6 +234,7 @@ OnInit(function ()
                     SetUnitInvulnerable(boss, true)
                     BlzSetUnitIntegerField(boss, UNIT_IF_MOVE_TYPE, 0)
                     SetUnitMoveSpeed(boss, 0)
+                    BossCanLeave(boss, true)
 
                     local needToKill = CreateGroup()
                     local guardromons = {} ---@type Digimon[]
@@ -253,6 +272,7 @@ OnInit(function ()
                             SetUnitPositionLoc(boss, previousPos)
                             DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, previousPos))
                             RemoveLocation(previousPos)
+                            BossCanLeave(boss, false)
                             return true
                         end
                         for u2 in unitsInTheField:elements() do
