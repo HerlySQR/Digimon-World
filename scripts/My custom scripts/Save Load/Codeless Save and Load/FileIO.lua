@@ -37,6 +37,7 @@ OnInit("FileIO", function()
     local RAW_SIZE = 256 - #RAW_PREFIX - #RAW_SUFFIX
     local LOAD_ABILITY = FourCC('ANdc')
     local LOAD_EMPTY_KEY = '!@#$, empty data'
+    local name
 
     local function open(filename)
         name = filename

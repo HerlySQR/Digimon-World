@@ -4,37 +4,36 @@ OnInit(function ()
     Require "Hotkeys"
     Require "Digimon"
 
-    local Materials = {} ---@type table<player, table<string, integer>>
+    local MAX_MATERIAL_AMOUNT = 99
+    local MAX_MATERIALS = 30
 
-    ---@class Material
-    ---@field name string
+    ---@class MaterialTemplate
     ---@field source integer
     ---@field itm integer
 
-    local MaterialFromName = {} ---@type table<string, Material>
-    local MaterialFromSource = {} ---@type table<integer, Material>
-    local MaterialFromItem = {} ---@type table<string, Material>
+    local MaterialFromSource = {} ---@type table<integer, MaterialTemplate>
+    local MaterialFromItem = {} ---@type table<integer, MaterialTemplate>
 
-    ---@param name string
-    ---@return Material
-    function GetMaterialFromName(name)
-        return MaterialFromName[name]
-    end
+    ---@class Material
+    ---@field template MaterialTemplate
+    ---@field amount integer
+
+    local Materials = {} ---@type table<player, Material[]>
 
     ---@param source integer
-    ---@return Material
+    ---@return MaterialTemplate
     function GetMaterialFromSource(source)
         return MaterialFromSource[source]
     end
 
     ---@param itm integer
-    ---@return Material
+    ---@return MaterialTemplate
     function GetMaterialFromItem(itm)
         return MaterialFromItem[itm]
     end
 
     ---@class MaterialData : Serializable
-    ---@field names string[]
+    ---@field itms integer[]
     ---@field amounts integer[]
     ---@field count integer
     MaterialData = setmetatable({}, Serializable)
@@ -44,15 +43,15 @@ OnInit(function ()
     ---@return MaterialData
     function MaterialData.create(p)
         local self = setmetatable({
-            names = __jarray(""),
+            itms = __jarray(0),
             amounts = __jarray(0),
             count = 0
         }, MaterialData)
         if p then
-            for name, amount in pairs(Materials[p]) do
+            for _, material in ipairs(Materials[p]) do
                 self.count = self.count + 1
-                self.names[self.count] = name
-                self.amounts[self.count] = amount
+                self.itms[self.count] = material.template.itm
+                self.amounts[self.count] = material.amount
             end
         end
         return self
@@ -61,7 +60,7 @@ OnInit(function ()
     function MaterialData:serializeProperties()
         self:addProperty("count", self.count)
         for i = 1, self.count do
-            self:addProperty("name" .. i, self.names[i])
+            self:addProperty("itm" .. i, self.itms[i])
             self:addProperty("amount" .. i, self.amounts[i])
         end
     end
@@ -69,21 +68,24 @@ OnInit(function ()
     function MaterialData:deserializeProperties()
         self.count = self:getIntProperty("count")
         for i = 1, self.count do
-            self.names[i] = self:getStringProperty("name" .. i)
+            self.itms[i] = self:getIntProperty("itm" .. i)
             self.amounts[i] = self:getIntProperty("amount" .. i)
         end
     end
 
     ---@param p player
     function MaterialData:apply(p)
-        Materials[p] = __jarray(0)
+        Materials[p] = {}
         for i = 1, self.count do
-            Materials[p][self.names[i]] = self.amounts[i]
+            Materials[p][i] = {
+                template = MaterialFromItem[self.itms[i]],
+                amount = self.amounts[i]
+            }
         end
     end
 
     for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
-        Materials[Player(i)] = __jarray(0)
+        Materials[Player(i)] = {}
     end
 
     local LocalPlayer = GetLocalPlayer()
@@ -92,14 +94,31 @@ OnInit(function ()
     local BackdropMaterialsButton = nil ---@type framehandle
     local MaterialsBackdrop = nil ---@type framehandle
     local MaterialsLabel = nil ---@type framehandle
-    local MaterialAmounts = nil ---@type framehandle
+    local MaterialIconT = {} ---@type framehandle[]
+    local BackdropMaterialIconT = {} ---@type framehandle[]
+    local MaterialAmount = {} ---@type framehandle[]
+    local MaterialTooltip = {} ---@type framehandle[]
+    local MaterialTooltipText = {} ---@type framehandle[]
 
     local function UpdateMenu()
-        local materials = ""
-        for name, amount in pairs(Materials[LocalPlayer]) do
-            materials = materials .. "- " .. amount .. " " .. name .. "\n"
+        local bag = Materials[LocalPlayer]
+        for i = 1, MAX_MATERIALS do
+            if bag[i] then
+                BlzFrameSetVisible(MaterialIconT[i-1], true)
+                BlzFrameSetTexture(BackdropMaterialIconT[i-1], BlzGetAbilityIcon(bag[i].template.itm), 0, true)
+                BlzFrameSetText(MaterialAmount[i-1], tostring(bag[i].amount))
+
+                BlzFrameSetText(MaterialTooltipText[i-1], GetObjectName(bag[i].template.itm))
+                BlzFrameSetSize(MaterialTooltipText[i-1], 0, 0.01)
+                BlzFrameClearAllPoints(MaterialTooltip[i-1])
+                BlzFrameSetPoint(MaterialTooltip[i-1], FRAMEPOINT_TOPLEFT, MaterialTooltipText[i-1], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
+                BlzFrameSetPoint(MaterialTooltip[i-1], FRAMEPOINT_BOTTOMRIGHT, MaterialTooltipText[i-1], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
+            else
+                BlzFrameSetVisible(MaterialIconT[i-1], false)
+                BlzFrameSetTexture(BackdropMaterialIconT[i-1], "UI\\Widgets\\Console\\Human\\human-inventory-slotfiller.blp", 0, true)
+                BlzFrameSetText(MaterialAmount[i-1], "")
+            end
         end
-        BlzFrameSetText(MaterialAmounts, materials)
     end
 
     local function MaterialsButtonFunc(p)
@@ -125,27 +144,54 @@ OnInit(function ()
 
         BackdropMaterialsButton = BlzCreateFrameByType("BACKDROP", "BackdropMaterialsButton", MaterialsButton, "", 0)
         BlzFrameSetAllPoints(BackdropMaterialsButton, MaterialsButton)
-        BlzFrameSetTexture(BackdropMaterialsButton, "ReplaceableTextures\\CommandButtons\\BTNDustOfAppearance.blp", 0, true)
+        BlzFrameSetTexture(BackdropMaterialsButton, "ReplaceableTextures\\CommandButtons\\BTNBagMaterials.blp", 0, true)
         OnClickEvent(MaterialsButton, MaterialsButtonFunc)
 
         MaterialsBackdrop = BlzCreateFrame("EscMenuBackdrop", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
-        BlzFrameSetAbsPoint(MaterialsBackdrop, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.235, 0.460000)
-        BlzFrameSetAbsPoint(MaterialsBackdrop, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.240000)
+        BlzFrameSetAbsPoint(MaterialsBackdrop, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.315, 0.420000)
+        BlzFrameSetAbsPoint(MaterialsBackdrop, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.230000)
         AddFrameToMenu(MaterialsBackdrop)
         BlzFrameSetVisible(MaterialsBackdrop, false)
 
         MaterialsLabel = BlzCreateFrameByType("TEXT", "name", MaterialsBackdrop, "", 0)
         BlzFrameSetScale(MaterialsLabel, 1.29)
-        BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_TOPLEFT, MaterialsBackdrop, FRAMEPOINT_TOPLEFT, 0.015000, -0.015000)
-        BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_BOTTOMRIGHT, MaterialsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.18500)
+        BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_TOPLEFT, MaterialsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.010000)
+        BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_BOTTOMRIGHT, MaterialsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.16000)
         BlzFrameSetText(MaterialsLabel, "|cffFFCC00Your materials:|r")
-        BlzFrameSetEnable(MaterialsLabel, false)
-        BlzFrameSetTextAlignment(MaterialsLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+        BlzFrameSetTextAlignment(MaterialsLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
-        MaterialAmounts = BlzCreateFrameByType("TEXTAREA", "name", MaterialsBackdrop, "", 0)
-        BlzFrameSetPoint(MaterialAmounts, FRAMEPOINT_TOPLEFT, MaterialsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)
-        BlzFrameSetPoint(MaterialAmounts, FRAMEPOINT_BOTTOMRIGHT, MaterialsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
-        BlzFrameSetText(MaterialAmounts, "|cffffffff100 Special Wood|r")
+        for i = 0, 4 do
+            for j = 0, 5 do
+                local index = i*6 + j
+
+                MaterialIconT[index] = BlzCreateFrame("IconButtonTemplate", MaterialsBackdrop, 0, 0)
+                BlzFrameSetPoint(MaterialIconT[index], FRAMEPOINT_TOPLEFT, MaterialsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000 + i*0.045, -0.030000 - j*0.025)
+                BlzFrameSetPoint(MaterialIconT[index], FRAMEPOINT_BOTTOMRIGHT, MaterialsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.22000 + i*0.045, 0.14000 - j*0.025)
+                BlzFrameSetEnable(MaterialIconT[index], false)
+
+                BackdropMaterialIconT[index] = BlzCreateFrameByType("BACKDROP", "BackdropMaterialIconT[" .. index .. "]", MaterialsBackdrop, "", 0)
+                BlzFrameSetAllPoints(BackdropMaterialIconT[index], MaterialIconT[index])
+                BlzFrameSetTexture(BackdropMaterialIconT[index], "UI\\Widgets\\Console\\Human\\human-inventory-slotfiller.blp", 0, true)
+
+                MaterialAmount[index] = BlzCreateFrameByType("TEXT", "name", MaterialsBackdrop, "", 0)
+                BlzFrameSetPoint(MaterialAmount[index], FRAMEPOINT_TOPLEFT, MaterialIconT[index], FRAMEPOINT_TOPLEFT, 0.020000, 0.0000)
+                BlzFrameSetPoint(MaterialAmount[index], FRAMEPOINT_BOTTOMRIGHT, MaterialIconT[index], FRAMEPOINT_BOTTOMRIGHT, 0.020000, 0.0000)
+                BlzFrameSetText(MaterialAmount[index], "")
+                BlzFrameSetTextAlignment(MaterialAmount[index], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+
+                MaterialTooltip[i] = BlzCreateFrame("QuestButtonBaseTemplate", MaterialIconT[i], 0, 0)
+
+                MaterialTooltipText[i] = BlzCreateFrameByType("TEXT", "name", MaterialTooltip[i], "", 0)
+                BlzFrameSetPoint(MaterialTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, MaterialIconT[i], FRAMEPOINT_BOTTOMRIGHT, -0.025000, 0.025000)
+                BlzFrameSetText(MaterialTooltipText[i], "Empty")
+                BlzFrameSetEnable(MaterialTooltipText[i], false)
+                BlzFrameSetTextAlignment(MaterialTooltipText[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+                BlzFrameSetPoint(MaterialTooltip[i], FRAMEPOINT_TOPLEFT, MaterialTooltipText[i], FRAMEPOINT_TOPLEFT, -0.0150000, 0.0150000)
+                BlzFrameSetPoint(MaterialTooltip[i], FRAMEPOINT_BOTTOMRIGHT, MaterialTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.0150000, -0.0150000)
+                BlzFrameSetTooltip(MaterialIconT[i], MaterialTooltip[i])
+            end
+        end
     end)
 
     OnChangeDimensions(function ()
@@ -155,31 +201,83 @@ OnInit(function ()
     end)
 
     ---@param p player
-    ---@param name string
+    ---@param itm integer
     ---@param amount integer
-    function SetMaterialAmount(p, name, amount)
-        Materials[p][name] = amount
+    function SetMaterialAmount(p, itm, amount)
+        amount = math.min(amount, MAX_MATERIAL_AMOUNT)
+
+        local found = false
+        for i = 1, #Materials[p] do
+            if Materials[p][i].template.itm == itm then
+                found = true
+                Materials[p][i].amount = amount
+                break
+            end
+        end
+
+        if not found then
+            table.insert(Materials[p], {
+                template = MaterialFromItem[itm],
+                amount = amount
+            })
+        end
+
+        if p == LocalPlayer then
+            UpdateMenu()
+        end
     end
 
     ---@param p player
-    ---@param name string
+    ---@param itm integer
     ---@return integer
-    function GetMaterialAmount(p, name)
-        return Materials[p][name]
+    function GetMaterialAmount(p, itm)
+        for i = 1, #Materials[p] do
+            if Materials[p][i].template.itm == itm then
+                return Materials[p][i].amount
+            end
+        end
+        return 0
     end
 
     ---@param p player
-    ---@param name string
+    ---@param itm integer
     ---@param amount integer
-    function AddMaterialAmount(p, name, amount)
-        Materials[p][name] = Materials[p][name] + amount
+    function AddMaterialAmount(p, itm, amount)
+        local found = false
+        for i = 1, #Materials[p] do
+            if Materials[p][i].template.itm == itm then
+                found = true
+                Materials[p][i].amount = math.min(Materials[p][i].amount + amount, MAX_MATERIAL_AMOUNT)
+                break
+            end
+        end
+
+        if not found then
+            amount = math.min(amount, MAX_MATERIAL_AMOUNT)
+            table.insert(Materials[p], {
+                template = MaterialFromItem[itm],
+                amount = amount
+            })
+        end
+
+        if p == LocalPlayer then
+            UpdateMenu()
+        end
     end
 
     ---@param p player
-    ---@param name string
+    ---@param itm integer
     ---@param amount integer
-    function SubMaterialAmount(p, name, amount)
-        Materials[p][name] = Materials[p][name] - amount
+    function SubMaterialAmount(p, itm, amount)
+        for i = 1, #Materials[p] do
+            if Materials[p][i].template.itm == itm then
+                Materials[p][i].amount = math.max(Materials[p][i].amount - amount, 0)
+                break
+            end
+        end
+        if p == LocalPlayer then
+            UpdateMenu()
+        end
     end
 
     ---@param p player
@@ -190,19 +288,16 @@ OnInit(function ()
         end
     end
 
-    ---@param name string
     ---@param itm integer -- item type
     ---@param source integer -- unit type
-    local function InitMaterial(name, itm, source)
+    local function InitMaterial(itm, source)
         IgnoreCommandButton(source)
 
         local material = {
-            name = name,
             source = source,
             itm = itm
         }
 
-        MaterialFromName[name] = material
         MaterialFromSource[source] = material
         MaterialFromItem[itm] = material
 
@@ -211,11 +306,23 @@ OnInit(function ()
         TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetManipulatedItem()) == itm end))
         TriggerAddAction(t, function ()
             local p = GetOwningPlayer(GetManipulatingUnit())
-            AddMaterialAmount(p, name, 1)
+            AddMaterialAmount(p, itm, 1)
             RemoveItem(GetManipulatedItem())
             if p == LocalPlayer then
                 BlzFrameSetVisible(MaterialsButton, true)
                 UpdateMenu()
+            end
+        end)
+
+        t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+        TriggerAddCondition(t, Condition(function () return GetItemTypeId(GetOrderTargetItem()) == itm and GetIssuedOrderId() == Orders.smart end))
+        TriggerAddAction(t, function ()
+            local u = GetOrderedUnit()
+            local p = GetOwningPlayer(u)
+            if GetMaterialAmount(p, itm) >= MAX_MATERIAL_AMOUNT then
+                IssueTargetOrderById(u, Orders.attack, u)
+                ErrorMessage("You can't carry more of this material.", p)
             end
         end)
 
@@ -271,7 +378,6 @@ OnInit(function ()
     udg_MaterialInit = CreateTrigger()
     TriggerAddAction(udg_MaterialInit, function ()
         InitMaterial(
-            udg_MaterialName,
             udg_MaterialItem,
             udg_MaterialSource
         )

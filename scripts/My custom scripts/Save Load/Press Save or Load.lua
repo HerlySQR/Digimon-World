@@ -386,7 +386,7 @@ OnInit("PressSaveOrLoad", function ()
 
             result = ""
             for i = 1, pData.materials.count do
-                result = result .. pData.materials.amounts[i] .. " " .. pData.materials.names[i] .. ", "
+                result = result .. pData.materials.amounts[i] .. " " .. GetObjectName(pData.materials.itms[i]) .. ", "
             end
             BlzFrameSetText(TooltipMaterials, "|cff3874ffMaterials:|r\n" .. result:sub(1, result:len() - 2))
 
