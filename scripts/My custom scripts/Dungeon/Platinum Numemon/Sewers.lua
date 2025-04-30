@@ -24,9 +24,9 @@ OnInit.final(function ()
     local ESNARE_BUFF = FourCC('Beng')
     local ESNARE_ORDER = Orders.ensnare
     local SUMMON_RAREMON_TICK = 2. -- seconds
-    local EXTRA_HEALTH_FACTOR = 0.5
-    local EXTRA_DMG_FACTOR = 5.
-    local EXTRA_ARMOR = 5
+    local EXTRA_HEALTH_FACTOR = 3.
+    local EXTRA_DMG_FACTOR = 3.
+    local EXTRA_ARMOR = 15
     local EXTRA_MANA_REGEN = 5
     local RAREMON_EXPLOSION_DAMAGE = 500.
     local FRENZY = FourCC('A0G8')
@@ -71,7 +71,7 @@ OnInit.final(function ()
             AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
-            AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
+            AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
 
             if GetUnitTypeId(u) == DRAGOMON then
                 table.insert(dragomons, u)
@@ -123,7 +123,7 @@ OnInit.final(function ()
                 AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
-                AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
+                AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
                 creeps[i] = u
 
                 if GetUnitTypeId(u) == DRAGOMON then
@@ -396,20 +396,26 @@ OnInit.final(function ()
     do
         local t = CreateTrigger()
         TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_DEATH)
-        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetDyingUnit()) == BLACK_KING_NUMEMON end))
+        TriggerAddCondition(t, Condition(function () return RectContainsUnit(place, GetDyingUnit()) end))
         TriggerAddAction(t, function ()
-            CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+            if GetUnitTypeId(GetDyingUnit()) == BLACK_KING_NUMEMON then
+                CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
 
-            local open = true
-            ForUnitsInRect(place, function (u)
-                if GetUnitTypeId(u) == BLACK_KING_NUMEMON and UnitAlive(u) then
-                    open = false
+                local open = true
+                ForUnitsInRect(place, function (u)
+                    if GetUnitTypeId(u) == BLACK_KING_NUMEMON and UnitAlive(u) then
+                        open = false
+                    end
+                end)
+
+                if open then
+                    for _, d in ipairs(wall) do
+                        ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+                    end
                 end
-            end)
-
-            if open then
-                for _, d in ipairs(wall) do
-                    ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+            else
+                if math.random(10) == 1 then
+                    CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
             end
         end)

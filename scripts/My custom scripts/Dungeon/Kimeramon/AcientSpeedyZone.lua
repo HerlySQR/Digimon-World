@@ -18,9 +18,9 @@ OnInit.final(function ()
     local VERMILIMON = FourCC('O064')
     local METEORMON = FourCC('O036')
     local VOLCAMON = FourCC('O056')
-    local EXTRA_HEALTH_FACTOR = 0.75
-    local EXTRA_DMG_FACTOR = 6.25
-    local EXTRA_ARMOR = 5
+    local EXTRA_HEALTH_FACTOR = 3.
+    local EXTRA_DMG_FACTOR = 3.
+    local EXTRA_ARMOR = 15
     local EXTRA_MANA_REGEN = 5
     local SLOW = FourCC('A0G9')
     local SLOW_BUFF = FourCC('B02T')
@@ -67,7 +67,7 @@ OnInit.final(function ()
             AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
-            AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
+            AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
 
             if typ == TRICERAMON or typ == METEORMON then
                 table.insert(specialCasters, u)
@@ -124,7 +124,7 @@ OnInit.final(function ()
                 AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
-                AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
+                AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
                 creeps[i] = u
 
                 if typ == TRICERAMON or typ == METEORMON then
@@ -250,20 +250,26 @@ OnInit.final(function ()
     do
         local t = CreateTrigger()
         TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_DEATH)
-        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetDyingUnit()) == VOLCAMON end))
+        TriggerAddCondition(t, Condition(function () return RectContainsUnit(place, GetDyingUnit()) end))
         TriggerAddAction(t, function ()
-            CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+            if GetUnitTypeId(GetDyingUnit()) == VOLCAMON then
+                CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
 
-            local open = true
-            ForUnitsInRect(place, function (u)
-                if GetUnitTypeId(u) == VOLCAMON and UnitAlive(u) then
-                    open = false
+                local open = true
+                ForUnitsInRect(place, function (u)
+                    if GetUnitTypeId(u) == VOLCAMON and UnitAlive(u) then
+                        open = false
+                    end
+                end)
+
+                if open then
+                    for _, d in ipairs(wall) do
+                        ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+                    end
                 end
-            end)
-
-            if open then
-                for _, d in ipairs(wall) do
-                    ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+            else
+                if math.random(10) == 1 then
+                    CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
             end
         end)

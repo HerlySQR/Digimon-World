@@ -357,9 +357,14 @@ OnInit("Backpack", function ()
         local itemData = Backpacks[p].actualItemData
 
         if itemData and itemData.spell == GetSpellAbilityId() then
-            local target = GetSpellTargetUnit()
-            local x = target and GetUnitX(target) or GetSpellTargetX()
-            local y = target and GetUnitY(target) or GetSpellTargetY()
+            local x, y
+            if GetSpellTargetUnit() then
+                x, y = GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit())
+            elseif GetSpellTargetItem() then
+                x, y = GetItemX(GetSpellTargetItem()), GetItemY(GetSpellTargetItem())
+            else
+                x, y = GetSpellTargetX(), GetSpellTargetY()
+            end
 
             if not GetRandomUnitOnRange(x, y, MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
                 UnitAbortCurrentOrder(caster)
