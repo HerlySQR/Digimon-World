@@ -53,9 +53,9 @@ OnInit("Diary", function ()
     -- Items
     local ItemsButton = nil ---@type framehandle
     local ItemsBackdrop = nil ---@type framehandle
-    local ItemTypes = {} ---@type framehandle[]
-    local BackdropItemTypes= {} ---@type framehandle[]
-    local ItemsSprite = {} ---@type framehandle[]
+    local ItemTypes = {} ---@type table<integer, framehandle>
+    local BackdropItemTypes = {} ---@type table<integer, framehandle>
+    local ItemsSprite = {} ---@type table<integer, framehandle>
     local ConsumablesText = nil ---@type framehandle
     local MiscText = nil ---@type framehandle
     local MiscsContainer = nil ---@type framehandle
@@ -85,6 +85,21 @@ OnInit("Diary", function ()
     local ItemInformation = nil ---@type framehandle
     local ItemName = nil ---@type framehandle
     local ItemDescription = nil ---@type framehandle
+
+    -- Diary
+    local RecipesBackdrop = nil ---@type framehandle
+    local MaterialsLabel = nil ---@type framehandle
+    local RecipeMaterialInformation = nil ---@type framehandle
+    local MaterialsContainer = nil ---@type framehandle
+    local RecipesLabel = nil ---@type framehandle
+    local RecipesContainer = nil ---@type framehandle
+    local RecipesButton = nil ---@type framehandle
+    local RecipeMaterialName = nil ---@type framehandle
+    local RecipeMaterialDescription = nil ---@type framehandle
+    local RecipeResultButton = nil ---@type framehandle
+    local RecipeRequimentsContainer = nil ---@type framehandle
+    local RecipeRequirmentT = {} ---@type framehandle[]
+    local RecipeRequirmentButton = {} ---@type framehandle[]
 
     -- Map
     local MapBackdrop = nil ---@type framehandle
@@ -130,6 +145,13 @@ OnInit("Diary", function ()
     BlzSetSpecialEffectScale(glow, 0.5)
     BlzSetSpecialEffectHeight(glow, BlzGetLocalSpecialEffectZ(glow) - 7.5)
     BlzSetSpecialEffectAlpha(glow, 0)
+
+    local sourceModel = CreateUnit(Digimon.PASSIVE, NO_SKIN, GetRectCenterX(gg_rct_DiaryRecipeSourceModel), GetRectCenterY(gg_rct_DiaryRecipeSourceModel), 270)
+    local sourceGlow = AddSpecialEffect("war3mapImported\\GeneralHeroGlow.mdx", GetRectCenterX(gg_rct_DiaryRecipeSourceModel), GetRectCenterY(gg_rct_DiaryRecipeSourceModel))
+    BlzSetSpecialEffectColorByPlayer(sourceGlow, Player(GetHandleId(PLAYER_COLOR_SNOW)))
+    BlzSetSpecialEffectScale(sourceGlow, 0.4)
+    BlzSetSpecialEffectHeight(sourceGlow, BlzGetLocalSpecialEffectZ(sourceGlow) - 6)
+    BlzSetSpecialEffectAlpha(sourceGlow, 0)
 
     local NO_SKIN_ITEM = FourCC('I07L')
     local itemModel = CreateItem(NO_SKIN_ITEM, GetRectCenterX(gg_rct_DiaryModel), GetRectCenterY(gg_rct_DiaryModel))
@@ -731,6 +753,72 @@ OnInit("Diary", function ()
         end
     end
 
+    local recipeMaterialSelected = -1
+    local isRecipe = __jarray(false)
+    local requirementList = {}
+
+    local function UpdateRecipe()
+        BlzSetItemSkin(itemModel, NO_SKIN_ITEM) -- To reset the scale
+        if recipeMaterialSelected ~= -1 then
+            BlzFrameSetVisible(ItemsSprite[recipeMaterialSelected], false)
+            BlzFrameSetText(RecipeMaterialName, "|cffFFCC00" .. GetObjectName(recipeMaterialSelected) .. "|r")
+            if isRecipe[recipeMaterialSelected] then
+                local recipe = GetRecipe(recipeMaterialSelected)
+
+                BlzFrameSetEnable(RecipeResultButton, unlockedItems[LocalPlayer][recipe.resultItm])
+
+                BlzFrameSetText(RecipeMaterialDescription, "To create " .. GetObjectName(recipe.resultItm) .. ":")
+
+                for i = #requirementList, 1, -1 do
+                    table.remove(requirementList, i)
+                end
+                if recipe.itmToUpgrade then
+                    table.insert(requirementList, recipe.itmToUpgrade)
+                end
+                for req, _ in pairs(recipe.requirements) do
+                    table.insert(requirementList, req)
+                end
+
+                for i = 1, 15 do
+                    if requirementList[i] then
+                        if recipe.itmToUpgrade and requirementList[i] == recipe.itmToUpgrade then
+                            BlzFrameSetText(RecipeRequirmentT[i-1], "- " .. GetObjectName(recipe.itmToUpgrade) .. " (to upgrade).")
+                            BlzFrameSetEnable(RecipeRequirmentButton[i-1], unlockedItems[LocalPlayer][recipe.itmToUpgrade])
+                        else
+                            BlzFrameSetText(RecipeRequirmentT[i-1], "- " .. recipe.requirements[requirementList[i]] .. " " .. GetObjectName(requirementList[i]) .. ".")
+                            BlzFrameSetEnable(RecipeRequirmentButton[i-1], unlockedItems[LocalPlayer][requirementList[i]])
+                        end
+                        BlzFrameSetVisible(RecipeRequirmentT[i-1], true)
+                    else
+                        BlzFrameSetText(RecipeRequirmentT[i-1], "")
+                        BlzFrameSetVisible(RecipeRequirmentT[i-1], false)
+                        BlzFrameSetEnable(RecipeRequirmentButton[i-1], false)
+                    end
+                end
+                BlzSetUnitSkin(sourceModel, NO_SKIN)
+                BlzSetSpecialEffectAlpha(sourceGlow, 0)
+
+                BlzFrameSetVisible(RecipeRequimentsContainer, true)
+            else
+                BlzFrameSetEnable(RecipeResultButton, false)
+                BlzFrameSetText(RecipeMaterialDescription, "It comes from:")
+                BlzFrameSetVisible(RecipeRequimentsContainer, false)
+
+                BlzSetUnitSkin(sourceModel, GetMaterialFromItem(recipeMaterialSelected).source)
+                SetUnitScale(sourceModel, 0.15*BlzGetUnitRealField(sourceModel, UNIT_RF_SCALING_VALUE), 0, 0)
+                BlzSetSpecialEffectAlpha(sourceGlow, 200)
+            end
+            BlzFrameSetVisible(RecipeMaterialInformation, true)
+
+            BlzSetItemSkin(itemModel, recipeMaterialSelected)
+            BlzSetItemRealField(itemModel, ITEM_RF_SCALING_VALUE, 0.5*BlzGetItemRealField(itemModel, ITEM_RF_SCALING_VALUE))
+            BlzSetSpecialEffectAlpha(glow, 200)
+        else
+            BlzFrameSetVisible(RecipeMaterialInformation, false)
+            BlzSetSpecialEffectAlpha(glow, 0)
+        end
+    end
+
     ---@param p player
     ---@param id integer
     local function UnlockButton(p, id)
@@ -1033,25 +1121,110 @@ OnInit("Diary", function ()
         end
     end
 
+    local actMaterialIndex = 0
+
+    ---@param id integer
+    local function AddMaterial(id)
+        isRecipe[id] = false
+        local i, j = ModuloInteger(actMaterialIndex, 14), math.floor(actMaterialIndex / 14)
+        FrameLoaderAdd(function ()
+            ItemTypes[id] = BlzCreateFrame("IconButtonTemplate", MaterialsContainer, 0, 0)
+            BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_TOPLEFT, MaterialsContainer, FRAMEPOINT_TOPLEFT, 0.0000 + i*0.04, 0.0000 - j*0.04)
+            BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_BOTTOMRIGHT, MaterialsContainer, FRAMEPOINT_BOTTOMRIGHT, -0.52000 + i*0.04, 0.080000 - j*0.04)
+            BlzFrameSetEnable(ItemTypes[id], false)
+
+            ItemsSprite[id] =  BlzCreateFrameByType("SPRITE", "sprite", ItemTypes[id], "", 0)
+            BlzFrameSetModel(ItemsSprite[id], "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
+            BlzFrameClearAllPoints(ItemsSprite[id])
+            BlzFrameSetPoint(ItemsSprite[id], FRAMEPOINT_BOTTOMLEFT, ItemTypes[id], FRAMEPOINT_BOTTOMLEFT, -0.001, -0.00175)
+            BlzFrameSetSize(ItemsSprite[id], 0.00001, 0.00001)
+            BlzFrameSetScale(ItemsSprite[id], 1.1)
+            BlzFrameSetLevel(ItemsSprite[id], 10)
+            BlzFrameSetVisible(ItemsSprite[id], false)
+
+            BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
+            BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
+            BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+
+            OnClickEvent(ItemTypes[id], function (p)
+                unlockedItems[p][id] = true
+
+                if p == LocalPlayer then
+                    recipeMaterialSelected = id
+                    UpdateRecipe()
+                end
+            end)
+        end)
+        actMaterialIndex = actMaterialIndex + 1
+    end
+
+    local actRecipeIndex = 0
+
+    ---@param id integer
+    local function AddRecipe(id)
+        isRecipe[id] = true
+        local i, j = ModuloInteger(actRecipeIndex, 14), math.floor(actRecipeIndex / 14)
+        FrameLoaderAdd(function ()
+            ItemTypes[id] = BlzCreateFrame("IconButtonTemplate", RecipesContainer, 0, 0)
+            BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_TOPLEFT, RecipesContainer, FRAMEPOINT_TOPLEFT, 0.0000 + i*0.04, 0.0000 - j*0.04)
+            BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_BOTTOMRIGHT, RecipesContainer, FRAMEPOINT_BOTTOMRIGHT, -0.52000 + i*0.04, 0.280000 - j*0.04)
+            BlzFrameSetEnable(ItemTypes[id], false)
+
+            ItemsSprite[id] =  BlzCreateFrameByType("SPRITE", "sprite", ItemTypes[id], "", 0)
+            BlzFrameSetModel(ItemsSprite[id], "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
+            BlzFrameClearAllPoints(ItemsSprite[id])
+            BlzFrameSetPoint(ItemsSprite[id], FRAMEPOINT_BOTTOMLEFT, ItemTypes[id], FRAMEPOINT_BOTTOMLEFT, -0.001, -0.00175)
+            BlzFrameSetSize(ItemsSprite[id], 0.00001, 0.00001)
+            BlzFrameSetScale(ItemsSprite[id], 1.1)
+            BlzFrameSetLevel(ItemsSprite[id], 10)
+            BlzFrameSetVisible(ItemsSprite[id], false)
+
+            BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
+            BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
+            BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+
+            OnClickEvent(ItemTypes[id], function (p)
+                unlockedItems[p][id] = true
+
+                if p == LocalPlayer then
+                    recipeMaterialSelected = id
+                    UpdateRecipe()
+                end
+            end)
+        end)
+        actRecipeIndex = actRecipeIndex + 1
+    end
+
     local function OpenMenu()
+        if actMenu ~= 0 then
+            BlzFrameSetVisible(DigimonsBackdrop, false)
+            BlzSetUnitSkin(model, NO_SKIN)
+        end
+        if actMenu ~= 1 then
+            BlzFrameSetVisible(ItemsBackdrop, false)
+            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
+        end
+        if actMenu ~= 2 then
+            BlzFrameSetVisible(RecipesBackdrop, false)
+            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
+            BlzSetUnitSkin(sourceModel, NO_SKIN)
+            BlzSetSpecialEffectAlpha(sourceGlow, 0)
+        end
+        if actMenu ~= 3 then
+            BlzFrameSetVisible(MapBackdrop, false)
+        end
+
         if actMenu == 0 then
             BlzFrameSetVisible(DigimonsBackdrop, true)
-            BlzFrameSetVisible(ItemsBackdrop, false)
-            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
-            BlzFrameSetVisible(MapBackdrop, false)
             UpdateInformation()
         elseif actMenu == 1 then
-            BlzFrameSetVisible(DigimonsBackdrop, false)
-            BlzSetUnitSkin(model, NO_SKIN)
             BlzFrameSetVisible(ItemsBackdrop, true)
-            BlzFrameSetVisible(MapBackdrop, false)
             UpdateItemInfo()
         elseif actMenu == 2 then
-            BlzFrameSetVisible(DigimonsBackdrop, false)
-            BlzSetUnitSkin(model, NO_SKIN)
-            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
+            BlzFrameSetVisible(RecipesBackdrop, true)
+            UpdateRecipe()
+        elseif actMenu == 3 then
             BlzSetSpecialEffectAlpha(glow, 0)
-            BlzFrameSetVisible(ItemsBackdrop, false)
             BlzFrameSetVisible(MapBackdrop, true)
             UpdateDigimons()
         end
@@ -1071,9 +1244,16 @@ OnInit("Diary", function ()
         end
     end
 
-    local function MapButtonFunc(p)
+    local function RecipesButtonFunc(p)
         if p == LocalPlayer then
             actMenu = 2
+            OpenMenu()
+        end
+    end
+
+    local function MapButtonFunc(p)
+        if p == LocalPlayer then
+            actMenu = 3
             OpenMenu()
         end
         onSeeMapClicked:run(p)
@@ -1090,17 +1270,45 @@ OnInit("Diary", function ()
                 if BlzGetTriggerPlayerMetaKey() == 1 then
                     actMenu = actMenu - 1
                     if actMenu < 0 then
-                        actMenu = 2
+                        actMenu = 3
                     end
                 else
                     actMenu = actMenu + 1
-                    if actMenu > 2 then
+                    if actMenu > 3 then
                         actMenu = 0
                     end
                 end
                 OpenMenu()
             end
         end)
+    end
+
+    local function RecipeRequirmentButtonFunc(p, i)
+        if p == LocalPlayer then
+            if unlockedItems[p][requirementList[i]] then
+                if isRecipe[recipeMaterialSelected] and GetRecipe(recipeMaterialSelected).itmToUpgrade == requirementList[i] then
+                    actMenu = 1
+                    OpenMenu()
+                    itemSelected = requirementList[i]
+                    UpdateItemInfo()
+                else
+                    recipeMaterialSelected = requirementList[i]
+                    UpdateRecipe()
+                end
+            end
+        end
+    end
+
+    local function RecipeResultButtonFunc(p)
+        if p == LocalPlayer then
+            local resultItm = GetRecipe(recipeMaterialSelected).resultItm
+            if unlockedItems[p][resultItm] then
+                actMenu = 1
+                OpenMenu()
+                itemSelected = resultItm
+                UpdateItemInfo()
+            end
+        end
     end
 
     local function DiaryFunc(p)
@@ -1608,11 +1816,94 @@ OnInit("Diary", function ()
         BlzFrameSetEnable(ItemDescription, false)
         BlzFrameSetTextAlignment(ItemDescription, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
+        -- Recipes
+
+        RecipesButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
+        BlzFrameSetPoint(RecipesButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.18000, -0.030000)
+        BlzFrameSetPoint(RecipesButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.55000, 0.54000)
+        BlzFrameSetText(RecipesButton, "|cffFCD20DRecipes|r")
+        OnClickEvent(RecipesButton, RecipesButtonFunc)
+
+        RecipesBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
+        BlzFrameSetAllPoints(RecipesBackdrop, Backdrop)
+        BlzFrameSetTexture(RecipesBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        MaterialsLabel = BlzCreateFrameByType("TEXT", "name", RecipesBackdrop, "", 0)
+        BlzFrameSetScale(MaterialsLabel, 2.00)
+        BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.070000)
+        BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.51000)
+        BlzFrameSetText(MaterialsLabel, "|cffFFCC00Materials|r")
+        BlzFrameSetTextAlignment(MaterialsLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        MaterialsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipesBackdrop, "", 1)
+        BlzFrameSetPoint(MaterialsContainer, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.10000)
+        BlzFrameSetPoint(MaterialsContainer, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.38000)
+        BlzFrameSetTexture(MaterialsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        RecipesLabel = BlzCreateFrameByType("TEXT", "name", RecipesBackdrop, "", 0)
+        BlzFrameSetScale(RecipesLabel, 2.00)
+        BlzFrameSetPoint(RecipesLabel, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.23000)
+        BlzFrameSetPoint(RecipesLabel, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.35000)
+        BlzFrameSetText(RecipesLabel, "|cffFFCC00Recipes|r")
+        BlzFrameSetTextAlignment(RecipesLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        RecipesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipesBackdrop, "", 1)
+        BlzFrameSetPoint(RecipesContainer, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.26000)
+        BlzFrameSetPoint(RecipesContainer, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.020000)
+        BlzFrameSetTexture(RecipesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        RecipeMaterialInformation = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipesBackdrop, "", 1)
+        BlzFrameSetPoint(RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.61000, -0.11000)
+        BlzFrameSetPoint(RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.020000)
+        BlzFrameSetTexture(RecipeMaterialInformation, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        RecipeMaterialName = BlzCreateFrameByType("TEXT", "name", RecipeMaterialInformation, "", 0)
+        BlzFrameSetScale(RecipeMaterialName, 1.71)
+        BlzFrameSetPoint(RecipeMaterialName, FRAMEPOINT_TOPLEFT, RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.010000)
+        BlzFrameSetPoint(RecipeMaterialName, FRAMEPOINT_BOTTOMRIGHT, RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.42000)
+        BlzFrameSetText(RecipeMaterialName, "|cffFFCC00Agumon|r")
+        BlzFrameSetEnable(RecipeMaterialName, false)
+        BlzFrameSetTextAlignment(RecipeMaterialName, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        RecipeMaterialDescription = BlzCreateFrameByType("TEXT", "name", RecipeMaterialInformation, "", 0)
+        BlzFrameSetScale(RecipeMaterialDescription, 1.43)
+        BlzFrameSetPoint(RecipeMaterialDescription, FRAMEPOINT_TOPLEFT, RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.24000)
+        BlzFrameSetPoint(RecipeMaterialDescription, FRAMEPOINT_BOTTOMRIGHT, RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
+        BlzFrameSetText(RecipeMaterialDescription, "|cffffffffStamina per level: |r")
+        BlzFrameSetEnable(RecipeMaterialDescription, false)
+        BlzFrameSetTextAlignment(RecipeMaterialDescription, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+        BlzFrameSetLevel(RecipeMaterialDescription, 1)
+
+        RecipeResultButton = BlzCreateFrame("IconButtonTemplate", RecipeMaterialInformation, 0, 0)
+        BlzFrameSetPoint(RecipeResultButton, FRAMEPOINT_TOPLEFT, RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.24000)
+        BlzFrameSetPoint(RecipeResultButton, FRAMEPOINT_BOTTOMRIGHT, RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.21700)
+        OnClickEvent(RecipeResultButton, RecipeResultButtonFunc)
+        BlzFrameSetLevel(RecipeResultButton, 2)
+
+        RecipeRequimentsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipeMaterialInformation, "", 1)
+        BlzFrameSetPoint(RecipeRequimentsContainer, FRAMEPOINT_TOPLEFT, RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, 0.020000, -0.27000)
+        BlzFrameSetPoint(RecipeRequimentsContainer, FRAMEPOINT_BOTTOMRIGHT, RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.020000)
+        BlzFrameSetTexture(RecipeRequimentsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+        BlzFrameSetLevel(RecipeRequimentsContainer, 2)
+
+        for i = 0, 14 do
+            RecipeRequirmentT[i] = BlzCreateFrameByType("TEXT", "name", RecipeRequimentsContainer, "", 0)
+            BlzFrameSetPoint(RecipeRequirmentT[i], FRAMEPOINT_TOPLEFT, RecipeRequimentsContainer, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000 - i*0.012000)
+            BlzFrameSetPoint(RecipeRequirmentT[i], FRAMEPOINT_BOTTOMRIGHT, RecipeRequimentsContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.16800 - i*0.012000)
+            BlzFrameSetText(RecipeRequirmentT[i], "|cffffffff- A requirment|r")
+            BlzFrameSetTextAlignment(RecipeRequirmentT[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+            RecipeRequirmentButton[i] = BlzCreateFrame("IconButtonTemplate", RecipeRequirmentT[i], 0, 0)
+            BlzFrameSetAllPoints(RecipeRequirmentButton[i], RecipeRequirmentT[i])
+            BlzFrameSetEnable(RecipeRequirmentButton[i], false)
+            OnClickEvent(RecipeRequirmentButton[i], function (p) RecipeRequirmentButtonFunc(p, i+1) end)
+        end
+
         -- Map
 
         MapButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
-        BlzFrameSetPoint(MapButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.18000, -0.030000)
-        BlzFrameSetPoint(MapButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.55000, 0.54000)
+        BlzFrameSetPoint(MapButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.26000, -0.030000)
+        BlzFrameSetPoint(MapButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.47000, 0.54000)
         BlzFrameSetText(MapButton, "|cffFCD20DMap|r")
         BlzFrameSetLevel(MapButton, 3)
         OnClickEvent(MapButton, MapButtonFunc)
@@ -1918,6 +2209,18 @@ OnInit("Diary", function ()
     udg_AddItemToList = CreateTrigger()
     TriggerAddAction(udg_AddItemToList, function ()
         AddItemToList(udg_DigimonItemType)
+        udg_DigimonItemType = 0
+    end)
+
+    udg_AddMaterial = CreateTrigger()
+    TriggerAddAction(udg_AddMaterial, function ()
+        AddMaterial(udg_DigimonItemType)
+        udg_DigimonItemType = 0
+    end)
+
+    udg_AddRecipe = CreateTrigger()
+    TriggerAddAction(udg_AddRecipe, function ()
+        AddRecipe(udg_DigimonItemType)
         udg_DigimonItemType = 0
     end)
 end)

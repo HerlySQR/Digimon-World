@@ -19,7 +19,7 @@ OnInit(function ()
     end
 
     ---@param itm integer
-    ---@param itmToUpgrade integer
+    ---@param itmToUpgrade integer?
     ---@param spell integer
     ---@param materialReq integer[]
     ---@param amountReq integer[]
@@ -29,7 +29,7 @@ OnInit(function ()
 
         local self = {
             itm = itm,
-            itmToUpgrade = itmToUpgrade ~= 0 and itmToUpgrade,
+            itmToUpgrade = itmToUpgrade,
             spell = spell,
             requirements = SyncedTable.create(),
             resultItm = resultItm
@@ -104,6 +104,8 @@ OnInit(function ()
         end)
     end
 
+    udg_RecipeItemToUpgrade = nil
+
     udg_RecipeInit = CreateTrigger()
     TriggerAddAction(udg_RecipeInit, function ()
         Create(
@@ -115,7 +117,7 @@ OnInit(function ()
             udg_RecipeResultItem
         )
         udg_RecipeItem = 0
-        udg_RecipeItemToUpgrade = 0
+        udg_RecipeItemToUpgrade = nil
         udg_RecipeSpell = 0
         udg_RecipeMaterialReq = __jarray(0)
         udg_RecipeAmountReq = __jarray(0)

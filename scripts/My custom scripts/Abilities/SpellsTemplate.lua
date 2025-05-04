@@ -225,6 +225,9 @@ OnInit("SpellsTemplate", function ()
                 missile:scale(data.scale)
                 missile:speed(data.speed)
                 missile:arc(data.arc)
+                if data.pColor then
+                    missile:playerColor(data.pColor)
+                end
                 missile.onFinish = function ()
                     ForUnitsInRange(missile.x, missile.y, area, function (u)
                         if IsUnitEnemy(u, missile.owner) then
@@ -281,6 +284,9 @@ OnInit("SpellsTemplate", function ()
             missile.collision = data.collision
             missile:scale(data.scale)
             missile.collideZ = true
+            if data.pColor then
+                missile:playerColor(data.pColor)
+            end
             missile.onPeriod = function ()
                 missile.collision = missile.collision + extraCollision
                 missile:scale(missile.Scale + extraScale)
