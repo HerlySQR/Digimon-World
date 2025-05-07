@@ -398,8 +398,13 @@ OnInit.final(function ()
         TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_DEATH)
         TriggerAddCondition(t, Condition(function () return RectContainsUnit(place, GetDyingUnit()) end))
         TriggerAddAction(t, function ()
+            if not GetKillingUnit() then
+                return
+            end
             if GetUnitTypeId(GetDyingUnit()) == BLACK_KING_NUMEMON then
-                CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+                if math.random(5) == 1 then
+                    CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+                end
 
                 local open = true
                 ForUnitsInRect(place, function (u)
@@ -414,7 +419,7 @@ OnInit.final(function ()
                     end
                 end
             else
-                if math.random(10) == 1 then
+                if math.random(20) == 1 then
                     CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
             end

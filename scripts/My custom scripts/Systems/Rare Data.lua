@@ -5,6 +5,13 @@ OnInit("Rare Data", function ()
 
     local Items = {} ---@type table<integer, {cost: integer, goldCost: integer, woodCost: integer}>
 
+    local itemGot = EventListener.create()
+
+    ---@param func fun(u: unit, itm: integer)
+    function OnRareDataItemGot(func)
+        itemGot:register(func)
+    end
+
     ---@param itm integer
     ---@param cost integer
     local function Define(itm, cost, goldCost, woodCost)
@@ -24,6 +31,7 @@ OnInit("Rare Data", function ()
             local rareDataCount = GetBackpackItemCharges(p, udg_RARE_DATA)
             if rareDataCount >= Items[id].cost then
                 SetBackpackItemCharges(p, udg_RARE_DATA, rareDataCount - Items[id].cost)
+                itemGot:run(GetBuyingUnit(), id)
             else
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + Items[id].goldCost)
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) + Items[id].woodCost)

@@ -475,7 +475,7 @@ OnInit(function ()
         ZTS_RemoveThreatUnit(target.root)
         ZTS_AddPlayerUnit(target.root)
     end)
-    Digimon.killEvent:register(function (info)
+    Digimon.deathEvent:register(function (info)
         local target = info.target ---@type Creep
         if target.rd then
             ZTS_RemoveThreatUnit(target.root)

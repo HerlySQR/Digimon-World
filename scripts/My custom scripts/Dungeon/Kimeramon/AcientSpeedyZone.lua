@@ -227,20 +227,6 @@ OnInit.final(function ()
             end
         end
 
-        -- Move creeps
-        for _, u in ipairs(creeps) do
-            local typ = GetUnitTypeId(u)
-            if (typ == TRICERAMON or typ == VERMILIMON) and not ZTS_GetCombatState(u) and GetUnitCurrentOrder(u) == 0 and math.random(5) == 1 then
-                local angle = 2*math.pi*math.random()
-                local dist = GetRandomReal(200., 600.)
-                local newX, newY = GetUnitX(u) + dist*math.cos(angle), GetUnitY(u) + dist*math.sin(angle)
-
-                if IsTerrainWalkable(newX, newY) then
-                    IssuePointOrderById(u, Orders.smart, newX, newY)
-                end
-            end
-        end
-
         prevHeros:clear()
         prevHeros:addAll(actHeros)
         actHeros:clear()
@@ -252,9 +238,13 @@ OnInit.final(function ()
         TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_DEATH)
         TriggerAddCondition(t, Condition(function () return RectContainsUnit(place, GetDyingUnit()) end))
         TriggerAddAction(t, function ()
+            if not GetKillingUnit() then
+                return
+            end
             if GetUnitTypeId(GetDyingUnit()) == VOLCAMON then
-                CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
-
+                if math.random(5) == 1 then
+                    CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+                end
                 local open = true
                 ForUnitsInRect(place, function (u)
                     if GetUnitTypeId(u) == VOLCAMON and UnitAlive(u) then
@@ -268,7 +258,7 @@ OnInit.final(function ()
                     end
                 end
             else
-                if math.random(10) == 1 then
+                if math.random(20) == 1 then
                     CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
             end

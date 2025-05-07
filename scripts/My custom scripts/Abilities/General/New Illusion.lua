@@ -3,10 +3,10 @@ OnInit(function ()
     Require "AbilityUtils"
 
     local SPELL = FourCC('A0JB')
-    local DURATION = 15.
+    local DURATION = 20.
     local DMG_DEALT = 1.
     local DMG_TAKEN = 1.5
-    local AOE = 170.
+    local AOE = 100.
     local NUMBER_OF_IMG = 2
     local DUMMY_ILLUSION = FourCC('A0JC')
     local ORDER = Orders.wandOfIllusion
@@ -30,6 +30,20 @@ OnInit(function ()
             IssueTargetOrderById(dummy, ORDER, caster)
 
             UnitApplyTimedLife(dummy, FourCC("BTLF"), 5.)
+
+            local t = CreateTrigger()
+            TriggerRegisterUnitInRange(t, dummy, 2*AOE)
+            TriggerAddAction(t, function ()
+                local u = GetTriggerUnit()
+                if IsUnitIllusion(u) and GetUnitTypeId(u) == GetUnitTypeId(caster) then
+                    local diff = math.abs(GetUnitBonus(caster, BONUS_DAMAGE) - GetUnitBonus(u, BONUS_DAMAGE))
+                    if diff > 0 then
+                        AddUnitBonus(u, BONUS_DAMAGE, diff)
+                        TriggerClearActions(t)
+                        DestroyTrigger(t)
+                    end
+                end
+            end)
         end
     end)
     

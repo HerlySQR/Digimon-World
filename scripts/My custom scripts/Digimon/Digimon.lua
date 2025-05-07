@@ -661,6 +661,7 @@ OnInit("Digimon", function ()
     -- Kill
 
     Digimon.killEvent = EventListener.create()
+    Digimon.deathEvent = EventListener.create()
 
     do
         local t = CreateTrigger()
@@ -670,7 +671,10 @@ OnInit("Digimon", function ()
             local target = Digimon._instance[GetDyingUnit()]
 
             if target then
-                Digimon.killEvent:run({killer = killer and Digimon._instance[killer] or killer, target = target})
+                if killer then
+                    Digimon.killEvent:run({killer = killer and Digimon._instance[killer] or killer, target = target})
+                end
+                Digimon.deathEvent:run({killer = killer and Digimon._instance[killer] or killer, target = target})
 
                 if target.isSummon or (not IsUnitType(target.root, UNIT_TYPE_ANCIENT) and (target:getOwner() == Digimon.NEUTRAL or target:getOwner() == Digimon.PASSIVE)) then
                     target:remove(6.)
