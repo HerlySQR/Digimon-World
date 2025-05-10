@@ -407,16 +407,17 @@ OnInit("Backpack", function ()
                     end
                 else
                     if itemData.spellCooldown > 0 then
-                        backpack.cooldowns[itemData.id] = itemData.spellCooldown
+                        local id = itemData.id
+                        backpack.cooldowns[id] = itemData.spellCooldown
                         if p == LocalPlayer then
                             UpdateCooldowns()
                         end
                         Timed.echo(1., function ()
-                            backpack.cooldowns[itemData.id] = backpack.cooldowns[itemData.id] - 1
+                            backpack.cooldowns[id] = backpack.cooldowns[id] - 1
                             if p == LocalPlayer then
                                 UpdateCooldowns()
                             end
-                            if backpack.cooldowns[itemData.id] <= 0 then
+                            if backpack.cooldowns[id] <= 0 then
                                 return true
                             end
                         end)

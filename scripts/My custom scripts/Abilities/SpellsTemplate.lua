@@ -241,7 +241,7 @@ OnInit("SpellsTemplate", function ()
         end)
     end
 
-    ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, finalDmgFactor: number?, maxRange: number, collision: number, missileModel: string, zOffsetSource: number, zOffsetTarget: number, scale: number, speed: number, arc: number, pColor: integer?, attType: attacktype, dmgType: damagetype, casterEffect: string?, targetEffect: string?, buffType: BuffSpell?, buffLevel: integer?}
+    ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, finalDmgFactor: number?, maxRange: number, initialCollision: number, finalCollision: number, missileModel: string, zOffsetSource: number, zOffsetTarget: number, scale: number, speed: number, arc: number, pColor: integer?, attType: attacktype, dmgType: damagetype, casterEffect: string?, targetEffect: string?, buffType: BuffSpell?, buffLevel: integer?}
     function CreateWaveSpell(data)
         data.strDmgFactor = data.strDmgFactor or 0
         data.agiDmgFactor = data.agiDmgFactor or 0
@@ -260,9 +260,10 @@ OnInit("SpellsTemplate", function ()
             150 / 27 = aprox 5.56
             1 / 27 = aprox 0.04
         ]]
+        local diff = data.finalCollision - data.initialCollision
         local instances = data.maxRange / data.speed / 0.025
-        local extraCollision = 150 / instances
-        local extraScale = 1 / instances
+        local extraCollision = diff / instances
+        local extraScale = (diff ~= 0 and (diff > 0 and 1 or -0.6) or 0) / instances
 
         RegisterSpellEffectEvent(data.spell, function ()
             local caster = GetSpellAbilityUnit()
@@ -281,7 +282,7 @@ OnInit("SpellsTemplate", function ()
             missile:speed(data.speed)
             missile:scale(data.scale)
             missile:arc(data.arc)
-            missile.collision = data.collision
+            missile.collision = data.initialCollision
             missile:scale(data.scale)
             missile.collideZ = true
             if data.pColor then

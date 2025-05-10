@@ -462,6 +462,11 @@ OnInit("Digimon", function ()
         self.IVwis = wis
     end
 
+    ---@return integer
+    function Digimon:getCurrentOrder()
+        return GetUnitCurrentOrder(self.root)
+    end
+
     ---@param u unit
     ---@return Digimon
     function Digimon.getInstance(u)
@@ -850,7 +855,19 @@ OnInit("Digimon", function ()
     Digimon.offCombatEvent = EventListener.create()
 
     do
-        local onCombat = __jarray(0) ---@type table<Digimon, integer>
+        local onCombat = SyncedTable.create() ---@type table<Digimon, integer>
+
+        Timed.echo(1., function ()
+            for d, cd in pairs(onCombat) do
+                if cd > 0 then
+                    onCombat[d] = cd - 1
+                else
+                    d.onCombat = false
+                    onCombat[d] = nil
+                    Digimon.offCombatEvent:run(d)
+                end
+            end
+        end)
 
         Digimon.postDamageEvent:register(function (info)
             local source = info.source ---@type Digimon
@@ -858,15 +875,6 @@ OnInit("Digimon", function ()
             if not source.onCombat then
                 source.onCombat = true
                 Digimon.onCombatEvent:run(source)
-                Timed.echo(1., function ()
-                    local cd = onCombat[source] - 1
-                    onCombat[source] = cd
-                    if cd <= 0 then
-                        source.onCombat = false
-                        Digimon.offCombatEvent:run(source)
-                        return true
-                    end
-                end)
             end
 
             local target = info.target ---@type Digimon
@@ -874,15 +882,6 @@ OnInit("Digimon", function ()
             if not target.onCombat then
                 target.onCombat = true
                 Digimon.onCombatEvent:run(target)
-                Timed.echo(1., function ()
-                    local cd = onCombat[target] - 1
-                    onCombat[target] = cd
-                    if cd <= 0 then
-                        target.onCombat = false
-                        Digimon.offCombatEvent:run(target)
-                        return true
-                    end
-                end)
             end
         end)
     end

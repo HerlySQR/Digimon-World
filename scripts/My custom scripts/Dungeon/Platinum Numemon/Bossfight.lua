@@ -17,6 +17,10 @@ OnInit(function ()
     local SUMMON_RAREMON = FourCC('A0G7')
     local BIG_POOP = FourCC('A0G1')
     local WARUMONZEAMON = FourCC('O058')
+    local HEAL_NUMEMON = FourCC('A0JM')
+    local HEAL_ORDER = Orders.holybolt
+    local NUMEMON_MINION = FourCC('h06L')
+    local HEAL_PERCENT = 0.05
 
     local EXTRA_HEALTH_FACTOR = 0.6
     local EXTRA_DMG_FACTOR = 6.
@@ -26,6 +30,63 @@ OnInit(function ()
     local secondPhase = false
     local originalX, originalY = GetUnitX(boss), GetUnitY(boss)
     local pipes = {gg_rct_SummonRaremon1, gg_rct_SummonRaremon2, gg_rct_SummonRaremon3, gg_rct_SummonRaremon4} ---@type rect[]
+
+    local stopGooTimer = false
+    local gooRunning = false
+
+    local GOO_BUFF = FourCC('B02X')
+
+    local function createGoo(x, y)
+        for _ = 1, math.random(5, 9) do
+            local dist = GetRandomReal(0, 180)
+            local angle = GetRandomReal(0, 2*math.pi)
+            local newX, newY = x + dist * math.cos(angle), y + dist * math.sin(angle)
+            local goo = AddSpecialEffect("war3mapImported\\puddle.mdl", newX, newY)
+            BlzSetSpecialEffectScale(goo, 0.3)
+            BlzSetSpecialEffectAlpha(goo, math.random(50, 150))
+            BlzSetSpecialEffectYaw(goo, math.random(0, 2*math.pi))
+            DestroyEffectTimed(goo, 5.)
+        end
+        Timed.echo(1.2, 5., function ()
+            ForUnitsInRange(x, y, 200., function (u)
+                if IsUnitEnemy(u, owner) and not UnitHasBuffBJ(u, GOO_BUFF) then
+                    -- Slow
+                    DummyCast(
+                        owner,
+                        GetUnitX(u), GetUnitY(u),
+                        SLOW_SPELL,
+                        SLOW_ORDER,
+                        4,
+                        CastType.TARGET,
+                        u
+                    )
+                end
+            end)
+        end)
+    end
+
+    local function startGoo()
+        if gooRunning then
+            return
+        end
+        gooRunning = true
+        Timed.echo(0.8, function ()
+            if stopGooTimer then
+                stopGooTimer = false
+                return true
+            end
+            if not IsUnitHidden(boss) then
+                createGoo(GetUnitX(boss), GetUnitY(boss))
+            end
+        end)
+    end
+
+    local function stopGoo()
+        stopGooTimer = true
+        gooRunning = false
+    end
+
+    local actualLifePercent = 1
 
     InitBossFight({
         name = "PlatinumNumemon",
@@ -46,12 +107,31 @@ OnInit(function ()
             FourCC('A0G1'), 3, Orders.breathoffrost, CastType.POINT -- Big poop
         },
         actions = function (u, unitsOnTheField)
-            if GetUnitHPRatio(boss) < 0.3 then
+            local hpRatio = GetUnitHPRatio(boss)
+            if hpRatio < 0.3 then
                 BlzEndUnitAbilityCooldown(boss, RAIN_OF_FILTH)
+            end
+            if hpRatio < 1 - 0.2 * actualLifePercent then
+                actualLifePercent = actualLifePercent + 1
+                for _ = 1, 2 do
+                    local dist = GetRandomReal(0, 128)
+                    local angle = GetRandomReal(0, 2*math.pi)
+                    local x, y = GetUnitX(boss) + dist * math.cos(angle), GetUnitY(boss) + dist * math.sin(angle)
+                    local numemon = SummonMinion(boss, NUMEMON_MINION, x, y, 360*math.random())
+                    DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Undead\\AnimateDead\\AnimateDeadTarget.mdl", x, y))
+                    Timed.echo(1., function ()
+                        if not numemon:isAlive() then
+                            return true
+                        end
+                        if numemon:getCurrentOrder() ~= HEAL_ORDER then
+                            numemon:issueOrder(HEAL_ORDER, boss)
+                        end
+                    end)
+                end
             end
             if u then
                 if not BossStillCasting(boss) then
-                    if math.random(100) <= 30 then
+                    if math.random(100) <= 8 then
                         BossIsCasting(boss, true)
                         ZTS_RemoveThreatUnit(boss)
 
@@ -63,7 +143,18 @@ OnInit(function ()
                                 ShowUnitHide(boss)
                                 Timed.call(2., function ()
 
-                                    for _ = 1, math.round(4.235*math.exp(0.166*unitsOnTheField:size())) do
+                                    local count = 0
+                                    for u2 in unitsOnTheField:elements() do
+                                        xpcall(function ()
+                                            if IsPlayerInGame(GetOwningPlayer(u2)) and IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitIllusion(u2) then
+                                                count = count + 1
+                                            end
+                                        end, function ()
+                                            print(GetUnitName(u2), GetHeroProperName(u2))
+                                        end)
+                                    end
+
+                                    for _ = 1, math.round(4.235*math.exp(0.166*count)) do
                                         local l = GetRandomLocInRect(area)
                                         for _ = 1, 6 do
                                             if IsTerrainWalkable(GetLocationX(l), GetLocationY(l)) then
@@ -175,6 +266,9 @@ OnInit(function ()
                 end
             end
         end,
+        onStart = function ()
+            startGoo()
+        end,
         onDeath = function ()
             local owners = CreateForce()
             ForUnitsInRect(gg_rct_PlatinumNumemon_1, function (u)
@@ -186,6 +280,7 @@ OnInit(function ()
                 CreateItem(RARE_DATA, GetUnitX(boss), GetUnitY(boss))
             end)
             DestroyForce(owners)
+            stopGoo()
         end,
         onReset = function ()
             if secondPhase then
@@ -200,6 +295,8 @@ OnInit(function ()
                 AddUnitBonus(boss, BONUS_DAMAGE, -100)
                 BossChangeAttack(boss, 0)
             end
+            actualLifePercent = 1
+            stopGoo()
         end
     })
 
@@ -452,5 +549,30 @@ OnInit(function ()
             end
         end)
     end
+
+    RegisterSpellEffectEvent(HEAL_NUMEMON, function ()
+        local caster = GetSpellAbilityUnit()
+        local target = GetSpellTargetUnit()
+        local missile = Missiles:create(GetUnitX(caster), GetUnitY(caster), 0., GetUnitX(target), GetUnitY(target), 0.)
+        missile.source = caster
+        missile.owner = owner
+        missile.target = target
+        missile:arc(10.)
+        missile:model("war3mapImported\\Trash.mdl")
+        missile:speed(900.)
+        missile.onFinish = function ()
+            DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\HolyBolt\\HolyBoltSpecialArt.mdl", target, "origin"))
+            SetUnitState(target, UNIT_STATE_LIFE, GetUnitState(target, UNIT_STATE_LIFE) + HEAL_PERCENT * GetUnitState(target, UNIT_STATE_MAX_LIFE))
+        end
+        missile:launch()
+    end)
+
+    local t = CreateTrigger()
+    TriggerRegisterVariableEvent(t, "udg_PreDamageEvent", EQUAL, 1.00)
+    TriggerAddAction(t, function ()
+        if GetUnitTypeId(udg_DamageEventTarget) == NUMEMON_MINION then
+            udg_DamageEventAmount = 1.
+        end
+    end)
 end)
 Debug.endFile()

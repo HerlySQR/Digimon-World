@@ -311,6 +311,7 @@ OnInit("BossFightUtils", function ()
         end)
     end
 
+    ---For n = 1, 2, 3, ... the intervals are 6, 3.5, 2, ... seconds
     ---@param n integer
     ---@param half boolean?
     ---@return number

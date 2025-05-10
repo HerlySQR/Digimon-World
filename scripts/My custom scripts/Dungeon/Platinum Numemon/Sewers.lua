@@ -344,7 +344,7 @@ OnInit.final(function ()
     RegisterSpellEffectEvent(RAREMON_BAIT, function ()
         local x, y = GetSpellTargetX(), GetSpellTargetY()
         Digimon.enumInRange(x, y, 1500., function (d)
-            if d:getTypeId() == RAREMON and d:getOwner() == Digimon.NEUTRAL then
+            if d:getTypeId() == RAREMON and RectContainsCoords(place, d:getPos()) then
                 if not attractionPoints[d] then
                     attractionPoints[d] = {}
                 end
@@ -358,7 +358,7 @@ OnInit.final(function ()
     Timed.echo(1.5, function ()
         for d, data in pairs(attractionPoints) do
             d:issueOrder(Orders.move, data.x, data.y)
-            data.remain = data.remain - 0.5
+            data.remain = data.remain - 1.5
             if data.remain <= 0 then
                 attractionPoints[d] = nil
             end
