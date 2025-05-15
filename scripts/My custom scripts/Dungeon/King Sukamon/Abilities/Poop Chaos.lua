@@ -18,7 +18,6 @@ OnInit(function ()
         local x = GetSpellTargetX()
         local y = GetSpellTargetY()
 
-        BossIsCasting(caster, true)
         PauseUnit(caster, true)
         SetUnitAnimation(caster, "spell")
 
@@ -44,7 +43,6 @@ OnInit(function ()
                     if counter == 0 then
                         PauseUnit(caster, false)
                         ResetUnitAnimation(caster)
-                        BossIsCasting(caster, false)
                         return true
                     end
                     SetUnitAnimation(caster, "spell throw")

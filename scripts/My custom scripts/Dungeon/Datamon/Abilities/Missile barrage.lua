@@ -17,7 +17,6 @@ OnInit(function ()
         local x = GetSpellTargetX()
         local y = GetSpellTargetY()
 
-        BossIsCasting(caster, true)
         PauseUnit(caster, true)
         SetUnitAnimation(caster, "spell")
 
@@ -40,10 +39,9 @@ OnInit(function ()
             if UnitAlive(caster) then
                 local counter = MAX_SHOTS
                 Timed.echo(INTERVAL, function ()
-                    if counter == 0 then
+                    if counter == 0 or not UnitAlive(caster) then
                         PauseUnit(caster, false)
                         ResetUnitAnimation(caster)
-                        BossIsCasting(caster, false)
                         return true
                     end
                     SetUnitAnimation(caster, "spell throw")

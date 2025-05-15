@@ -19,13 +19,10 @@ OnInit(function ()
         bar:setSize(1.3)
         bar:setTargetUnit(caster)
 
-        BossIsCasting(caster, true)
-
         local progress = 0
         Timed.echo(0.02, DELAY, function ()
             if not UnitAlive(caster) or GetUnitCurrentOrder(caster) ~= birdOfFireOrder then
                 bar:destroy()
-                BossIsCasting(caster, false)
                 return true
             end
             progress = progress + 0.02
@@ -37,7 +34,6 @@ OnInit(function ()
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
-        BossIsCasting(caster, false)
         local x = GetUnitX(caster)
         local y = GetUnitY(caster)
         local tx = GetSpellTargetX()

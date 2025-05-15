@@ -14,7 +14,6 @@ OnInit(function ()
     TriggerAddCondition(t, Condition(function () return GetSpellAbilityId() == SPELL end))
     TriggerAddAction(t, function ()
         local caster = GetSpellAbilityUnit()
-        BossIsCasting(caster, true)
         SetUnitAnimation(caster, "spell")
 
         local bar = ProgressBar.create()
@@ -27,13 +26,11 @@ OnInit(function ()
         Timed.echo(0.02, DELAY, function ()
             if not UnitAlive(caster) then
                 bar:destroy()
-                BossIsCasting(caster, false)
                 return true
             end
             progress = progress + 0.02
             bar:setPercentage((progress/DELAY)*100, 1)
         end, function ()
-            BossIsCasting(caster, false)
             bar:destroy()
         end)
     end)

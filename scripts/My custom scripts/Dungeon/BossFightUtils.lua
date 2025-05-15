@@ -360,21 +360,21 @@ OnInit("BossFightUtils", function ()
             actSpell = 1
             spells = {}
             for i = 1, #data.spells // 4 do
-                spells[i] = {
+                table.insert(spells, {
                     id = data.spells[4*(i-1)+1],
                     weight = data.spells[4*(i-1)+2],
                     order = data.spells[4*(i-1)+3],
                     ttype = data.spells[4*(i-1)+4]
-                }
+                })
             end
             if data.extraSpells then
                 extraSpells = {}
                 for i = 1, #data.extraSpells // 3 do
-                    extraSpells[i] = {
+                    table.insert(extraSpells, {
                         id = data.extraSpells[3*(i-1)+1],
                         order = data.extraSpells[3*(i-1)+2],
                         ttype = data.extraSpells[3*(i-1)+3]
-                    }
+                    })
                 end
             end
         end
@@ -438,6 +438,8 @@ OnInit("BossFightUtils", function ()
                     end
                     table.remove(summons[data.boss], i)
                 end
+
+                isCasting[data.boss] = false
             end
         end
 
@@ -593,12 +595,14 @@ OnInit("BossFightUtils", function ()
                                                         IssueTargetOrderById(data.boss, stats.order, u)
                                                     end
                                                     spellToCast = stats.id
+                                                    print(1, GetAbilityName(stats.id))
                                                 else
                                                     hitsDealt = 0
                                                     actSpell = actSpell + 1
                                                     if actSpell > #spells then
                                                         actSpell = 1
                                                     end
+                                                    print(2, GetAbilityName(stats.id))
                                                 end
                                             elseif extraSpells then
                                                 local options = {}
@@ -834,6 +838,21 @@ OnInit("BossFightUtils", function ()
                 if IsUnitType(u, UNIT_TYPE_HERO) and u ~= data.boss and not unitsInTheField:contains(u) then
                     IssueTargetOrderById(u, Orders.attack, u)
                     ErrorMessage("You can't attack the boss from there", GetOwningPlayer(u))
+                end
+            end)
+        end
+
+        do
+            local t = CreateTrigger()
+            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_CHANNEL)
+            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_ENDCAST)
+            TriggerAddAction(t, function ()
+                if GetTriggerEventId() == EVENT_UNIT_SPELL_CHANNEL then
+                    isCasting[data.boss] = true
+                else
+                    Timed.call(5., function ()
+                        isCasting[data.boss] = false
+                    end)
                 end
             end)
         end

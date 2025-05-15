@@ -19,8 +19,6 @@ OnInit(function ()
         bar:setSize(1.5)
         bar:setTargetUnit(caster)
 
-        BossIsCasting(caster, true)
-
         SetUnitAnimationByIndex(caster, 1) -- stand ready
 
         local progress = 0
@@ -28,7 +26,6 @@ OnInit(function ()
         Timed.echo(0.02, DELAY, function ()
             if not UnitAlive(caster) or GetUnitCurrentOrder(caster) ~= ORDER then
                 bar:destroy()
-                BossIsCasting(caster, false)
                 return true
             end
             progress = progress + 0.02
@@ -48,7 +45,6 @@ OnInit(function ()
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
         local owner = GetOwningPlayer(caster)
-        BossIsCasting(caster, false)
         local x = GetUnitX(caster)
         local y = GetUnitY(caster)
         local tx = GetSpellTargetX()

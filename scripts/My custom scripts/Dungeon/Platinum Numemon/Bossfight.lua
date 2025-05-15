@@ -114,7 +114,7 @@ OnInit(function ()
             if hpRatio < 1 - 0.2 * actualLifePercent then
                 actualLifePercent = actualLifePercent + 1
                 for _ = 1, 2 do
-                    local dist = GetRandomReal(0, 128)
+                    local dist = GetRandomReal(128, 256)
                     local angle = GetRandomReal(0, 2*math.pi)
                     local x, y = GetUnitX(boss) + dist * math.cos(angle), GetUnitY(boss) + dist * math.sin(angle)
                     local numemon = SummonMinion(boss, NUMEMON_MINION, x, y, 360*math.random())
@@ -373,7 +373,6 @@ OnInit(function ()
         TriggerAddAction(t, function ()
             local poop = AddSpecialEffectTarget("Missile\\Poop1.mdx", boss, "head")
 
-            BossIsCasting(boss, true)
             SetUnitAnimation(boss, "spell")
 
             local bar = ProgressBar.create()
@@ -389,7 +388,6 @@ OnInit(function ()
                 BlzSetSpecialEffectScale(poop, scale)
                 if not UnitAlive(boss) or GetUnitCurrentOrder(boss) ~= bigPoopOrder then
                     bar:destroy()
-                    BossIsCasting(boss, false)
                     BlzSetSpecialEffectAlpha(poop, 0)
                     DestroyEffect(poop)
                     return true
@@ -397,7 +395,6 @@ OnInit(function ()
                 progress = progress + 0.02
                 bar:setPercentage((progress/BIG_POOP_DELAY)*100, 1)
             end, function ()
-                BossIsCasting(boss, false)
                 BlzSetSpecialEffectAlpha(poop, 0)
                 DestroyEffect(poop)
                 bar:destroy()

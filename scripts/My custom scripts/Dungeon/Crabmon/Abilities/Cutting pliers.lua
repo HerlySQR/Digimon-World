@@ -15,7 +15,6 @@ OnInit(function ()
         local deltaX = SPEED * math.cos(angle)
         local deltaY = SPEED * math.sin(angle)
 
-        BossIsCasting(caster, true)
         PauseUnit(caster, true)
         SetUnitPathing(caster, false)
         SetUnitAnimation(caster, "ready")
@@ -36,7 +35,6 @@ OnInit(function ()
             traveled = traveled + SPEED
             if traveled >= DISTANCE then
                 DestroyGroup(affected)
-                BossIsCasting(caster, false)
                 PauseUnit(caster, false)
                 SetUnitPathing(caster, true)
                 ResetUnitAnimation(caster)

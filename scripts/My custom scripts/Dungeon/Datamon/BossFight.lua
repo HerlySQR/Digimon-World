@@ -15,6 +15,9 @@ OnInit(function ()
     local GUARDROMON = FourCC('O01I')
     local GUARDROMON_EFFECT = "Abilities\\Spells\\Demon\\DemonBoltImpact\\DemonBoltImpact.mdl"
     local MISSILE_BARRAGE = FourCC('A0E0')
+    local SHOCKING_ORBS = FourCC('A0JN')
+    local SUMMON_GUARDROMON = FourCC('A0J4')
+    local MOVE = FourCC('A0H5')
 
     local boss = gg_unit_O03P_0105 ---@type unit
     local originalSize = BlzGetUnitRealField(boss, UNIT_RF_SCALING_VALUE)
@@ -110,7 +113,7 @@ OnInit(function ()
                 Timed.call(2., function ()
                     local unitToTeleportTo = {}
                     ForUnitsInRect(gg_rct_Datamon_1, function (u2)
-                        if not unitToTeleportTo[GetOwningPlayer(u2)] then
+                        if not unitToTeleportTo[GetOwningPlayer(u2)] and not RectContainsUnit(generatorRect, u2) then
                             unitToTeleportTo[GetOwningPlayer(u2)] = u2
                         end
                     end)
@@ -168,7 +171,7 @@ OnInit(function ()
         end)
     end
 
-    RegisterSpellEffectEvent(FourCC('A0H5'), function ()
+    RegisterSpellEffectEvent(MOVE, function ()
         if GetSpellAbilityUnit() == boss then
             BossMove(boss, 1, 1000, 150, math.random(2) == 1)
         end
@@ -183,8 +186,9 @@ OnInit(function ()
         entrance = gg_rct_DatamonEntrance,
         spells = {
             FourCC('A0DZ'), 5, Orders.shadowstrike, CastType.TARGET, -- Homming Missile
-            FourCC('A0E0'), 3, Orders.clusterrockets, CastType.POINT, -- Missile Barrage
-            FourCC('A0H5'), 2, Orders.avengerform, CastType.IMMEDIATE, -- Move
+            MISSILE_BARRAGE, 3, Orders.breathoffire, CastType.POINT, -- Missile Barrage
+            MOVE, 2, Orders.avengerform, CastType.IMMEDIATE, -- Move
+            SHOCKING_ORBS, 2, Orders.fanofknives, CastType.IMMEDIATE, -- Shocking Orbs
         },
         actions = function (u, unitsInTheField)
             --BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)
@@ -235,6 +239,7 @@ OnInit(function ()
                     BlzSetUnitIntegerField(boss, UNIT_IF_MOVE_TYPE, 0)
                     SetUnitMoveSpeed(boss, 0)
                     BossCanLeave(boss, true)
+                    UnitRemoveAbility(boss, SUMMON_GUARDROMON)
 
                     local needToKill = CreateGroup()
                     local guardromons = {} ---@type Digimon[]
@@ -273,6 +278,7 @@ OnInit(function ()
                             DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, previousPos))
                             RemoveLocation(previousPos)
                             BossCanLeave(boss, false)
+                            UnitAddAbility(boss, SUMMON_GUARDROMON)
                             return true
                         end
                         for u2 in unitsInTheField:elements() do
@@ -289,6 +295,7 @@ OnInit(function ()
                 if goMetamorphosis then
                     metamorphosis = true
                     SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 2)
+                    SetUnitAbilityLevel(boss, SHOCKING_ORBS, 2)
                     BossChangeAttack(boss, 1)
                     local current = 0
                     Timed.echo(0.02, 1., function ()
@@ -302,10 +309,14 @@ OnInit(function ()
         onReset = function ()
             secondPhase = false
             goMetamorphosis = false
+            if GetUnitAbilityLevel(boss, SUMMON_GUARDROMON) == 0  then
+                UnitAddAbility(boss, SUMMON_GUARDROMON)
+            end
 
             if metamorphosis then
                 metamorphosis = false
                 SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 1)
+                SetUnitAbilityLevel(boss, SHOCKING_ORBS, 1)
                 BossChangeAttack(boss, 0)
                 local current = 0
                 Timed.echo(0.02, 1., function ()

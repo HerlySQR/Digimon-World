@@ -14,7 +14,6 @@ OnInit(function ()
         local owner = GetOwningPlayer(caster)
         local angle = math.atan(GetSpellTargetY() - GetUnitY(caster), GetSpellTargetX() - GetUnitX(caster))
         local affected = Set.create()
-        BossIsCasting(caster, true)
         local reached = 0
         Timed.echo(INTERVAL, function ()
             local x = GetUnitX(caster)
@@ -25,7 +24,6 @@ OnInit(function ()
                 y = y + 50 * math.sin(angle)
                 if not IsTerrainWalkable(x, y) then
                     ResetUnitAnimation(caster)
-                    BossIsCasting(caster, false)
                     return true
                 else
                     SetUnitPosition(caster, x, y)
@@ -49,7 +47,6 @@ OnInit(function ()
                 end
             else
                 ResetUnitAnimation(caster)
-                BossIsCasting(caster, false)
                 return true
             end
             reached = reached + 50

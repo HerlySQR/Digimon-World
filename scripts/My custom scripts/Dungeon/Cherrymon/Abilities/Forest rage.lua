@@ -10,7 +10,6 @@ OnInit(function ()
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
-        local owner = GetOwningPlayer(caster)
         local x, y = GetUnitX(caster), GetUnitY(caster)
 
         SetUnitInvulnerable(caster, true)
@@ -20,7 +19,10 @@ OnInit(function ()
 
         for i = 1, QUANTITY do
             local angle = i*math.pi/4
-            minions[i] = SummonMinion(caster, WOODMON, x + 100 * math.cos(angle), y + 100 * math.sin(angle), math.deg(angle))
+            local newX = x + 100 * math.cos(angle)
+            local newY = y + 100 * math.sin(angle)
+            minions[i] = SummonMinion(caster, WOODMON, newX, newY, math.deg(angle))
+            DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\NightElf\\EntBirthTarget\\EntBirthTarget.mdl", newX, newY))
         end
 
         local heal = BlzGetUnitMaxHP(caster) * HEAL_LIFE_FACTOR / DURATION
