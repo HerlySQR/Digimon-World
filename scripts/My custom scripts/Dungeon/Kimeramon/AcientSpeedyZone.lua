@@ -10,9 +10,9 @@ OnInit.final(function ()
     Require "AbilityUtils"
 
     local MAX_HEROS = 2
-    local MAX_TIME = 5400.
+    local MAX_TIME = 3600.
+    local RESET_ASZ = FourCC('A0JO')
     local NPC = gg_unit_N02I_0192 ---@type unit
-    local BOSS = gg_unit_O06V_0193 ---@type unit
     local ENTER = FourCC('I05Y')
     local TRICERAMON = FourCC('O054')
     local VERMILIMON = FourCC('O064')
@@ -28,6 +28,7 @@ OnInit.final(function ()
     local STUN = FourCC('BPSE')
     local VOLCANIC_EXPLOSION = FourCC('A0GA')
     local VOLCANIC_EXPLOSION_ORDER = Orders.summongrizzly
+    local THUNDERCLAP = FourCC('A0JP')
 
     local boss = gg_unit_O06V_0193 ---@type unit
     local place = gg_rct_Ancient_Speedy_Zone ---@type rect
@@ -48,6 +49,7 @@ OnInit.final(function ()
     local specialCasterBuffs = {[TRICERAMON] = SLOW_BUFF, [METEORMON] = STUN} ---@type table<integer, integer>
     local volcamons = {} ---@type unit[]
     local wall = {gg_dest_Dofw_53415} ---@type destructable[]
+    local canReset = false
     local summonPlace = gg_rct_ASRSummonCreeps
     local summonTrigger = gg_rct_ASRSummonCreepsTrigger
     local summonReferencePoint = gg_rct_KimeramonEntrance
@@ -169,6 +171,16 @@ OnInit.final(function ()
         SetTextTagVisibility(text, true)
     end
 
+    do
+        local t = CreateTrigger()
+        TriggerRegisterUnitEvent(t, NPC, EVENT_UNIT_SPELL_EFFECT)
+        TriggerAddCondition(t, Condition(function () return GetSpellAbilityId() == RESET_ASZ end))
+        TriggerAddAction(t, function ()
+            PauseTimer(tm)
+            resetAcientSpeedyZone()
+        end)
+    end
+
     Timed.echo(1., function ()
         -- Set time
         local time = TimerGetRemaining(tm)
@@ -223,7 +235,35 @@ OnInit.final(function ()
 
         if started then
             if players:isEmpty() then
-                resetAcientSpeedyZone()
+                if not canReset then
+                    canReset = true
+                    UnitAddAbility(NPC, RESET_ASZ)
+                end
+            else
+                if canReset then
+                    canReset = false
+                    UnitRemoveAbility(NPC, RESET_ASZ)
+                end
+            end
+
+            for _ = 1, 10 do
+                local l = GetRandomLocInRect(place)
+                local circle = AddSpecialEffectLoc("war3mapImported\\EnduranceAuraTarget.mdl", l)
+                BlzSetSpecialEffectScale(circle, 3)
+                Timed.call(1., function ()
+                    DestroyEffect(AddSpecialEffectLoc("Effect\\MeteorStrike.mdl", l))
+                    Timed.call(1., function ()
+                        DestroyEffect(circle)
+                        DummyCast(
+                            DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), GetLocationX(l), GetLocationY(l)) > 1000. and Digimon.NEUTRAL or Digimon.VILLAIN,
+                            GetLocationX(l), GetLocationY(l),
+                            THUNDERCLAP,
+                            Orders.thunderclap,
+                            1,
+                            CastType.IMMEDIATE)
+                        RemoveLocation(l)
+                    end)
+                end)
             end
         end
 

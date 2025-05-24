@@ -1,7 +1,6 @@
 Debug.beginFile("Crabmon\\Abilities\\Scissor Magic Chaos")
 OnInit(function ()
     Require "BossFightUtils"
-    local ProgressBar = Require "ProgressBar" ---@type ProgressBar
 
     local SPELL = FourCC('A0C4')
     local DELAY = 2.5

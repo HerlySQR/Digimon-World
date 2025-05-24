@@ -6,7 +6,7 @@ OnInit(function ()
     local Color = Require "Color" ---@type Color
 
     local GENERATOR = FourCC('n01U')
-    local ELECTRIC_TRAP_TICKS_CD = 8
+    local ELECTRIC_TRAP_TICKS_CD = 9
     local ELECTRIC_TRAP_EFFECT = "Abilities\\Spells\\Orc\\LightningShield\\LightningShieldBuff.mdl"
     local ENERGY_FIELD = FourCC('YZef')
     local RESTORE_EFFECT = "Objects\\Spawnmodels\\Undead\\UDeathSmall\\UDeathSmall.mdl"
@@ -14,8 +14,6 @@ OnInit(function ()
     local TELEPORT_EFFECT_TARGET = "Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl"
     local GUARDROMON = FourCC('O01I')
     local GUARDROMON_EFFECT = "Abilities\\Spells\\Demon\\DemonBoltImpact\\DemonBoltImpact.mdl"
-    local MISSILE_BARRAGE = FourCC('A0E0')
-    local SHOCKING_ORBS = FourCC('A0JN')
     local SUMMON_GUARDROMON = FourCC('A0J4')
     local MOVE = FourCC('A0H5')
 
@@ -177,6 +175,200 @@ OnInit(function ()
         end
     end)
 
+    local HM_MISSILE_MODEL = "Abilities\\Weapons\\Mortar\\MortarMissile.mdl"
+    local HM_TARGET_EFFECT = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
+    local HM_DURATION = 5
+    local HM_WARNING_1 = 3
+    local HM_WARNING_2 = 1.5
+    local HM_DAMAGE = 350
+    local HM_PUSH_DIST = 300
+
+    local function onHommingMissile(caster, target)
+        SetUnitAnimation(caster, "spell")
+        Timed.call(0.5, function ()
+            ResetUnitAnimation(caster)
+
+            SetUnitVertexColor(target, 255, 50, 50, 255)
+            local m = Missiles:create(GetUnitX(caster), GetUnitY(caster), 50, GetUnitX(target), GetUnitY(target), 50)
+            local speed = 300
+            local duration = HM_DURATION
+            local orange = false
+            local red = false
+            m.owner = GetOwningPlayer(caster)
+            m.target = target
+            m:model(HM_MISSILE_MODEL)
+            m:speed(speed)
+            m.onPeriod = function ()
+                duration = duration - 0.025
+                if not orange and duration <= HM_WARNING_1 then
+                    orange = true
+                    m:color(255, 150, 150)
+                end
+                if not red and duration <= HM_WARNING_2 then
+                    red = true
+                    m:color(255, 50, 50)
+                end
+                if duration <= 0 then
+                    return true
+                end
+            end
+            m.onFinish = function ()
+                ForUnitsInRange(GetUnitX(target), GetUnitY(target), 200., function (u)
+                    if IsUnitEnemy(u, m.owner) then
+                        Damage.apply(caster, u, HM_DAMAGE, false, false, udg_Machine, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                    end
+                end)
+                Knockback(
+                    target,
+                    m:getYaw(),
+                    HM_PUSH_DIST,
+                    2000.,
+                    HM_TARGET_EFFECT,
+                    nil
+                )
+            end
+            m.onRemove = function ()
+                SetUnitVertexColor(target, 255, 255, 255, 255)
+            end
+
+            Timed.call(2., function ()
+                m:launch()
+            end)
+        end)
+    end
+
+    local MB_DELAY = 2.5
+    local MB_DAMAGE_PER_SHOT = {180., 620.}
+    local MB_MAX_SHOTS = 12
+    local MB_AREA = 225.
+    local MB_MISSILE_MODEL = "Abilities\\Weapons\\GyroCopter\\GyroCopterMissile.mdl"
+    local MB_INTERVAL = 0.03125
+
+    local function onMissileBarrage(caster, x, y)
+        local owner = GetOwningPlayer(caster)
+        PauseUnit(caster, true)
+        SetUnitAnimation(caster, "spell")
+        BossIsCasting(caster, true)
+
+        local bar = ProgressBar.create()
+        bar:setColor(PLAYER_COLOR_PEANUT)
+        bar:setZOffset(450)
+        bar:setSize(1.3)
+        bar:setTargetUnit(caster)
+
+        local progress = 0
+        Timed.echo(0.02, MB_DELAY, function ()
+            if not UnitAlive(caster) then
+                bar:destroy()
+                return true
+            end
+            progress = progress + 0.02
+            bar:setPercentage((progress/MB_DELAY)*100, 1)
+        end, function ()
+            bar:destroy()
+            if UnitAlive(caster) then
+                local counter = MB_MAX_SHOTS
+                Timed.echo(MB_INTERVAL, function ()
+                    if counter == 0 or not UnitAlive(caster) then
+                        PauseUnit(caster, false)
+                        ResetUnitAnimation(caster)
+                        BossIsCasting(caster, false)
+                        return true
+                    end
+                    SetUnitAnimation(caster, "spell throw")
+
+                    local angle = 2 * math.pi * math.random()
+                    local dist = MB_AREA * math.random()
+                    local tx = x + dist * math.cos(angle)
+                    local ty = y + dist * math.sin(angle)
+                    local missile = Missiles:create(GetUnitX(caster), GetUnitY(caster), 25, tx, ty, 0)
+                    missile.source = caster
+                    missile.owner = owner
+                    missile.damage = MB_DAMAGE_PER_SHOT[secondPhase and 2 or 1]
+                    missile:model(MB_MISSILE_MODEL)
+                    missile:speed(900.)
+                    missile:arc(60.)
+                    missile.onFinish = function ()
+                        ForUnitsInRange(missile.x, missile.y, 128., function (u)
+                            if IsUnitEnemy(u, missile.owner) then
+                                Damage.apply(caster, u, missile.damage, true, false, udg_Water, DAMAGE_TYPE_COLD, WEAPON_TYPE_WHOKNOWS)
+                            end
+                        end)
+                    end
+                    missile:launch()
+                    counter = counter - 1
+                end)
+            end
+        end)
+    end
+
+    local SO_DELAY = 2.5
+    local SO_DAMAGE_PER_ORB = {300., 800.}
+    local SO_ORBS = {4, 5}
+    local SO_COLISION = 256.
+    local SO_MISSILE_MODEL = "Abilities\\Spells\\Orc\\Purge\\PurgeBuffTarget.mdl"
+    local SO_MAX_DISTANCE = 900.
+
+    local function onShockingOrbs(caster)
+        local owner = GetOwningPlayer(caster)
+
+        PauseUnit(caster, true)
+        SetUnitAnimation(caster, "spell")
+        BossIsCasting(caster, true)
+
+        local bar = ProgressBar.create()
+        bar:setColor(PLAYER_COLOR_CYAN)
+        bar:setZOffset(450)
+        bar:setSize(1.3)
+        bar:setTargetUnit(caster)
+
+        local progress = 0
+        Timed.echo(0.02, SO_DELAY, function ()
+            if not UnitAlive(caster) then
+                bar:destroy()
+                return true
+            end
+            progress = progress + 0.02
+            bar:setPercentage((progress/SO_DELAY)*100, 1)
+        end, function ()
+            bar:destroy()
+            if UnitAlive(caster) then
+                PauseUnit(caster, false)
+                SetUnitAnimation(caster, "spell throw")
+                BossIsCasting(caster, false)
+
+                local count = SO_ORBS[secondPhase and 2 or 1]
+                local x = GetUnitX(caster)
+                local y = GetUnitY(caster)
+                for i = 1, count do
+                    local angle = (i + math.random()) * (2 * math.pi / count)
+                    local tx = x + SO_MAX_DISTANCE * math.cos(angle)
+                    local ty = y + SO_MAX_DISTANCE * math.sin(angle)
+                    local missile = Missiles:create(x, y, 25, tx, ty, 25)
+                    missile.source = caster
+                    missile.owner = owner
+                    missile.damage = SO_DAMAGE_PER_ORB[secondPhase and 2 or 1]
+                    missile.collision = SO_COLISION
+                    missile:model(SO_MISSILE_MODEL)
+                    missile:arc(0.)
+                    missile:speed(200.)
+                    missile.onPeriod = function ()
+                        if missile.Speed < 900. then
+                            missile:speed(missile.Speed + 25.)
+                        end
+                    end
+                    missile.onHit = function (u)
+                        if IsUnitEnemy(u, missile.owner) then
+                            Damage.apply(caster, u, missile.damage, true, false, udg_Machine, DAMAGE_TYPE_LIGHTNING, WEAPON_TYPE_WHOKNOWS)
+                            DummyCast(owner, GetUnitX(u), GetUnitY(u), PURGE_SPELL, PURGE_ORDER, 1, CastType.TARGET, u)
+                        end
+                    end
+                    missile:launch()
+                end
+            end
+        end)
+    end
+
     InitBossFight({
         name = "Datamon",
         boss = boss,
@@ -185,14 +377,14 @@ OnInit(function ()
         inner = gg_rct_DatamonInner,
         entrance = gg_rct_DatamonEntrance,
         spells = {
-            FourCC('A0DZ'), 5, Orders.shadowstrike, CastType.TARGET, -- Homming Missile
-            MISSILE_BARRAGE, 3, Orders.breathoffire, CastType.POINT, -- Missile Barrage
-            MOVE, 2, Orders.avengerform, CastType.IMMEDIATE, -- Move
-            SHOCKING_ORBS, 2, Orders.fanofknives, CastType.IMMEDIATE, -- Shocking Orbs
+            5, CastType.TARGET, onHommingMissile, -- Homming Missile
+            4, CastType.POINT, onMissileBarrage, -- Missile Barrage
+            4, CastType.IMMEDIATE, onShockingOrbs-- Shocking Orbs
+        },
+        extraSpells = {
+            MOVE, Orders.avengerform, CastType.IMMEDIATE, -- Move
         },
         actions = function (u, unitsInTheField)
-            --BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)
-
             if canTrap then
                 cooldown = cooldown - 1
                 if cooldown <= 0 then
@@ -294,8 +486,6 @@ OnInit(function ()
             if not metamorphosis then
                 if goMetamorphosis then
                     metamorphosis = true
-                    SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 2)
-                    SetUnitAbilityLevel(boss, SHOCKING_ORBS, 2)
                     BossChangeAttack(boss, 1)
                     local current = 0
                     Timed.echo(0.02, 1., function ()
@@ -306,6 +496,9 @@ OnInit(function ()
                 end
             end
         end,
+        onStart = function ()
+            BlzStartUnitAbilityCooldown(boss, MOVE, 30.)
+        end,
         onReset = function ()
             secondPhase = false
             goMetamorphosis = false
@@ -315,8 +508,6 @@ OnInit(function ()
 
             if metamorphosis then
                 metamorphosis = false
-                SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 1)
-                SetUnitAbilityLevel(boss, SHOCKING_ORBS, 1)
                 BossChangeAttack(boss, 0)
                 local current = 0
                 Timed.echo(0.02, 1., function ()

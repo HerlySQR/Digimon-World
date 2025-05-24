@@ -36,9 +36,9 @@ OnInit(function ()
             end
             if refund then
                 local p = GetOwningPlayer(u)
-                SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + 1500)
-                SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) + 10)
-                SetBackpackItemCharges(p, udg_RARE_DATA, GetBackpackItemCharges(p, udg_RARE_DATA) + 27)
+                SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + 5000)
+                SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) + 20)
+                SetBackpackItemCharges(p, udg_RARE_DATA, GetBackpackItemCharges(p, udg_RARE_DATA) + 25)
                 ErrorMessage("You IV " .. whatIV .. " is maxed out.", p)
             end
         end

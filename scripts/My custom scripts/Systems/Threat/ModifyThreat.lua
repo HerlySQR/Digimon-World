@@ -44,7 +44,7 @@ OnInit("ModifyThreat", function ()
         local source = udg_DamageEventSource ---@type unit
         local target = udg_DamageEventTarget ---@type unit
 
-        if IsPlayerInGame(GetOwningPlayer(source)) and not IsPlayerInGame(GetOwningPlayer(target)) then
+        if source and target and IsPlayerInGame(GetOwningPlayer(source)) and not IsPlayerInGame(GetOwningPlayer(target)) then
             ZTS_ModifyThreat(source, target, applyModifiers(source, udg_DamageEventAmount * DAMAGE_THREAT_FACTOR), true)
         end
     end)

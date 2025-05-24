@@ -5,6 +5,7 @@ OnInit("BossFightUtils", function ()
     Require "Pathfinder"
     Require "Environment"
     Require "SpellAISystem"
+    Require "ProgressBar"
 
     local castDelay = 5. -- seconds
     local isCasting = {} ---@type boolean[]
@@ -325,7 +326,7 @@ OnInit("BossFightUtils", function ()
         return 0.7 + 0.1*n
     end
 
-    ---@param data {name: string, boss: unit, manualRevive: boolean, spells: table?, extraSpells: table?, castCondition: (fun():boolean)?, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
+    ---@param data {name: string, boss: unit, manualRevive: boolean, spells: table?, extraSpells: table?, castCondition: (fun(id: (integer|function), tx: (number|unit)?, ty: number?):boolean)?, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
     function InitBossFight(data)
         if type(data) ~= "table" then
             print("Bad data implemented in bossfight:", data)
@@ -352,19 +353,17 @@ OnInit("BossFightUtils", function ()
 
         local hitsDealt
         local actSpell
-        local spells ---@type {id: integer, weight: integer, order: integer, ttype: CastType}[]
-        local spellToCast
+        local spells ---@type {weight: integer, ttype: CastType, onActions: fun(caster: unit, x: (unit|number)?, y: number?)}[]
         local extraSpells ---@type {id: integer, order: integer, ttype: CastType}[]
         if data.spells then
             hitsDealt = 0
             actSpell = 1
             spells = {}
-            for i = 1, #data.spells // 4 do
+            for i = 1, #data.spells // 3 do
                 table.insert(spells, {
-                    id = data.spells[4*(i-1)+1],
-                    weight = data.spells[4*(i-1)+2],
-                    order = data.spells[4*(i-1)+3],
-                    ttype = data.spells[4*(i-1)+4]
+                    weight = data.spells[3*(i-1)+1],
+                    ttype = data.spells[3*(i-1)+2],
+                    onActions = data.spells[3*(i-1)+3]
                 })
             end
             if data.extraSpells then
@@ -583,29 +582,36 @@ OnInit("BossFightUtils", function ()
                                 if data.spells then
                                     if not isCasting[data.boss] then
                                         local stats = spells[actSpell]
-                                        if (GetUnitCurrentOrder(data.boss) == Orders.attack or GetUnitCurrentOrder(data.boss) == Orders.smart or GetUnitCurrentOrder(data.boss) == 0)
-                                            and (not data.castCondition or data.castCondition()) then
+                                        if not isCasting[data.boss]
+                                            and (GetUnitCurrentOrder(data.boss) == Orders.attack or GetUnitCurrentOrder(data.boss) == Orders.smart or GetUnitCurrentOrder(data.boss) == 0)
+                                            and not IsUnitPaused(data.boss) then
+
+                                            local tx, ty
+                                            if stats.ttype == CastType.POINT then
+                                                tx, ty = GetUnitX(u), GetUnitY(u)
+                                            elseif stats.ttype == CastType.TARGET then
+                                                tx = u
+                                            end
+
                                             if hitsDealt >= stats.weight then
-                                                if GetUnitAbilityLevel(data.boss, stats.id) > 0 then
+                                                if not data.castCondition or data.castCondition(stats.onActions, tx, ty) then
                                                     if stats.ttype == CastType.IMMEDIATE then
-                                                        IssueImmediateOrderById(data.boss, stats.order)
+                                                        stats.onActions(data.boss)
                                                     elseif stats.ttype == CastType.POINT then
-                                                        IssuePointOrderById(data.boss, stats.order, GetUnitX(u), GetUnitY(u))
+                                                        SetUnitFacing(data.boss, math.deg(math.atan(ty - GetUnitY(data.boss), tx - GetUnitX(data.boss))))
+                                                        stats.onActions(data.boss, tx, ty)
                                                     elseif stats.ttype == CastType.TARGET then
-                                                        IssueTargetOrderById(data.boss, stats.order, u)
+                                                        SetUnitFacing(data.boss, math.deg(math.atan(GetUnitY(u) - GetUnitY(data.boss), GetUnitX(u) - GetUnitX(data.boss))))
+                                                        stats.onActions(data.boss, u)
                                                     end
-                                                    spellToCast = stats.id
-                                                    print(1, GetAbilityName(stats.id))
-                                                else
-                                                    hitsDealt = 0
-                                                    actSpell = actSpell + 1
-                                                    if actSpell > #spells then
-                                                        actSpell = 1
-                                                    end
-                                                    print(2, GetAbilityName(stats.id))
+                                                end
+                                                hitsDealt = 0
+                                                actSpell = actSpell + 1
+                                                if actSpell > #spells then
+                                                    actSpell = 1
                                                 end
                                             elseif extraSpells then
-                                                local options = {}
+                                                local options = {} ---@type {id: integer, order: integer, ttype: CastType}[]
                                                 for i = 1, #extraSpells do
                                                     local spell = extraSpells[i].id
                                                     if BlzGetUnitAbilityCooldownRemaining(data.boss, spell) <= 0.
@@ -616,12 +622,14 @@ OnInit("BossFightUtils", function ()
                                                 end
                                                 local extaStats = options[math.random(#options)]
                                                 if extaStats then
-                                                    if extaStats.ttype == CastType.IMMEDIATE then
-                                                        IssueImmediateOrderById(data.boss, extaStats.order)
-                                                    elseif extaStats.ttype == CastType.POINT then
-                                                        IssuePointOrderById(data.boss, extaStats.order, GetUnitX(u), GetUnitY(u))
-                                                    elseif extaStats.ttype == CastType.TARGET then
-                                                        IssueTargetOrderById(data.boss, extaStats.order, u)
+                                                    if not data.castCondition or data.castCondition(extaStats.id, tx, ty) then
+                                                        if extaStats.ttype == CastType.IMMEDIATE then
+                                                            IssueImmediateOrderById(data.boss, extaStats.order)
+                                                        elseif extaStats.ttype == CastType.POINT then
+                                                            IssuePointOrderById(data.boss, extaStats.order, tx, ty)
+                                                        elseif extaStats.ttype == CastType.TARGET then
+                                                            IssueTargetOrderById(data.boss, extaStats.order, u)
+                                                        end
                                                     end
                                                 end
                                             end
@@ -862,18 +870,6 @@ OnInit("BossFightUtils", function ()
                 if (info.source == data.boss or info.source.root == data.boss) and udg_IsDamageAttack then
                     if math.random() < hitChance then
                         hitsDealt = hitsDealt + 1
-                    end
-                end
-            end)
-
-            local t = CreateTrigger()
-            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_EFFECT)
-            TriggerAddAction(t, function ()
-                if GetSpellAbilityId() == spellToCast then
-                    hitsDealt = 0
-                    actSpell = actSpell + 1
-                    if actSpell > #spells then
-                        actSpell = 1
                     end
                 end
             end)
