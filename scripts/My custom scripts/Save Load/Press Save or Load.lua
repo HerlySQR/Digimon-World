@@ -23,6 +23,7 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     ---@class PlayerData: Serializable
+    ---@field id string
     ---@field gold integer
     ---@field lumber integer
     ---@field food integer
@@ -56,6 +57,14 @@ OnInit("PressSaveOrLoad", function ()
             self.vistedPlaces = GetVisitedPlaces(p)
             self.vistedPlaceCount = #self.vistedPlaces
             self.materials = MaterialData.create(p)
+            local id = ""
+            for k, v in pairs(self.date) do
+                if k == "isdst" then
+                    v = v and "1" or "0"
+                end
+                id = id .. v
+            end
+            self.id = id
         end
         return self
     end
@@ -71,6 +80,7 @@ OnInit("PressSaveOrLoad", function ()
         end
         self:addProperty("slot", self.slot)
         self:addProperty("materials", self.materials:serialize())
+        self:addProperty("id", self.id)
     end
 
     function PlayerData:deserializeProperties()
@@ -88,6 +98,7 @@ OnInit("PressSaveOrLoad", function ()
         end
         self.materials = MaterialData.create()
         self.materials:deserialize(self:getStringProperty("materials"))
+        self.id = self:getStringProperty("id")
     end
 
     local PlayerDatas = {} ---@type table<player, PlayerData[]>
@@ -143,10 +154,10 @@ OnInit("PressSaveOrLoad", function ()
         end
 
         PlayerDatas[p][slot] = data
-        DigimonDatas[p][slot] = SaveDigimons(p, slot)
-        BackpackDatas[p][slot] = SaveBackpack(p, slot)
-        QuestDatas[p][slot] = SaveQuests(p, slot)
-        data.unlockedInfo = SaveDiary(p, slot)
+        DigimonDatas[p][slot] = SaveDigimons(p, slot, data.id)
+        BackpackDatas[p][slot] = SaveBackpack(p, slot, data.id)
+        QuestDatas[p][slot] = SaveQuests(p, slot, data.id)
+        data.unlockedInfo = SaveDiary(p, slot, data.id)
     end
 
     ---@param p player
@@ -167,26 +178,39 @@ OnInit("PressSaveOrLoad", function ()
             return false
         end
 
+        local id = data.id
 
+        print("a")
+        print(id)
         local bdata = LoadDigimons(p, slot)
-        if not bdata then
+        print(bdata and bdata.id)
+        if not bdata or bdata.id ~= id then
             return false
         end
 
         local pdata = LoadBackpack(p, slot)
-        if not pdata then
+        print(pdata and pdata.ind)
+        if not pdata or pdata.ind ~= id then
             return false
         end
 
         local qdata = LoadQuests(p, slot)
-        if not qdata then
+        print(qdata and qdata.ind)
+        print(1)
+        if not qdata or qdata.ind ~= id then
             return false
         end
+        print(2)
 
         data.unlockedInfo = LoadDiary(p, slot)
-        if not data.unlockedInfo then
+        print(data.unlockedInfo)
+        if data.unlockedInfo then
+            print(data.unlockedInfo.id)
+        end
+        if not data.unlockedInfo or data.unlockedInfo.id ~= id then
             return false
         end
+        print("b")
 
         PlayerDatas[p][slot] = data
         DigimonDatas[p][slot] = bdata
@@ -238,6 +262,7 @@ OnInit("PressSaveOrLoad", function ()
     local LocalPlayer = GetLocalPlayer()
 
     local Pressed = __jarray(0) ---@type table<player, integer>
+    local SeeSaveLoad = nil ---@type framehandle
     local SaveButton = nil ---@type framehandle
     local BackdropSaveButton = nil ---@type framehandle
     local LoadButton = nil ---@type framehandle
@@ -270,7 +295,7 @@ OnInit("PressSaveOrLoad", function ()
     local AbsoluteLoad = nil ---@type framehandle
     local Exit = nil ---@type framehandle
 
-    local NotOnline = true
+    local NotOnline = false
     local QuestsAdded = {}
     local paused = __jarray(true)
 
@@ -426,12 +451,12 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     OnInit.final(function ()
-        NotOnline = true
+        NotOnline = not udg_SaveOnSinglePlayer and GameStatus.get() ~= GameStatus.ONLINE
 
         PolledWait(1.)
 
         if NotOnline then
-            print("Save data is disabled.")
+            print("You are on Singleplayer, save is disabled.")
             BlzFrameSetEnable(AbsoluteSave, false)
         else
             -- Auto-save
@@ -462,6 +487,18 @@ OnInit("PressSaveOrLoad", function ()
                 end)
             end)
         end
+    end)
+
+    Timed.echo(0.5, function ()
+        local show = true
+        local list = GetUsedDigimons(LocalPlayer)
+        for _, d in pairs(list) do
+            if d.onCombat then
+                show = false
+                break
+            end
+        end
+        BlzFrameSetVisible(SeeSaveLoad, show)
     end)
 
     local function SaveLoadActions(p, slot)
@@ -532,13 +569,16 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     local function InitFrames()
-        local t = nil ---@type trigger
-
         BlzLoadTOCFile("ButtonsTOC.toc")
         BlzLoadTOCFile("war3mapImported\\slider.toc")
 
+        SeeSaveLoad = BlzCreateFrameByType("BACKDROP", "BackdropSaveButton", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
+        BlzFrameSetAbsPoint(SeeSaveLoad, FRAMEPOINT_TOPLEFT, 0, 0)
+        BlzFrameSetAbsPoint(SeeSaveLoad, FRAMEPOINT_BOTTOMRIGHT, 0, 0)
+        BlzFrameSetTexture(SeeSaveLoad, "war3mapImported\\EmptyBTN.blp", 0, true)
+
         -- Save Button
-        SaveButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
+        SaveButton = BlzCreateFrame("IconButtonTemplate", SeeSaveLoad, 0, 0)
         AddButtonToTheRight(SaveButton, 9)
         BlzFrameSetText(SaveButton, "|cff" .. NormalColor .. "Save|r")
         BlzFrameSetVisible(SaveButton, false)
@@ -553,7 +593,7 @@ OnInit("PressSaveOrLoad", function ()
 
         -- Load Button
 
-        LoadButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
+        LoadButton = BlzCreateFrame("IconButtonTemplate", SeeSaveLoad,0,0)
         AddButtonToTheRight(LoadButton, 10)
         BlzFrameSetText(LoadButton, "|cff" .. NormalColor .. "Load|r")
         BlzFrameSetVisible(LoadButton, false)
@@ -568,7 +608,7 @@ OnInit("PressSaveOrLoad", function ()
 
         -- Menu
 
-        SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
+        SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", SeeSaveLoad,0,0)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.27, 0.535000)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.280000)
         BlzFrameSetVisible(SaveLoadMenu, false)

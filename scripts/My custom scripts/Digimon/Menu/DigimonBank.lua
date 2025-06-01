@@ -187,13 +187,16 @@ OnInit("DigimonBank", function ()
     ---@field rItms integer
     ---@field rCd number
     ---@field slot integer
+    ---@field id string
     BankData = setmetatable({}, Serializable)
     BankData.__index = BankData
 
-    ---@param main? Bank
+    ---@overload fun(slot: integer): BankData
+    ---@param main Bank
     ---@param slot integer
+    ---@param id string
     ---@return BankData|Serializable
-    function BankData.create(main, slot)
+    function BankData.create(main, slot, id)
         local self = {
             stocked = {},
             maxSaved = 0,
@@ -205,10 +208,12 @@ OnInit("DigimonBank", function ()
             rCd = 0.,
         }
         if type(main) == "number" then
+            id = slot
             slot = main
             main = nil
         end
         self.slot = slot
+        self.id = id or ""
         if main then
             for i = 0, MAX_STOCK - 1 do
                 if main.stocked[i] then
@@ -256,6 +261,7 @@ OnInit("DigimonBank", function ()
         self:addProperty("rItms", self.rItms)
         self:addProperty("rCd", self.rCd)
         self:addProperty("slot", self.slot)
+        self:addProperty("id", self.id)
     end
 
     function BankData:deserializeProperties()
@@ -288,6 +294,7 @@ OnInit("DigimonBank", function ()
         end
         self.rItms = self:getIntProperty("rItms")
         self.rCd = self:getRealProperty("rCd")
+        self.id = self:getStringProperty("id")
     end
 
     -- Conditions
@@ -2636,10 +2643,11 @@ OnInit("DigimonBank", function ()
 
     ---@param p player
     ---@param slot integer
+    ---@param id string
     ---@return BankData
-    function SaveDigimons(p, slot)
+    function SaveDigimons(p, slot, id)
         local fileRoot = SaveFile.getPath2(p, slot, udg_DIGIMON_BANK_ROOT)
-        local data = BankData.create(Bank[GetPlayerId(p)], slot)
+        local data = BankData.create(Bank[GetPlayerId(p)], slot, id)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then

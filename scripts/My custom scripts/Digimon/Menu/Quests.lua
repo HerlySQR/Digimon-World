@@ -79,13 +79,16 @@ OnInit("Quests", function ()
     ---@field comp boolean[]
     ---@field cret boolean[]
     ---@field slot integer
+    ---@field ind string
     QuestData = setmetatable({}, Serializable)
     QuestData.__index = QuestData
 
-    ---@param p player?
+    ---@overload fun(slot: integer): QuestData
+    ---@param p player
     ---@param slot integer
+    ---@param ind string
     ---@return QuestData | Serializable
-    function QuestData.create(p, slot)
+    function QuestData.create(p, slot, ind)
         local self = setmetatable({
             amount = 0,
             id = __jarray(0),
@@ -94,10 +97,12 @@ OnInit("Quests", function ()
             cret = __jarray(false)
         }, QuestData)
         if type(p) == "number" then
+            ind = slot
             slot = p
             p = nil
         end
         self.slot = slot
+        self.ind = ind or ""
         if p then
             for i = 0, MAX_QUESTS do
                 local quest = PlayerQuests[p][i]
@@ -122,6 +127,7 @@ OnInit("Quests", function ()
             self:addProperty("cret" .. i, self.cret[i])
         end
         self:addProperty("slot", self.slot)
+        self:addProperty("ind", self.ind)
     end
 
     function QuestData:deserializeProperties()
@@ -136,6 +142,7 @@ OnInit("Quests", function ()
             self.comp[i] = self:getBoolProperty("comp" .. i)
             self.cret[i] = self:getBoolProperty("cret" .. i)
         end
+        self.ind = self:getStringProperty("ind")
     end
 
     local function UpdateMenu()
@@ -798,10 +805,11 @@ OnInit("Quests", function ()
 
     ---@param p player
     ---@param slot integer
+    ---@param id string
     ---@return QuestData
-    function SaveQuests(p, slot)
+    function SaveQuests(p, slot, id)
         local fileRoot = SaveFile.getPath2(p, slot, udg_QUEST_ROOT)
-        local data = QuestData.create(p, slot)
+        local data = QuestData.create(p, slot, id)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then

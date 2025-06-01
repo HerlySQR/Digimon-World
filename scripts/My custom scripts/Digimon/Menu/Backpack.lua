@@ -66,13 +66,16 @@ OnInit("Backpack", function ()
     ---@field charges integer[]
     ---@field slot integer[]
     ---@field sslot integer
+    ---@field ind string
     BackpackData = setmetatable({}, Serializable)
     BackpackData.__index = BackpackData
 
-    ---@param backpack? Backpack
+    ---@overload fun(slot: integer): BackpackData
+    ---@param backpack Backpack
     ---@param sslot integer
+    ---@param ind string
     ---@return Serializable
-    function BackpackData.create(backpack, sslot)
+    function BackpackData.create(backpack, sslot, ind)
         local self = setmetatable({
             amount = 0,
             id = {},
@@ -81,10 +84,12 @@ OnInit("Backpack", function ()
         }, BackpackData)
 
         if type(backpack) == "number" then
+            ind = sslot
             sslot = backpack
             backpack = nil
         end
         self.sslot = sslot
+        self.ind = ind or ""
 
         if backpack then
             for i, data in ipairs(backpack.items) do
@@ -106,6 +111,7 @@ OnInit("Backpack", function ()
             self:addProperty("slot" .. i, self.slot[i])
         end
         self:addProperty("sslot", self.sslot)
+        self:addProperty("ind", self.ind)
     end
 
     function BackpackData:deserializeProperties()
@@ -119,6 +125,7 @@ OnInit("Backpack", function ()
             self.charges[i] = self:getIntProperty("charges" .. i)
             self.slot[i] = self:getIntProperty("slot" .. i)
         end
+        self.ind = self:getStringProperty("ind")
     end
 
     local Backpacks = {} ---@type table<player, Backpack>
@@ -914,10 +921,11 @@ OnInit("Backpack", function ()
 
     ---@param p player
     ---@param slot integer
+    ---@param id string
     ---@return BackpackData
-    function SaveBackpack(p, slot)
+    function SaveBackpack(p, slot, id)
         local fileRoot = SaveFile.getPath2(p, slot, udg_BACKPACK_ROOT)
-        local data = BackpackData.create(Backpacks[p], slot)
+        local data = BackpackData.create(Backpacks[p], slot, id)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then

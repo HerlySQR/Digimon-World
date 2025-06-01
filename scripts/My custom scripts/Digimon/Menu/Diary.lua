@@ -541,13 +541,16 @@ OnInit("Diary", function ()
     ---@field itemsUnlocked integer
     ---@field items integer[]
     ---@field slot integer
+    ---@field id string
     UnlockedInfoData = setmetatable({}, Serializable)
     UnlockedInfoData.__index = UnlockedInfoData
 
-    ---@param p player?
+    ---@overload fun(slot: integer): UnlockedInfoData
+    ---@param p player
     ---@param slot integer
+    ---@param ind string
     ---@return UnlockedInfoData
-    function UnlockedInfoData.create(p, slot)
+    function UnlockedInfoData.create(p, slot, ind)
         local self = setmetatable({
             p = p,
             amount = 0,
@@ -560,10 +563,12 @@ OnInit("Diary", function ()
         }, UnlockedInfoData)
 
         if type(p) == "number" then
+            ind = slot
             slot = p
             p = nil
         end
         self.slot = slot
+        self.id = ind or ""
 
         if p then
             for id, info in pairs(unlockedDigiInfos[p]) do
@@ -599,6 +604,7 @@ OnInit("Diary", function ()
             self:addProperty("itms" .. i, self.items[i])
         end
         self:addProperty("slot", self.slot)
+        self:addProperty("id", self.id)
     end
 
     function UnlockedInfoData:deserializeProperties()
@@ -618,6 +624,7 @@ OnInit("Diary", function ()
         for i = 1, self.itemsUnlocked do
             self.items[i] = self:getIntProperty("itms" .. i)
         end
+        self.id = self:getStringProperty("id")
     end
 
     function UnlockedInfoData:apply()
@@ -2139,10 +2146,11 @@ OnInit("Diary", function ()
 
     ---@param p player
     ---@param slot integer
+    ---@param id string
     ---@return UnlockedInfoData
-    function SaveDiary(p, slot)
+    function SaveDiary(p, slot, id)
         local fileRoot = SaveFile.getPath2(p, slot, udg_DIARY_ROOT)
-        local data = UnlockedInfoData.create(p, slot)
+        local data = UnlockedInfoData.create(p, slot, id)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then
