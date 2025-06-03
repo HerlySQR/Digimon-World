@@ -995,6 +995,13 @@ OnInit("Digimon", function ()
     GlobalRemap("udg_SetEpic", nil, function (id) rarities[id] = Rarity.EPIC end)
     GlobalRemap("udg_SetLegendary", nil, function (id) rarities[id] = Rarity.LEGENDARY end)
 
+    -- Assign illusions as summons
+    Digimon.createEvent:register(function (d)
+        if IsUnitIllusion(d.root) then
+            d.isSummon = true
+        end
+    end)
+
     -- Init rarities
     OnInit.trig(function ()
         TriggerExecute(gg_trg_Set_rarities)

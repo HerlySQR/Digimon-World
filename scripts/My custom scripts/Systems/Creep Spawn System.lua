@@ -293,9 +293,15 @@ OnInit(function ()
         for node = start, finish do
             regionData = All[node]
             -- Check if the unit nearby the spawn region belongs to a player
-            regionData.inregion = false
             lvl = 1
-            ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, checkForPlayerUnits)
+            if not regionData.inregion then
+                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, checkForPlayerUnits)
+                if regionData.inregion then
+                    for rd in regionData.sameRegion:elements() do
+                        rd.inregion = true
+                    end
+                end
+            end
             -- Check if a unit is still nearby the spawn region
             regionData.someoneClose = true
             -- Control the creep or the spawn
@@ -311,8 +317,14 @@ OnInit(function ()
                 regionData.delay = regionData.delay - INTERVAL
                 regionData.waitToSpawn = regionData.waitToSpawn - INTERVAL
             else
-                regionData.someoneClose = false
-                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, checkForSomeoneClose)
+                if not regionData.someoneClose then
+                    ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, checkForSomeoneClose)
+                    if regionData.someoneClose then
+                        for rd in regionData.sameRegion:elements() do
+                            rd.inregion = true
+                        end
+                    end
+                end
                 regionData.delay = math.max(regionData.delay, DELAY_NORMAL)
             end
 
@@ -348,25 +360,30 @@ OnInit(function ()
                     end
                 end
 
-                bossNearby = false
-                ForUnitsInRange(creep:getX(), creep:getY(), 1000., checkForBossNearby)
+                if creep:getCurrentOrder() ~= Orders.smart then
+                    bossNearby = false
+                    ForUnitsInRange(creep:getX(), creep:getY(), 1000., checkForBossNearby)
 
-                if not bossNearby then
-                    if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
-                        local dist = GetRandomReal(128, 384)
-                        local angle = GetRandomReal(0, 2*math.pi)
-                        local x, y = creep:getX() + dist * math.cos(angle), creep:getY() + dist * math.sin(angle)
-                        if IsTerrainWalkable(x, y) then
-                            creep:issueOrder(Orders.attack, x, y)
+                    if not bossNearby then
+                        if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
+                            local dist = GetRandomReal(128, 384)
+                            local angle = GetRandomReal(0, 2*math.pi)
+                            local x, y = creep:getX() + dist * math.cos(angle), creep:getY() + dist * math.sin(angle)
+                            if IsTerrainWalkable(x, y) then
+                                creep:issueOrder(Orders.attack, x, y)
+                            end
                         end
+                    else
+                        creep:issueOrder(Orders.smart, regionData.spawnpoint.x, regionData.spawnpoint.y)
                     end
-                else
-                    creep:issueOrder(Orders.smart, regionData.spawnpoint.x, regionData.spawnpoint.y)
                 end
             end
             if not PlayersInRegion:isEmpty() then
                 PlayersInRegion:clear()
             end
+
+            regionData.inregion = false
+            regionData.someoneClose = false
         end
 
         while true do

@@ -574,7 +574,7 @@ OnInit(function ()
                 end
             end)
             ForForce(owners, function ()
-                CreateItem(RARE_DATA, GetUnitX(boss), GetUnitY(boss))
+                CreateItem(udg_RARE_DATA, GetUnitX(boss), GetUnitY(boss))
             end)
             DestroyForce(owners)
         end,

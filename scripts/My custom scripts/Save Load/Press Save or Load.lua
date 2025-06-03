@@ -180,37 +180,25 @@ OnInit("PressSaveOrLoad", function ()
 
         local id = data.id
 
-        print("a")
-        print(id)
         local bdata = LoadDigimons(p, slot)
-        print(bdata and bdata.id)
         if not bdata or bdata.id ~= id then
             return false
         end
 
         local pdata = LoadBackpack(p, slot)
-        print(pdata and pdata.ind)
         if not pdata or pdata.ind ~= id then
             return false
         end
 
         local qdata = LoadQuests(p, slot)
-        print(qdata and qdata.ind)
-        print(1)
         if not qdata or qdata.ind ~= id then
             return false
         end
-        print(2)
 
         data.unlockedInfo = LoadDiary(p, slot)
-        print(data.unlockedInfo)
-        if data.unlockedInfo then
-            print(data.unlockedInfo.id)
-        end
         if not data.unlockedInfo or data.unlockedInfo.id ~= id then
             return false
         end
-        print("b")
 
         PlayerDatas[p][slot] = data
         DigimonDatas[p][slot] = bdata
@@ -295,7 +283,7 @@ OnInit("PressSaveOrLoad", function ()
     local AbsoluteLoad = nil ---@type framehandle
     local Exit = nil ---@type framehandle
 
-    local NotOnline = false
+    local NotOnline = true
     local QuestsAdded = {}
     local paused = __jarray(true)
 
@@ -451,12 +439,12 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     OnInit.final(function ()
-        NotOnline = not udg_SaveOnSinglePlayer and GameStatus.get() ~= GameStatus.ONLINE
+        NotOnline = true
 
         PolledWait(1.)
 
         if NotOnline then
-            print("You are on Singleplayer, save is disabled.")
+            print("Save data is disabled.")
             BlzFrameSetEnable(AbsoluteSave, false)
         else
             -- Auto-save

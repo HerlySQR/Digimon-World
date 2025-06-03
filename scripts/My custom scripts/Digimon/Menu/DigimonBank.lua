@@ -12,11 +12,14 @@ OnInit("DigimonBank", function ()
 
     local MAX_STOCK = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
+    local MAX_SAVED_2 = udg_MAX_SAVED_DIGIMONS_2
     local MAX_USED = udg_MAX_USED_DIGIMONS
     local MIN_SAVED_ITEMS = udg_MIN_SAVED_ITEMS
     local MAX_SAVED_ITEMS = udg_MAX_SAVED_ITEMS
     local NEW_ITEM_SLOT_COST_BITS = 1500
     local NEW_ITEM_SLOT_COST_CRYSTALS = 2
+    local NEW_DIGIMON_SLOT_COST_RARE_DATA = 15
+    local NEW_DIGIMON_SLOT_COST_CRYSTALS_2 = 5
     local NEW_DIGIMON_SLOT_COST_BITS = 3500
     local NEW_DIGIMON_SLOT_COST_CRYSTALS = 4
     local REVIVE_ITEM = udg_REVIVE_ITEM
@@ -67,7 +70,7 @@ OnInit("DigimonBank", function ()
     local SavedTooltipText = {} ---@type framehandle[]
     local Swap = nil ---@type framehandle
     local ExitSave = nil ---@type framehandle
-    -- Item
+    -- DIGIMON
     local ItemMenu = nil ---@type framehandle
     local ExitItem = nil ---@type framehandle
     local SaveItemDrop = nil ---@type framehandle
@@ -788,7 +791,7 @@ OnInit("DigimonBank", function ()
             BlzFrameSetPoint(UsingTooltip[i], FRAMEPOINT_TOPLEFT, UsingTooltipText[i], FRAMEPOINT_TOPLEFT, -0.015000, 0.015000)
             BlzFrameSetPoint(UsingTooltip[i], FRAMEPOINT_BOTTOMRIGHT, UsingTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, 0.015000, -0.015000)
         end
-        for i = 0, MAX_SAVED - 1 do
+        for i = 0, MAX_SAVED_2 - 1 do
             if i < bank.savedDigimonsStock then
                 local d = bank.saved[i] ---@type Digimon
                 if d then
@@ -1108,17 +1111,34 @@ OnInit("DigimonBank", function ()
                 end
             end
         elseif bank.wantDigimonSlot then
-            local requiredGold = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_BITS
-            local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS
-            if playerGold >= requiredGold and playerLumber >= requiredLumber then
-                SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, playerGold - requiredGold)
-                SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, playerLumber - requiredLumber)
-                bank.savedDigimonsStock = bank.savedDigimonsStock + 1
-            else
-                if playerGold < requiredGold then
-                    ErrorMessage("You don't have enough digibits", p)
+            if bank.savedDigimonsStock < MAX_SAVED then
+                local requiredGold = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_BITS
+                local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS
+                if playerGold >= requiredGold and playerLumber >= requiredLumber then
+                    SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, playerGold - requiredGold)
+                    SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, playerLumber - requiredLumber)
+                    bank.savedDigimonsStock = bank.savedDigimonsStock + 1
                 else
-                    ErrorMessage("You don't have enough digicrystals", p)
+                    if playerGold < requiredGold then
+                        ErrorMessage("You don't have enough digibits", p)
+                    else
+                        ErrorMessage("You don't have enough digicrystals", p)
+                    end
+                end
+            else
+                local playerRareData = GetBackpackItemCharges(p, udg_RARE_DATA)
+
+                local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS_2
+                if playerRareData >= NEW_DIGIMON_SLOT_COST_RARE_DATA and playerLumber >= requiredLumber then
+                    SetBackpackItemCharges(p, udg_RARE_DATA, playerRareData - NEW_DIGIMON_SLOT_COST_RARE_DATA)
+                    SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, playerLumber - requiredLumber)
+                    bank.savedDigimonsStock = bank.savedDigimonsStock + 1
+                else
+                    if playerRareData < NEW_DIGIMON_SLOT_COST_RARE_DATA then
+                        ErrorMessage("You don't have enough rare data", p)
+                    else
+                        ErrorMessage("You don't have enough digicrystals", p)
+                    end
                 end
             end
         end
@@ -1189,9 +1209,14 @@ OnInit("DigimonBank", function ()
         else
             bank.wantDigimonSlot = true
             if p == LocalPlayer then
-                local requiredGold = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_BITS
-                local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS
-                BlzFrameSetText(BuySlotMessage, "Do you want to buy a new digimon slot for |cff828282" .. requiredGold .. " digibits|r and |cffc882c8" ..requiredLumber .. " digiCrystals|r?")
+                if bank.savedDigimonsStock < MAX_SAVED then
+                    local requiredGold = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_BITS
+                    local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS
+                    BlzFrameSetText(BuySlotMessage, "Do you want to buy a new digimon slot for |cff828282" .. requiredGold .. " digibits|r and |cffc882c8" ..requiredLumber .. " digiCrystals|r?")
+                else
+                    local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS_2
+                    BlzFrameSetText(BuySlotMessage, "Do you want to buy a new digimon slot for |cffc882c8" ..requiredLumber .. " digiCrystals|r and |cffd45e19" .. NEW_DIGIMON_SLOT_COST_RARE_DATA .. " rare data|r?")
+                end
                 for j = 0, bank.savedDigimonsStock do
                     if SavedDigimonT[j] then
                         BlzFrameSetEnable(SavedDigimonT[j], false)
@@ -1639,15 +1664,15 @@ OnInit("DigimonBank", function ()
         OnClickEvent(SaveItem, function (p) UseCaster(p, "Z") end)]]
 
         SavedDigimons = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.195000, 0.510000)
-        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, 0.605000, 0.180000)
+        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.0950000, 0.510000)
+        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, 0.705000, 0.180000)
         BlzFrameSetVisible(SavedDigimons, false)
         AddFrameToMenu(SavedDigimons)
 
         Using = BlzCreateFrameByType("TEXT", "name", SavedDigimons, "", 0)
         BlzFrameSetScale(Using, 1.29)
-        BlzFrameSetPoint(Using, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.035000, -0.030000)
-        BlzFrameSetPoint(Using, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.27500, 0.28000)
+        BlzFrameSetPoint(Using, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.045000, -0.030000)
+        BlzFrameSetPoint(Using, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.46500, 0.28000)
         BlzFrameSetText(Using, "|cffFFCC00Using|r")
         BlzFrameSetEnable(Using, false)
         BlzFrameSetTextAlignment(Using, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
@@ -1656,9 +1681,9 @@ OnInit("DigimonBank", function ()
         for i = 0, part - 1 do
             for j = 0, 1 do
                 local index = i + part * j
-                x1[index] = 0.035000 + j * 0.05000
+                x1[index] = 0.045000 + j * 0.05000
                 y1[index] = -0.070000 - i * 0.05000
-                x2[index] = -0.32500 + j * 0.05000
+                x2[index] = -0.51500 + j * 0.05000
                 y2[index] = 0.21000 - i * 0.05000
             end
         end
@@ -1712,24 +1737,24 @@ OnInit("DigimonBank", function ()
 
         Saved = BlzCreateFrameByType("TEXT", "name", SavedDigimons, "", 0)
         BlzFrameSetScale(Saved, 1.29)
-        BlzFrameSetPoint(Saved, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.22500, -0.030000)
-        BlzFrameSetPoint(Saved, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.085000, 0.28000)
+        BlzFrameSetPoint(Saved, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.32500, -0.030000)
+        BlzFrameSetPoint(Saved, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.18500, 0.28000)
         BlzFrameSetText(Saved, "|cffFFCC00Saved|r")
         BlzFrameSetEnable(Saved, false)
         BlzFrameSetTextAlignment(Saved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
-        part = MAX_SAVED // 4
+        part = MAX_SAVED_2 // 4
         for i = 0, part - 1 do
             for j = 0, 3 do
-                local index = i + part * j
-                x1[index] = 0.17500 + j * 0.05000
-                y1[index] = -0.070000 - i * 0.05000
-                x2[index] = -0.18500 + j * 0.05000
-                y2[index] = 0.21000 - i * 0.05000
+                local index = 4*i + j
+                x1[index] = 0.17500 + i * 0.05000
+                y1[index] = -0.070000 - j * 0.05000
+                x2[index] = -0.38500 + i * 0.05000
+                y2[index] = 0.21000 - j * 0.05000
             end
         end
 
-        for i = 0, MAX_SAVED - 1 do
+        for i = 0, MAX_SAVED_2 - 1 do
             SavedDigimonT[i] = BlzCreateFrame("IconButtonTemplate", SavedDigimons, 0, 0)
             BlzFrameSetPoint(SavedDigimonT[i], FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, x1[i], y1[i])
             BlzFrameSetPoint(SavedDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, x2[i], y2[i])
@@ -1769,15 +1794,14 @@ OnInit("DigimonBank", function ()
 
         Swap = BlzCreateFrame("ScriptDialogButton", SavedDigimons, 0, 0)
         BlzFrameSetScale(Swap, 1.29)
-        BlzFrameSetPoint(Swap, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.16000, -0.28000)
-        BlzFrameSetPoint(Swap, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.17000, 0.020000)
+        BlzFrameSetPoint(Swap, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.26000, -0.28000)
+        BlzFrameSetPoint(Swap, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.27000, 0.020000)
         BlzFrameSetText(Swap, "|cffFCD20DSwap|r")
         BlzFrameSetEnable(Swap, false)
         OnClickEvent(Swap, SwapFunc)
 
         ExitSave = BlzCreateFrame("ScriptDialogButton", SavedDigimons, 0, 0)
-        BlzFrameSetScale(ExitSave, 1.00)
-        BlzFrameSetPoint(ExitSave, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.37500, -0.0050000)
+        BlzFrameSetPoint(ExitSave, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.57500, -0.0050000)
         BlzFrameSetPoint(ExitSave, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.30000)
         BlzFrameSetText(ExitSave, "|cffFCD20DX|r")
         OnClickEvent(ExitSave, ExitSaveFunc)
@@ -2413,7 +2437,7 @@ OnInit("DigimonBank", function ()
     function GetSavedDigimons(p)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
         local result = {}
-        for i = 0, MAX_SAVED - 1 do
+        for i = 0, MAX_SAVED_2 - 1 do
             if bank.saved[i] then
                 table.insert(result, bank.saved[i])
             end

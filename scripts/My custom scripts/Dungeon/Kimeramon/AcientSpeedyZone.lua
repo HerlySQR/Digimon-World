@@ -28,6 +28,8 @@ OnInit.final(function ()
     local STUN = FourCC('BPSE')
     local VOLCANIC_EXPLOSION = FourCC('A0GA')
     local VOLCANIC_EXPLOSION_ORDER = Orders.summongrizzly
+    local SCORCHING_HEAT = FourCC('A02C')
+    local SCORCHING_HEAT_ORDER = Orders.thunderclap
     local THUNDERCLAP = FourCC('A0JP')
 
     local boss = gg_unit_O06V_0193 ---@type unit
@@ -78,6 +80,7 @@ OnInit.final(function ()
             elseif typ == VOLCAMON then
                 table.insert(volcamons, u)
                 UnitAddAbility(u, VOLCANIC_EXPLOSION)
+                UnitAddAbility(u, SCORCHING_HEAT)
                 AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
@@ -136,6 +139,7 @@ OnInit.final(function ()
                 elseif typ == VOLCAMON then
                     table.insert(volcamons, u)
                     UnitAddAbility(u, VOLCANIC_EXPLOSION)
+                    UnitAddAbility(u, SCORCHING_HEAT)
                     AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                     AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
                     AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
@@ -343,7 +347,7 @@ OnInit.final(function ()
                     end)
                 end
                 if cast then
-                    IssueImmediateOrderById(volcamons[i], VOLCANIC_EXPLOSION_ORDER)
+                    IssueImmediateOrderById(volcamons[i], math.random(2) == 1 and VOLCANIC_EXPLOSION_ORDER or SCORCHING_HEAT_ORDER)
                 end
             else
                 table.remove(volcamons, i)
