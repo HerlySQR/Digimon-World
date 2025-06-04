@@ -104,6 +104,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofv_52788},
         inner = gg_rct_MeramonInner,
         entrance = gg_rct_MeramonEntrance,
+        moveOption = 3,
         spells = {
             4, CastType.IMMEDIATE, onScorchingHeat, -- Scorching heat
             0, CastType.IMMEDIATE, onMeltAll, -- Melt All

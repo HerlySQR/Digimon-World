@@ -422,6 +422,7 @@ OnInit(function ()
         inner = gg_rct_KimeramonInner,
         entrance = gg_rct_KimeramonEntrance,
         toTeleport = gg_rct_Ancient_Speedy_Zone,
+        moveOption = 0,
         spells = {
             4, CastType.POINT, onCycloneClap, -- Cyclone Clap
             5, CastType.IMMEDIATE, onFireRay, -- Fire Ray
@@ -476,12 +477,6 @@ OnInit(function ()
                     Timed.call(1., function ()
                         doAmbush(#unitsInTheField)
                     end)
-                end
-
-                if not flying then
-                    if math.random(100) > 90 then
-                        BossMove(boss, 0, 600., GetHeroStr(boss, true), true)
-                    end
                 end
 
                 -- Make the summons follow the nearest player unit to them

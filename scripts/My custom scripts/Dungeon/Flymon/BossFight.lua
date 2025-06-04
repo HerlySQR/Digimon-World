@@ -122,6 +122,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofv_52785},
         inner = gg_rct_FlymonInner,
         entrance = gg_rct_FlymonEntrance,
+        moveOption = 3,
         spells = {
             0, CastType.POINT, onStingerShots, -- Stinger Shots
             3, CastType.POINT, onPoisonPowder -- Poison Powder
@@ -131,6 +132,9 @@ OnInit(function ()
             FourCC('A07A'), Orders.berserk, CastType.IMMEDIATE, -- Berserk
             FourCC('A06Z'), Orders.charm, CastType.TARGET, -- Stinger
         },
+        castCondition = function ()
+            return not flying
+        end,
         actions = function (u)
             if not flying then
                 waitFlying = waitFlying - 1

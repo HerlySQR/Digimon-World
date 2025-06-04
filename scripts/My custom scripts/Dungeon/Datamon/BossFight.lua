@@ -15,7 +15,6 @@ OnInit(function ()
     local GUARDROMON = FourCC('O01I')
     local GUARDROMON_EFFECT = "Abilities\\Spells\\Demon\\DemonBoltImpact\\DemonBoltImpact.mdl"
     local SUMMON_GUARDROMON = FourCC('A0J4')
-    local MOVE = FourCC('A0H5')
 
     local boss = gg_unit_O03P_0105 ---@type unit
     local originalSize = BlzGetUnitRealField(boss, UNIT_RF_SCALING_VALUE)
@@ -168,12 +167,6 @@ OnInit(function ()
             end
         end)
     end
-
-    RegisterSpellEffectEvent(MOVE, function ()
-        if GetSpellAbilityUnit() == boss then
-            BossMove(boss, 1, 1000, 150, math.random(2) == 1)
-        end
-    end)
 
     local HM_MISSILE_MODEL = "Abilities\\Weapons\\Mortar\\MortarMissile.mdl"
     local HM_TARGET_EFFECT = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
@@ -376,13 +369,11 @@ OnInit(function ()
         forceWall = {gg_dest_Dofw_52713},
         inner = gg_rct_DatamonInner,
         entrance = gg_rct_DatamonEntrance,
+        moveOption = 1,
         spells = {
             5, CastType.TARGET, onHommingMissile, -- Homming Missile
             4, CastType.POINT, onMissileBarrage, -- Missile Barrage
             4, CastType.IMMEDIATE, onShockingOrbs-- Shocking Orbs
-        },
-        extraSpells = {
-            MOVE, Orders.avengerform, CastType.IMMEDIATE, -- Move
         },
         actions = function (u, unitsInTheField)
             if canTrap then
@@ -495,9 +486,6 @@ OnInit(function ()
                     end)
                 end
             end
-        end,
-        onStart = function ()
-            BlzStartUnitAbilityCooldown(boss, MOVE, 30.)
         end,
         onReset = function ()
             secondPhase = false

@@ -249,6 +249,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofv_13463, gg_dest_Dofv_13464},
         inner = gg_rct_PanjyamonInner,
         entrance = gg_rct_PanjyamonEntrance,
+        moveOption = 0,
         spells = {
             6, CastType.TARGET, onCatJump, -- Cat jump
             2, CastType.POINT, onIceFist,-- Ice fist

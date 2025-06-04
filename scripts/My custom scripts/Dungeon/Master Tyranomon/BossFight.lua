@@ -111,6 +111,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofv_12250},
         inner = gg_rct_MasterTyranomonInner,
         entrance = gg_rct_MasterTyranomonEntrance,
+        moveOption = 3,
         spells = {
             7, CastType.IMMEDIATE, onTowerOfFire, -- Tower of fire
             5, CastType.POINT, FlameWave -- Flame wave

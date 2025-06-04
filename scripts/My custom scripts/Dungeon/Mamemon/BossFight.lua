@@ -96,6 +96,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofw_52789},
         inner = gg_rct_MamemonInner,
         entrance = gg_rct_MamemonEntrance,
+        moveOption = 0,
         spells = {
             4, CastType.TARGET, onKnockbackPunch, -- Knockback punch
             4, CastType.TARGET, onKnockupPunch, -- Knockup punch

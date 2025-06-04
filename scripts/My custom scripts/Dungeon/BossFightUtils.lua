@@ -326,7 +326,7 @@ OnInit("BossFightUtils", function ()
         return 0.7 + 0.1*n
     end
 
-    ---@param data {name: string, boss: unit, manualRevive: boolean, spells: table?, extraSpells: table?, castCondition: (fun(id: (integer|function), tx: (number|unit)?, ty: number?):boolean)?, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?}
+    ---@param data {name: string, boss: unit, manualRevive: boolean, spells: table?, extraSpells: table?, castCondition: (fun(id: (integer|function)?, tx: (number|unit)?, ty: number?):boolean)?, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?, moveOption: BossMoveType?}
     function InitBossFight(data)
         if type(data) ~= "table" then
             print("Bad data implemented in bossfight:", data)
@@ -350,6 +350,13 @@ OnInit("BossFightUtils", function ()
         battlefield[data.boss] = {}
         summons[data.boss] = {}
         local playersOnField = Set.create()
+        local hitsTaken
+        local didntDamage
+
+        if data.moveOption then
+            hitsTaken = 0
+            didntDamage = 0
+        end
 
         local hitsDealt
         local actSpell
@@ -361,7 +368,7 @@ OnInit("BossFightUtils", function ()
             spells = {}
             for i = 1, #data.spells // 3 do
                 table.insert(spells, {
-                    weight = data.spells[3*(i-1)+1],
+                    weight = data.spells[3*(i-1)+1]*2,
                     ttype = data.spells[3*(i-1)+2],
                     onActions = data.spells[3*(i-1)+3]
                 })
@@ -553,7 +560,10 @@ OnInit("BossFightUtils", function ()
 
                     hitChance = geHitChance(playersOnField:size())
 
+                    didntDamage = didntDamage + 0.5
+
                     if current >= interval then
+                        hitsDealt = hitsDealt + 1
                         returned = false
                         local u = nil
                         local maxThreat = -1
@@ -634,6 +644,18 @@ OnInit("BossFightUtils", function ()
                                                 end
                                             end
                                         end
+                                    end
+                                end
+                            end
+                            if data.moveOption then
+                                if not data.castCondition or data.castCondition() then
+                                    if didntDamage >= 5. then
+                                        didntDamage = 0
+                                        BossMove(data.boss, data.moveOption, GetUnitMoveSpeed(data.boss)*1.6, GetAvarageAttack(data.boss), true)
+                                    end
+                                    if hitsTaken > 15 then
+                                        hitsTaken = 0
+                                        BossMove(data.boss, data.moveOption, GetUnitMoveSpeed(data.boss)*1.6, GetAvarageAttack(data.boss), false)
                                     end
                                 end
                             end
@@ -861,6 +883,18 @@ OnInit("BossFightUtils", function ()
                     Timed.call(5., function ()
                         isCasting[data.boss] = false
                     end)
+                end
+            end)
+        end
+
+        if data.moveOption then
+            Digimon.postDamageEvent:register(function (info)
+                if udg_IsDamageAttack then
+                    if info.target == data.boss then
+                        hitsTaken = hitsTaken + 1
+                    elseif info.source == data.boss or info.source.root == data.boss then
+                        didntDamage = 0
+                    end
                 end
             end)
         end

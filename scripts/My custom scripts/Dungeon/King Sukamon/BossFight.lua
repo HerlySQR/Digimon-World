@@ -151,6 +151,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofv_52792, gg_dest_Dofw_12379},
         inner = gg_rct_KingSukamonInner,
         entrance = gg_rct_KingSukamonEntrance,
+        moveOption = 3,
         spells = {
             4, CastType.POINT, onWardOfDamage, -- Ward of damage
             0, CastType.IMMEDIATE, onHealingMinions, -- Healing Minions

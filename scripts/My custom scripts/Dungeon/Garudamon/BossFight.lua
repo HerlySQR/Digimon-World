@@ -192,6 +192,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofw_13138},
         inner = gg_rct_GarudamonInner,
         entrance = gg_rct_GarudamonEntrance,
+        moveOption = 0,
         spells = {
             5, CastType.POINT, onDash, -- Dash
             6, CastType.POINT, onBirdOfFire, -- Bird of Fire

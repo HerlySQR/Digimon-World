@@ -235,6 +235,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofv_52787},
         inner = gg_rct_DrimogemonInner,
         entrance = gg_rct_DrimogemonEntrance,
+        moveOption = 2,
         spells = {
             5, CastType.POINT, onDash, -- Missile Dash
             2, CastType.POINT, onEarthQuake, -- Moving Earthquake

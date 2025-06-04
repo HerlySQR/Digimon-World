@@ -188,6 +188,7 @@ OnInit(function ()
         forceWall = {gg_dest_B082_12252, gg_dest_B082_12254},
         inner = gg_rct_TonosamaGekomonInner,
         entrance = gg_rct_TonosamaGekomonEntrance,
+        moveOption = 3,
         spells = {
             3, CastType.IMMEDIATE, onSummonGekomon, -- Summon Gekomon
             4, CastType.POINT, onSoundWave, -- Sonic wave

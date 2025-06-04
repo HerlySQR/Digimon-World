@@ -325,6 +325,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofw_31899},
         inner = gg_rct_SkullSatamonInner,
         entrance = gg_rct_SkullSatamonEntrance,
+        moveOption = 1,
         spells = {
             8, CastType.TARGET, onJail, -- Jail
             5, CastType.IMMEDIATE, onThunderclap, -- Thunderclap

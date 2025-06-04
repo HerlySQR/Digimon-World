@@ -122,6 +122,7 @@ OnInit(function ()
         forceWall = {gg_dest_Dofv_52786},
         inner = gg_rct_CrabmonInner,
         entrance = gg_rct_CrabmonEntrance,
+        moveOption = 2,
         spells = {
             2, CastType.POINT, onScissorMagicChaos, -- Scissor Magic Chaos
             3, CastType.POINT, onCuttingPliers, -- Cutting pliers
