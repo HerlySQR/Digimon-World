@@ -26,6 +26,33 @@ OnInit("BossFightUtils", function ()
 
     local playing = false
 
+    local STUNS = {
+        FourCC('BUsl'), -- Sleep
+        FourCC('BUst'), -- Sleep (stun)
+        FourCC('BUsp'), -- Sleep (Pause)
+        FourCC('BUim'), -- Impale
+        FourCC('BNcs'), -- Cluster rockets
+        FourCC('BSTN'), -- Stun
+        FourCC('BPSE'), -- Stun (Pause)
+        FourCC('B00H'), -- Stun (Brown Stingers)
+        FourCC('B00I'), -- Stun (Harpoon Torpedo)
+        FourCC('BEer'), -- Entangling roots
+        FourCC('B001'), -- Freeze
+        FourCC('B01F'), -- Water Explosion
+        FourCC('B008'), -- Flora (Esnare)
+    }
+
+    ---@param u unit
+    ---@return integer?
+    local function isStunned(u)
+        for i = 1, #STUNS do
+            if UnitHasBuffBJ(u, STUNS[i]) then
+                return STUNS[i]
+            end
+        end
+        return nil
+    end
+
     ---Don't cast timed duration spells when other timed duration spell is casted
     ---@param caster unit
     ---@param flag boolean
@@ -368,7 +395,7 @@ OnInit("BossFightUtils", function ()
             spells = {}
             for i = 1, #data.spells // 3 do
                 table.insert(spells, {
-                    weight = data.spells[3*(i-1)+1]*2,
+                    weight = math.round(data.spells[3*(i-1)+1]*1.5),
                     ttype = data.spells[3*(i-1)+2],
                     onActions = data.spells[3*(i-1)+3]
                 })
@@ -560,7 +587,9 @@ OnInit("BossFightUtils", function ()
 
                     hitChance = geHitChance(playersOnField:size())
 
-                    didntDamage = didntDamage + 0.5
+                    if data.moveOption and not isCasting[data.boss] then
+                        didntDamage = didntDamage + 0.5
+                    end
 
                     if current >= interval then
                         hitsDealt = hitsDealt + 1
@@ -653,7 +682,7 @@ OnInit("BossFightUtils", function ()
                                         didntDamage = 0
                                         BossMove(data.boss, data.moveOption, GetUnitMoveSpeed(data.boss)*1.6, GetAvarageAttack(data.boss), true)
                                     end
-                                    if hitsTaken > 15 then
+                                    if hitsTaken > 25 then
                                         hitsTaken = 0
                                         BossMove(data.boss, data.moveOption, GetUnitMoveSpeed(data.boss)*1.6, GetAvarageAttack(data.boss), false)
                                     end
@@ -889,12 +918,10 @@ OnInit("BossFightUtils", function ()
 
         if data.moveOption then
             Digimon.postDamageEvent:register(function (info)
-                if udg_IsDamageAttack then
-                    if info.target == data.boss then
-                        hitsTaken = hitsTaken + 1
-                    elseif info.source == data.boss or info.source.root == data.boss then
-                        didntDamage = 0
-                    end
+                if info.target.root == data.boss then
+                    hitsTaken = hitsTaken + 1
+                elseif info.source == data.boss or info.source.root == data.boss then
+                    didntDamage = 0
                 end
             end)
         end
@@ -904,6 +931,26 @@ OnInit("BossFightUtils", function ()
                 if (info.source == data.boss or info.source.root == data.boss) and udg_IsDamageAttack then
                     if math.random() < hitChance then
                         hitsDealt = hitsDealt + 1
+                    end
+                end
+            end)
+        end
+
+        -- Spell shield
+        do
+            local shieldEnabled = false
+            Digimon.postDamageEvent:register(function (info)
+                if not shieldEnabled then
+                    if info.target.root and isStunned(data.boss) then
+                        shieldEnabled = true
+                        local shield = AddSpecialEffectTarget("war3mapImported\\PlasmaShell.mdx", data.boss, "origin")
+                        UnitAddAbility(data.boss, FourCC('ANss'))
+                        BlzSetUnitAbilityCooldown(data.boss, FourCC('ANss'), 0, 0)
+                        Timed.call(6., function ()
+                            shieldEnabled = false
+                            DestroyEffect(shield)
+                            UnitRemoveAbility(data.boss, FourCC('ANss'))
+                        end)
                     end
                 end
             end)

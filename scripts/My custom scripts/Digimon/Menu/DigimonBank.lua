@@ -18,10 +18,9 @@ OnInit("DigimonBank", function ()
     local MAX_SAVED_ITEMS = udg_MAX_SAVED_ITEMS
     local NEW_ITEM_SLOT_COST_BITS = 1500
     local NEW_ITEM_SLOT_COST_CRYSTALS = 2
-    local NEW_DIGIMON_SLOT_COST_RARE_DATA = 15
-    local NEW_DIGIMON_SLOT_COST_CRYSTALS_2 = 5
-    local NEW_DIGIMON_SLOT_COST_BITS = 3500
-    local NEW_DIGIMON_SLOT_COST_CRYSTALS = 4
+    local NEW_DIGIMON_SLOT_COST_RARE_DATA = 5
+    local NEW_DIGIMON_SLOT_COST_BITS = {1500, 2000, 2750, 3500}
+    local NEW_DIGIMON_SLOT_COST_CRYSTALS = {3, 4, 6, 10}
     local REVIVE_ITEM = udg_REVIVE_ITEM
     local REVIVE_COOLDOWN = 90.
 
@@ -607,6 +606,24 @@ OnInit("DigimonBank", function ()
         DisplayTextToPlayer(LocalPlayer, 0, 0, GetPlayerName(p) .. " was afk for too long, all its digimons were stored.")
     end)
 
+    local function getNewDigimonSlotCost(p)
+        local bank = Bank[GetPlayerId(p)] ---@type Bank
+        local digiBitsCost = 1000
+        local digiCrystalsCost = 0
+        local rareDataCost = 0
+        local slot = bank.savedDigimonsStock + 1
+
+        for i = 1, slot do
+            digiBitsCost = digiBitsCost + NEW_DIGIMON_SLOT_COST_BITS[math.floor((i-1)/10) + 1]
+            digiCrystalsCost = digiCrystalsCost + NEW_DIGIMON_SLOT_COST_CRYSTALS[math.floor((i-1)/10) + 1]
+        end
+        if slot >= 20 then
+            rareDataCost = (slot - 18) * NEW_DIGIMON_SLOT_COST_RARE_DATA
+        end
+
+        return digiBitsCost, digiCrystalsCost, rareDataCost
+    end
+
     --[[local dummyHeros = {} ---@type unit[]
     local heroGlows = {} ---@type framehandle[]
 
@@ -1111,34 +1128,20 @@ OnInit("DigimonBank", function ()
                 end
             end
         elseif bank.wantDigimonSlot then
-            if bank.savedDigimonsStock < MAX_SAVED then
-                local requiredGold = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_BITS
-                local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS
-                if playerGold >= requiredGold and playerLumber >= requiredLumber then
-                    SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, playerGold - requiredGold)
-                    SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, playerLumber - requiredLumber)
-                    bank.savedDigimonsStock = bank.savedDigimonsStock + 1
-                else
-                    if playerGold < requiredGold then
-                        ErrorMessage("You don't have enough digibits", p)
-                    else
-                        ErrorMessage("You don't have enough digicrystals", p)
-                    end
-                end
+            local requiredGold, requiredLumber, requiredData = getNewDigimonSlotCost(p)
+            local playerRareData = GetBackpackItemCharges(p, udg_RARE_DATA)
+            if playerGold >= requiredGold and playerLumber >= requiredLumber and playerRareData >= requiredData then
+                SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, playerGold - requiredGold)
+                SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, playerLumber - requiredLumber)
+                SetBackpackItemCharges(p, udg_RARE_DATA, playerRareData - requiredData)
+                bank.savedDigimonsStock = bank.savedDigimonsStock + 1
             else
-                local playerRareData = GetBackpackItemCharges(p, udg_RARE_DATA)
-
-                local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS_2
-                if playerRareData >= NEW_DIGIMON_SLOT_COST_RARE_DATA and playerLumber >= requiredLumber then
-                    SetBackpackItemCharges(p, udg_RARE_DATA, playerRareData - NEW_DIGIMON_SLOT_COST_RARE_DATA)
-                    SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, playerLumber - requiredLumber)
-                    bank.savedDigimonsStock = bank.savedDigimonsStock + 1
+                if playerGold < requiredGold then
+                    ErrorMessage("You don't have enough digibits", p)
+                elseif playerLumber < requiredLumber then
+                    ErrorMessage("You don't have enough digicrystals", p)
                 else
-                    if playerRareData < NEW_DIGIMON_SLOT_COST_RARE_DATA then
-                        ErrorMessage("You don't have enough rare data", p)
-                    else
-                        ErrorMessage("You don't have enough digicrystals", p)
-                    end
+                    ErrorMessage("You don't have enough rare data", p)
                 end
             end
         end
@@ -1209,13 +1212,11 @@ OnInit("DigimonBank", function ()
         else
             bank.wantDigimonSlot = true
             if p == LocalPlayer then
-                if bank.savedDigimonsStock < MAX_SAVED then
-                    local requiredGold = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_BITS
-                    local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS
+                local requiredGold, requiredLumber, requiredData = getNewDigimonSlotCost(p)
+                if requiredData == 0 then
                     BlzFrameSetText(BuySlotMessage, "Do you want to buy a new digimon slot for |cff828282" .. requiredGold .. " digibits|r and |cffc882c8" ..requiredLumber .. " digiCrystals|r?")
                 else
-                    local requiredLumber = (bank.savedDigimonsStock + 1) * NEW_DIGIMON_SLOT_COST_CRYSTALS_2
-                    BlzFrameSetText(BuySlotMessage, "Do you want to buy a new digimon slot for |cffc882c8" ..requiredLumber .. " digiCrystals|r and |cffd45e19" .. NEW_DIGIMON_SLOT_COST_RARE_DATA .. " rare data|r?")
+                    BlzFrameSetText(BuySlotMessage, "Do you want to buy a new digimon slot for |cff828282" .. requiredGold .. " digibits|r, |cffc882c8" ..requiredLumber .. " digiCrystals|r and |cffd45e19" .. requiredData .. " rare data|r?")
                 end
                 for j = 0, bank.savedDigimonsStock do
                     if SavedDigimonT[j] then

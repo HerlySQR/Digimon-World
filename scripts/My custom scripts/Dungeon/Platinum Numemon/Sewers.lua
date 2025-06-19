@@ -295,6 +295,7 @@ OnInit.final(function ()
                             d:pause()
                             local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl", d.root, "overhead")
                             BlzSetSpecialEffectScale(eff, 3.)
+                            BlzSetSpecialEffectColor(eff, 255, 0, 0)
                             DestroyEffectTimed(eff, SUMMON_RAREMON_TICK)
                         end
                     else
@@ -370,30 +371,37 @@ OnInit.final(function ()
     local inRange = MDTable.create(2, false) ---@type table<unit, table<unit, boolean>>
 
     Timed.echo(2., function ()
-        for i = #dragomons, 1, -1 do
-            if UnitAlive(dragomons[i]) then
-                local x, y = GetLocationX(dragomonsPos[dragomons[i]]), GetLocationY(dragomonsPos[dragomons[i]])
-                ForUnitsInRange(x, y, 900, function (u)
-                    if IsPlayerInGame(GetOwningPlayer(u)) then
-                        local d = DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u))
-                        if d < 700. then
-                            inRange[dragomons[i]][u] = true
-                        elseif inRange[dragomons[i]][u] and not UnitHasBuffBJ(u, ESNARE_BUFF) then
-                            inRange[dragomons[i]] = nil
-                            IssueTargetOrderById(dragomons[i], ESNARE_ORDER, u)
-                        end
+        if started then
+            for i = #dragomons, 1, -1 do
+                if UnitAlive(dragomons[i]) then
+                    if UnitCanCastAbility(dragomons[i], ESNARE) then
+                        local x, y = GetLocationX(dragomonsPos[dragomons[i]]), GetLocationY(dragomonsPos[dragomons[i]])
+                        ForUnitsInRange(x, y, 900, function (u)
+                            if IsPlayerInGame(GetOwningPlayer(u)) then
+                                local d = DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u))
+                                if d < 700. then
+                                    inRange[dragomons[i]][u] = true
+                                elseif inRange[dragomons[i]][u] and not UnitHasBuffBJ(u, ESNARE_BUFF) then
+                                    inRange[dragomons[i]] = nil
+                                    IssueTargetOrderById(dragomons[i], ESNARE_ORDER, u)
+                                end
+                            end
+                        end)
                     end
-                end)
-            else
-                RemoveLocation(dragomonsPos[dragomons[i]])
-                dragomonsPos[dragomons[i]] = nil
-                table.remove(dragomons, i)
+                else
+                    RemoveLocation(dragomonsPos[dragomons[i]])
+                    dragomonsPos[dragomons[i]] = nil
+                    table.remove(dragomons, i)
+                end
             end
         end
     end)
 
     -- Drop items
+
     do
+        local specialItems ---@type itempool
+
         local t = CreateTrigger()
         TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_DEATH)
         TriggerAddCondition(t, Condition(function () return RectContainsUnit(place, GetDyingUnit()) end))
@@ -402,8 +410,14 @@ OnInit.final(function ()
                 return
             end
             if GetUnitTypeId(GetDyingUnit()) == BLACK_KING_NUMEMON then
+                if not specialItems then
+                    specialItems = CreateItemPool()
+                    for i = 1, #udg_SewersSpecialItems do
+                        ItemPoolAddItemType(specialItems, udg_SewersSpecialItems[i], udg_SewersSpecialItemsWeights[i])
+                    end
+                end
                 if math.random(5) == 1 then
-                    CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+                    PlaceRandomItem(specialItems, GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
 
                 local open = true
@@ -418,7 +432,7 @@ OnInit.final(function ()
                         ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
                     end
                 end
-            else
+            elseif GetUnitTypeId(GetDyingUnit()) ~= RAREMON then
                 if math.random(20) == 1 then
                     CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end

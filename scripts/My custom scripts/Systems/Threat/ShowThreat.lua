@@ -11,6 +11,7 @@ OnInit(function ()
     local ThreatArrow = nil ---@type framehandle
     local ThreatPlayerUnitT = {} ---@type framehandle[]
     local ThreatPlayerUnitPercent = {} ---@type framehandle[]
+    local HealthBar = {} ---@type framehandle[]
 
     local bosses = {} ---@type unit[]
     local canSee = CreateForce()
@@ -21,6 +22,8 @@ OnInit(function ()
         "00ff00",
         "ffffff"
     }
+    local red = Color.new(0xFF0000)
+    local green = Color.new(0x00FF00)
     --local speedMove = 0.005
     --local speedAlpha = 8
 
@@ -59,10 +62,15 @@ OnInit(function ()
                             BlzFrameSetVisible(ThreatPlayerUnitPercent[j], true)
                             BlzFrameSetText(ThreatPlayerUnitPercent[j], "|cff" .. colors[j] .. math.floor(ZTS_GetThreatUnitAmount(boss, u)/totalThreat * 100) .. "\x25|r")
                         end
+
+                        local ratio = GetUnitHPRatio(u)
+                        BlzFrameSetVertexColor(HealthBar[j], ILerpColors(red, ratio, green))
+                        BlzFrameSetValue(HealthBar[j], math.round(ratio*100))
                     else
                         BlzFrameSetVisible(ThreatPlayerUnitT[j], false)
                     end
                     BlzFrameSetVisible(ThreatPlayerUnitPercent[j], BlzFrameIsVisible(ThreatPlayerUnitT[j]))
+                    BlzFrameSetVisible(HealthBar[j], BlzFrameIsVisible(ThreatPlayerUnitT[j]))
                 end
             end
             ForceClear(canSee)
@@ -101,6 +109,14 @@ OnInit(function ()
             BlzFrameSetAllPoints(ThreatPlayerUnitPercent[i], ThreatPlayerUnitT[i])
             BlzFrameSetText(ThreatPlayerUnitPercent[i], "0\x25")
             BlzFrameSetTextAlignment(ThreatPlayerUnitPercent[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+
+            HealthBar[i] = BlzCreateFrameByType("SIMPLESTATUSBAR", "", ThreatPlayerUnitT[i], "", 0)
+            BlzFrameSetTexture(HealthBar[i], "replaceabletextures\\teamcolor\\teamcolor21", 0, true)
+            BlzFrameSetPoint(HealthBar[i], FRAMEPOINT_TOPLEFT, ThreatPlayerUnitT[i], FRAMEPOINT_TOPLEFT, 0.0010000, -0.020500)
+            BlzFrameSetPoint(HealthBar[i], FRAMEPOINT_BOTTOMRIGHT, ThreatPlayerUnitT[i], FRAMEPOINT_BOTTOMRIGHT, -0.0015000, -0.0050000)
+            BlzFrameSetMinMaxValue(HealthBar[i], 0, 100)
+            BlzFrameSetValue(HealthBar[i], 50)
+            BlzFrameSetVisible(HealthBar[i], false)
         end
     end)
 end)

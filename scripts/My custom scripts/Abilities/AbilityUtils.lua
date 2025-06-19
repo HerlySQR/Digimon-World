@@ -228,16 +228,23 @@ OnInit("AbilityUtils", function ()
     ---@param col1 Color
     ---@param alpha number
     ---@param col2 Color
+    ---@return integer
+    function ILerpColors(col1, alpha, col2)
+        return BlzConvertColor(
+            ILerp(col1.alpha, alpha, col2.alpha),
+            ILerp(col1.red, alpha, col2.red),
+            ILerp(col1.green, alpha, col2.green),
+            ILerp(col1.blue, alpha, col2.blue)
+        )
+    end
+
+    ---Color linear interpolation
+    ---@param col1 Color
+    ---@param alpha number
+    ---@param col2 Color
     ---@return string
     function LerpColors(col1, alpha, col2)
-        return Hex2Str(
-            BlzConvertColor(
-                ILerp(col1.alpha, alpha, col2.alpha),
-                ILerp(col1.red, alpha, col2.red),
-                ILerp(col1.green, alpha, col2.green),
-                ILerp(col1.blue, alpha, col2.blue)
-            )
-        )
+        return Hex2Str(ILerpColors(col1, alpha, col2))
     end
 
     ---Return if all the units in the group are alive
@@ -436,6 +443,13 @@ OnInit("AbilityUtils", function ()
             end)
         end
         counters[source][target] = POISON_DURATION
+    end
+
+    ---@param caster unit
+    ---@param abil integer
+    ---@return boolean
+    function UnitCanCastAbility(caster, abil)
+        return BlzGetUnitAbilityCooldownRemaining(caster, abil) <= 0 and BlzGetUnitAbilityManaCost(caster, abil, GetUnitAbilityLevel(caster, abil)-1) <= GetUnitState(caster, UNIT_STATE_MANA)
     end
 
 end)

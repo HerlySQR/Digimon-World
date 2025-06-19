@@ -319,6 +319,17 @@ OnInit("Digimon", function ()
             end
         end
         SetHeroXP(self.root, e, true)
+
+        local newLevel = GetHeroLevel(self.root)
+        if (self.rank == Rank.ROOKIE and newLevel > udg_MAX_ROOKIE_LVL) then
+            self:setLevel(udg_MAX_ROOKIE_LVL)
+        elseif (self.rank == Rank.CHAMPION and newLevel > udg_MAX_CHAMPION_LVL) then
+            self:setLevel(udg_MAX_CHAMPION_LVL)
+        elseif (self.rank == Rank.ULTIMATE and newLevel > udg_MAX_ULTIMATE_LVL) then
+            self:setLevel(udg_MAX_ULTIMATE_LVL)
+        elseif (self.rank == Rank.MEGA and newLevel > udg_MAX_MEGA_LVL) then
+            self:setLevel(udg_MAX_MEGA_LVL)
+        end
     end
 
     ---@return boolean

@@ -93,6 +93,9 @@ OnInit("SpellAISystem", function ()
             if isPaused[u] then
                 return false
             end
+            if not UnitCanCastAbility(u, spell) then
+                return false
+            end
             local abil = BlzGetUnitAbility(u, spell)
             local level = GetUnitAbilityLevel(u, spell)
             local range = convertedRange(BlzGetAbilityRealLevelField(abil, ABILITY_RLF_CAST_RANGE, level - 1))

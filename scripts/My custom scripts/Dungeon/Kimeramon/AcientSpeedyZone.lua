@@ -250,24 +250,29 @@ OnInit.final(function ()
                 end
             end
 
-            for _ = 1, 10 do
-                local l = GetRandomLocInRect(place)
-                local circle = AddSpecialEffectLoc("war3mapImported\\EnduranceAuraTarget.mdl", l)
-                BlzSetSpecialEffectScale(circle, 3)
-                Timed.call(1., function ()
-                    DestroyEffect(AddSpecialEffectLoc("Effect\\MeteorStrike.mdl", l))
-                    Timed.call(1., function ()
-                        DestroyEffect(circle)
-                        DummyCast(
-                            DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), GetLocationX(l), GetLocationY(l)) > 1000. and Digimon.NEUTRAL or Digimon.VILLAIN,
-                            GetLocationX(l), GetLocationY(l),
-                            THUNDERCLAP,
-                            Orders.thunderclap,
-                            1,
-                            CastType.IMMEDIATE)
-                        RemoveLocation(l)
-                    end)
-                end)
+            for d in actHeros:elements() do
+                if math.random(5) == 1 then
+                    local angle = 2 * math.pi * math.random()
+                    local dist = 3000 * math.random()
+                    local x, y = d:getX() + dist*math.cos(angle), d:getY() + dist*math.sin(angle)
+                    if RectContainsCoords(place, x, y) then
+                        local circle = AddSpecialEffect("war3mapImported\\EnduranceAuraTarget.mdl", x, y)
+                        BlzSetSpecialEffectScale(circle, 3)
+                        Timed.call(1., function ()
+                            DestroyEffect(AddSpecialEffect("Effect\\MeteorStrike.mdl", x, y))
+                            Timed.call(1., function ()
+                                DestroyEffect(circle)
+                                DummyCast(
+                                    DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), x, y) > 1000. and Digimon.NEUTRAL or Digimon.VILLAIN,
+                                    x, y,
+                                    THUNDERCLAP,
+                                    Orders.thunderclap,
+                                    1,
+                                    CastType.IMMEDIATE)
+                            end)
+                        end)
+                    end
+                end
             end
         end
 
@@ -278,6 +283,8 @@ OnInit.final(function ()
 
     -- Drop items
     do
+        local specialItems ---@type itempool
+
         local t = CreateTrigger()
         TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_DEATH)
         TriggerAddCondition(t, Condition(function () return RectContainsUnit(place, GetDyingUnit()) end))
@@ -286,8 +293,14 @@ OnInit.final(function ()
                 return
             end
             if GetUnitTypeId(GetDyingUnit()) == VOLCAMON then
+                if not specialItems then
+                    specialItems = CreateItemPool()
+                    for i = 1, #udg_AcientSpeedyZoneSpecialItems do
+                        ItemPoolAddItemType(specialItems, udg_AcientSpeedyZoneSpecialItems[i], udg_AcientSpeedyZoneSpecialItemsW[i])
+                    end
+                end
                 if math.random(5) == 1 then
-                    CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+                    PlaceRandomItem(specialItems, GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
                 local open = true
                 ForUnitsInRect(place, function (u)
@@ -314,43 +327,49 @@ OnInit.final(function ()
     local inRange = MDTable.create(2, false) ---@type table<unit, table<unit, boolean>>
 
     Timed.echo(1., function ()
-        for i = #specialCasters, 1, -1 do
-            if UnitAlive(specialCasters[i]) then
-                local typ = GetUnitTypeId(specialCasters[i])
-                local x, y = GetLocationX(specialCastersLocs[specialCasters[i]]), GetLocationY(specialCastersLocs[specialCasters[i]])
-                ForUnitsInRange(x, y, 900, function (u)
-                    if IsPlayerInGame(GetOwningPlayer(u)) then
-                        local d = DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u))
-                        if d < 700. then
-                            inRange[specialCasters[i]][u] = true
-                        elseif inRange[specialCasters[i]][u] and not UnitHasBuffBJ(u, specialCasterBuffs[typ]) then
-                            inRange[specialCasters[i]] = nil
-                            IssueTargetOrderById(specialCasters[i], specialCasterOrders[typ], u)
+        if started then
+            for i = #specialCasters, 1, -1 do
+                if UnitAlive(specialCasters[i]) then
+                    local typ = GetUnitTypeId(specialCasters[i])
+                    if UnitCanCastAbility(specialCasters[i], specialCasterSpells[typ]) then
+                        local x, y = GetLocationX(specialCastersLocs[specialCasters[i]]), GetLocationY(specialCastersLocs[specialCasters[i]])
+                        ForUnitsInRange(x, y, 900, function (u)
+                            if IsPlayerInGame(GetOwningPlayer(u)) then
+                                local d = DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u))
+                                if d < 700. then
+                                    inRange[specialCasters[i]][u] = true
+                                elseif inRange[specialCasters[i]][u] and not UnitHasBuffBJ(u, specialCasterBuffs[typ]) then
+                                    inRange[specialCasters[i]] = nil
+                                    IssueTargetOrderById(specialCasters[i], specialCasterOrders[typ], u)
+                                end
+                            end
+                        end)
+                    end
+                else
+                    RemoveLocation(specialCastersLocs[specialCasters[i]])
+                    specialCastersLocs[specialCasters[i]] = nil
+                    table.remove(specialCasters, i)
+                end
+            end
+            for i = #volcamons, 1, -1 do
+                if UnitAlive(volcamons[i]) then
+                    if UnitCanCastAbility(volcamons[i], VOLCANIC_EXPLOSION) then
+                        local x, y = GetUnitX(volcamons[i]), GetUnitY(volcamons[i])
+                        local cast = false
+                        if GetUnitHPRatio(volcamons[i]) < 0.9 then
+                            ForUnitsInRange(x, y, 275., function (u)
+                                if IsUnitEnemy(u, Digimon.NEUTRAL) then
+                                    cast = true
+                                end
+                            end)
+                        end
+                        if cast then
+                            IssueImmediateOrderById(volcamons[i], math.random(2) == 1 and VOLCANIC_EXPLOSION_ORDER or SCORCHING_HEAT_ORDER)
                         end
                     end
-                end)
-            else
-                RemoveLocation(specialCastersLocs[specialCasters[i]])
-                specialCastersLocs[specialCasters[i]] = nil
-                table.remove(specialCasters, i)
-            end
-        end
-        for i = #volcamons, 1, -1 do
-            if UnitAlive(volcamons[i]) then
-                local x, y = GetUnitX(volcamons[i]), GetUnitY(volcamons[i])
-                local cast = false
-                if GetUnitHPRatio(volcamons[i]) < 0.9 then
-                    ForUnitsInRange(x, y, 275., function (u)
-                        if IsUnitEnemy(u, Digimon.NEUTRAL) then
-                            cast = true
-                        end
-                    end)
+                else
+                    table.remove(volcamons, i)
                 end
-                if cast then
-                    IssueImmediateOrderById(volcamons[i], math.random(2) == 1 and VOLCANIC_EXPLOSION_ORDER or SCORCHING_HEAT_ORDER)
-                end
-            else
-                table.remove(volcamons, i)
             end
         end
     end)
