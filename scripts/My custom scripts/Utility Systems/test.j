@@ -1,181 +1,120 @@
-package Serializable
-import ChunkedString
-import HashMap
-import ErrorHandling
-
-/* 	Simple Serialisation and Deserialisation package intended to be used with SaveLoadData.
-	Allows you to save properties of any class instance into a string,
-	and load the same properties from that string.
-
-	Properties are saved in plain text format, but hashed to prevent naive tampering.
-	If the saved properties are meant to be private, you should pripe the output through an encoder.
-
-	=>USAGE<=
-
-	1. Make your class extend the Serializable abstract class
-
-		> class MyClass extends Serializable
-		> 	var amount = 0
-
-	2. Implement `serializeProperties`, saving all properties that you want by using `addProperty`.
-	   The first parameter is the name with which you will load the property later.
-
-		> override function serializeProperties()
-		>	addProperty("amount", amount)
-
-	3.  Implement `deserializeProperties`, loading all saved properties using the type specific `getXProperty` function,
-		and assigning it to the variable that was originally saved.
-
-		> override function deserializeProperties()
-		>	amount = getIntProperty("amount")
-
-	4. That's all the setup required. You can now save any instance to a `ChunkedString` using `serialize`
-
-		> let myClass = new MyClass()
-		> let chunkedString = myClass.serialize()
-
-	   and load it again from a `ChunkedString` using `deserialize`.
-
-	   > let myClass2 = new MyClass()
-	   > myClass.deserialize(chunkedString)
-
-	=>BEHIND THE SCENES<=
-
-	The properties are saved in a RLE format which can be defined as follows:
-
-		T					 	   LLL							N*  		=  				V*
-		^							^							^			^				^
-	  1 letter type token  | 3 letters run length  |  [1-10] prop name | equal sign | [1-180] prop value
-
-	Repeated for each property, with the hash being appended at the end.
-
-*/
-
-constant MAX_NAME_LENGTH = 10
-constant LEN_LENGTH = 3
-constant HASH_LENGTH = 10
-
-constant INT_TOKEN = "i"
-constant REAL_TOKEN = "r"
-constant STRING_TOKEN = "s"
-
-public abstract class Serializable
-    private ChunkedString serOutput = null
-    private HashMap<int, int> intMap = null
-    private HashMap<int, real> realMap = null
-    private HashMap<int, string> stringMap = null
-    var hash = 0
-
-    function addProperty(string name, int value)
-        if name.length() > MAX_NAME_LENGTH
-            error("name " + name + " too long.")
-
-        let prop = name + "=" + value.toString()
-        var propLen = prop.length().toString()
-        while propLen.length() < LEN_LENGTH
-            propLen = "0" + propLen
-
-        hash += prop.getHash()
-        serOutput.append(INT_TOKEN + propLen + prop)
-
-    function addProperty(string name, real value)
-        if name.length() > MAX_NAME_LENGTH
-            error("name " + name + " too long.")
-
-        let prop = name + "=" + value.toString()
-        var propLen = prop.length().toString()
-        while propLen.length() < LEN_LENGTH
-            propLen = "0" + propLen
-
-        hash += prop.getHash()
-        serOutput.append(REAL_TOKEN + propLen + prop)
-
-    function addProperty(string name, string value)
-        if name.length() > MAX_NAME_LENGTH
-            error("name " + name + " too long.")
-
-        let prop = name + "=" + value
-        var propLen = prop.length().toString()
-        while propLen.length() < LEN_LENGTH
-            propLen = "0" + propLen
-
-        hash += prop.getHash()
-        serOutput.append(STRING_TOKEN + propLen + prop)
-
-
-    function getIntProperty(string name) returns int
-        return intMap.get(name.getHash())
-
-    function getRealProperty(string name) returns real
-        return realMap.get(name.getHash())
-
-    function getStringProperty(string name) returns string
-        return stringMap.get(name.getHash())
-
-    function serialize() returns ChunkedString
-        hash = 0
-        serOutput = new ChunkedString()
-        serializeProperties()
-
-        serOutput.append(padHash())
-        return serOutput
-
-    function padHash() returns string
-        var hashStr = hash.toString()
-        if hashStr.length() > HASH_LENGTH
-            hashStr = hashStr.substring(0, HASH_LENGTH)
-        while hashStr.length() < HASH_LENGTH
-            hashStr = "0" + hashStr
-        return hashStr
-
-    function deserialize(ChunkedString input)
-        hash = 0
-        intMap = new HashMap<int, int>()
-        realMap = new HashMap<int, real>()
-        stringMap = new HashMap<int, string>()
-        parseInput(input)
-
-        let hashStr = input.getUnsafeSubString(input.length() - HASH_LENGTH, input.length())
-        if hashStr == padHash()
-            deserializeProperties()
-
-        destroy intMap
-        destroy realMap
-        destroy stringMap
-        intMap = null
-        realMap = null
-        stringMap = null
-
-
-    private function parseInput(ChunkedString input)
-        var pointer = 0
-
-        while pointer + HASH_LENGTH < input.length()
-            let token = input.getUnsafeSubString(pointer, pointer + 1)
-            if token != INT_TOKEN and token != REAL_TOKEN and token != STRING_TOKEN
-                break
-            pointer += 1
-            let length = input.getUnsafeSubString(pointer, pointer + LEN_LENGTH).toInt()
-            pointer += LEN_LENGTH
-            parseProperty(token, input.getUnsafeSubString(pointer, pointer + length))
-            pointer += length
-
-    private function parseProperty(string token, string input)
-        hash += input.getHash()
-        let indexOfEqual = input.indexOf("=")
-        let name = input.substring(0, indexOfEqual).getHash()
-        let value = input.substring(indexOfEqual + 1)
-        switch token
-            case INT_TOKEN
-                intMap.put(name, value.toInt())
-            case REAL_TOKEN
-                realMap.put(name, value.toReal())
-            case STRING_TOKEN
-                stringMap.put(name, value)
-
-
-
-
-    abstract function serializeProperties()
-
-    abstract function deserializeProperties()
+// Arcing Text Tag v1.0.2.0 by Maker with added API by Bribe and features proposed by Ugabunda and Kusanagi Kuro
+// 
+// Added API in 1.0.1.0:
+//   public static ArcingTextTag lastCreated
+//   - Get the last created ArcingTextTag
+//   public real scaling
+//   - Set the size ratio of the texttag - 1.00 is the default
+//   public real timeScaling
+//   - Set the duration ratio of the texttag - 1.00 is the default
+library FloatingTextArc
+    globals
+        private constant    real    SIZE_MIN        = 0.018         // Minimum size of text
+        private constant    real    SIZE_BONUS      = 0.012         // Text size increase
+        private constant    real    TIME_LIFE       = 1.0           // How long the text lasts
+        private constant    real    TIME_FADE       = 0.8           // When does the text start to fade
+        private constant    real    Z_OFFSET        = 50            // Height above unit
+        private constant    real    Z_OFFSET_BON    = 50            // How much extra height the text gains
+        private constant    real    VELOCITY        = 2             // How fast the text move in x/y plane
+        private constant    real    ANGLE           = bj_PI/2       // Movement angle of the text. Does not apply if
+                                                                    // ANGLE_RND is true
+        private constant    boolean ANGLE_RND       = true          // Is the angle random or fixed
+        private             timer   TMR             = CreateTimer()
+    endglobals
+    
+    struct ArcingTextTag extends array        
+        private texttag tt
+        private real as         // angle, sin component
+        private real ac         // angle, cos component
+        private real t          // time
+        private real x          // origin x
+        private real y          // origin y
+        private string s        // text
+        private static integer array next
+        private static integer array prev
+        private static integer array rn
+        private static integer ic           = 0       // Instance count   
+        
+        private real scale
+        private real timeScale
+        
+        public static thistype lastCreated = 0
+        
+        private static method update takes nothing returns nothing
+            local thistype this=next[0]
+            local real p
+            loop
+                set p = Sin(bj_PI*(.t / timeScale))
+                set .t = .t - 0.03125
+                set .x = .x + .ac
+                set .y = .y + .as
+                call SetTextTagPos(.tt, .x, .y, Z_OFFSET + Z_OFFSET_BON*p)
+                call SetTextTagText(.tt, .s, (SIZE_MIN + SIZE_BONUS*p)*.scale)
+                if .t <= 0 then
+                    set .tt = null
+                    set next[prev[this]] = next[this]
+                    set prev[next[this]] = prev[this]
+                    set rn[this] = rn[0]
+                    set rn[0] = this
+                    if next[0]==0 then
+                        call PauseTimer(TMR)
+                    endif
+                endif
+                set this = next[this]
+                exitwhen this == 0
+            endloop
+        endmethod
+        
+        public static method createEx takes string s, unit u, real duration, real size, player p returns thistype
+            local thistype this = rn[0]
+            static if ANGLE_RND then
+                local real a = GetRandomReal(0, 2*bj_PI)
+            else
+                local real a = ANGLE
+            endif
+            if this == 0 then
+                set ic = ic + 1
+                set this = ic
+            else
+                set rn[0] = rn[this]
+            endif
+            
+            set .scale = size
+            set .timeScale = RMaxBJ(duration, 0.001)
+            
+            set next[this] = 0
+            set prev[this] = prev[0]
+            set next[prev[0]] = this
+            set prev[0] = this
+            
+            set .s = s
+            set .x = GetUnitX(u)
+            set .y = GetUnitY(u)
+            set .t = TIME_LIFE
+            set .as = Sin(a)*VELOCITY
+            set .ac = Cos(a)*VELOCITY
+            
+            if IsUnitVisible(u, p) then
+                set .tt = CreateTextTag()
+                call SetTextTagPermanent(.tt, false)
+                call SetTextTagLifespan(.tt, TIME_LIFE*duration)
+                call SetTextTagFadepoint(.tt, TIME_FADE*duration)
+                call SetTextTagText(.tt, s, SIZE_MIN*size)
+                call SetTextTagPos(.tt, .x, .y, Z_OFFSET)
+            else
+                set .tt = null
+            endif
+            
+            if prev[this] == 0 then
+                call TimerStart(TMR, 0.03125, true, function thistype.update)
+            endif
+            
+            set .lastCreated = this
+            
+            return this
+        endmethod
+        public static method create takes string s, unit u returns thistype
+            return thistype.createEx(s, u, TIME_LIFE, 1.00, GetLocalPlayer())
+        endmethod
+    endstruct
+endlibrary

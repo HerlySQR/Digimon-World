@@ -63,7 +63,7 @@ OnInit(function ()
         end
     end)
 
-    ---@param creep any
+    ---@param creep unit
     function RerollItemDrop(creep)
         local list = instances[creep]
         if list then

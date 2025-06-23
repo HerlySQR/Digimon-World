@@ -508,9 +508,12 @@ OnInit(function ()
                     ForceAddPlayer(owners, GetOwningPlayer(u))
                 end
             end)
-            ForForce(owners, function ()
+            for i = 1, math.ceil(CountPlayersInForceBJ(owners)/3) do
                 CreateItem(udg_RARE_DATA, GetUnitX(boss), GetUnitY(boss))
-            end)
+                if i == 2 then
+                    RerollItemDrop(boss)
+                end
+            end
             DestroyForce(owners)
             stopGoo()
         end,
