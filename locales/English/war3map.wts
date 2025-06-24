@@ -7634,11 +7634,6 @@ STRING 1277
 Dexterity Training
 }
 
-STRING 1278
-{
-Type: |Cffffcc00Holy|r
-}
-
 STRING 1279
 // Items: I09S (Stamina Training), Tip (Tooltip - Basic)
 {
@@ -7679,11 +7674,6 @@ STRING 1285
 // Abilities: A09C (Metal Fireball), Name (Name)
 {
 Metal Fireball
-}
-
-STRING 1286
-{
-Type: |Cffffcc00Holy|r
 }
 
 STRING 1287
@@ -7810,46 +7800,6 @@ STRING 1307
 // Doodads: D00U (Computer), Name (Name)
 {
 Computer
-}
-
-STRING 1308
-{
-Must target an enemy Digimon.
-}
-
-STRING 1309
-{
-Digimon Attributes:
-}
-
-STRING 1310
-{
-Digimons Used
-}
-
-STRING 1311
-{
-Digimons Killed
-}
-
-STRING 1312
-{
-Digimons Score
-}
-
-STRING 1313
-{
-Digimon level:
-}
-
-STRING 1314
-{
-Nearby Digimon
-}
-
-STRING 1315
-{
-Digimons
 }
 
 STRING 1316
@@ -10264,45 +10214,10 @@ STRING 1747
 Arena Rookie Digimon 1
 }
 
-STRING 1748
-{
-|cff007d32Dexterity|r
-}
-
-STRING 1749
-{
-|cff007d32Dexterity:|r
-}
-
 STRING 1750
 // Upgrades: R008 (Fuerza bruta), Ubertip (Tooltip - Extended)
 {
 Arena Rookie Digimon 1
-}
-
-STRING 1751
-{
-|cff0078c8Wisdom:|r
-}
-
-STRING 1752
-{
-|cffff7d00Stamina:|r
-}
-
-STRING 1753
-{
-|cff0078c8Wisdom|r
-}
-
-STRING 1754
-{
-|cff0078c8Wisdom|r
-}
-
-STRING 1755
-{
-|cffff7d00Stamina|r
 }
 
 STRING 1756
@@ -10321,11 +10236,6 @@ STRING 1758
 // Upgrades: R00E (Fuerza bruta), Name (Name)
 {
 Arena Rookie Digimon 2
-}
-
-STRING 1759
-{
-|cff828282DigiBits|r is gathered from killing digimons and doing quests.
 }
 
 STRING 1760
@@ -12284,86 +12194,6 @@ STRING 2251
 Item heal
 }
 
-STRING 2299
-{
-A Digimon must be nearby.
-}
-
-STRING 2300
-{
-Digimon is at max level.
-}
-
-STRING 2301
-{
-Digimon has full health.
-}
-
-STRING 2308
-{
-Type: |cffff8080Beast|r
-}
-
-STRING 2309
-{
-Type: |cff00ffffAir|r
-}
-
-STRING 2310
-{
-Type: |cff008000Nature|r
-}
-
-STRING 2311
-{
-Type: |cff0000ffWater|r
-}
-
-STRING 2313
-{
-Type: |cff6f2583Dark|r
-}
-
-STRING 2314
-{
-Type: |cffff0000Flame|r
-}
-
-STRING 2316
-{
-Type: |cff008000Nature|r
-}
-
-STRING 2317
-{
-Type: |cffff8080Beast|r
-}
-
-STRING 2318
-{
-Type: |cffff0000Flame|r
-}
-
-STRING 2320
-{
-Type: |cff00ffffAir|r
-}
-
-STRING 2321
-{
-Type: |cff6f2583Dark|r
-}
-
-STRING 2322
-{
-Type: |cff0000ffWater|r
-}
-
-STRING 2323
-{
-Type: |Cffffcc00Holy|r
-}
-
 STRING 2324
 // Buffs/Effects: B02B (Evolve), Bufftip (Tooltip)
 {
@@ -12374,266 +12204,6 @@ STRING 2325
 // Buffs/Effects: B02B (Evolve), Buffubertip (Tooltip - Extended)
 {
  
-}
-
-STRING 2326
-{
- 
-}
-
-STRING 2327
-{
- 
-}
-
-STRING 2328
-{
- 
-}
-
-STRING 2329
-{
- 
-}
-
-STRING 2330
-{
- 
-}
-
-STRING 2331
-{
- 
-}
-
-STRING 2332
-{
- 
-}
-
-STRING 2333
-{
- 
-}
-
-STRING 2334
-{
- 
-}
-
-STRING 2335
-{
- 
-}
-
-STRING 2336
-{
- 
-}
-
-STRING 2337
-{
- 
-}
-
-STRING 2338
-{
- 
-}
-
-STRING 2339
-{
- 
-}
-
-STRING 2340
-{
- 
-}
-
-STRING 2341
-{
- 
-}
-
-STRING 2342
-{
- 
-}
-
-STRING 2343
-{
- 
-}
-
-STRING 2344
-{
- 
-}
-
-STRING 2345
-{
- 
-}
-
-STRING 2346
-{
- 
-}
-
-STRING 2347
-{
- 
-}
-
-STRING 2348
-{
- 
-}
-
-STRING 2349
-{
- 
-}
-
-STRING 2350
-{
- 
-}
-
-STRING 2351
-{
-|cffc882c8DigiCrystal |r
-}
-
-STRING 2352
-{
-|cff828282DigiBits |r
-}
-
-STRING 2353
-{
- 
-}
-
-STRING 2354
-{
- 
-}
-
-STRING 2355
-{
- 
-}
-
-STRING 2356
-{
- 
-}
-
-STRING 2357
-{
- 
-}
-
-STRING 2358
-{
- 
-}
-
-STRING 2359
-{
- 
-}
-
-STRING 2360
-{
- 
-}
-
-STRING 2361
-{
- 
-}
-
-STRING 2362
-{
- 
-}
-
-STRING 2363
-{
- 
-}
-
-STRING 2364
-{
- 
-}
-
-STRING 2365
-{
- 
-}
-
-STRING 2366
-{
- 
-}
-
-STRING 2367
-{
- 
-}
-
-STRING 2368
-{
- 
-}
-
-STRING 2369
-{
- 
-}
-
-STRING 2370
-{
- 
-}
-
-STRING 2371
-{
- 
-}
-
-STRING 2372
-{
- 
-}
-
-STRING 2373
-{
- 
-}
-
-STRING 2374
-{
- 
-}
-
-STRING 2375
-{
- 
-}
-
-STRING 2376
-{
- 
-}
-
-STRING 2377
-{
-|cff828282DigiBits |r
 }
 
 STRING 2379
@@ -15459,36 +15029,6 @@ STRING 3213
 // Abilities: A05D (Spd. Disk 3), Tip (Tooltip - Normal)
 {
 Spd. Disk 3
-}
-
-STRING 3219
-{
- 
-}
-
-STRING 3220
-{
- 
-}
-
-STRING 3221
-{
- 
-}
-
-STRING 3225
-{
- 
-}
-
-STRING 3226
-{
- 
-}
-
-STRING 3227
-{
- 
 }
 
 STRING 3228
@@ -21902,21 +21442,6 @@ STRING 4623
 Silphymon
 }
 
-STRING 4624
-{
-Information (|Cfffed312F9|R)
-}
-
-STRING 4625
-{
- 
-}
-
-STRING 4626
-{
- 
-}
-
 STRING 4627
 // Abilities: Aroc (Bombardear), Tip (Tooltip - Normal)
 {
@@ -22760,26 +22285,6 @@ STRING 4911
 // Items: I03C (Berrys), Tip (Tooltip - Basic)
 {
 Berrys
-}
-
-STRING 4919
-{
-|cff8080ffTamer Rank|r
-}
-
-STRING 4920
-{
-|cffc882c8DigiCrystal |r
-}
-
-STRING 4921
-{
-|cffc882c8DigiCrystal |ris gathered from Bosses.
-}
-
-STRING 4922
-{
-|cff8080ffTamer Rank|r is inscreased Battling in the Grey's Arena.
 }
 
 STRING 4924
@@ -26000,16 +25505,6 @@ STRING 6321
 Charges 1 area skill that cant be stoped/paused/freeze, after the charge is finished throw a lot of stings in a region of  dealing huge damage.
 }
 
-STRING 6324
-{
-Type: |cff808080Ore|r
-}
-
-STRING 6325
-{
-Type: |cff808080Ore|r
-}
-
 STRING 6326
 // Abilities: A0IG (Poison), Name (Name)
 {
@@ -27552,16 +27047,6 @@ STRING 6789
 |cff808080+100 Digibits|r |cffdcc800+35 Experience|r |cff00ffff+3 Digimon net|r
 }
 
-STRING 6791
-{
- 
-}
-
-STRING 6792
-{
- 
-}
-
 STRING 6815
 // Items: I04D (Almonds), Name (Name)
 {
@@ -28562,21 +28047,6 @@ STRING 7090
 // Abilities: A0JK (Mass Morph), Hotkey (Hotkey - Normal)
 {
 W
-}
-
-STRING 7099
-{
- - Each point increases attack speed by 0.07|n - Each point increases chance of critical by 0.075%|n - Each point increases chance of evasion by 0.065%
-}
-
-STRING 7101
-{
-- Each point inscrease hit points by 3|n- Each point inscrease hit point regeneration by 0.005
-}
-
-STRING 7102
-{
- - Each point increases mana by 2|n - Each point increases energy regeneration 0.003|n - Each point inscrease the critical damage by 0.2%
 }
 
 STRING 7103
@@ -30852,11 +30322,6 @@ STRING 7661
 // Abilities: A0GH (Ataque de relámpagos), EditorSuffix (Editor Suffix)
 {
 (Kimeramon)
-}
-
-STRING 7662
-{
- 
 }
 
 STRING 7663
