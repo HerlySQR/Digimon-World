@@ -259,7 +259,7 @@ STRING 43
 }
 
 STRING 44
-// Abilities: Amls (Grilletes aéreos), Tip (Tooltip - Normal)
+// Abilities: Amls (Aerial Shackles), Tip (Tooltip - Normal)
 {
 !
 }
@@ -403,13 +403,13 @@ Digiiron
 }
 
 STRING 68
-// Abilities: A000 (Inventario), EditorSuffix (Editor Suffix)
+// Abilities: A000 (Inventory), EditorSuffix (Editor Suffix)
 {
 (2 Slots)
 }
 
 STRING 69
-// Abilities: A001 (Inventario), EditorSuffix (Editor Suffix)
+// Abilities: A001 (Inventory), EditorSuffix (Editor Suffix)
 {
 (4 Slots)
 }
@@ -511,7 +511,7 @@ Digifire Wood
 }
 
 STRING 86
-// Abilities: A004 (Peleador borracho), EditorSuffix (Editor Suffix)
+// Abilities: A004 (Drunken Brawler), EditorSuffix (Editor Suffix)
 {
 (New)
 }
@@ -2151,7 +2151,7 @@ Champion Digimon
 }
 
 STRING 360
-// Abilities: A07A (Rabia), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A07A (Berserk), Ubertip (Tooltip - Normal - Extended)
 {
 Causes this unit to attack 55% and move 15% faster.|nLasts 12 seconds.
 }
@@ -2307,7 +2307,7 @@ Champion Digimon
 }
 
 STRING 386
-// Abilities: A0AB (Ciclón), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0AB (Cyclone), Ubertip (Tooltip - Normal - Extended)
 {
 Tosses a target digimon enemy unit into the air, rendering it unable to move, attack or cast spells, and stopping others from attacking or casting on it. |nLasts 8 seconds.|n|cffffff00Generate Medium amount of Threat.|r
 }
@@ -5091,7 +5091,7 @@ Ultimate Digimon
 }
 
 STRING 854
-// Abilities: A07H (Lisiar), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A07H (Cripple), Ubertip (Tooltip - Normal - Extended)
 {
 Reduces damage by 35% and speed by 30% of a target enemy unit. |nLasts 10 seconds.|n|cffffff00Generate Medium amount of Threat.|r
 }
@@ -5193,13 +5193,13 @@ Ancientmermaydmon
 }
 
 STRING 871
-// Abilities: A002 (Evasión), EditorSuffix (Editor Suffix)
+// Abilities: A002 (Evasion), EditorSuffix (Editor Suffix)
 {
 (Passive)
 }
 
 STRING 872
-// Abilities: A003 (Golpe crítico), EditorSuffix (Editor Suffix)
+// Abilities: A003 (Critical Strike), EditorSuffix (Editor Suffix)
 {
 (Passive)
 }
@@ -5235,7 +5235,7 @@ Air Bonus Attack
 }
 
 STRING 878
-// Abilities: A008 (Aura vampírica), EditorSuffix (Editor Suffix)
+// Abilities: A008 (Vampiric Aura), EditorSuffix (Editor Suffix)
 {
 (Passive)
 }
@@ -5355,13 +5355,13 @@ STRING 897
 }
 
 STRING 898
-// Abilities: A00G (Aporrear), EditorSuffix (Editor Suffix)
+// Abilities: A00G (Bash), EditorSuffix (Editor Suffix)
 {
 (Passive)
 }
 
 STRING 899
-// Abilities: A00H (Pulverizar), EditorSuffix (Editor Suffix)
+// Abilities: A00H (Pulverize), EditorSuffix (Editor Suffix)
 {
 (Passive)
 }
@@ -5385,7 +5385,7 @@ STRING 902
 }
 
 STRING 903
-// Abilities: A00J (Ataque de hielo), EditorSuffix (Editor Suffix)
+// Abilities: A00J (Frost Attack), EditorSuffix (Editor Suffix)
 {
 (Passive)
 }
@@ -5409,19 +5409,19 @@ Regeneration Aura
 }
 
 STRING 907
-// Abilities: A00L (Caparazón con púas), EditorSuffix (Editor Suffix)
+// Abilities: A00L (Spiked Carapace), EditorSuffix (Editor Suffix)
 {
 (Passive)
 }
 
 STRING 908
-// Abilities: A00M (Piel endurecida), EditorSuffix (Editor Suffix)
+// Abilities: A00M (Hardened Skin), EditorSuffix (Editor Suffix)
 {
 (Passive)
 }
 
 STRING 909
-// Abilities: A00O (Ataque arrollador), EditorSuffix (Editor Suffix)
+// Abilities: A00O (Cleaving Attack), EditorSuffix (Editor Suffix)
 {
 (Passive)
 }
@@ -5655,13 +5655,13 @@ STRING 947
 }
 
 STRING 948
-// Abilities: A0A9 (Raíces enredadoras), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0A9 (Entangling Roots), Ubertip (Tooltip - Normal - Extended)
 {
 Causes roots to burst from the ground, immobilizing and disarming a target enemy unit dealing 6 |cff008000Nature|r for 4 seconds.|n|cffffff00Generate High amount of Threat.|r
 }
 
 STRING 949
-// Abilities: A0D7 (Armadura de hielo), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0D7 (Frost Armor), Ubertip (Tooltip - Normal - Extended)
 {
 The digimon creates a shield of frost around itself. The shield adds 4 armor and slows melee units that attack it for 2 seconds. |nLasts 45 seconds.|n|cffffff00Generate High amount of Threat.|r
 }
@@ -5745,7 +5745,7 @@ Shellmon
 }
 
 STRING 963
-// Abilities: A0A9 (Raíces enredadoras), Tip (Tooltip - Normal)
+// Abilities: A0A9 (Entangling Roots), Tip (Tooltip - Normal)
 {
 |cff008000Entangling Roots|r
 }
@@ -5787,13 +5787,13 @@ Agumon
 }
 
 STRING 970
-// Abilities: A0JG (Raíces enredadoras), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0JG (Entangling Roots), Ubertip (Tooltip - Normal - Extended)
 {
 Causes roots to burst from the ground, immobilizing and disarming a target enemy unit dealing 12 |cff008000Nature|r for 4 seconds.|n|cffffff00Generate High amount of Threat.|r
 }
 
 STRING 971
-// Abilities: A0JG (Raíces enredadoras), EditorSuffix (Editor Suffix)
+// Abilities: A0JG (Entangling Roots), EditorSuffix (Editor Suffix)
 {
 Digimon Ultimate
 }
@@ -5961,7 +5961,7 @@ SKILL Ultimate
 }
 
 STRING 999
-// Abilities: A0JI (Armadura de hielo), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0JI (Frost Armor), Ubertip (Tooltip - Normal - Extended)
 {
 The digimon creates a shield of frost around itself. The shield adds 4 armor and slows melee units that attack it for 2 seconds. |nLasts 45 seconds.|n|cffffff00Generate High amount of Threat.|r
 }
@@ -5973,7 +5973,7 @@ Impmon
 }
 
 STRING 1001
-// Abilities: A07G (Armadura de hielo), Tip (Tooltip - Normal)
+// Abilities: A07G (Frost Armor), Tip (Tooltip - Normal)
 {
 |cff0000ffFrost Armor|r
 }
@@ -6021,7 +6021,7 @@ Lucemon
 }
 
 STRING 1009
-// Abilities: A0JI (Armadura de hielo), EditorSuffix (Editor Suffix)
+// Abilities: A0JI (Frost Armor), EditorSuffix (Editor Suffix)
 {
 NEW Ultimate
 }
@@ -6207,7 +6207,7 @@ Ebonwumon
 }
 
 STRING 1040
-// Abilities: A016 (Ansia de sangre), Unhotkey (Hotkey - Turn Off)
+// Abilities: A016 (Bloodlust), Unhotkey (Hotkey - Turn Off)
 {
 W
 }
@@ -6333,7 +6333,7 @@ Terriermon
 }
 
 STRING 1061
-// Abilities: A016 (Ansia de sangre), Hotkey (Hotkey - Normal)
+// Abilities: A016 (Bloodlust), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -6357,7 +6357,7 @@ STRING 1064
 }
 
 STRING 1065
-// Abilities: A017 (Sanar), Hotkey (Hotkey - Normal)
+// Abilities: A017 (Heal), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -6627,25 +6627,25 @@ MP Large
 }
 
 STRING 1110
-// Upgrades: R001 (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R001 (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 1111
-// Upgrades: R00C (Fuerza bruta), Name (Name)
+// Upgrades: R00C (Brute Strength), Name (Name)
 {
 Dungeon Digimons 1
 }
 
 STRING 1112
-// Upgrades: R00C (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R00C (Brute Strength), Tip (Tooltip)
 {
 Dungeon Digimons 1
 }
 
 STRING 1113
-// Upgrades: R00C (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R00C (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Dungeon Digimons 1
 }
@@ -6705,13 +6705,13 @@ Q
 }
 
 STRING 1123
-// Upgrades: R002 (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R002 (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 1124
-// Abilities: Acri (Lisiar), Ubertip (Tooltip - Normal - Extended)
+// Abilities: Acri (Cripple), Ubertip (Tooltip - Normal - Extended)
 {
 Reduces damage by 50% of a target enemy unit. |nLasts 7 seconds.
 }
@@ -6741,7 +6741,7 @@ Gives friendly nearby digimons a |cffffff0015%|r bonus to damage. |nLasts |cffff
 }
 
 STRING 1129
-// Abilities: A017 (Sanar), Unhotkey (Hotkey - Turn Off)
+// Abilities: A017 (Heal), Unhotkey (Hotkey - Turn Off)
 {
 W
 }
@@ -6771,7 +6771,7 @@ Gives friendly nearby digimons a |cffffff0020%|r bonus to HP regen and |cffffff0
 }
 
 STRING 1134
-// Abilities: A019 (Lisiar), Hotkey (Hotkey - Normal)
+// Abilities: A019 (Cripple), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -6795,7 +6795,7 @@ Reboot
 }
 
 STRING 1138
-// Abilities: A01A (Armadura de hielo), Hotkey (Hotkey - Normal)
+// Abilities: A01A (Frost Armor), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -6831,7 +6831,7 @@ Dispels positive buffs from enemy units, and negative buffs from friendly units.
 }
 
 STRING 1144
-// Abilities: A01A (Armadura de hielo), Unhotkey (Hotkey - Turn Off)
+// Abilities: A01A (Frost Armor), Unhotkey (Hotkey - Turn Off)
 {
 W
 }
@@ -6855,25 +6855,25 @@ W
 }
 
 STRING 1148
-// Abilities: A016 (Ansia de sangre), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A016 (Bloodlust), Ubertip (Tooltip - Normal - Extended)
 {
 Increases a friendly unit's attack rate by |cffffff0025%|r and movement speed by |cffffff0025%|r. |nLasts |cffffff0045|r seconds.
 }
 
 STRING 1149
-// Abilities: A01C (Fuego feérico), Hotkey (Hotkey - Normal)
+// Abilities: A01C (Faerie Fire), Hotkey (Hotkey - Normal)
 {
 W
 }
 
 STRING 1150
-// Abilities: A016 (Ansia de sangre), EditorSuffix (Editor Suffix)
+// Abilities: A016 (Bloodlust), EditorSuffix (Editor Suffix)
 {
 * + Attack/Move Speed
 }
 
 STRING 1151
-// Abilities: A01C (Fuego feérico), Unhotkey (Hotkey - Turn Off)
+// Abilities: A01C (Faerie Fire), Unhotkey (Hotkey - Turn Off)
 {
 W
 }
@@ -6885,25 +6885,25 @@ W
 }
 
 STRING 1153
-// Abilities: A017 (Sanar), EditorSuffix (Editor Suffix)
+// Abilities: A017 (Heal), EditorSuffix (Editor Suffix)
 {
 * Heal
 }
 
 STRING 1154
-// Abilities: A018 (Ralentizar), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A018 (Slow), Ubertip (Tooltip - Normal - Extended)
 {
 Slows a target enemy unit's attack rate by |cffffff0025%|r and movement speed by |cffffff0025%|r. |nLasts |cffffff0030|r seconds.
 }
 
 STRING 1155
-// Abilities: A018 (Ralentizar), EditorSuffix (Editor Suffix)
+// Abilities: A018 (Slow), EditorSuffix (Editor Suffix)
 {
 * - Move/Attack Speed
 }
 
 STRING 1156
-// Abilities: A019 (Lisiar), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A019 (Cripple), Ubertip (Tooltip - Normal - Extended)
 {
 Reduces damage by 50% of a target enemy unit. |nLasts 7 seconds.
 }
@@ -6915,13 +6915,13 @@ W
 }
 
 STRING 1158
-// Abilities: A019 (Lisiar), EditorSuffix (Editor Suffix)
+// Abilities: A019 (Cripple), EditorSuffix (Editor Suffix)
 {
 * - Attack
 }
 
 STRING 1159
-// Abilities: A01A (Armadura de hielo), EditorSuffix (Editor Suffix)
+// Abilities: A01A (Frost Armor), EditorSuffix (Editor Suffix)
 {
 * + armor
 }
@@ -6939,13 +6939,13 @@ W
 }
 
 STRING 1162
-// Upgrades: R00D (Fuerza bruta), Name (Name)
+// Upgrades: R00D (Brute Strength), Name (Name)
 {
 Dungeon Digimons 2
 }
 
 STRING 1163
-// Upgrades: R00D (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R00D (Brute Strength), Tip (Tooltip)
 {
 Dungeon Digimons 2
 }
@@ -6963,7 +6963,7 @@ W
 }
 
 STRING 1166
-// Upgrades: R00D (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R00D (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Dungeon Digimons 2
 }
@@ -6987,19 +6987,19 @@ W
 }
 
 STRING 1170
-// Abilities: A01C (Fuego feérico), EditorSuffix (Editor Suffix)
+// Abilities: A01C (Faerie Fire), EditorSuffix (Editor Suffix)
 {
 * - Armor
 }
 
 STRING 1171
-// Abilities: A01D (Aullido de terror), EditorSuffix (Editor Suffix)
+// Abilities: A01D (Howl of Terror), EditorSuffix (Editor Suffix)
 {
 * - Attack area
 }
 
 STRING 1172
-// Abilities: A01E (Aullido de terror), EditorSuffix (Editor Suffix)
+// Abilities: A01E (Howl of Terror), EditorSuffix (Editor Suffix)
 {
 * - defense area
 }
@@ -7725,13 +7725,13 @@ Lunatic Dance
 }
 
 STRING 1295
-// Upgrades: R008 (Fuerza bruta), effect4 (Effect 4)
+// Upgrades: R008 (Brute Strength), effect4 (Effect 4)
 {
 rmnx
 }
 
 STRING 1296
-// Upgrades: R00C (Fuerza bruta), effect4 (Effect 4)
+// Upgrades: R00C (Brute Strength), effect4 (Effect 4)
 {
 rmnx
 }
@@ -8846,6 +8846,12 @@ STRING 1489
 Boarmon
 }
 
+STRING 1490
+// Buffs/Effects: B02B (Evolve), Bufftip (Tooltip)
+{
+ 
+}
+
 STRING 1491
 // Units: O00E (Champion Digimon), EditorSuffix (Name - Editor Suffix)
 {
@@ -8892,6 +8898,12 @@ STRING 1498
 // Units: O00L (Champion Digimon), EditorSuffix (Name - Editor Suffix)
 {
 Deltamon
+}
+
+STRING 1499
+// Buffs/Effects: B02B (Evolve), Buffubertip (Tooltip - Extended)
+{
+ 
 }
 
 STRING 1500
@@ -10203,49 +10215,49 @@ All the spells has the chance of freeze an enemy
 }
 
 STRING 1746
-// Upgrades: R008 (Fuerza bruta), Name (Name)
+// Upgrades: R008 (Brute Strength), Name (Name)
 {
 Arena Rookie Digimon 1
 }
 
 STRING 1747
-// Upgrades: R008 (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R008 (Brute Strength), Tip (Tooltip)
 {
 Arena Rookie Digimon 1
 }
 
 STRING 1750
-// Upgrades: R008 (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R008 (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Arena Rookie Digimon 1
 }
 
 STRING 1756
-// Upgrades: R00D (Fuerza bruta), effect4 (Effect 4)
+// Upgrades: R00D (Brute Strength), effect4 (Effect 4)
 {
 rmnx
 }
 
 STRING 1757
-// Upgrades: R003 (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R003 (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 1758
-// Upgrades: R00E (Fuerza bruta), Name (Name)
+// Upgrades: R00E (Brute Strength), Name (Name)
 {
 Arena Rookie Digimon 2
 }
 
 STRING 1760
-// Upgrades: R00E (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R00E (Brute Strength), Tip (Tooltip)
 {
 Arena Rookie Digimon 2
 }
 
 STRING 1761
-// Upgrades: R00E (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R00E (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Arena Rookie Digimon 2
 }
@@ -10311,7 +10323,7 @@ Bishopchessmon W
 }
 
 STRING 1772
-// Upgrades: R00E (Fuerza bruta), effect4 (Effect 4)
+// Upgrades: R00E (Brute Strength), effect4 (Effect 4)
 {
 rmnx
 }
@@ -12015,7 +12027,7 @@ This unit was hit by Flora; cannot move and takes damage over time.
 }
 
 STRING 2184
-// Abilities: A02Y (Raíces enredadoras), EditorSuffix (Editor Suffix)
+// Abilities: A02Y (Entangling Roots), EditorSuffix (Editor Suffix)
 {
 (Flora)
 }
@@ -12192,18 +12204,6 @@ STRING 2251
 // Abilities: A03E (Item heal), Name (Name)
 {
 Item heal
-}
-
-STRING 2324
-// Buffs/Effects: B02B (Evolve), Bufftip (Tooltip)
-{
- 
-}
-
-STRING 2325
-// Buffs/Effects: B02B (Evolve), Buffubertip (Tooltip - Extended)
-{
- 
 }
 
 STRING 2379
@@ -12608,7 +12608,7 @@ Targetable mana replish
 }
 
 STRING 2597
-// Abilities: A0CQ (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0CQ (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 200
 }
@@ -15872,13 +15872,13 @@ W
 }
 
 STRING 3426
-// Abilities: A079 (Tótem de sanación), Hotkey (Hotkey - Normal)
+// Abilities: A079 (Healing Ward), Hotkey (Hotkey - Normal)
 {
 W
 }
 
 STRING 3427
-// Abilities: A07A (Rabia), Hotkey (Hotkey - Normal)
+// Abilities: A07A (Berserk), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -15944,7 +15944,7 @@ W
 }
 
 STRING 3441
-// Abilities: A07G (Armadura de hielo), Hotkey (Hotkey - Normal)
+// Abilities: A07G (Frost Armor), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -15968,13 +15968,13 @@ STRING 3445
 }
 
 STRING 3446
-// Abilities: A07H (Lisiar), Hotkey (Hotkey - Normal)
+// Abilities: A07H (Cripple), Hotkey (Hotkey - Normal)
 {
 W
 }
 
 STRING 3447
-// Abilities: A079 (Tótem de sanación), EditorSuffix (Editor Suffix)
+// Abilities: A079 (Healing Ward), EditorSuffix (Editor Suffix)
 {
 (Digimon)
 }
@@ -15986,7 +15986,7 @@ W
 }
 
 STRING 3450
-// Abilities: A07A (Rabia), EditorSuffix (Editor Suffix)
+// Abilities: A07A (Berserk), EditorSuffix (Editor Suffix)
 {
 (Digimon)
 }
@@ -16046,7 +16046,7 @@ STRING 3461
 }
 
 STRING 3462
-// Abilities: A0A9 (Raíces enredadoras), Hotkey (Hotkey - Normal)
+// Abilities: A0A9 (Entangling Roots), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -16088,19 +16088,19 @@ W
 }
 
 STRING 3472
-// Abilities: A07G (Armadura de hielo), EditorSuffix (Editor Suffix)
+// Abilities: A07G (Frost Armor), EditorSuffix (Editor Suffix)
 {
 (Digimon)
 }
 
 STRING 3474
-// Abilities: A0AB (Ciclón), Hotkey (Hotkey - Normal)
+// Abilities: A0AB (Cyclone), Hotkey (Hotkey - Normal)
 {
 W
 }
 
 STRING 3475
-// Abilities: A07H (Lisiar), EditorSuffix (Editor Suffix)
+// Abilities: A07H (Cripple), EditorSuffix (Editor Suffix)
 {
 (Digimon)
 }
@@ -16364,7 +16364,7 @@ Cherry Juice
 }
 
 STRING 3550
-// Abilities: A07U (Crystal Water), Name (Name)
+// Items: I02C (Cherry Juice), Tip (Tooltip - Basic)
 {
 Crystal Water
 }
@@ -16772,7 +16772,7 @@ This digimon drank Grape Juice.
 }
 
 STRING 3644
-// Items: I02C (Cherry Juice), Tip (Tooltip - Basic)
+// Abilities: A07U (Cherry Juice), Name (Name)
 {
 Cherry Juice
 }
@@ -19413,7 +19413,7 @@ STRING 4153
 }
 
 STRING 4155
-// Abilities: A07A (Rabia), Tip (Tooltip - Normal)
+// Abilities: A07A (Berserk), Tip (Tooltip - Normal)
 {
 |cffff80a0Beserk|r
 }
@@ -19443,13 +19443,13 @@ STRING 4160
 }
 
 STRING 4163
-// Abilities: A0D7 (Armadura de hielo), Tip (Tooltip - Normal)
+// Abilities: A0D7 (Frost Armor), Tip (Tooltip - Normal)
 {
 |cff0000ffFrost Armor|r
 }
 
 STRING 4165
-// Abilities: A07H (Lisiar), Tip (Tooltip - Normal)
+// Abilities: A07H (Cripple), Tip (Tooltip - Normal)
 {
 |cff6f2583Cripple|r
 }
@@ -19479,13 +19479,13 @@ W
 }
 
 STRING 4175
-// Abilities: A0JG (Raíces enredadoras), Tip (Tooltip - Normal)
+// Abilities: A0JG (Entangling Roots), Tip (Tooltip - Normal)
 {
 |cff008000Entangling Roots|r
 }
 
 STRING 4177
-// Abilities: A0A9 (Raíces enredadoras), EditorSuffix (Editor Suffix)
+// Abilities: A0A9 (Entangling Roots), EditorSuffix (Editor Suffix)
 {
 Digimon
 }
@@ -19515,7 +19515,7 @@ Remedy
 }
 
 STRING 4182
-// Abilities: A0AB (Ciclón), Tip (Tooltip - Normal)
+// Abilities: A0AB (Cyclone), Tip (Tooltip - Normal)
 {
 |cff00ffffCyclone|r
 }
@@ -19527,7 +19527,7 @@ W
 }
 
 STRING 4184
-// Abilities: A0AB (Ciclón), EditorSuffix (Editor Suffix)
+// Abilities: A0AB (Cyclone), EditorSuffix (Editor Suffix)
 {
 IDIGMON
 }
@@ -19563,7 +19563,7 @@ STRING 4191
 }
 
 STRING 4192
-// Abilities: A0D7 (Armadura de hielo), Hotkey (Hotkey - Normal)
+// Abilities: A0D7 (Frost Armor), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -20279,13 +20279,13 @@ Move you to: |cff808000Drill Tunnel|r
 }
 
 STRING 4345
-// Abilities: A0AP (Objeto - Regeneración de maná), EditorSuffix (Editor Suffix)
+// Abilities: A0AP (Item Mana Regeneration), EditorSuffix (Editor Suffix)
 {
 75%
 }
 
 STRING 4346
-// Abilities: A0AQ (Objeto - Regeneración de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0AQ (Item Life Regeneration), EditorSuffix (Editor Suffix)
 {
 3
 }
@@ -20717,13 +20717,13 @@ Cast a channeling fire, deal fire damage while channeling in front of it during 
 }
 
 STRING 4447
-// Abilities: A0B0 (Frenesí), Hotkey (Hotkey - Normal)
+// Abilities: A0B0 (Frenzy), Hotkey (Hotkey - Normal)
 {
 E
 }
 
 STRING 4448
-// Abilities: A0B0 (Frenesí), Unhotkey (Hotkey - Turn Off)
+// Abilities: A0B0 (Frenzy), Unhotkey (Hotkey - Turn Off)
 {
 E
 }
@@ -20975,37 +20975,37 @@ Purchase |cff80ff80Leather Guard|r
 }
 
 STRING 4514
-// Abilities: AIl1 (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: AIl1 (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 60
 }
 
 STRING 4515
-// Abilities: AIlz (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: AIlz (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 30
 }
 
 STRING 4516
-// Abilities: AIs2 (Objeto - Bonificación de velocidad de ataque), EditorSuffix (Editor Suffix)
+// Abilities: AIs2 (Item Attack Speed Bonus), EditorSuffix (Editor Suffix)
 {
 20
 }
 
 STRING 4517
-// Abilities: AIbm (Objeto - Bonificación de maná), EditorSuffix (Editor Suffix)
+// Abilities: AIbm (Item Mana Bonus), EditorSuffix (Editor Suffix)
 {
 40
 }
 
 STRING 4518
-// Abilities: AIlf (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: AIlf (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 90
 }
 
 STRING 4519
-// Abilities: AIl2 (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: AIl2 (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 120
 }
@@ -21017,25 +21017,25 @@ STRING 4520
 }
 
 STRING 4521
-// Abilities: Arll (Objeto - Regeneración de vida), EditorSuffix (Editor Suffix)
+// Abilities: Arll (Item Life Regeneration), EditorSuffix (Editor Suffix)
 {
 1
 }
 
 STRING 4522
-// Abilities: A0H8 (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0H8 (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 15
 }
 
 STRING 4524
-// Abilities: AImb (Objeto - Bonificación de maná), EditorSuffix (Editor Suffix)
+// Abilities: AImb (Item Mana Bonus), EditorSuffix (Editor Suffix)
 {
 25
 }
 
 STRING 4525
-// Abilities: AIrm (Objeto - Regeneración de maná), EditorSuffix (Editor Suffix)
+// Abilities: AIrm (Item Mana Regeneration), EditorSuffix (Editor Suffix)
 {
 50
 }
@@ -21365,13 +21365,13 @@ dummy
 }
 
 STRING 4599
-// Upgrades: R000 (Saqueo), Name (Name)
+// Upgrades: R000 (Pillage), Name (Name)
 {
 Need to find the minimum conditions!
 }
 
 STRING 4600
-// Upgrades: R000 (Saqueo), Tip (Tooltip)
+// Upgrades: R000 (Pillage), Tip (Tooltip)
 {
 Need to find the minimum conditions!
 }
@@ -21443,19 +21443,19 @@ Silphymon
 }
 
 STRING 4627
-// Abilities: Aroc (Bombardear), Tip (Tooltip - Normal)
+// Abilities: Aroc (Barrage), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 4628
-// Abilities: Amic (Llamar a las armas), Tip (Tooltip - Normal)
+// Abilities: Amic (Call To Arms), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 4629
-// Abilities: Amil (Llamar a las armas), Tip (Tooltip - Normal)
+// Abilities: Amil (Call to Arms), Tip (Tooltip - Normal)
 {
 !
 }
@@ -21718,13 +21718,13 @@ Purchase |cff80ff80Rare Gem|r
 }
 
 STRING 4729
-// Upgrades: R001 (Fuerza bruta), Name (Name)
+// Upgrades: R001 (Brute Strength), Name (Name)
 {
 Wild Ultimate Digimon
 }
 
 STRING 4730
-// Upgrades: R006 (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R006 (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
@@ -21736,37 +21736,37 @@ Ultimate Digimon
 }
 
 STRING 4734
-// Upgrades: R001 (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R001 (Brute Strength), Tip (Tooltip)
 {
 Wild Ultimate Digimon
 }
 
 STRING 4735
-// Upgrades: R001 (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R001 (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Wild Ultimate Digimon
 }
 
 STRING 4736
-// Upgrades: R002 (Fuerza bruta), Name (Name)
+// Upgrades: R002 (Brute Strength), Name (Name)
 {
 Wild Champion Digimon
 }
 
 STRING 4737
-// Upgrades: R007 (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R007 (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 4738
-// Upgrades: R002 (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R002 (Brute Strength), Tip (Tooltip)
 {
 Wild Champion Digimon
 }
 
 STRING 4739
-// Upgrades: R002 (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R002 (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Wild Champion Digimon
 }
@@ -21892,7 +21892,7 @@ Jumps into the air and deal area damage when landing to the ground slowing the e
 }
 
 STRING 4761
-// Abilities: A0BL (Atronar), EditorSuffix (Editor Suffix)
+// Abilities: A0BL (Thunder Clap), EditorSuffix (Editor Suffix)
 {
 (Big Leap)
 }
@@ -22084,19 +22084,19 @@ Purchase |cff80ff80Ninja Cape|r
 }
 
 STRING 4813
-// Abilities: AIms (Objeto - Bonificación de velocidad de movimiento), EditorSuffix (Editor Suffix)
+// Abilities: AIms (Item Move Speed Bonus), EditorSuffix (Editor Suffix)
 {
 50
 }
 
 STRING 4814
-// Abilities: AIs1 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: AIs1 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+10 Strength)
 }
 
 STRING 4815
-// Abilities: AIi1 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: AIi1 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+10 Intelligence)
 }
@@ -22228,7 +22228,7 @@ Labramon
 }
 
 STRING 4879
-// Abilities: Arel (Objeto - Regeneración de vida), EditorSuffix (Editor Suffix)
+// Abilities: Arel (Item Life Regeneration), EditorSuffix (Editor Suffix)
 {
 2
 }
@@ -22823,25 +22823,25 @@ Nanimon
 }
 
 STRING 5272
-// Upgrades: R008 (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R008 (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 5273
-// Upgrades: R003 (Fuerza bruta), Name (Name)
+// Upgrades: R003 (Brute Strength), Name (Name)
 {
 Wild Champion Digimon Lower
 }
 
 STRING 5274
-// Upgrades: R003 (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R003 (Brute Strength), Tip (Tooltip)
 {
 Wild Champion Digimon Lower
 }
 
 STRING 5275
-// Upgrades: R003 (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R003 (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Wild Champion Digimon Lower
 }
@@ -22889,1201 +22889,1201 @@ STRING 5282
 }
 
 STRING 5283
-// Upgrades: R004 (Saqueo), Name (Name)
+// Upgrades: R004 (Pillage), Name (Name)
 {
 Not avaible now
 }
 
 STRING 5284
-// Upgrades: R004 (Saqueo), Tip (Tooltip)
+// Upgrades: R004 (Pillage), Tip (Tooltip)
 {
 Not avaible now
 }
 
 STRING 5285
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 1
 }
 
 STRING 5286
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 1
 }
 
 STRING 5287
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 2
 }
 
 STRING 5288
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 3
 }
 
 STRING 5289
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 4
 }
 
 STRING 5290
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 5
 }
 
 STRING 5291
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 6
 }
 
 STRING 5292
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 7
 }
 
 STRING 5293
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 8
 }
 
 STRING 5294
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 9
 }
 
 STRING 5295
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 10
 }
 
 STRING 5296
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 11
 }
 
 STRING 5297
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 12
 }
 
 STRING 5298
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 13
 }
 
 STRING 5299
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 14
 }
 
 STRING 5300
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 15
 }
 
 STRING 5301
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 16
 }
 
 STRING 5302
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 17
 }
 
 STRING 5303
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 18
 }
 
 STRING 5304
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 19
 }
 
 STRING 5305
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 20
 }
 
 STRING 5306
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 21
 }
 
 STRING 5307
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 22
 }
 
 STRING 5308
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 23
 }
 
 STRING 5309
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 24
 }
 
 STRING 5310
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 25
 }
 
 STRING 5311
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 26
 }
 
 STRING 5312
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 27
 }
 
 STRING 5313
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 28
 }
 
 STRING 5314
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 29
 }
 
 STRING 5315
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 30
 }
 
 STRING 5316
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 31
 }
 
 STRING 5317
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 32
 }
 
 STRING 5318
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 33
 }
 
 STRING 5319
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 34
 }
 
 STRING 5320
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 35
 }
 
 STRING 5321
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 36
 }
 
 STRING 5322
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 37
 }
 
 STRING 5323
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 38
 }
 
 STRING 5324
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 39
 }
 
 STRING 5325
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 40
 }
 
 STRING 5326
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 41
 }
 
 STRING 5327
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 42
 }
 
 STRING 5328
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 43
 }
 
 STRING 5329
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 44
 }
 
 STRING 5330
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 45
 }
 
 STRING 5331
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 46
 }
 
 STRING 5332
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 47
 }
 
 STRING 5333
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 48
 }
 
 STRING 5334
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 49
 }
 
 STRING 5335
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 50
 }
 
 STRING 5336
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 51
 }
 
 STRING 5337
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 52
 }
 
 STRING 5338
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 53
 }
 
 STRING 5339
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 54
 }
 
 STRING 5340
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 55
 }
 
 STRING 5341
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 56
 }
 
 STRING 5342
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 57
 }
 
 STRING 5343
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 58
 }
 
 STRING 5344
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 59
 }
 
 STRING 5345
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 60
 }
 
 STRING 5346
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 61
 }
 
 STRING 5347
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 62
 }
 
 STRING 5348
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 63
 }
 
 STRING 5349
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 64
 }
 
 STRING 5350
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 65
 }
 
 STRING 5351
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 66
 }
 
 STRING 5352
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 67
 }
 
 STRING 5353
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 68
 }
 
 STRING 5354
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 69
 }
 
 STRING 5355
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 70
 }
 
 STRING 5356
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 71
 }
 
 STRING 5357
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 72
 }
 
 STRING 5358
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 73
 }
 
 STRING 5359
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 74
 }
 
 STRING 5360
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 75
 }
 
 STRING 5361
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 76
 }
 
 STRING 5362
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 77
 }
 
 STRING 5363
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 78
 }
 
 STRING 5364
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 79
 }
 
 STRING 5365
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 80
 }
 
 STRING 5366
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 81
 }
 
 STRING 5367
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 82
 }
 
 STRING 5368
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 83
 }
 
 STRING 5369
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 84
 }
 
 STRING 5370
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 85
 }
 
 STRING 5371
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 86
 }
 
 STRING 5372
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 87
 }
 
 STRING 5373
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 88
 }
 
 STRING 5374
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 89
 }
 
 STRING 5375
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 90
 }
 
 STRING 5376
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 91
 }
 
 STRING 5377
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 92
 }
 
 STRING 5378
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 93
 }
 
 STRING 5379
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 94
 }
 
 STRING 5380
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 95
 }
 
 STRING 5381
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 96
 }
 
 STRING 5382
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 97
 }
 
 STRING 5383
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 98
 }
 
 STRING 5384
-// Upgrades: R005 (Saqueo), Name (Name)
+// Upgrades: R005 (Pillage), Name (Name)
 {
 Rank 99
 }
 
 STRING 5385
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 2
 }
 
 STRING 5386
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 3
 }
 
 STRING 5387
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 4
 }
 
 STRING 5388
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 5
 }
 
 STRING 5389
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 6
 }
 
 STRING 5390
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 7
 }
 
 STRING 5391
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 8
 }
 
 STRING 5392
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 9
 }
 
 STRING 5393
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 10
 }
 
 STRING 5394
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 11
 }
 
 STRING 5395
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 12
 }
 
 STRING 5396
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 13
 }
 
 STRING 5397
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 14
 }
 
 STRING 5398
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 15
 }
 
 STRING 5399
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 16
 }
 
 STRING 5400
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 17
 }
 
 STRING 5401
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 18
 }
 
 STRING 5402
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 19
 }
 
 STRING 5403
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 20
 }
 
 STRING 5404
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 21
 }
 
 STRING 5405
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 22
 }
 
 STRING 5406
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 23
 }
 
 STRING 5407
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 24
 }
 
 STRING 5408
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 25
 }
 
 STRING 5409
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 26
 }
 
 STRING 5410
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 27
 }
 
 STRING 5411
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 28
 }
 
 STRING 5412
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 29
 }
 
 STRING 5413
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 30
 }
 
 STRING 5414
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 31
 }
 
 STRING 5415
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 32
 }
 
 STRING 5416
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 33
 }
 
 STRING 5417
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 34
 }
 
 STRING 5418
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 35
 }
 
 STRING 5419
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 36
 }
 
 STRING 5420
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 37
 }
 
 STRING 5421
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 38
 }
 
 STRING 5422
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 39
 }
 
 STRING 5423
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 40
 }
 
 STRING 5424
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 41
 }
 
 STRING 5425
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 42
 }
 
 STRING 5426
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 43
 }
 
 STRING 5427
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 44
 }
 
 STRING 5428
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 45
 }
 
 STRING 5429
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 46
 }
 
 STRING 5430
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 47
 }
 
 STRING 5431
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 48
 }
 
 STRING 5432
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 49
 }
 
 STRING 5433
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 50
 }
 
 STRING 5434
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 51
 }
 
 STRING 5435
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 52
 }
 
 STRING 5436
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 53
 }
 
 STRING 5437
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 54
 }
 
 STRING 5438
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 55
 }
 
 STRING 5439
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 56
 }
 
 STRING 5440
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 57
 }
 
 STRING 5441
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 58
 }
 
 STRING 5442
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 59
 }
 
 STRING 5443
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 60
 }
 
 STRING 5444
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 61
 }
 
 STRING 5445
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 62
 }
 
 STRING 5446
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 63
 }
 
 STRING 5447
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 64
 }
 
 STRING 5448
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 65
 }
 
 STRING 5449
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 66
 }
 
 STRING 5450
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 67
 }
 
 STRING 5451
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 68
 }
 
 STRING 5452
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 69
 }
 
 STRING 5453
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 70
 }
 
 STRING 5454
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 71
 }
 
 STRING 5455
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 72
 }
 
 STRING 5456
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 73
 }
 
 STRING 5457
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 74
 }
 
 STRING 5458
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 75
 }
 
 STRING 5459
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 76
 }
 
 STRING 5460
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 77
 }
 
 STRING 5461
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 78
 }
 
 STRING 5462
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 79
 }
 
 STRING 5463
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 80
 }
 
 STRING 5464
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 81
 }
 
 STRING 5465
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 82
 }
 
 STRING 5466
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 83
 }
 
 STRING 5467
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 84
 }
 
 STRING 5468
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 85
 }
 
 STRING 5469
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 86
 }
 
 STRING 5470
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 87
 }
 
 STRING 5471
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 88
 }
 
 STRING 5472
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 89
 }
 
 STRING 5473
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 90
 }
 
 STRING 5474
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 91
 }
 
 STRING 5475
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 92
 }
 
 STRING 5476
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 93
 }
 
 STRING 5477
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 94
 }
 
 STRING 5478
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 95
 }
 
 STRING 5479
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 96
 }
 
 STRING 5480
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 97
 }
 
 STRING 5481
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 98
 }
 
 STRING 5482
-// Upgrades: R005 (Saqueo), Tip (Tooltip)
+// Upgrades: R005 (Pillage), Tip (Tooltip)
 {
 Rank 99
 }
@@ -24101,7 +24101,7 @@ Ogremon
 }
 
 STRING 5486
-// Abilities: A07G (Armadura de hielo), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A07G (Frost Armor), Ubertip (Tooltip - Normal - Extended)
 {
 The digimon creates a shield of frost around itself. The shield adds 3 armor and slows melee units that attack it for 2 seconds. |nLasts 45 seconds.
 }
@@ -24279,7 +24279,7 @@ This digimon ate a Soup.
 }
 
 STRING 5574
-// Abilities: A0FQ (Armadura de hielo), Hotkey (Hotkey - Normal)
+// Abilities: A0FQ (Frost Armor), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -24510,13 +24510,13 @@ Q
 }
 
 STRING 5944
-// Abilities: A0C7 (Teleport Back), Name (Name)
+// Items: I03W (Teleport Back), Name (Name)
 {
 Teleport Back
 }
 
 STRING 5947
-// Abilities: A0C7 (Teleport Back), Tip (Tooltip - Normal)
+// Items: I03W (Teleport Back), Tip (Tooltip - Basic)
 {
 Teleport Back
 }
@@ -24564,13 +24564,13 @@ Gokuwmon
 }
 
 STRING 5957
-// Items: I03W (Auto Pilot), Name (Name)
+// Abilities: A0C7 (Auto Pilot), Name (Name)
 {
 Auto Pilot
 }
 
 STRING 5958
-// Items: I03W (Auto Pilot), Tip (Tooltip - Basic)
+// Abilities: A0C7 (Auto Pilot), Tip (Tooltip - Normal)
 {
 Auto Pilot
 }
@@ -24804,67 +24804,67 @@ EM. LG Recovery
 }
 
 STRING 6014
-// Items: I044 (EM. SP Recovery), Description (Description)
+// Items: I044 (EM. MD Recovery), Description (Description)
 {
 Restores 1000 hit points.|n|cffffff00Can only have 1 Healling Chip at a time.|r
 }
 
 STRING 6015
-// Items: I044 (EM. SP Recovery), Ubertip (Tooltip - Extended)
+// Items: I044 (EM. MD Recovery), Ubertip (Tooltip - Extended)
 {
 Restores 1000 hit points.|n|cffffff00Can only have 1 Healling Chip at a time.|r
 }
 
 STRING 6016
-// Items: I044 (EM. SP Recovery), Name (Name)
+// Items: I042 (EM. MD Recovery), Tip (Tooltip - Basic)
 {
 EM. SP Recovery
 }
 
 STRING 6018
-// Abilities: A0CB (Objeto - Sanación), EditorSuffix (Editor Suffix)
+// Abilities: A0CB (Item Healing), EditorSuffix (Editor Suffix)
 {
 100
 }
 
 STRING 6019
-// Abilities: A0CC (Objeto - Sanación), EditorSuffix (Editor Suffix)
+// Abilities: A0CC (Item Healing), EditorSuffix (Editor Suffix)
 {
 250
 }
 
 STRING 6020
-// Abilities: A0CD (Objeto - Sanación), EditorSuffix (Editor Suffix)
+// Abilities: A0CD (Item Healing), EditorSuffix (Editor Suffix)
 {
 500
 }
 
 STRING 6021
-// Abilities: A0CE (Objeto - Sanación), EditorSuffix (Editor Suffix)
+// Abilities: A0CE (Item Healing), EditorSuffix (Editor Suffix)
 {
 1000
 }
 
 STRING 6022
-// Abilities: A0CF (Objeto - Recuperación de maná), EditorSuffix (Editor Suffix)
+// Abilities: A0CF (Item Mana Regain), EditorSuffix (Editor Suffix)
 {
 100
 }
 
 STRING 6023
-// Abilities: A0CG (Objeto - Recuperación de maná), EditorSuffix (Editor Suffix)
+// Abilities: A0CG (Item Mana Regain), EditorSuffix (Editor Suffix)
 {
 250
 }
 
 STRING 6024
-// Abilities: A0CH (Objeto - Recuperación de maná), EditorSuffix (Editor Suffix)
+// Abilities: A0CH (Item Mana Regain), EditorSuffix (Editor Suffix)
 {
 500
 }
 
 STRING 6025
-// Abilities: A0CI (Objeto - Recuperación de maná), EditorSuffix (Editor Suffix)
+// Abilities: A0CI (Item Mana Regain), EditorSuffix (Editor Suffix)
 {
 1000
 }
@@ -24978,7 +24978,7 @@ EM. MP Huge
 }
 
 STRING 6051
-// Items: I042 (EM. MD Recovery), Tip (Tooltip - Basic)
+// Items: I044 (EM. MD Recovery), Name (Name)
 {
 EM. MD Recovery
 }
@@ -24990,7 +24990,7 @@ EM. LG Recovery
 }
 
 STRING 6053
-// Items: I044 (EM. SP Recovery), Tip (Tooltip - Basic)
+// Items: I044 (EM. MD Recovery), Tip (Tooltip - Basic)
 {
 EM. SP Recovery
 }
@@ -25020,49 +25020,49 @@ STRING 6148
 }
 
 STRING 6151
-// Abilities: A0CJ (Objeto - Bonificación de armadura), EditorSuffix (Editor Suffix)
+// Abilities: A0CJ (Item Armor Bonus), EditorSuffix (Editor Suffix)
 {
 (+6)
 }
 
 STRING 6152
-// Abilities: A0CK (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0CK (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+25 Strength)
 }
 
 STRING 6153
-// Abilities: A0CL (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0CL (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+20 Intelligence)
 }
 
 STRING 6154
-// Abilities: A0CM (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0CM (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+30 Agility)
 }
 
 STRING 6156
-// Abilities: A0CO (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0CO (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+15 Intelligence)
 }
 
 STRING 6157
-// Abilities: A0CP (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0CP (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+15 Agility)
 }
 
 STRING 6159
-// Abilities: A0CR (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0CR (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+25 Agility)
 }
 
 STRING 6160
-// Abilities: A0CS (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0CS (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+17 All Stats)
 }
@@ -25452,31 +25452,31 @@ STRING 6288
 }
 
 STRING 6289
-// Abilities: A0CZ (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0CZ (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+20 Agility)
 }
 
 STRING 6290
-// Abilities: A0D0 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0D0 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+20 Strength)
 }
 
 STRING 6291
-// Abilities: A0D1 (Objeto - Bonificación de velocidad de ataque), EditorSuffix (Editor Suffix)
+// Abilities: A0D1 (Item Attack Speed Bonus), EditorSuffix (Editor Suffix)
 {
 30
 }
 
 STRING 6292
-// Abilities: A0D2 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0D2 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+30 Intelligence)
 }
 
 STRING 6293
-// Abilities: A0D3 (Objeto - Regeneración de maná), EditorSuffix (Editor Suffix)
+// Abilities: A0D3 (Item Mana Regeneration), EditorSuffix (Editor Suffix)
 {
 150%
 }
@@ -25577,13 +25577,13 @@ Blue Flower
 }
 
 STRING 6431
-// Abilities: A0FQ (Armadura de hielo), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0FQ (Frost Armor), Ubertip (Tooltip - Normal - Extended)
 {
 The digimon creates a shield of frost around itself. The shield adds 3 armor and slows melee units that attack it for 2 seconds. |nLasts 45 seconds.
 }
 
 STRING 6432
-// Abilities: A0FQ (Armadura de hielo), Tip (Tooltip - Normal)
+// Abilities: A0FQ (Frost Armor), Tip (Tooltip - Normal)
 {
 |cff0000ffFrost Armor|r
 }
@@ -25595,7 +25595,7 @@ W
 }
 
 STRING 6434
-// Abilities: A0D7 (Armadura de hielo), EditorSuffix (Editor Suffix)
+// Abilities: A0D7 (Frost Armor), EditorSuffix (Editor Suffix)
 {
 NEW
 }
@@ -25625,7 +25625,7 @@ Purchase |cff8080ffCentarus Medicine|r
 }
 
 STRING 6443
-// Abilities: A0D8 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0D8 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+10 All Stats)
 }
@@ -25655,7 +25655,7 @@ Equip Shop
 }
 
 STRING 6497
-// Abilities: A0DA (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0DA (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+15 Strenght)
 }
@@ -25667,7 +25667,7 @@ STRING 6499
 }
 
 STRING 6500
-// Abilities: A0JG (Raíces enredadoras), Hotkey (Hotkey - Normal)
+// Abilities: A0JG (Entangling Roots), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -25991,7 +25991,7 @@ STRING 6553
 }
 
 STRING 6554
-// Buffs/Effects: B01N (), Bufftip (Tooltip)
+// Abilities: A0FD (Ice aura), Name (Name)
 {
 Ice aura
 }
@@ -26033,7 +26033,7 @@ W
 }
 
 STRING 6568
-// Abilities: A0JI (Armadura de hielo), Hotkey (Hotkey - Normal)
+// Abilities: A0JI (Frost Armor), Hotkey (Hotkey - Normal)
 {
 W
 }
@@ -26045,7 +26045,7 @@ Wind Barrier
 }
 
 STRING 6571
-// Abilities: A0DP (Pulverizar), EditorSuffix (Editor Suffix)
+// Abilities: A0DP (Pulverize), EditorSuffix (Editor Suffix)
 {
 Cherry
 }
@@ -26072,7 +26072,7 @@ STRING 6575
 }
 
 STRING 6576
-// Abilities: A0DQ (Aura de ralentización), EditorSuffix (Editor Suffix)
+// Abilities: A0DQ (Slow Aura), EditorSuffix (Editor Suffix)
 {
 Earthquakke
 }
@@ -26096,25 +26096,25 @@ Bosses
 }
 
 STRING 6581
-// Upgrades: R009 (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R009 (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 6582
-// Upgrades: R006 (Fuerza bruta), Name (Name)
+// Upgrades: R006 (Brute Strength), Name (Name)
 {
 Wild Ultimate Digimon 2
 }
 
 STRING 6583
-// Upgrades: R006 (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R006 (Brute Strength), Tip (Tooltip)
 {
 Wild Ultimate Digimon 2
 }
 
 STRING 6584
-// Upgrades: R006 (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R006 (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Wild Ultimate Digimon 2
 }
@@ -26252,25 +26252,25 @@ Skullsatamon
 }
 
 STRING 6611
-// Destructibles: B07X (Jaula), EditorSuffix (Editor Suffix)
+// Destructibles: B07X (Cage), EditorSuffix (Editor Suffix)
 {
 (Skull Satamon)
 }
 
 STRING 6612
-// Abilities: A0DW (Atronar), Tip (Tooltip - Normal)
+// Abilities: A0DW (Thunder Clap), Tip (Tooltip - Normal)
 {
 Thunderclap
 }
 
 STRING 6613
-// Abilities: A0DW (Atronar), Tip (Tooltip - Normal)
+// Abilities: A0DW (Thunder Clap), Tip (Tooltip - Normal)
 {
 Thunderclap
 }
 
 STRING 6614
-// Abilities: A0DW (Atronar), EditorSuffix (Editor Suffix)
+// Abilities: A0DW (Thunder Clap), EditorSuffix (Editor Suffix)
 {
 (Skull Satamon)
 }
@@ -26462,55 +26462,55 @@ Hardened Skin Pillar
 }
 
 STRING 6649
-// Upgrades: R00A (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R00A (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 6650
-// Upgrades: R007 (Fuerza bruta), Name (Name)
+// Upgrades: R007 (Brute Strength), Name (Name)
 {
 Arena Champion Digimon
 }
 
 STRING 6651
-// Upgrades: R007 (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R007 (Brute Strength), Tip (Tooltip)
 {
 Arena Champion Digimon
 }
 
 STRING 6652
-// Upgrades: R007 (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R007 (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Arena Champion Digimon
 }
 
 STRING 6653
-// Upgrades: R00C (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R00C (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 6657
-// Upgrades: R00D (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R00D (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 6658
-// Upgrades: R009 (Fuerza bruta), Name (Name)
+// Upgrades: R009 (Brute Strength), Name (Name)
 {
 Arena Ultimate Digimon
 }
 
 STRING 6659
-// Upgrades: R009 (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R009 (Brute Strength), Tip (Tooltip)
 {
 Arena Ultimate Digimon
 }
 
 STRING 6660
-// Upgrades: R009 (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R009 (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Arena Ultimate Digimon
 }
@@ -27002,7 +27002,7 @@ Talk
 }
 
 STRING 6744
-// Abilities: A0EQ (Seleccionar héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0EQ (Select Hero), EditorSuffix (Editor Suffix)
 {
 (Talk System)
 }
@@ -27084,19 +27084,19 @@ Almonds
 }
 
 STRING 6842
-// Abilities: A0ES (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0ES (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+2 Strength)
 }
 
 STRING 6843
-// Abilities: A0ET (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0ET (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+2 Agility)
 }
 
 STRING 6844
-// Abilities: A0EU (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0EU (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+2 Intelligence)
 }
@@ -28696,7 +28696,7 @@ STRING 7266
 }
 
 STRING 7271
-// Abilities: A0FB (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0FB (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+35 Strength)
 }
@@ -28726,7 +28726,7 @@ Icemon
 }
 
 STRING 7276
-// Abilities: A0FD (Frost Aura), Name (Name)
+// Buffs/Effects: B01N (), Bufftip (Tooltip)
 {
 Frost Aura
 }
@@ -29080,49 +29080,49 @@ Green Flag
 }
 
 STRING 7388
-// Abilities: A0FL (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0FL (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+25 Intelligence)
 }
 
 STRING 7389
-// Abilities: A0FM (Objeto - Regeneración de maná), EditorSuffix (Editor Suffix)
+// Abilities: A0FM (Item Mana Regeneration), EditorSuffix (Editor Suffix)
 {
 300%
 }
 
 STRING 7390
-// Abilities: A0HE (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0HE (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 360
 }
 
 STRING 7391
-// Abilities: A0FO (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0FO (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+30 Strength)
 }
 
 STRING 7394
-// Abilities: A0JI (Armadura de hielo), Tip (Tooltip - Normal)
+// Abilities: A0JI (Frost Armor), Tip (Tooltip - Normal)
 {
 |cff0000ffFrost Armor|r
 }
 
 STRING 7396
-// Abilities: A0FQ (Armadura de hielo), EditorSuffix (Editor Suffix)
+// Abilities: A0FQ (Frost Armor), EditorSuffix (Editor Suffix)
 {
 ITEM
 }
 
 STRING 7397
-// Abilities: A0FR (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0FR (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+35 Intelligence)
 }
 
 STRING 7398
-// Abilities: A0FS (Objeto - Bonificación de daño), EditorSuffix (Editor Suffix)
+// Abilities: A0FS (Item Damage Bonus), EditorSuffix (Editor Suffix)
 {
 (+22)
 }
@@ -29134,19 +29134,19 @@ Item Mana Bonus (300)
 }
 
 STRING 7400
-// Abilities: A0FU (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0FU (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+35 Agility)
 }
 
 STRING 7401
-// Abilities: A0FV (Objeto - Regeneración de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0FV (Item Life Regeneration), EditorSuffix (Editor Suffix)
 {
 4
 }
 
 STRING 7402
-// Abilities: A0FW (Objeto - Regeneración de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0FW (Item Life Regeneration), EditorSuffix (Editor Suffix)
 {
 5
 }
@@ -29170,31 +29170,31 @@ Subzero
 }
 
 STRING 7406
-// Upgrades: R00E (Fuerza bruta), effect3 (Effect 3)
+// Upgrades: R00E (Brute Strength), effect3 (Effect 3)
 {
 rarm
 }
 
 STRING 7407
-// Upgrades: R00A (Fuerza bruta), Name (Name)
+// Upgrades: R00A (Brute Strength), Name (Name)
 {
 Wild Boss Summons 1
 }
 
 STRING 7408
-// Upgrades: R00A (Fuerza bruta), Tip (Tooltip)
+// Upgrades: R00A (Brute Strength), Tip (Tooltip)
 {
 Wild Boss Summons 1
 }
 
 STRING 7409
-// Upgrades: R00A (Fuerza bruta), Ubertip (Tooltip - Extended)
+// Upgrades: R00A (Brute Strength), Ubertip (Tooltip - Extended)
 {
 Wild Boss Summons 1
 }
 
 STRING 7410
-// Upgrades: R00A (Fuerza bruta), effect4 (Effect 4)
+// Upgrades: R00A (Brute Strength), effect4 (Effect 4)
 {
 rhpr
 }
@@ -29463,7 +29463,7 @@ STRING 7493
 }
 
 STRING 7496
-// Abilities: A0FZ (Objeto - Bonificación de velocidad de movimiento), EditorSuffix (Editor Suffix)
+// Abilities: A0FZ (Item Move Speed Bonus), EditorSuffix (Editor Suffix)
 {
 30
 }
@@ -29648,7 +29648,7 @@ STRING 7531
 }
 
 STRING 7532
-// Destructibles: B082 (Pared resplandeciente), EditorSuffix (Editor Suffix)
+// Destructibles: B082 (ForceWall), EditorSuffix (Editor Suffix)
 {
 (Small)
 }
@@ -29995,7 +29995,7 @@ Use to attract the the |cffd45e19Raremons|r in the |cff808080Sewers|r for 6 seco
 }
 
 STRING 7600
-// Abilities: A0G3 (Atrapar), EditorSuffix (Editor Suffix)
+// Abilities: A0G3 (Ensnare), EditorSuffix (Editor Suffix)
 {
 (Dragomon)
 }
@@ -30121,19 +30121,19 @@ STRING 7626
 }
 
 STRING 7627
-// Abilities: A0G8 (Frenesí), Hotkey (Hotkey - Normal)
+// Abilities: A0G8 (Frenzy), Hotkey (Hotkey - Normal)
 {
 E
 }
 
 STRING 7628
-// Abilities: A0G8 (Frenesí), Unhotkey (Hotkey - Turn Off)
+// Abilities: A0G8 (Frenzy), Unhotkey (Hotkey - Turn Off)
 {
 E
 }
 
 STRING 7629
-// Abilities: A0G8 (Frenesí), EditorSuffix (Editor Suffix)
+// Abilities: A0G8 (Frenzy), EditorSuffix (Editor Suffix)
 {
 (Black King Numemon)
 }
@@ -30199,7 +30199,7 @@ Enter to the: |cffd45e19Acient Speedy Zone|r |cffffff00Level 90|r.
 }
 
 STRING 7641
-// Abilities: A0G9 (Ralentizar), EditorSuffix (Editor Suffix)
+// Abilities: A0G9 (Slow), EditorSuffix (Editor Suffix)
 {
 (Triceramon)
 }
@@ -30301,25 +30301,25 @@ Expels a huge beam of fire that damages the enemies.
 }
 
 STRING 7658
-// Abilities: A0GB (Empalar), EditorSuffix (Editor Suffix)
+// Abilities: A0GB (Impale), EditorSuffix (Editor Suffix)
 {
 (Kimeramon)
 }
 
 STRING 7659
-// Abilities: A0GF (Aura de ralentización), EditorSuffix (Editor Suffix)
+// Abilities: A0GF (Slow Aura), EditorSuffix (Editor Suffix)
 {
 (Tornado/Kimeramon)
 }
 
 STRING 7660
-// Abilities: A0GG (Giro de Tornado), EditorSuffix (Editor Suffix)
+// Abilities: A0GG (Tornado Spin), EditorSuffix (Editor Suffix)
 {
 (Tornado/Kimeramon)
 }
 
 STRING 7661
-// Abilities: A0GH (Ataque de relámpagos), EditorSuffix (Editor Suffix)
+// Abilities: A0GH (Lightning Attack), EditorSuffix (Editor Suffix)
 {
 (Kimeramon)
 }
@@ -30864,13 +30864,13 @@ Sleep
 }
 
 STRING 7765
-// Upgrades: R00B (Saqueo), Name (Name)
+// Upgrades: R00B (Pillage), Name (Name)
 {
 You can't sleep on combat.
 }
 
 STRING 7766
-// Upgrades: R00B (Saqueo), Tip (Tooltip)
+// Upgrades: R00B (Pillage), Tip (Tooltip)
 {
 Need to find the minimum conditions!
 }
@@ -30912,61 +30912,61 @@ Terrain Glow Gray
 }
 
 STRING 7787
-// Abilities: Acmg (Controlar magia), Tip (Tooltip - Normal)
+// Abilities: Acmg (Control Magic), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 7788
-// Abilities: Adef (Defender), Tip (Tooltip - Normal)
+// Abilities: Adef (Defend), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 7789
-// Abilities: Adis (Disipar magia), Tip (Tooltip - Normal)
+// Abilities: Adis (Dispel Magic), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 7790
-// Abilities: Afbt (Retroalimentación), Tip (Tooltip - Normal)
+// Abilities: Afbt (Feedback), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 7791
-// Abilities: Afbk (Retroalimentación), Tip (Tooltip - Normal)
+// Abilities: Afbk (Feedback), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 7792
-// Abilities: Amdf (Defensa mágica), Tip (Tooltip - Normal)
+// Abilities: Amdf (Magic Defense), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 7793
-// Abilities: Adts (Detector de magia), Tip (Tooltip - Normal)
+// Abilities: Adts (Magic Sentry), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 7794
-// Abilities: Ainf (Fuego interno), Tip (Tooltip - Normal)
+// Abilities: Ainf (Inner Fire), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 7795
-// Abilities: Aivs (Invisibilidad), Tip (Tooltip - Normal)
+// Abilities: Aivs (Invisibility), Tip (Tooltip - Normal)
 {
 !
 }
 
 STRING 7796
-// Abilities: Asth (Martillos de tormenta), Tip (Tooltip - Normal)
+// Abilities: Asth (Storm Hammers), Tip (Tooltip - Normal)
 {
 !
 }
@@ -32092,49 +32092,49 @@ STRING 8092
 }
 
 STRING 8106
-// Abilities: A0CY (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0CY (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 120
 }
 
 STRING 8107
-// Abilities: A0FN (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0FN (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 250
 }
 
 STRING 8108
-// Abilities: A0FP (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0FP (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 450
 }
 
 STRING 8110
-// Abilities: A0H9 (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0H9 (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 30
 }
 
 STRING 8111
-// Abilities: A0HA (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0HA (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 45
 }
 
 STRING 8112
-// Abilities: A0HB (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0HB (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 60
 }
 
 STRING 8113
-// Abilities: A0HC (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0HC (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 90
 }
 
 STRING 8114
-// Abilities: A0HD (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0HD (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 300
 }
@@ -32152,7 +32152,7 @@ Increases the unit's evasion by 10%, attack rate by 20% and movement speed by 15
 }
 
 STRING 8118
-// Abilities: A0HF (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0HF (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 255
 }
@@ -32332,109 +32332,109 @@ STRING 8189
 }
 
 STRING 8190
-// Abilities: AIsx (Objeto - Bonificación de velocidad de ataque), EditorSuffix (Editor Suffix)
+// Abilities: AIsx (Item Attack Speed Bonus), EditorSuffix (Editor Suffix)
 {
 10
 }
 
 STRING 8191
-// Abilities: A0HG (Objeto - Bonificación de armadura), EditorSuffix (Editor Suffix)
+// Abilities: A0HG (Item Armor Bonus), EditorSuffix (Editor Suffix)
 {
 (+9)
 }
 
 STRING 8192
-// Abilities: A0HH (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HH (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+12 Agility)
 }
 
 STRING 8193
-// Abilities: A0HI (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HI (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+12 Strength)
 }
 
 STRING 8194
-// Abilities: A0HJ (Objeto - Regeneración de maná), EditorSuffix (Editor Suffix)
+// Abilities: A0HJ (Item Mana Regeneration), EditorSuffix (Editor Suffix)
 {
 100%
 }
 
 STRING 8195
-// Abilities: A0HK (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HK (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+14 Agility)
 }
 
 STRING 8196
-// Abilities: A0HL (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HL (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+5 Strength)
 }
 
 STRING 8197
-// Abilities: A0HM (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HM (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+15 Agility)
 }
 
 STRING 8198
-// Abilities: A0HN (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HN (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+18 Agility)
 }
 
 STRING 8199
-// Abilities: A0HO (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HO (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+16 Intelligence)
 }
 
 STRING 8200
-// Abilities: A0HP (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HP (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+5 Intelligence)
 }
 
 STRING 8201
-// Abilities: A0HQ (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HQ (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+14 Strenght)
 }
 
 STRING 8202
-// Abilities: A0HR (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HR (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+16 Strenght)
 }
 
 STRING 8203
-// Abilities: A0HS (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HS (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+5 Agility)
 }
 
 STRING 8204
-// Abilities: A0HT (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HT (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+12 Intelligence)
 }
 
 STRING 8205
-// Abilities: A0HU (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HU (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+7 Strength)
 }
 
 STRING 8206
-// Abilities: A0HV (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HV (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+8 Agility)
 }
 
 STRING 8207
-// Abilities: A0HW (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HW (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+8 Intelligence)
 }
@@ -33226,37 +33226,37 @@ STRING 8617
 }
 
 STRING 8618
-// Abilities: A0HX (Objeto - Bonificación de velocidad de ataque), EditorSuffix (Editor Suffix)
+// Abilities: A0HX (Item Attack Speed Bonus), EditorSuffix (Editor Suffix)
 {
 15+
 }
 
 STRING 8619
-// Abilities: A0HY (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HY (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+13 Strenght)
 }
 
 STRING 8620
-// Abilities: A0HZ (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0HZ (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+13 Intelligence)
 }
 
 STRING 8621
-// Abilities: A0I0 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0I0 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+14 Intelligence)
 }
 
 STRING 8622
-// Abilities: A0I1 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0I1 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+22 Agility)
 }
 
 STRING 8623
-// Abilities: A0I2 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0I2 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+7 Agility)
 }
@@ -33268,7 +33268,7 @@ Item Mana Bonus (150)
 }
 
 STRING 8625
-// Abilities: A0I4 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0I4 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+18 Inteligence)
 }
@@ -33280,19 +33280,19 @@ Item Mana Bonus (150)
 }
 
 STRING 8627
-// Abilities: A0I6 (Objeto - Regeneración de maná), EditorSuffix (Editor Suffix)
+// Abilities: A0I6 (Item Mana Regeneration), EditorSuffix (Editor Suffix)
 {
 200%
 }
 
 STRING 8628
-// Abilities: A0I7 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0I7 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+18 Strenght)
 }
 
 STRING 8642
-// Abilities: A0I8 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0I8 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+11 All Stats)
 }
@@ -33400,25 +33400,25 @@ Targetable mana replish
 }
 
 STRING 8696
-// Abilities: A0CN (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0CN (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 150
 }
 
 STRING 8697
-// Abilities: A0FX (Objeto - Bonificación de vida), EditorSuffix (Editor Suffix)
+// Abilities: A0FX (Item Life Bonus), EditorSuffix (Editor Suffix)
 {
 600
 }
 
 STRING 8698
-// Abilities: A0I9 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0I9 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+22 Strenght)
 }
 
 STRING 8699
-// Abilities: A0IA (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0IA (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+22 Intelligence)
 }
@@ -34629,13 +34629,13 @@ STRING 8987
 }
 
 STRING 8988
-// Items: I03W (Auto Pilot), Description (Description)
+// Items: I03W (Teleport Back), Description (Description)
 {
 Teleports the selected digimons of your team to the File's City.|cffffc800  |nIt pauses the digimon.|nIt will be canceled if the digimons gets stunned or dies.|r|n|cffffff00This item will go to the backpack.|r
 }
 
 STRING 8989
-// Items: I03W (Auto Pilot), Ubertip (Tooltip - Extended)
+// Items: I03W (Teleport Back), Ubertip (Tooltip - Extended)
 {
 Teleports the selected digimons of your team to the File's City.|cffffc800  |nIt pauses the digimon.|nIt will be canceled if the digimons gets stunned or dies.|r|n|cffffff00This item will go to the backpack.|r
 }
@@ -35937,55 +35937,55 @@ Hardened Skin BOSSSES 5
 }
 
 STRING 9289
-// Abilities: A0IJ (Ralentizar), Tip (Tooltip - Normal)
+// Abilities: A0IJ (Slow), Tip (Tooltip - Normal)
 {
 Ralentizar
 }
 
 STRING 9290
-// Abilities: A0IJ (Ralentizar), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IJ (Slow), Ubertip (Tooltip - Normal - Extended)
 {
 Ralentiza la velocidad de ataque de la unidad enemiga objetivo un <Aslo,DataB1,%>% y la velocidad de movimiento un <Aslo,DataA1,%>%. |nDura <Aslo,Dur1> segundos.
 }
 
 STRING 9291
-// Abilities: A0IJ (Ralentizar), Untip (Tooltip - Turn Off)
+// Abilities: A0IJ (Slow), Untip (Tooltip - Turn Off)
 {
 |cffc3dbffHaz clic derecho para activar el lanzamiento automático.|r
 }
 
 STRING 9292
-// Abilities: A0IJ (Ralentizar), Unubertip (Tooltip - Turn Off - Extended)
+// Abilities: A0IJ (Slow), Unubertip (Tooltip - Turn Off - Extended)
 {
 |cffc3dbffHaz clic derecho para desactivar el lanzamiento automático.|r
 }
 
 STRING 9293
-// Abilities: A0IJ (Ralentizar), Tip (Tooltip - Normal)
+// Abilities: A0IJ (Slow), Tip (Tooltip - Normal)
 {
 Ralentizar
 }
 
 STRING 9294
-// Abilities: A0IJ (Ralentizar), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IJ (Slow), Ubertip (Tooltip - Normal - Extended)
 {
 Ralentiza la velocidad de ataque de la unidad enemiga objetivo un <Aslo,DataB1,%>% y la velocidad de movimiento un <Aslo,DataA1,%>%. |nDura <Aslo,Dur1> segundos.
 }
 
 STRING 9295
-// Abilities: A0IJ (Ralentizar), Untip (Tooltip - Turn Off)
+// Abilities: A0IJ (Slow), Untip (Tooltip - Turn Off)
 {
 |cffc3dbffHaz clic derecho para activar el lanzamiento automático.|r
 }
 
 STRING 9296
-// Abilities: A0IJ (Ralentizar), Unubertip (Tooltip - Turn Off - Extended)
+// Abilities: A0IJ (Slow), Unubertip (Tooltip - Turn Off - Extended)
 {
 |cffc3dbffHaz clic derecho para desactivar el lanzamiento automático.|r
 }
 
 STRING 9297
-// Abilities: A0IJ (Ralentizar), EditorSuffix (Editor Suffix)
+// Abilities: A0IJ (Slow), EditorSuffix (Editor Suffix)
 {
 (Flora)
 }
@@ -37246,7 +37246,7 @@ STRING 9613
 }
 
 STRING 9614
-// Abilities: A0IX (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0IX (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+8 Strength)
 }
@@ -37724,7 +37724,7 @@ STRING 9699
 }
 
 STRING 9700
-// Destructibles: B07Y (Pared de jaula mágica), EditorSuffix (Editor Suffix)
+// Destructibles: B07Y (Magical Pen Wall), EditorSuffix (Editor Suffix)
 {
 (Datamon)
 }
@@ -37760,19 +37760,19 @@ Hardened Skin Mobs 2
 }
 
 STRING 9706
-// Abilities: A0J7 (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
+// Abilities: A0J7 (Item Hero Stat Bonus), EditorSuffix (Editor Suffix)
 {
 (+24 Inteligence)
 }
 
 STRING 9707
-// Abilities: Ane2 (Seleccionar unidad), Hotkey (Hotkey - Normal)
+// Abilities: Ane2 (Select Unit), Hotkey (Hotkey - Normal)
 {
 H
 }
 
 STRING 9708
-// Abilities: Ane2 (Seleccionar unidad), Unhotkey (Hotkey - Turn Off)
+// Abilities: Ane2 (Select Unit), Unhotkey (Hotkey - Turn Off)
 {
 H
 }
@@ -38243,7 +38243,7 @@ Z
 }
 
 STRING 9792
-// Abilities: A0C7 (Teleport Back), Hotkey (Hotkey - Normal)
+// Abilities: A0C7 (Auto Pilot), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -39227,7 +39227,7 @@ Sell the item.
 }
 
 STRING 9967
-// Upgrades: R00B (Saqueo), Ubertip (Tooltip - Extended)
+// Upgrades: R00B (Pillage), Ubertip (Tooltip - Extended)
 {
 The digimon sleeps to recover its power, while is sleeping recovers 2% of its health and energy every second.|nIt wakes up when is attacked.
 }

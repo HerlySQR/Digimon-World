@@ -586,7 +586,7 @@ OnInit("Digimon", function ()
                     udg_Red = 100.00
                     udg_Green = 100.00
                     udg_Blue = 100.00
-                    udg_Text = "miss"
+                    udg_Text = GetLocalizedString("MISS")
                     udg_Size = 10.00
                     udg_ZOffset = 0.00
                     TriggerExecute(gg_trg_Display_Damage_Ex)

@@ -288,6 +288,14 @@ TUTORIAL_FISH_1=There are plenty of fish in the sea.
 TUTORIAL_FISH_2=They can be very useful for you.
 TUTORIAL_FISH_3=If you wanna you can get a fish rod to catch as much as you want.
 TUTORIAL_FISH_4=Of course you need patience to do that.
+MISS=miss
+DIGIMON_CAPTURE_TARGET_TOO_POWERFUL=This digimon is too powerful.
+DIGIMON_CAPTURE_CHANCE=Your chance is: %d
+DIGIMON_CAPTURE_CHANCE_GOT=You got: %d
+DIGIMON_CAPTURE_SUCCESS=You got it!
+DIGIMON_CAPTURE_FAIL_CHANCE=Was not this time.
+DIGIMON_CAPTURE_FAIL_FULL=You can't have more digimons.
+DIGIMON_CAPTURE_FAIL_NO_NEUTRAL=You can't capture this digimon.
 
 [Terrain]
 MaxHeight=3712,3712,3712,3712,3712,3712

@@ -48,24 +48,24 @@ OnInit("Digimon Capture", function ()
                         captureChance = 101
                     end
                     local randomCapture = math.random(0, 100)
-                    DisplayTextToPlayer(p, 0, 0, "Your chance is: " .. captureChance)
-                    DisplayTextToPlayer(p, 0, 0, "You got: " .. randomCapture)
+                    DisplayTextToPlayer(p, 0, 0, GetLocalizedString("DIGIMON_CAPTURE_CHANCE"):format(captureChance))
+                    DisplayTextToPlayer(p, 0, 0, GetLocalizedString("DIGIMON_CAPTURE_CHANCE_GOT"):format(randomCapture))
                     if randomCapture < captureChance then
                         if SendToBank(p, dTarget) == -1 then
                             SaveDigimon(p, dTarget)
                         end
-                        DisplayTextToPlayer(p, 0, 0, "You got it!")
+                        DisplayTextToPlayer(p, 0, 0, GetLocalizedString("DIGIMON_CAPTURE_SUCCESS"))
                         DestroyEffectTimed(AddSpecialEffect("Abilities\\Spells\\Undead\\DarkRitual\\DarkRitualCaster.mdl", GetUnitX(target), GetUnitY(target)), 2.00)
                         Digimon.capturedEvent:run({owner = p, target = dTarget})
                     else
-                        DisplayTextToPlayer(p, 0, 0, "Was not this time.")
+                        DisplayTextToPlayer(p, 0, 0, GetLocalizedString("DIGIMON_CAPTURE_FAIL_CHANCE"))
                     end
                 else
-                    DisplayTextToPlayer(p, 0, 0, "You can't have more digimons.")
+                    DisplayTextToPlayer(p, 0, 0, GetLocalizedString("DIGIMON_CAPTURE_FAIL_FULL"))
                     UnitAbortCurrentOrder(caster)
                 end
             else
-                DisplayTextToPlayer(p, 0, 0, "You can't capture this digimon.")
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("DIGIMON_CAPTURE_FAIL_NO_NEUTRAL"))
                 UnitAbortCurrentOrder(caster)
             end
         end)
