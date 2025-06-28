@@ -19,7 +19,7 @@ OnInit("Digimon Capture", function ()
         TriggerAddAction(t, function ()
             local dTarget = Digimon.getInstance(GetSpellTargetUnit())
             if dTarget.rank ~= Rank.ROOKIE then
-                DisplayTextToPlayer(GetOwningPlayer(GetSpellAbilityUnit()), 0, 0, "This digimon is too powerful.")
+                DisplayTextToPlayer(GetOwningPlayer(GetSpellAbilityUnit()), 0, 0, GetLocalizedString("DIGIMON_CAPTURE_TARGET_TOO_POWERFUL"))
                 UnitAbortCurrentOrder(GetSpellAbilityUnit())
             end
         end)

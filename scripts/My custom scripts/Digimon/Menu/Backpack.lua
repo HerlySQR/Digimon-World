@@ -173,7 +173,7 @@ OnInit("Backpack", function ()
             noConsummable = AllowedItems[itemId].noConsummable
         }
         itemData.spellCooldown = math.floor(BlzGetAbilityCooldown(itemData.spell, itemData.level - 1))
-        local i = itemData.description:find("|n|cffffff00This item will go to the backpack.|r")
+        local i = itemData.description:find(GetLocalizedString("BACKPACK_STRIP_TEXT"))
         if i then
             itemData.description = itemData.description:sub(1, i - 1)
         end
@@ -226,7 +226,7 @@ OnInit("Backpack", function ()
             BlzFrameSetEnable(Backpack, true)
 
             if not BlzFrameIsVisible(BackpackMenu) then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                 BlzFrameSetVisible(BackpackMenu, true)
                 AddButtonToEscStack(Backpack)
                 UpdateMenu()
@@ -243,7 +243,7 @@ OnInit("Backpack", function ()
             backpack.discardMode = false
             table.remove(backpack.items, i)
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                 UpdateMenu()
             end
         elseif backpack.dropMode then
@@ -251,12 +251,12 @@ OnInit("Backpack", function ()
             local d = GetMainDigimon(p)
             if not d then
                 if p == LocalPlayer then
-                    BlzFrameSetText(BackpackText, "|cffffcc00There is no a main digimon|r")
+                    BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_NO_MAIN_DIGIMON"))
                 end
                 Timed.call(2., function ()
                     if p == LocalPlayer then
-                        if BlzFrameGetText(BackpackText) == "|cffffcc00There is no a main digimon|r" then
-                            BlzFrameSetText(BackpackText, "Use an item")
+                        if BlzFrameGetText(BackpackText) == GetLocalizedString("BACKPACK_NO_MAIN_DIGIMON") then
+                            BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                         end
                     end
                 end)
@@ -269,7 +269,7 @@ OnInit("Backpack", function ()
             SetItemCharges(m, data.charges)
 
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                 UpdateMenu()
             end
         else
@@ -281,12 +281,12 @@ OnInit("Backpack", function ()
 
             if backpack.cooldowns[itemData.id] > 0 then
                 if p == LocalPlayer then
-                    BlzFrameSetText(BackpackText, "|cffffcc00Item is on cooldown|r")
+                    BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_ITEM_ON_COOLDOWN"))
                 end
                 Timed.call(2., function ()
                     if p == LocalPlayer then
-                        if BlzFrameGetText(BackpackText) == "|cffffcc00Item is on cooldown|r" then
-                            BlzFrameSetText(BackpackText, "Use an item")
+                        if BlzFrameGetText(BackpackText) == GetLocalizedString("BACKPACK_ITEM_ON_COOLDOWN") then
+                            BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                         end
                     end
                 end)
@@ -312,7 +312,7 @@ OnInit("Backpack", function ()
                 end
                 BlzFrameSetEnable(BackpackDiscard, false)
                 BlzFrameSetEnable(BackpackDrop, false)
-                BlzFrameSetText(BackpackText, "|cff00ff00Select a target|r")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_SELECT_TARGET"))
             end
         end
     end
@@ -349,7 +349,7 @@ OnInit("Backpack", function ()
         backpack.usingCaster = false
 
         if backpack.owner == LocalPlayer then
-            BlzFrameSetText(BackpackText, "Use an item")
+            BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
         end
     end
 
@@ -375,7 +375,7 @@ OnInit("Backpack", function ()
 
             if not GetRandomUnitOnRange(x, y, MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
                 UnitAbortCurrentOrder(caster)
-                ErrorMessage("A digimon should be nearby the target", p)
+                ErrorMessage(GetLocalizedString("BACKPACK_DIGIMON_NEARBY"), p)
             end
         end
     end)
@@ -474,12 +474,12 @@ OnInit("Backpack", function ()
         if not backpack.discardMode then
             backpack.discardMode = true
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "|cffffcc00Select to discard an item.|r Press again to cancel")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_DISCARD_PRESS_AGAIN"))
             end
         else
             backpack.discardMode = false
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
             end
         end
     end
@@ -489,12 +489,12 @@ OnInit("Backpack", function ()
         if not backpack.dropMode then
             backpack.dropMode = true
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "|cffffcc00Select to drop an item.|r Press again to cancel")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_DROP_PRESS_AGAIN"))
             end
         else
             backpack.dropMode = false
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
             end
         end
     end
@@ -506,7 +506,7 @@ OnInit("Backpack", function ()
         AddFrameToMenu(Backpack)
         AssignFrame(Backpack, 0) -- 0
         SetFrameHotkey(Backpack, "B")
-        AddDefaultTooltip(Backpack, "Backpack", "Look your stored consummable items.")
+        AddDefaultTooltip(Backpack, GetLocalizedString("BACKPACK"), GetLocalizedString("BACKPACK_TOOLTIP"))
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
         BlzFrameSetAllPoints(BackdropBackpack, Backpack)
@@ -530,16 +530,15 @@ OnInit("Backpack", function ()
         BackpackText = BlzCreateFrameByType("TEXT", "name", BackpackMenu, "", 0)
         BlzFrameSetPoint(BackpackText, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.015000)
         BlzFrameSetPoint(BackpackText, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.16000)
-        BlzFrameSetText(BackpackText, "Use an item for the focused digimon")
+        BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
         BlzFrameSetEnable(BackpackText, false)
-        BlzFrameSetScale(BackpackText, 1.00)
         BlzFrameSetTextAlignment(BackpackText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         BackpackDiscard = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
         BlzFrameSetScale(BackpackDiscard, 0.858)
         BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.095000, -0.16000)
         BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.015000)
-        BlzFrameSetText(BackpackDiscard, "|cffFCD20DDiscard|r")
+        BlzFrameSetText(BackpackDiscard, GetLocalizedString("BACKPACK_DISCARD"))
         OnClickEvent(BackpackDiscard, BackpackDiscardFunc)
         AssignFrame(BackpackDiscard, 1)
 
@@ -547,7 +546,7 @@ OnInit("Backpack", function ()
         BlzFrameSetScale(BackpackDrop, 0.858)
         BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.16000)
         BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.095000, 0.015000)
-        BlzFrameSetText(BackpackDrop, "|cffFCD20DDrop|r")
+        BlzFrameSetText(BackpackDrop, GetLocalizedString("BACKPACK_DROP"))
         OnClickEvent(BackpackDrop, BackpackDropFunc)
         AssignFrame(BackpackDrop, 2)
 
@@ -650,7 +649,7 @@ OnInit("Backpack", function ()
 
             if GetPlayerController(GetItemPlayer(m)) == MAP_CONTROL_USER and GetItemPlayer(m) ~= p then
                 UnitRemoveItem(u, m)
-                ErrorMessage("This item belongs to another player", p)
+                ErrorMessage(GetLocalizedString("THIS_ITEM_BELONGS_TO_OTHER_PLAYER"), p)
                 return
             end
 
@@ -684,7 +683,7 @@ OnInit("Backpack", function ()
             if not itemData then
                 if #items >= MAX_ITEMS then
                     UnitRemoveItem(u, m)
-                    ErrorMessage("Backpack is full", p)
+                    ErrorMessage(GetLocalizedString("BACKPACK_FULL"), p)
                     return
                 end
                 itemData = CreateItemData(id)
@@ -740,7 +739,7 @@ OnInit("Backpack", function ()
             end
 
             IssueTargetOrderById(u, Orders.attack, u)
-            ErrorMessage("Backpack is full", p)
+            ErrorMessage(GetLocalizedString("BACKPACK_FULL"), p)
         end
     end)
 
@@ -796,7 +795,7 @@ OnInit("Backpack", function ()
 
         for i = #items, 1, -1 do
             if items[i] == 0 then
-                DisplayTextToPlayer(p, 0, 0, "You loaded an invalid object in the backpack.")
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("BACKPACK_LOAD_ERROR"))
                 table.remove(items, i)
                 if charges then
                     table.remove(charges, i)
@@ -946,7 +945,7 @@ OnInit("Backpack", function ()
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
             if not success or not decode or not pcall(data.deserialize, data, decode) then
-                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("INVALID_FILE"):format(fileRoot))
                 return
             end
         end

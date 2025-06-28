@@ -178,7 +178,7 @@ OnInit("Quests", function ()
         end
         for i, q in pairs(PlayerQuests[LocalPlayer]) do
             if not QuestTemplates[i].isRequirement then
-                local progress = "In progress"
+                local progress = GetLocalizedString("QUEST_IN_PROGRESS")
                 local max = QuestTemplates[q.id].maxProgress
                 if max > 1 then
                     if q.progress < max then
@@ -187,7 +187,7 @@ OnInit("Quests", function ()
                         progress = progress .. " |cff00ff00" .. q.progress .. "/" .. max .. "|r"
                     end
                 end
-                BlzFrameSetText(QuestOptionText[i], "|cffFFCC00" .. q.name .. "|r" .. (q.level > 0 and (" - Level " .. q.level) or "") .. "\n" .. progress)
+                BlzFrameSetText(QuestOptionText[i], "|cffFFCC00" .. q.name .. "|r" .. (q.level > 0 and (GetLocalizedString("QUEST_LEVEL"):format(q.level)) or "") .. "\n" .. progress)
             end
         end
     end
@@ -229,7 +229,7 @@ OnInit("Quests", function ()
         BlzFrameSetVisible(QuestButton, false)
         AddFrameToMenu(QuestButton)
         SetFrameHotkey(QuestButton, "L")
-        AddDefaultTooltip(QuestButton, "Quest Log", "Look at the progress of your accepted quests.")
+        AddDefaultTooltip(QuestButton, GetLocalizedString("QUEST_LOG"), GetLocalizedString("QUEST_LOG_TOOLTIP"))
 
         BackdropQuestButton = BlzCreateFrameByType("BACKDROP", "BackdropQuestButton", QuestButton, "", 0)
         BlzFrameSetAllPoints(BackdropQuestButton, QuestButton)
@@ -257,7 +257,7 @@ OnInit("Quests", function ()
         QuestText = BlzCreateFrameByType("TEXT", "name", QuestMenu, "", 0)
         BlzFrameSetPoint(QuestText, FRAMEPOINT_TOPLEFT, QuestMenu, FRAMEPOINT_TOPLEFT, 0.0150000, -0.010000)
         BlzFrameSetPoint(QuestText, FRAMEPOINT_BOTTOMRIGHT, QuestMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.20500)
-        BlzFrameSetText(QuestText, "|cffFFCC00Quest Log|r")
+        BlzFrameSetText(QuestText, "|cffFFCC00" .. GetLocalizedString("QUEST_LOG") .. "|r")
         BlzFrameSetEnable(QuestText, false)
         BlzFrameSetScale(QuestText, 1)
         BlzFrameSetTextAlignment(QuestText, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -345,9 +345,9 @@ OnInit("Quests", function ()
         end
         if PlayerQuests[p][id] then
             if PlayerQuests[p][id].completed then
-                ErrorMessage("You already completed this quest.", p)
+                ErrorMessage(GetLocalizedString("QUEST_ALREADY_COMPLETED"), p)
             else
-                ErrorMessage("You already have this quest.", p)
+                ErrorMessage(GetLocalizedString("QUEST_ALREADY_HAVE"), p)
             end
             return
         end
@@ -383,7 +383,7 @@ OnInit("Quests", function ()
             StartSound(bj_questDiscoveredSound)
             BlzFrameSetVisible(QuestButton, true)
             if not BlzFrameIsVisible(QuestMenu) then
-                DisplayTextToPlayer(p, 0, 0, "|cffFFCC00NEW QUEST:|r " .. PlayerQuests[p][id].name)
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("QUEST_NEW") .. " " .. PlayerQuests[p][id].name)
                 BlzFrameSetVisible(QuestButtonSprite, true)
                 BlzFrameSetSpriteAnimate(QuestButtonSprite, 1, 0)
             end
@@ -457,14 +457,14 @@ OnInit("Quests", function ()
             local remain = DO_QUEST_AGAIN_DELAY
             if counter then
                 if p == LocalPlayer then
-                    SetTextTagTextBJ(counter, "Comeback in: " .. math.floor(DO_QUEST_AGAIN_DELAY), 10.)
+                    SetTextTagTextBJ(counter, GetLocalizedString("QUEST_COMEBACK") .. " " .. math.floor(DO_QUEST_AGAIN_DELAY), 10.)
                 end
             end
             Timed.echo(1., DO_QUEST_AGAIN_DELAY, function ()
                 remain = remain - 1
                 if counter then
                     if p == LocalPlayer then
-                        SetTextTagTextBJ(counter, "Comeback in: " .. math.floor(remain), 10.)
+                        SetTextTagTextBJ(counter, GetLocalizedString("QUEST_COMEBACK") .. " " .. math.floor(remain), 10.)
                     end
                 end
             end, function ()
@@ -495,7 +495,7 @@ OnInit("Quests", function ()
                 PressedQuest = -1
                 StartSound(bj_questCompletedSound)
                 if not BlzFrameIsVisible(QuestMenu) then
-                    DisplayTextToPlayer(p, 0, 0, "|cffFFCC00QUEST COMPLETED:|r |cff00ff00" .. PlayerQuests[p][id].name .. "|r")
+                    DisplayTextToPlayer(p, 0, 0, GetLocalizedString("QUEST_COMPLETED") .. " |cff00ff00" .. PlayerQuests[p][id].name .. "|r")
                 end
                 if QuestTemplates[id].questMark then
                     BlzPlaySpecialEffect(QuestTemplates[id].questMarkDone, ANIM_TYPE_DEATH)
@@ -830,7 +830,7 @@ OnInit("Quests", function ()
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
             if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
-                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("INVALID_FILE"):format(fileRoot))
                 return
             end
         end

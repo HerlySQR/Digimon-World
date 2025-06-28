@@ -17,21 +17,21 @@ OnInit(function ()
                     d:setIV(d.IVsta + 1, d.IVdex, d.IVwis)
                 else
                     refund = true
-                    whatIV = "stamina"
+                    whatIV = GetLocalizedString("STAMINA")
                 end
             elseif itm == PROTEIN then
                 if d.IVdex < 15 then
                     d:setIV(d.IVsta, d.IVdex + 1, d.IVwis)
                 else
                     refund = true
-                    whatIV = "dexterity"
+                    whatIV = GetLocalizedString("DEXTERITY")
                 end
             elseif itm == FIBER then
                 if d.IVwis < 15 then
                     d:setIV(d.IVsta, d.IVdex, d.IVwis + 1)
                 else
                     refund = true
-                    whatIV = "wisdom"
+                    whatIV = GetLocalizedString("WISDOM")
                 end
             end
             if refund then
@@ -39,7 +39,7 @@ OnInit(function ()
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + 5000)
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) + 20)
                 SetBackpackItemCharges(p, udg_RARE_DATA, GetBackpackItemCharges(p, udg_RARE_DATA) + 25)
-                ErrorMessage("You IV " .. whatIV .. " is maxed out.", p)
+                ErrorMessage(GetLocalizedString("IV_MAXED_OUT"):format(whatIV), p)
             end
         end
     end)

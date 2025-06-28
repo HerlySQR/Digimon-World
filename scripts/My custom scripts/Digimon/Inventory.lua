@@ -61,7 +61,7 @@ OnInit(function ()
                     end
 
                     if has then
-                        ErrorMessage("You can't carry more of this item.", GetOwningPlayer(u))
+                        ErrorMessage(GetLocalizedString("CANT_CARRY_MORE_OF_THIS_ITEM"), GetOwningPlayer(u))
                         UnitRemoveItem(u, m)
                     else
                         local slot

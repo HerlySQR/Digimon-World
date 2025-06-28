@@ -265,7 +265,7 @@ OnInit(function ()
                     end
                     Timed.call(1., function ()
                         if self:localPlayerCond() then
-                            BlzFrameSetText(FIGHT, "|cffff0000FIGHT!|r")
+                            BlzFrameSetText(FIGHT, GetLocalizedString("GYM_FIGHT"))
                         end
                         Timed.call(1., function ()
                             if self:localPlayerCond() then
@@ -305,11 +305,11 @@ OnInit(function ()
 
         if not loser then
             if self:localPlayerCond() then
-                DisplayTextToPlayer(LocalPlayer, 0, 0, "Draw")
+                DisplayTextToPlayer(LocalPlayer, 0, 0, GetLocalizedString("GYM_DRAW"))
             end
         else
             if self:localPlayerCond() then
-                DisplayTextToPlayer(LocalPlayer, 0, 0, "The winner is " .. User[winner.p]:getNameColored() .. ".")
+                DisplayTextToPlayer(LocalPlayer, 0, 0, GetLocalizedString("GYM_WINNER"):format(User[winner.p]:getNameColored()))
             end
         end
 
@@ -356,25 +356,25 @@ OnInit(function ()
                         end
                         if winner == info and loser.p == Digimon.VILLAIN and not reachedMax then
                             local prizes = RANK_PRIZES[GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED)]
-                            local message = "\nFor winning all your digimons will gain:"
+                            local message = "\n" .. GetLocalizedString("GYM_PRIZES")
                             if prizes.damage then
-                                message = message .. "\n» " .. prizes.damage .. " damage attack"
+                                message = message .. "\n» " .. GetLocalizedString("GYM_PRIZE_DAMAGE"):format(prizes.damage)
                             end
                             if prizes.defense then
-                                message = message .. "\n» " .. prizes.defense .. " defense"
+                                message = message .. "\n» " .. GetLocalizedString("GYM_PRIZE_DEFENSE"):format(prizes.defense)
                             end
                             if prizes.health then
-                                message = message .. "\n» " .. prizes.health .. " health"
+                                message = message .. "\n» " .. GetLocalizedString("GYM_PRIZE_HEALTH"):format(prizes.health)
                             end
                             if prizes.energy then
-                                message = message .. "\n» " .. prizes.energy .. " energy"
+                                message = message .. "\n» " .. GetLocalizedString("GYM_PRIZE_ENERGY"):format(prizes.energy)
                             end
                             if prizes.equips then
-                                message = message .. "\nAnd also " .. prizes.equips .. " items unlocked in the shop."
+                                message = message .. "\n " .. GetLocalizedString("GYM_PRIZE_EQUIPS"):format(prizes.equips)
                             end
                             DisplayTextToPlayer(winner.p, 0, 0, message)
                             if GetPlayerState(winner.p, PLAYER_STATE_RESOURCE_FOOD_USED) >= udg_MAX_RANK then
-                                DisplayTextToPlayer(winner.p, 0, 0, "\nYou reached the max rank, congratulations!")
+                                DisplayTextToPlayer(winner.p, 0, 0, "\n" .. GetLocalizedString("GYM_MAX_RANK"))
                             end
                             if winner.p == LocalPlayer then
                                 StartSound(bj_questItemAcquiredSound)
@@ -578,34 +578,34 @@ OnInit(function ()
             if info1.clickedGroup == 1 then
                 BlzFrameSetEnable(Select, not info1.bannedDigimons:contains(i) and info1.aliveDigimons > 3 and (info1.selectedDigimons:contains(i) or info1.availableSelects > 0))
                 BlzFrameSetEnable(Ban, false)
-                BlzFrameSetText(Select, "|cffFCD20D" .. (info1.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
+                BlzFrameSetText(Select, "|cffFCD20D" .. (info1.selectedDigimons:contains(i) and GetLocalizedString("GYM_UNSELECT") or GetLocalizedString("GYM_SELECT")) .. "|r")
             elseif info1.clickedGroup == 2 then
                 BlzFrameSetEnable(Select, false)
                 BlzFrameSetEnable(Ban, not info2.selectedDigimons:contains(i) and info2.aliveDigimons > 3 and (info2.bannedDigimons:contains(i) or info1.availableBans > 0))
-                BlzFrameSetText(Ban, "|cffFCD20D" .. (info2.bannedDigimons:contains(i) and "Unban" or "Ban") .. "|r")
+                BlzFrameSetText(Ban, "|cffFCD20D" .. (info2.bannedDigimons:contains(i) and GetLocalizedString("GYM_UNBAN") or GetLocalizedString("GYM_BAN")) .. "|r")
             end
             BlzFrameSetEnable(Ready, info1.availableSelects == 0)
-            BlzFrameSetText(Ready, "|cffFCD20D" .. (info1.votedStart and "I'm not ready" or "I'm ready") .. "|r")
+            BlzFrameSetText(Ready, "|cffFCD20D" .. (info1.votedStart and GetLocalizedString("GYM_IM_NOT_READY") or GetLocalizedString("GYM_IM_READY")) .. "|r")
         elseif info2.p == LocalPlayer then
             local i = info2.clicked
             if info2.clickedGroup == 2 then
                 BlzFrameSetEnable(Select, not info2.bannedDigimons:contains(i) and info2.aliveDigimons > 3 and (info2.selectedDigimons:contains(i) or info2.availableSelects > 0))
                 BlzFrameSetEnable(Ban, false)
-                BlzFrameSetText(Select, "|cffFCD20D" .. (info2.selectedDigimons:contains(i) and "Unselect" or "Select") .. "|r")
+                BlzFrameSetText(Select, "|cffFCD20D" .. (info2.selectedDigimons:contains(i) and GetLocalizedString("GYM_UNSELECT") or GetLocalizedString("GYM_SELECT")) .. "|r")
             elseif info2.clickedGroup == 1 then
                 BlzFrameSetEnable(Select, false)
                 BlzFrameSetEnable(Ban, not info1.selectedDigimons:contains(i) and info1.aliveDigimons > 3 and (info1.bannedDigimons:contains(i) or info2.availableBans > 0))
-                BlzFrameSetText(Ban, "|cffFCD20D" .. (info1.bannedDigimons:contains(i) and "Unban" or "Ban") .. "|r")
+                BlzFrameSetText(Ban, "|cffFCD20D" .. (info1.bannedDigimons:contains(i) and GetLocalizedString("GYM_UNBAN") or GetLocalizedString("GYM_BAN")) .. "|r")
             end
             BlzFrameSetEnable(Ready, info2.availableSelects == 0)
-            BlzFrameSetText(Ready, "|cffFCD20D" .. (info2.votedStart and "I'm not ready" or "I'm ready") .. "|r")
+            BlzFrameSetText(Ready, "|cffFCD20D" .. (info2.votedStart and GetLocalizedString("GYM_IM_NOT_READY") or GetLocalizedString("GYM_IM_READY")) .. "|r")
         end
 
-        BlzFrameSetText(PlayerSelections[1], "Selections: " .. info1.availableSelects)
-        BlzFrameSetText(PlayerBans[1], "Bans: " .. info1.availableBans)
+        BlzFrameSetText(PlayerSelections[1], GetLocalizedString("GYM_SELECTIONS"):format(info1.availableSelects))
+        BlzFrameSetText(PlayerBans[1], GetLocalizedString("GYM_BANS"):format(info1.availableBans))
 
-        BlzFrameSetText(PlayerSelections[2], "Selections: " .. info2.availableSelects)
-        BlzFrameSetText(PlayerBans[2], "Bans: " .. info2.availableBans)
+        BlzFrameSetText(PlayerSelections[2], GetLocalizedString("GYM_SELECTIONS"):format(info2.availableSelects))
+        BlzFrameSetText(PlayerBans[2], GetLocalizedString("GYM_BANS"):format(info2.availableBans))
     end
 
     local function SelectFunc(p)
@@ -720,12 +720,12 @@ OnInit(function ()
         local actWood = GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)
 
         if actGold < itm.goldCost then
-            ErrorMessage("Not enough digibits", p)
+            ErrorMessage(GetLocalizedString("NOT_ENOUGH_DIGIBITS"), p)
             return
         end
 
         if actWood < itm.woodCost then
-            ErrorMessage("Not enough digicrystals", p)
+            ErrorMessage(GetLocalizedString("NOT_ENOUGH_DIGICRYSTALS"), p)
             return
         end
 
@@ -799,7 +799,7 @@ OnInit(function ()
             end
 
             BlzFrameSetText(tooltipText,
-                "|cffffcc00" .. GetObjectName(id) .. "|r | |cffDAF7A6Rank level " .. rank .. "|r\n" ..
+                "|cffffcc00" .. GetObjectName(id) .. "|r | |cffDAF7A6" .. GetLocalizedString("GYM_RANK_LEVEL") .. " " .. rank .. "|r\n" ..
                 (goldCost > 0 and ("     |cffffcc00" .. goldCost .. "|r") or "") ..
                 (woodCost > 0 and ("     |cffffcc00" .. woodCost .. "|r") or "") ..
                 "\n" ..
@@ -977,14 +977,14 @@ OnInit(function ()
         BlzFrameSetScale(RankShopText, 1.57)
         BlzFrameSetPoint(RankShopText, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, 0.040000, -0.020000)
         BlzFrameSetPoint(RankShopText, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.26000)
-        BlzFrameSetText(RankShopText, "|cffFFCC00Click to buy an item|r")
+        BlzFrameSetText(RankShopText, GetLocalizedString("GYM_CLICK_TO_BUY_ITEM"))
         BlzFrameSetEnable(RankShopText, false)
         BlzFrameSetTextAlignment(RankShopText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         RankShopExit = BlzCreateFrame("ScriptDialogButton", RankShopMenu, 0, 0)
         BlzFrameSetPoint(RankShopExit, FRAMEPOINT_TOPLEFT, RankShopMenu, FRAMEPOINT_TOPLEFT, 0.10000, -0.26500)
         BlzFrameSetPoint(RankShopExit, FRAMEPOINT_BOTTOMRIGHT, RankShopMenu, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.015000)
-        BlzFrameSetText(RankShopExit, "|cffFCD20DClose|r")
+        BlzFrameSetText(RankShopExit, GetLocalizedString("GYM_CLOSE"))
         BlzFrameSetScale(RankShopExit, 1.00)
         OnClickEvent(RankShopExit, RankShopExitFunc)
     end
@@ -1013,16 +1013,16 @@ OnInit(function ()
     ---@param p player
     local function UpdateDialog(p)
         DialogClear(SelectPlayer[p])
-        DialogSetMessage(SelectPlayer[p], "Who do you want to fight?")
+        DialogSetMessage(SelectPlayer[p], GetLocalizedString("GYM_WHO_TO_FIGHT"))
         PlayerClicked[p] = {}
 
         local index = 0
         for v in PlayerOptions[p]:elements() do
             index = index + 1
-            PlayerClicked[p][index] = DialogAddButton(SelectPlayer[p], User[v]:getNameColored() .. " (" .. (PlayerSelected[v] == p and "Accept" or "Challenge") .. ")", 0)
+            PlayerClicked[p][index] = DialogAddButton(SelectPlayer[p], User[v]:getNameColored() .. " (" .. (PlayerSelected[v] == p and GetLocalizedString("GYM_ACCEPT") or GetLocalizedString("GYM_CHALLENGE")) .. ")", 0)
         end
 
-        DialogAddButton(SelectPlayer[p], "Cancel", 0)
+        DialogAddButton(SelectPlayer[p], GetLocalizedString("GYM_CANCEL"), 0)
     end
 
     ---@param p1 player
@@ -1081,7 +1081,7 @@ OnInit(function ()
             local p = GetEnumPlayer()
             waitTimers[p] = CreateTimer()
             waitWindows[p] = CreateTimerDialog(waitTimers[p])
-            TimerDialogSetTitle(waitWindows[p], "Waiting a player:")
+            TimerDialogSetTitle(waitWindows[p], GetLocalizedString("GYM_WAITING_A_PLAYER"))
         end)
     end)
 
@@ -1100,7 +1100,7 @@ OnInit(function ()
         TimerDialogDisplay(waitWindows[p1], false)
         TimerDialogDisplay(waitWindows[p2], false)
         if p2 ~= Digimon.VILLAIN then
-            DisplayTextToForce(WannaPvP, User[p1]:getNameColored() .. " and " .. User[p2]:getNameColored() .. " will fight.")
+            DisplayTextToForce(WannaPvP, GetLocalizedString("GYM_WILL_FIGHT"):format(User[p1]:getNameColored(), User[p2]:getNameColored()))
             PlayerSelected[p1] = nil
             PlayerSelected[p2] = nil
 
@@ -1171,7 +1171,7 @@ OnInit(function ()
             Timed.echo(1., function ()
                 fight.selectTime = fight.selectTime - 1
                 if fight:localPlayerCond() then
-                    BlzFrameSetText(Remaining, "Remain: " .. math.floor(fight.selectTime))
+                    BlzFrameSetText(Remaining, GetLocalizedString("GYM_REMAIN"):format(math.floor(fight.selectTime)))
                 end
                 if fight.selectTime <= 0 then
                     fight:autoSelect()
@@ -1193,7 +1193,7 @@ OnInit(function ()
                 ForceUICancel() -- In case another menu was opened
                 HideMenu(true)
 
-                BlzFrameSetText(Remaining, "Remain: " .. math.floor(fight.selectTime))
+                BlzFrameSetText(Remaining, GetLocalizedString("GYM_REMAIN"):format(math.floor(fight.selectTime)))
 
                 BlzFrameSetText(PlayerName[1], User[p1]:getNameColored())
                 BlzFrameSetText(PlayerName[2], User[p2]:getNameColored())
@@ -1225,7 +1225,7 @@ OnInit(function ()
                 BlzFrameSetVisible(GymMenu, true)
             end
         else
-            DisplayTextToForce(WannaPvP, User[p1]:getNameColored() .. " accepted challenge the gym.")
+            DisplayTextToForce(WannaPvP, GetLocalizedString("GYM_ACCEPTED_CHALLENGE"):format(User[p1]:getNameColored()))
 
             ForceRemovePlayer(WannaPvP, p1)
             ForForce(WannaPvP, function ()
@@ -1276,7 +1276,7 @@ OnInit(function ()
             Timed.echo(1., function ()
                 fight.selectTime = fight.selectTime - 1
                 if p1 == LocalPlayer then
-                    BlzFrameSetText(Remaining, "Remain: " .. math.floor(fight.selectTime))
+                    BlzFrameSetText(Remaining, GetLocalizedString("GYM_REMAIN"):format(math.floor(fight.selectTime)))
                 end
                 if fight.selectTime <= 0 then
                     fight:autoSelect()
@@ -1297,7 +1297,7 @@ OnInit(function ()
                 ForceUICancel() -- In case another menu was opened
                 HideMenu(true)
 
-                BlzFrameSetText(Remaining, "Remain: " .. math.floor(fight.selectTime))
+                BlzFrameSetText(Remaining, GetLocalizedString("GYM_REMAIN"):format(math.floor(fight.selectTime)))
 
                 BlzFrameSetText(PlayerName[1], User[p1]:getNameColored())
                 BlzFrameSetText(PlayerName[2], User[p2]:getNameColored())
@@ -1359,7 +1359,7 @@ OnInit(function ()
                     local i = GetFreeArena()
                     if not i then
                         if LocalPlayer == p or LocalPlayer == toFight then
-                            DisplayTextToPlayer(LocalPlayer, 0, 0, "All the arenas are being used, you have to wait until they are free.")
+                            DisplayTextToPlayer(LocalPlayer, 0, 0, GetLocalizedString("GYM_ALL_ARENA_USED"))
                         end
                         return
                     end
@@ -1377,22 +1377,22 @@ OnInit(function ()
             local p = GetOwningPlayer(GetManipulatingUnit())
             if GetItemTypeId(GetManipulatedItem()) == ARENA_TICKET then
                 if cantPvE[p] then
-                    ErrorMessage("You can't go to arena when trying to fight a player.", p)
+                    ErrorMessage(GetLocalizedString("GYM_CANT_GO_TO_ARENA"), p)
                 else
                     local gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
                     local requiredGold = 50 + 50 * GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED)
                     if requiredGold > gold then
-                        ErrorMessage("You don't have enough digibits.", p)
+                        ErrorMessage(GetLocalizedString("NOT_ENOUGH_DIGIBITS"), p)
                         return
                     end
                     SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, gold - requiredGold)
                     if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
-                        ErrorMessage("You can only use this ticket in the gym lobby.", p)
+                        ErrorMessage(GetLocalizedString("GYM_USE_TICKET_IN_LOBBY"), p)
                         return
                     end
                     local i = GetFreeArena()
                     if not i then
-                        DisplayTextToPlayer(p, 0, 0, "All the arenas are being used, you have to wait until they are free.")
+                        DisplayTextToPlayer(p, 0, 0, GetLocalizedString("GYM_ALL_ARENA_USED"))
                         return
                     end
                     ForForce(WannaPvP, function ()
@@ -1406,7 +1406,7 @@ OnInit(function ()
                 end
             elseif GetItemTypeId(GetManipulatedItem()) == PVP_TICKET then
                 if not RectContainsUnit(LOBBY, GetManipulatingUnit()) then
-                    ErrorMessage("You can only use this ticket in the gym lobby.", p)
+                    ErrorMessage(GetLocalizedString("GYM_USE_TICKET_IN_LOBBY"), p)
                     return
                 end
                 if not cantPvE[p] then

@@ -661,9 +661,9 @@ OnInit("Diary", function ()
             BlzFrameSetText(DigimonName, "|cffFFCC00" .. info.name .. "|r")
             BlzFrameSetTexture(DigimonAttackTypeIcon, info.attackIcon, 0, true)
             BlzFrameSetTexture(DigimonDefenseTypeIcon, info.defenseIcon, 0, true)
-            BlzFrameSetText(DigimonStamina, "|cffff7d00Stamina per level: |r" .. (unlockedInfo.staPerLvl and info.staPerLvl or "???"))
-            BlzFrameSetText(DigimonDexterity, "|cff007d20Dexterity per level: |r" .. (unlockedInfo.dexPerLvl and info.dexPerLvl or "???"))
-            BlzFrameSetText(DigimonWisdom, "|cff004ec8Wisdom per level: |r" .. (unlockedInfo.wisPerLvl and info.wisPerLvl or "???"))
+            BlzFrameSetText(DigimonStamina, GetLocalizedString("DIARY_STAMINA_PER_LEVEL") .. (unlockedInfo.staPerLvl and info.staPerLvl or GetLocalizedString("DIARY_UNKNOWN")))
+            BlzFrameSetText(DigimonDexterity, GetLocalizedString("DIARY_DEXTERITY_PER_LEVEL") .. (unlockedInfo.dexPerLvl and info.dexPerLvl or GetLocalizedString("DIARY_UNKNOWN")))
+            BlzFrameSetText(DigimonWisdom, GetLocalizedString("DIARY_WISDOM_PER_LEVEL") .. (unlockedInfo.wisPerLvl and info.wisPerLvl or GetLocalizedString("DIARY_UNKNOWN")))
 
             local conds = info.evolveOptions
             if conds then
@@ -674,32 +674,32 @@ OnInit("Diary", function ()
                         local unlockedCond = unlockedConds[cond.toEvolve]
                         if unlockedCond then
                             BlzFrameSetText(DigimonEvolvesToOption[i], cond.label)
-                            local result = "- " .. (unlockedCond.level and ("Have level " .. cond.level) or "???")
+                            local result = "- " .. (unlockedCond.level and (GetLocalizedString("DIARY_LEVEL_COND"):format(unlockedCond.level)) or GetLocalizedString("DIARY_UNKNOWN"))
                             if cond.stone then
-                                result = result .. "\n- " .. (unlockedCond.stone and ("Hold the " .. GetObjectName(cond.stone) .. " item.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.stone and (GetLocalizedString("DIARY_STONE_COND"):format(GetObjectName(cond.stone))) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.place then
-                                result = result .. "\n- " .. (unlockedCond.place and ("Stay on " .. rectNames[cond.place] .. ".") or "???")
+                                result = result .. "\n- " .. (unlockedCond.place and (GetLocalizedString("DIARY_PLACE_COND"):format(rectNames[cond.place])) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.str then
-                                result = result .. "\n- " .. (unlockedCond.str and ("Get " .. cond.str .. " stamina.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.str and (GetLocalizedString("DIARY_STA_COND"):format(cond.str)) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.agi then
-                                result = result .. "\n- " .. (unlockedCond.agi and ("Get " .. cond.agi .. " dexterity.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.agi and (GetLocalizedString("DIARY_AGI_COND"):format(cond.agi)) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.int then
-                                result = result .. "\n- " .. (unlockedCond.int and ("Get " .. cond.int .. " wisdom.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.int and (GetLocalizedString("DIARY_INT_COND"):format(cond.int)) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.onlyDay then
-                                result = result .. "\n- " .. (unlockedCond.onlyDay and ("Only during day.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.onlyDay and (GetLocalizedString("DIARY_DAY_COND")) or GetLocalizedString("DIARY_UNKNOWN"))
                             elseif cond.onlyNight then
-                                result = result .. "\n- " .. (unlockedCond.onlyNight and ("Only during night.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.onlyNight and (GetLocalizedString("DIARY_NIGHT_COND")) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             BlzFrameSetText(DigimonEvolveRequirementsText[i], result)
                             BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], unlockedDigiInfos[LocalPlayer][digimonSelected] ~= nil)
                         else
-                            BlzFrameSetText(DigimonEvolvesToOption[i], "???")
-                            BlzFrameSetText(DigimonEvolveRequirementsText[i], "???")
+                            BlzFrameSetText(DigimonEvolvesToOption[i], GetLocalizedString("DIARY_UNKNOWN"))
+                            BlzFrameSetText(DigimonEvolveRequirementsText[i], GetLocalizedString("DIARY_UNKNOWN"))
                             BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], false)
                         end
                         BlzFrameSetSize(DigimonEvolveRequirementsText[i], 0.17, 0)
@@ -774,7 +774,7 @@ OnInit("Diary", function ()
 
                 BlzFrameSetEnable(RecipeResultButton, unlockedItems[LocalPlayer][recipe.resultItm])
 
-                BlzFrameSetText(RecipeMaterialDescription, "To create " .. GetObjectName(recipe.resultItm) .. ":")
+                BlzFrameSetText(RecipeMaterialDescription, GetLocalizedString("DIARY_TO_CREATE_RECIPE"):format(GetObjectName(recipe.resultItm)))
 
                 for i = #requirementList, 1, -1 do
                     table.remove(requirementList, i)
@@ -789,7 +789,7 @@ OnInit("Diary", function ()
                 for i = 1, 15 do
                     if requirementList[i] then
                         if recipe.itmToUpgrade and requirementList[i] == recipe.itmToUpgrade then
-                            BlzFrameSetText(RecipeRequirmentT[i-1], "- " .. GetObjectName(recipe.itmToUpgrade) .. " (to upgrade).")
+                            BlzFrameSetText(RecipeRequirmentT[i-1], "- " .. GetLocalizedString("DIARY_TO_UPGRADE_ITEM"):format(GetObjectName(recipe.itmToUpgrade)))
                             BlzFrameSetEnable(RecipeRequirmentButton[i-1], unlockedItems[LocalPlayer][recipe.itmToUpgrade])
                         else
                             BlzFrameSetText(RecipeRequirmentT[i-1], "- " .. recipe.requirements[requirementList[i]] .. " " .. GetObjectName(requirementList[i]) .. ".")
@@ -808,7 +808,7 @@ OnInit("Diary", function ()
                 BlzFrameSetVisible(RecipeRequimentsContainer, true)
             else
                 BlzFrameSetEnable(RecipeResultButton, false)
-                BlzFrameSetText(RecipeMaterialDescription, "It comes from:")
+                BlzFrameSetText(RecipeMaterialDescription, GetLocalizedString("DIARY_IT_COMES_FROM"):format(GetObjectName(recipeMaterialSelected)))
                 BlzFrameSetVisible(RecipeRequimentsContainer, false)
 
                 BlzSetUnitSkin(sourceModel, GetMaterialFromItem(recipeMaterialSelected).source)
@@ -845,19 +845,17 @@ OnInit("Diary", function ()
     local function AddDigimonToList(id, whereToBeFound)
         local list
         local container
-        local s = GetObjectName(id)
-        local space = s:find(" ")
-        local which = space and s:sub(1, space - 1) or s
-        if which == "Rookie" then
+        local which = GetObjectName(id)
+        if which == GetLocalizedString("ROOKIE_DIGIMON") then
             list = RookiesList
             container = RookiesContainer
-        elseif which == "Champion" then
+        elseif which == GetLocalizedString("CHAMPION_DIGIMON") then
             list = ChampionsList
             container = ChampionsContainer
-        elseif which == "Ultimate" then
+        elseif which == GetLocalizedString("ULTIMATE_DIGIMON") then
             list = UltimatesList
             container = UltimatesContainer
-        elseif which == "Mega" then
+        elseif which == GetLocalizedString("MEGA_DIGIMON") then
             list = MegasList
             container = MegasContainer
         else
@@ -1362,7 +1360,7 @@ OnInit("Diary", function ()
         AddButtonToTheRight(Diary, 7)
         AddFrameToMenu(Diary)
         SetFrameHotkey(Diary, "V")
-        AddDefaultTooltip(Diary, "DigiWiki", "Look at your recopilated information about the digimons, items and the world.")
+        AddDefaultTooltip(Diary, GetLocalizedString("DIARY"), GetLocalizedString("DIARY_TOOLTIP"))
         BlzFrameSetVisible(Diary, false)
 
         BackdropDiary = BlzCreateFrameByType("BACKDROP", "BackdropSeeMap", Diary, "", 0)
@@ -1387,7 +1385,7 @@ OnInit("Diary", function ()
         Exit = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.71000, -0.030000)
         BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.54000)
-        BlzFrameSetText(Exit, "|cffFCD20DExit|r")
+        BlzFrameSetText(Exit, GetLocalizedString("DIARY_EXIT"))
         BlzFrameSetLevel(Exit, 3)
         OnClickEvent(Exit, ExitFunc)
 
@@ -1401,7 +1399,7 @@ OnInit("Diary", function ()
         DigimonsButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(DigimonsButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.030000)
         BlzFrameSetPoint(DigimonsButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.71000, 0.54000)
-        BlzFrameSetText(DigimonsButton, "|cffFCD20DDigimons|r")
+        BlzFrameSetText(DigimonsButton, GetLocalizedString("DIARY_DIGIMONS"))
         BlzFrameSetLevel(DigimonsButton, 3)
         OnClickEvent(DigimonsButton, DigimonsButtonFunc)
 
@@ -1409,7 +1407,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(RookiesText, 2.00)
         BlzFrameSetPoint(RookiesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.080000)
         BlzFrameSetPoint(RookiesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.50000)
-        BlzFrameSetText(RookiesText, "|cffFFCC00Rookies|r")
+        BlzFrameSetText(RookiesText, GetLocalizedString("DIARY_ROOKIES"))
         BlzFrameSetEnable(RookiesText, false)
         BlzFrameSetTextAlignment(RookiesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1427,7 +1425,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(ChampionsText, 2.00)
         BlzFrameSetPoint(ChampionsText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.20000)
         BlzFrameSetPoint(ChampionsText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.38000)
-        BlzFrameSetText(ChampionsText, "|cffFFCC00Champions|r")
+        BlzFrameSetText(ChampionsText, GetLocalizedString("DIARY_CHAMPIONS"))
         BlzFrameSetEnable(ChampionsText, false)
         BlzFrameSetTextAlignment(ChampionsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1445,7 +1443,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(UltimatesText, 2.00)
         BlzFrameSetPoint(UltimatesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.32000)
         BlzFrameSetPoint(UltimatesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.26000)
-        BlzFrameSetText(UltimatesText, "|cffFFCC00Ultimates|r")
+        BlzFrameSetText(UltimatesText, GetLocalizedString("DIARY_ULTIMATES"))
         BlzFrameSetEnable(UltimatesText, false)
         BlzFrameSetTextAlignment(UltimatesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1463,7 +1461,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(MegasText, 2.00)
         BlzFrameSetPoint(MegasText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.44000)
         BlzFrameSetPoint(MegasText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.14000)
-        BlzFrameSetText(MegasText, "|cffFFCC00Megas|r")
+        BlzFrameSetText(MegasText, GetLocalizedString("DIARY_MEGAS"))
         BlzFrameSetEnable(MegasText, false)
         BlzFrameSetTextAlignment(MegasText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1504,14 +1502,14 @@ OnInit("Diary", function ()
         DigimonAttackTypeLabel = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
         BlzFrameSetPoint(DigimonAttackTypeLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.11000, -0.060000)
         BlzFrameSetPoint(DigimonAttackTypeLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.45000)
-        BlzFrameSetText(DigimonAttackTypeLabel, "|cffffcc00Att|r")
+        BlzFrameSetText(DigimonAttackTypeLabel, GetLocalizedString("DIARY_ATTACK_TYPE"))
         BlzFrameSetEnable(DigimonAttackTypeLabel, false)
         BlzFrameSetTextAlignment(DigimonAttackTypeLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
         DigimonDefenseTypeLabel = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
         BlzFrameSetPoint(DigimonDefenseTypeLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.14000, -0.060000)
         BlzFrameSetPoint(DigimonDefenseTypeLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.45000)
-        BlzFrameSetText(DigimonDefenseTypeLabel, "|cffffcc00Def|r")
+        BlzFrameSetText(DigimonDefenseTypeLabel, GetLocalizedString("DIARY_DEFENSE_TYPE"))
         BlzFrameSetEnable(DigimonDefenseTypeLabel, false)
         BlzFrameSetTextAlignment(DigimonDefenseTypeLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
@@ -1519,7 +1517,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigimonStamina, 1.43)
         BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.35000)
         BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.15000)
-        BlzFrameSetText(DigimonStamina, "|cffff7d00Stamina per level: |r")
+        BlzFrameSetText(DigimonStamina, GetLocalizedString("DIARY_STAMINA_PER_LEVEL"))
         BlzFrameSetEnable(DigimonStamina, false)
         BlzFrameSetTextAlignment(DigimonStamina, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1527,7 +1525,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigimonDexterity, 1.43)
         BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.37000)
         BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.13000)
-        BlzFrameSetText(DigimonDexterity, "|cff007d20Dexterity per level: |r")
+        BlzFrameSetText(DigimonDexterity, GetLocalizedString("DIARY_DEXTERITY_PER_LEVEL"))
         BlzFrameSetEnable(DigimonDexterity, false)
         BlzFrameSetTextAlignment(DigimonDexterity, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1535,7 +1533,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigimonWisdom, 1.43)
         BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.39000)
         BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.11000)
-        BlzFrameSetText(DigimonWisdom, "|cff004ec8Wisdom per level: |r")
+        BlzFrameSetText(DigimonWisdom, GetLocalizedString("DIARY_WISDOM_PER_LEVEL"))
         BlzFrameSetEnable(DigimonWisdom, false)
         BlzFrameSetTextAlignment(DigimonWisdom, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1543,7 +1541,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigimonEvolvesToLabel, 1.57)
         BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.42000)
         BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.080000)
-        BlzFrameSetText(DigimonEvolvesToLabel, "|cffffcc00Evolves to:|r")
+        BlzFrameSetText(DigimonEvolvesToLabel, GetLocalizedString("DIARY_EVOLVES_TO"))
         BlzFrameSetEnable(DigimonEvolvesToLabel, false)
         BlzFrameSetTextAlignment(DigimonEvolvesToLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1631,7 +1629,7 @@ OnInit("Diary", function ()
         ItemsButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(ItemsButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.10000, -0.030000)
         BlzFrameSetPoint(ItemsButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.63000, 0.54000)
-        BlzFrameSetText(ItemsButton, "|cffFCD20DItems|r")
+        BlzFrameSetText(ItemsButton, GetLocalizedString("DIARY_ITEMS"))
         BlzFrameSetLevel(ItemsButton, 3)
         OnClickEvent(ItemsButton, ItemsButtonFunc)
 
@@ -1645,7 +1643,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(ConsumablesText, 2.00)
         BlzFrameSetPoint(ConsumablesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.070000)
         BlzFrameSetPoint(ConsumablesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.51000)
-        BlzFrameSetText(ConsumablesText, "|cffFFCC00Consumables|r")
+        BlzFrameSetText(ConsumablesText, GetLocalizedString("DIARY_CONSUMABLES"))
         BlzFrameSetEnable(ConsumablesText, false)
         BlzFrameSetTextAlignment(ConsumablesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1653,7 +1651,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(MiscText, 1.43)
         BlzFrameSetPoint(MiscText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.10000)
         BlzFrameSetPoint(MiscText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.48500)
-        BlzFrameSetText(MiscText, "|cff00ffffMiscellaneous|r")
+        BlzFrameSetText(MiscText, GetLocalizedString("DIARY_MISCELLANEOUS"))
         BlzFrameSetEnable(MiscText, false)
         BlzFrameSetTextAlignment(MiscText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1671,7 +1669,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(FoodText, 1.43)
         BlzFrameSetPoint(FoodText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.20000, -0.10000)
         BlzFrameSetPoint(FoodText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.46000, 0.48500)
-        BlzFrameSetText(FoodText, "|cff00ffffFoods|r")
+        BlzFrameSetText(FoodText, GetLocalizedString("DIARY_FOODS"))
         BlzFrameSetEnable(FoodText, false)
         BlzFrameSetTextAlignment(FoodText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1689,7 +1687,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DrinkText, 1.43)
         BlzFrameSetPoint(DrinkText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.39000, -0.10000)
         BlzFrameSetPoint(DrinkText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.27000, 0.48500)
-        BlzFrameSetText(DrinkText, "|cff00ffffDrinks|r")
+        BlzFrameSetText(DrinkText, GetLocalizedString("DIARY_DRINKS"))
         BlzFrameSetEnable(DrinkText, false)
         BlzFrameSetTextAlignment(DrinkText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1707,7 +1705,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(EquipmentsText, 2.00)
         BlzFrameSetPoint(EquipmentsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.21500)
         BlzFrameSetPoint(EquipmentsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.36500)
-        BlzFrameSetText(EquipmentsText, "|cffFFCC00Equipments|r")
+        BlzFrameSetText(EquipmentsText, GetLocalizedString("DIARY_EQUIPMENTS"))
         BlzFrameSetEnable(EquipmentsText, false)
         BlzFrameSetTextAlignment(EquipmentsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1715,7 +1713,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(ShieldsText, 1.43)
         BlzFrameSetPoint(ShieldsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.24500)
         BlzFrameSetPoint(ShieldsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.34000)
-        BlzFrameSetText(ShieldsText, "|cff00ffffShields|r")
+        BlzFrameSetText(ShieldsText, GetLocalizedString("DIARY_SHIELDS"))
         BlzFrameSetEnable(ShieldsText, false)
         BlzFrameSetTextAlignment(ShieldsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1733,7 +1731,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(WeaponsText, 1.43)
         BlzFrameSetPoint(WeaponsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.31550)
         BlzFrameSetPoint(WeaponsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.26950)
-        BlzFrameSetText(WeaponsText, "|cff00ffffWeapons|r")
+        BlzFrameSetText(WeaponsText, GetLocalizedString("DIARY_WEAPONS"))
         BlzFrameSetEnable(WeaponsText, false)
         BlzFrameSetTextAlignment(WeaponsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1751,7 +1749,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(AccesoriesText, 1.43)
         BlzFrameSetPoint(AccesoriesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.38600)
         BlzFrameSetPoint(AccesoriesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.19900)
-        BlzFrameSetText(AccesoriesText, "|cff00ffffAccesories|r")
+        BlzFrameSetText(AccesoriesText, GetLocalizedString("DIARY_ACCESORIES"))
         BlzFrameSetEnable(AccesoriesText, false)
         BlzFrameSetTextAlignment(AccesoriesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1769,7 +1767,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigivicesText, 1.43)
         BlzFrameSetPoint(DigivicesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.45650)
         BlzFrameSetPoint(DigivicesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.12850)
-        BlzFrameSetText(DigivicesText, "|cff00ffffDigivices|r")
+        BlzFrameSetText(DigivicesText, GetLocalizedString("DIARY_DIGIVICES"))
         BlzFrameSetEnable(DigivicesText, false)
         BlzFrameSetTextAlignment(DigivicesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1787,7 +1785,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(CrestsText, 1.43)
         BlzFrameSetPoint(CrestsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.52700)
         BlzFrameSetPoint(CrestsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.058000)
-        BlzFrameSetText(CrestsText, "|cff00ffffCrests|r")
+        BlzFrameSetText(CrestsText, GetLocalizedString("DIARY_CRESTS"))
         BlzFrameSetEnable(CrestsText, false)
         BlzFrameSetTextAlignment(CrestsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1828,7 +1826,7 @@ OnInit("Diary", function ()
         RecipesButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(RecipesButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.18000, -0.030000)
         BlzFrameSetPoint(RecipesButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.55000, 0.54000)
-        BlzFrameSetText(RecipesButton, "|cffFCD20DRecipes|r")
+        BlzFrameSetText(RecipesButton, GetLocalizedString("DIARY_RECIPES"))
         OnClickEvent(RecipesButton, RecipesButtonFunc)
 
         RecipesBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
@@ -1839,7 +1837,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(MaterialsLabel, 2.00)
         BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.070000)
         BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.51000)
-        BlzFrameSetText(MaterialsLabel, "|cffFFCC00Materials|r")
+        BlzFrameSetText(MaterialsLabel, GetLocalizedString("DIARY_MATERIALS_LABEL"))
         BlzFrameSetTextAlignment(MaterialsLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         MaterialsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipesBackdrop, "", 1)
@@ -1851,7 +1849,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(RecipesLabel, 2.00)
         BlzFrameSetPoint(RecipesLabel, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.23000)
         BlzFrameSetPoint(RecipesLabel, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.35000)
-        BlzFrameSetText(RecipesLabel, "|cffFFCC00Recipes|r")
+        BlzFrameSetText(RecipesLabel, GetLocalizedString("DIARY_RECIPES_LABEL"))
         BlzFrameSetTextAlignment(RecipesLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         RecipesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipesBackdrop, "", 1)
@@ -1911,7 +1909,7 @@ OnInit("Diary", function ()
         MapButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(MapButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.26000, -0.030000)
         BlzFrameSetPoint(MapButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.47000, 0.54000)
-        BlzFrameSetText(MapButton, "|cffFCD20DMap|r")
+        BlzFrameSetText(MapButton, GetLocalizedString("DIARY_MAP"))
         BlzFrameSetLevel(MapButton, 3)
         OnClickEvent(MapButton, MapButtonFunc)
 
@@ -2172,7 +2170,7 @@ OnInit("Diary", function ()
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
             if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
-                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("INVALID_FILE"):format(fileRoot))
                 return
             end
         end

@@ -34,12 +34,12 @@ OnInit("Stats", function ()
     }
 
     local names = {
-        [0] = "Shield",
-        [1] = "Weapon",
-        [2] = "Accesory",
-        [3] = "Accesory",
-        [4] = "Digivice",
-        [5] = "Crest"
+        [0] = GetLocalizedString("STATS_EQUIP_NAME_1"), -- "Shield"
+        [1] = GetLocalizedString("STATS_EQUIP_NAME_2"), -- "Weapon"
+        [2] = GetLocalizedString("STATS_EQUIP_NAME_3"), -- "Accesory"
+        [3] = GetLocalizedString("STATS_EQUIP_NAME_3"), -- "Accesory"
+        [4] = GetLocalizedString("STATS_EQUIP_NAME_4"), -- "Digivice"
+        [5] = GetLocalizedString("STATS_EQUIP_NAME_5")  -- "Crest"
     }
 
     local StatsButton = nil ---@type framehandle
@@ -347,7 +347,7 @@ OnInit("Stats", function ()
                             BlzFrameSetEnable(StatsItemT[i][j], true)
                             BlzFrameSetTexture(BackdropStatsItemT[i][j], BlzGetAbilityIcon(GetItemTypeId(m)), 0, true)
                             local desc = BlzGetItemDescription(m)
-                            local _, final = desc:find("Can only use \x25d+ \x25a+ at a time.|n")
+                            local _, final = desc:find(GetLocalizedString("STATS_DESC_STRIP"))
                             if final then
                                 desc = desc:sub(final+1)
                             end
@@ -448,21 +448,21 @@ OnInit("Stats", function ()
 
         local text = ""
 
-        text = text .. "|cff00ff00HP:|r " .. math.floor(GetUnitState(selected, UNIT_STATE_LIFE)) .. " \\ " .. math.floor(GetUnitState(selected, UNIT_STATE_MAX_LIFE)) .. "\n"
-        text = text .. "|cff007fffMP:|r " .. math.floor(GetUnitState(selected, UNIT_STATE_MANA)) .. " \\ " .. math.floor(GetUnitState(selected, UNIT_STATE_MAX_MANA)) .. "\n"
+        text = text .. GetLocalizedString("STATS_ENEMY_HP") .. " " .. math.floor(GetUnitState(selected, UNIT_STATE_LIFE)) .. " \\ " .. math.floor(GetUnitState(selected, UNIT_STATE_MAX_LIFE)) .. "\n"
+        text = text .. GetLocalizedString("STATS_ENEMY_MP") .. " " .. math.floor(GetUnitState(selected, UNIT_STATE_MANA)) .. " \\ " .. math.floor(GetUnitState(selected, UNIT_STATE_MAX_MANA)) .. "\n"
 
 
         local base = GetHeroStr(selected, false)
         local bonus = GetHeroStr(selected, true) - base
-        text = text .. "|cffff7d00STA:|r " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "") .. "\n"
+        text = text .. GetLocalizedString("STATS_ENEMY_STA") .. " " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "") .. "\n"
 
         base = GetHeroAgi(selected, false)
         bonus = GetHeroAgi(selected, true) - base
-        text = text .. "|cff007d20DEX:|r " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "") .. "\n"
+        text = text .. GetLocalizedString("STATS_ENEMY_DEX") .. " " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "") .. "\n"
 
         base = GetHeroInt(selected, false)
         bonus = GetHeroInt(selected, true) - base
-        text = text .. "|cff004ec8WIS:|r " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "")
+        text = text .. GetLocalizedString("STATS_ENEMY_WIS") .. " " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "")
 
         BlzFrameSetText(OtherStats, text)
         BlzFrameSetVisible(OtherStats, true)
@@ -517,7 +517,7 @@ OnInit("Stats", function ()
         BlzFrameSetVisible(StatsButton, false)
         AddFrameToMenu(StatsButton)
         SetFrameHotkey(StatsButton, "U")
-        AddDefaultTooltip(StatsButton, "Show/Hide stats", "Show/Hide the stats of the digimons you are using.")
+        AddDefaultTooltip(StatsButton, GetLocalizedString("STATS"), GetLocalizedString("STATS_TOOLTIP"))
 
         BackdropStatsButton = BlzCreateFrameByType("BACKDROP", "BackdropStatsButton", StatsButton, "", 0)
         BlzFrameSetAllPoints(BackdropStatsButton, StatsButton)
@@ -548,7 +548,7 @@ OnInit("Stats", function ()
             StatsDamageLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsDamageLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.15250, -0.0050000)
             BlzFrameSetPoint(StatsDamageLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.16500, 0.080000)
-            BlzFrameSetText(StatsDamageLabel[i], "|cffFFCC00Damage:|r")
+            BlzFrameSetText(StatsDamageLabel[i], GetLocalizedString("STATS_DAMAGE_LABEL"))
             BlzFrameSetEnable(StatsDamageLabel[i], false)
             BlzFrameSetScale(StatsDamageLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsDamageLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -561,7 +561,7 @@ OnInit("Stats", function ()
             StatsArmorLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsArmorLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.15250, -0.050000)
             BlzFrameSetPoint(StatsArmorLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.16500, 0.035000)
-            BlzFrameSetText(StatsArmorLabel[i], "|cffFFCC00Armor:|r")
+            BlzFrameSetText(StatsArmorLabel[i], GetLocalizedString("STATS_ARMOR_LABEL"))
             BlzFrameSetEnable(StatsArmorLabel[i], false)
             BlzFrameSetScale(StatsArmorLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsArmorLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -595,7 +595,7 @@ OnInit("Stats", function ()
             StatsStaminaLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsStaminaLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.25500, -0.0050000)
             BlzFrameSetPoint(StatsStaminaLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.057500, 0.080000)
-            BlzFrameSetText(StatsStaminaLabel[i], "|cffff7d00Stamina:|r")
+            BlzFrameSetText(StatsStaminaLabel[i], GetLocalizedString("STATS_STAMINA_LABEL"))
             BlzFrameSetEnable(StatsStaminaLabel[i], false)
             BlzFrameSetScale(StatsStaminaLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsStaminaLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -611,7 +611,7 @@ OnInit("Stats", function ()
             StatsDexterityLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsDexterityLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.25500, -0.035000)
             BlzFrameSetPoint(StatsDexterityLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.057500, 0.050000)
-            BlzFrameSetText(StatsDexterityLabel[i], "|cff007d20Dexterity:|r")
+            BlzFrameSetText(StatsDexterityLabel[i], GetLocalizedString("STATS_DEXTERITY_LABEL"))
             BlzFrameSetEnable(StatsDexterityLabel[i], false)
             BlzFrameSetScale(StatsDexterityLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsDexterityLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -627,7 +627,7 @@ OnInit("Stats", function ()
             StatsWisdomLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsWisdomLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.25500, -0.065000)
             BlzFrameSetPoint(StatsWisdomLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.057500, 0.020000)
-            BlzFrameSetText(StatsWisdomLabel[i], "|cff004ec8Wisdom:|r")
+            BlzFrameSetText(StatsWisdomLabel[i], GetLocalizedString("STATS_WISDOM_LABEL"))
             BlzFrameSetEnable(StatsWisdomLabel[i], false)
             BlzFrameSetScale(StatsWisdomLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsWisdomLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -722,7 +722,7 @@ OnInit("Stats", function ()
             StatsCriticalLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsCriticalLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.31250, -0.0055000)
             BlzFrameSetPoint(StatsCriticalLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.085000)
-            BlzFrameSetText(StatsCriticalLabel[i], "|cffa80000Critical:|r")
+            BlzFrameSetText(StatsCriticalLabel[i], GetLocalizedString("STATS_CRITICAL_LABEL"))
             BlzFrameSetEnable(StatsCriticalLabel[i], false)
             BlzFrameSetScale(StatsCriticalLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsCriticalLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -730,7 +730,7 @@ OnInit("Stats", function ()
             StatsBlockLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsBlockLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.31250, -0.051500)
             BlzFrameSetPoint(StatsBlockLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.039000)
-            BlzFrameSetText(StatsBlockLabel[i], "|cff8a8a8aBlock:|r")
+            BlzFrameSetText(StatsBlockLabel[i], GetLocalizedString("STATS_BLOCK_LABEL"))
             BlzFrameSetEnable(StatsBlockLabel[i], false)
             BlzFrameSetScale(StatsBlockLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsBlockLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -738,7 +738,7 @@ OnInit("Stats", function ()
             StatsEvasionLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsEvasionLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.31250, -0.074500)
             BlzFrameSetPoint(StatsEvasionLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.016000)
-            BlzFrameSetText(StatsEvasionLabel[i], "|cff42ffadEvasion:|r")
+            BlzFrameSetText(StatsEvasionLabel[i], GetLocalizedString("STATS_EVASION_LABEL"))
             BlzFrameSetEnable(StatsEvasionLabel[i], false)
             BlzFrameSetScale(StatsEvasionLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsEvasionLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -746,7 +746,7 @@ OnInit("Stats", function ()
             StatsImpactLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
             BlzFrameSetPoint(StatsImpactLabel[i], FRAMEPOINT_TOPLEFT, StatsBackdrop[i], FRAMEPOINT_TOPLEFT, 0.31250, -0.028500)
             BlzFrameSetPoint(StatsImpactLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.062000)
-            BlzFrameSetText(StatsImpactLabel[i], "|cffffff00Impact:|r")
+            BlzFrameSetText(StatsImpactLabel[i], GetLocalizedString("STATS_IMPACT_LABEL"))
             BlzFrameSetEnable(StatsImpactLabel[i], false)
             BlzFrameSetScale(StatsImpactLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsImpactLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
