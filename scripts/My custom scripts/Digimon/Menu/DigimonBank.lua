@@ -933,15 +933,6 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetSize(DigimonTTooltipText[i], 0.2, 0)
 
                 BlzFrameSetVisible(DigimonTIsMain[i], bank.main == d)
-
-                BlzFrameSetText(Revive, (bank.reviveCooldown > 0 and ("[" .. math.floor(bank.reviveCooldown) .. "] ") or "") .. "|cffFCD20DRevive|r")
-
-                if bank.reviveItems > 0 then
-                    BlzFrameSetVisible(ReviveItems, true)
-                    BlzFrameSetText(ReviveItemsCharges, tostring(bank.reviveItems))
-                else
-                    BlzFrameSetVisible(ReviveItems, false)
-                end
             else
                 -- Button
                 BlzFrameSetEnable(DigimonT[i], false)
@@ -964,6 +955,15 @@ OnInit("DigimonBank", function ()
         if bank.pressed ~= -1 and BlzFrameGetEnable(DigimonT[bank.pressed]) then
             BlzFrameClick(DigimonT[bank.pressed])
         end
+
+        BlzFrameSetText(Revive, (bank.reviveCooldown > 0 and ("[" .. math.floor(bank.reviveCooldown) .. "] ") or "") .. "|cffFCD20DRevive|r")
+        if bank.reviveItems > 0 then
+            BlzFrameSetVisible(ReviveItems, true)
+            BlzFrameSetText(ReviveItemsCharges, tostring(bank.reviveItems))
+        else
+            BlzFrameSetVisible(ReviveItems, false)
+        end
+
         UpdateButtons()
     end
 

@@ -48,6 +48,7 @@ OnInit("Backpack", function ()
     ---@field slot integer
     ---@field stopped boolean
     ---@field noConsummable boolean
+    ---@field noTarget boolean
 
     ---@class Backpack
     ---@field owner player
@@ -170,7 +171,8 @@ OnInit("Backpack", function ()
             charges = 0,
             description = GetObjectName(itemId) .. "\n" .. BlzGetAbilityExtendedTooltip(itemId, 0),
             stopped = false,
-            noConsummable = AllowedItems[itemId].noConsummable
+            noConsummable = AllowedItems[itemId].noConsummable,
+            noTarget = AllowedItems[itemId].noTarget
         }
         itemData.spellCooldown = math.floor(BlzGetAbilityCooldown(itemData.spell, itemData.level - 1))
         local i = itemData.description:find(GetLocalizedString("BACKPACK_STRIP_TEXT"))
@@ -363,7 +365,7 @@ OnInit("Backpack", function ()
         local p = GetOwningPlayer(caster)
         local itemData = Backpacks[p].actualItemData
 
-        if itemData and itemData.spell == GetSpellAbilityId() then
+        if itemData and itemData.spell == GetSpellAbilityId() and not itemData.noTarget then
             local x, y
             if GetSpellTargetUnit() then
                 x, y = GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit())
@@ -658,18 +660,6 @@ OnInit("Backpack", function ()
             local id = GetItemTypeId(m)
             local itemData ---@type ItemData
 
-            if not gotItem[p] then
-                if p == LocalPlayer then
-                    BlzFrameSetVisible(BackpackSprite, true)
-                    BlzFrameSetSpriteAnimate(BackpackSprite, 1, 0)
-                end
-                Timed.call(8., function ()
-                    if p == LocalPlayer then
-                        BlzFrameSetVisible(BackpackSprite, false)
-                    end
-                end)
-            end
-
             gotItem[p] = true
             ShowBackpack(p, true)
 
@@ -686,6 +676,17 @@ OnInit("Backpack", function ()
                     ErrorMessage(GetLocalizedString("BACKPACK_FULL"), p)
                     return
                 end
+
+                if p == LocalPlayer then
+                    BlzFrameSetVisible(BackpackSprite, true)
+                    BlzFrameSetSpriteAnimate(BackpackSprite, 1, 0)
+                end
+                Timed.call(8., function ()
+                    if p == LocalPlayer then
+                        BlzFrameSetVisible(BackpackSprite, false)
+                    end
+                end)
+
                 itemData = CreateItemData(id)
                 table.insert(items, itemData)
                 itemData.slot = #items
@@ -750,13 +751,15 @@ OnInit("Backpack", function ()
         AllowedItems[udg_BackpackItem] = {
             ability = udg_BackpackAbility,
             level = udg_BackpackLevel,
-            noConsummable = udg_BackpackNoConsummable
+            noConsummable = udg_BackpackNoConsummable,
+            noTarget = udg_BackpackNoTarget
         }
 
         udg_BackpackItem = 0
         udg_BackpackAbility = 0
         udg_BackpackLevel = 1
         udg_BackpackNoConsummable = false
+        udg_BackpackNoTarget = false
     end)
 
     ---@param p any
@@ -961,8 +964,12 @@ OnInit("Backpack", function ()
 
         for i = 1, data.amount do
             backpack.items[i] = CreateItemData(data.id[i])
-            backpack.items[i].slot = data.slot[i]
-            backpack.items[i].charges = data.charges[i]
+            if not backpack.items[i] then
+                DisplayTextToPlayer(p, 0, 0, "You are trying to load a backpack item that no longer exists in this map version.")
+            else
+                backpack.items[i].slot = data.slot[i]
+                backpack.items[i].charges = data.charges[i]
+            end
         end
 
         if p == LocalPlayer then

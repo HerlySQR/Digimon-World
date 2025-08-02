@@ -64,13 +64,16 @@ OnInit(function ()
     end)
 
     ---@param creep unit
+    ---@return boolean
     function RerollItemDrop(creep)
         local list = instances[creep]
         if list then
             for i = #list, 1, -1 do
                 PlaceRandomItem(list[i].itempool, GetUnitX(creep), GetUnitY(creep))
             end
+            return true
         end
+        return false
     end
 
     -- For GUI

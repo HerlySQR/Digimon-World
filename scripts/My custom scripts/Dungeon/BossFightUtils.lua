@@ -416,7 +416,7 @@ OnInit("BossFightUtils", function ()
 
         local advice
         if not data.manualRevive then
-            advice = CreateTextTagLocBJ("Revive in: ", GetUnitLoc(data.boss), 50, 10, 100, 100, 100, 0)
+            advice = CreateTextTagLocBJ(GetLocalizedString("BOSS_REVIVE_IN"), GetUnitLoc(data.boss), 50, 10, 100, 100, 100, 0)
             SetTextTagPermanent(advice, true)
             SetTextTagVisibility(advice, false)
         end
@@ -557,7 +557,7 @@ OnInit("BossFightUtils", function ()
                 else
                     if playersOnField:size() > data.maxPlayers then
                         if playersOnField:contains(LocalPlayer) then
-                            DisplayTextToPlayer(LocalPlayer, 0, 0, "There are too many players on the battlefield.")
+                            DisplayTextToPlayer(LocalPlayer, 0, 0, GetLocalizedString("BOSS_TOO_MANY_PLAYERS"))
                         end
                         whoAlreadyAre = playersOnField:except(whoAlreadyAre)
                         for _ = 1, (playersOnField:size() - data.maxPlayers) do
@@ -737,7 +737,7 @@ OnInit("BossFightUtils", function ()
                             DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdl", GetUnitX(u2), GetUnitY(u2)))
                         end
                         if playersOnField:contains(LocalPlayer) then
-                            DisplayTextToPlayer(LocalPlayer, 0, 0, "Someone just left the battlefield, the boss was reseted.")
+                            DisplayTextToPlayer(LocalPlayer, 0, 0, GetLocalizedString("BOSS_SOMEONE_LEFT"))
                             PanCameraToTimed(GetRectCenterX(data.entrance), GetRectCenterY(data.entrance), 0.)
                         end
                         break
@@ -766,7 +766,7 @@ OnInit("BossFightUtils", function ()
                     if data.returnPlace then
                         local tm = CreateTimer()
                         local window = CreateTimerDialog(tm)
-                        TimerDialogSetTitle(window, "Digimons returning in:")
+                        TimerDialogSetTitle(window, GetLocalizedString("BOSS_DIGIMONS_RETURN"))
                         ForUnitsInRect(data.toTeleport, function (u)
                             TimerDialogDisplay(window, GetOwningPlayer(u) == LocalPlayer)
                         end)
@@ -826,7 +826,7 @@ OnInit("BossFightUtils", function ()
                         local remaining = 360.
                         Timed.echo(0.02, 360., function ()
                             remaining = remaining - 0.02
-                            SetTextTagText(advice, "Revive in: " .. R2I(remaining), 0.023)
+                            SetTextTagText(advice, GetLocalizedString("BOSS_REVIVE_IN") .. R2I(remaining), 0.023)
                             SetTextTagVisibility(advice, dead and IsVisibleToPlayer(initialPosX, initialPosY, LocalPlayer))
                             -- In case the boss revived for another reason
                             if UnitAlive(data.boss) then
@@ -867,7 +867,7 @@ OnInit("BossFightUtils", function ()
                 local u = GetAttacker()
                 if IsUnitType(u, UNIT_TYPE_HERO) and u ~= data.boss and not unitsInTheField:contains(u) then
                     IssueTargetOrderById(u, Orders.attack, u)
-                    ErrorMessage("You can't attack the boss from there", GetOwningPlayer(u))
+                    ErrorMessage(GetLocalizedString("BOSS_CANT_ATTACK"), GetOwningPlayer(u))
                 end
             end)
         end
@@ -896,7 +896,7 @@ OnInit("BossFightUtils", function ()
                 local u = GetSpellAbilityUnit()
                 if IsUnitType(u, UNIT_TYPE_HERO) and u ~= data.boss and not unitsInTheField:contains(u) then
                     IssueTargetOrderById(u, Orders.attack, u)
-                    ErrorMessage("You can't attack the boss from there", GetOwningPlayer(u))
+                    ErrorMessage(GetLocalizedString("BOSS_CANT_ATTACK"), GetOwningPlayer(u))
                 end
             end)
         end

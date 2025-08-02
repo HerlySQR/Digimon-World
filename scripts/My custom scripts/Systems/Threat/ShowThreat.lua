@@ -35,6 +35,9 @@ OnInit(function ()
 
     Timed.echo(1., function ()
         BlzFrameSetVisible(ThreatBackdrop, false)
+        for j = 0, 3 do
+            BlzFrameSetVisible(HealthBar[j], false)
+        end
         for i = 1, #bosses do
             local boss = bosses[i]
             local attackers = ZTS_GetAttackers(boss)

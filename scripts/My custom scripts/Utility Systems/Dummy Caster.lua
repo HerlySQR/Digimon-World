@@ -46,7 +46,7 @@ OnInit("DummyCaster", function ()
             if Wc3Type(tx) ~= "unit" then
                 error("Invalid target", 2)
             end
-            angle = math.atan(GetUnitX(tx) - y, GetUnitX(tx) - x)
+            angle = math.atan(GetUnitY(tx) - y, GetUnitX(tx) - x)
         else
             error("Invalid target-type", 2)
         end

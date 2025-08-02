@@ -415,7 +415,7 @@ OnInit(function ()
         name = "Kimeramon",
         boss = boss,
         manualRevive = true,
-        maxPlayers = 4,
+        maxPlayers = 5,
         forceWall = {gg_dest_Dofv_53414},
         returnPlace = gg_rct_ASRReturn,
         returnEnv = "Ancient Dino Region",

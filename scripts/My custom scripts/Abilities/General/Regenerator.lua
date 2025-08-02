@@ -4,10 +4,10 @@ OnInit(function ()
 
     local Spell = FourCC('A039')
     local ResetCombat = 57.
-    local LifeRegenOnCombat = 1.75 - 1
-    local ManaRegenOnCombat = 1.75 - 1
-    local LifeRegenOffCombat = 3.5 - 1
-    local ManaRegenOffCombat = 3.5 - 1
+    local LifeRegenOnCombat = 0.75
+    local ManaRegenOnCombat = 0.75
+    local LifeRegenOffCombat = 2.5
+    local ManaRegenOffCombat = 2.5
 
     local onCombat = __jarray(0.) ---@type table<Digimon, number>
     local instances = {} ---@type Digimon[]
@@ -24,8 +24,8 @@ OnInit(function ()
                                 table.remove(instances, i)
                             else
                                 onCombat[d] = onCombat[d] - 1
-                                SetWidgetLife(d.root, GetWidgetLife(d.root) + ((onCombat[d] > 0) and LifeRegenOnCombat or LifeRegenOffCombat) * BlzGetUnitRealField(d.root, UNIT_RF_HIT_POINTS_REGENERATION_RATE))
-                                SetUnitState(d.root, UNIT_STATE_MANA, GetUnitState(d.root, UNIT_STATE_MANA) + ((onCombat[d] > 0) and ManaRegenOnCombat or ManaRegenOffCombat) * BlzGetUnitRealField(d.root, UNIT_RF_MANA_REGENERATION))
+                                SetUnitState(d.root, UNIT_STATE_LIFE, GetUnitState(d.root, UNIT_STATE_LIFE) + (onCombat[d] > 0 and LifeRegenOnCombat or LifeRegenOffCombat))
+                                SetUnitState(d.root, UNIT_STATE_MANA, GetUnitState(d.root, UNIT_STATE_MANA) + (onCombat[d] > 0 and ManaRegenOnCombat or ManaRegenOffCombat))
                             end
                         end
                         if instances == 0 then

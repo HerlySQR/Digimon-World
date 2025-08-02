@@ -328,7 +328,7 @@ OnInit(function ()
         name = "PlatinumNumemon",
         boss = boss,
         manualRevive = true,
-        maxPlayers = 3,
+        maxPlayers = 5,
         forceWall = {gg_dest_B082_53321},
         returnPlace = gg_rct_DatamonReturnPlace,
         returnEnv = "Factorial Town",
