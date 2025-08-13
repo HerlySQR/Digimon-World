@@ -39,12 +39,12 @@ OnInit("DummyCaster", function ()
             if not tx or not ty then
                 error("You didn't set a target point", 2)
             elseif not type(tx) == "number" or not type(ty) == "number" then
-                error("Invalid target", 2)
+                error("Invalid target (".. tostring(tx) .. "," .. tostring(ty) .. ")", 2)
             end
             angle = math.atan(ty - y, tx - x)
         elseif castType == CastType.TARGET then
             if Wc3Type(tx) ~= "unit" then
-                error("Invalid target", 2)
+                error("Invalid target (".. tostring(tx) .. ")", 2)
             end
             angle = math.atan(GetUnitY(tx) - y, GetUnitX(tx) - x)
         else

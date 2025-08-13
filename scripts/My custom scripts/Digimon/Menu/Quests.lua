@@ -52,6 +52,7 @@ OnInit("Quests", function ()
     ---@field level integer
     ---@field onlyOnce boolean
     ---@field maxProgress integer
+    ---@field petitioner unit
     ---@field questMark effect?
     ---@field questMarkDone effect?
     ---@field counter texttag?
@@ -431,6 +432,8 @@ OnInit("Quests", function ()
             BlzSetSpecialEffectZ(questMarkDone, GetUnitZ(petitioner, true) + 175)
             BlzSetSpecialEffectAlpha(questMarkDone, 0)
             QuestTemplates[id].questMarkDone = questMarkDone
+
+            QuestTemplates[id].petitioner = petitioner
         end
         if setRequirements then
             QuestTemplates[id].isRequirement = true
@@ -650,6 +653,7 @@ OnInit("Quests", function ()
                         BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, GREEN)
                     end
                 end
+                DisplayTimedTextToPlayer(udg_QuestPlayer, 0, 0, 5., GetLocalizedString("QUEST_RETURN"):format(GetHeroProperName(QuestTemplates[id].petitioner)))
             end
         end)
     end)
@@ -909,6 +913,40 @@ OnInit("Quests", function ()
             BlzFrameSetVisible(QuestButton, true)
         end
     end
+
+    udg_QuestPrizeSend = CreateTrigger()
+    TriggerAddAction(udg_QuestPrizeSend, function ()
+        local p = GetOwningPlayer(udg_QuestPrizeReceiver)
+        local message = ""
+        if udg_QuestPrizeBits > 0 then
+            AdjustPlayerStateBJ(udg_QuestPrizeBits, p, PLAYER_STATE_RESOURCE_GOLD)
+            message = message .. ("|cff808080+\x25d \x25s|r "):format(udg_QuestPrizeBits, GetLocalizedString("DIGIBITS"))
+        end
+        if udg_QuestPrizeCrystals > 0 then
+            AdjustPlayerStateBJ(udg_QuestPrizeCrystals, p, PLAYER_STATE_RESOURCE_LUMBER)
+            message = message .. ("|cffff8080+\x25d \x25s|r "):format(udg_QuestPrizeCrystals, GetLocalizedString("DIGICRYSTALS"))
+        end
+        if udg_QuestPrizeXP > 0 then
+            ForUnitsOfPlayer(p, function (u)
+                if IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitIllusion(u) and GetHeroLevel(u) >= udg_QuestPrizeLevelReq then
+                    AddHeroXP(u, udg_QuestPrizeXP, true)
+                end
+            end)
+            message = message .. ("|cffdcc800+\x25d \x25s|r "):format(udg_QuestPrizeXP, GetLocalizedString("EXPERIENCE"))
+        end
+        if udg_QuestPrizeItem ~= 0 then
+            SetItemPlayer(UnitAddItemById(udg_QuestPrizeReceiver, udg_QuestPrizeItem), p, true)
+            message = message .. ("|cff8080ff+\x25s|r "):format(GetObjectName(udg_QuestPrizeItem))
+        end
+        DisplayTimedTextToPlayer(p, 0, 0, 5., message)
+
+        udg_QuestPrizeBits = 0
+        udg_QuestPrizeCrystals = 0
+        udg_QuestPrizeXP = 0
+        udg_QuestPrizeLevelReq = 0
+        udg_QuestPrizeItem = 0
+        udg_QuestPrizeReceiver = nil
+    end)
 
 end)
 Debug.endFile()

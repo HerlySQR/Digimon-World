@@ -330,7 +330,7 @@ OnInit(function ()
             8, CastType.TARGET, onJail, -- Jail
             5, CastType.IMMEDIATE, onThunderclap, -- Thunderclap
             4, CastType.TARGET, onJail, -- Jail
-            6, CastType.TARGET, onFirePillar -- Fire Pillar
+            6, CastType.POINT, onFirePillar -- Fire Pillar
         },
         extraSpells = {
             FourCC('A09E'), Orders.carrionswarm, CastType.POINT, -- Nail bone

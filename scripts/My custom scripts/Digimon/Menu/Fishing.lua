@@ -139,22 +139,29 @@ OnInit(function ()
     local function getRandomFish(u)
         local whatRod = getRod(u)
 
-        if whatRod then
+        if whatRod ~= -1 then
             local env = Digimon.getInstance(u) and Digimon.getInstance(u).environment
             if not env then
                 return
             end
 
             local fishes = Set.create()
-            for _, fish in ipairs(PLACES[env.name]) do
-                if FISHES[whatRod][fish] then
-                    fishes:addSingle(fish)
+            if PLACES[env.name] then
+                for _, fish in ipairs(PLACES[env.name]) do
+                    if FISHES[whatRod][fish] then
+                        fishes:addSingle(fish)
+                    end
                 end
             end
             for _, fish in ipairs(PLACES["All"]) do
                 if FISHES[whatRod][fish] then
                     fishes:addSingle(fish)
                 end
+            end
+
+            if fishes:isEmpty() then
+                ErrorMessage("You don't have to right rod for this place.", GetOwningPlayer(u))
+                return
             end
 
             local chances = {}
@@ -178,6 +185,8 @@ OnInit(function ()
                     return whatFishes[j]
                 end
             end
+        else
+            ErrorMessage("What happened with your rod?", GetOwningPlayer(u))
         end
     end
 

@@ -117,12 +117,6 @@ OnInit.final(function ()
                 SetUnitPositionLoc(u, creepLocs[i])
                 BlzSetUnitFacingEx(u, creepFacings[i])
             else
-                local typ = GetUnitTypeId(u)
-
-                if typ ~= 0 then
-                    RemoveUnit(u)
-                end
-
                 u = CreateUnitAtLoc(Digimon.NEUTRAL, creepTypes[i], creepLocs[i], creepFacings[i])
                 SetHeroLevel(u, creepLevels[i], false)
                 ZTS_AddThreatUnit(u, false)
@@ -132,11 +126,11 @@ OnInit.final(function ()
                 AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
                 creeps[i] = u
 
-                if typ == TRICERAMON or typ == METEORMON then
+                if creepTypes[i] == TRICERAMON or creepTypes[i] == METEORMON then
                     table.insert(specialCasters, u)
                     specialCastersLocs[u] = GetUnitLoc(u)
-                    UnitAddAbility(u, specialCasterSpells[typ])
-                elseif typ == VOLCAMON then
+                    UnitAddAbility(u, specialCasterSpells[creepTypes[i]])
+                elseif creepTypes[i] == VOLCAMON then
                     table.insert(volcamons, u)
                     UnitAddAbility(u, VOLCANIC_EXPLOSION)
                     UnitAddAbility(u, SCORCHING_HEAT)
@@ -251,7 +245,7 @@ OnInit.final(function ()
             end
 
             for d in actHeros:elements() do
-                if math.random(5) == 1 then
+                if math.random(10) == 1 then
                     local angle = 2 * math.pi * math.random()
                     local dist = 3000 * math.random()
                     local x, y = d:getX() + dist*math.cos(angle), d:getY() + dist*math.sin(angle)
@@ -269,6 +263,11 @@ OnInit.final(function ()
                                     Orders.thunderclap,
                                     1,
                                     CastType.IMMEDIATE)
+                                ForUnitsInRange(x, y, 180., function (u)
+                                    if IsPlayerInGame(GetOwningPlayer(u)) then
+                                        Damage.apply(boss, u, 225, false, false, udg_Fire, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                                    end
+                                end)
                             end)
                         end)
                     end

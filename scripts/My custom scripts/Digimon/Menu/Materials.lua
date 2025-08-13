@@ -291,6 +291,11 @@ OnInit(function ()
     ---@param itm integer -- item type
     ---@param source integer -- unit type
     local function InitMaterial(itm, source)
+        if source == 0 then
+            print("Materials: The material " .. GetObjectName(itm) .. " has no source.")
+            return
+        end
+
         IgnoreCommandButton(source)
 
         local material = {

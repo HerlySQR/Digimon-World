@@ -674,7 +674,7 @@ OnInit("Diary", function ()
                         local unlockedCond = unlockedConds[cond.toEvolve]
                         if unlockedCond then
                             BlzFrameSetText(DigimonEvolvesToOption[i], cond.label)
-                            local result = "- " .. (unlockedCond.level and (GetLocalizedString("DIARY_LEVEL_COND"):format(unlockedCond.level)) or GetLocalizedString("DIARY_UNKNOWN"))
+                            local result = "- " .. (unlockedCond.level and (GetLocalizedString("DIARY_LEVEL_COND"):format(cond.level)) or GetLocalizedString("DIARY_UNKNOWN"))
                             if cond.stone then
                                 result = result .. "\n- " .. (unlockedCond.stone and (GetLocalizedString("DIARY_STONE_COND"):format(GetObjectName(cond.stone))) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
@@ -1130,6 +1130,11 @@ OnInit("Diary", function ()
 
     ---@param id integer
     local function AddMaterial(id)
+        if not GetMaterialFromItem(id) then
+            print("Diary: The item " .. GetObjectName(id) .. " was not set as material.")
+            return
+        end
+
         isRecipe[id] = false
         local i, j = ModuloInteger(actMaterialIndex, 14), math.floor(actMaterialIndex / 14)
         FrameLoaderAdd(function ()
@@ -1167,6 +1172,10 @@ OnInit("Diary", function ()
 
     ---@param id integer
     local function AddRecipe(id)
+        if not GetRecipe(id) then
+            print("Diary: The item " .. GetObjectName(id) .. " was not set as recipe.")
+            return
+        end
         isRecipe[id] = true
         local i, j = ModuloInteger(actRecipeIndex, 14), math.floor(actRecipeIndex / 14)
         FrameLoaderAdd(function ()

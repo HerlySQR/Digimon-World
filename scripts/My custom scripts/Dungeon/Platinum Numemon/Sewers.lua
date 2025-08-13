@@ -17,18 +17,18 @@ OnInit.final(function ()
     local DRAGOMON = FourCC('O023')
     local BLACK_KING_NUMEMON = FourCC('O03Q')
     local RAREMON_SUMMON_EFFECT = "Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl"
-    local MAX_RAREMON_PER_RECT = 20
+    local MAX_RAREMON_PER_RECT = 14
     local BOSSFIGHT_PLACE = gg_rct_PlatinumNumemon_1 ---@type rect
     local RAREMON_BAIT = FourCC('A0G0')
     local ESNARE = FourCC('A0G3')
     local ESNARE_BUFF = FourCC('Beng')
     local ESNARE_ORDER = Orders.ensnare
-    local SUMMON_RAREMON_TICK = 2. -- seconds
-    local EXTRA_HEALTH_FACTOR = 3.
-    local EXTRA_DMG_FACTOR = 3.
-    local EXTRA_ARMOR = 15
+    local SUMMON_RAREMON_TICK = 4. -- seconds
+    local EXTRA_HEALTH_FACTOR = 0.8
+    local EXTRA_DMG_FACTOR = 1.8
+    local EXTRA_ARMOR = 18
     local EXTRA_MANA_REGEN = 5
-    local RAREMON_EXPLOSION_DAMAGE = 500.
+    local RAREMON_EXPLOSION_DAMAGE = 650.
     local FRENZY = FourCC('A0G8')
     local FRENZY_BUFF = FourCC('B02S')
 
@@ -290,26 +290,26 @@ OnInit.final(function ()
                     local remove = false
 
                     if not exploding[d] then
-                        if math.random(10) == 1 then
+                        if math.random(5) == 1 then
                             exploding[d] = true
                             d:pause()
                             local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl", d.root, "overhead")
                             BlzSetSpecialEffectScale(eff, 3.)
                             BlzSetSpecialEffectColor(eff, 255, 0, 0)
-                            DestroyEffectTimed(eff, SUMMON_RAREMON_TICK)
+                            DestroyEffectTimed(eff, SUMMON_RAREMON_TICK/2)
                         end
                     else
                         if d:isAlive() then
                             local x, y = d:getPos()
                             ForUnitsInRange(x, y, 300., function (u)
                                 if IsUnitEnemy(d.root, GetOwningPlayer(u)) then
-                                    Damage.apply(d.root, u, RAREMON_EXPLOSION_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                                    Damage.apply(d.root, u, RAREMON_EXPLOSION_DAMAGE, false, false, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
                                 elseif GetUnitTypeId(u) == RAREMON then
                                     SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE) - RAREMON_EXPLOSION_DAMAGE)
                                 end
                             end)
                             DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Demon\\DemonLargeDeathExplode\\DemonLargeDeathExplode.mdl", x, y))
-                            DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\Mortar\\MortarMissile.mdl", x, y))
+                            DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", x, y))
                         end
                         d:destroy()
                     end

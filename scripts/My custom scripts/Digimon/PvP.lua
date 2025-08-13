@@ -5,10 +5,16 @@ OnInit("PvP", function ()
 
     local inPeace = MDTable.create(2) ---@type table<player, table<player, boolean>>
 
-    Digimon.issueTargetOrderEvent:register(function (digimon, order, target)
-        if order == Orders.attack then
-            if inPeace[digimon:getOwner()][target:getOwner()] then
-                digimon:issueOrder(Orders.smart, target.root)
+    local t = CreateTrigger()
+    TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+    TriggerAddAction(t, function ()
+        if GetIssuedOrderId() == Orders.attack then
+            local target = GetOrderTargetUnit()
+            if target then -- The target can be something that is no unit
+                local source = GetOrderedUnit()
+                if inPeace[GetOwningPlayer(source)][GetOwningPlayer(target)] then
+                    IssueTargetOrderById(source, Orders.smart, target)
+                end
             end
         end
     end)

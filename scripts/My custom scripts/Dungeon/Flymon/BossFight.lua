@@ -11,7 +11,7 @@ OnInit(function ()
     UnitRemoveAbility(boss, CROW_FORM_ID)
 
     local flying = false
-    local waitFlying = 5
+    local waitFlying = 6
 
     local SS_DELAY = 2.5
     local SS_DAMAGE_PER_SHOT = 48.
@@ -138,9 +138,9 @@ OnInit(function ()
         actions = function (u)
             if not flying then
                 waitFlying = waitFlying - 1
-                if not flying and waitFlying <= 0 then
+                if not flying and waitFlying <= 0 and not BossStillCasting(boss) then
                     if math.random() < 0.1 then
-                        waitFlying = 4
+                        waitFlying = 6
                         flying = true
                         SetUnitPathing(boss, false)
                         PauseUnit(boss, true)

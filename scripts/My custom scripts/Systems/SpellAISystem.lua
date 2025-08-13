@@ -20,13 +20,22 @@ OnInit("SpellAISystem", function ()
         return (2/r + r)*100
     end
 
-    Timed.echo(1., function ()
-        for creep, set in pairs(UnitSpellAIs) do
-            if not isCasting[creep] and ZTS_GetCombatState(creep) and not IsUnitPaused(creep) and not IsUnitHidden(creep) then
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+        TriggerAddAction(t, function ()
+            if not ZTS_IsEvent() then
+                return
+            end
+
+            local creep = GetOrderedUnit()
+            local set = UnitSpellAIs[GetOrderedUnit()]
+            if set then
                 set:random()(creep)
             end
-        end
-    end)
+        end)
+    end
 
     ---@param u unit
     ---@param flag boolean
@@ -67,7 +76,9 @@ OnInit("SpellAISystem", function ()
         TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
         TriggerAddCondition(t, Condition(function () return UnitSpellAIs[GetSpellAbilityUnit()] ~= nil end))
         TriggerAddAction(t, function ()
-            isCasting[GetSpellAbilityUnit()] = GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_CHANNEL
+            local caster = GetSpellAbilityUnit()
+            isCasting[caster] = GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_CHANNEL
+            IssueTargetOrderById(caster, Orders.smart, ZTS_GetThreatSlotUnit(caster, 1))
         end)
     end
 

@@ -7,8 +7,7 @@ OnInit("BossFightUtils", function ()
     Require "SpellAISystem"
     Require "ProgressBar"
 
-    local castDelay = 5. -- seconds
-    local isCasting = {} ---@type boolean[]
+    local isCasting = __jarray(0) ---@type table<unit, number>
     local LocalPlayer = GetLocalPlayer()
     local ignored = {} ---@type table<unit, table<unit, boolean>>
     local battlefield = {} ---@type table<unit, rect[]>
@@ -23,6 +22,8 @@ OnInit("BossFightUtils", function ()
     local TELEPORT_TARGET_EFFECT = "war3mapImported\\Blink Purple Target.mdl"
     local UNDERGOUND_EFFECT = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
     local MUSIC = "war3mapImported\\Mt_Infinity.mp3"
+    local CASTING_CLEAR_DELAY = 8.
+    local CASTING_CLEAR_DELAY_LESS = 2.
 
     local playing = false
 
@@ -58,16 +59,16 @@ OnInit("BossFightUtils", function ()
     ---@param flag boolean
     function BossIsCasting(caster, flag)
         if flag then
-            isCasting[caster] = true
+            isCasting[caster] = CASTING_CLEAR_DELAY
         else
-            Timed.call(castDelay, function () isCasting[caster] = false end)
+            isCasting[caster] = CASTING_CLEAR_DELAY_LESS
         end
     end
 
     ---@param caster unit
     ---@return boolean
     function BossStillCasting(caster)
-        return isCasting[caster]
+        return isCasting[caster] > 0
     end
 
     ---@param boss unit
@@ -178,7 +179,7 @@ OnInit("BossFightUtils", function ()
     ---@param dmg number
     ---@param offensive boolean
     function BossMove(boss, typ, speed, dmg, offensive)
-        isCasting[boss] = true
+        BossIsCasting(boss, true)
 
         local xTarget, yTarget
 
@@ -234,7 +235,7 @@ OnInit("BossFightUtils", function ()
                             finish()
                             DestroyGroup(affected)
                             DestroyEffect(eff)
-                            isCasting[boss] = false
+                            BossIsCasting(boss, false)
                         end)
                     elseif typ == 1 then
                         local affected = CreateGroup()
@@ -255,7 +256,7 @@ OnInit("BossFightUtils", function ()
 
                         DestroyGroup(affected)
 
-                        isCasting[boss] = false
+                        BossIsCasting(boss, false)
                     elseif typ == 2 then
                         local wasEnabled1 = BlzGetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0)
                         local wasEnabled2 = BlzGetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1)
@@ -313,7 +314,7 @@ OnInit("BossFightUtils", function ()
                                         ShowUnitShow(boss)
                                         BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, wasEnabled1)
                                         BlzSetUnitWeaponBooleanField(boss, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, wasEnabled2)
-                                        isCasting[boss] = false
+                                        BossIsCasting(boss, false)
                                     end)
                                     return true
                                 end
@@ -331,7 +332,7 @@ OnInit("BossFightUtils", function ()
                                     Damage.apply(boss, u, dmg, false, false, att, DAMAGE_TYPE_DEFENSIVE, WEAPON_TYPE_WHOKNOWS)
                                 end
                             end)
-                            isCasting[boss] = false
+                            BossIsCasting(boss, false)
                         end)
                     end
                 end)
@@ -437,11 +438,16 @@ OnInit("BossFightUtils", function ()
 
         local function reset()
             if not returned then
-                ZTS_RemoveThreatUnit(data.boss)
-                local prevX, prevY = GetUnitX(data.boss), GetUnitY(data.boss)
-                SetUnitX(data.boss, initialPosX) SetUnitY(data.boss, initialPosY)
-                ZTS_AddThreatUnit(data.boss, false)
-                SetUnitX(data.boss, prevX) SetUnitY(data.boss, prevY)
+                local g = ZTS_GetAttackers(data.boss)
+                while true do
+                    local u = FirstOfGroup(g)
+                    if not u then break end
+
+                    ZTS_RemovePlayerUnit(u)
+                    ZTS_AddPlayerUnit(u)
+
+                    GroupRemoveUnit(g, u)
+                end
 
                 SetUnitState(data.boss, UNIT_STATE_LIFE, GetUnitState(data.boss, UNIT_STATE_MAX_LIFE))
                 SetUnitState(data.boss, UNIT_STATE_MANA, GetUnitState(data.boss, UNIT_STATE_MAX_MANA))
@@ -472,7 +478,7 @@ OnInit("BossFightUtils", function ()
                     table.remove(summons[data.boss], i)
                 end
 
-                isCasting[data.boss] = false
+                BossIsCasting(data.boss, false)
             end
         end
 
@@ -504,6 +510,9 @@ OnInit("BossFightUtils", function ()
         local current = 0
         Timed.echo(0.5, function ()
             current = current + 0.5
+
+            isCasting[data.boss] = isCasting[data.boss] - 0.5
+
             if UnitAlive(data.boss) then
                 if dead then
                     dead = false
@@ -587,7 +596,7 @@ OnInit("BossFightUtils", function ()
 
                     hitChance = geHitChance(playersOnField:size())
 
-                    if data.moveOption and not isCasting[data.boss] then
+                    if data.moveOption and not BossStillCasting(data.boss) then
                         didntDamage = didntDamage + 0.5
                     end
 
@@ -617,64 +626,6 @@ OnInit("BossFightUtils", function ()
                                         IssuePointOrderById(data.boss, Orders.attack, x, y)
                                     end
                                 end)
-                            else
-                                if data.spells then
-                                    if not isCasting[data.boss] then
-                                        local stats = spells[actSpell]
-                                        if not isCasting[data.boss]
-                                            and (GetUnitCurrentOrder(data.boss) == Orders.attack or GetUnitCurrentOrder(data.boss) == Orders.smart or GetUnitCurrentOrder(data.boss) == 0)
-                                            and not IsUnitPaused(data.boss) then
-
-                                            local tx, ty
-                                            if stats.ttype == CastType.POINT then
-                                                tx, ty = GetUnitX(u), GetUnitY(u)
-                                            elseif stats.ttype == CastType.TARGET then
-                                                tx = u
-                                            end
-
-                                            if hitsDealt >= stats.weight then
-                                                if not data.castCondition or data.castCondition(stats.onActions, tx, ty) then
-                                                    if stats.ttype == CastType.IMMEDIATE then
-                                                        stats.onActions(data.boss)
-                                                    elseif stats.ttype == CastType.POINT then
-                                                        SetUnitFacing(data.boss, math.deg(math.atan(ty - GetUnitY(data.boss), tx - GetUnitX(data.boss))))
-                                                        stats.onActions(data.boss, tx, ty)
-                                                    elseif stats.ttype == CastType.TARGET then
-                                                        SetUnitFacing(data.boss, math.deg(math.atan(GetUnitY(u) - GetUnitY(data.boss), GetUnitX(u) - GetUnitX(data.boss))))
-                                                        stats.onActions(data.boss, u)
-                                                    end
-                                                end
-                                                hitsDealt = 0
-                                                actSpell = actSpell + 1
-                                                if actSpell > #spells then
-                                                    actSpell = 1
-                                                end
-                                            elseif extraSpells then
-                                                local options = {} ---@type {id: integer, order: integer, ttype: CastType}[]
-                                                for i = 1, #extraSpells do
-                                                    local spell = extraSpells[i].id
-                                                    if BlzGetUnitAbilityCooldownRemaining(data.boss, spell) <= 0.
-                                                        and BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell)-1) <= GetUnitState(data.boss, UNIT_STATE_MANA) then
-
-                                                        table.insert(options, extraSpells[i])
-                                                    end
-                                                end
-                                                local extaStats = options[math.random(#options)]
-                                                if extaStats then
-                                                    if not data.castCondition or data.castCondition(extaStats.id, tx, ty) then
-                                                        if extaStats.ttype == CastType.IMMEDIATE then
-                                                            IssueImmediateOrderById(data.boss, extaStats.order)
-                                                        elseif extaStats.ttype == CastType.POINT then
-                                                            IssuePointOrderById(data.boss, extaStats.order, tx, ty)
-                                                        elseif extaStats.ttype == CastType.TARGET then
-                                                            IssueTargetOrderById(data.boss, extaStats.order, u)
-                                                        end
-                                                    end
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
                             end
                             if data.moveOption then
                                 if not data.castCondition or data.castCondition() then
@@ -761,7 +712,7 @@ OnInit("BossFightUtils", function ()
                         table.remove(summons[data.boss], i)
                     end
 
-                    isCasting[data.boss] = false
+                    BossIsCasting(data.boss, false)
 
                     if data.returnPlace then
                         local tm = CreateTimer()
@@ -906,13 +857,8 @@ OnInit("BossFightUtils", function ()
             TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_CHANNEL)
             TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_ENDCAST)
             TriggerAddAction(t, function ()
-                if GetTriggerEventId() == EVENT_UNIT_SPELL_CHANNEL then
-                    isCasting[data.boss] = true
-                else
-                    Timed.call(5., function ()
-                        isCasting[data.boss] = false
-                    end)
-                end
+                BossIsCasting(data.boss, GetTriggerEventId() == EVENT_UNIT_SPELL_CHANNEL)
+                IssueTargetOrderById(data.boss, Orders.smart, ZTS_GetThreatSlotUnit(data.boss, 1))
             end)
         end
 
@@ -931,6 +877,65 @@ OnInit("BossFightUtils", function ()
                 if (info.source == data.boss or info.source.root == data.boss) and udg_IsDamageAttack then
                     if math.random() < hitChance then
                         hitsDealt = hitsDealt + 1
+                    end
+                end
+            end)
+
+            local t = CreateTrigger()
+            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_ISSUED_TARGET_ORDER)
+            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_ISSUED_ORDER)
+            TriggerAddAction(t, function ()
+                if not ZTS_IsEvent() then
+                    return
+                end
+
+                local stats = spells[actSpell]
+                local u = ZTS_GetThreatSlotUnit(data.boss, 1)
+                local tx, ty
+                if stats.ttype == CastType.POINT then
+                    tx, ty = GetUnitX(u), GetUnitY(u)
+                elseif stats.ttype == CastType.TARGET then
+                    tx = u
+                end
+
+                if hitsDealt >= stats.weight then
+                    if not data.castCondition or data.castCondition(stats.onActions, tx, ty) then
+                        if stats.ttype == CastType.IMMEDIATE then
+                            stats.onActions(data.boss)
+                        elseif stats.ttype == CastType.POINT then
+                            SetUnitFacing(data.boss, math.deg(math.atan(ty - GetUnitY(data.boss), tx - GetUnitX(data.boss))))
+                            stats.onActions(data.boss, tx, ty)
+                        elseif stats.ttype == CastType.TARGET then
+                            SetUnitFacing(data.boss, math.deg(math.atan(GetUnitY(u) - GetUnitY(data.boss), GetUnitX(u) - GetUnitX(data.boss))))
+                            stats.onActions(data.boss, u)
+                        end
+                    end
+                    hitsDealt = 0
+                    actSpell = actSpell + 1
+                    if actSpell > #spells then
+                        actSpell = 1
+                    end
+                elseif extraSpells then
+                    local options = {} ---@type {id: integer, order: integer, ttype: CastType}[]
+                    for i = 1, #extraSpells do
+                        local spell = extraSpells[i].id
+                        if BlzGetUnitAbilityCooldownRemaining(data.boss, spell) <= 0.
+                            and BlzGetUnitAbilityManaCost(data.boss, spell, GetUnitAbilityLevel(data.boss, spell)-1) <= GetUnitState(data.boss, UNIT_STATE_MANA) then
+
+                            table.insert(options, extraSpells[i])
+                        end
+                    end
+                    local extaStats = options[math.random(#options)]
+                    if extaStats then
+                        if not data.castCondition or data.castCondition(extaStats.id, tx, ty) then
+                            if extaStats.ttype == CastType.IMMEDIATE then
+                                IssueImmediateOrderById(data.boss, extaStats.order)
+                            elseif extaStats.ttype == CastType.POINT then
+                                IssuePointOrderById(data.boss, extaStats.order, tx, ty)
+                            elseif extaStats.ttype == CastType.TARGET then
+                                IssueTargetOrderById(data.boss, extaStats.order, u)
+                            end
+                        end
                     end
                 end
             end)

@@ -1,0 +1,188 @@
+if Debug then Debug.beginFile("NEW Zwiebelchen's threat system") end
+--------------------------------------------------------------------------------------------------------//
+--  ZTS - ZWIEBELCHEN'S THREAT SYSTEM        v. 2.6                                                     //
+--------------------------------------------------------------------------------------------------------//         
+--------------------------------------------------------------------------------------------------------//
+--                                                                                                      //
+--                                                                                                      //
+--  Special thanks to TEC-Ghost, who inspired me on creating this system.                               //
+--------------------------------------------------------------------------------------------------------//
+--                                              MANUAL                                                  //
+--------------------------------------------------------------------------------------------------------//
+-- 1.   How to Install:
+--
+--      - Create a trigger called "ZTS"
+--      - Convert it to custom Text
+--      - Replace everything inside with this code
+--
+--
+-- 2.   How to set it up:
+--
+--  2.1 Constants
+--
+--      There are a bunch of global constants below this manual, you can edit to your liking.
+--      I commented everything you need to know about those constants right beside them. If you need additional information,
+--      please tell me, so I can improve this manual. However, I think most of it should be pretty clear.
+--
+--  2.2. Gameplay Constants
+--
+--      It is recommended to edit certain Gameplay Constants entries, to use the full potential of
+--      the system.
+--      The most important entries are: (with selected "Show Raw-Data")
+--      CallForHelp                 --> Set this to 0, if possible; the system will manage this - it isn't a problem if you don't do this, though
+--                                      You don't have to do it if your threat-system controlled units are neutral hostile
+--      CreepCallForHelp            --> Set this to 0, if possible; the system will manage this - it isn't a problem if you don't do this, though
+--      GuardDistance               --> Set this to something higher than ReturnRange (see below)
+--      MaxGuardDistance            --> Set this to something higher than ReturnRange (see below)
+--      GuardReturnTime             --> Set this to something very high, so that the standard AI doesn't interfere (i.e. 60 seconds)       
+--
+--  2.3. Damage Detection
+--
+--      Of course, a threat system is pretty useless without a trigger, that adds threat depending on
+--      the damage dealt by a player unit.
+--      I recommend using a damage detection script like IDDS:
+--      (http://www.wc3c.net/showthread.php?t=100618)
+--      Check up the demo map for a very simple (but leaking) damage detection trigger
+--      The only function you actually need then is:
+--       ZTS_ModifyThreat(GetEventDamageSource(), GetTriggerUnit(), GetEventDamage(), true)
+--      The function does all required checks on its own. There is no need to run something else.
+--
+-- 3. How to use it:
+--
+--  3.1. Core functions
+--
+--      ZTS_AddThreatUnit(unit npc, boolean includeCombatCamps) returns nothing:
+--
+--          This function registers the unit as an AI-controlled unit.
+--          ThreatUnits will automaticly attack the highest-in-threat attacker.
+--          When adding a ThreatUnit, its current position gets saved and be considered camp-position.
+--          It will always return to this position if pulled to far or on victory.
+--          Nearby units will be considered in the same camp group. Camp members will always retreat and attack together.
+--          If includeCombatCamps is true, the unit will be added to already fighting camps. If it is false, the unit will
+--          create its own camp group, if it can't find any non-fighting units nearby.
+--          This should be false in most cases, but it can be useful when you have bosses that summon units infight, so that
+--          the summons will be added to the bossfight correctly instead of getting their own seperate group.
+--
+--      ZTS_AddPlayerUnit(unit pu) returns nothing:
+--
+--          Units add by this way will generate threat on ThreatUnits.
+--          If the unit is not registered as a PlayerUnit, it will not be attacked by ThreatUnits.
+--
+--      ZTS_RemoveThreatUnit(unit npc) returns nothing:
+--
+--          Removes a ThreatUnit from the system. The unit will no longer be controlled by the threat system.
+--          Also, the threat list for that unit will be cleared.
+--          Dead or removed units will automaticly be cleared. You need to add them again after revival/recreation.
+--
+--      ZTS_RemovePlayerUnit(unit pu) returns nothing:
+--
+--          Removes a player unit from the system. The unit will no longer generate threat on ThreatUnits.
+--          The unit will also be instantly removed from all threat lists.
+--          If the unit was the last unit in combat with the same hostile camp, all units
+--          of that camp group will immediately return to their camp positions.
+--          You can use this, followed by AddPlayerUnit to that unit out of combat and reset all threat.
+--          Dead or removed units will automaticly be cleared. You need to add them again after revival/recreation.
+--
+--      ZTS_ModifyThreat(unit pu, unit npc, number amount, boolean add) returns nothing:
+--
+--          Adds, sets or substracts threat from npc's threat list caused by pu.
+--          Set 'add' to true to add or substract amount from the current value.
+--          Set 'add' to false to set the new threat value to amount.
+--          To reduce threat, use negative amount values with add == true.
+--          Remember: If a unit has 0 threat, it is still considered in-combat -
+--          this also means, that adding "0" to the units threat causes them to attack!
+--
+--      ZTS_ApplyHealThreat(unit pu, unit ally, number amount, boolean add, boolean divide) returns nothing:
+--
+--          Adds Healing Threat to all units, that have ally on threat-list
+--          This can be abused to apply global threat to a unit by passing the same unit to p and ally.
+--          Parameter divide = true means that the amount is split by the number of units attacking the target;
+--          for example if 3 units are currently attacking the targeted ally, it adds amount/3 threat from pu to all of them.
+--          Parameter divide = false means that every attacking unit gets 'amount' of threat applied.
+--          use add = false to set the amount of threat to 'amount', instead of increasing/decreasing it
+--          negative values are allowed in combination with 'add' to reduce threat.
+--          You can also use this with add = false and amount = 0 with pu = ally to set total threat generated back to zero for this unit.
+--
+--
+--  3.2. Getter functions
+--
+--      ZTS_GetCombatState(unit U) returns boolean:
+--
+--          Returns the combat state of a player or npc unit.
+--          Returns true, if the unit is registered and in combat.
+--          Returns false, if the unit is not registered or out of combat.
+--
+--      ZTS_GetCombatTime(unit NPC) returns boolean:
+--
+--          Returns the incombat time of the npc.
+--          Does not work for player units.
+--          Returns "0" if the unit is not in combat or currently returning to camp position.
+--
+--      ZTS_GetThreatUnitPosition(unit NPC, unit PU) returns integer:
+--
+--          Returns the position of unit PU in unit NPC's threat list
+--          Returns "0" if the unit was not found, NPC does not feature a threat list or in case of invalid input data
+--
+--      ZTS_GetThreatUnitAmount(unit NPC, unit PU) returns number:
+--
+--          Returns the amount of threat unit PU has in unit NPC's threat list
+--          Returns "0" if the unit was not found, NPC does not feature a threat list or in case of invalid input data
+--
+--      ZTS_GetThreatSlotUnit(unit NPC, integer position) returns unit:
+--
+--          Returns the unit in threat-slot position
+--          Returns null if the NPC does not feature a threat list, the number is too large
+--          or in case of invalid input data
+--
+--      ZTS_GetThreatSlotAmount(unit NPC, integer position) returns number:
+--
+--          Returns the threat amount of the threat-slot position
+--          Returns "0" if the NPC does not feature a threat list, the number is too large
+--          or in case of invalid input data
+--
+--      ZTS_GetAttackers(unit U) returns group:
+--
+--          If used on a ThreatUnit, this returns a group of all units in threat list;
+--          if used on a PlayerUnit, this returns a group of all units aggroed.
+--          Returns an empty group, in case of invalid input data or empty lists.
+--
+--  
+--  3.3. Advanced User features
+--
+--      ZTS_IsEvent() returns boolean
+--
+--          When using "A unit is issued an order without target" or "A unit is issued a target order" events,
+--          this function returns true when the order was issued by the threat system.
+--          You can use this to setup your own spell-AI for units.
+--          Let's say you want the unit to cast Summon Water Elemental whenever the cooldown is ready:
+--          Just use the mentioned events and add:
+--              Custom script:   if not ZTS_IsEvent() then
+--              Custom script:   return
+--              Custom script:   endif
+--          at the beginning of you trigger's actions and you're done.
+--          You can now issue the order to the triggering unit:
+--              Unit - Order (Triggering unit) to Human Archmage - Summon Water Elemental
+--          In combination with some of the Getter functions, you can trigger nice spell AI like this.
+--          NOTE: ZTS_IsEvent will only return true once(!) for every fired event, so if you need it again inside that trigger,
+--                make sure to save it to a variable.
+--
+--------------------------------------------------------------------------------------------------------//
+
+OnInit("ZTS", function ()
+    Require "AddHook"
+    Require "MDTable"
+   
+    local UpdateIntervall      = 0.5  ---@type number --The intervall for issueing orders and performing AttackRange check. recommended value: 0.5
+    local HelpRange      = 200  ---@type number --The range between units considered being in the same camp. If a unit of the same camp gets attacked, all others will help.
+                                          --Set CallForHelp to something lower in Gameplay Constants.
+    local OrderReturnRange      = 4000  ---@type number --The range the unit's target can be away from the original camping position, before being ordered to return.
+    local ReturnRange      = 1500  ---@type number --The range the unit can move away from the original camping position, before being ordered to return.
+    local TimeToPort      = 10  ---@type number --This timer expires once a unit tries to return to its camping position.
+                                          --If it reaches 0 before reaching the camp position, the unit will be teleported immediately.
+    local HealUnitsOnReturn         = true  ---@type boolean --If this is true, returning units will be healed to 100% health.
+    
+    
+--      Do not edit below here!
+--------------------------------------------------------------------------------------------------------//  
+end)
+if Debug then Debug.endFile() end
