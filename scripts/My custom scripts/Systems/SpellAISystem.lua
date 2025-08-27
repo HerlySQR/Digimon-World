@@ -32,7 +32,9 @@ OnInit("SpellAISystem", function ()
             local creep = GetOrderedUnit()
             local set = UnitSpellAIs[GetOrderedUnit()]
             if set then
-                set:random()(creep)
+                DisableTrigger(t)
+                print(set:random()(creep))
+                EnableTrigger(t)
             end
         end)
     end

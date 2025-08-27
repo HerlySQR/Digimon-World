@@ -80,7 +80,7 @@ OnInit(function ()
 
             if tick >= 5 then
                 tick = 0
-                local u = ZTS_GetThreatSlotUnit(caster, 1)
+                local u = Threat.getSlotUnit(caster, 1)
                 if u then
                     SetUnitFacing(caster, math.deg(math.atan(GetUnitY(u) - y, GetUnitX(u) - x)))
                 end

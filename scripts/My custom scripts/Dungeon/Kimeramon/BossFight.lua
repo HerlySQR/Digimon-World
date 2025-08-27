@@ -76,9 +76,9 @@ OnInit(function ()
             AddUnitBonus(d.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(d.root, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(d.root, BONUS_DAMAGE, math.floor(GetAvarageAttack(d.root) * EXTRA_DMG_FACTOR))
             DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", x, y))
-            ZTS_AddThreatUnit(d.root, false)
+            Threat.addNPC(d.root, false)
             if options[i][4] then
-                ZTS_ModifyThreat(options[i][4], d.root, 1, false)
+                Threat.modify(options[i][4], d.root, 1, false)
             end
             Timed.echo(1., 60., function ()
                 if not UnitAlive(boss) and d:isAlive() then
@@ -170,7 +170,7 @@ OnInit(function ()
         SetUnitTimeScale(boss, 2)
         SetUnitPathing(boss, false)
 
-        ZTS_RemoveThreatUnit(boss)
+        Threat.removeNPC(boss)
 
         Timed.call(2., function ()
             ShowUnitHide(boss)
@@ -209,7 +209,7 @@ OnInit(function ()
                     SetUnitPathing(boss, true)
                     flying = false
 
-                    ZTS_AddThreatUnit(boss, false)
+                    Threat.addNPC(boss, false)
 
                     if grabbed then
                         SetUnitFlyHeight(grabbed, defaultGrabbedFly, 999999)
@@ -337,7 +337,7 @@ OnInit(function ()
 
                 if tick >= 5 then
                     tick = 0
-                    local u = ZTS_GetThreatSlotUnit(caster, 1)
+                    local u = Threat.getSlotUnit(caster, 1)
                     if u then
                         SetUnitFacing(caster, math.deg(math.atan(GetUnitY(u) - y, GetUnitX(u) - x)))
                     end
@@ -490,7 +490,7 @@ OnInit(function ()
                             end
                         end)
                         if not follow then
-                            ZTS_RemoveThreatUnit(d.root)
+                            Threat.removeNPC(d.root)
                             local nearby
                             local shortestDistance = math.huge
                             local x, y = d:getPos()
@@ -505,7 +505,7 @@ OnInit(function ()
                                 d:issueOrder(Orders.attack, GetUnitX(nearby), GetUnitY(nearby))
                             end
                         else
-                            ZTS_AddThreatUnit(d.root, false)
+                            Threat.addNPC(d.root, false)
                         end
                     else
                         table.remove(summons, i)

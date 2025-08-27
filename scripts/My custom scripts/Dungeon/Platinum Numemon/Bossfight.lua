@@ -219,7 +219,7 @@ OnInit(function ()
 
                 d:setLevel(90)
                 SetUnitMoveSpeed(d.root, 275)
-                ZTS_AddThreatUnit(d.root, false)
+                Threat.addNPC(d.root, false)
                 SetUnitState(d.root, UNIT_STATE_MANA, 0)
                 SetUnitVertexColor(d.root, 255, 150, 150, 255)
                 AddUnitBonus(d.root, BONUS_DAMAGE, 25)
@@ -227,7 +227,7 @@ OnInit(function ()
 
                 ForUnitsInRect(area, function (u)
                     if IsUnitEnemy(caster, GetOwningPlayer(u)) then
-                        ZTS_ModifyThreat(u, d.root, 10., true)
+                        Threat.modify(u, d.root, 10., true)
                     end
                 end)
                 local exploding = false
@@ -365,7 +365,7 @@ OnInit(function ()
                 if not BossStillCasting(boss) then
                     if math.random(100) <= 8 then
                         BossIsCasting(boss, true)
-                        ZTS_RemoveThreatUnit(boss)
+                        Threat.removeNPC(boss)
 
                         local options = {1, 2, 3, 4}
                         local enter = table.remove(options, math.random(#options))
@@ -434,7 +434,7 @@ OnInit(function ()
 
                                         w:setLevel(90)
                                         w:pause()
-                                        ZTS_AddThreatUnit(w.root, false)
+                                        Threat.addNPC(w.root, false)
                                         AddUnitBonus(w.root, BONUS_STRENGTH, math.floor(GetHeroStr(w.root, false) * EXTRA_HEALTH_FACTOR))
                                         AddUnitBonus(w.root, BONUS_AGILITY, math.floor(GetHeroAgi(w.root, false) * EXTRA_HEALTH_FACTOR))
                                         AddUnitBonus(w.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(w.root, false) * EXTRA_HEALTH_FACTOR))
@@ -460,7 +460,7 @@ OnInit(function ()
                                             SetUnitX(boss, originalX)
                                             SetUnitY(boss, originalY)
 
-                                            ZTS_AddThreatUnit(boss, false)
+                                            Threat.addNPC(boss, false)
 
                                             SetUnitX(boss, GetRectCenterX(pipes[exit]))
                                             SetUnitY(boss, GetRectCenterY(pipes[exit]))

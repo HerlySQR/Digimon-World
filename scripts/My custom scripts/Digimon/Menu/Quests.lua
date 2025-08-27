@@ -928,7 +928,7 @@ OnInit("Quests", function ()
         end
         if udg_QuestPrizeXP > 0 then
             ForUnitsOfPlayer(p, function (u)
-                if IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitIllusion(u) and GetHeroLevel(u) >= udg_QuestPrizeLevelReq then
+                if IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitIllusion(u) and GetHeroLevel(u) >= udg_QuestPrizeLevelReq and GetHeroLevel(u) <= udg_QuestPrizeLevelMax then
                     AddHeroXP(u, udg_QuestPrizeXP, true)
                 end
             end)
@@ -944,6 +944,7 @@ OnInit("Quests", function ()
         udg_QuestPrizeCrystals = 0
         udg_QuestPrizeXP = 0
         udg_QuestPrizeLevelReq = 0
+        udg_QuestPrizeLevelMax = 99
         udg_QuestPrizeItem = 0
         udg_QuestPrizeReceiver = nil
     end)

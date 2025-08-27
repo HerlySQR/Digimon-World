@@ -206,7 +206,7 @@ OnInit("ZTS", function ()
     ---@return boolean
     function ZTS_IsEvent()
         if EventBool then
-            EventBool = false
+            --EventBool = false
             return true
         end
         return false

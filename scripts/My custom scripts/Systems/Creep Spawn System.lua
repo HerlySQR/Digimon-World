@@ -5,7 +5,7 @@ OnInit(function ()
     Require "Set"
     Require "AbilityUtils"
     Require "Digimon Capture"
-    Require "ZTS"
+    Require "Threat System"
 
     local CREEPS_PER_PLAYER     ---@type integer
     local CREEPS_PER_REGION     ---@type integer
@@ -68,7 +68,7 @@ OnInit(function ()
         creep.patrolling = true
         creep.rd = rd
 
-        ZTS_AddThreatUnit(creep.root, true)
+        Threat.addNPC(creep.root, true)
 
         return creep
     end
@@ -330,7 +330,7 @@ OnInit(function ()
 
             for _, creep in ipairs(regionData.creeps) do
                 if creep.rd == regionData then
-                    creep.patrolling = not ZTS_GetCombatState(creep.root)
+                    creep.patrolling = not Threat.getCombatState(creep.root)
                     if creep.patrolling then
                         creep.remaining = creep.remaining - INTERVAL
                     end
@@ -489,13 +489,13 @@ OnInit(function ()
     Digimon.capturedEvent:register(function (info)
         local target = info.target ---@type Creep
         target.captured = true
-        ZTS_RemoveThreatUnit(target.root)
-        ZTS_AddPlayerUnit(target.root)
+        Threat.removeNPC(target.root)
+        Threat.addPlayerUnit(target.root)
     end)
     Digimon.deathEvent:register(function (info)
         local target = info.target ---@type Creep
         if target.rd then
-            ZTS_RemoveThreatUnit(target.root)
+            Threat.removeNPC(target.root)
             target.captured = true
             local itm = target.rd.itemTable[math.random(#target.rd.itemTable)]
             if itm then
@@ -508,7 +508,7 @@ OnInit(function ()
 
     function RerollCreepItem(creep)
         if creep.rd then
-            ZTS_RemoveThreatUnit(creep.root)
+            Threat.removeNPC(creep.root)
             creep.captured = true
             local itm = creep.rd.itemTable[math.random(#creep.rd.itemTable)]
             if itm then

@@ -1,6 +1,6 @@
 Debug.beginFile("ShowThreat")
 OnInit(function ()
-    Require "ZTS"
+    Require "Threat System"
     Require "Menu"
     Require "AbilityUtils"
 
@@ -17,7 +17,7 @@ OnInit(function ()
     local canSee = CreateForce()
     local units = {}
     local colors = {
-        [0] = "ff00ff",
+        "ff00ff",
         "ffff00",
         "00ff00",
         "ffffff"
@@ -40,22 +40,20 @@ OnInit(function ()
         end
         for i = 1, #bosses do
             local boss = bosses[i]
-            local attackers = ZTS_GetAttackers(boss)
             local totalThreat = 0
-            for j = 0, 3 do
-                local u = BlzGroupUnitAt(attackers, j)
+            for j = 1, 4 do
+                local u = Threat.getSlotUnit(boss, j)
                 if u then
                     ForceAddPlayer(canSee, GetOwningPlayer(u))
                 end
                 units[j] = u
-                totalThreat = totalThreat + ZTS_GetThreatUnitAmount(boss, u)
+                totalThreat = totalThreat + Threat.getUnitAmount(boss, u)
             end
-            DestroyGroup(attackers)
             if IsPlayerInForce(LocalPlayer, canSee) then
                 BlzFrameSetVisible(ThreatBackdrop, true)
                 BlzFrameSetTexture(ThreatBoss, BlzGetAbilityIcon(GetUnitTypeId(boss)), 0, true)
                 for j = 0, 3 do
-                    local u = units[#units-j] -- I don't know why they are in inverse order
+                    local u = units[j+1] -- I don't know why they are in inverse order
                     if u then
                         BlzFrameSetVisible(ThreatPlayerUnitT[j], true)
                         BlzFrameSetTexture(ThreatPlayerUnitT[j], BlzGetAbilityIcon(GetUnitTypeId(u)), 0, true)
@@ -63,7 +61,7 @@ OnInit(function ()
                             BlzFrameSetVisible(ThreatPlayerUnitPercent[j], false)
                         else
                             BlzFrameSetVisible(ThreatPlayerUnitPercent[j], true)
-                            BlzFrameSetText(ThreatPlayerUnitPercent[j], "|cff" .. colors[j] .. math.floor(ZTS_GetThreatUnitAmount(boss, u)/totalThreat * 100) .. "\x25|r")
+                            BlzFrameSetText(ThreatPlayerUnitPercent[j], "|cff" .. colors[j+1] .. math.floor(Threat.getUnitAmount(boss, u)/totalThreat * 100) .. "\x25|r")
                         end
 
                         local ratio = GetUnitHPRatio(u)

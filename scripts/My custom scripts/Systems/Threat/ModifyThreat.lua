@@ -1,6 +1,6 @@
 Debug.beginFile("ModifyThreat")
 OnInit("ModifyThreat", function ()
-    Require "ZTS"
+    Require "Threat System"
     Require "AbilityUtils"
 
     local DAMAGE_THREAT_FACTOR = 0.75
@@ -45,7 +45,7 @@ OnInit("ModifyThreat", function ()
         local target = udg_DamageEventTarget ---@type unit
 
         if source and target and IsPlayerInGame(GetOwningPlayer(source)) and not IsPlayerInGame(GetOwningPlayer(target)) then
-            ZTS_ModifyThreat(source, target, applyModifiers(source, udg_DamageEventAmount * DAMAGE_THREAT_FACTOR), true)
+            Threat.modify(source, target, applyModifiers(source, udg_DamageEventAmount * DAMAGE_THREAT_FACTOR), true)
         end
     end)
 
@@ -57,14 +57,9 @@ OnInit("ModifyThreat", function ()
 
         if abilityThreat[id] and IsPlayerInGame(GetOwningPlayer(source)) then
             local threat = abilityThreat[id]
-            local g = ZTS_GetAttackers(source)
-            while true do
-                local u = FirstOfGroup(g)
-                if not u then break end
-                ZTS_ModifyThreat(source, u, applyModifiers(source, threat), true)
-                GroupRemoveUnit(g, u)
+            for _, u in ipairs(Threat.getAttackers(source)) do
+                Threat.modify(source, u, applyModifiers(source, threat), true)
             end
-            DestroyGroup(g)
         end
     end)
 

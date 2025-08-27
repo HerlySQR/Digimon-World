@@ -67,7 +67,7 @@ OnInit.final(function ()
             table.insert(creepLevels, GetHeroLevel(u))
             table.insert(creepLocs, GetUnitLoc(u))
             table.insert(creepFacings, GetUnitFacing(u))
-            ZTS_AddThreatUnit(u, false)
+            Threat.addNPC(u, false)
             AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
@@ -119,7 +119,7 @@ OnInit.final(function ()
                 end
                 u = CreateUnitAtLoc(Digimon.NEUTRAL, creepTypes[i], creepLocs[i], creepFacings[i])
                 SetHeroLevel(u, creepLevels[i], false)
-                ZTS_AddThreatUnit(u, false)
+                Threat.addNPC(u, false)
                 AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
@@ -266,7 +266,7 @@ OnInit.final(function ()
                         d:setLevel(85)
                         SetUnitMoveSpeed(d.root, 250)
                         SetUnitScale(d.root, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SCALING_VALUE), 0, 0)
-                        ZTS_AddThreatUnit(d.root, false)
+                        Threat.addNPC(d.root, false)
                         SetUnitState(d.root, UNIT_STATE_MANA, 0)
                         BlzSetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE))
                         BlzSetUnitRealField(d.root, UNIT_RF_MANA_REGENERATION, 0)
@@ -281,7 +281,7 @@ OnInit.final(function ()
                     end
                     for j = summonCounts[i], 1, -1 do
                         local d = summonings[i][j]
-                        ZTS_ModifyThreat(u, d.root, 10., true)
+                        Threat.modify(u, d.root, 10., true)
                     end
                 end)
 
@@ -316,7 +316,7 @@ OnInit.final(function ()
 
                     if not d:isAlive() then
                         remove = true
-                    elseif not ZTS_GetCombatState(d.root) then
+                    elseif not Threat.getCombatState(d.root) then
                         d:destroy()
                         remove = true
                     end
@@ -462,18 +462,14 @@ OnInit.final(function ()
 
     do
         local t = CreateTrigger()
-        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_ORDER)
-        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER)
+        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
         TriggerAddCondition(t, Condition(function ()
             return GetUnitTypeId(GetOrderedUnit()) == BLACK_KING_NUMEMON and GetUnitAbilityLevel(GetOrderedUnit(), FRENZY) > 0
         end))
         TriggerAddAction(t, function ()
-            if not ZTS_IsEvent() then
-                return
-            end
+            local numemon = GetOrderedUnit()
             DisableTrigger(t)
-            IssueImmediateOrderById(GetOrderedUnit(), Orders.frenzy)
+            IssueImmediateOrderById(numemon, Orders.frenzy)
             EnableTrigger(t)
         end)
     end
