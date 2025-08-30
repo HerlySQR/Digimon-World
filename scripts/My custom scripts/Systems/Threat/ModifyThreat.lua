@@ -24,6 +24,9 @@ OnInit("ModifyThreat", function ()
         end
     end
 
+    ---@param source unit
+    ---@param threat number
+    ---@return number
     local function applyModifiers(source, threat)
         local index = 0
         while true do
@@ -44,7 +47,7 @@ OnInit("ModifyThreat", function ()
         local source = udg_DamageEventSource ---@type unit
         local target = udg_DamageEventTarget ---@type unit
 
-        if source and target and IsPlayerInGame(GetOwningPlayer(source)) and not IsPlayerInGame(GetOwningPlayer(target)) then
+        if source and target and Threat.getType(source) == "playerunit" and Threat.getType(target) == "npc" then
             Threat.modify(source, target, applyModifiers(source, udg_DamageEventAmount * DAMAGE_THREAT_FACTOR), true)
         end
     end)
@@ -55,7 +58,7 @@ OnInit("ModifyThreat", function ()
         local source = GetSpellAbilityUnit() ---@type unit
         local id = GetSpellAbilityId()
 
-        if abilityThreat[id] and IsPlayerInGame(GetOwningPlayer(source)) then
+        if abilityThreat[id] and Threat.getType(source) == "playerunit" then
             local threat = abilityThreat[id]
             for _, u in ipairs(Threat.getAttackers(source)) do
                 Threat.modify(source, u, applyModifiers(source, threat), true)

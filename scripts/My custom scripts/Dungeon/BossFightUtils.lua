@@ -95,6 +95,8 @@ OnInit("BossFightUtils", function ()
         end
     end
 
+    ---@param boss unit
+    ---@param flag boolean
     function BossCanLeave(boss, flag)
         canLeave[boss] = flag
     end
@@ -443,7 +445,7 @@ OnInit("BossFightUtils", function ()
                 UnitResetCooldown(data.boss)
                 interval = 3.
                 hitChance = 1.
-                returned = true
+
                 if data.forceWall then
                     for _, d in ipairs(data.forceWall) do
                         ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
@@ -467,6 +469,10 @@ OnInit("BossFightUtils", function ()
                 end
 
                 BossIsCasting(data.boss, false)
+                PauseUnit(data.boss, false)
+
+                Threat.addNPC(data.boss, false)
+                Threat.changeReturnPos(data.boss, initialPosX, initialPosY)
             end
         end
 
@@ -550,7 +556,6 @@ OnInit("BossFightUtils", function ()
                 if unitsInTheField:isEmpty() then
                     -- Reset the boss
                     reset()
-                    IssuePointOrderById(data.boss, Orders.smart, initialPosX, initialPosY)
                 else
                     if playersOnField:size() > data.maxPlayers then
                         if playersOnField:contains(LocalPlayer) then
@@ -647,8 +652,6 @@ OnInit("BossFightUtils", function ()
                                     end
                                 end
                             end
-                        else
-                            IssuePointOrderById(data.boss, Orders.move, initialPosX, initialPosY)
                         end
 
                         data.actions(u, unitsInTheField)
@@ -656,10 +659,7 @@ OnInit("BossFightUtils", function ()
                 end
 
                 if not isInBattlefield and not canLeave[data.boss] then
-                    --reset()
-                    IssuePointOrderById(data.boss, Orders.smart, initialPosX, initialPosY)
-
-                    Timed.echo(0.5, 10., function ()
+                    Timed.echo(0.5, 3., function ()
                         for i = 1, numRect do
                             isInBattlefield = RectContainsUnit(battlefield[data.boss][i], data.boss)
                             if isInBattlefield then
@@ -859,16 +859,6 @@ OnInit("BossFightUtils", function ()
             end)
         end
 
-        do
-            local t = CreateTrigger()
-            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_CHANNEL)
-            TriggerRegisterUnitEvent(t, data.boss, EVENT_UNIT_SPELL_ENDCAST)
-            TriggerAddAction(t, function ()
-                BossIsCasting(data.boss, GetTriggerEventId() == EVENT_UNIT_SPELL_CHANNEL)
-                IssueTargetOrderById(data.boss, Orders.smart, Threat.getSlotUnit(data.boss, 1))
-            end)
-        end
-
         if data.moveOption then
             Digimon.postDamageEvent:register(function (info)
                 if info.target.root == data.boss then
@@ -896,7 +886,7 @@ OnInit("BossFightUtils", function ()
                 if not shieldEnabled then
                     if info.target.root and isStunned(data.boss) then
                         shieldEnabled = true
-                        local shield = AddSpecialEffectTarget("war3mapImported\\PlasmaShell.mdx", data.boss, "origin")
+                        local shield = AddSpecialEffectTarget("war3mapImported\\PlasmaShell.mdx", data.boss, "chest")
                         UnitAddAbility(data.boss, FourCC('ANss'))
                         BlzSetUnitAbilityCooldown(data.boss, FourCC('ANss'), 0, 0)
                         Timed.call(6., function ()
@@ -905,6 +895,32 @@ OnInit("BossFightUtils", function ()
                             UnitRemoveAbility(data.boss, FourCC('ANss'))
                         end)
                     end
+                end
+            end)
+        end
+
+        -- Register summons
+        do
+            local t = CreateTrigger()
+            TriggerRegisterPlayerUnitEvent(t, GetOwningPlayer(data.boss), EVENT_PLAYER_UNIT_SUMMON)
+            TriggerAddAction(t, function ()
+                local caster = GetSummoningUnit()
+                local add = false
+                if caster == data.boss then
+                    add = true
+                else
+                    for _, d in ipairs(summons[data.boss]) do
+                        if caster == d.root then
+                            add = true
+                            break
+                        end
+                    end
+                end
+                if add then
+                    local summon = GetSummonedUnit()
+                    local d = Digimon.getInstance(summon) or Digimon.add(summon)
+                    d.isSummon = true
+                    table.insert(summons[data.boss], d)
                 end
             end)
         end

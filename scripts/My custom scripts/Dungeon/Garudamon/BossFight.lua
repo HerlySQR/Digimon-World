@@ -27,6 +27,8 @@ OnInit(function ()
                 y = y + 50 * math.sin(angle)
                 if not IsTerrainWalkable(x, y) then
                     ResetUnitAnimation(caster)
+                    SetUnitPathing(caster, true)
+                    PauseUnit(caster, false)
                     return true
                 else
                     SetUnitPosition(caster, x, y)
@@ -46,6 +48,10 @@ OnInit(function ()
                 return true
             end
             reached = reached + 50
+        end, function ()
+            ResetUnitAnimation(caster)
+            SetUnitPathing(caster, true)
+            PauseUnit(caster, false)
         end)
     end
 
@@ -56,7 +62,10 @@ OnInit(function ()
     local BoF_DELAY = 2.
 
     local function onBirdOfFire(caster, tx, ty)
+        PauseUnit(caster, true)
+        SetUnitAnimation(caster, "spell")
         BossIsCasting(caster, true)
+
         local bar = ProgressBar.create()
         bar:setColor(PLAYER_COLOR_PEANUT)
         bar:setZOffset(300)
@@ -76,6 +85,7 @@ OnInit(function ()
 
             SetUnitAnimation(caster, "attack")
             Timed.call(0.5, function ()
+                PauseUnit(caster, false)
                 BossIsCasting(caster, false)
                 ResetUnitAnimation(caster)
 
@@ -182,6 +192,7 @@ OnInit(function ()
         end, function ()
             BossIsCasting(caster, false)
             SetUnitPathing(caster, true)
+            PauseUnit(caster, false)
         end)
     end
 

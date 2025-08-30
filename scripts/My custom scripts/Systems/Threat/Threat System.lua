@@ -12,7 +12,7 @@ OnInit("Threat System", function ()
                                           -- Set CallForHelp to something lower in Gameplay Constants.
     local ORDER_RETURN_RANGE = 3500 -- The range the unit's target can be away from the original camping position, before being ordered to return.
     local RETURN_RANGE = 1200 -- The range the unit can move away from the original camping position, before being ordered to return.
-    local TIME_TO_PORT = 10 -- This timer expires once a unit tries to return to its camping position.
+    local TIME_TO_PORT = 0 -- This timer expires once a unit tries to return to its camping position.
                                           -- If it reaches 0 before reaching the camp position, the unit will be teleported immediately.
     local HEAL_UNITS_IN_RETURN = true -- If this is true, returning units will be healed to 100% health.
     local DISABLE_NPC_COLLISION = false
@@ -191,7 +191,7 @@ OnInit("Threat System", function ()
 
         if NPClist[npc].status > 1 then -- unit status is: returning
             IssueImmediateOrderById(npc, Orders.stop)
-            SetUnitInvulnerable(npc, false)
+            --SetUnitInvulnerable(npc, false)
         end
 
         for i = 1, #NPClist[npc].list do -- remove the entry in the player unit's position list and list group and decrease list group count
@@ -426,7 +426,7 @@ OnInit("Threat System", function ()
                 IssueImmediateOrderById(npc, Orders.stop)
                 IssuePointOrderById(npc, Orders.move, NPClist[npc].returnX, NPClist[npc].returnY)
                 NPClist[npc].time = TIME_TO_PORT
-                SetUnitInvulnerable(npc, true)
+                --SetUnitInvulnerable(npc, true)
                 if HEAL_UNITS_IN_RETURN then
                     SetUnitState(npc, UNIT_STATE_LIFE, GetUnitState(npc, UNIT_STATE_MAX_LIFE))
                     SetUnitState(npc, UNIT_STATE_MANA, GetUnitState(npc, UNIT_STATE_MAX_MANA))
@@ -434,7 +434,7 @@ OnInit("Threat System", function ()
             elseif status == 3 then
                 NPClist[npc].status = 0
                 NPClist[npc].time = 0.
-                SetUnitInvulnerable(npc, false)
+                --SetUnitInvulnerable(npc, false)
                 if HEAL_UNITS_IN_RETURN then
                     SetUnitState(npc, UNIT_STATE_LIFE, GetUnitState(npc, UNIT_STATE_MAX_LIFE))
                     SetUnitState(npc, UNIT_STATE_MANA, GetUnitState(npc, UNIT_STATE_MAX_MANA))
@@ -537,55 +537,81 @@ OnInit("Threat System", function ()
 
     Timed.echo(UPDATE_INTERVAL, function ()
         for npc, threat in pairs(NPClist) do
-            local status = threat.status
+            if not IsUnitPaused(npc) and not IsUnitHidden(npc) then
+                local status = threat.status
 
-            if status == 1 then
-                threat.time = threat.time + UPDATE_INTERVAL
+                if status == 1 then
+                    threat.time = threat.time + UPDATE_INTERVAL
 
-                if IsUnitInRangeXY(npc, threat.returnX, threat.returnY, RETURN_RANGE) and threat.list[1] then
-                    local target = threat.list[1]
-                    if IsUnitInRangeXY(target, threat.returnX, threat.returnY, ORDER_RETURN_RANGE) then
-                        if GetUnitCurrentOrder(npc) == Orders.attack or GetUnitCurrentOrder(npc) == 0 or GetUnitCurrentOrder(npc) == Orders.smart then
-                            IssueSpellOrder(npc, target)
+                    if IsUnitInRangeXY(npc, threat.returnX, threat.returnY, RETURN_RANGE) and threat.list[1] then
+                        local target = threat.list[1]
+                        if IsUnitInRangeXY(target, threat.returnX, threat.returnY, ORDER_RETURN_RANGE) then
+                            if GetUnitCurrentOrder(npc) == Orders.attack or GetUnitCurrentOrder(npc) == 0 or GetUnitCurrentOrder(npc) == Orders.smart then
+                                IssueSpellOrder(npc, target)
+                            end
+                        else -- target of unit to far away from camp position
+                            CampCommand(threat.camp)
                         end
-                    else -- target of unit to far away from camp position
+                    else -- unit left return range or killed all player units
                         CampCommand(threat.camp)
                     end
-                else -- unit left return range or killed all player units
-                    CampCommand(threat.camp)
-                end
-            elseif status == 2 then -- unit is returning
-                if threat.time > 0 then
-                    threat.time = threat.time - UPDATE_INTERVAL
-                    if not IsUnitInRangeXY(npc, threat.returnX, threat.returnY, 35) then
-                        IssuePointOrderById(npc, Orders.move, threat.returnX, threat.returnY)
-                        SetUnitInvulnerable(npc, true)
-                    else -- unit within close range to camp position
-                        if GetUnitCurrentOrder(npc) == Orders.move then -- move order
-                            SetUnitInvulnerable(npc, true)
-                        else -- Something blocks the exact spot or the unit has arrived
-                            threat.status = 3 -- set status: returned
-                            for other, _ in pairs(threat.camp) do
-                                if NPClist[other].status ~= 3 then
+                elseif status == 2 then -- unit is returning
+                    if threat.time > 0 then
+                        threat.time = threat.time - UPDATE_INTERVAL
+                        if not IsUnitInRangeXY(npc, threat.returnX, threat.returnY, 35) then
+                            IssuePointOrderById(npc, Orders.move, threat.returnX, threat.returnY)
+                            --SetUnitInvulnerable(npc, true)
+                        else -- unit within close range to camp position
+                            if GetUnitCurrentOrder(npc) == Orders.move then -- move order
+                                --SetUnitInvulnerable(npc, true)
+                            else -- Something blocks the exact spot or the unit has arrived
+                                threat.status = 3 -- set status: returned
+                                local b = true
+                                for other, _ in pairs(threat.camp) do
+                                    if NPClist[other].status ~= 3 then
+                                        b = false
+                                        break
+                                    end
+                                end
+                                if b then
                                     CampCommand(threat.camp)
-                                    break
                                 end
                             end
                         end
-                    end
-                else -- counter expired - perform instant teleport
-                    SetUnitPosition(npc, threat.returnX, threat.returnY)
-                    threat.status = 3 -- set status: returned
-                    for other, _ in pairs(threat.camp) do
-                        if NPClist[other].status ~= 3 then
+                    else -- counter expired - perform instant teleport
+                        SetUnitPosition(npc, threat.returnX, threat.returnY)
+                        threat.status = 3 -- set status: returned
+                        local b = true
+                        for other, _ in pairs(threat.camp) do
+                            if NPClist[other].status ~= 3 then
+                                b = false
+                                break
+                            end
+                        end
+                        if b then
                             CampCommand(threat.camp)
-                            break
                         end
                     end
                 end
             end
         end
     end)
+
+    ---@param u unit
+    ---@return "null" | "dead" | "playerunit" | "npc" | "unregistered"
+    function Threat.getType(u)
+        if GetUnitTypeId(u) == 0 then
+            return "null"
+        elseif IsUnitType(u, UNIT_TYPE_DEAD) then
+            return "dead"
+        end
+        if PUlist[u] then
+            return "playerunit"
+        elseif NPClist[u] then
+            return "npc"
+        end
+        return "unregistered"
+    end
 
     OnUnitLeave(function (u)
         if PUlist[u] then

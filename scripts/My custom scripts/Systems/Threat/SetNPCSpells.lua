@@ -46,7 +46,7 @@ OnInit(function ()
 
     udg_SpellAICreate = CreateTrigger()
     TriggerAddAction(udg_SpellAICreate, function ()
-        Create(
+        xpcall(Create, print,
             udg_SpellAIAbility,
             udg_SpellAIOrder,
             udg_SpellAIHasUnitTarget,

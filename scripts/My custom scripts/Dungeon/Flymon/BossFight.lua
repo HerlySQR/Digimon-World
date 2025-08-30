@@ -21,9 +21,6 @@ OnInit(function ()
     local SS_INTERVAL = 0.03125
 
     local function onStingerShots(caster, x, y)
-        local cx = GetUnitX(caster)
-        local cy = GetUnitY(caster)
-
         PauseUnit(caster, true)
         SetUnitAnimation(caster, "spell")
         BossIsCasting(caster, true)
@@ -60,7 +57,7 @@ OnInit(function ()
                         local dist = SS_AREA * math.random()
                         local tx = x + dist * math.cos(angle)
                         local ty = y + dist * math.sin(angle)
-                        local missile = Missiles:create(cx, cy, 25, tx, ty, 0)
+                        local missile = Missiles:create(GetUnitX(caster), GetUnitY(caster), 25, tx, ty, 0)
                         missile.source = caster
                         missile.owner = GetOwningPlayer(caster)
                         missile.damage = SS_DAMAGE_PER_SHOT
@@ -223,6 +220,10 @@ OnInit(function ()
                     end
                 end
             end
+        end,
+        onStart = function ()
+            flying = false
+            waitFlying = 6
         end
     })
 end)
