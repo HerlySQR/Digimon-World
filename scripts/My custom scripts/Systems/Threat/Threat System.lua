@@ -12,6 +12,7 @@ OnInit("Threat System", function ()
                                           -- Set CallForHelp to something lower in Gameplay Constants.
     local ORDER_RETURN_RANGE = 3500 -- The range the unit's target can be away from the original camping position, before being ordered to return.
     local RETURN_RANGE = 1200 -- The range the unit can move away from the original camping position, before being ordered to return.
+    local BOSS_RETURN_RANGE = 2500 -- The range a boss can move away from the original camping position, before being ordered to return.
     local TIME_TO_PORT = 0 -- This timer expires once a unit tries to return to its camping position.
                                           -- If it reaches 0 before reaching the camp position, the unit will be teleported immediately.
     local HEAL_UNITS_IN_RETURN = true -- If this is true, returning units will be healed to 100% health.
@@ -543,7 +544,7 @@ OnInit("Threat System", function ()
                 if status == 1 then
                     threat.time = threat.time + UPDATE_INTERVAL
 
-                    if IsUnitInRangeXY(npc, threat.returnX, threat.returnY, RETURN_RANGE) and threat.list[1] then
+                    if IsUnitInRangeXY(npc, threat.returnX, threat.returnY, (GetHandleId(GetUnitRace(npc)) == 11 and IsUnitType(npc, UNIT_TYPE_HERO)) and BOSS_RETURN_RANGE or RETURN_RANGE) and threat.list[1] then
                         local target = threat.list[1]
                         if IsUnitInRangeXY(target, threat.returnX, threat.returnY, ORDER_RETURN_RANGE) then
                             if GetUnitCurrentOrder(npc) == Orders.attack or GetUnitCurrentOrder(npc) == 0 or GetUnitCurrentOrder(npc) == Orders.smart then

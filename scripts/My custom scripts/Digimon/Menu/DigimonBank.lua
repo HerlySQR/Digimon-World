@@ -9,6 +9,7 @@ OnInit("DigimonBank", function ()
     Require "Serializable"
     Require "Digimon"
     Require "Hotkeys"
+    Require "Threat System"
 
     local MAX_STOCK = udg_MAX_DIGIMONS
     local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
@@ -406,6 +407,7 @@ OnInit("DigimonBank", function ()
     function Bank:storeDigimon(index, hide)
         local d = self.inUse[index] ---@type Digimon
         if d then
+            Threat.removePlayerUnit(d.root)
             self.inUse[index] = nil
             if self.main == d then
                 self:searchMain()
@@ -2081,6 +2083,9 @@ OnInit("DigimonBank", function ()
                 d.environment = bank.main.environment
             end
             bank.inUse[index] = d
+
+            Threat.addPlayerUnit(d.root)
+
             b = true
         end
         if p == LocalPlayer then

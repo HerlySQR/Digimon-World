@@ -23,6 +23,7 @@ OnInit("BossFightUtils", function ()
     local MUSIC = "war3mapImported\\Mt_Infinity.mp3"
     local CASTING_CLEAR_DELAY = 8.
     local CASTING_CLEAR_DELAY_LESS = 2.
+    local BOSS_RESPAWN_DELAY = 360.
 
     local playing = false
 
@@ -777,8 +778,8 @@ OnInit("BossFightUtils", function ()
                     SetTextTagVisibility(advice, IsVisibleToPlayer(initialPosX, initialPosY, LocalPlayer))
 
                     if not data.manualRevive then
-                        local remaining = 360.
-                        Timed.echo(0.02, 360., function ()
+                        local remaining = BOSS_RESPAWN_DELAY
+                        Timed.echo(0.02, BOSS_RESPAWN_DELAY, function ()
                             remaining = remaining - 0.02
                             SetTextTagText(advice, GetLocalizedString("BOSS_REVIVE_IN") .. R2I(remaining), 0.023)
                             SetTextTagVisibility(advice, dead and IsVisibleToPlayer(initialPosX, initialPosY, LocalPlayer))
