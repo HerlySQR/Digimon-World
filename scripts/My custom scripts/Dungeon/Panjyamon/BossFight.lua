@@ -61,7 +61,7 @@ OnInit(function ()
                     SetUnitFlyHeight(target, GetUnitFlyHeight(caster) + 50, 1000000000)
                 end)
 
-                Jump(caster, toX, toY, 500., 100., nil, "slam", function ()
+                Jump(caster, toX, toY, 300., 100., nil, "slam", function ()
                     endTimer()
                     SetUnitFlyHeight(target, originHeight, 1000000000)
 
@@ -262,7 +262,7 @@ OnInit(function ()
         },
         castCondition = function (spell)
             if spell == onIceFist or spell == onIceStomp then
-                return GetUnitHPRatio(boss) < 0.5
+                return GetUnitHPRatio(boss) < 0.5, true
             end
             return true
         end,

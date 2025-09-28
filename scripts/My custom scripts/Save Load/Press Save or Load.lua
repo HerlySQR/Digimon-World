@@ -287,7 +287,7 @@ OnInit("PressSaveOrLoad", function ()
     local AbsoluteLoad = nil ---@type framehandle
     local Exit = nil ---@type framehandle
 
-    local NotOnline = true
+    local NotOnline = false
     local QuestsAdded = {}
     local paused = __jarray(true)
 
@@ -463,12 +463,12 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     OnInit.final(function ()
-        NotOnline = true
+        NotOnline = not udg_SaveOnSinglePlayer and GameStatus.get() ~= GameStatus.ONLINE
 
         PolledWait(1.)
 
         if NotOnline then
-            print("Save data is disabled.")
+            print("You are on Singleplayer, save is disabled.")
             BlzFrameSetEnable(AbsoluteSave, false)
         else
             -- Auto-save

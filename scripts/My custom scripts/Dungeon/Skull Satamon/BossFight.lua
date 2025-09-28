@@ -338,9 +338,9 @@ OnInit(function ()
         },
         castCondition = function (spell, target)
             if spell == onJail then
-                return not J_isCaged[GetOwningPlayer(target)]
+                return not J_isCaged[GetOwningPlayer(target)], true
             elseif spell == onFirePillar then
-                return metamorphosis
+                return metamorphosis, true
             end
             return true
         end,

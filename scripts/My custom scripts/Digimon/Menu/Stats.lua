@@ -90,8 +90,15 @@ OnInit("Stats", function ()
     local HeroButtons = {} ---@type framehandle[]
     local HeroBuffs = {} ---@type framehandle[][]
     local OtherStats = nil ---@type framehandle
+    local OtherStatsBackdrop = nil ---@type framehandle
     local SelectedDigimonIcon = nil ---@type framehandle
     local SelectedDigimonName = nil ---@type framehandle
+    local OtherStatsDmgLabel = nil ---@type framehandle
+    local OtherStatsDmgIcon = nil ---@type framehandle
+    local OtherStatsDefIcon = nil ---@type framehandle
+    local OtherStatsDefLabel = nil ---@type framehandle
+    local OtherStatsDefAmount = nil ---@type framehandle
+    local OtherStatsDmgAmount = nil ---@type framehandle
 
     local LocalPlayer = GetLocalPlayer()
 
@@ -415,7 +422,7 @@ OnInit("Stats", function ()
             end
         end
 
-        BlzFrameSetVisible(OtherStats, false)
+        BlzFrameSetVisible(OtherStatsBackdrop, false)
         BlzFrameSetVisible(SelectedDigimonIcon, false)
         BlzFrameSetVisible(SelectedDigimonName, false)
 
@@ -465,7 +472,68 @@ OnInit("Stats", function ()
         text = text .. GetLocalizedString("STATS_ENEMY_WIS") .. " " .. base .. ((bonus > 0) and (" (+".. bonus .. ")") or "")
 
         BlzFrameSetText(OtherStats, text)
-        BlzFrameSetVisible(OtherStats, true)
+
+        base = BlzGetUnitWeaponIntegerField(selected, UNIT_WEAPON_IF_ATTACK_DAMAGE_BASE, 0)
+        if base == 0 then
+            BlzFrameSetTexture(OtherStatsDmgIcon, "war3mapImported\\EmptyBTN.blp", 0, true)
+            BlzFrameSetText(OtherStatsDmgAmount, "")
+        else
+            local typ = BlzGetUnitWeaponIntegerField(selected, UNIT_WEAPON_IF_ATTACK_ATTACK_TYPE, 0)
+            local root
+            if typ == udg_WaterAsInt then
+                root = WATER_ICON
+            elseif typ == udg_MachineAsInt then
+                root = MACHINE_ICON
+            elseif typ == udg_BeastAsInt then
+                root = BEAST_ICON
+            elseif typ == udg_FireAsInt then
+                root = FIRE_ICON
+            elseif typ == udg_NatureAsInt then
+                root = NATURE_ICON
+            elseif typ == udg_AirAsInt then
+                root = AIR_ICON
+            elseif typ == udg_DarkAsInt then
+                root = DARK_ICON
+            elseif typ == udg_HolyAsInt then
+                root = HOLY_ICON
+            else
+                root = "war3mapImported\\EmptyBTN.blp"
+            end
+            BlzFrameSetTexture(OtherStatsDmgIcon, root, 0, true)
+
+            BlzFrameSetText(OtherStatsDmgAmount, tostring(math.floor(base + GetUnitBonus(selected, BONUS_DAMAGE))))
+        end
+
+        local typ = armorEquiv[BlzGetUnitIntegerField(selected, UNIT_IF_DEFENSE_TYPE)]
+        local root
+        if typ == udg_WaterAsInt then
+            root = WATER_ICON
+        elseif typ == udg_MachineAsInt then
+            root = MACHINE_ICON
+        elseif typ == udg_BeastAsInt then
+            root = BEAST_ICON
+        elseif typ == udg_FireAsInt then
+            root = FIRE_ICON
+        elseif typ == udg_NatureAsInt then
+            root = NATURE_ICON
+        elseif typ == udg_AirAsInt then
+            root = AIR_ICON
+        elseif typ == udg_DarkAsInt then
+            root = DARK_ICON
+        elseif typ == udg_HolyAsInt then
+            root = HOLY_ICON
+        else
+            root = "war3mapImported\\EmptyBTN.blp"
+        end
+        BlzFrameSetTexture(OtherStatsDefIcon, root, 0, true)
+
+        if not BlzIsUnitInvulnerable(selected) then
+            BlzFrameSetText(OtherStatsDefAmount, tostring(math.floor(BlzGetUnitArmor(selected))))
+        else
+            BlzFrameSetText(OtherStatsDefAmount, "")
+        end
+
+        BlzFrameSetVisible(OtherStatsBackdrop, true)
     end)
     do
         local t = CreateTrigger()
@@ -474,7 +542,7 @@ OnInit("Stats", function ()
         end)
         TriggerAddAction(t, function ()
             if GetLocalPlayer() == GetTriggerPlayer() then
-                BlzFrameSetVisible(OtherStats, false)
+                BlzFrameSetVisible(OtherStatsBackdrop, false)
             end
         end)
     end
@@ -542,7 +610,6 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsName[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.28750, 0.077500)
             BlzFrameSetText(StatsName[i], "|cffFFCC00Rookie Digimon Agumon|r")
             BlzFrameSetEnable(StatsName[i], false)
-            BlzFrameSetScale(StatsName[i], 1.00)
             BlzFrameSetTextAlignment(StatsName[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
             StatsDamageLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
@@ -550,7 +617,6 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsDamageLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.16500, 0.080000)
             BlzFrameSetText(StatsDamageLabel[i], GetLocalizedString("STATS_DAMAGE_LABEL"))
             BlzFrameSetEnable(StatsDamageLabel[i], false)
-            BlzFrameSetScale(StatsDamageLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsDamageLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             StatsDamageIcon[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", StatsBackdrop[i], "", 1)
@@ -563,7 +629,6 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsArmorLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.16500, 0.035000)
             BlzFrameSetText(StatsArmorLabel[i], GetLocalizedString("STATS_ARMOR_LABEL"))
             BlzFrameSetEnable(StatsArmorLabel[i], false)
-            BlzFrameSetScale(StatsArmorLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsArmorLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             StatsArmorIcon[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", StatsBackdrop[i], "", 1)
@@ -576,7 +641,6 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsDamage[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.15250, 0.050000)
             BlzFrameSetText(StatsDamage[i], "|cffffffff9999|r")
             BlzFrameSetEnable(StatsDamage[i], false)
-            BlzFrameSetScale(StatsDamage[i], 1.00)
             BlzFrameSetTextAlignment(StatsDamage[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             StatsArmor[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
@@ -584,7 +648,6 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsArmor[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.15250, 0.0050000)
             BlzFrameSetText(StatsArmor[i], "|cffffffff150|r")
             BlzFrameSetEnable(StatsArmor[i], false)
-            BlzFrameSetScale(StatsArmor[i], 1.00)
             BlzFrameSetTextAlignment(StatsArmor[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             StatsHeroIcon[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", StatsBackdrop[i], "", 1)
@@ -605,7 +668,6 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsStamina[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.057500, 0.065000)
             BlzFrameSetText(StatsStamina[i], "|cffffffff999|r")
             BlzFrameSetEnable(StatsStamina[i], false)
-            BlzFrameSetScale(StatsStamina[i], 1.00)
             BlzFrameSetTextAlignment(StatsStamina[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             StatsDexterityLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
@@ -613,7 +675,6 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsDexterityLabel[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.057500, 0.050000)
             BlzFrameSetText(StatsDexterityLabel[i], GetLocalizedString("STATS_DEXTERITY_LABEL"))
             BlzFrameSetEnable(StatsDexterityLabel[i], false)
-            BlzFrameSetScale(StatsDexterityLabel[i], 1.00)
             BlzFrameSetTextAlignment(StatsDexterityLabel[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             StatsDexterity[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
@@ -621,7 +682,6 @@ OnInit("Stats", function ()
             BlzFrameSetPoint(StatsDexterity[i], FRAMEPOINT_BOTTOMRIGHT, StatsBackdrop[i], FRAMEPOINT_BOTTOMRIGHT, -0.057500, 0.035000)
             BlzFrameSetText(StatsDexterity[i], "|cffffffff999|r")
             BlzFrameSetEnable(StatsDexterity[i], false)
-            BlzFrameSetScale(StatsDexterity[i], 1.00)
             BlzFrameSetTextAlignment(StatsDexterity[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             StatsWisdomLabel[i] = BlzCreateFrameByType("TEXT", "name", StatsBackdrop[i], "", 0)
@@ -870,13 +930,16 @@ OnInit("Stats", function ()
         BlzFrameSetLevel(FocusedUnit, 5)
         BlzFrameSetVisible(FocusedUnit, false)]]
 
-        OtherStats = BlzCreateFrameByType("TEXT", "name", CommandButtonBackDrop, "", 0)
+        OtherStatsBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", CommandButtonBackDrop, "", 1)
+        BlzFrameSetTexture(OtherStatsDmgIcon, "war3mapImported\\EmptyBTN.blp", 0, true)
+        BlzFrameSetVisible(OtherStatsBackdrop, false)
+
+        OtherStats = BlzCreateFrameByType("TEXT", "name", OtherStatsBackdrop, "", 0)
         BlzFrameSetScale(OtherStats, 1.43)
         BlzFrameSetPoint(OtherStats, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.035000)
-        BlzFrameSetPoint(OtherStats, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.010000)
+        BlzFrameSetPoint(OtherStats, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.060000)
         BlzFrameSetText(OtherStats, "|cffFFCC00HP: 999/999\nMP: 999/999\nSTA: 999 (+999)\nDEX: 999 (+999)\nWIS: 999 (+999)|r")
         BlzFrameSetTextAlignment(OtherStats, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
-        BlzFrameSetVisible(OtherStats, false)
 
         SelectedDigimonIcon = BlzCreateFrameByType("BACKDROP", "BACKDROP", CommandButtonBackDrop, "", 1)
         BlzFrameSetPoint(SelectedDigimonIcon, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.015000)
@@ -891,6 +954,44 @@ OnInit("Stats", function ()
         BlzFrameSetText(SelectedDigimonName, "|cffFFCC00Agumon|r")
         BlzFrameSetTextAlignment(SelectedDigimonName, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
         BlzFrameSetVisible(SelectedDigimonName, false)
+
+        OtherStatsDmgIcon = BlzCreateFrameByType("BACKDROP", "BACKDROP", OtherStatsBackdrop, "", 1)
+        BlzFrameSetPoint(OtherStatsDmgIcon, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.025000, -0.15000)
+        BlzFrameSetPoint(OtherStatsDmgIcon, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.17500, 0.025000)
+        BlzFrameSetTexture(OtherStatsDmgIcon, "CustomFrame.png", 0, true)
+
+        OtherStatsDefIcon = BlzCreateFrameByType("BACKDROP", "BACKDROP", OtherStatsBackdrop, "", 1)
+        BlzFrameSetPoint(OtherStatsDefIcon, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.12000, -0.15000)
+        BlzFrameSetPoint(OtherStatsDefIcon, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.080000, 0.025000)
+        BlzFrameSetTexture(OtherStatsDefIcon, "CustomFrame.png", 0, true)
+
+        OtherStatsDmgLabel = BlzCreateFrameByType("TEXT", "name", OtherStatsBackdrop, "", 0)
+        BlzFrameSetScale(OtherStatsDmgLabel, 1.43)
+        BlzFrameSetPoint(OtherStatsDmgLabel, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.060000, -0.15000)
+        BlzFrameSetPoint(OtherStatsDmgLabel, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.040000)
+        BlzFrameSetText(OtherStatsDmgLabel, "|cffFFCC00DMG:|r")
+        BlzFrameSetTextAlignment(OtherStatsDmgLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+        OtherStatsDefLabel = BlzCreateFrameByType("TEXT", "name", OtherStatsBackdrop, "", 0)
+        BlzFrameSetScale(OtherStatsDefLabel, 1.43)
+        BlzFrameSetPoint(OtherStatsDefLabel, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.15500, -0.15000)
+        BlzFrameSetPoint(OtherStatsDefLabel, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.025000, 0.040000)
+        BlzFrameSetText(OtherStatsDefLabel, "|cffFFCC00DEF:|r")
+        BlzFrameSetTextAlignment(OtherStatsDefLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+        OtherStatsDefAmount = BlzCreateFrameByType("TEXT", "name", OtherStatsBackdrop, "", 0)
+        BlzFrameSetScale(OtherStatsDefAmount, 1.43)
+        BlzFrameSetPoint(OtherStatsDefAmount, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.15500, -0.16550)
+        BlzFrameSetPoint(OtherStatsDefAmount, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.025000, 0.025000)
+        BlzFrameSetText(OtherStatsDefAmount, "|cffffffff9999|r")
+        BlzFrameSetTextAlignment(OtherStatsDefAmount, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
+
+        OtherStatsDmgAmount = BlzCreateFrameByType("TEXT", "name", OtherStatsBackdrop, "", 0)
+        BlzFrameSetScale(OtherStatsDmgAmount, 1.43)
+        BlzFrameSetPoint(OtherStatsDmgAmount, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.060000, -0.16550)
+        BlzFrameSetPoint(OtherStatsDmgAmount, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.025000)
+        BlzFrameSetText(OtherStatsDmgAmount, "|cffffffff9999|r")
+        BlzFrameSetTextAlignment(OtherStatsDmgAmount, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
     end)
 
     OnChangeDimensions(function ()

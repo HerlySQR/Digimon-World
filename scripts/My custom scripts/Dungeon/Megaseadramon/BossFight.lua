@@ -131,7 +131,7 @@ OnInit(function ()
         },
         castCondition =  function (spell)
             if spell == onIcePrison then
-                return GetUnitHPRatio(boss) < 0.7
+                return GetUnitHPRatio(boss) < 0.7, true
             end
             return true
         end,

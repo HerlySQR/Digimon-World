@@ -247,7 +247,7 @@ OnInit(function ()
         },
         castCondition = function (spell)
             if spell == onEarthQuake then
-                return GetUnitHPRatio(boss) < 0.5
+                return GetUnitHPRatio(boss) < 0.5, true
             end
             return true
         end,

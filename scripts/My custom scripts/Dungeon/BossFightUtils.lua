@@ -350,7 +350,7 @@ OnInit("BossFightUtils", function ()
     ---@param half boolean?
     ---@return number
     local function getInterval(n, half)
-        return (half and 6 or 3) * math.exp(-0.5493061443341 * (n - 1))
+        return (half and 3 or 6) * math.exp(-0.5493061443341 * (n - 1))
     end
 
     ---@param n integer
@@ -359,7 +359,7 @@ OnInit("BossFightUtils", function ()
         return 0.7 + 0.1*n
     end
 
-    ---@param data {name: string, boss: unit, manualRevive: boolean, spells: table?, extraSpells: table?, castCondition: (fun(id: (integer|function)?, tx: (number|unit)?, ty: number?):boolean)?, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?, moveOption: BossMoveType?}
+    ---@param data {name: string, boss: unit, manualRevive: boolean, spells: table?, extraSpells: table?, castCondition: (fun(id: (integer|function)?, tx: (number|unit)?, ty: number?):boolean, boolean?)?, actions: fun(u?: unit, unitsInTheField?: Set), onStart: function?, onReset: function?, onDeath: function?, maxPlayers: integer?, entrance: rect, returnPlace: rect?, returnEnv: string?, inner: rect?, toTeleport: rect?, forceWall: destructable[]?, moveOption: BossMoveType?}
     function InitBossFight(data)
         if type(data) ~= "table" then
             print("Bad data implemented in bossfight:", data)
@@ -503,6 +503,30 @@ OnInit("BossFightUtils", function ()
         end
 
         local current = 0
+
+        if udg_SeeBossStats then
+            local tt = CreateTextTagUnitBJ("", data.boss, 100, 10, 100, 100, 100, 0)
+            SetTextTagPermanent(tt, true)
+            Timed.echo(0.02, function ()
+                if UnitAlive(data.boss) then
+                    local s = "Cast CD: " .. isCasting[data.boss]
+                    if data.moveOption then
+                        s = s .. "\nDidn't damage: " .. didntDamage .. "/" .. CASTING_CLEAR_DELAY
+                              .. "\nHits taken: " .. hitsTaken .. "/65"
+                    end
+                    if data.spells then
+                        s = s .. "\nNext spell: " .. hitsDealt .. "/" .. spells[actSpell].weight
+                    end
+                    s = s.. "\nPatience: " .. (interval - current)
+                    SetTextTagTextBJ(tt, s, 10.)
+                    SetTextTagPosUnit(tt, data.boss, 100)
+                    SetTextTagVisibility(tt, IsUnitVisible(data.boss, LocalPlayer))
+                else
+                    SetTextTagVisibility(tt, false)
+                end
+            end)
+        end
+
         Timed.echo(0.5, function ()
             current = current + 0.5
 
@@ -523,7 +547,7 @@ OnInit("BossFightUtils", function ()
                 -- Check if are units in the battlefield
                 for i = 1, numRect do
                     ForUnitsInRect(battlefield[data.boss][i], function (u)
-                        if u ~= data.boss and UnitAlive(u) and not IsUnitIllusion(u) and IsPlayerInGame(GetOwningPlayer(u)) then
+                        if u ~= data.boss and UnitAlive(u) and not IsUnitIllusion(u) and IsPlayerInGame(GetOwningPlayer(u)) and GetUnitTypeId(u) ~= 0 then
                             unitsInTheField:addSingle(u)
                             playersOnField:addSingle(GetOwningPlayer(u))
                         end
@@ -531,7 +555,7 @@ OnInit("BossFightUtils", function ()
                     -- Add hidden units
                     for p in whoAlreadyAre:elements() do
                         ForUnitsOfPlayer(p, function (u)
-                            if (IsUnitHidden(u) or BlzIsUnitInvulnerable(u)) and UnitAlive(u) and not IsUnitIllusion(u) and RectContainsUnit(battlefield[data.boss][i], u) then
+                            if (IsUnitHidden(u) or BlzIsUnitInvulnerable(u)) and UnitAlive(u) and not IsUnitIllusion(u) and GetUnitTypeId(u) ~= 0 and RectContainsUnit(battlefield[data.boss][i], u) then
                                 unitsInTheField:addSingle(u)
                                 playersOnField:addSingle(GetOwningPlayer(u))
                             end
@@ -571,10 +595,10 @@ OnInit("BossFightUtils", function ()
                                 for u in unitsInTheField:elements() do
                                     if GetOwningPlayer(u) == p then
                                         SetUnitPosition(u, GetRectCenterX(data.entrance), GetRectCenterY(data.entrance))
+                                        unitsInTheField:removeSingle(u)
                                     elseif whoAlreadyAre:contains(GetOwningPlayer(u)) then
                                         SetUnitPosition(u, GetRectCenterX(data.inner), GetRectCenterY(data.inner))
                                     end
-                                    unitsInTheField:removeSingle(u)
                                 end
                             end
                         end
@@ -621,7 +645,16 @@ OnInit("BossFightUtils", function ()
                             end
 
                             if hitsDealt >= stats.weight then
-                                if not data.castCondition or data.castCondition(stats.onActions, tx, ty) then
+                                local cast = false
+                                local skip = false
+
+                                if not data.castCondition then
+                                    cast = true
+                                else
+                                    cast, skip = data.castCondition(stats.onActions, tx, ty)
+                                end
+
+                                if cast then
                                     if stats.ttype == CastType.IMMEDIATE then
                                         stats.onActions(data.boss)
                                     elseif stats.ttype == CastType.POINT then
@@ -636,10 +669,14 @@ OnInit("BossFightUtils", function ()
                                     if actSpell > #spells then
                                         actSpell = 1
                                     end
+                                elseif skip then
+                                    hitsDealt = 0
+                                    actSpell = actSpell + 1
+                                    if actSpell > #spells then
+                                        actSpell = 1
+                                    end
                                 end
-                            end
-
-                            if data.moveOption then
+                            elseif data.moveOption then
                                 if not BossStillCasting(data.boss) and (not data.castCondition or data.castCondition()) then
                                     if didntDamage >= CASTING_CLEAR_DELAY then
                                         didntDamage = 0

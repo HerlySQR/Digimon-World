@@ -1,33 +1,38 @@
-Debug.beginFile("IncreaseIV.lua")
+Debug.beginFile("IncreaseIV")
 OnInit(function ()
     Require "Backpack"
     Require "Rare Data"
 
-    local CARBS = FourCC('I09R')
-    local PROTEIN = FourCC('I09S')
-    local FIBER = FourCC('I09T')
+    local STA_TRAINING = FourCC('I09S')
+    local DEX_TRAINING = FourCC('I09R')
+    local WIS_TRAINING = FourCC('I09T')
 
     OnRareDataItemGot(function (u, itm)
+        if itm ~= STA_TRAINING and itm ~= DEX_TRAINING and itm ~= WIS_TRAINING then
+            return
+        end
+
         local d = Digimon.getInstance(u)
         if d then
+            local max = 20
             local refund = false
             local whatIV
-            if itm == CARBS then
-                if d.IVsta < 15 then
+            if itm == STA_TRAINING then
+                if d.IVsta < max then
                     d:setIV(d.IVsta + 1, d.IVdex, d.IVwis)
                 else
                     refund = true
                     whatIV = GetLocalizedString("STAMINA")
                 end
-            elseif itm == PROTEIN then
-                if d.IVdex < 15 then
+            elseif itm == DEX_TRAINING then
+                if d.IVdex < max then
                     d:setIV(d.IVsta, d.IVdex + 1, d.IVwis)
                 else
                     refund = true
                     whatIV = GetLocalizedString("DEXTERITY")
                 end
-            elseif itm == FIBER then
-                if d.IVwis < 15 then
+            elseif itm == WIS_TRAINING then
+                if d.IVwis < max then
                     d:setIV(d.IVsta, d.IVdex, d.IVwis + 1)
                 else
                     refund = true

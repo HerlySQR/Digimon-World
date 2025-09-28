@@ -1667,15 +1667,15 @@ OnInit("DigimonBank", function ()
         OnClickEvent(SaveItem, function (p) UseCaster(p, "Z") end)]]
 
         SavedDigimons = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.0950000, 0.510000)
-        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, 0.705000, 0.180000)
+        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.0450000, 0.510000)
+        BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, 0.755000, 0.180000)
         BlzFrameSetVisible(SavedDigimons, false)
         AddFrameToMenu(SavedDigimons)
 
         Using = BlzCreateFrameByType("TEXT", "name", SavedDigimons, "", 0)
         BlzFrameSetScale(Using, 1.29)
         BlzFrameSetPoint(Using, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.045000, -0.030000)
-        BlzFrameSetPoint(Using, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.46500, 0.28000)
+        BlzFrameSetPoint(Using, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.56500, 0.28000)
         BlzFrameSetText(Using, "|cffFFCC00Using|r")
         BlzFrameSetEnable(Using, false)
         BlzFrameSetTextAlignment(Using, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
@@ -1686,7 +1686,7 @@ OnInit("DigimonBank", function ()
                 local index = i + part * j
                 x1[index] = 0.045000 + j * 0.05000
                 y1[index] = -0.070000 - i * 0.05000
-                x2[index] = -0.51500 + j * 0.05000
+                x2[index] = -0.61500 + j * 0.05000
                 y2[index] = 0.21000 - i * 0.05000
             end
         end
@@ -1740,8 +1740,8 @@ OnInit("DigimonBank", function ()
 
         Saved = BlzCreateFrameByType("TEXT", "name", SavedDigimons, "", 0)
         BlzFrameSetScale(Saved, 1.29)
-        BlzFrameSetPoint(Saved, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.32500, -0.030000)
-        BlzFrameSetPoint(Saved, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.18500, 0.28000)
+        BlzFrameSetPoint(Saved, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.37500, -0.030000)
+        BlzFrameSetPoint(Saved, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.23500, 0.28000)
         BlzFrameSetText(Saved, "|cffFFCC00Saved|r")
         BlzFrameSetEnable(Saved, false)
         BlzFrameSetTextAlignment(Saved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
@@ -1752,7 +1752,7 @@ OnInit("DigimonBank", function ()
                 local index = 4*i + j
                 x1[index] = 0.17500 + i * 0.05000
                 y1[index] = -0.070000 - j * 0.05000
-                x2[index] = -0.38500 + i * 0.05000
+                x2[index] = -0.48500 + i * 0.05000
                 y2[index] = 0.21000 - j * 0.05000
             end
         end
@@ -1797,14 +1797,14 @@ OnInit("DigimonBank", function ()
 
         Swap = BlzCreateFrame("ScriptDialogButton", SavedDigimons, 0, 0)
         BlzFrameSetScale(Swap, 1.29)
-        BlzFrameSetPoint(Swap, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.26000, -0.28000)
-        BlzFrameSetPoint(Swap, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.27000, 0.020000)
+        BlzFrameSetPoint(Swap, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.31000, -0.28000)
+        BlzFrameSetPoint(Swap, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.32000, 0.020000)
         BlzFrameSetText(Swap, "|cffFCD20DSwap|r")
         BlzFrameSetEnable(Swap, false)
         OnClickEvent(Swap, SwapFunc)
 
         ExitSave = BlzCreateFrame("ScriptDialogButton", SavedDigimons, 0, 0)
-        BlzFrameSetPoint(ExitSave, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.57500, -0.0050000)
+        BlzFrameSetPoint(ExitSave, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.67500, -0.0050000)
         BlzFrameSetPoint(ExitSave, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.30000)
         BlzFrameSetText(ExitSave, "|cffFCD20DX|r")
         OnClickEvent(ExitSave, ExitSaveFunc)

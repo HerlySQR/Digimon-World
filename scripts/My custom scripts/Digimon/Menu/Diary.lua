@@ -753,6 +753,10 @@ OnInit("Diary", function ()
 
             BlzSetItemSkin(itemModel, itemSelected)
             BlzSetItemRealField(itemModel, ITEM_RF_SCALING_VALUE, 0.5*BlzGetItemRealField(itemModel, ITEM_RF_SCALING_VALUE))
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_RED, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_GREEN, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_BLUE, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_ALPHA, 255)
             BlzSetSpecialEffectAlpha(glow, 200)
         else
             BlzFrameSetVisible(ItemInformation, false)
@@ -819,6 +823,10 @@ OnInit("Diary", function ()
 
             BlzSetItemSkin(itemModel, recipeMaterialSelected)
             BlzSetItemRealField(itemModel, ITEM_RF_SCALING_VALUE, 0.5*BlzGetItemRealField(itemModel, ITEM_RF_SCALING_VALUE))
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_RED, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_GREEN, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_BLUE, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_ALPHA, 255)
             BlzSetSpecialEffectAlpha(glow, 200)
         else
             BlzFrameSetVisible(RecipeMaterialInformation, false)

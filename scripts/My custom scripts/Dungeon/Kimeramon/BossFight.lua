@@ -438,7 +438,7 @@ OnInit(function ()
                 return false
             end
             if spell == onFireRay then
-                return secondPhase
+                return secondPhase, true
             end
             return true
         end,
