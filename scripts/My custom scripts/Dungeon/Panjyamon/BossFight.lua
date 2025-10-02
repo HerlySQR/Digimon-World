@@ -137,13 +137,13 @@ OnInit(function ()
                     local angle = math.atan(ty - y, tx - x)
 
                     local eff = AddSpecialEffect(IF_EFFECT_TARGET, x, y)
-                    BlzSetSpecialEffectPosition(eff, x + 50*math.cos(angle - math.pi/6), y + 50*math.sin(angle - math.pi/6), 165.)
+                    BlzSetSpecialEffectPosition(eff, x + 50*math.cos(angle), y + 50*math.sin(angle), 165.)
                     BlzSetSpecialEffectYaw(eff, angle)
                     BlzSetSpecialEffectColor(eff, 0, 209, 255)
                     DestroyEffect(eff)
 
                     ForUnitsInRange(x - 100*math.cos(angle), y - 100*math.sin(angle), IF_DISTANCE, function (u)
-                        if math.abs(math.atan(GetUnitY(u) - y, GetUnitX(u) - x)) <= math.pi/6 and IsUnitEnemy(u, owner) then
+                        if math.abs(math.atan(GetUnitY(u) - y, GetUnitX(u) - x) - angle) <= math.pi/6 and IsUnitEnemy(u, owner) then
                             DummyCast(owner, GetUnitX(u), GetUnitY(u), ICE_SPELL, ICE_ORDER, 1, CastType.TARGET, u)
                             Damage.apply(caster, u, IF_DAMAGE, false, false, udg_Water, DAMAGE_TYPE_COLD, WEAPON_TYPE_WHOKNOWS)
                         end

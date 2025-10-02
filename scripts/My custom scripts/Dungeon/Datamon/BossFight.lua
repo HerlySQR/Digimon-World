@@ -465,7 +465,9 @@ OnInit(function ()
                             return true
                         end
                         for u2 in unitsInTheField:elements() do
-                            canSeeHim[GetOwningPlayer(u2)] = true
+                            if UnitAlive(u2) and GetUnitTypeId(u2) ~= 0 then
+                                canSeeHim[GetOwningPlayer(u2)] = true
+                            end
                         end
                         for k, _ in pairs(canSeeHim) do
                             UnitShareVision(boss, k, true)
