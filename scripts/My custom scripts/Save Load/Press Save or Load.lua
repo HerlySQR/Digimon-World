@@ -54,7 +54,7 @@ OnInit("PressSaveOrLoad", function ()
             self.gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
             self.lumber = GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)
             self.food = GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED)
-            self.date = GetSyncedData(p, os.date, "*t")
+            _, self.date = pcall(GetSyncedData, p, os.date, "*t")
             self.vistedPlaces = GetVisitedPlaces(p)
             self.vistedPlaceCount = #self.vistedPlaces
             self.materials = MaterialData.create(p)
@@ -171,7 +171,12 @@ OnInit("PressSaveOrLoad", function ()
     function LoadPlayerData(p, slot)
         local fileRoot = SaveFile.getPath2(p, slot, udg_PLAYER_DATA_ROOT)
         local data = PlayerData.create(slot)
-        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
+
+        if not loaded then
+            print(GetPlayerName(p) .. " can't load its data.")
+            return false
+        end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
@@ -219,13 +224,16 @@ OnInit("PressSaveOrLoad", function ()
                 RemoveItem(GetEnumItem())
             end
         end)
+        if QuestDatas[p][slot] then
+            SetQuests(p, QuestDatas[p][slot])
+        end
         if PlayerDatas[p][slot] then
             local data = PlayerDatas[p][slot]
             SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, data.gold)
             SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, data.lumber)
             SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, data.food)
-            ApplyVisitedPlaces(p, data.vistedPlaces)
             data.unlockedInfo:apply()
+            ApplyVisitedPlaces(p, data.vistedPlaces)
             data.materials:apply(p)
             SetUnstableDataParts(p, data.unstableDataParts)
         end
@@ -234,9 +242,6 @@ OnInit("PressSaveOrLoad", function ()
         end
         if BackpackDatas[p][slot] then
             SetBackpack(p, BackpackDatas[p][slot])
-        end
-        if QuestDatas[p][slot] then
-            SetQuests(p, QuestDatas[p][slot])
         end
         if p == GetLocalPlayer() then
             RestartMusic()
@@ -254,7 +259,6 @@ OnInit("PressSaveOrLoad", function ()
     local LocalPlayer = GetLocalPlayer()
 
     local Pressed = __jarray(0) ---@type table<player, integer>
-    local SeeSaveLoad = nil ---@type framehandle
     local SaveButton = nil ---@type framehandle
     local BackdropSaveButton = nil ---@type framehandle
     local LoadButton = nil ---@type framehandle
@@ -386,7 +390,7 @@ OnInit("PressSaveOrLoad", function ()
                     end
                     BlzFrameSetText(TooltipDigimonItemsT[index], GetLocalizedString("SL_ITEMS") .. s)
                     BlzFrameSetTexture(TooltipDigimonIconT[index], BlzGetAbilityIcon(dData.saved[i].typeId), 0, true)
-                    BlzFrameSetText(TooltipDigimonLevelT[index],  GetLocalizedString("SL_LEVEL"):format(math.floor(dData.stocked[i].level)))
+                    BlzFrameSetText(TooltipDigimonLevelT[index],  GetLocalizedString("SL_LEVEL"):format(math.floor(dData.saved[i].level)))
                     BlzFrameSetText(TooltipDigimonStamina[index], GetLocalizedString("SL_STA") .. dData.saved[i].lvlSta .. " (+" .. dData.saved[i].IVsta .. ")")
                     BlzFrameSetText(TooltipDigimonDexterity[index], GetLocalizedString("SL_DEX") .. dData.saved[i].lvlDex .. " (+" .. dData.saved[i].IVdex .. ")")
                     BlzFrameSetText(TooltipDigimonWisdom[index], GetLocalizedString("SL_WIS") .. dData.saved[i].lvlWis .. " (+" .. dData.saved[i].IVwis .. ")")
@@ -501,18 +505,6 @@ OnInit("PressSaveOrLoad", function ()
         end
     end)
 
-    Timed.echo(0.5, function ()
-        local show = true
-        local list = GetUsedDigimons(LocalPlayer)
-        for _, d in pairs(list) do
-            if d.onCombat then
-                show = false
-                break
-            end
-        end
-        BlzFrameSetVisible(SeeSaveLoad, show)
-    end)
-
     local function SaveLoadActions(p, slot)
         local oldSlot = Pressed[p] - 1
         Pressed[p] = slot + 1
@@ -584,13 +576,8 @@ OnInit("PressSaveOrLoad", function ()
         BlzLoadTOCFile("ButtonsTOC.toc")
         BlzLoadTOCFile("war3mapImported\\slider.toc")
 
-        SeeSaveLoad = BlzCreateFrameByType("BACKDROP", "BackdropSaveButton", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
-        BlzFrameSetAbsPoint(SeeSaveLoad, FRAMEPOINT_TOPLEFT, 0, 0)
-        BlzFrameSetAbsPoint(SeeSaveLoad, FRAMEPOINT_BOTTOMRIGHT, 0, 0)
-        BlzFrameSetTexture(SeeSaveLoad, "war3mapImported\\EmptyBTN.blp", 0, true)
-
         -- Save Button
-        SaveButton = BlzCreateFrame("IconButtonTemplate", SeeSaveLoad, 0, 0)
+        SaveButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(SaveButton, 9)
         BlzFrameSetVisible(SaveButton, false)
         AddFrameToMenu(SaveButton)
@@ -604,7 +591,7 @@ OnInit("PressSaveOrLoad", function ()
 
         -- Load Button
 
-        LoadButton = BlzCreateFrame("IconButtonTemplate", SeeSaveLoad, 0, 0)
+        LoadButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(LoadButton, 10)
         BlzFrameSetVisible(LoadButton, false)
         AddFrameToMenu(LoadButton)
@@ -618,7 +605,7 @@ OnInit("PressSaveOrLoad", function ()
 
         -- Menu
 
-        SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", SeeSaveLoad,0,0)
+        SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.27, 0.535000)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.280000)
         BlzFrameSetVisible(SaveLoadMenu, false)
@@ -865,6 +852,9 @@ OnInit("PressSaveOrLoad", function ()
     function ShowSave(p, flag)
         if p == LocalPlayer then
             BlzFrameSetVisible(SaveButton, flag)
+            if not flag then
+                BlzFrameSetEnable(SaveLoadMenu, false)
+            end
         end
     end
 
@@ -873,6 +863,9 @@ OnInit("PressSaveOrLoad", function ()
     function ShowLoad(p, flag)
         if p == LocalPlayer then
             BlzFrameSetVisible(LoadButton, flag)
+            if not flag then
+                BlzFrameSetEnable(SaveLoadMenu, false)
+            end
         end
     end
 

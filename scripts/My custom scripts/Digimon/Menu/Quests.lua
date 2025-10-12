@@ -214,9 +214,8 @@ OnInit("Quests", function ()
                 AddButtonToEscStack(QuestButton)
             end
             BlzFrameSetVisible(QuestMenu, not BlzFrameIsVisible(QuestMenu))
+            PressedQuest = -1
             BlzFrameSetVisible(QuestInformation, false)
-            BlzFrameSetEnable(QuestButton, false)
-            BlzFrameSetEnable(QuestButton, true)
             UpdateMenu()
         end
     end
@@ -829,7 +828,12 @@ OnInit("Quests", function ()
     function LoadQuests(p, slot)
         local fileRoot = SaveFile.getPath2(p, slot, udg_QUEST_ROOT)
         local data = QuestData.create(slot)
-        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
+
+        if not loaded then
+            print(GetPlayerName(p) .. " can't load its data.")
+            return
+        end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)

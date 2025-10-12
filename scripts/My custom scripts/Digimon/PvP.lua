@@ -13,7 +13,9 @@ OnInit("PvP", function ()
             if target then -- The target can be something that is no unit
                 local source = GetOrderedUnit()
                 if inPeace[GetOwningPlayer(source)][GetOwningPlayer(target)] then
+                    DisableTrigger(t)
                     IssueTargetOrderById(source, Orders.smart, target)
+                    EnableTrigger(t)
                 end
             end
         end

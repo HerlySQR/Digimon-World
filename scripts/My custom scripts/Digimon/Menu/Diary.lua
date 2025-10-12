@@ -6,6 +6,7 @@ OnInit("Diary", function ()
     Require "Serializable"
     Require "FoodBonus"
     Require "BitSet"
+    Require "SyncedTable"
 
     local LocalPlayer = GetLocalPlayer()
 
@@ -223,11 +224,11 @@ OnInit("Diary", function ()
     local onSeeMapClosed = EventListener.create()
 
     for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
-        unlockedDigiInfos[Player(i)] = {}
+        unlockedDigiInfos[Player(i)] = SyncedTable.create()
         kills[Player(i)] = __jarray(0)
         deaths[Player(i)] = __jarray(0)
         vistedPlaces[Player(i)] = {}
-        unlockedItems[Player(i)] = {}
+        unlockedItems[Player(i)] = SyncedTable.create()
     end
 
     Timed.echo(0.02, function ()
@@ -628,6 +629,7 @@ OnInit("Diary", function ()
     end
 
     function UnlockedInfoData:apply()
+        ClearDiary(self.p)
         for i = 1, self.amount do
             unlockedDigiInfos[self.p][self.ids[i]] = self.infos[i]
             if self.p == LocalPlayer then
@@ -2154,6 +2156,7 @@ OnInit("Diary", function ()
                 vistedPlaces[p][i] = canBeVisted[i]
                 BlzFrameSetVisible(canBeVisted[i], true)
             else
+                vistedPlaces[p][i] = nil
                 BlzFrameSetVisible(canBeVisted[i], false)
             end
         end
@@ -2182,7 +2185,12 @@ OnInit("Diary", function ()
         local fileRoot = SaveFile.getPath2(p, slot, udg_DIARY_ROOT)
         local data = UnlockedInfoData.create(slot)
         data.p = p
-        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
+
+        if not loaded then
+            print(GetPlayerName(p) .. " can't load its data.")
+            return
+        end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
@@ -2196,10 +2204,23 @@ OnInit("Diary", function ()
     end
 
     function ClearDiary(p)
-        unlockedDigiInfos[p] = {}
+        if p == LocalPlayer then
+            for id, _ in pairs(unlockedDigiInfos[p]) do
+                BlzFrameSetTexture(digiInfos[id].backdrop, "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetEnable(digiInfos[id].button, false)
+                BlzFrameSetVisible(digiInfos[id].sprite, false)
+            end
+            for id, _ in pairs(unlockedItems[p]) do
+                BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetEnable(ItemTypes[id], false)
+                BlzFrameSetVisible(ItemsSprite[id], false)
+            end
+        end
+        unlockedDigiInfos[p] = SyncedTable.create()
         kills[p] = __jarray(0)
         deaths[p] = __jarray(0)
-        unlockedItems[p] = {}
+        unlockedItems[p] = SyncedTable.create()
+        ApplyVisitedPlaces(p, {})
 
         if p == LocalPlayer then
             digimonSelected = -1

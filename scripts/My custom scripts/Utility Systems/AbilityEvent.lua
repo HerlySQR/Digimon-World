@@ -1,5 +1,5 @@
 if Debug then Debug.beginFile("AbilityEvent") end
-OnInit.main("AbilityEvent", function ()
+OnInit("AbilityEvent", function ()
     Require "EventListener"
     Require "SyncedTable"
 

@@ -1,10 +1,12 @@
 if Debug then Debug.beginFile("GetSyncedData") end
 OnInit("GetSyncedData", function ()
     Require "Obj2Str" -- https://www.hiveworkshop.com/pastebin/65b5fc46fc82087ba24609b14f2dc4ff.25120
+    Require "Timed"
 
     local PREFIX = "GetSyncedData__SYNC"
     local END_PREFIX = "GetSyncedData__END_SYNC"
     local BLOCK_LENGHT = 246
+    local MAX_WAIT = 5 -- in seconds
 
     local LocalPlayer = GetLocalPlayer()
     local callbacks = {} ---@type (fun(noSync: boolean?): thread)[]
@@ -35,13 +37,15 @@ OnInit("GetSyncedData", function ()
     ---value is an array (table) with the results in the order you set them.
     ---
     ---The sync takes time, so the function yields the thread until the data is synced.
+    ---If you call this function from a non in-game player, it raises an error.
+    ---If the sync takes too much (or is aborted because the player left), it will return nil
     ---@async
     ---@overload fun(p: player, func: table): table
     ---@generic T
     ---@param p player
     ---@param func fun(...): T
     ---@vararg any
-    ---@return T
+    ---@return T | nil
     function GetSyncedData(p, func, ...)
         if not (GetPlayerController(p) == MAP_CONTROL_USER and GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) then
             error("The player " .. GetPlayerName(p) .. " is not an in-game player.", 2)
@@ -77,8 +81,28 @@ OnInit("GetSyncedData", function ()
             actThread = callbacks[1]()
         end
 
+        local cancel = Timed.call(MAX_WAIT, function ()
+            if coroutine.status(t) == "suspended" then
+                coroutine.resume(t, false, nil)
+                if areWaiting[t] then
+                    for _, thr in ipairs(areWaiting[t]) do
+                        coroutine.resume(thr)
+                    end
+                    areWaiting[t] = nil
+                end
+                for i = 1, #callbacks do
+                    if callbacks[i](true) == t then
+                        table.remove(callbacks, i)
+                        break
+                    end
+                end
+            end
+        end)
+
         areSyncs = true
         local success, value = coroutine.yield() ---@type boolean, T | table
+
+        cancel(false)
 
         if not success then
             error("Error during the conversion", 2)

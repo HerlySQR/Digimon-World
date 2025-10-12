@@ -2212,7 +2212,7 @@ OnInit("DigimonBank", function ()
         return oldReviveHeroLoc(whichHero, loc, doEyecandy)
     end)
 
-    Digimon.killEvent:register(function (info)
+    Digimon.deathEvent:register(function (info)
         local dead = info.target ---@type Digimon
         local p = dead:getOwner()
         if not Digimon.isNeutral(p) then
@@ -2693,7 +2693,12 @@ OnInit("DigimonBank", function ()
     function LoadDigimons(p, slot)
         local fileRoot = SaveFile.getPath2(p, slot, udg_DIGIMON_BANK_ROOT)
         local data = BankData.create(slot)
-        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
+
+        if not loaded then
+            print(GetPlayerName(p) .. " can't load its data.")
+            return
+        end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)

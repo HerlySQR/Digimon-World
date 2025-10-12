@@ -489,8 +489,15 @@ OnInit("Cosmetic", function ()
     function LoadUnlockedCosmetics(p)
         local list = __jarray(false)
         local path = SaveFile.getPath2(p, "UnlockedCosmetics")
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, path)
+
+        if not loaded then
+            print(GetPlayerName(p) .. " can't load its data.")
+            return
+        end
+
         local savecode = Savecode.create()
-        if savecode:Load(p, GetSyncedData(p, FileIO.Read, path), 1) then
+        if savecode:Load(p, code, 1) then
             local amount = savecode:Decode(udg_MAX_COSMETICS) -- Load the amount of cosmetics
             for _ = 1, amount do
                 local unlocked = savecode:Decode(udg_MAX_COSMETICS) -- Load the id of the cosmetics

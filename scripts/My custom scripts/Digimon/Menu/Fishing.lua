@@ -514,7 +514,7 @@ OnInit(function ()
                                     if DistanceBetweenCoordsSq(actX, actY, GetUnitX(u), GetUnitY(u)) < 2500 then
                                         local whatFish = getRandomFish(u)
                                         if whatFish then
-                                            CreateItem(whatFish, GetUnitX(u), GetUnitY(u))
+                                            SetItemPlayer(CreateItem(whatFish, GetUnitX(u), GetUnitY(u)), p, true)
                                         end
                                         abortFish(u)
                                     end

@@ -524,21 +524,21 @@ OnInit("Backpack", function ()
         BlzFrameSetVisible(BackpackSprite, false)
 
         BackpackMenu = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.21000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.23500)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.01000)
         BlzFrameSetVisible(BackpackMenu, false)
         AddFrameToMenu(BackpackMenu)
 
         BackpackText = BlzCreateFrameByType("TEXT", "name", BackpackMenu, "", 0)
         BlzFrameSetPoint(BackpackText, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.015000)
-        BlzFrameSetPoint(BackpackText, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.16000)
+        BlzFrameSetPoint(BackpackText, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.18500)
         BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
         BlzFrameSetEnable(BackpackText, false)
         BlzFrameSetTextAlignment(BackpackText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         BackpackDiscard = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
         BlzFrameSetScale(BackpackDiscard, 0.858)
-        BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.095000, -0.16000)
+        BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.095000, -0.18500)
         BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.015000)
         BlzFrameSetText(BackpackDiscard, GetLocalizedString("BACKPACK_DISCARD"))
         OnClickEvent(BackpackDiscard, BackpackDiscardFunc)
@@ -546,7 +546,7 @@ OnInit("Backpack", function ()
 
         BackpackDrop = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
         BlzFrameSetScale(BackpackDrop, 0.858)
-        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.16000)
+        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.18500)
         BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.095000, 0.015000)
         BlzFrameSetText(BackpackDrop, GetLocalizedString("BACKPACK_DROP"))
         OnClickEvent(BackpackDrop, BackpackDropFunc)
@@ -561,7 +561,7 @@ OnInit("Backpack", function ()
         local stepSize = 0.025
 
         local startY = 0
-        for row = 1, 5 do
+        for row = 1, 6 do
             local startX = 0
             for colum = 1, 5 do
                 local index = 5 * (row - 1) + colum
@@ -574,7 +574,7 @@ OnInit("Backpack", function ()
             startY = startY - stepSize
         end
 
-        local indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 34, 35, 36, 37, 38, 39, 40, 41}
+        local indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44, 45, 46, 47}
         for i = 1, MAX_ITEMS do
             BackpackItemT[i] = BlzCreateFrame("IconButtonTemplate", BackpackItems, 0, 0)
             BlzFrameSetPoint(BackpackItemT[i], FRAMEPOINT_TOPLEFT, BackpackItems, FRAMEPOINT_TOPLEFT, x[i], y[i])
@@ -627,7 +627,7 @@ OnInit("Backpack", function ()
 
     OnChangeDimensions(function ()
         BlzFrameClearAllPoints(BackpackMenu)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.21000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.23500)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.01000)
     end)
 
@@ -943,7 +943,12 @@ OnInit("Backpack", function ()
     function LoadBackpack(p, slot)
         local fileRoot = SaveFile.getPath2(p, slot, udg_BACKPACK_ROOT)
         local data = BackpackData.create(slot)
-        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
+
+        if not loaded then
+            print(GetPlayerName(p) .. " can't load its data.")
+            return nil
+        end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)

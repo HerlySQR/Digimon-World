@@ -6,6 +6,9 @@ OnInit(function ()
     local localStrings = {} ---@type table<string, string>
 
     GlobalRemap("udg_TrgStrValue", nil, function (str)
+        if localStrings[udg_TrgStrKey] then
+            print("Warning: Key " .. udg_TrgStrKey .. " is already used for localization.")
+        end
         localStrings[udg_TrgStrKey] = str
     end)
 
