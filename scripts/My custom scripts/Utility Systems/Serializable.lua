@@ -108,24 +108,36 @@ OnInit("Serializable", function ()
     ---@param name string
     ---@return integer
     function Serializable:getIntProperty(name)
+        if math.type(self.map[name]) ~= "integer" then
+            return 0
+        end
         return self.map[name] or 0
     end
 
     ---@param name string
     ---@return number
     function Serializable:getRealProperty(name)
+        if type(self.map[name]) ~= "number" then
+            return 0.
+        end
         return self.map[name] or 0.
     end
 
     ---@param name string
     ---@return string
     function Serializable:getStringProperty(name)
+        if type(self.map[name]) ~= "string" then
+            return ""
+        end
         return self.map[name] or ""
     end
 
     ---@param name string
     ---@return boolean
     function Serializable:getBoolProperty(name)
+        if math.type(self.map[name]) ~= "integer" or self.map[name] > 1 then
+            return false
+        end
         return self.map[name] == 1
     end
 

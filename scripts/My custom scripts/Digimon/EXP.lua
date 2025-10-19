@@ -13,7 +13,7 @@ OnInit(function ()
     end
 
     local function ConvertEXP(lvl)
-        return round(1.08*lvl+(7-(lvl))/(5/4)+6)
+        return round(1.07*lvl+(7-(lvl))/(5/4)+6)
     end
 
     local LocalPlayer = GetLocalPlayer()

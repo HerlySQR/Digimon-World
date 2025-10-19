@@ -143,7 +143,7 @@ OnInit("Digimon", function ()
         if main then
             self.typeId = main:getTypeId()
             self.exp = main:getExp()
-            self.level = main:getLevel()
+            self.level = GetLevelFromXP(self.exp)
             self.IVsta = main.IVsta
             self.IVdex = main.IVdex
             self.IVwis = main.IVwis
@@ -161,34 +161,60 @@ OnInit("Digimon", function ()
     end
 
     function DigimonData:serializeProperties()
-        self:addProperty("typeId", self.typeId)
+        self:addProperty("typeId", BlzFourCC2S(self.typeId))
         self:addProperty("exp", self.exp)
-        self:addProperty("level", self.level)
-        self:addProperty("IVsta", self.IVsta)
-        self:addProperty("IVdex", self.IVdex)
-        self:addProperty("IVwis", self.IVwis)
+        --self:addProperty("level", self.level)
+        --self:addProperty("IVsta", self.IVsta)
+        --self:addProperty("IVdex", self.IVdex)
+        --self:addProperty("IVwis", self.IVwis)
+        self:addProperty("IV", self.IVsta * 2500 + self.IVdex * 50 + self.IVwis)
         for i = 0, 5 do
-            self:addProperty("invSlot" .. i, self["invSlot" .. i])
+            if self["invSlot" .. i] ~= 0 then
+                self:addProperty("invSlot" .. i, BlzFourCC2S(self["invSlot" .. i]))
+            end
         end
-        self:addProperty("lvlSta", self.lvlSta)
-        self:addProperty("lvlDex", self.lvlDex)
-        self:addProperty("lvlWis", self.lvlWis)
+        --self:addProperty("lvlSta", self.lvlSta)
+        --self:addProperty("lvlDex", self.lvlDex)
+        --self:addProperty("lvlWis", self.lvlWis)
+        self:addProperty("lvlTrain", self.lvlSta * 10000 + self.lvlDex * 100 + self.lvlWis)
         self:addProperty("cosmetics", Obj2Str(self.cosmetics))
     end
 
     function DigimonData:deserializeProperties()
-        self.typeId = self:getIntProperty("typeId")
-        self.exp = self:getIntProperty("exp")
-        self.level = self:getIntProperty("level")
-        self.IVsta = self:getIntProperty("IVsta")
-        self.IVdex = self:getIntProperty("IVdex")
-        self.IVwis = self:getIntProperty("IVwis")
-        for i = 0, 5 do
-            self["invSlot" .. i] = self:getIntProperty("invSlot" .. i)
+        if self:getStringProperty("typeId") ~= "" then
+            self.typeId = FourCC(self:getStringProperty("typeId"))
+        else -- Backwards compatibility
+            self.typeId = self:getIntProperty("typeId")
         end
-        self.lvlSta = self:getIntProperty("lvlSta")
-        self.lvlDex = self:getIntProperty("lvlDex")
-        self.lvlWis = self:getIntProperty("lvlWis")
+        self.exp = self:getIntProperty("exp")
+        self.level = GetLevelFromXP(self.exp)
+        if self:getIntProperty("IV") ~= 0 then
+            local iv = self:getIntProperty("IV")
+            self.IVsta = math.floor(iv / 2500)
+            self.IVdex = math.floor(ModuloInteger(iv, 2500) / 50)
+            self.IVwis = ModuloInteger(iv, 50)
+        else -- Backwards compatibility
+            self.IVsta = self:getIntProperty("IVsta")
+            self.IVdex = self:getIntProperty("IVdex")
+            self.IVwis = self:getIntProperty("IVwis")
+        end
+        for i = 0, 5 do
+            if self:getStringProperty("invSlot" .. i) ~= "" then
+                self["invSlot" .. i] = FourCC(self:getStringProperty("invSlot" .. i))
+            else -- Backwards compatibility
+                self["invSlot" .. i] = self:getIntProperty("invSlot" .. i)
+            end
+        end
+        if self:getIntProperty("lvlTrain") ~= 0 then
+            local lvlTrain = self:getIntProperty("lvlTrain")
+            self.lvlSta = math.floor(lvlTrain / 10000)
+            self.lvlDex = math.floor(ModuloInteger(lvlTrain, 10000) / 100)
+            self.lvlWis = ModuloInteger(lvlTrain, 100)
+        else -- Backwards compatibility
+            self.lvlSta = self:getIntProperty("lvlSta")
+            self.lvlDex = self:getIntProperty("lvlDex")
+            self.lvlWis = self:getIntProperty("lvlWis")
+        end
         self.cosmetics = Str2Obj(self:getStringProperty("cosmetics"))
     end
 

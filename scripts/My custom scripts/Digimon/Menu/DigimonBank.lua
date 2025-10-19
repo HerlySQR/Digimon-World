@@ -12,18 +12,17 @@ OnInit("DigimonBank", function ()
     Require "Threat System"
 
     local MAX_STOCK = udg_MAX_DIGIMONS
-    local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
     local MAX_SAVED_2 = udg_MAX_SAVED_DIGIMONS_2
     local MAX_USED = udg_MAX_USED_DIGIMONS
     local MIN_SAVED_ITEMS = udg_MIN_SAVED_ITEMS
     local MAX_SAVED_ITEMS = udg_MAX_SAVED_ITEMS
-    local NEW_ITEM_SLOT_COST_BITS = 1500
-    local NEW_ITEM_SLOT_COST_CRYSTALS = 2
-    local NEW_DIGIMON_SLOT_COST_RARE_DATA = 5
-    local NEW_DIGIMON_SLOT_COST_BITS = {1500, 2000, 2750, 3500}
-    local NEW_DIGIMON_SLOT_COST_CRYSTALS = {3, 4, 6, 10}
+    local NEW_ITEM_SLOT_COST_BITS = udg_NEW_ITEM_SLOT_COST_BITS
+    local NEW_ITEM_SLOT_COST_CRYSTALS = udg_NEW_ITEM_SLOT_COST_CRYSTALS
+    local NEW_DIGIMON_SLOT_COST_RARE_DATA = udg_NEW_SLOT_COST_RARE_DATA
+    local NEW_DIGIMON_SLOT_COST_BITS = {udg_NEW_DIGIMON_SLOT_COST_BITS_1, udg_NEW_DIGIMON_SLOT_COST_BITS_2, udg_NEW_DIGIMON_SLOT_COST_BITS_3, udg_NEW_DIGIMON_SLOT_COST_BITS_4}
+    local NEW_DIGIMON_SLOT_COST_CRYSTALS = {udg_NEW_SLOT_COST_CRYSTALS_1, udg_NEW_SLOT_COST_CRYSTALS_2, udg_NEW_SLOT_COST_CRYSTALS_3, udg_NEW_SLOT_COST_CRYSTALS_4}
     local REVIVE_ITEM = udg_REVIVE_ITEM
-    local REVIVE_COOLDOWN = 90.
+    local REVIVE_COOLDOWN = udg_REVIVE_COOLDOWN
 
     local OriginFrame = BlzGetFrameByName("ConsoleUIBackdrop", 0)
 
@@ -669,7 +668,7 @@ OnInit("DigimonBank", function ()
                     BlzFrameSetText(SaveItemTooltipText[i], GetItemName(m) .. ((charges > 1) and ("(" .. charges .. ")") or "") .. "\n" .. BlzGetItemDescription(m))
                     BlzFrameSetSize(SaveItemTooltipText[i], 0.15, 0)
                 else
-                    BlzFrameSetTexture(BackdropSavedItemT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                    BlzFrameSetTexture(BackdropSavedItemT[i], udg_BANK_EMPTY_BUTTON, 0, true)
                     BlzFrameSetEnable(SavedItemT[i], false)
 
                     BlzFrameSetText(SaveItemTooltipText[i], "Empty")
@@ -677,7 +676,7 @@ OnInit("DigimonBank", function ()
                 end
                 BlzFrameSetVisible(SaveItemLocked[i], false)
             else
-                BlzFrameSetTexture(BackdropSavedItemT[i], "ReplaceableTextures\\CommandButtons\\BTNLock.blp", 0, true)
+                BlzFrameSetTexture(BackdropSavedItemT[i], udg_BANK_LOCKED_BUTTON, 0, true)
                 if i == bank.savedItemsStock + 1 then
                     BlzFrameSetEnable(SavedItemT[i], true)
                     BlzFrameSetVisible(SaveItemLocked[i], false)
@@ -799,7 +798,7 @@ OnInit("DigimonBank", function ()
             else
                 -- Button
                 BlzFrameSetEnable(UsingDigimonT[i], not BlzFrameIsVisible(UsingTSelected[i]))
-                BlzFrameSetTexture(BackdropUsingDigimonT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetTexture(BackdropUsingDigimonT[i], udg_BANK_EMPTY_BUTTON, 0, true)
 
                 -- Tooltip
                 BlzFrameSetText(UsingTooltipText[i], "Empty slot")
@@ -836,14 +835,14 @@ OnInit("DigimonBank", function ()
                 else
                     -- Button
                     BlzFrameSetEnable(SavedDigimonT[i], false)
-                    BlzFrameSetTexture(BackdropSavedDigimonT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                    BlzFrameSetTexture(BackdropSavedDigimonT[i], udg_BANK_EMPTY_BUTTON, 0, true)
 
                     BlzFrameSetText(SavedTooltipText[i], "Empty slot")
                     BlzFrameSetSize(SavedTooltipText[i], 0, 0.01)
                 end
                 BlzFrameSetEnable(SavedDigimonT[i], not BlzFrameIsVisible(SavedTSelected[i]))
             else
-                BlzFrameSetTexture(BackdropSavedDigimonT[i], "ReplaceableTextures\\CommandButtons\\BTNLock.blp", 0, true)
+                BlzFrameSetTexture(BackdropSavedDigimonT[i], udg_BANK_LOCKED_BUTTON, 0, true)
                 if i == bank.savedDigimonsStock then
                     BlzFrameSetEnable(SavedDigimonT[i], true)
                     BlzFrameSetVisible(SavedDigimonLocked[i], false)
@@ -938,7 +937,7 @@ OnInit("DigimonBank", function ()
             else
                 -- Button
                 BlzFrameSetEnable(DigimonT[i], false)
-                BlzFrameSetTexture(BackdropDigimonT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetTexture(BackdropDigimonT[i], udg_BANK_EMPTY_BUTTON, 0, true)
                 -- Tooltip
                 BlzFrameSetText(DigimonTTooltipText[i], "Empty slot")
                 BlzFrameSetSize(DigimonTTooltipText[i], 0, 0.01)
@@ -1487,13 +1486,13 @@ OnInit("DigimonBank", function ()
 
         SummonADigimon = BlzCreateFrame("IconButtonTemplate", OriginFrame,0,0)
         AddButtonToTheRight(SummonADigimon, 0)
-        SetFrameHotkey(SummonADigimon, "D")
+        SetFrameHotkey(SummonADigimon, udg_BANK_HOTKEY)
         AddDefaultTooltip(SummonADigimon, "Your digimons", "Look your stored digimons.")
         AssignFrame(SummonADigimon, 20)
 
         BackdropSummonADigimon = BlzCreateFrameByType("BACKDROP", "BackdropSummonADigimon", SummonADigimon, "", 0)
         BlzFrameSetAllPoints(BackdropSummonADigimon, SummonADigimon)
-        BlzFrameSetTexture(BackdropSummonADigimon, "ReplaceableTextures\\CommandButtons\\BTNDigi.blp", 0, true)
+        BlzFrameSetTexture(BackdropSummonADigimon, udg_BANK_BUTTON, 0, true)
 
         OnClickEvent(SummonADigimon, SummonADigimonFunc)
         BlzFrameSetVisible(SummonADigimon, false)
@@ -1514,7 +1513,7 @@ OnInit("DigimonBank", function ()
             BlzFrameSetPoint(DigimonT[i], FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, x2[i], y2[i])
             BackdropDigimonT[i] = BlzCreateFrameByType("BACKDROP", "BackdropDigimonT[" .. i .. "]", DigimonT[i], "", 1)
             BlzFrameSetAllPoints(BackdropDigimonT[i], DigimonT[i])
-            BlzFrameSetTexture(BackdropDigimonT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(BackdropDigimonT[i], udg_BANK_EMPTY_BUTTON, 0, true)
             BlzFrameSetLevel(BackdropDigimonT[i], 1)
             OnClickEvent(DigimonT[i], function (p) PressedActions(p, i) end) -- :D
             AssignFrame(DigimonT[i], indexes[i])
@@ -1638,7 +1637,7 @@ OnInit("DigimonBank", function ()
         ReviveItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", StockedDigimonsMenu, "", 1)
         BlzFrameSetPoint(ReviveItems, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.13000, -0.23250)
         BlzFrameSetPoint(ReviveItems, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, 0.030000, 0.0075000)
-        BlzFrameSetTexture(ReviveItems, "ReplaceableTextures\\CommandButtons\\BTNHealButton.blp", 0, true)
+        BlzFrameSetTexture(ReviveItems, udg_BANK_REVIVE_BUTTON, 0, true)
         BlzFrameSetVisible(ReviveItems, false)
 
         ReviveItemsChargesBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", ReviveItems, "", 1)
@@ -1653,18 +1652,6 @@ OnInit("DigimonBank", function ()
         BlzFrameSetTextAlignment(ReviveItemsCharges, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_RIGHT)
 
         -- Saved
-
-        --[[SaveItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
-        AddButtonToTheRight(SaveItem, 6)
-        SetFrameHotkey(SaveItem, "C")
-        AddDefaultTooltip(SaveItem, "Save item", "Saves the selected item in the bank (you have to go to the bank to see it).")
-        AddFrameToMenu(SaveItem)
-        BlzFrameSetVisible(SaveItem, false)
-
-        BackdropSaveItem = BlzCreateFrameByType("BACKDROP", "BackdropSaveItem", SaveItem, "", 0)
-        BlzFrameSetAllPoints(BackdropSaveItem, SaveItem)
-        BlzFrameSetTexture(BackdropSaveItem, "ReplaceableTextures\\CommandButtons\\BTNStore.blp", 0, true)
-        OnClickEvent(SaveItem, function (p) UseCaster(p, "Z") end)]]
 
         SavedDigimons = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
         BlzFrameSetAbsPoint(SavedDigimons, FRAMEPOINT_TOPLEFT, 0.0450000, 0.510000)
@@ -1698,7 +1685,7 @@ OnInit("DigimonBank", function ()
 
             BackdropUsingDigimonT[i] = BlzCreateFrameByType("BACKDROP", "BackdropUsingDigimonT[" .. i .. "]", UsingDigimonT[i], "", 0)
             BlzFrameSetAllPoints(BackdropUsingDigimonT[i], UsingDigimonT[i])
-            BlzFrameSetTexture(BackdropUsingDigimonT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(BackdropUsingDigimonT[i], udg_BANK_EMPTY_BUTTON, 0, true)
 
             OnClickEvent(UsingDigimonT[i], function (p) PressedUsing(p, i) end)
 
@@ -1764,7 +1751,7 @@ OnInit("DigimonBank", function ()
 
             BackdropSavedDigimonT[i] = BlzCreateFrameByType("BACKDROP", "BackdropSavedDigimonT[" .. i .. "]", SavedDigimonT[i], "", 0)
             BlzFrameSetAllPoints(BackdropSavedDigimonT[i], SavedDigimonT[i])
-            BlzFrameSetTexture(BackdropSavedDigimonT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(BackdropSavedDigimonT[i], udg_BANK_EMPTY_BUTTON, 0, true)
 
             OnClickEvent(SavedDigimonT[i], function (p) PressedSaved(p, i) end)
 
@@ -1855,7 +1842,7 @@ OnInit("DigimonBank", function ()
 
             BackdropSavedItemT[i] = BlzCreateFrameByType("BACKDROP", "BackdropSavedItemT[" .. i .. "]", SavedItemT[i], "", 0)
             BlzFrameSetAllPoints(BackdropSavedItemT[i], SavedItemT[i])
-            BlzFrameSetTexture(BackdropSavedItemT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(BackdropSavedItemT[i], udg_BANK_EMPTY_BUTTON, 0, true)
             OnClickEvent(SavedItemT[i], function (p) SavedItemTFunc(p, i) end)
 
             SaveItemLocked[i] = BlzCreateFrameByType("BACKDROP", "SaveItemLocked[" .. i .."]", SavedItemT[i], "", 1)
@@ -1911,18 +1898,6 @@ OnInit("DigimonBank", function ()
         BlzFrameSetPoint(BuySlotNo, FRAMEPOINT_BOTTOMRIGHT, BuySlotMenu, FRAMEPOINT_BOTTOMRIGHT, -0.025000, 0.0025000)
         BlzFrameSetText(BuySlotNo, "|cffFCD20DNo|r")
         OnClickEvent(BuySlotNo, BuySlotNoFunc)
-
-        --[[SellItem = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
-        AddButtonToTheRight(SellItem, 4)
-        SetFrameHotkey(SellItem, "F")
-        AddDefaultTooltip(SellItem, "Sell item", "Sells the selected item of yours.")
-        AddFrameToMenu(SellItem)
-        BlzFrameSetVisible(SellItem, false)
-
-        BackdropSellItem = BlzCreateFrameByType("BACKDROP", "BackdropSellItem", SellItem, "", 0)
-        BlzFrameSetAllPoints(BackdropSellItem, SellItem)
-        BlzFrameSetTexture(BackdropSellItem, "ReplaceableTextures\\CommandButtons\\BTNSell.blp", 0, true)
-        OnClickEvent(SellItem, function (p) UseCaster(p, "A") end)]]
     end
 
     FrameLoaderAdd(InitFrames)

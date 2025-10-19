@@ -4,8 +4,8 @@ OnInit(function ()
     Require "Hotkeys"
     Require "Digimon"
 
-    local MAX_MATERIAL_AMOUNT = 99
-    local MAX_MATERIALS = 30
+    local MAX_MATERIAL_AMOUNT = udg_MAX_MATERIAL_AMOUNT
+    local MAX_MATERIALS = udg_MAX_MATERIALS
 
     ---@class MaterialTemplate
     ---@field source integer
@@ -137,14 +137,14 @@ OnInit(function ()
     FrameLoaderAdd(function()
         MaterialsButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(MaterialsButton, 6)
-        SetFrameHotkey(MaterialsButton, "Y")
+        SetFrameHotkey(MaterialsButton, udg_MATERIALS_HOTKEY)
         AddDefaultTooltip(MaterialsButton, "Material bag", "Look how many materials you have stored.")
         AddFrameToMenu(MaterialsButton)
         BlzFrameSetVisible(MaterialsButton, false)
 
         BackdropMaterialsButton = BlzCreateFrameByType("BACKDROP", "BackdropMaterialsButton", MaterialsButton, "", 0)
         BlzFrameSetAllPoints(BackdropMaterialsButton, MaterialsButton)
-        BlzFrameSetTexture(BackdropMaterialsButton, "ReplaceableTextures\\CommandButtons\\BTNBagMaterials.blp", 0, true)
+        BlzFrameSetTexture(BackdropMaterialsButton, udg_MATERIALS_BUTTON, 0, true)
         OnClickEvent(MaterialsButton, MaterialsButtonFunc)
 
         MaterialsBackdrop = BlzCreateFrame("EscMenuBackdrop", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)

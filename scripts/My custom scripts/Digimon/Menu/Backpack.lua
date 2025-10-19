@@ -107,7 +107,7 @@ OnInit("Backpack", function ()
     function BackpackData:serializeProperties()
         self:addProperty("amount", self.amount)
         for i = 1, self.amount do
-            self:addProperty("id" .. i, self.id[i])
+            self:addProperty("id" .. i, BlzFourCC2S(self.id[i]))
             self:addProperty("charges" .. i, self.charges[i])
             self:addProperty("slot" .. i, self.slot[i])
         end
@@ -122,7 +122,11 @@ OnInit("Backpack", function ()
         end
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
-            self.id[i] = self:getIntProperty("id" .. i)
+            if self:getStringProperty("id" .. i) ~= "" then
+                self.id[i] = FourCC(self:getStringProperty("id" .. i))
+            else -- Backwards compatibility
+                self.id[i] = self:getIntProperty("id" .. i)
+            end
             self.charges[i] = self:getIntProperty("charges" .. i)
             self.slot[i] = self:getIntProperty("slot" .. i)
         end
@@ -507,12 +511,12 @@ OnInit("Backpack", function ()
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
         AssignFrame(Backpack, 0) -- 0
-        SetFrameHotkey(Backpack, "B")
+        SetFrameHotkey(Backpack, udg_BACKPACK_HOTKEY)
         AddDefaultTooltip(Backpack, GetLocalizedString("BACKPACK"), GetLocalizedString("BACKPACK_TOOLTIP"))
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
         BlzFrameSetAllPoints(BackdropBackpack, Backpack)
-        BlzFrameSetTexture(BackdropBackpack, "ReplaceableTextures\\CommandButtons\\BTNBag.blp", 0, true)
+        BlzFrameSetTexture(BackdropBackpack, udg_BACKPACK_BUTTON, 0, true)
         OnClickEvent(Backpack, BackpackFunc)
 
         BackpackSprite =  BlzCreateFrameByType("SPRITE", "BackpackSprite", Backpack, "", 0)
@@ -981,24 +985,5 @@ OnInit("Backpack", function ()
             UpdateMenu()
         end
     end
---[[
-    do
-        local tr = CreateTrigger()
-        TriggerRegisterPlayerChatEvent(tr, Player(0), "b ", false)
-        TriggerAddAction(tr, function ()
-            local amount = tonumber(GetEventPlayerChatString():sub(3))
-            local p = GetTriggerPlayer()
-            SetBackpackItemCharges(p, Backpacks[p].items[1].id, amount)
-        end)
-    end
-    do
-        local tr = CreateTrigger()
-        TriggerRegisterPlayerChatEvent(tr, Player(0), "p", false)
-        TriggerAddAction(tr, function ()
-            local p = GetTriggerPlayer()
-            print(GetBackpackItemCharges(p, Backpacks[p].items[1].id))
-        end)
-    end
-]]
 end)
 Debug.endFile()

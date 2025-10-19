@@ -591,7 +591,7 @@ OnInit("Diary", function ()
     function UnlockedInfoData:serializeProperties()
         self:addProperty("amount", self.amount)
         for i = 1, self.amount do
-            self:addProperty("id" .. i, self.ids[i])
+            self:addProperty("id" .. i, BlzFourCC2S(self.ids[i]))
             self:addProperty("info"..i, self.infos[i]:serialize())
             if self.killCount[i] > 0 then
                 self:addProperty("kc" .. i, self.killCount[i])
@@ -602,7 +602,7 @@ OnInit("Diary", function ()
         end
         self:addProperty("iU", self.itemsUnlocked)
         for i = 1, self.itemsUnlocked do
-            self:addProperty("itms" .. i, self.items[i])
+            self:addProperty("itms" .. i, BlzFourCC2S(self.items[i]))
         end
         self:addProperty("slot", self.slot)
         self:addProperty("id", self.id)
@@ -615,7 +615,11 @@ OnInit("Diary", function ()
         end
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
-            self.ids[i] = self:getIntProperty("id" .. i)
+            if self:getStringProperty("id" .. i) ~= "" then
+                self.ids[i] = FourCC(self:getStringProperty("id" .. i))
+            else -- Backwards compatibility
+                self.ids[i] = self:getIntProperty("id" .. i)
+            end
             self.infos[i] = DigimonUnlockedInfo.create()
             self.infos[i]:deserialize(self:getStringProperty("info"..i))
             self.killCount[i] = self:getIntProperty("kc" .. i)
@@ -623,7 +627,11 @@ OnInit("Diary", function ()
         end
         self.itemsUnlocked = self:getIntProperty("iU")
         for i = 1, self.itemsUnlocked do
-            self.items[i] = self:getIntProperty("itms" .. i)
+            if self:getStringProperty("itms" .. i) ~= "" then
+                self.items[i] = FourCC(self:getStringProperty("itms" .. i))
+            else -- Backwards compatibility
+                self.items[i] = self:getIntProperty("itms" .. i)
+            end
         end
         self.id = self:getStringProperty("id")
     end
@@ -902,7 +910,7 @@ OnInit("Diary", function ()
 
             local backdrop = BlzCreateFrameByType("BACKDROP", "DigimonType[" .. id .. "]", button, "", 0)
             BlzFrameSetAllPoints(backdrop, button)
-            BlzFrameSetTexture(backdrop, "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(backdrop, udg_DIARY_LOCKED_BUTTON, 0, true)
 
             digiInfos[id] = {
                 whereToBeFound = whereToBeFound,
@@ -1069,7 +1077,7 @@ OnInit("Diary", function ()
 
                 BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
                 BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
-                BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
 
                 OnClickEvent(ItemTypes[id], function (p)
                     unlockedItems[p][id] = true
@@ -1122,7 +1130,7 @@ OnInit("Diary", function ()
 
                 BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
                 BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
-                BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
 
                 OnClickEvent(ItemTypes[id], function (p)
                     if p == LocalPlayer then
@@ -1164,7 +1172,7 @@ OnInit("Diary", function ()
 
             BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
             BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
-            BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
 
             OnClickEvent(ItemTypes[id], function (p)
                 unlockedItems[p][id] = true
@@ -1205,7 +1213,7 @@ OnInit("Diary", function ()
 
             BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
             BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
-            BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
 
             OnClickEvent(ItemTypes[id], function (p)
                 unlockedItems[p][id] = true
@@ -1378,13 +1386,13 @@ OnInit("Diary", function ()
         Diary = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(Diary, 7)
         AddFrameToMenu(Diary)
-        SetFrameHotkey(Diary, "V")
+        SetFrameHotkey(Diary, udg_DIARY_HOTKEY)
         AddDefaultTooltip(Diary, GetLocalizedString("DIARY"), GetLocalizedString("DIARY_TOOLTIP"))
         BlzFrameSetVisible(Diary, false)
 
         BackdropDiary = BlzCreateFrameByType("BACKDROP", "BackdropSeeMap", Diary, "", 0)
         BlzFrameSetAllPoints(BackdropDiary, Diary)
-        BlzFrameSetTexture(BackdropDiary, "ReplaceableTextures\\CommandButtons\\BTNDigiWikiIcon.blp", 0, true)
+        BlzFrameSetTexture(BackdropDiary, udg_DIARY_BUTTON, 0, true)
         OnClickEvent(Diary, DiaryFunc)
 
         Sprite = BlzCreateFrameByType("SPRITE", "Sprite", Diary, "", 0)
@@ -1940,7 +1948,7 @@ OnInit("Diary", function ()
 
         for i = 1, udg_MAX_USED_DIGIMONS do
             DigimonIcons[i] = BlzCreateFrameByType("BACKDROP", "DigimonIcons[" .. i .. "]", MapBackdrop, "", 1)
-            BlzFrameSetTexture(DigimonIcons[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(DigimonIcons[i], udg_DIARY_LOCKED_BUTTON, 0, true)
             BlzFrameSetLevel(DigimonIcons[i], 10)
             BlzFrameSetVisible(DigimonIcons[i], false)
             BlzFrameSetSize(DigimonIcons[i], 0.02, 0.02)
@@ -2206,12 +2214,12 @@ OnInit("Diary", function ()
     function ClearDiary(p)
         if p == LocalPlayer then
             for id, _ in pairs(unlockedDigiInfos[p]) do
-                BlzFrameSetTexture(digiInfos[id].backdrop, "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetTexture(digiInfos[id].backdrop, udg_DIARY_LOCKED_BUTTON, 0, true)
                 BlzFrameSetEnable(digiInfos[id].button, false)
                 BlzFrameSetVisible(digiInfos[id].sprite, false)
             end
             for id, _ in pairs(unlockedItems[p]) do
-                BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
                 BlzFrameSetEnable(ItemTypes[id], false)
                 BlzFrameSetVisible(ItemsSprite[id], false)
             end

@@ -44,6 +44,8 @@ OnInit("Quests", function ()
     local Origin = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local LocalPlayer = GetLocalPlayer()
     local PressedQuest = -1
+    local questMaxProgress = 1
+    local questLevel = 1
 
     ---@class QuestTemplate
     ---@field name string
@@ -228,7 +230,7 @@ OnInit("Quests", function ()
         OnClickEvent(QuestButton, ShowMenu)
         BlzFrameSetVisible(QuestButton, false)
         AddFrameToMenu(QuestButton)
-        SetFrameHotkey(QuestButton, "L")
+        SetFrameHotkey(QuestButton, udg_QUEST_HOTKEY)
         AddDefaultTooltip(QuestButton, GetLocalizedString("QUEST_LOG"), GetLocalizedString("QUEST_LOG_TOOLTIP"))
 
         BackdropQuestButton = BlzCreateFrameByType("BACKDROP", "BackdropQuestButton", QuestButton, "", 0)
@@ -535,62 +537,6 @@ OnInit("Quests", function ()
         return QuestTemplates[id].maxProgress
     end
 
-    --[[---@overload fun(p: player)
-    ---@param p player
-    ---@param ids integer[]
-    ---@param progresses integer[]
-    ---@param isCompleted boolean[]
-    function SetQuestsData(p, ids, progresses, isCompleted)
-        local have = __jarray(false)
-        if ids then
-            for i = 1, #ids do
-                local id = ids[i]
-                if QuestTemplates[id] then
-                    PlayerQuests[p][id] = {
-                        name = QuestTemplates[id].name,
-                        description = QuestTemplates[id].description,
-                        owner = p,
-                        id = id,
-                        level = QuestTemplates[id].level,
-                        completed = isCompleted[i],
-                        progress = progresses[i]
-                    }
-                    if p == LocalPlayer then
-                        if not QuestTemplates[id].isRequirement then
-                            if isCompleted[i] then
-                                QuestList:remove(QuestOptionT[id])
-                            else
-                                BlzFrameSetEnable(QuestOptionT[id], true)
-                                BlzFrameSetVisible(QuestOptionT[id], true)
-                                QuestList:add(QuestOptionT[id])
-                            end
-                        end
-                        if QuestTemplates[id].questMark then
-                            BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
-                        end
-                        UpdateMenu()
-                        BlzFrameSetVisible(QuestButton, true)
-                    end
-                    have[id] = true
-                end
-            end
-        else
-            if p == LocalPlayer then
-                while QuestList:remove() do end
-            end
-        end
-        for i = 0, MAX_QUESTS do
-            if not have[i] and QuestTemplates[i] then
-                PlayerQuests[p][i] = nil
-                if p == LocalPlayer then
-                    if QuestTemplates[i].questMark then
-                        BlzSetSpecialEffectAlpha(QuestTemplates[i].questMark, 255)
-                    end
-                end
-            end
-        end
-    end]]
-
     ---@param id integer
     ---@return string
     function GetQuestName(id)
@@ -805,6 +751,22 @@ OnInit("Quests", function ()
             udg_QuestPetitioner = savedFields[6]
         end
     end)
+    GlobalRemap("udg_QuestMaxProgress", function ()
+        if not QuestTemplates[udg_QuestId] then
+            return questMaxProgress
+        end
+        return QuestTemplates[udg_QuestId].maxProgress
+    end, function (value)
+        questMaxProgress = value
+    end)
+    GlobalRemap("udg_QuestLevel", function ()
+        if not QuestTemplates[udg_QuestId] then
+            return questLevel
+        end
+        return QuestTemplates[udg_QuestId].level
+    end, function (value)
+        questLevel = value
+    end)
 
     ---@param p player
     ---@param slot integer
@@ -920,7 +882,7 @@ OnInit("Quests", function ()
 
     udg_QuestPrizeSend = CreateTrigger()
     TriggerAddAction(udg_QuestPrizeSend, function ()
-        local p = GetOwningPlayer(udg_QuestPrizeReceiver)
+        local p = udg_QuestPlayer
         local message = ""
         if udg_QuestPrizeBits > 0 then
             AdjustPlayerStateBJ(udg_QuestPrizeBits, p, PLAYER_STATE_RESOURCE_GOLD)

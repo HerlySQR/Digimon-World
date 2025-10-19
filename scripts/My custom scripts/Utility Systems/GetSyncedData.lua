@@ -6,7 +6,6 @@ OnInit("GetSyncedData", function ()
     local PREFIX = "GetSyncedData__SYNC"
     local END_PREFIX = "GetSyncedData__END_SYNC"
     local BLOCK_LENGHT = 246
-    local MAX_WAIT = 5 -- in seconds
 
     local LocalPlayer = GetLocalPlayer()
     local callbacks = {} ---@type (fun(noSync: boolean?): thread)[]
@@ -38,7 +37,7 @@ OnInit("GetSyncedData", function ()
     ---
     ---The sync takes time, so the function yields the thread until the data is synced.
     ---If you call this function from a non in-game player, it raises an error.
-    ---If the sync takes too much (or is aborted because the player left), it will return nil
+    ---If the player left before the sync happened, it will return nil
     ---@async
     ---@overload fun(p: player, func: table): table
     ---@generic T
@@ -81,8 +80,8 @@ OnInit("GetSyncedData", function ()
             actThread = callbacks[1]()
         end
 
-        local cancel = Timed.call(MAX_WAIT, function ()
-            if coroutine.status(t) == "suspended" then
+        local cancel = Timed.echo(1., function ()
+            if not (GetPlayerController(p) == MAP_CONTROL_USER and GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) then
                 coroutine.resume(t, false, nil)
                 if areWaiting[t] then
                     for _, thr in ipairs(areWaiting[t]) do
@@ -96,13 +95,17 @@ OnInit("GetSyncedData", function ()
                         break
                     end
                 end
+                if #callbacks == 0 then
+                    areSyncs = false
+                end
+                return true
             end
         end)
 
         areSyncs = true
         local success, value = coroutine.yield() ---@type boolean, T | table
 
-        cancel(false)
+        cancel()
 
         if not success then
             error("Error during the conversion", 2)

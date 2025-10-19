@@ -8,21 +8,21 @@ OnInit("Stats", function ()
     Require "GetMainSelectedUnit"
     Require "Hotkeys"
 
-    local WATER_ICON = "war3mapImported\\ATTAqua.blp"
-    local MACHINE_ICON = "war3mapImported\\ATTOre.blp"
-    local BEAST_ICON = "war3mapImported\\ATTBeastN.blp"
-    local FIRE_ICON = "war3mapImported\\ATTFlame2.blp"
-    local NATURE_ICON = "war3mapImported\\ATTNatureN.blp"
-    local AIR_ICON = "war3mapImported\\ATTAirN.blp"
-    local DARK_ICON = "war3mapImported\\ATTDark.blp"
-    local HOLY_ICON = "war3mapImported\\ATTLight.blp"
-    local HERO_ICON = "war3mapImported\\ATTSystemMed.blp"
+    local WATER_ICON = udg_WATER_ICON
+    local MACHINE_ICON = udg_MACHINE_ICON
+    local BEAST_ICON = udg_BEAST_ICON
+    local FIRE_ICON = udg_FIRE_ICON
+    local NATURE_ICON = udg_NATURE_ICON
+    local AIR_ICON = udg_AIR_ICON
+    local DARK_ICON = udg_DARK_ICON
+    local HOLY_ICON = udg_HOLY_ICON
+    local HERO_ICON = udg_HERO_ICON
 
-    local SHIELD_ICON = "ReplaceableTextures\\CommandButtons\\PASShieldBag.blp"
-    local WEAPON_ICON = "ReplaceableTextures\\CommandButtons\\PASSwordBag.blp"
-    local ACCESORY_ICON = "ReplaceableTextures\\CommandButtons\\PASAcessBag.blp"
-    local DIGIVICE_ICON = "ReplaceableTextures\\CommandButtons\\PASDiviceBag.blp"
-    local CREST_ICON = "ReplaceableTextures\\CommandButtons\\PASCrestBag.blp"
+    local SHIELD_ICON = udg_SHIELD_ICON
+    local WEAPON_ICON = udg_WEAPON_ICON
+    local ACCESORY_ICON = udg_ACCESORY_ICON
+    local DIGIVICE_ICON = udg_DIGIVICE_ICON
+    local CREST_ICON = udg_CREST_ICON
 
     local icons = {
         [0] = SHIELD_ICON,
@@ -130,56 +130,22 @@ OnInit("Stats", function ()
         reqExps[i] = exps[i] - exps[i-1]
     end
 
+    ---@param xp integer
+    ---@return integer
+    function GetLevelFromXP(xp)
+        for i = 1, 99 do
+            if xp < exps[i] then
+                return i
+            end
+        end
+        return 99
+    end
+
     local allVisible = false
     local changeVisible = false
-    --local seeOnly = {} ---@type table<player, unit>
     local dropItemI = __jarray(0) ---@type table<player, integer>
     local dropItemJ = __jarray(0) ---@type table<player, integer>
     local buffIcons = __jarray("") ---@type table<integer, string>
-
-    --[[local show = FourCC('A0GR')
-
-    -- Add the see stats ability to the new digimon
-    Digimon.createEvent:register(function (new)
-        if new:getOwner() ~= Digimon.CITY and new:getOwner() ~= Digimon.PASSIVE then
-            new:addAbility(show)
-        end
-    end)
-
-    Digimon.evolutionEvent:register(function (d)
-        d:addAbility(show)
-    end)
-
-    -- Remove the see stats ability to destroyed digimon
-    Digimon.destroyEvent:register(function (old)
-        old:removeAbility(show)
-    end)
-
-    do
-        local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_CAST)
-        TriggerAddCondition(t, Condition(function () return GetSpellAbilityId() == show end))
-        TriggerAddAction(t, function ()
-            local u = GetSpellAbilityUnit()
-            local p = GetOwningPlayer(u)
-            if seeOnly[p] then
-                if seeOnly[p] == u then
-                    seeOnly[p] = nil
-                    if p == LocalPlayer then
-                        changeVisible = true
-                    end
-                else
-                    seeOnly[p] = u
-                end
-            else
-                seeOnly[p] = u
-                if p == LocalPlayer then
-                    changeVisible = true
-                end
-            end
-            IssueImmediateOrderById(u, Orders.unimmolation)
-        end)
-    end]]
 
     local function StatsButtonFunc(p)
         if not GetUsedDigimons(p)[1] then
@@ -189,21 +155,20 @@ OnInit("Stats", function ()
             allVisible = not allVisible
             changeVisible = true
         end
-        --seeOnly[p] = nil
     end
 
     Timed.echo(0.08, function ()
         local list = GetUsedDigimons(LocalPlayer)
         for i = 0, 2 do
-            if allVisible --[[or seeOnly[LocalPlayer] ]]then
+            if allVisible then
                 if changeVisible and not BlzFrameIsVisible(StatsBackdrop[i]) then
                     BlzFrameSetVisible(StatsBackdrop[i], true)
                 end
 
-                if not list[i+1] --[[or (seeOnly[LocalPlayer] and i ~= 0)]] then
+                if not list[i+1] then
                     BlzFrameSetVisible(StatsBackdrop[i], false)
                 else
-                    local d = --[[seeOnly[LocalPlayer] == nil and]] list[i+1]--[[ or Digimon.getInstance(seeOnly[LocalPlayer])]]
+                    local d = list[i+1]
                     if not d then
                         break
                     end
@@ -372,7 +337,7 @@ OnInit("Stats", function ()
                     end
                 end
             else
-                if (changeVisible --[[or (i == 0 and not seeOnly[LocalPlayer])]]) and BlzFrameIsVisible(StatsBackdrop[i]) then
+                if (changeVisible) and BlzFrameIsVisible(StatsBackdrop[i]) then
                     BlzFrameSetVisible(StatsBackdrop[i], false)
                 end
             end
@@ -382,16 +347,6 @@ OnInit("Stats", function ()
             changeVisible = false
             BlzFrameSetVisible(StatsItemDrop, false)
         end
-
-        --[[local u = GetMainSelectedUnitEx()
-        if u and Digimon.getInstance(u) and GetOwningPlayer(u) == LocalPlayer then
-            local pos = GetDigimonPosition(LocalPlayer, Digimon.getInstance(u))
-            BlzFrameSetVisible(FocusedUnit, BlzFrameIsVisible(HeroButtons[pos-1]))
-            BlzFrameClearAllPoints(FocusedUnit)
-            BlzFrameSetPoint(FocusedUnit, FRAMEPOINT_BOTTOMLEFT, HeroButtons[pos-1], FRAMEPOINT_BOTTOMLEFT, -0.005, -0.005)
-        else
-            BlzFrameSetVisible(FocusedUnit, false)
-        end]]
 
         for i = 0, 2 do
             local d = list[i+1]
@@ -584,12 +539,12 @@ OnInit("Stats", function ()
         AddButtonToTheRight(StatsButton, 1)
         BlzFrameSetVisible(StatsButton, false)
         AddFrameToMenu(StatsButton)
-        SetFrameHotkey(StatsButton, "U")
+        SetFrameHotkey(StatsButton, udg_STATS_HOTKEY)
         AddDefaultTooltip(StatsButton, GetLocalizedString("STATS"), GetLocalizedString("STATS_TOOLTIP"))
 
         BackdropStatsButton = BlzCreateFrameByType("BACKDROP", "BackdropStatsButton", StatsButton, "", 0)
         BlzFrameSetAllPoints(BackdropStatsButton, StatsButton)
-        BlzFrameSetTexture(BackdropStatsButton, "ReplaceableTextures\\CommandButtons\\BTNCharacteristic.blp", 0, true)
+        BlzFrameSetTexture(BackdropStatsButton, udg_STATS_BUTTON, 0, true)
         OnClickEvent(StatsButton, StatsButtonFunc)
 
         for i = 0, 2 do

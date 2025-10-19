@@ -158,7 +158,7 @@ OnInit(function ()
             end
 
             SetItemPlayer(CreateItem(resultItm, x, y), p, true)
-            DestroyEffect(AddSpecialEffect("war3mapImported\\Ubershield Jade.mdx", x, y))
+            DestroyEffect(AddSpecialEffect(udg_RECIPE_EFFECT, x, y))
         end)
     end
 

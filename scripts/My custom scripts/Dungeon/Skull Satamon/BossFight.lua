@@ -262,6 +262,7 @@ OnInit(function ()
 
     local function onThunderclap(caster)
         BossIsCasting(caster, true)
+        PauseUnit(caster, true)
 
         local bar = ProgressBar.create()
         bar:setColor(PLAYER_COLOR_AQUA)
@@ -280,6 +281,7 @@ OnInit(function ()
         end, function ()
             bar:destroy()
             BossIsCasting(caster, false)
+            PauseUnit(caster, false)
             DummyCast(GetOwningPlayer(caster), GetUnitX(caster), GetUnitY(caster), T_SPELL, Orders.thunderclap, metamorphosis and 2 or 1, CastType.IMMEDIATE)
         end)
     end

@@ -286,12 +286,12 @@ OnInit("Cosmetic", function ()
         AddButtonToTheRight(CosmeticOpen, 2)
         BlzFrameSetVisible(CosmeticOpen, false)
         AddFrameToMenu(CosmeticOpen)
-        SetFrameHotkey(CosmeticOpen, "N")
+        SetFrameHotkey(CosmeticOpen, udg_COSMETIC_HOTKEY)
         AddDefaultTooltip(CosmeticOpen, GetLocalizedString("COSMETICS"), GetLocalizedString("COSMETICS_TOOLTIP"))
 
         BackdropCosmeticOpen = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticOpen", CosmeticOpen, "", 0)
         BlzFrameSetAllPoints(BackdropCosmeticOpen, CosmeticOpen)
-        BlzFrameSetTexture(BackdropCosmeticOpen, "ReplaceableTextures\\CommandButtons\\BTNAura.blp", 0, true)
+        BlzFrameSetTexture(BackdropCosmeticOpen, udg_COSMETIC_BUTTON, 0, true)
         OnClickEvent(CosmeticOpen, CosmeticOpenFunc)
 
         CosmeticMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
@@ -433,7 +433,7 @@ OnInit("Cosmetic", function ()
 
                 local lockFrame = BlzCreateFrameByType("BACKDROP", "BackdropLockCosmeticEffect[" .. id .. "]", lockButton, "", 0)
                 BlzFrameSetAllPoints(lockFrame, button)
-                BlzFrameSetTexture(lockFrame, "ReplaceableTextures\\CommandButtons\\BTNLock.blp", 0, true)
+                BlzFrameSetTexture(lockFrame, udg_COSMETIC_LOCKED_BUTTON, 0, true)
 
                 local tooltip = BlzCreateFrame("QuestButtonBaseTemplate", lockButton, 0, 0)
 
@@ -519,66 +519,6 @@ OnInit("Cosmetic", function ()
             end
         end
     end
-
-    --[[---@param p player
-    ---@param slot integer
-    ---@return table<integer, integer[]>
-    function SaveUsedCosmetics(p, slot)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\UsingSlot_" .. slot .. ".pld"
-        local savecode = Savecode.create()
-        local digis = GetAllDigimons(p)
-        local result = {}
-
-        for i, d in ipairs(digis) do
-            local amount = 0
-            result[i] = __jarray(0)
-            for _, c in pairs(d.cosmetics) do
-                savecode:Encode(c.id, udg_MAX_COSMETICS) -- Save the id of cosmetic of the digimon
-                amount = amount + 1
-                result[i][amount] = c.id
-            end
-            savecode:Encode(amount, udg_MAX_COSMETICS) -- Save the amount of effects has the digimon
-            savecode:Encode(i, udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Save the place the digimon is in the list
-        end
-        savecode:Encode(#digis, udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Save the amount of digimons
-
-        local s = savecode:Save(p, 1)
-
-        if p == LocalPlayer then
-            FileIO.Write(path, s)
-        end
-
-        savecode:destroy()
-
-        return result
-    end
-
-    ---@param p player
-    ---@param slot integer
-    ---@return table<integer, integer[]>
-    function LoadUsedCosmetics(p, slot)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\UsingSlot_" .. slot .. ".pld"
-        local result = {}
-        local savecode = Savecode.create()
-        if savecode:Load(p, GetSyncedData(p, FileIO.Read, path), 1) then
-            local length = savecode:Decode(udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Load the amount of digimons
-
-            for _ = 1, length do
-                local place = savecode:Decode(udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Load the place the digimon is in the list
-                local amount = savecode:Decode(udg_MAX_COSMETICS) -- Load the amount of effects has the digimon
-
-                result[place] = __jarray(0)
-
-                for j = amount, 1, -1 do
-                    result[place][j] = savecode:Decode(udg_MAX_COSMETICS) -- Load the id of cosmetic of the digimon
-                end
-            end
-        end
-
-        savecode:destroy()
-
-        return result
-    end]]--
 
     ---@param p player
     ---@param id integer
