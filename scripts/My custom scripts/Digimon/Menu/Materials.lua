@@ -138,7 +138,7 @@ OnInit(function ()
         MaterialsButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(MaterialsButton, 6)
         SetFrameHotkey(MaterialsButton, udg_MATERIALS_HOTKEY)
-        AddDefaultTooltip(MaterialsButton, "Material bag", "Look how many materials you have stored.")
+        AddDefaultTooltip(MaterialsButton, GetLocalizedString("MATERIALS"), GetLocalizedString("MATERIALS_TOOLTIP"))
         AddFrameToMenu(MaterialsButton)
         BlzFrameSetVisible(MaterialsButton, false)
 
@@ -157,7 +157,7 @@ OnInit(function ()
         BlzFrameSetScale(MaterialsLabel, 1.29)
         BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_TOPLEFT, MaterialsBackdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.010000)
         BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_BOTTOMRIGHT, MaterialsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.16000)
-        BlzFrameSetText(MaterialsLabel, "|cffFFCC00Your materials:|r")
+        BlzFrameSetText(MaterialsLabel, GetLocalizedString("MATERIALS_LABEL"))
         BlzFrameSetTextAlignment(MaterialsLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         for i = 0, 4 do
@@ -327,7 +327,7 @@ OnInit(function ()
             local p = GetOwningPlayer(u)
             if GetMaterialAmount(p, itm) >= MAX_MATERIAL_AMOUNT then
                 IssueTargetOrderById(u, Orders.attack, u)
-                ErrorMessage("You can't carry more of this material.", p)
+                ErrorMessage(GetLocalizedString("MATERIALS_CANT_CARRY_MORE"), p)
             end
         end)
 
@@ -353,11 +353,11 @@ OnInit(function ()
 
             local tt = CreateTextTag()
             SetTextTagPos(tt, x, y, 128.)
-            SetTextTagText(tt, "Restore in: " .. math.floor(delay), 0.023)
+            SetTextTagText(tt, GetLocalizedString("MATERIALS_RESTORE"):format(math.floor(delay)), 0.023)
             SetTextTagVisibility(tt, IsVisibleToPlayer(x, y, LocalPlayer))
             Timed.echo(0.02, udg_MATERIAL_REFILL_DELAY, function ()
                 delay = delay - 0.02
-                SetTextTagText(tt, "Restore in: " .. math.floor(delay), 0.023)
+                SetTextTagText(tt, GetLocalizedString("MATERIALS_RESTORE"):format(math.floor(delay)), 0.023)
                 SetTextTagVisibility(tt, IsVisibleToPlayer(x, y, LocalPlayer))
             end, function ()
                 DestroyTextTag(tt)

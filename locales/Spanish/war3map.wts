@@ -2139,7 +2139,7 @@ Digimon Campeón
 }
 
 STRING 358
-// Abilities: A075 (Freeze), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A075 (Congelar), Ubertip (Tooltip - Normal - Extended)
 {
 Reduce la velocidad de ataque y la velocidad de movimiento de la unidad enemiga objetivo en un 50%. |nDura 5 segundos.|n|cffffff00Genera una gran cantidad de amenaza.|r
 }
@@ -7937,7 +7937,7 @@ STRING 1325
 }
 
 STRING 1326
-// Abilities: A0JP (Meteor), EditorSuffix (Editor Suffix)
+// Abilities: A0JP (Meteoro), EditorSuffix (Editor Suffix)
 {
 (Acient Speedy Zone)
 }
@@ -10133,7 +10133,7 @@ Huracán
 }
 
 STRING 1692
-// Abilities: A01M (Water Blitz), Hotkey (Hotkey - Normal)
+// Abilities: A01M (Bombardeo acuático), Hotkey (Hotkey - Normal)
 {
 E
 }
@@ -10289,15 +10289,15 @@ Envenena al objetivo.
 }
 
 STRING 1718
-// Abilities: A01L (Dummy Freeze), Name (Name)
+// Abilities: A01L (Dummy Congelar), Name (Name)
 {
-Dummy Freeze
+Dummy Congelar
 }
 
 STRING 1719
-// Abilities: A01U (Dummy Poison), Name (Name)
+// Abilities: A01U (Dummy Veneno), Name (Name)
 {
-Dummy Poison
+Dummy Veneno
 }
 
 STRING 1720
@@ -10403,33 +10403,33 @@ Hace retroceder a las unidades enemigas cercanas.
 }
 
 STRING 1737
-// Abilities: A01M (Water Blitz), Name (Name)
+// Abilities: A01M (Bombardeo acuático), Name (Name)
 {
-Water Blitz
+Bombardeo acuático
 }
 
 STRING 1738
-// Abilities: A01M (Water Blitz), Tip (Tooltip - Normal)
+// Abilities: A01M (Bombardeo acuático), Tip (Tooltip - Normal)
 {
-Water Blitz
+Bombardeo acuático
 }
 
 STRING 1739
-// Abilities: A01M (Water Blitz), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A01M (Bombardeo acuático), Ubertip (Tooltip - Normal - Extended)
 {
-Crears a water ball that explodes in contact
+Crea una bola de agua que explota al contacto.
 }
 
 STRING 1740
-// Abilities: A0JP (Meteor), Name (Name)
+// Abilities: A0JP (Meteoro), Name (Name)
 {
-Meteor
+Meteoro
 }
 
 STRING 1741
-// Abilities: A021 (Dummy Sleep), Name (Name)
+// Abilities: A021 (Dummy Dormir), Name (Name)
 {
-Dummy Sleep
+Dummy Dormir
 }
 
 STRING 1742
@@ -10439,21 +10439,21 @@ Base pasive ability
 }
 
 STRING 1743
-// Abilities: A028 (Frost), Name (Name)
+// Abilities: A028 (Helada), Name (Name)
 {
-Frost
+Helada
 }
 
 STRING 1744
-// Abilities: A028 (Frost), Tip (Tooltip - Normal)
+// Abilities: A028 (Helada), Tip (Tooltip - Normal)
 {
-Frost
+Helada
 }
 
 STRING 1745
-// Abilities: A028 (Frost), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A028 (Helada), Ubertip (Tooltip - Normal - Extended)
 {
-All the spells has the chance of freeze an enemy
+Todos los hechizos tienen la posibilidad de congelar a un enemigo.
 }
 
 STRING 1746
@@ -10998,7 +10998,7 @@ RockChessmon
 STRING 1837
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-The bank is a place where you can store items and digimons, let's go see it
+El banco es un lugar donde puedes guardar objetos y Digimon, vamos a verlo.
 }
 
 STRING 1838
@@ -11208,13 +11208,13 @@ Cherubimon E
 STRING 1872
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-In the arena you can show your strength, what do you think about a visit there?
+En la arena puedes demostrar tu fuerza, ¿qué te parece una visita allí?
 }
 
 STRING 1873
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-All the digimons have different elements, let's check what you are Good against at the Green Gym
+Todos los Digimon tienen diferentes elementos, veamos contra cuáles eres bueno en el Gimnasio Verde.
 }
 
 STRING 1874
@@ -11544,223 +11544,223 @@ PrinceMamemon
 STRING 1928
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Have you ever thought about fishing?
+¿Alguna vez has pensado en pescar?
 }
 
 STRING 1929
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Welcome to the File City!
+¡Bienvenidos a la Ciudad File!
 }
 
 STRING 1930
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-This is your starting point in the Digital World.
+Este es tu punto de partida en el Mundo Digital.
 }
 
 STRING 1931
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Big world to explore, isn't it?
+¡Qué mundo tan grande para explorar, ¿verdad?
 }
 
 STRING 1932
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-But you can keep track of all of it with the DigiWiki.
+Pero puedes llevar un registro de todo ello con DigiWiki.
 }
 
 STRING 1933
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-There you can see all the regions you visited in your world map.
+Allí podrás ver todas las regiones que has visitado en tu mapa mundial.
 }
 
 STRING 1934
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Also you can see all the digimons you captured/battled and items you colected/used.
+También podrás ver todos los Digimon los que has capturado/peleado y los objetos que has recogido/utilizado.
 }
 
 STRING 1935
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Please open the Digiwiki to check it out!
+Por favor, abre la Digiwiki para verlo!
 }
 
 STRING 1936
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Fine, I see you more interested in other things.
+Bien, veo que estás más interesado en otras cosas.
 }
 
 STRING 1937
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Very Good!
+¡Muy bien!
 }
 
 STRING 1938
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-We have many places to visit here in the File City!
+¡Tenemos muchos lugares para visitar aquí en Cuidad File!
 }
 
 STRING 1939
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Birdra Transporte, Green Gym, Grey's Arena, Centaur Clinic, Item shop and the Restaurant!
+¡Transporte Birdra, Gimnasio Verde, Arena Gris, Clínica Centauro, Tienda de ítems y Restaurante!
 }
 
 STRING 1940
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-By the way, there are a lot of digimons that could use your help.
+Por cierto, hay muchos digimon que podrían necesitar tu ayuda.
 }
 
 STRING 1941
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Let's start with Tentomon to see what he needs.
+Empecemos con Tentomon para ver qué necesita.
 }
 
 STRING 1942
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Hey! Where are you going?
+¡Oye! ¿Adónde vas?
 }
 
 STRING 1943
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Are you gonna take this seriously?
+¿Te lo vas a tomar en serio?
 }
 
 STRING 1944
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Fine... Let's do something else.
+De acuerdo... Hagamos otra cosa.
 }
 
 STRING 1945
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-This digimon gave you a task.
+Este digimon te dio una tarea.
 }
 
 STRING 1946
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-In the quest log you can check for more information.
+En el registro de misiones puedes consultar más información.
 }
 
 STRING 1947
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-As you heard, let's talk to other digimons.
+Como ya escuchaste, vamos a hablar con otros digimon.
 }
 
 STRING 1948
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Let's start with the ones around here.
+Comencemos con los de aquí.
 }
 
 STRING 1949
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Oh yeah! Some Digimon may require certain conditions to give you the task!
+¡Oh sí! ¡Algunos Digimon pueden requerir ciertas condiciones para darte la tarea!
 }
 
 STRING 1950
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Try finishing other digimons tasks or getting more levels, then talk to them again!
+¡Intenta completar otras tareas de Digimon o subir de nivel, y luego vuelve a hablar con ellos!
 }
 
 STRING 1951
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-And remember some digimons may require you to return to them to finish the quest.
+Y recuerda que algunos Digimon pueden requerir que regreses con ellos para completar la misión.
 }
 
 STRING 1952
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-It seems that you picked a consummable item.
+Parece que has elegido un ítem consumible.
 }
 
 STRING 1953
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-This type of item goes to your backpack.
+Este tipo de ítem va en tu mochila.
 }
 
 STRING 1954
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-To use that item open your backpack B hotkey and select the Digimon you want to use it.
+Para usar ese ítem, abre tu mochila con la tecla de acceso rápido B y selecciona el Digimon con el que quieras usarlo.
 }
 
 STRING 1955
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-The item you picked is a digimon gift.
+El ítem que has elegido es un regalo Digimon.
 }
 
 STRING 1956
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-The digimon gift is used to become friend with a wild rookie digimon
+El regalo Digimon se usa para hacerse amigo de un Digimon novato salvaje.
 }
 
 STRING 1957
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Is easier to become friend when they have lower Sanarth, but it's not 100%!
+Es más fácil hacerse amigo de ellos cuando tienen menos salud, ¡pero no es seguro al 100%!
 }
 
 STRING 1958
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Then you can look for them at the digimon menu.
+Es más fácil hacerse amigo de ellos cuando tienen menos salud, ¡pero no es seguro al 100%!
 }
 
 STRING 1959
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-This is a digimon gift.
+Este es un regalo Digimon.
 }
 
 STRING 1960
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-The digimon gift is used to become friend with a wild rookie digimon
+El regalo Digimon se usa para hacerse amigo de un Digimon novato salvaje.
 }
 
 STRING 1961
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Is easier to become friend when they have lower Sanarth, but it's not 100%!
+Es más fácil hacerse amigo de ellos cuando tienen menos salud, ¡pero no es seguro al 100%!
 }
 
 STRING 1962
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Then you can look for them at the digimon menu.
+Luego puedes buscarlos en el menú digimon.
 }
 
 STRING 1963
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-This is an equipment.
+Esto es un equipamiento.
 }
 
 STRING 1964
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-It increases your stats.
+Mejora tus estadísticas.
 }
 
 STRING 1965
@@ -11868,19 +11868,19 @@ Pharaohmon
 STRING 1982
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-But you are limited in how many you can use at a time
+Pero estás limitado en cuántos puedes usar a la vez.
 }
 
 STRING 1983
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-1 Weapon, 1 Shield, 2 Accessories, 1 Digivice and 1 Crest, that's the way you can use it!
+¡1 arma, 1 escudo, 2 accesorios, 1 Digivice y 1 emblema, así es como puedes usarlo!
 }
 
 STRING 1984
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-At the digimon menu you can see what your digimon is using
+En el menú de Digimon puedes ver qué está usando tu Digimon.
 }
 
 STRING 1985
@@ -11922,43 +11922,43 @@ Market
 STRING 1991
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-You can find many Merchant digimons selling many useful items!
+¡Podrás encontrar muchos Digimon comerciantes que venden muchos ítems útiles!
 }
 
 STRING 1992
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Of course you need digibits to buy it.
+Por supuesto, necesitas digbits para comprarlo.
 }
 
 STRING 1993
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-In the Item shop you can buy equipment, disks and other useful stuff.
+En la tienda de ítems puedes comprar equipamiento, discos y otras cosas útiles.
 }
 
 STRING 1994
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-All those items can be very useful sooner or later!
+¡Todos esos ítems pueden resultar muy útiles tarde o temprano!
 }
 
 STRING 1995
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-You can find many digimons selling services!
+¡Puedes encontrar muchos digimons que ofrecen servicios!
 }
 
 STRING 1996
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Sí, you need to pay for those services!
+¡Sí, tienes que pagar por dichos servicios!
 }
 
 STRING 1997
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-In the restaurant they sell you Comida or drinks that buffs you for 30 min.
+En el restaurante te venden comida o bebidas que te dan una mejora durante 30 minutos.
 }
 
 STRING 1998
@@ -11976,19 +11976,19 @@ F
 STRING 2000
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Very useful! But you can only have one drink and one Comida at a time.
+¡Muy útil! Pero solo puedes tomar una bebida y una comida a la vez.
 }
 
 STRING 2001
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Watch out!
+¡Cuidado!
 }
 
 STRING 2002
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-An wild digimon!
+¡Un Digimon salvaje!
 }
 
 STRING 2003
@@ -12000,259 +12000,259 @@ F
 STRING 2004
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-If you feel that you can beat him, go for it.
+Si crees que puedes vencerlo, ¡adelante!
 }
 
 STRING 2005
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-But you could just run away.
+Pero podrías simplemente huir.
 }
 
 STRING 2006
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Don't forget to be aware of your stats!
+¡No olvides estar al tanto de tus estadísticas!
 }
 
 STRING 2007
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-When you win a battle you will get digibits and experience if he has a similar level as yours
+Cuando ganes una batalla, obtendrás Digibits y experiencia si él tiene un nivel similar al tuyo.
 }
 
 STRING 2008
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-If the level difference is higher then 5 you won't get any experience
+Si la diferencia de nivel es superior a 5, no obtendrás ninguna experiencia.
 }
 
 STRING 2009
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Your digimon fainted.
+Tu Digimon se desmayó.
 }
 
 STRING 2010
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Don't worry, Centarumon will take care of him.
+No te preocupes, Centarumon lo cuidará.
 }
 
 STRING 2011
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-This is the Centaur's Clinic.
+Esta es la clínica del centauro.
 }
 
 STRING 2012
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-You can come here to recover and Sanar your fainted digimons.
+Puedes venir aquí para recuperar y sanar a tus Digimon debilitados.
 }
 
 STRING 2013
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-And in case all your digimons faint in combat, you will come back here.
+Y en caso de que todos tus digimon se debiliten en combate, regresarás aquí.
 }
 
 STRING 2014
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Hey look!
+¡Oye mira!
 }
 
 STRING 2015
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-This is one of the digimons that can Transporte you around the Digimon World.
+Este es uno de los Digimon que puede transportarte por el Mundo Digimon.
 }
 
 STRING 2016
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-You can Comprar ticket to many diferente places.
+Puedes comprar boletos para muchos lugares diferentes.
 }
 
 STRING 2017
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-But I don't recommend that yet, you are not ready.
+Pero aún no te lo recomiendo, no estás preparado.
 }
 
 STRING 2018
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-In this world you can find special resources.
+En este mundo puedes encontrar recursos especiales.
 }
 
 STRING 2019
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-These can be used to upgrade your equipment.
+Estos se pueden utilizar para mejorar tu equipamiento.
 }
 
 STRING 2020
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Once you get an equipment you can use it to improve it.
+Una vez que consigas un equipamiento, podrás usarlo para mejorarlo.
 }
 
 STRING 2021
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Ataque it to make it drop the materials.
+Atácalo para que suelte los materiales.
 }
 
 STRING 2022
-// Abilities: A075 (Freeze), Name (Name)
+// Abilities: A075 (Congelar), Name (Name)
 {
-Freeze
+Congelar
 }
 
 STRING 2023
 // Buffs/Effects: B001 (), Buffubertip (Tooltip - Extended)
 {
-This unit was frozen; it can not move.
+Esta unidad está congelada; no se puede mover.
 }
 
 STRING 2024
-// Abilities: A0D6 (Poison), Name (Name)
+// Abilities: A0D6 (Veneno), Name (Name)
 {
-Poison
+Veneno
 }
 
 STRING 2025
-// Abilities: A0D6 (Poison), Tip (Tooltip - Normal)
+// Abilities: A0D6 (Veneno), Tip (Tooltip - Normal)
 {
-Poison
+Veneno
 }
 
 STRING 2026
-// Buffs/Effects: B002 (Poison), Buffubertip (Tooltip - Extended)
+// Buffs/Effects: B002 (Veneno), Buffubertip (Tooltip - Extended)
 {
-This unit is poisoned, their move and attack speed are slowed.
+Esta unidad está envenenada, su velocidad de movimiento y ataque se ven reducidas.
 }
 
 STRING 2027
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Here is the bank, you can look at the items you stored in the server.
+Aquí está el banco, puedes ver los ítems que has guardado en el servidor.
 }
 
 STRING 2028
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-And can transfer or swap digimons to the server as you can only bring 8 with you.
+Y puedes transferir o intercambiar Digimon en el servidor, ya que solo puedes llevar 8 contigo.
 }
 
 STRING 2029
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-When you see an item you can either use it or send it here.
+Cuando veas un ítem, puedes usarlo o enviarlo aquí.
 }
 
 STRING 2030
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-To send the item here, there is a Store Button
+Para enviar el ítem aquí, hay un botón de Guardar Ítem.
 }
 
 STRING 2031
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-But if you want, you can just sell it to get digibits.
+Pero si quieres, puedes venderlo para conseguir digbits.
 }
 
 STRING 2032
-// Abilities: A0GO (Sleep), Name (Name)
+// Abilities: A0GO (Dormir), Name (Name)
 {
-Sleep
+Dormir
 }
 
 STRING 2033
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-To sell it just use the sell button and select the item
+Para venderlo, simplemente utilice el botón de vender y seleccione el ítem.
 }
 
 STRING 2034
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-So you decided to enter the Grey Arena.
+Así que decidiste entrar en la Arena Gris.
 }
 
 STRING 2035
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Here you can fight with the strongest digimons, if you pay of course.
+Aquí podrás luchar contra los digimon más fuertes, si pagas, claro.
 }
 
 STRING 2036
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-You can also have friendly fights with other Tamers or buy some Prizes with Ogremon.
+También puedes tener combates amistosos con otros Domadores o comprar algunos Premios con Ogremon.
 }
 
 STRING 2037
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Higher ranks in the arena, higher prizes! Oh and you also get bonus stats for all digimons with a higher rank!
+¡A mayor rango en la arena, mayores premios! ¡Ah, y también obtienes estadísticas adicionales para todos los Digimon con un rango superior!
 }
 
 STRING 2038
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Welcome to the green gym!
+¡Bienvenido al gimnasio verde!
 }
 
 STRING 2039
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Maybe you noticed that your digimons have damage type and defense type.
+Tal vez hayas notado que tus Digimon tienen tipo de daño y tipo de defensa.
 }
 
 STRING 2040
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Some damage types are better to certain defenses types and worst to others.
+Algunos tipos de daño son más efectivos contra ciertos tipos de defensas y menos contra otros.
 }
 
 STRING 2041
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-You can train it with those targets.
+Puedes entrenarlo con estas dianas.
 }
 
 STRING 2042
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-There are plenty of fish in the sea.
+Hay muchos peces en el mar.
 }
 
 STRING 2043
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-They can be very useful for you.
+Pueden serte muy útiles.
 }
 
 STRING 2044
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-If you wanna you can get a fish rod to catch as much as you want.
+Si quieres, puedes comprar una caña de pescar para pescar todo lo que quieras.
 }
 
 STRING 2045
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Of course you need patience to do that.
+Por supuesto, para eso se necesita paciencia.
 }
 
 STRING 2046
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-This digimon is too powerful.
+Este Digimon es demasiado poderoso.
 }
 
 STRING 2047
@@ -12756,7 +12756,7 @@ Hot
 STRING 2130
 // Buffs/Effects: B00K (), Bufftip (Tooltip)
 {
-Frost
+Helada
 }
 
 STRING 2131
@@ -13591,6 +13591,18 @@ STRING 2269
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
 Show/Hide the stats of the digimons you are using.
+}
+
+STRING 2270
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Material bag
+}
+
+STRING 2271
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Look how many materials you have stored.
 }
 
 STRING 2272
@@ -24811,7 +24823,7 @@ STRING 4150
 }
 
 STRING 4151
-// Abilities: A075 (Freeze), Tip (Tooltip - Normal)
+// Abilities: A075 (Congelar), Tip (Tooltip - Normal)
 {
 |cff0000ffFreeze|r
 }
@@ -25191,7 +25203,7 @@ STRING 4213
 STRING 4214
 // Buffs/Effects: B001 (), Bufftip (Tooltip)
 {
-Freeze
+Congelar
 }
 
 STRING 4215
@@ -26423,7 +26435,7 @@ Ice prison
 STRING 4421
 // Abilities: A00W (Ice prison), Ubertip (Tooltip - Normal - Extended)
 {
-Freeze 1 targe,t need to be attacked to break the ice or dispelled.
+Congelar 1 targe,t need to be attacked to break the ice or dispelled.
 }
 
 STRING 4422
@@ -28799,7 +28811,7 @@ Crear Mine Shield
 }
 
 STRING 4818
-// Abilities: A0GO (Sleep), Hotkey (Hotkey - Normal)
+// Abilities: A0GO (Dormir), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -36349,6 +36361,42 @@ STRING 6079
 |cffFFCC00Dmg:|r
 }
 
+STRING 6080
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+|cffFFCC00Your materials:|r
+}
+
+STRING 6081
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+You can't carry more of this material.
+}
+
+STRING 6082
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Restore in: %d
+}
+
+STRING 6083
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+|cffd45e19Requires:|r|n
+}
+
+STRING 6084
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Wrong item for this recipe
+}
+
+STRING 6085
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+You don't have the necessary materials
+}
+
 STRING 6122
 // Items: I02W (|cff80ff80Cobra Hide|r), Tip (Tooltip - Basic)
 {
@@ -36864,15 +36912,15 @@ Tipo: |cff808080Ore|r
 }
 
 STRING 6326
-// Abilities: A0IG (Poison), Name (Name)
+// Abilities: A0IG (Veneno), Name (Name)
 {
-Poison
+Veneno
 }
 
 STRING 6327
-// Abilities: A0IG (Poison), Tip (Tooltip - Normal)
+// Abilities: A0IG (Veneno), Tip (Tooltip - Normal)
 {
-Poison
+Veneno
 }
 
 STRING 6368
@@ -40028,15 +40076,15 @@ Icemon
 }
 
 STRING 7276
-// Abilities: A0FD (Frost Aura), Name (Name)
+// Abilities: A0FD (Helada Aura), Name (Name)
 {
-Frost Aura
+Helada Aura
 }
 
 STRING 7277
 // Buffs/Effects: B02J (), Bufftip (Tooltip)
 {
-Frost Aura
+Helada Aura
 }
 
 STRING 7278
@@ -42010,33 +42058,33 @@ R
 }
 
 STRING 7759
-// Abilities: A0GO (Sleep), Tip (Tooltip - Normal)
+// Abilities: A0GO (Dormir), Tip (Tooltip - Normal)
 {
-Sleep
+Dormir
 }
 
 STRING 7760
-// Abilities: A0GP (Sleep), Name (Name)
+// Abilities: A0GP (Dormir), Name (Name)
 {
-Sleep
+Dormir
 }
 
 STRING 7761
-// Abilities: A0GP (Sleep), EditorSuffix (Editor Suffix)
+// Abilities: A0GP (Dormir), EditorSuffix (Editor Suffix)
 {
 (De-actived)
 }
 
 STRING 7763
-// Abilities: A0GP (Sleep), Tip (Tooltip - Normal)
+// Abilities: A0GP (Dormir), Tip (Tooltip - Normal)
 {
-Sleep
+Dormir
 }
 
 STRING 7764
 // Buffs/Effects: B005 (), Bufftip (Tooltip)
 {
-Sleep
+Dormir
 }
 
 STRING 7765
@@ -44292,7 +44340,7 @@ T
 }
 
 STRING 8736
-// Abilities: A0GO (Sleep), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0GO (Dormir), Ubertip (Tooltip - Normal - Extended)
 {
 The digimon sleeps to recover its power, while is sleeping recovers 2% of its Sanarth and Energía every second.|nIt wakes up when is attacked.
 }
@@ -45919,15 +45967,15 @@ STRING 9225
 }
 
 STRING 9226
-// Buffs/Effects: B002 (Poison), EditorName (Name (Editor Only))
+// Buffs/Effects: B002 (Veneno), EditorName (Name (Editor Only))
 {
-Poison
+Veneno
 }
 
 STRING 9227
-// Buffs/Effects: B002 (Poison), Bufftip (Tooltip)
+// Buffs/Effects: B002 (Veneno), Bufftip (Tooltip)
 {
-Poison
+Veneno
 }
 
 STRING 9228
@@ -46032,7 +46080,7 @@ WaruSeadramon
 STRING 9250
 // Buffs/Effects: B02V (), Bufftip (Tooltip)
 {
-Freeze
+Congelar
 }
 
 STRING 9251
@@ -49475,7 +49523,7 @@ Confuses the enemy by creating 2 illusion of the Digimon that deal 100% base dam
 }
 
 STRING 9987
-// Abilities: A0GP (Sleep), Hotkey (Hotkey - Normal)
+// Abilities: A0GP (Dormir), Hotkey (Hotkey - Normal)
 {
 R
 }

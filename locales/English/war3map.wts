@@ -13593,6 +13593,18 @@ STRING 2269
 Show/Hide the stats of the digimons you are using.
 }
 
+STRING 2270
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Material bag
+}
+
+STRING 2271
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Look how many materials you have stored.
+}
+
 STRING 2272
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
@@ -36347,6 +36359,42 @@ STRING 6079
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
 |cffFFCC00Dmg:|r
+}
+
+STRING 6080
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+|cffFFCC00Your materials:|r
+}
+
+STRING 6081
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+You can't carry more of this material.
+}
+
+STRING 6082
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Restore in: %d
+}
+
+STRING 6083
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+|cffd45e19Requires:|r|n
+}
+
+STRING 6084
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Wrong item for this recipe
+}
+
+STRING 6085
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+You don't have the necessary materials
 }
 
 STRING 6122

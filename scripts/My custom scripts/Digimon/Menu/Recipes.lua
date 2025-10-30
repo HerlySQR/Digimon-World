@@ -23,7 +23,7 @@ OnInit(function ()
     ---@param tooltip string
     ---@return string
     local function fixTooltip(recipe, tooltip)
-        local _, start = tooltip:find("|cffd45e19Requires:|r|n")
+        local _, start = tooltip:find(GetLocalizedString("RECIPES_REQUIRE_HEADER"))
         if start then
             local tooltipStart = tooltip:sub(1, start)
             local _, finish = tooltip:reverse():find("n|")
@@ -111,14 +111,14 @@ OnInit(function ()
                 local m = GetSpellTargetItem()
                 if GetItemTypeId(m) ~= itmToUpgrade then
                     UnitAbortCurrentOrder(caster)
-                    ErrorMessage("Wrong item for this recipe", p)
+                    ErrorMessage(GetLocalizedString("RECIPES_WARN_WRONG_ITEM"), p)
                     return
                 end
 
                 local iOwner = GetItemPlayer(m)
                 if IsPlayerInGame(iOwner) and p ~= iOwner then
                     UnitAbortCurrentOrder(caster)
-                    ErrorMessage("This item belongs to another player", p)
+                    ErrorMessage(GetLocalizedString("THIS_ITEM_BELONGS_TO_OTHER_PLAYER"), p)
                     return
                 end
             end
@@ -133,7 +133,7 @@ OnInit(function ()
 
             if not has then
                 UnitAbortCurrentOrder(caster)
-                ErrorMessage("You don't have the necessary materials", p)
+                ErrorMessage(GetLocalizedString("RECIPE_WARN_NO_MATERIALS"), p)
             end
         end)
 
