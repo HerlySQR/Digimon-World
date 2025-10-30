@@ -473,7 +473,7 @@ OnInit("Menu", function ()
         BlzFrameSetAbsPoint(Minimap, FRAMEPOINT_BOTTOMLEFT, minX + 0.015, 0.015000)
 
         BlzFrameClearAllPoints(CommandButtonBackDrop)
-        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.180000)
+        BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, minX + 0.18, 0.205000)
         BlzFrameSetAbsPoint(CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, minX + 0.41, 0.00000)
 
         if not isIgnored then

@@ -18,7 +18,7 @@ OnInit.final(function ()
     local VERMILIMON = FourCC('O064')
     local METEORMON = FourCC('O036')
     local VOLCAMON = FourCC('O056')
-    local EXTRA_HEALTH_FACTOR = 3.
+    local EXTRA_HEALTH_FACTOR = 0.75
     local EXTRA_DMG_FACTOR = 3.
     local EXTRA_ARMOR = 15
     local EXTRA_MANA_REGEN = 5
@@ -245,7 +245,7 @@ OnInit.final(function ()
             end
 
             for d in actHeros:elements() do
-                if math.random(10) == 1 then
+                if math.random(5) == 1 then
                     local angle = 2 * math.pi * math.random()
                     local dist = 3000 * math.random()
                     local x, y = d:getX() + dist*math.cos(angle), d:getY() + dist*math.sin(angle)
@@ -263,9 +263,9 @@ OnInit.final(function ()
                                     Orders.thunderclap,
                                     1,
                                     CastType.IMMEDIATE)
-                                ForUnitsInRange(x, y, 180., function (u)
+                                ForUnitsInRange(x, y, 225., function (u)
                                     if IsPlayerInGame(GetOwningPlayer(u)) then
-                                        Damage.apply(boss, u, 225, false, false, udg_Fire, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                                        Damage.apply(boss, u, 250, false, false, udg_Fire, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
                                     end
                                 end)
                             end)
@@ -298,7 +298,7 @@ OnInit.final(function ()
                         ItemPoolAddItemType(specialItems, udg_AcientSpeedyZoneSpecialItems[i], udg_AcientSpeedyZoneSpecialItemsW[i])
                     end
                 end
-                if math.random(5) == 1 then
+                if math.random(15) == 1 then
                     PlaceRandomItem(specialItems, GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
                 local open = true
@@ -314,7 +314,7 @@ OnInit.final(function ()
                     end
                 end
             else
-                if math.random(20) == 1 then
+                if math.random(50) == 1 then
                     CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
             end

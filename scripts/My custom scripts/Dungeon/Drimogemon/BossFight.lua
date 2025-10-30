@@ -107,7 +107,7 @@ OnInit(function ()
     end
 
     local B_DURATION = 4.
-    local B_DAMAGE = 105.
+    local B_DAMAGE = 125.
     local B_RANGE = 600.
     local B_AREA = 110.
     local B_CASTER_MODEL = "war3mapImported\\Drimogemon.mdl"

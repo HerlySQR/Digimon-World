@@ -172,7 +172,7 @@ OnInit(function ()
     local HM_TARGET_EFFECT = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
     local HM_DURATION = 5
     local HM_WARNING_1 = 3
-    local HM_WARNING_2 = 1.5
+    local HM_WARNING_2 = 3.5
     local HM_DAMAGE = 350
     local HM_PUSH_DIST = 300
 
@@ -230,10 +230,10 @@ OnInit(function ()
         end)
     end
 
-    local MB_DELAY = 2.5
-    local MB_DAMAGE_PER_SHOT = {180., 620.}
+    local MB_DELAY = 3.
+    local MB_DAMAGE_PER_SHOT = {180., 520.}
     local MB_MAX_SHOTS = 12
-    local MB_AREA = 225.
+    local MB_AREA = 325.
     local MB_MISSILE_MODEL = "Abilities\\Weapons\\GyroCopter\\GyroCopterMissile.mdl"
     local MB_INTERVAL = 0.03125
 
@@ -296,11 +296,11 @@ OnInit(function ()
     end
 
     local SO_DELAY = 2.5
-    local SO_DAMAGE_PER_ORB = {300., 800.}
-    local SO_ORBS = {4, 5}
+    local SO_DAMAGE_PER_ORB = {200., 400.}
+    local SO_ORBS = {4, 6}
     local SO_COLISION = 256.
     local SO_MISSILE_MODEL = "Abilities\\Spells\\Orc\\Purge\\PurgeBuffTarget.mdl"
-    local SO_MAX_DISTANCE = 900.
+    local SO_MAX_DISTANCE = 600.
 
     local function onShockingOrbs(caster)
         local owner = GetOwningPlayer(caster)

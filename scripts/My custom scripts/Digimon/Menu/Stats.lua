@@ -265,7 +265,7 @@ OnInit("Stats", function ()
                         end
                         BlzFrameSetTexture(StatsDamageIcon[i], root, 0, true)
 
-                        BlzFrameSetText(StatsDamage[i], tostring(math.floor(base + GetUnitBonus(u, BONUS_DAMAGE))))
+                        BlzFrameSetText(StatsDamage[i], tostring(math.floor(GetAvarageAttack(u))))
                     end
 
                     local typ = armorEquiv[BlzGetUnitIntegerField(u, UNIT_IF_DEFENSE_TYPE)]
@@ -456,7 +456,7 @@ OnInit("Stats", function ()
             end
             BlzFrameSetTexture(OtherStatsDmgIcon, root, 0, true)
 
-            BlzFrameSetText(OtherStatsDmgAmount, tostring(math.floor(base + GetUnitBonus(selected, BONUS_DAMAGE))))
+            BlzFrameSetText(OtherStatsDmgAmount, tostring(math.floor(GetAvarageAttack(selected))))
         end
 
         local typ = armorEquiv[BlzGetUnitIntegerField(selected, UNIT_IF_DEFENSE_TYPE)]
@@ -845,8 +845,7 @@ OnInit("Stats", function ()
             StatsItemDrop = BlzCreateFrame("ScriptDialogButton", StatsInventoryBackdrop[0], 0, 0)
             BlzFrameSetPoint(StatsItemDrop, FRAMEPOINT_TOPLEFT, StatsItemT[0][0], FRAMEPOINT_TOPLEFT, 0.014500, -0.010000)
             BlzFrameSetPoint(StatsItemDrop, FRAMEPOINT_BOTTOMRIGHT, StatsItemT[0][0], FRAMEPOINT_BOTTOMRIGHT, 0.029500, -0.0050000)
-            BlzFrameSetText(StatsItemDrop, "|cffFCD20DDrop|r")
-            BlzFrameSetScale(StatsItemDrop, 1.00)
+            BlzFrameSetText(StatsItemDrop, GetLocalizedString("STATS_ITEM_DROP"))
             BlzFrameSetLevel(StatsItemDrop, 100)
             OnClickEvent(StatsItemDrop, StatsItemDropFunc)
             BlzFrameSetVisible(StatsItemDrop, false)
@@ -924,14 +923,14 @@ OnInit("Stats", function ()
         BlzFrameSetScale(OtherStatsDmgLabel, 1.43)
         BlzFrameSetPoint(OtherStatsDmgLabel, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.060000, -0.15000)
         BlzFrameSetPoint(OtherStatsDmgLabel, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.040000)
-        BlzFrameSetText(OtherStatsDmgLabel, "|cffFFCC00DMG:|r")
+        BlzFrameSetText(OtherStatsDmgLabel, GetLocalizedString("STATS_DAMAGE_LABEL"))
         BlzFrameSetTextAlignment(OtherStatsDmgLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         OtherStatsDefLabel = BlzCreateFrameByType("TEXT", "name", OtherStatsBackdrop, "", 0)
         BlzFrameSetScale(OtherStatsDefLabel, 1.43)
         BlzFrameSetPoint(OtherStatsDefLabel, FRAMEPOINT_TOPLEFT, CommandButtonBackDrop, FRAMEPOINT_TOPLEFT, 0.15500, -0.15000)
         BlzFrameSetPoint(OtherStatsDefLabel, FRAMEPOINT_BOTTOMRIGHT, CommandButtonBackDrop, FRAMEPOINT_BOTTOMRIGHT, -0.025000, 0.040000)
-        BlzFrameSetText(OtherStatsDefLabel, "|cffFFCC00DEF:|r")
+        BlzFrameSetText(OtherStatsDefLabel, GetLocalizedString("STATS_ARMOR_LABEL"))
         BlzFrameSetTextAlignment(OtherStatsDefLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         OtherStatsDefAmount = BlzCreateFrameByType("TEXT", "name", OtherStatsBackdrop, "", 0)

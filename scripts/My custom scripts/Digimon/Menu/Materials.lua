@@ -196,8 +196,8 @@ OnInit(function ()
 
     OnChangeDimensions(function ()
         BlzFrameClearAllPoints(MaterialsBackdrop)
-        BlzFrameSetAbsPoint(MaterialsBackdrop, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.460000)
-        BlzFrameSetAbsPoint(MaterialsBackdrop, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.300000)
+        BlzFrameSetAbsPoint(MaterialsBackdrop, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.315, 0.420000)
+        BlzFrameSetAbsPoint(MaterialsBackdrop, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.055, 0.230000)
     end)
 
     ---@param p player

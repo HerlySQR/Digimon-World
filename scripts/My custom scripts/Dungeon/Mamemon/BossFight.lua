@@ -4,7 +4,7 @@ OnInit(function ()
 
     local boss = gg_unit_O00A_0062 ---@type unit
 
-    local KBP_DAMAGE = 35.
+    local KBP_DAMAGE = 65.
     local KBP_PUSH_DIST = 300.
     local KBP_AREA = 200.
     local KBP_PUNCH_EFFECT = "Abilities\\Spells\\Human\\ThunderClap\\ThunderClapCaster.mdl"
@@ -40,7 +40,7 @@ OnInit(function ()
         end)
     end
 
-    local KUP_DAMAGE = 60.
+    local KUP_DAMAGE = 65.
     local KUP_FLY_DIST = 600.
     local KUP_SPEED = 70.
     local KUP_AREA = 200.
@@ -96,7 +96,6 @@ OnInit(function ()
         forceWall = {gg_dest_Dofw_52789},
         inner = gg_rct_MamemonInner,
         entrance = gg_rct_MamemonEntrance,
-        moveOption = 0,
         spells = {
             4, CastType.TARGET, onKnockbackPunch, -- Knockback punch
             4, CastType.TARGET, onKnockupPunch, -- Knockup punch

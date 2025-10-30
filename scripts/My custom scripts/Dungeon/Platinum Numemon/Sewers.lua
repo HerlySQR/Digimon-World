@@ -24,7 +24,7 @@ OnInit.final(function ()
     local ESNARE_BUFF = FourCC('Beng')
     local ESNARE_ORDER = Orders.ensnare
     local SUMMON_RAREMON_TICK = 4. -- seconds
-    local EXTRA_HEALTH_FACTOR = 0.8
+    local EXTRA_HEALTH_FACTOR = 0.75
     local EXTRA_DMG_FACTOR = 1.8
     local EXTRA_ARMOR = 18
     local EXTRA_MANA_REGEN = 5
@@ -416,7 +416,7 @@ OnInit.final(function ()
                         ItemPoolAddItemType(specialItems, udg_SewersSpecialItems[i], udg_SewersSpecialItemsWeights[i])
                     end
                 end
-                if math.random(5) == 1 then
+                if math.random(15) == 1 then
                     PlaceRandomItem(specialItems, GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
 
@@ -433,7 +433,7 @@ OnInit.final(function ()
                     end
                 end
             elseif GetUnitTypeId(GetDyingUnit()) ~= RAREMON then
-                if math.random(20) == 1 then
+                if math.random(50) == 1 then
                     CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
             end

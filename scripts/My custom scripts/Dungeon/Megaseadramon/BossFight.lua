@@ -5,7 +5,7 @@ OnInit(function ()
     local boss = gg_unit_O006_0036 ---@type unit
 
     local GL_BOLT_MODEL = "war3mapImported\\Great Lightning.mdl"
-    local GL_AREA = 170.
+    local GL_AREA = 160.
     local GL_DAMAGE = 100.
 
     local function onGreatLightning(caster, x, y)
@@ -48,7 +48,7 @@ OnInit(function ()
     local SS_DURATION = 8.
     local SS_COLOR = Color.new(0, 224, 255)
     local SS_AREA = 300.
-    local SS_DAMAGE = 25.
+    local SS_DAMAGE = 22.
 
     local function onSpontaneousStorm(caster, x, y)
         local owner = GetOwningPlayer(caster)
@@ -75,7 +75,7 @@ OnInit(function ()
     local CS_EFF1 = FourCC('SNhs') -- Northrend snow (heavy)
     local CS_EFF2 = FourCC('WOcw') -- Outland wind (heavy)
     local CS_AREA = 1400.
-    local CS_DAMAGE = 6.
+    local CS_DAMAGE = 5.
     local CS_DURATION = 55.
 
     local function onColdStorm(caster)

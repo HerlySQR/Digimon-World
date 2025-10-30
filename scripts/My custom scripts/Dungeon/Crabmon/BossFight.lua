@@ -75,8 +75,8 @@ OnInit(function ()
         end)
     end
 
-    local CP_DAMAGE = 40.
-    local CP_DISTANCE = 250.
+    local CP_DAMAGE = 30.
+    local CP_DISTANCE = 200.
     local CP_SPEED = CP_DISTANCE * 0.12
     local CP_EFFECT = "war3mapImported\\ChargerWindCasterArt.mdx"
 

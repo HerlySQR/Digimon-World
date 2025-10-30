@@ -89,8 +89,8 @@ OnInit(function ()
     end
 
     local IF_DISTANCE = 600.
-    local IF_DAMAGE = 1500.
-    local IF_DELAY = 2. -- Same as object editor
+    local IF_DAMAGE = 2200.
+    local IF_DELAY = 3.0 -- Same as object editor
     local IF_EFFECT_CASTER = "Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathMissile.mdl"
     local IF_EFFECT_TARGET = "war3mapImported\\DetroitSmash_Effect.mdx"
 
@@ -156,7 +156,7 @@ OnInit(function ()
         end)
     end
 
-    local IS_DAMAGE = 350.
+    local IS_DAMAGE = 650.
     local IS_AREA = 255.
     local IS_DURATION = 1.
     local IS_HEIGHT = 120.^2
@@ -188,9 +188,9 @@ OnInit(function ()
         end)
     end
 
-    local MR_DAMAGE = 400.
+    local MR_DAMAGE = 600.
     local MR_DURATION = 8.
-    local MR_MAMOTHMON_SPEED = 300.
+    local MR_MAMOTHMON_SPEED = 250.
     local MR_MAMOTHMON_MODEL = "war3mapImported\\MammonDMO - optimized3.mdl"
     local MR_EXPLOSION_MODEL = "Abilities\\Spells\\Other\\Stampede\\StampedeMissileDeath.mdl"
     local MR_MAX_DIST = 1500.
@@ -204,7 +204,7 @@ OnInit(function ()
         PauseUnit(caster, true)
         BossIsCasting(caster, true)
 
-        Timed.echo(0.4, MR_DURATION, function ()
+        Timed.echo(0.35, MR_DURATION, function ()
             SetUnitAnimation(caster, "attack slam")
 
             if not UnitAlive(caster) then
@@ -293,4 +293,3 @@ OnInit(function ()
         end
     end)
 end)
-Debug.endFile()

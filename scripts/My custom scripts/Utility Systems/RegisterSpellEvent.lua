@@ -28,6 +28,9 @@ OnInit("RegisterSpellEvent", function ()
                 if i then i() end
             end))
         end
+        if tb[GetHandleId(event)][abil] then
+            print("Ability " .. GetAbilityName(abil) .. " already has a spell event registered.")
+        end
         tb[GetHandleId(event)][abil] = onCast
     end
 

@@ -13,7 +13,7 @@ OnInit(function ()
     local VOLCAMON = FourCC('O056')
     local TORNADO = FourCC('n02J')
     local LIGHTNING_ATTACK = FourCC('A0GH')
-    local EXTRA_HEALTH_FACTOR = 0.1
+    local EXTRA_HEALTH_FACTOR = 0.2
     local EXTRA_DMG_FACTOR = 2.
 
     local summons = {} ---@type Digimon[]
@@ -270,7 +270,7 @@ OnInit(function ()
     end
 
     local FR_DELAY = 2. -- Same as object editor
-    local FR_DMG_PER_TICK = 4.
+    local FR_DMG_PER_TICK = 15.
     local FR_DISTANCE = 1250.
     local FR_DURATION = 15.
     local FR_RAY = "HWSB"
@@ -366,7 +366,7 @@ OnInit(function ()
     local VM_MIN_RANGE = 50.
     local VM_MAX_RANGE = 325.
     local VM_AREA = 128.
-    local VM_DMG = 100.
+    local VM_DMG = 750.
     local VM_ROCK = "Abilities\\Spells\\Other\\Volcano\\VolcanoMissile.mdl"
 
     local function onVolcanicExplosion(caster)
@@ -387,7 +387,7 @@ OnInit(function ()
                     rock.owner = owner
                     rock:speed(300.)
                     rock:arc(53.)
-                    rock.damage = VM_DMG + 0.5 * GetHeroStr(caster, true)
+                    rock.damage = VM_DMG + 0.8 * GetHeroStr(caster, true)
                     rock.onFinish = function ()
                         ForUnitsInRange(rock.x, rock.y, VM_AREA, function (u)
                             if IsUnitEnemy(u, owner) and not IsUnitType(u, UNIT_TYPE_MAGIC_IMMUNE) then
@@ -555,7 +555,7 @@ OnInit(function ()
                         SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
                         current = current + 0.02
                     end)
-                    AddUnitBonus(boss, BONUS_DAMAGE, 100)
+                    AddUnitBonus(boss, BONUS_DAMAGE, 200)
                     BossChangeAttack(boss, 1)
                     UnitAddAbility(boss, LIGHTNING_ATTACK)
                 end
@@ -592,7 +592,7 @@ OnInit(function ()
                     SetUnitScale(boss, Lerp(increasedSize, current, originalSize), 0., 0.)
                     current = current + 0.02
                 end)
-                AddUnitBonus(boss, BONUS_DAMAGE, -100)
+                AddUnitBonus(boss, BONUS_DAMAGE, -200)
                 BossChangeAttack(boss, 0)
                 UnitRemoveAbility(boss, LIGHTNING_ATTACK)
             end

@@ -36,7 +36,7 @@ OnInit("Rare Data", function ()
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + Items[id].goldCost)
                 SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) + Items[id].woodCost)
                 RemoveItem(GetSoldItem())
-                ErrorMessage("Not enough rare data.", p)
+                ErrorMessage(GetLocalizedString("NOT_ENOUGH_RARE_DATA"), p)
             end
         end
     end)

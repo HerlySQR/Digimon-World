@@ -6,10 +6,10 @@ OnInit(function ()
 
     local entagle = FourCC('A0DG')
 
-    local PP_StrDmgFactor = 1.0
-    local PP_AgiDmgFactor = 1.0
-    local PP_IntDmgFactor = 1.0
-    local PP_AttackFactor = 1.0
+    local PP_StrDmgFactor = 0.9
+    local PP_AgiDmgFactor = 0.9
+    local PP_IntDmgFactor = 0.9
+    local PP_AttackFactor = 0.7
     local PP_MissileModel = "Objects\\InventoryItems\\Shimmerweed\\Shimmerweed.mdl"
     local PP_TargetUnitModel = "Effect\\SapStampedeMissileDeath.mdx"
     local PP_Area = 155.
@@ -58,9 +58,9 @@ OnInit(function ()
     end
 
     local WOODMON = FourCC('h04R')
-    local FR_QUANTITY = 4
+    local FR_QUANTITY = 5
     local FR_DURATION = 70.
-    local FR_HEAL_LIFE_FACTOR = 0.02
+    local FR_HEAL_LIFE_FACTOR = 0.01
 
     local function onForestRage(caster)
         local x, y = GetUnitX(caster), GetUnitY(caster)
@@ -124,7 +124,7 @@ OnInit(function ()
     InitBossFight({
         name = "Cherrymon",
         boss = boss,
-        maxPlayers = 2,
+        maxPlayers = 3,
         forceWall = {gg_dest_Dofw_13139},
         inner = gg_rct_CherrymonInner,
         entrance = gg_rct_CherrymonEntrance,

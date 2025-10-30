@@ -123,6 +123,9 @@ OnInit("SpellsTemplate", function ()
     ---@param data {spell: integer, strDmgFactor: number?, agiDmgFactor: number?, intDmgFactor: number?, attackFactor: number?, finalDmgFactor: number?, missileModel: string, zOffsetSource: number, zOffsetTarget: number, scale: number, speed: number, arc: number, pColor: integer?, attType: attacktype, dmgType: damagetype, casterEffect: string?, targetEffect: string?, buffType: BuffSpell?, buffLevel: integer?, onFinish: fun(missile: Missiles)?}
     function CreateSingleMissileSpell(data)
         data.onFinish = function (missile)
+            if not missile.target then
+                error("Missile target is nil for spell " .. GetObjectName(data.spell))
+            end
             applyEffects(data, missile, missile.target)
         end
         baseSingleMissileSpell(data)

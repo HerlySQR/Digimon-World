@@ -45,7 +45,6 @@ OnInit("Backpack", function ()
     ---@field charges integer
     ---@field description string
     ---@field spellCooldown integer
-    ---@field slot integer
     ---@field stopped boolean
     ---@field noConsummable boolean
     ---@field noTarget boolean
@@ -65,7 +64,6 @@ OnInit("Backpack", function ()
     ---@field amount integer
     ---@field id integer[]
     ---@field charges integer[]
-    ---@field slot integer[]
     ---@field sslot integer
     ---@field ind string
     BackpackData = setmetatable({}, Serializable)
@@ -80,8 +78,7 @@ OnInit("Backpack", function ()
         local self = setmetatable({
             amount = 0,
             id = {},
-            charges = {},
-            slot = {},
+            charges = {}
         }, BackpackData)
 
         if type(backpack) == "number" then
@@ -97,7 +94,6 @@ OnInit("Backpack", function ()
                 self.amount = self.amount + 1
                 self.id[i] = data.id
                 self.charges[i] = data.charges
-                self.slot[i] = data.slot
             end
         end
 
@@ -109,7 +105,6 @@ OnInit("Backpack", function ()
         for i = 1, self.amount do
             self:addProperty("id" .. i, BlzFourCC2S(self.id[i]))
             self:addProperty("charges" .. i, self.charges[i])
-            self:addProperty("slot" .. i, self.slot[i])
         end
         self:addProperty("sslot", self.sslot)
         self:addProperty("ind", self.ind)
@@ -128,7 +123,6 @@ OnInit("Backpack", function ()
                 self.id[i] = self:getIntProperty("id" .. i)
             end
             self.charges[i] = self:getIntProperty("charges" .. i)
-            self.slot[i] = self:getIntProperty("slot" .. i)
         end
         self.ind = self:getStringProperty("ind")
     end
@@ -323,17 +317,6 @@ OnInit("Backpack", function ()
         end
     end
 
-    do
-        local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SELECTED)
-        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetTriggerUnit()) == DUMMY_CASTER end))
-        TriggerAddAction(t, function ()
-            if GetTriggerPlayer() == LocalPlayer then
-                ForceUIKey("Z")
-            end
-        end)
-    end
-
     ---@param backpack Backpack
     local function BackpackDummyCastEnd(backpack)
         UnitRemoveAbility(backpack.caster, backpack.actualItemData.spell)
@@ -357,6 +340,34 @@ OnInit("Backpack", function ()
         if backpack.owner == LocalPlayer then
             BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
         end
+    end
+
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SELECTED)
+        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetTriggerUnit()) == DUMMY_CASTER end))
+        TriggerAddAction(t, function ()
+            local p = GetTriggerPlayer()
+            local backpack = Backpacks[p]
+            local itemData = backpack.actualItemData
+
+            if itemData.charges <= 0 then
+                for i = 1, #backpack.items do
+                    if backpack.items[i] == itemData then
+                        table.remove(backpack.items, i)
+                        break
+                    end
+                end
+                if p == LocalPlayer then
+                    UpdateMenu()
+                end
+                BackpackDummyCastEnd(backpack)
+            else
+                if p == LocalPlayer then
+                    ForceUIKey("Z")
+                end
+            end
+        end)
     end
 
     local trig = CreateTrigger()
@@ -408,15 +419,15 @@ OnInit("Backpack", function ()
         local itemData = backpack.actualItemData
 
         if itemData and itemData.spell == GetSpellAbilityId() then
-            local i = itemData.slot
-
             if not itemData.stopped then
                 itemData.charges = itemData.charges - 1
 
                 if itemData.charges <= 0 then
-                    table.remove(backpack.items, i)
-                    for newSlot, otherData in ipairs(backpack.items) do
-                        otherData.slot = newSlot
+                    for i = 1, #backpack.items do
+                        if backpack.items[i] == itemData then
+                            table.remove(backpack.items, i)
+                            break
+                        end
                     end
                 else
                     if itemData.spellCooldown > 0 then
@@ -693,7 +704,6 @@ OnInit("Backpack", function ()
 
                 itemData = CreateItemData(id)
                 table.insert(items, itemData)
-                itemData.slot = #items
             end
             itemData.charges = itemData.charges + GetItemCharges(m)
 
@@ -879,7 +889,6 @@ OnInit("Backpack", function ()
             while diff > 0 do
                 local itemData = CreateItemData(itm)
                 table.insert(items, itemData)
-                itemData.slot = #items
                 itemData.charges = math.min(diff, MAX_STACK)
                 diff = diff - MAX_STACK
             end
@@ -904,9 +913,11 @@ OnInit("Backpack", function ()
                 diff = diff - left
                 itemData.charges = itemData.charges - left
                 if itemData.charges <= 0 then
-                    table.remove(items, itemData.slot)
-                    for newSlot, otherData in ipairs(backpack.items) do
-                        otherData.slot = newSlot
+                    for i = 1, #items do
+                        if items[i] == itemData then
+                            table.remove(items, i)
+                            break
+                        end
                     end
                 end
                 if diff <= 0 then
@@ -976,7 +987,6 @@ OnInit("Backpack", function ()
             if not backpack.items[i] then
                 DisplayTextToPlayer(p, 0, 0, "You are trying to load a backpack item that no longer exists in this map version.")
             else
-                backpack.items[i].slot = data.slot[i]
                 backpack.items[i].charges = data.charges[i]
             end
         end

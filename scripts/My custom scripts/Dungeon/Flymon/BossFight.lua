@@ -79,7 +79,7 @@ OnInit(function ()
         end)
     end
 
-    local PP_DAMAGE_PER_SEC = 15.
+    local PP_DAMAGE_PER_SEC = 12.
     local PP_DURATION = 8.
     local PP_AREA = 300.
     local PP_CLOUD_MODEL = "Abilities\\Spells\\Undead\\PlagueCloud\\PlagueCloudCaster.mdl"

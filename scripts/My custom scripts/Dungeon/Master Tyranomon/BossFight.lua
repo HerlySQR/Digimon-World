@@ -9,7 +9,7 @@ OnInit(function ()
     local TOF_FIRE_MODEL = "Effects\\FireShield.mdx"
     local TOF_DISTANCE = 300.
     local TOF_AREA = 300.
-    local TOF_DAMAGE = 30.
+    local TOF_DAMAGE = 35.
     local TOF_DURATION = 3.
 
     local function onTowerOfFire(caster)
@@ -47,7 +47,7 @@ OnInit(function ()
 
     local FW_DISTANCE = 700. -- The same as in the object editor
     local FW_DAMAGE = 550.
-    local FW_DAMAGE_PER_SEC = 40.
+    local FW_DAMAGE_PER_SEC = 50.
     local FW_AREA = 156.
     local FW_DELAY = 2. -- Same as object editor
 

@@ -19,7 +19,7 @@ OnInit(function ()
     local HEAL_PERCENT = 0.05
 
     local EXTRA_HEALTH_FACTOR = 0.1
-    local EXTRA_DMG_FACTOR = 2.
+    local EXTRA_DMG_FACTOR = 1.0
 
     local bigPoopOrder = Orders.breathoffrost
 
@@ -264,9 +264,9 @@ OnInit(function ()
     end
 
     local BIG_POOP_MISSILE = "Missile\\PoopMissile.mdx"
-    local BIG_POOP_DELAY = 2.
+    local BIG_POOP_DELAY = 3.
     local BIG_POOP_AREA = 300.
-    local BIG_POOP_DMG = 600.
+    local BIG_POOP_DMG = 800.
 
     local function onBigPoop(caster)
         local poop = AddSpecialEffectTarget("Missile\\Poop1.mdx", caster, "head")

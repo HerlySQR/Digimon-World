@@ -7,7 +7,7 @@ OnInit(function ()
     local wingBlade = FourCC('A08L')
 
     local D_MAX_DIST = 700.
-    local D_DAMAGE = 270.
+    local D_DAMAGE = 250.
     local D_COLLISION = 192.
     local D_INTERVAL = 0.03125
 
@@ -57,7 +57,7 @@ OnInit(function ()
 
     local BoF_DISTANCE = 600.
     local BoF_DAMAGE = 950.
-    local BoF_DAMAGE_PER_SEC = 30.
+    local BoF_DAMAGE_PER_SEC = 25.
     local BoF_AREA = 156.
     local BoF_DELAY = 2.
 
@@ -93,7 +93,7 @@ OnInit(function ()
                 local y = GetUnitY(caster)
                 local angle = math.atan(ty - y, tx - x)
                 local missile = Missiles:create(x, y, 50., x + BoF_DISTANCE * math.cos(angle), y + BoF_DISTANCE * math.sin(angle), 50.)
-                missile:model("Missile\\SpiritDragonMissile(Red).mdx")
+                missile:model("war3mapImported\\Blaze Missile.mdx")
                 missile:speed(800.)
                 missile:scale(3.)
                 missile.source = caster
@@ -115,7 +115,7 @@ OnInit(function ()
         end)
     end
 
-    local FaT_DAMAGE = 350.
+    local FaT_DAMAGE = 300.
     local FaT_AREA = 190.
 
     local function onFlyAndThrow(caster, target)
