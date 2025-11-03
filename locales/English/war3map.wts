@@ -36493,6 +36493,12 @@ STRING 6101
 Energy%s+Regen
 }
 
+STRING 6103
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Block
+}
+
 STRING 6122
 // Items: I02W (|cff80ff80Cobra Hide|r), Tip (Tooltip - Basic)
 {

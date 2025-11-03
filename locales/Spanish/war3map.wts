@@ -67,7 +67,7 @@ Ilusión
 }
 
 STRING 12
-// Items: I03B (Grey Arena Ticket), Hotkey (Hotkey)
+// Items: I03B (Entrada a la Arena Gris), Hotkey (Hotkey)
 {
 W
 }
@@ -6699,7 +6699,7 @@ Aliento de pimienta
 }
 
 STRING 1118
-// Items: I03A (PVP ticket), Hotkey (Hotkey)
+// Items: I03A (Boleto JcJ), Hotkey (Hotkey)
 {
 Q
 }
@@ -7931,9 +7931,9 @@ STRING 1324
 }
 
 STRING 1325
-// Items: I058 (|cff00ffffData Cannon|r), Ubertip (Tooltip - Extended)
+// Items: I058 (|cff00ffffCañón de datos|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 28 Ataque|n+ 25 Destreza|n+ 18 Sabiduría |n+ 150% Regeneración de energía |n+ 6% Probabilidad de crítico |n+ 10% Impacto Crítico|n+20% Posibilidad de infligir 20 puntos de daño fuego
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 28 Ataque|n+ 25 Destreza|n+ 18 Sabiduría |n+ 150% Regeneración de energía|n+ 6% Probabilidad de crítico |n+ 10% Impacto Crítico|n+20% Posibilidad de infligir 20 puntos de daño fuego
 }
 
 STRING 1326
@@ -8405,15 +8405,15 @@ Máquina Spotlight
 }
 
 STRING 1404
-// Doodads: D037 (Floor Stone ), Name (Name)
+// Doodads: D037 (Floor Piedra ), Name (Name)
 {
-Floor Stone 
+Floor Piedra 
 }
 
 STRING 1405
-// Doodads: D038 (Wall Stone), Name (Name)
+// Doodads: D038 (Wall Piedra), Name (Name)
 {
-Wall Stone
+Wall Piedra
 }
 
 STRING 1406
@@ -8719,13 +8719,13 @@ STRING 1455
 STRING 1456
 // Items: I06C (|cff00ffffLa cabeza de Quimera|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 550 Salud|n+ 150% Regeneración de energía |n+ 32 Estámina|n+ 7% Evasión|n+ 7% Probabilidad de crítico|n+ 10 Armadura|n+ 20% Probabilidad de devolver 20 de daño de Bestia
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 550 Salud|n+ 150% Regeneración de energía|n+ 32 Estámina|n+ 7% Evasión|n+ 7% Probabilidad de crítico|n+ 10 Armadura|n+ 20% Probabilidad de devolver 20 de daño de Bestia
 }
 
 STRING 1457
 // Items: I06C (|cff00ffffLa cabeza de Quimera|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 550 Salud|n+ 150% Regeneración de energía |n+ 32 Estámina|n+ 7% Evasión|n+ 7% Probabilidad de crítico|n+ 10 Armadura|n+ 20% Probabilidad de devolver 20 de daño de Bestia
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 550 Salud|n+ 150% Regeneración de energía|n+ 32 Estámina|n+ 7% Evasión|n+ 7% Probabilidad de crítico|n+ 10 Armadura|n+ 20% Probabilidad de devolver 20 de daño de Bestia
 }
 
 STRING 1458
@@ -8765,7 +8765,7 @@ STRING 1463
 }
 
 STRING 1464
-// Items: I03B (Grey Arena Ticket), Ubertip (Tooltip - Extended)
+// Items: I03B (Entrada a la Arena Gris), Ubertip (Tooltip - Extended)
 {
 Usa este ticket para luchar contra un grupo de digimons enemigos. |nCuesta 50+50*(tu rango) digbits.
 }
@@ -9791,9 +9791,9 @@ Z
 }
 
 STRING 1635
-// Items: I06I (|cff8080ffOscuro Dagger|r), Description (Description)
+// Items: I06I (|cff8080ffDaga Oscura|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 14 Ataque|n+ 14 Sabiduría|n+ 14 Estámina|n+ 75% Regeneración de energía |n+ 3% Posibilidad de evasión|n+ 20% Posibilidad de infligir 10 de daño adicional de Oscuridad
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 14 Ataque|n+ 14 Sabiduría|n+ 14 Estámina|n+ 75% Regeneración de energía|n+ 3% Posibilidad de evasión|n+ 20% Posibilidad de infligir 10 de daño adicional de Oscuridad
 }
 
 STRING 1636
@@ -9809,9 +9809,9 @@ STRING 1637
 }
 
 STRING 1638
-// Items: I0A6 (Receta de |cffff0000La barrera de ADN de Kimera|r), Name (Name)
+// Items: I0A6 (Receta de |cffff0000La barrera de ADN de Quimera|r), Name (Name)
 {
-Receta de |cffff0000La barrera de ADN de Kimera|r
+Receta de |cffff0000La barrera de ADN de Quimera|r
 }
 
 STRING 1639
@@ -10001,9 +10001,9 @@ Dummy Ice
 }
 
 STRING 1670
-// Items: I0A6 (Receta de |cffff0000La barrera de ADN de Kimera|r), Tip (Tooltip - Basic)
+// Items: I0A6 (Receta de |cffff0000La barrera de ADN de Quimera|r), Tip (Tooltip - Basic)
 {
-Receta de |cffff0000La barrera de ADN de Kimera|r
+Receta de |cffff0000La barrera de ADN de Quimera|r
 }
 
 STRING 1671
@@ -11512,7 +11512,7 @@ Marsmon
 }
 
 STRING 1923
-// Units: N009 (Sea Traveler), Propernames (Proper Names)
+// Units: N009 (Viajero del mar), Propernames (Proper Names)
 {
 Whamon
 }
@@ -12424,15 +12424,15 @@ Ice Spike 1
 }
 
 STRING 2075
-// Doodads: D05A (Ice Stone), Name (Name)
+// Doodads: D05A (Ice Piedra), Name (Name)
 {
-Ice Stone
+Ice Piedra
 }
 
 STRING 2076
-// Doodads: D05B (Ice Stone HUGE), Name (Name)
+// Doodads: D05B (Ice Piedra HUGE), Name (Name)
 {
-Ice Stone HUGE
+Ice Piedra HUGE
 }
 
 STRING 2077
@@ -12472,21 +12472,21 @@ Coral Smaller
 }
 
 STRING 2083
-// Doodads: D05F (Ruins Stone 1), Name (Name)
+// Doodads: D05F (Ruins Piedra 1), Name (Name)
 {
-Ruins Stone 1
+Ruins Piedra 1
 }
 
 STRING 2084
-// Doodads: D05G (Ruins Stone 2), Name (Name)
+// Doodads: D05G (Ruins Piedra 2), Name (Name)
 {
-Ruins Stone 2
+Ruins Piedra 2
 }
 
 STRING 2085
-// Doodads: D05H (Ruins Stone 3), Name (Name)
+// Doodads: D05H (Ruins Piedra 3), Name (Name)
 {
-Ruins Stone 3
+Ruins Piedra 3
 }
 
 STRING 2086
@@ -12934,13 +12934,13 @@ Estoy listo
 }
 
 STRING 2160
-// Abilities: A02H (Digivolution), EditorSuffix (Editor Suffix)
+// Abilities: A02H (Digievolución), EditorSuffix (Editor Suffix)
 {
 (Actived)
 }
 
 STRING 2161
-// Abilities: A02I (Digivolution), EditorSuffix (Editor Suffix)
+// Abilities: A02I (Digievolución), EditorSuffix (Editor Suffix)
 {
 (De-actived)
 }
@@ -14475,13 +14475,13 @@ Cueva de la playa secreta
 STRING 2428
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
-Geko Swamp
+Pantano Geko
 }
 
 STRING 2429
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
-Mangroove Region
+Manglar
 }
 
 STRING 2430
@@ -14745,7 +14745,7 @@ Montaña Basura
 STRING 2473
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Geko Swamp
+Pantano Geko
 }
 
 STRING 2474
@@ -16104,13 +16104,13 @@ Receta de |cff80ff80Nueva barrera de roble|r
 }
 
 STRING 2700
-// Items: I0A6 (Receta de |cffff0000La barrera de ADN de Kimera|r), Description (Description)
+// Items: I0A6 (Receta de |cffff0000La barrera de ADN de Quimera|r), Description (Description)
 {
 |cffd45e19Estadísticas|r|n- Armadura +2|n- PS +45|n- Evasión +1%|n|n|cffd45e19Requiere:|r|n- Escudo +1|n- 1 Madera de DigiRoble|n- 2 Digiarcilla|n|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 2701
-// Items: I0A6 (Receta de |cffff0000La barrera de ADN de Kimera|r), Ubertip (Tooltip - Extended)
+// Items: I0A6 (Receta de |cffff0000La barrera de ADN de Quimera|r), Ubertip (Tooltip - Extended)
 {
 |cffd45e19Estadísticas|r|n- Armadura +2|n- PS +45|n- Evasión +1%|n|n|cffd45e19Requiere:|r|n- Escudo +1|n- 1 Madera de DigiRoble|n- 2 Digiarcilla|n|n|cffffff00Este ítem irá a la mochila.|r
 }
@@ -16788,7 +16788,7 @@ Receta de |cff80ff80Tótem del jabalí|r
 }
 
 STRING 2814
-// Abilities: A04X (|cff6f2583Colorful Spark|r), Hotkey (Hotkey - Normal)
+// Abilities: A04X (|cff6f2583Chispa colorida|r), Hotkey (Hotkey - Normal)
 {
 Q
 }
@@ -17208,7 +17208,7 @@ Apunta al enemigo con su lanza.
 }
 
 STRING 2884
-// Abilities: A04X (|cff6f2583Colorful Spark|r), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A04X (|cff6f2583Chispa colorida|r), Ubertip (Tooltip - Normal - Extended)
 {
 ¡Lanza energía eléctrica de colores al enemigo!
 }
@@ -18342,9 +18342,9 @@ STRING 3072
 }
 
 STRING 3073
-// Items: I058 (|cff00ffffData Cannon|r), Description (Description)
+// Items: I058 (|cff00ffffCañón de datos|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 28 Ataque|n+ 25 Destreza|n+ 18 Sabiduría |n+ 150% Regeneración de energía |n+ 6% Probabilidad de crítico |n+ 10% Impacto Crítico|n+20% Posibilidad de infligir 20 puntos de daño fuego
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 28 Ataque|n+ 25 Destreza|n+ 18 Sabiduría |n+ 150% Regeneración de energía|n+ 6% Probabilidad de crítico |n+ 10% Impacto Crítico|n+20% Posibilidad de infligir 20 puntos de daño fuego
 }
 
 STRING 3074
@@ -19056,7 +19056,7 @@ STRING 3191
 }
 
 STRING 3192
-// Items: I08B (|cff8080ffThe Reaper|r), Description (Description)
+// Items: I08B (|cff8080ffEl segador|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 36 Ataque|n+ 16 Sabiduría|n+ 16 Estámina|n+ 16 Destreza|n+ 6% Posibilidad de infligir 66 daños adicionales de Oscuridad
 }
@@ -19458,7 +19458,7 @@ Q
 }
 
 STRING 3260
-// Items: I08B (|cff8080ffThe Reaper|r), Ubertip (Tooltip - Extended)
+// Items: I08B (|cff8080ffEl segador|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 36 Ataque|n+ 16 Sabiduría|n+ 16 Estámina|n+ 16 Destreza|n+ 6% Posibilidad de infligir 66 daños adicionales de Oscuridad
 }
@@ -19938,9 +19938,9 @@ STRING 3339
 }
 
 STRING 3340
-// Items: I06I (|cff8080ffOscuro Dagger|r), Ubertip (Tooltip - Extended)
+// Items: I06I (|cff8080ffDaga Oscura|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 14 Ataque|n+ 14 Sabiduría|n+ 14 Estámina|n+ 75% Regeneración de energía |n+ 3% Posibilidad de evasión|n+ 20% Posibilidad de infligir 10 de daño adicional de Oscuridad
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 14 Ataque|n+ 14 Sabiduría|n+ 14 Estámina|n+ 75% Regeneración de energía|n+ 3% Posibilidad de evasión|n+ 20% Posibilidad de infligir 10 de daño adicional de Oscuridad
 }
 
 STRING 3341
@@ -20448,9 +20448,9 @@ STRING 3424
 }
 
 STRING 3425
-// Items: I00Y (Crest of Courage), Ubertip (Tooltip - Extended)
+// Items: I00Y (Escudo de la valentía), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 3426
@@ -20502,9 +20502,9 @@ STRING 3433
 }
 
 STRING 3434
-// Items: I00Y (Crest of Courage), Description (Description)
+// Items: I00Y (Escudo de la valentía), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 3435
@@ -20526,13 +20526,13 @@ Robar
 }
 
 STRING 3438
-// Items: I07X (|cffff0000Master Fishing Rod|r), Description (Description)
+// Items: I07X (|cffff0000Caña de pescar maestra|r), Description (Description)
 {
 Permite que tu Digimon pesque peces comunes con una alta probabilidad de obtener peces raros.|n|cffff0000Debe estar cerca de aguas profundas.|r
 }
 
 STRING 3439
-// Items: I07X (|cffff0000Master Fishing Rod|r), Ubertip (Tooltip - Extended)
+// Items: I07X (|cffff0000Caña de pescar maestra|r), Ubertip (Tooltip - Extended)
 {
 Permite que tu Digimon pesque peces comunes con una alta probabilidad de obtener peces raros.|n|cffff0000Debe estar cerca de aguas profundas.|r
 }
@@ -20736,7 +20736,7 @@ STRING 3472
 }
 
 STRING 3473
-// Items: I07K (|cff8080ffBlazing Skull|r), Ubertip (Tooltip - Extended)
+// Items: I07K (|cff8080ffCalavera llameante|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 12 Ataque|n+ 8 Sabiduría|n+ 7 Destreza|n+ 3% Posibilidad de evasión|n+ 150 Salud|n+ 20% Posibilidad de infligir 10 puntos de daño adicionales de Llamas
 }
@@ -20832,7 +20832,7 @@ Grito de guerra
 }
 
 STRING 3489
-// Items: I07K (|cff8080ffBlazing Skull|r), Description (Description)
+// Items: I07K (|cff8080ffCalavera llameante|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 12 Ataque|n+ 8 Sabiduría|n+ 7 Destreza|n+ 3% Posibilidad de evasión|n+ 150 Salud|n+ 20% Posibilidad de infligir 10 puntos de daño adicionales de Llamas
 }
@@ -21162,13 +21162,13 @@ Jugo de espinaca
 }
 
 STRING 3544
-// Items: I057 (|cff80ff80Ice Tiger Claw|r), Ubertip (Tooltip - Extended)
+// Items: I057 (|cff80ff80Garra de tigre de hielo|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 20 Ataque|n+ 30% Velocidad de ataque|n+ 22 Destreza|n+ 4% Posibilidad de evasión|n+ 2 Regeneración de salud|n+ 30 Velocidad de movimiento
 }
 
 STRING 3545
-// Items: I057 (|cff80ff80Ice Tiger Claw|r), Description (Description)
+// Items: I057 (|cff80ff80Garra de tigre de hielo|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 20 Ataque|n+ 30% Velocidad de ataque|n+ 22 Destreza|n+ 4% Posibilidad de evasión|n+ 2 Regeneración de salud|n+ 30 Velocidad de movimiento
 }
@@ -22554,7 +22554,7 @@ Hace girar la lanza que sostiene en su mano derecha a la velocidad de la luz, ge
 }
 
 STRING 3776
-// Items: I06D (|cffff0000La barrera de ADN de Kimera|r), Ubertip (Tooltip - Extended)
+// Items: I06D (|cffff0000La barrera de ADN de Quimera|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 600 Salud|n+ 200% Regeneración de energía|n+ 35 Estámina|n+ 8% Impacto Crítico|n+ 10 Armadura|n+ 20% Posibilidad de devolver 25 de daño Bestia
 }
@@ -22578,7 +22578,7 @@ Q
 }
 
 STRING 3780
-// Items: I06D (|cffff0000La barrera de ADN de Kimera|r), Description (Description)
+// Items: I06D (|cffff0000La barrera de ADN de Quimera|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 600 Salud|n+ 200% Regeneración de energía|n+ 35 Estámina|n+ 8% Impacto Crítico|n+ 10 Armadura|n+ 20% Posibilidad de devolver 25 de daño Bestia
 }
@@ -22614,7 +22614,7 @@ STRING 3785
 }
 
 STRING 3786
-// Units: N02V (Sea Traveler), Propernames (Proper Names)
+// Units: N02V (Viajero del mar), Propernames (Proper Names)
 {
 Whamon
 }
@@ -27852,9 +27852,9 @@ Digibits TEST
 }
 
 STRING 4658
-// Abilities: A0BD (Bundle of Lumber TEST), Name (Name)
+// Abilities: A0BD (Paquete de madera TEST), Name (Name)
 {
-Bundle of Lumber TEST
+Paquete de madera TEST
 }
 
 STRING 4659
@@ -28871,7 +28871,7 @@ Crear Lanza relámpago
 }
 
 STRING 4828
-// Abilities: A0IM (DigiAnchovy), Hotkey (Hotkey - Normal)
+// Abilities: A0IM (Digianchoa), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -28883,7 +28883,7 @@ Crear Bastón Cenit
 }
 
 STRING 4830
-// Abilities: A0IN (DigiDragonFish), Hotkey (Hotkey - Normal)
+// Abilities: A0IN (DigiPezDragón), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -28895,7 +28895,7 @@ Crear Manual del hacker
 }
 
 STRING 4832
-// Abilities: A0IO (DigiCarp), Hotkey (Hotkey - Normal)
+// Abilities: A0IO (DigiCarpa), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -28907,7 +28907,7 @@ Crear Escudo Bestia
 }
 
 STRING 4834
-// Abilities: A0IP (DigiSeabass), Hotkey (Hotkey - Normal)
+// Abilities: A0IP (DigiLubina), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -28919,7 +28919,7 @@ Crear Tridente marino
 }
 
 STRING 4836
-// Abilities: A0IQ (DigiSnapper), Hotkey (Hotkey - Normal)
+// Abilities: A0IQ (DigiPargo), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -28943,13 +28943,13 @@ Crear Cresta de bondad
 }
 
 STRING 4840
-// Abilities: A0IS (DigiTrout), Hotkey (Hotkey - Normal)
+// Abilities: A0IS (Digitrucha), Hotkey (Hotkey - Normal)
 {
 Z
 }
 
 STRING 4841
-// Items: I03A (PVP ticket), Description (Description)
+// Items: I03A (Boleto JcJ), Description (Description)
 {
 Usa esto boleto para luchar con un jugador en el gimnasio.
 }
@@ -28973,7 +28973,7 @@ Habilidad nula
 }
 
 STRING 4845
-// Abilities: A0IT (DigiTuna), Hotkey (Hotkey - Normal)
+// Abilities: A0IT (DigiAtún), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -28985,7 +28985,7 @@ Aumentar la probabilidad de daño crítico y crítico por 10%.|n|cffffff00Dismin
 }
 
 STRING 4847
-// Items: I03B (Grey Arena Ticket), Description (Description)
+// Items: I03B (Entrada a la Arena Gris), Description (Description)
 {
 Usa este ticket para luchar contra un grupo de Digimones enemigos.
 }
@@ -29687,7 +29687,7 @@ NPC
 }
 
 STRING 4965
-// Abilities: A0IU (DeluxMushroom), Hotkey (Hotkey - Normal)
+// Abilities: A0IU (Champiñón De Lujo), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -29717,37 +29717,37 @@ Piezas de juguete para Sukamon.
 }
 
 STRING 4970
-// Items: I07Q (DigiSnapper), Description (Description)
+// Items: I07Q (DigiPargo), Description (Description)
 {
 Cura 320 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 4971
-// Items: I07Q (DigiSnapper), Ubertip (Tooltip - Extended)
+// Items: I07Q (DigiPargo), Ubertip (Tooltip - Extended)
 {
 Cura 320 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 4972
-// Items: I07S (DigiTrout), Description (Description)
+// Items: I07S (Digitrucha), Description (Description)
 {
 Cura 500 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 4973
-// Items: I07S (DigiTrout), Ubertip (Tooltip - Extended)
+// Items: I07S (Digitrucha), Ubertip (Tooltip - Extended)
 {
 Cura 500 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 4974
-// Items: I07T (DigiTuna), Description (Description)
+// Items: I07T (DigiAtún), Description (Description)
 {
 Cura 850 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 4975
-// Items: I07T (DigiTuna), Ubertip (Tooltip - Extended)
+// Items: I07T (DigiAtún), Ubertip (Tooltip - Extended)
 {
 Cura 850 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
@@ -29854,7 +29854,7 @@ DigiCarpaBlanca
 }
 
 STRING 4993
-// Abilities: A0IW (DigiShark), Hotkey (Hotkey - Normal)
+// Abilities: A0IW (DigiTiburón), Hotkey (Hotkey - Normal)
 {
 Z
 }
@@ -36493,6 +36493,12 @@ STRING 6101
 Regeneración%s+de%s+energía
 }
 
+STRING 6103
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Bloqueo
+}
+
 STRING 6122
 // Items: I02W (|cff80ff80Piel de cobra|r), Tip (Tooltip - Basic)
 {
@@ -39902,7 +39908,7 @@ STRING 7190
 }
 
 STRING 7191
-// Abilities: A0IH (Thorn Jab), Hotkey (Hotkey - Normal)
+// Abilities: A0IH (Golpe espinoso), Hotkey (Hotkey - Normal)
 {
 Q
 }
@@ -39932,7 +39938,7 @@ Despedaza al oponente en una "Danza del Infierno", en la que sus ágiles movimie
 }
 
 STRING 7196
-// Abilities: A0J3 (Heaven's Gate), Hotkey (Hotkey - Normal)
+// Abilities: A0J3 (La puerta del cielo), Hotkey (Hotkey - Normal)
 {
 Q
 }
@@ -39956,7 +39962,7 @@ STRING 7199
 }
 
 STRING 7200
-// Abilities: A0J8 (Electronic Blast Espada), Hotkey (Hotkey - Normal)
+// Abilities: A0J8 (Espada explosiva electrónica), Hotkey (Hotkey - Normal)
 {
 Q
 }
@@ -40148,9 +40154,9 @@ STRING 7271
 }
 
 STRING 7272
-// Abilities: A0FC (Hardened Skin Mobs 1), Name (Name)
+// Abilities: A0FC (Piel endurecida turbas 1), Name (Name)
 {
-Hardened Skin Mobs 1
+Piel endurecida turbas 1
 }
 
 STRING 7273
@@ -40400,7 +40406,7 @@ STRING 7317
 }
 
 STRING 7318
-// Abilities: A0J9 (Huracán Gale), Hotkey (Hotkey - Normal)
+// Abilities: A0J9 (Vendaval huracanado), Hotkey (Hotkey - Normal)
 {
 Q
 }
@@ -41192,7 +41198,7 @@ Un boleto para viajar a: |cffd45e19Gran Cañón|r |cffffff00Nivel 49 - 60|r.
 STRING 7573
 // Items: I02Y (Boleto a |cffd45e19Gran Cañón|r.), Ubertip (Tooltip - Extended)
 {
-Un boleto para viajar a:  |cffd45e19Gran Cañón|r |cffffff00Nivel 49 - 60|r.
+Un boleto para viajar a: |cffd45e19Gran Cañón|r |cffffff00Nivel 49 - 60|r.
 }
 
 STRING 7574
@@ -42196,7 +42202,7 @@ STRING 7766
 }
 
 STRING 7777
-// Abilities: A0GQ (Digimon Stats), Untip (Tooltip - Turn Off)
+// Abilities: A0GQ (Estadísticas de Digimon), Untip (Tooltip - Turn Off)
 {
 Ocultar estadísticas
 }
@@ -43502,7 +43508,7 @@ STRING 8148
 STRING 8149
 // Items: I05W (Test item), Description (Description)
 {
-- |cff00ff00Salud|r +100.|n- |cff00ff80Regeneración de salud|r +1.|n- |cff0080ffEnergía|r +100.|n- |cff8080ffRegeneración de energía|r +10%.|n- |cff008000Destreza|r +10.|n- |cffd45e19Estámina|r +10.|n- |cff0000ffSabiduría|r +10.|n- |cff00ffffEvasión|r +10%.|n- |cff800000Crítico|r +10%.|n- |cff6f2583Armadura|r +10.|n- |cffff0000Daño|r +12.|n- |cffffff00Impacto Crítico|r +360.|n- |cff808080Bloqueo|r +20%.|n- |cffff8080Velocidad de movimiento|r +30.|n|nSolo se puede usar 1 escudo a la vez.
+- +100 |cff00ff00Salud|r.|n- +1 |cff00ff80Regeneración de salud|r.|n- +100 |cff0080ffEnergía|r.|n- +10% |cff8080ffRegeneración de energía|r.|n- +10 |cff008000Destreza|r.|n- +10 |cffd45e19Estámina|r.|n- +10 |cff0000ffSabiduría|r.|n- +10% |cff00ffffEvasión|r.|n- +10% |cff800000Crítico|r.|n- +10 |cff6f2583Armadura|r.|n- +12 |cffff0000Daño|r.|n- +360 |cffffff00Impacto Crítico|r.|n- +20% |cff808080Bloqueo|r.|n- +30 |cffff8080Velocidad de movimiento|r.|n|nSolo se puede usar 1 escudo a la vez.
 }
 
 STRING 8152
@@ -43518,27 +43524,27 @@ Regalo Digimon
 }
 
 STRING 8158
-// Items: I06I (|cff8080ffOscuro Dagger|r), Name (Name)
+// Items: I06I (|cff8080ffDaga Oscura|r), Name (Name)
 {
-|cff8080ffOscuro Dagger|r
+|cff8080ffDaga Oscura|r
 }
 
 STRING 8159
-// Items: I06I (|cff8080ffOscuro Dagger|r), Tip (Tooltip - Basic)
+// Items: I06I (|cff8080ffDaga Oscura|r), Tip (Tooltip - Basic)
 {
-|cff8080ffOscuro Dagger|r
+|cff8080ffDaga Oscura|r
 }
 
 STRING 8160
-// Items: I073 (|cff8080ffGreat Hacha|r), Name (Name)
+// Items: I073 (|cff8080ffGran Hacha|r), Name (Name)
 {
-|cff8080ffGreat Hacha|r
+|cff8080ffGran Hacha|r
 }
 
 STRING 8161
-// Items: I073 (|cff8080ffGreat Hacha|r), Tip (Tooltip - Basic)
+// Items: I073 (|cff8080ffGran Hacha|r), Tip (Tooltip - Basic)
 {
-|cff8080ffGreat Hacha|r
+|cff8080ffGran Hacha|r
 }
 
 STRING 8184
@@ -43674,519 +43680,519 @@ Veedramon
 }
 
 STRING 8242
-// Items: I06D (|cffff0000La barrera de ADN de Kimera|r), Name (Name)
+// Items: I06D (|cffff0000La barrera de ADN de Quimera|r), Name (Name)
 {
-|cffff0000La barrera de ADN de Kimera|r
+|cffff0000La barrera de ADN de Quimera|r
 }
 
 STRING 8243
-// Items: I06D (|cffff0000La barrera de ADN de Kimera|r), Tip (Tooltip - Basic)
+// Items: I06D (|cffff0000La barrera de ADN de Quimera|r), Tip (Tooltip - Basic)
 {
-|cffff0000La barrera de ADN de Kimera|r
+|cffff0000La barrera de ADN de Quimera|r
 }
 
 STRING 8284
-// Items: I00Y (Crest of Courage), Name (Name)
+// Items: I00Y (Escudo de la valentía), Name (Name)
 {
-Crest of Courage
+Escudo de la valentía
 }
 
 STRING 8285
-// Items: I00Y (Crest of Courage), Tip (Tooltip - Basic)
+// Items: I00Y (Escudo de la valentía), Tip (Tooltip - Basic)
 {
-Crest of Courage
+Escudo de la valentía
 }
 
 STRING 8286
-// Items: I00Z (Crest of Destiny), Ubertip (Tooltip - Extended)
+// Items: I00Z (Cresta del Destino), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8287
-// Items: I00Z (Crest of Destiny), Description (Description)
+// Items: I00Z (Cresta del Destino), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8288
-// Items: I00Z (Crest of Destiny), Name (Name)
+// Items: I00Z (Cresta del Destino), Name (Name)
 {
-Crest of Destiny
+Cresta del Destino
 }
 
 STRING 8289
-// Items: I00Z (Crest of Destiny), Tip (Tooltip - Basic)
+// Items: I00Z (Cresta del Destino), Tip (Tooltip - Basic)
 {
-Crest of Destiny
+Cresta del Destino
 }
 
 STRING 8290
-// Items: I010 (Crest of Friendship), Ubertip (Tooltip - Extended)
+// Items: I010 (Cresta de la amistad), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8291
-// Items: I010 (Crest of Friendship), Description (Description)
+// Items: I010 (Cresta de la amistad), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8292
-// Items: I010 (Crest of Friendship), Name (Name)
+// Items: I010 (Cresta de la amistad), Name (Name)
 {
-Crest of Friendship
+Cresta de la amistad
 }
 
 STRING 8293
-// Items: I010 (Crest of Friendship), Tip (Tooltip - Basic)
+// Items: I010 (Cresta de la amistad), Tip (Tooltip - Basic)
 {
-Crest of Friendship
+Cresta de la amistad
 }
 
 STRING 8294
-// Items: I011 (Crest of Hope), Ubertip (Tooltip - Extended)
+// Items: I011 (Cresta de la esperanza), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8295
-// Items: I011 (Crest of Hope), Description (Description)
+// Items: I011 (Cresta de la esperanza), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8296
-// Items: I011 (Crest of Hope), Name (Name)
+// Items: I011 (Cresta de la esperanza), Name (Name)
 {
-Crest of Hope
+Cresta de la esperanza
 }
 
 STRING 8297
-// Items: I011 (Crest of Hope), Tip (Tooltip - Basic)
+// Items: I011 (Cresta de la esperanza), Tip (Tooltip - Basic)
 {
-Crest of Hope
+Cresta de la esperanza
 }
 
 STRING 8298
-// Items: I013 (Crest of Knowledge), Ubertip (Tooltip - Extended)
+// Items: I013 (Cresta del conocimiento), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8299
-// Items: I013 (Crest of Knowledge), Description (Description)
+// Items: I013 (Cresta del conocimiento), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8302
-// Items: I014 (Crest of Luz), Ubertip (Tooltip - Extended)
+// Items: I014 (Cresta de luz), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8303
-// Items: I014 (Crest of Luz), Description (Description)
+// Items: I014 (Cresta de luz), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8304
-// Items: I013 (Crest of Knowledge), Name (Name)
+// Items: I013 (Cresta del conocimiento), Name (Name)
 {
-Crest of Knowledge
+Cresta del conocimiento
 }
 
 STRING 8305
-// Items: I013 (Crest of Knowledge), Tip (Tooltip - Basic)
+// Items: I013 (Cresta del conocimiento), Tip (Tooltip - Basic)
 {
-Crest of Knowledge
+Cresta del conocimiento
 }
 
 STRING 8306
-// Items: I015 (Crest of Love ), Ubertip (Tooltip - Extended)
+// Items: I015 (Cresta del amor), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8307
-// Items: I015 (Crest of Love ), Description (Description)
+// Items: I015 (Cresta del amor), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8308
-// Items: I014 (Crest of Luz), Name (Name)
+// Items: I014 (Cresta de luz), Name (Name)
 {
-Crest of Luz
+Cresta de luz
 }
 
 STRING 8309
-// Items: I014 (Crest of Luz), Tip (Tooltip - Basic)
+// Items: I014 (Cresta de luz), Tip (Tooltip - Basic)
 {
-Crest of Luz
+Cresta de luz
 }
 
 STRING 8310
-// Items: I016 (Crest of Reliability), Ubertip (Tooltip - Extended)
+// Items: I016 (Cresta de fiabilidad), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8311
-// Items: I016 (Crest of Reliability), Description (Description)
+// Items: I016 (Cresta de fiabilidad), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8312
-// Items: I015 (Crest of Love ), Name (Name)
+// Items: I015 (Cresta del amor), Name (Name)
 {
-Crest of Love 
+Cresta del amor
 }
 
 STRING 8313
-// Items: I015 (Crest of Love ), Tip (Tooltip - Basic)
+// Items: I015 (Cresta del amor), Tip (Tooltip - Basic)
 {
-Crest of Love 
+Cresta del amor
 }
 
 STRING 8314
-// Items: I017 (Crest of Sincerity), Ubertip (Tooltip - Extended)
+// Items: I017 (Cresta de la Sinceridad), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8315
-// Items: I017 (Crest of Sincerity), Description (Description)
+// Items: I017 (Cresta de la Sinceridad), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Permite que los Digimon digievolucionen a la etapa Mega.
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 escudo a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permite que los Digimon digievolucionen a la etapa Mega.
 }
 
 STRING 8316
-// Items: I016 (Crest of Reliability), Name (Name)
+// Items: I016 (Cresta de fiabilidad), Name (Name)
 {
-Crest of Reliability
+Cresta de fiabilidad
 }
 
 STRING 8317
-// Items: I016 (Crest of Reliability), Tip (Tooltip - Basic)
+// Items: I016 (Cresta de fiabilidad), Tip (Tooltip - Basic)
 {
-Crest of Reliability
+Cresta de fiabilidad
 }
 
 STRING 8320
-// Items: I017 (Crest of Sincerity), Name (Name)
+// Items: I017 (Cresta de la Sinceridad), Name (Name)
 {
-Crest of Sincerity
+Cresta de la Sinceridad
 }
 
 STRING 8321
-// Items: I017 (Crest of Sincerity), Tip (Tooltip - Basic)
+// Items: I017 (Cresta de la Sinceridad), Tip (Tooltip - Basic)
 {
-Crest of Sincerity
+Cresta de la Sinceridad
 }
 
 STRING 8330
 // Items: I01B (Recuperación pequeña), Description (Description)
 {
-Sana 100 Salud instantly of the selected Digimon.|n|cffffff00Este ítem irá a la mochila.|r
+Cura instantáneamente 100 puntos de salud al Digimon seleccionado.|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8331
 // Items: I01B (Recuperación pequeña), Ubertip (Tooltip - Extended)
 {
-Sana 100 Salud instantly of the selected Digimon.|n|cffffff00Este ítem irá a la mochila.|r
+Cura instantáneamente 100 puntos de salud al Digimon seleccionado.|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8346
 // Items: I023 (Leche chocolatada), Description (Description)
 {
-Inscrease the Energía by 50, Estámina by 5, Destreza by 25, Sabiduría by 5 and Armadura en 1.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 50, Estámina en 5, Destreza en 25, Sabiduría en 5 y Armadura en 1.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8347
 // Items: I023 (Leche chocolatada), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía by 50, Estámina by 5, Destreza by 25, Sabiduría by 5 and Armadura en 1.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 50, Estámina en 5, Destreza en 25, Sabiduría en 5 y Armadura en 1.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8348
 // Items: I024 (Vitamina de arándano), Description (Description)
 {
-Inscrease the Energía by 70, Estámina by 7, Destreza by 35, Sabiduría by 7 and armor by 3.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 70, Estámina en 7, Destreza en 35, Sabiduría en 7 y armadura en 3.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8349
 // Items: I024 (Vitamina de arándano), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía by 70, Estámina by 7, Destreza by 35, Sabiduría by 7 and armor by 3.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 70, Estámina en 7, Destreza en 35, Sabiduría en 7 y armadura en 3.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8350
 // Items: I025 (Vitamina de manzana verde), Description (Description)
 {
-Inscrease the Energía by 70, Estámina by 7, Destreza by 7 and Sabiduría by 35.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumentar la Energía en 70, Estámina en 7, Destreza en 7 y Sabiduría en 35.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8351
 // Items: I025 (Vitamina de manzana verde), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía by 70, Estámina by 7, Destreza by 7 and Sabiduría by 35.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumentar la Energía en 70, Estámina en 7, Destreza en 7 y Sabiduría en 35.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8352
 // Items: I026 (Agua Cristalina), Description (Description)
 {
-Inscrease the Energía en 10 and all stats by 4.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 10 y todas las estadísticas en 4.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8353
 // Items: I026 (Agua Cristalina), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía en 10 and all stats by 4.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 10 y todas las estadísticas en 4.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8354
 // Items: I027 (Vitamina de fresa), Description (Description)
 {
-Inscrease the Energía en 100, Estámina en 16, Destreza en 16, Sabiduría en 16 and armor by 2.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 100, Estámina en 16, Destreza en 16, Sabiduría en 16 y armadura en 2.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8355
 // Items: I027 (Vitamina de fresa), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía en 100, Estámina en 16, Destreza en 16, Sabiduría en 16 and armor by 2.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 100, Estámina en 16, Destreza en 16, Sabiduría en 16 y armadura en 2.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8356
 // Items: I028 (Vitamina Kiwi), Description (Description)
 {
-Inscrease the Energía by 70, Estámina by 35, Destreza by 7 and Sabiduría by 7.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 70, Estámina en 35, Destreza en 7 y Sabiduría en 7.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8357
 // Items: I028 (Vitamina Kiwi), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía by 70, Estámina by 35, Destreza by 7 and Sabiduría by 7.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 70, Estámina en 35, Destreza en 7 y Sabiduría en 7.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8358
 // Items: I029 (Leche de mantequilla), Description (Description)
 {
-Inscrease the Energía by 50, Estámina by 5, Destreza by 5 and Sabiduría by 25.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 50, Estámina en 5, Destreza en 5 y Sabiduría en 25.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8359
 // Items: I029 (Leche de mantequilla), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía by 50, Estámina by 5, Destreza by 5 and Sabiduría by 25.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 50, Estámina en 5, Destreza en 5 y Sabiduría en 25.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8360
 // Items: I02A (Jugo de uva), Description (Description)
 {
-Inscrease the Energía by 20 and all stats by 6.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 20 y todas las estadísticas en 6.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8361
 // Items: I02A (Jugo de uva), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía by 20 and all stats by 6.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 20 y todas las estadísticas en 6.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8362
 // Items: I02B (Jugo de espinaca), Description (Description)
 {
-Inscrease the Energía by 35 and all stats by 8.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 35 y todas las estadísticas en 8.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8363
 // Items: I02B (Jugo de espinaca), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía by 35 and all stats by 8.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumenta la Energía en 35 y todas las estadísticas en 8.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8364
 // Items: I02C (Jugo de cereza), Description (Description)
 {
-Inscrease the Energía by 50, Estámina by 25, Destreza by 5 and Sabiduría by 5.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumentar la Energía en 50, Estámina en 25, Destreza en 5 y Sabiduría en 5.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8365
 // Items: I02C (Jugo de cereza), Ubertip (Tooltip - Extended)
 {
-Inscrease the Energía by 50, Estámina by 25, Destreza by 5 and Sabiduría by 5.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Drink effect at time.|r
+Aumentar la Energía en 50, Estámina en 25, Destreza en 5 y Sabiduría en 5.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo un efecto de bebida a la vez.|r
 }
 
 STRING 8366
 // Items: I02E (Tarta de manzana), Description (Description)
 {
-Inscrease the Salud en 110, Estámina by 35, Destreza by 7 and Sabiduría by 7.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 110, Estámina en 35, Destreza en 7 y Sabiduría en 7.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8367
 // Items: I02E (Tarta de manzana), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud en 110, Estámina by 35, Destreza by 7 and Sabiduría by 7.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 110, Estámina en 35, Destreza en 7 y Sabiduría en 7.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8368
 // Items: I02F (Croissant), Description (Description)
 {
-Inscrease the Salud by 55 and all stats by 8.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 55 y todas las estadísticas en 8.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8369
 // Items: I02F (Croissant), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud by 55 and all stats by 8.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 55 y todas las estadísticas en 8.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8372
 // Items: I02H (Filete Ahumado), Description (Description)
 {
-Inscrease the Salud en 150, Daño by 4, Estámina en 16, Destreza en 16 and Sabiduría en 16.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 150, Daño en 4, Estámina en 16, Destreza en 16 y Sabiduría en 16.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8373
 // Items: I02H (Filete Ahumado), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud en 150, Daño by 4, Estámina en 16, Destreza en 16 and Sabiduría en 16.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 150, Daño en 4, Estámina en 16, Destreza en 16 y Sabiduría en 16.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8374
 // Items: I02I (Pollo asado), Description (Description)
 {
-Inscrease the Salud by 70, Daño by 7, Estámina by 7, Destreza by 35 and Sabiduría by 7.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 70, Daño en 7, Estámina en 7, Destreza en 35 y Sabiduría en 7.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8375
 // Items: I02I (Pollo asado), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud by 70, Daño by 7, Estámina by 7, Destreza by 35 and Sabiduría by 7.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 70, Daño en 7, Estámina en 7, Destreza en 35 y Sabiduría en 7.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8376
 // Items: I02J (Costillas a la barbacoa), Description (Description)
 {
-Inscrease the Salud en 110, Estámina by 7, Destreza by 7 and Sabiduría by 35.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 110, Estámina en 7, Destreza en 7 y Sabiduría en 35.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8377
 // Items: I02J (Costillas a la barbacoa), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud en 110, Estámina by 7, Destreza by 7 and Sabiduría by 35.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 110, Estámina en 7, Destreza en 7 y Sabiduría en 35.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8378
 // Items: I02K (Salchicha de cerdo), Description (Description)
 {
-Inscrease the Salud by 50, Daño by 5, Estámina by 5, Destreza by 25 and Sabiduría by 5.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 50, Daño en 5, Estámina en 5, Destreza en 25 y Sabiduría en 5.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8379
 // Items: I02K (Salchicha de cerdo), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud by 50, Daño by 5, Estámina by 5, Destreza by 25 and Sabiduría by 5.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 50, Daño en 5, Estámina en 5, Destreza en 25 y Sabiduría en 5.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8380
 // Items: I02L (Pan Suave), Description (Description)
 {
-Inscrease the Salud by 35 and all stats by 6.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 35 y todas las estadísticas en 6.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8381
 // Items: I02L (Pan Suave), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud by 35 and all stats by 6.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 35 y todas las estadísticas en 6.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8382
 // Items: I02M (Filete Sazonado), Description (Description)
 {
-Inscrease the Salud by 80, Estámina by 5, Destreza by 5 and Sabiduría by 25.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumentar la Salud en 80, Estámina en 5, Destreza en 5 y Sabiduría en 25.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8383
 // Items: I02M (Filete Sazonado), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud by 80, Estámina by 5, Destreza by 5 and Sabiduría by 25.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumentar la Salud en 80, Estámina en 5, Destreza en 5 y Sabiduría en 25.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8390
 // Items: I03I (Sopa), Description (Description)
 {
-Inscrease the Salud by 20 and all stats by 4.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 20 y todas las estadísticas en 4.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8391
 // Items: I03I (Sopa), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud by 20 and all stats by 4.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 20 y todas las estadísticas en 4.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8392
 // Items: I04D (Almendras), Description (Description)
 {
-Inscrease the Salud by 80, Estámina by 25, Destreza by 5 and Sabiduría by 5.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 80, Estámina en 25, Destreza en 5 y Sabiduría en 5.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8393
 // Items: I04D (Almendras), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud by 80, Estámina by 25, Destreza by 5 and Sabiduría by 5.|n|cffffff00Lasts 30 minutes.|r|n|cffffff00Only 1 Comida effect at time.|r
+Aumenta la Salud en 80, Estámina en 25, Destreza en 5 y Sabiduría en 5.|n|cffffff00Dura 30 minutos.|r|n|cffffff00Solo 1 efecto de comida a la vez.|r
 }
 
 STRING 8400
 // Items: I05X (Tienda de premios de la arena), Description (Description)
 {
-Look the items you can buy based on your Arena rank.
+Consulta los objetos que puedes comprar según tu rango en la Arena.
 }
 
 STRING 8401
 // Items: I05X (Tienda de premios de la arena), Ubertip (Tooltip - Extended)
 {
-Look the items you can buy based on your Arena rank.
+Consulta los objetos que puedes comprar según tu rango en la Arena.
 }
 
 STRING 8440
-// Items: I058 (|cff00ffffData Cannon|r), Name (Name)
+// Items: I058 (|cff00ffffCañón de datos|r), Name (Name)
 {
-|cff00ffffData Cannon|r
+|cff00ffffCañón de datos|r
 }
 
 STRING 8441
-// Items: I058 (|cff00ffffData Cannon|r), Tip (Tooltip - Basic)
+// Items: I058 (|cff00ffffCañón de datos|r), Tip (Tooltip - Basic)
 {
-|cff00ffffData Cannon|r
+|cff00ffffCañón de datos|r
 }
 
 STRING 8466
-// Items: I057 (|cff80ff80Ice Tiger Claw|r), Name (Name)
+// Items: I057 (|cff80ff80Garra de tigre de hielo|r), Name (Name)
 {
-|cff80ff80Ice Tiger Claw|r
+|cff80ff80Garra de tigre de hielo|r
 }
 
 STRING 8467
-// Items: I057 (|cff80ff80Ice Tiger Claw|r), Tip (Tooltip - Basic)
+// Items: I057 (|cff80ff80Garra de tigre de hielo|r), Tip (Tooltip - Basic)
 {
-|cff80ff80Ice Tiger Claw|r
+|cff80ff80Garra de tigre de hielo|r
 }
 
 STRING 8480
-// Items: ckng (|cff808080Heavy Helmet|r), Name (Name)
+// Items: ckng (|cff808080Casco pesado|r), Name (Name)
 {
-|cff808080Heavy Helmet|r
+|cff808080Casco pesado|r
 }
 
 STRING 8481
-// Items: ckng (|cff808080Heavy Helmet|r), Tip (Tooltip - Basic)
+// Items: ckng (|cff808080Casco pesado|r), Tip (Tooltip - Basic)
 {
-|cff808080Heavy Helmet|r
+|cff808080Casco pesado|r
 }
 
 STRING 8617
@@ -44394,13 +44400,13 @@ Bench N
 }
 
 STRING 8726
-// Abilities: A02H (Digivolution), Hotkey (Hotkey - Normal)
+// Abilities: A02H (Digievolución), Hotkey (Hotkey - Normal)
 {
 I
 }
 
 STRING 8727
-// Abilities: A02I (Digivolution), Hotkey (Hotkey - Normal)
+// Abilities: A02I (Digievolución), Hotkey (Hotkey - Normal)
 {
 I
 }
@@ -44412,25 +44418,25 @@ Z
 }
 
 STRING 8729
-// Abilities: A0GQ (Digimon Stats), Hotkey (Hotkey - Normal)
+// Abilities: A0GQ (Estadísticas de Digimon), Hotkey (Hotkey - Normal)
 {
 T
 }
 
 STRING 8730
-// Abilities: A0GQ (Digimon Stats), Unhotkey (Hotkey - Turn Off)
+// Abilities: A0GQ (Estadísticas de Digimon), Unhotkey (Hotkey - Turn Off)
 {
 T
 }
 
 STRING 8731
-// Abilities: A0GR (Digimon Stats), Unhotkey (Hotkey - Turn Off)
+// Abilities: A0GR (Estadísticas de Digimon), Unhotkey (Hotkey - Turn Off)
 {
 T
 }
 
 STRING 8732
-// Abilities: A0GR (Digimon Stats), Hotkey (Hotkey - Normal)
+// Abilities: A0GR (Estadísticas de Digimon), Hotkey (Hotkey - Normal)
 {
 T
 }
@@ -44438,181 +44444,181 @@ T
 STRING 8736
 // Abilities: A0GO (Dormir), Ubertip (Tooltip - Normal - Extended)
 {
-The digimon sleeps to recover its power, while is sleeping recovers 2% of its Salud and Energía every second.|nIt wakes up when is attacked.
+El Digimon duerme para recuperar su poder, mientras duerme recupera un 2% de su Salud y Energía cada segundo. |nSe despierta cuando es atacado.
 }
 
 STRING 8737
-// Abilities: A0IC (Hardened Skin BOSSSES), Name (Name)
+// Abilities: A0IC (Piel endurecida JEFES), Name (Name)
 {
-Hardened Skin BOSSSES
+Piel endurecida JEFES
 }
 
 STRING 8738
-// Abilities: A0IC (Hardened Skin BOSSSES), Tip (Tooltip - Normal)
+// Abilities: A0IC (Piel endurecida JEFES), Tip (Tooltip - Normal)
 {
-Hardened Skin BOSSSES
+Piel endurecida JEFES
 }
 
 STRING 8739
-// Abilities: A0ID (Hardened Skin BOSSSES 2), Name (Name)
+// Abilities: A0ID (Piel endurecida JEFES 2), Name (Name)
 {
-Hardened Skin BOSSSES 2
+Piel endurecida JEFES 2
 }
 
 STRING 8740
-// Abilities: A0ID (Hardened Skin BOSSSES 2), Tip (Tooltip - Normal)
+// Abilities: A0ID (Piel endurecida JEFES 2), Tip (Tooltip - Normal)
 {
-Hardened Skin BOSSSES 2
+Piel endurecida JEFES 2
 }
 
 STRING 8741
-// Abilities: A0IE (Hardened Skin BOSSSES 3), Name (Name)
+// Abilities: A0IE (Piel endurecida JEFES 3), Name (Name)
 {
-Hardened Skin BOSSSES 3
+Piel endurecida JEFES 3
 }
 
 STRING 8742
-// Abilities: A0IE (Hardened Skin BOSSSES 3), Tip (Tooltip - Normal)
+// Abilities: A0IE (Piel endurecida JEFES 3), Tip (Tooltip - Normal)
 {
-Hardened Skin BOSSSES 3
+Piel endurecida JEFES 3
 }
 
 STRING 8743
-// Abilities: A0IF (Hardened Skin BOSSSES 4), Name (Name)
+// Abilities: A0IF (Piel endurecida JEFES 4), Name (Name)
 {
-Hardened Skin BOSSSES 4
+Piel endurecida JEFES 4
 }
 
 STRING 8744
-// Abilities: A0IF (Hardened Skin BOSSSES 4), Tip (Tooltip - Normal)
+// Abilities: A0IF (Piel endurecida JEFES 4), Tip (Tooltip - Normal)
 {
-Hardened Skin BOSSSES 4
+Piel endurecida JEFES 4
 }
 
 STRING 8745
-// Units: n02P (Change place indicator), Name (Name)
+// Units: n02P (Indicador de cambio de lugar), Name (Name)
 {
-Change place indicator
+Indicador de cambio de lugar
 }
 
 STRING 8747
-// Units: e004 (Transporte indicator), Name (Name)
+// Units: e004 (Indicador de transporte), Name (Name)
 {
-Transporte indicator
+Indicador de transporte
 }
 
 STRING 8748
-// Units: n02Q (Boss indicator), Name (Name)
+// Units: n02Q (Indicador de jefe), Name (Name)
 {
-Boss indicator
+Indicador de jefe
 }
 
 STRING 8749
-// Units: u000 (Boss indicator), Name (Name)
+// Units: u000 (Indicador de jefe), Name (Name)
 {
-Boss indicator
+Indicador de jefe
 }
 
 STRING 8750
-// Units: n02R (Inner indicator), Name (Name)
+// Units: n02R (Indicador de interior), Name (Name)
 {
-Inner indicator
+Indicador de interior
 }
 
 STRING 8751
-// Items: I03M (Sunshine Herbs), Name (Name)
+// Items: I03M (Hierbas del sol), Name (Name)
 {
-Sunshine Herbs
+Hierbas del sol
 }
 
 STRING 8752
-// Items: I03M (Sunshine Herbs), Description (Description)
+// Items: I03M (Hierbas del sol), Description (Description)
 {
-Herbs to calm down Megadramon.
+Hierbas para calmar a Megadramon.
 }
 
 STRING 8753
-// Items: I03M (Sunshine Herbs), Ubertip (Tooltip - Extended)
+// Items: I03M (Hierbas del sol), Ubertip (Tooltip - Extended)
 {
-Herbs to calm down Megadramon.
+Hierbas para calmar a Megadramon.
 }
 
 STRING 8754
-// Items: I03M (Sunshine Herbs), Tip (Tooltip - Basic)
+// Items: I03M (Hierbas del sol), Tip (Tooltip - Basic)
 {
-Sunshine Herbs
+Hierbas del sol
 }
 
 STRING 8755
-// Abilities: A02H (Digivolution), Tip (Tooltip - Normal)
+// Abilities: A02H (Digievolución), Tip (Tooltip - Normal)
 {
-Digivolution
+Digievolución
 }
 
 STRING 8756
-// Abilities: A02H (Digivolution), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A02H (Digievolución), Ubertip (Tooltip - Normal - Extended)
 {
-The conditions for a Digivolution was meet!|n|cffff0000WARNING:|r You can't devolve.
+¡Se cumplieron las condiciones para una Digievolución!|n|cffff0000ADVERTENCIA:|r No puedes involucionar.
 }
 
 STRING 8757
-// Abilities: A02H (Digivolution), Name (Name)
+// Abilities: A02H (Digievolución), Name (Name)
 {
-Digivolution
+Digievolución
 }
 
 STRING 8758
-// Abilities: A02I (Digivolution), Name (Name)
+// Abilities: A02I (Digievolución), Name (Name)
 {
-Digivolution
+Digievolución
 }
 
 STRING 8759
-// Abilities: A02I (Digivolution), Tip (Tooltip - Normal)
+// Abilities: A02I (Digievolución), Tip (Tooltip - Normal)
 {
-Digivolution
+Digievolución
 }
 
 STRING 8761
-// Abilities: A0GQ (Digimon Stats), Name (Name)
+// Abilities: A0GQ (Estadísticas de Digimon), Name (Name)
 {
-Digimon Stats
+Estadísticas de Digimon
 }
 
 STRING 8762
-// Abilities: A0GQ (Digimon Stats), Tip (Tooltip - Normal)
+// Abilities: A0GQ (Estadísticas de Digimon), Tip (Tooltip - Normal)
 {
-Digimon Stats
+Estadísticas de Digimon
 }
 
 STRING 8763
-// Abilities: A0GQ (Digimon Stats), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0GQ (Estadísticas de Digimon), Ubertip (Tooltip - Normal - Extended)
 {
-Display all this digimon stats and items wield.
+Muestra todas las estadísticas de este Digimon y los objetos que porta.
 }
 
 STRING 8764
-// Abilities: A0GR (Digimon Stats), Name (Name)
+// Abilities: A0GR (Estadísticas de Digimon), Name (Name)
 {
-Digimon Stats
+Estadísticas de Digimon
 }
 
 STRING 8765
-// Abilities: A0GR (Digimon Stats), Tip (Tooltip - Normal)
+// Abilities: A0GR (Estadísticas de Digimon), Tip (Tooltip - Normal)
 {
-Digimon Stats
+Estadísticas de Digimon
 }
 
 STRING 8766
-// Abilities: A0GR (Digimon Stats), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0GR (Estadísticas de Digimon), Ubertip (Tooltip - Normal - Extended)
 {
-Display all this digimon stats and items wield.
+Muestra todas las estadísticas de este Digimon y los objetos que porta.
 }
 
 STRING 8767
 // Abilities: A0KE (LocalStrings2), Ubertip (Tooltip - Normal - Extended)
 {
-Piximon can help with the diary!
+¡Piximon puede ayudar con el diario!
 }
 
 STRING 8768
@@ -44661,39 +44667,39 @@ NPC
 }
 
 STRING 8797
-// Items: I075 (Mysterious Diary), Name (Name)
+// Items: I075 (Diario misterioso), Name (Name)
 {
-Mysterious Diary
+Diario misterioso
 }
 
 STRING 8798
-// Items: I075 (Mysterious Diary), Description (Description)
+// Items: I075 (Diario misterioso), Description (Description)
 {
-Mysterious Diary
+Diario misterioso
 }
 
 STRING 8799
-// Items: I075 (Mysterious Diary), Ubertip (Tooltip - Extended)
+// Items: I075 (Diario misterioso), Ubertip (Tooltip - Extended)
 {
-Mysterious Diary
+Diario misterioso
 }
 
 STRING 8800
-// Items: I075 (Mysterious Diary), Tip (Tooltip - Basic)
+// Items: I075 (Diario misterioso), Tip (Tooltip - Basic)
 {
-Mysterious Diary
+Diario misterioso
 }
 
 STRING 8801
 // Items: I076 (Páginas faltantes), Description (Description)
 {
-Mysterious Diary missing pages
+Páginas faltantes del diario misterioso
 }
 
 STRING 8802
 // Items: I076 (Páginas faltantes), Ubertip (Tooltip - Extended)
 {
-Mysterious Green Diary missing pages
+Páginas perdidas del misterioso Diario Verde
 }
 
 STRING 8803
@@ -44705,13 +44711,13 @@ Páginas faltantes - 2
 STRING 8804
 // Items: I077 (Páginas faltantes - 2), Description (Description)
 {
-Mysterious Diary missing pages
+Páginas faltantes del diario misterioso
 }
 
 STRING 8805
 // Items: I077 (Páginas faltantes - 2), Ubertip (Tooltip - Extended)
 {
-Mysterious Diary missing pages
+Páginas faltantes del diario misterioso
 }
 
 STRING 8806
@@ -44744,27 +44750,27 @@ Hiandromon
 }
 
 STRING 8824
-// Items: I078 (Backup Files), Name (Name)
+// Items: I078 (Archivos de copia de seguridad), Name (Name)
 {
-Backup Files
+Archivos de copia de seguridad
 }
 
 STRING 8825
-// Items: I078 (Backup Files), Description (Description)
+// Items: I078 (Archivos de copia de seguridad), Description (Description)
 {
-Mysterious Diary backup files.
+Diario misterioso backup files.
 }
 
 STRING 8826
-// Items: I078 (Backup Files), Ubertip (Tooltip - Extended)
+// Items: I078 (Archivos de copia de seguridad), Ubertip (Tooltip - Extended)
 {
-Mysterious Diary backup files.
+Diario misterioso backup files.
 }
 
 STRING 8827
-// Items: I078 (Backup Files), Tip (Tooltip - Basic)
+// Items: I078 (Archivos de copia de seguridad), Tip (Tooltip - Basic)
 {
-Backup Files
+Archivos de copia de seguridad
 }
 
 STRING 8828
@@ -44804,79 +44810,79 @@ Computer Vent
 }
 
 STRING 8834
-// Units: N009 (Sea Traveler), Name (Name)
+// Units: N009 (Viajero del mar), Name (Name)
 {
-Sea Traveler
+Viajero del mar
 }
 
 STRING 8835
-// Units: N009 (Sea Traveler), EditorSuffix (Name - Editor Suffix)
+// Units: N009 (Viajero del mar), EditorSuffix (Name - Editor Suffix)
 {
 (Villa de los inicios)
 }
 
 STRING 8836
-// Units: N02V (Sea Traveler), Name (Name)
+// Units: N02V (Viajero del mar), Name (Name)
 {
-Sea Traveler
+Viajero del mar
 }
 
 STRING 8837
-// Units: N02V (Sea Traveler), EditorSuffix (Name - Editor Suffix)
+// Units: N02V (Viajero del mar), EditorSuffix (Name - Editor Suffix)
 {
 (Freezelandia)
 }
 
 STRING 8838
-// Units: N02W (Sea Traveler), Name (Name)
+// Units: N02W (Viajero del mar), Name (Name)
 {
-Sea Traveler
+Viajero del mar
 }
 
 STRING 8839
-// Units: N02W (Sea Traveler), Propernames (Proper Names)
+// Units: N02W (Viajero del mar), Propernames (Proper Names)
 {
 Whamon
 }
 
 STRING 8840
-// Units: N02W (Sea Traveler), EditorSuffix (Name - Editor Suffix)
+// Units: N02W (Viajero del mar), EditorSuffix (Name - Editor Suffix)
 {
 (Isla Escarabajo)
 }
 
 STRING 8841
-// Units: N02X (Sea Traveler), Name (Name)
+// Units: N02X (Viajero del mar), Name (Name)
 {
-Sea Traveler
+Viajero del mar
 }
 
 STRING 8842
-// Units: N02X (Sea Traveler), Propernames (Proper Names)
+// Units: N02X (Viajero del mar), Propernames (Proper Names)
 {
 Whamon
 }
 
 STRING 8843
-// Units: N02X (Sea Traveler), EditorSuffix (Name - Editor Suffix)
+// Units: N02X (Viajero del mar), EditorSuffix (Name - Editor Suffix)
 {
 (Pueblo Factorial)
 }
 
 STRING 8844
-// Units: N02Y (Sea Traveler), Name (Name)
+// Units: N02Y (Viajero del mar), Name (Name)
 {
-Sea Traveler
+Viajero del mar
 }
 
 STRING 8845
-// Units: N02Y (Sea Traveler), Propernames (Proper Names)
+// Units: N02Y (Viajero del mar), Propernames (Proper Names)
 {
 Whamon
 }
 
 STRING 8846
-// Units: N02Y (Sea Traveler), EditorSuffix (Name - Editor Suffix)
+// Units: N02Y (Viajero del mar), EditorSuffix (Name - Editor Suffix)
 {
 (Cueva de la playa secreta)
 }
@@ -44926,13 +44932,13 @@ STRING 8865
 STRING 8866
 // Items: I000 (Regalo Digimon), Ubertip (Tooltip - Extended)
 {
-An digimon gift that has a chance to convince a digimon to join the party of the tamer.|n|cffffff00Este ítem irá a la mochila.|r
+Un regalo Digimon que tiene la posibilidad de convencer a un Digimon de unirse al grupo del domador.|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8867
 // Items: I000 (Regalo Digimon), Description (Description)
 {
-An digimon gift that has a chance to convince a digimon to join the party of the tamer.|n|cffffff00Este ítem irá a la mochila.|r
+Un regalo Digimon que tiene la posibilidad de convencer a un Digimon de unirse al grupo del domador.|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8888
@@ -44950,49 +44956,49 @@ STRING 8889
 STRING 8896
 // Items: I001 (Disco de defensa 1), Description (Description)
 {
-Inscrease the Defense of the selected Digimon by 2.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Defensa del Digimon seleccionado en 2.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8897
 // Items: I001 (Disco de defensa 1), Ubertip (Tooltip - Extended)
 {
-Inscrease the Defense of the selected Digimon by 2.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Defensa del Digimon seleccionado en 2.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8898
 // Items: I002 (Disco de salud 1), Description (Description)
 {
-Inscrease the Salud regeneration of the selected Digimon by 75%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la regeneración de Salud del Digimon seleccionado en un 75%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8899
 // Items: I002 (Disco de salud 1), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud regeneration of the selected Digimon by 75%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la regeneración de Salud del Digimon seleccionado en un 75%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8900
 // Items: I003 (Disco de ataque 1), Description (Description)
 {
-Inscrease the Ataque of the selected Digimon by 30%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta el Ataque del Digimon seleccionado en un 30%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8901
 // Items: I003 (Disco de ataque 1), Ubertip (Tooltip - Extended)
 {
-Inscrease the Ataque of the selected Digimon by 30%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta el Ataque del Digimon seleccionado en un 30%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8902
 // Items: I005 (Disco de velocidad 1), Description (Description)
 {
-Inscrease the Velocidad de ataque en 10% and movement Speed 5% of the selected Digimon.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Velocidad de ataque en un 10% y la Velocidad de movimiento en un 5% del Digimon seleccionado.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8903
 // Items: I005 (Disco de velocidad 1), Ubertip (Tooltip - Extended)
 {
-Inscrease the Velocidad de ataque en 10% and movement Speed 5% of the selected Digimon.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Velocidad de ataque en un 10% y la Velocidad de movimiento en un 5% del Digimon seleccionado.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8904
@@ -45058,97 +45064,97 @@ STRING 8913
 STRING 8916
 // Items: I01L (Disco de ataque 2), Description (Description)
 {
-Inscrease the Ataque of the selected Digimon by 50%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta el Ataque del Digimon seleccionado en un 50%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8917
 // Items: I01L (Disco de ataque 2), Ubertip (Tooltip - Extended)
 {
-Inscrease the Ataque of the selected Digimon by 50%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta el Ataque del Digimon seleccionado en un 50%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8918
 // Items: I01M (Disco de ataque 3), Description (Description)
 {
-Inscrease the Ataque of the selected Digimon by 70%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta el Ataque del Digimon seleccionado en un 70%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8919
 // Items: I01M (Disco de ataque 3), Ubertip (Tooltip - Extended)
 {
-Inscrease the Ataque of the selected Digimon by 70%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta el Ataque del Digimon seleccionado en un 70%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8920
 // Items: I01N (Disco de defensa 2), Description (Description)
 {
-Inscrease the Defense of the selected Digimon by 4.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Defensa del Digimon seleccionado en 4.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8921
 // Items: I01N (Disco de defensa 2), Ubertip (Tooltip - Extended)
 {
-Inscrease the Defense of the selected Digimon by 4.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Defensa del Digimon seleccionado en 4.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8922
 // Items: I01O (Disco de defensa 3), Description (Description)
 {
-Inscrease the Defense of the selected Digimon by 6.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Defensa del Digimon seleccionado en 6.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8923
 // Items: I01O (Disco de defensa 3), Ubertip (Tooltip - Extended)
 {
-Inscrease the Defense of the selected Digimon by 6.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Defensa del Digimon seleccionado en 6.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8924
 // Items: I01P (Disco de velocidad 2), Description (Description)
 {
-Inscrease the Velocidad de ataque by 20% and movement Speed 7% of the selected Digimon.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Velocidad de ataque en un 20% y la Velocidad de movimiento en un 7% del Digimon seleccionado.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8925
 // Items: I01P (Disco de velocidad 2), Ubertip (Tooltip - Extended)
 {
-Inscrease the Velocidad de ataque by 20% and movement Speed 7% of the selected Digimon.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Velocidad de ataque en un 20% y la Velocidad de movimiento en un 7% del Digimon seleccionado.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8926
 // Items: I01Q (Disco de velocidad 3), Description (Description)
 {
-Inscrease the Velocidad de ataque by 30% and movement Speed 10% of the selected Digimon.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Velocidad de ataque en un 30% y la Velocidad de movimiento en un 10% del Digimon seleccionado.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8927
 // Items: I01Q (Disco de velocidad 3), Ubertip (Tooltip - Extended)
 {
-Inscrease the Velocidad de ataque by 30% and movement Speed 10% of the selected Digimon.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la Velocidad de ataque en un 30% y la Velocidad de movimiento en un 10% del Digimon seleccionado.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8928
 // Items: I01R (Disco de regeneracion de salud 2), Description (Description)
 {
-Inscrease the Salud regeneration of the selected Digimon en 150%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la regeneración de Salud del Digimon seleccionado en un 150%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8929
 // Items: I01R (Disco de regeneracion de salud 2), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud regeneration of the selected Digimon en 150%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la regeneración de Salud del Digimon seleccionado en un 150%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8930
 // Items: I01S (Disco de regeneracion de salud 3), Description (Description)
 {
-Inscrease the Salud regeneration of the selected Digimon by 225%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la regeneración de Salud del Digimon seleccionado en un 225%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8931
 // Items: I01S (Disco de regeneracion de salud 3), Ubertip (Tooltip - Extended)
 {
-Inscrease the Salud regeneration of the selected Digimon by 225%.|n|cffffff00Lasts 15 minutes.|r|n|cffffff00Este ítem irá a la mochila.|r
+Aumenta la regeneración de Salud del Digimon seleccionado en un 225%.|n|cffffff00Dura 15 minutos.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8934
@@ -45164,13 +45170,13 @@ STRING 8935
 }
 
 STRING 8938
-// Items: I01Y (|cff80ff80Tunnel Crystal|r), Description (Description)
+// Items: I01Y (|cff80ff80Cristal del Túnel|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 7 Destreza|n+ 6 Sabiduría|n|r+ 25 Energía|n+ 3% Impacto Crítico
 }
 
 STRING 8939
-// Items: I01Y (|cff80ff80Tunnel Crystal|r), Ubertip (Tooltip - Extended)
+// Items: I01Y (|cff80ff80Cristal del Túnel|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 7 Destreza|n+ 6 Sabiduría|n|r+ 25 Energía|n+ 3% Impacto Crítico
 }
@@ -45298,25 +45304,25 @@ STRING 8977
 STRING 8978
 // Items: I03O (|cff00ffffGlorioso Trofeo|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 10 Destreza|n+ 8 Sabiduría|n+ 5 Ataque|n+ 4% Probabilidad de crítico|n+ 30 Velocidad de movimiento|n+ 20% Chance of getting +20% Ataque speed
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 10 Destreza|n+ 8 Sabiduría|n+ 5 Ataque|n+ 4% Probabilidad de crítico|n+ 30 Velocidad de movimiento|n+ 20% Posibilidad de obtener un +20% de velocidad de ataque
 }
 
 STRING 8979
 // Items: I03O (|cff00ffffGlorioso Trofeo|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 10 Destreza|n+ 8 Sabiduría|n+ 5 Ataque|n+ 4% Probabilidad de crítico|n+ 30 Velocidad de movimiento|n+ 20% Chance of getting +20% Ataque speed
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 10 Destreza|n+ 8 Sabiduría|n+ 5 Ataque|n+ 4% Probabilidad de crítico|n+ 30 Velocidad de movimiento|n+ 20% Posibilidad de obtener un +20% de velocidad de ataque
 }
 
 STRING 8988
 // Items: I03W (Piloto automático), Description (Description)
 {
-Teleports the selected digimons of your team to the File's City.|cffffc800  |nIt pauses the digimon.|nIt will be canceled if the digimons gets stunned or dies.|r|n|cffffff00Este ítem irá a la mochila.|r
+Teletransporta los digimon seleccionados de tu equipo a la Villa de los inicios.|cffffc800  |nEsto pausa al digimon. |nSe cancelará si el digimon queda aturdido o muere.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8989
 // Items: I03W (Piloto automático), Ubertip (Tooltip - Extended)
 {
-Teleports the selected digimons of your team to the File's City.|cffffc800  |nIt pauses the digimon.|nIt will be canceled if the digimons gets stunned or dies.|r|n|cffffff00Este ítem irá a la mochila.|r
+Teletransporta los digimon seleccionados de tu equipo a la Villa de los inicios.|cffffc800  |nEsto pausa al digimon. |nSe cancelará si el digimon queda aturdido o muere.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 8990
@@ -45418,13 +45424,13 @@ STRING 9007
 STRING 9010
 // Items: I04K (|cff8080ffEl collar de Hontel|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Ataque|n+ 10 Estámina|n+ 10 Destreza|n+ 3% Evasión|n+ 15% Chance of getting +20% Ataque speed
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Ataque|n+ 10 Estámina|n+ 10 Destreza|n+ 3% Evasión|n+ 15% Posibilidad de obtener un +20% de velocidad de ataque
 }
 
 STRING 9011
 // Items: I04K (|cff8080ffEl collar de Hontel|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Ataque|n+ 10 Estámina|n+ 10 Destreza|n+ 3% Evasión|n+ 15% Chance of getting +20% Ataque speed
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Ataque|n+ 10 Estámina|n+ 10 Destreza|n+ 3% Evasión|n+ 15% Posibilidad de obtener un +20% de velocidad de ataque
 }
 
 STRING 9012
@@ -45496,13 +45502,13 @@ STRING 9051
 STRING 9052
 // Items: I05D (|cff00ffffCalavera encantada|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 15 Estámina|n+ 6 Ataque|n+ 6% Probabilidad de crítico|n+ 8% Impacto Crítico|n+ 50 Velocidad de movimiento|n+ 25% Chance of getting +20% Ataque speed
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 15 Estámina|n+ 6 Ataque|n+ 6% Probabilidad de crítico|n+ 8% Impacto Crítico|n+ 50 Velocidad de movimiento|n+ 25% Posibilidad de obtener un +20% de velocidad de ataque
 }
 
 STRING 9053
 // Items: I05D (|cff00ffffCalavera encantada|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 15 Estámina|n+ 6 Ataque|n+ 6% Probabilidad de crítico|n+ 8% Impacto Crítico|n+ 50 Velocidad de movimiento|n+ 25% Chance of getting +20% Ataque speed
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 15 Estámina|n+ 6 Ataque|n+ 6% Probabilidad de crítico|n+ 8% Impacto Crítico|n+ 50 Velocidad de movimiento|n+ 25% Posibilidad de obtener un +20% de velocidad de ataque
 }
 
 STRING 9056
@@ -45530,37 +45536,37 @@ STRING 9059
 }
 
 STRING 9066
-// Items: I05K (Gargoyle Wing), Description (Description)
+// Items: I05K (Ala de gárgola), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 20 Destreza|n+ 20 Sabiduría|n+ 20 Estámina|n+ 8% Impacto Crítico
 }
 
 STRING 9067
-// Items: I05K (Gargoyle Wing), Ubertip (Tooltip - Extended)
+// Items: I05K (Ala de gárgola), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 20 Destreza|n+ 20 Sabiduría|n+ 20 Estámina|n+ 8% Impacto Crítico
 }
 
 STRING 9072
-// Items: I060 (First Aid Pack), Name (Name)
+// Items: I060 (Paquete de primeros auxilios), Name (Name)
 {
-First Aid Pack
+Paquete de primeros auxilios
 }
 
 STRING 9073
-// Items: I060 (First Aid Pack), Tip (Tooltip - Basic)
+// Items: I060 (Paquete de primeros auxilios), Tip (Tooltip - Basic)
 {
-First Aid Pack
+Paquete de primeros auxilios
 }
 
 STRING 9090
-// Items: I06L (|cff80ff80Vile's Claw|r), Ubertip (Tooltip - Extended)
+// Items: I06L (|cff80ff80La garra Vil|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 28 Ataque|n+ 35 Estámina|n+ 10% Impacto Crítico|n+ 4 Regeneración de salud
 }
 
 STRING 9091
-// Items: I06L (|cff80ff80Vile's Claw|r), Description (Description)
+// Items: I06L (|cff80ff80La garra Vil|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 28 Ataque|n+ 35 Estámina|n+ 10% Impacto Crítico|n+ 4 Regeneración de salud
 }
@@ -45662,13 +45668,13 @@ STRING 9115
 }
 
 STRING 9122
-// Items: I073 (|cff8080ffGreat Hacha|r), Description (Description)
+// Items: I073 (|cff8080ffGran Hacha|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 14 Ataque|n+ 6 Estámina|n+ 1 Regeneración de salud|n+ 1 Armadura
 }
 
 STRING 9123
-// Items: I073 (|cff8080ffGreat Hacha|r), Ubertip (Tooltip - Extended)
+// Items: I073 (|cff8080ffGran Hacha|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se puede usar 1 arma a la vez.|n|r+ 14 Ataque|n+ 6 Estámina|n+ 1 Regeneración de salud|n+ 1 Armadura
 }
@@ -45676,7 +45682,7 @@ STRING 9123
 STRING 9149
 // Abilities: A0H1 (Lanzamiento de caca del rey), Ubertip (Tooltip - Normal - Extended)
 {
-Throws the "king" poop.|n|cffffff00Generate a high ammount of threat.|r
+Lanza la caca del "rey".|n|cffffff00Genera una gran cantidad de amenaza.|r
 }
 
 STRING 9150
@@ -45686,147 +45692,147 @@ NPC
 }
 
 STRING 9152
-// Items: I079 (Agua Element), Name (Name)
+// Items: I079 (Elemento Agua), Name (Name)
 {
-Agua Element
+Elemento Agua
 }
 
 STRING 9153
-// Items: I079 (Agua Element), Tip (Tooltip - Basic)
+// Items: I079 (Elemento Agua), Tip (Tooltip - Basic)
 {
-Agua Element
+Elemento Agua
 }
 
 STRING 9154
-// Items: I079 (Agua Element), Ubertip (Tooltip - Extended)
+// Items: I079 (Elemento Agua), Ubertip (Tooltip - Extended)
 {
-Offense   /  Defense|n|cff0000ffAgua|r  : 100% / 100%|n|cff008000Naturaleza|r : 80% / 120%|n|cffff8080Bestia|r  : 100% / 100%|n|cffff0000Llama|r : 120% / 80%|n|cff00ffffAire|r      : 90% / 110%|n|cff808080Mineral|r     : 110% / 90%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
+Ofensiva   /   Defensa|n|cff0000ffAgua|r  : 100% / 100%|n|cff008000Naturaleza|r : 80% / 120%|n|cffff8080Bestia|r  : 100% / 100%|n|cffff0000Llama|r : 120% / 80%|n|cff00ffffAire|r      : 90% / 110%|n|cff808080Mineral|r     : 110% / 90%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
 }
 
 STRING 9155
-// Items: I07A (Mineral Element), Name (Name)
+// Items: I07A (Elemento Mineral), Name (Name)
 {
-Mineral Element
+Elemento Mineral
 }
 
 STRING 9156
-// Items: I07A (Mineral Element), Tip (Tooltip - Basic)
+// Items: I07A (Elemento Mineral), Tip (Tooltip - Basic)
 {
-Mineral Element
+Elemento Mineral
 }
 
 STRING 9157
-// Items: I07A (Mineral Element), Ubertip (Tooltip - Extended)
+// Items: I07A (Elemento Mineral), Ubertip (Tooltip - Extended)
 {
-Offense   /  Defense|n|cff0000ffAgua|r  : 90% / 110%|n|cff008000Naturaleza|r : 100% / 100%|n|cffff8080Bestia|r  : 120% / 80%|n|cffff0000Llama|r : 110% / 90%|n|cff00ffffAire|r      : 80% / 120%|n|cff808080Mineral|r     : 100% / 100%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
+Ofensiva   /   Defensa|n|cff0000ffAgua|r  : 90% / 110%|n|cff008000Naturaleza|r : 100% / 100%|n|cffff8080Bestia|r  : 120% / 80%|n|cffff0000Llama|r : 110% / 90%|n|cff00ffffAire|r      : 80% / 120%|n|cff808080Mineral|r     : 100% / 100%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
 }
 
 STRING 9158
-// Items: I07B (Bestia Element), Name (Name)
+// Items: I07B (Elemento Bestia), Name (Name)
 {
-Bestia Element
+Elemento Bestia
 }
 
 STRING 9159
-// Items: I07B (Bestia Element), Tip (Tooltip - Basic)
+// Items: I07B (Elemento Bestia), Tip (Tooltip - Basic)
 {
-Bestia Element
+Elemento Bestia
 }
 
 STRING 9160
-// Items: I07B (Bestia Element), Ubertip (Tooltip - Extended)
+// Items: I07B (Elemento Bestia), Ubertip (Tooltip - Extended)
 {
-Offense   /  Defense|n|cff0000ffAgua|r  : 100% / 100%|n|cff008000Naturaleza|r : 110% / 90%|n|cffff8080Bestia|r  : 100% / 100%|n|cffff0000Llama|r : 90% / 110%|n|cff00ffffAire|r      : 120% / 80%|n|cff808080Mineral|r     : 80% / 120%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
+Ofensiva   /   Defensa|n|cff0000ffAgua|r  : 100% / 100%|n|cff008000Naturaleza|r : 110% / 90%|n|cffff8080Bestia|r  : 100% / 100%|n|cffff0000Llama|r : 90% / 110%|n|cff00ffffAire|r      : 120% / 80%|n|cff808080Mineral|r     : 80% / 120%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
 }
 
 STRING 9161
-// Items: I07C (Llamas Element), Name (Name)
+// Items: I07C (Elemento Llamas), Name (Name)
 {
-Llamas Element
+Elemento Llamas
 }
 
 STRING 9162
-// Items: I07C (Llamas Element), Tip (Tooltip - Basic)
+// Items: I07C (Elemento Llamas), Tip (Tooltip - Basic)
 {
-Llamas Element
+Elemento Llamas
 }
 
 STRING 9163
-// Items: I07C (Llamas Element), Ubertip (Tooltip - Extended)
+// Items: I07C (Elemento Llamas), Ubertip (Tooltip - Extended)
 {
-Offense   /  Defense|n|cff0000ffAgua|r  : 80% / 120%|n|cff008000Naturaleza|r : 120% / 80%|n|cffff8080Bestia|r  : 110% / 90%|n|cffff0000Llama|r : 100% / 100%|n|cff00ffffAire|r      : 100% / 100%|n|cff808080Mineral|r     : 90% / 110%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
+Ofensiva   /   Defensa|n|cff0000ffAgua|r  : 80% / 120%|n|cff008000Naturaleza|r : 120% / 80%|n|cffff8080Bestia|r  : 110% / 90%|n|cffff0000Llama|r : 100% / 100%|n|cff00ffffAire|r      : 100% / 100%|n|cff808080Mineral|r     : 90% / 110%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
 }
 
 STRING 9164
-// Items: I07D (Aire Element), Name (Name)
+// Items: I07D (Elemento Aire), Name (Name)
 {
-Aire Element
+Elemento Aire
 }
 
 STRING 9165
-// Items: I07D (Aire Element), Tip (Tooltip - Basic)
+// Items: I07D (Elemento Aire), Tip (Tooltip - Basic)
 {
-Aire Element
+Elemento Aire
 }
 
 STRING 9166
-// Items: I07D (Aire Element), Ubertip (Tooltip - Extended)
+// Items: I07D (Elemento Aire), Ubertip (Tooltip - Extended)
 {
-Offense   /  Defense|n|cff0000ffAgua|r  : 110% / 90%|n|cff008000Naturaleza|r : 90% / 110%|n|cffff8080Bestia|r  : 80% / 120%|n|cffff0000Llama|r : 100% / 100%|n|cff00ffffAire|r      : 100% / 100%|n|cff808080Mineral|r     : 120% / 80%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
+Ofensiva   /   Defensa|n|cff0000ffAgua|r  : 110% / 90%|n|cff008000Naturaleza|r : 90% / 110%|n|cffff8080Bestia|r  : 80% / 120%|n|cffff0000Llama|r : 100% / 100%|n|cff00ffffAire|r      : 100% / 100%|n|cff808080Mineral|r     : 120% / 80%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
 }
 
 STRING 9167
-// Items: I07E (Naturaleza Element), Name (Name)
+// Items: I07E (Elemento Naturaleza), Name (Name)
 {
-Naturaleza Element
+Elemento Naturaleza
 }
 
 STRING 9168
-// Items: I07E (Naturaleza Element), Tip (Tooltip - Basic)
+// Items: I07E (Elemento Naturaleza), Tip (Tooltip - Basic)
 {
-Naturaleza Element
+Elemento Naturaleza
 }
 
 STRING 9169
-// Items: I07E (Naturaleza Element), Ubertip (Tooltip - Extended)
+// Items: I07E (Elemento Naturaleza), Ubertip (Tooltip - Extended)
 {
-Offense   /  Defense|n|cff0000ffAgua|r  : 120% / 80%|n|cff008000Naturaleza|r : 100% / 100%|n|cffff8080Bestia|r  : 90% / 110%|n|cffff0000Llama|r : 80% / 120%|n|cff00ffffAire|r      : 110% / 90%|n|cff808080Mineral|r     : 100% / 100%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
+Ofensiva   /   Defensa|n|cff0000ffAgua|r  : 120% / 80%|n|cff008000Naturaleza|r : 100% / 100%|n|cffff8080Bestia|r  : 90% / 110%|n|cffff0000Llama|r : 80% / 120%|n|cff00ffffAire|r      : 110% / 90%|n|cff808080Mineral|r     : 100% / 100%|n|cff6f2583Oscuro|r   : 95% / 105%|n|cffffff00Luz|r  : 100% / 100%
 }
 
 STRING 9170
-// Items: I07F (Oscuridad Element), Name (Name)
+// Items: I07F (Elemento Oscuridad), Name (Name)
 {
-Oscuridad Element
+Elemento Oscuridad
 }
 
 STRING 9171
-// Items: I07F (Oscuridad Element), Tip (Tooltip - Basic)
+// Items: I07F (Elemento Oscuridad), Tip (Tooltip - Basic)
 {
-Oscuridad Element
+Elemento Oscuridad
 }
 
 STRING 9172
-// Items: I07F (Oscuridad Element), Ubertip (Tooltip - Extended)
+// Items: I07F (Elemento Oscuridad), Ubertip (Tooltip - Extended)
 {
-Offense   /  Defense|n|cff0000ffAgua|r  : 105% / 95%|n|cff008000Naturaleza|r : 105% / 95%|n|cffff8080Bestia|r  : 105% / 95%|n|cffff0000Llama|r : 105% / 95%|n|cff00ffffAire|r      : 105% / 95%|n|cff808080Mineral|r     : 105% / 95%|n|cff6f2583Oscuro|r   : 100% / 100%|n|cffffff00Luz|r  : 70% / 130%
+Ofensiva   /   Defensa|n|cff0000ffAgua|r  : 105% / 95%|n|cff008000Naturaleza|r : 105% / 95%|n|cffff8080Bestia|r  : 105% / 95%|n|cffff0000Llama|r : 105% / 95%|n|cff00ffffAire|r      : 105% / 95%|n|cff808080Mineral|r     : 105% / 95%|n|cff6f2583Oscuro|r   : 100% / 100%|n|cffffff00Luz|r  : 70% / 130%
 }
 
 STRING 9173
-// Items: I07G (Luz Element), Name (Name)
+// Items: I07G (Elemento Luz), Name (Name)
 {
-Luz Element
+Elemento Luz
 }
 
 STRING 9174
-// Items: I07G (Luz Element), Tip (Tooltip - Basic)
+// Items: I07G (Elemento Luz), Tip (Tooltip - Basic)
 {
-Luz Element
+Elemento Luz
 }
 
 STRING 9175
-// Items: I07G (Luz Element), Ubertip (Tooltip - Extended)
+// Items: I07G (Elemento Luz), Ubertip (Tooltip - Extended)
 {
-Offense   /  Defense|n|cff0000ffAgua|r  : 100% / 100%|n|cff008000Naturaleza|r : 100% / 100%|n|cffff8080Bestia|r  : 100% / 100%|n|cffff0000Llama|r : 100% / 100%|n|cff00ffffAire|r      : 100% / 100%|n|cff808080Mineral|r     : 100% / 100%|n|cff6f2583Oscuro|r   : 130% / 70%|n|cffffff00Luz|r  : 100% / 100%
+Ofensiva   /   Defensa|n|cff0000ffAgua|r  : 100% / 100%|n|cff008000Naturaleza|r : 100% / 100%|n|cffff8080Bestia|r  : 100% / 100%|n|cffff0000Llama|r : 100% / 100%|n|cff00ffffAire|r      : 100% / 100%|n|cff808080Mineral|r     : 100% / 100%|n|cff6f2583Oscuro|r   : 130% / 70%|n|cffffff00Luz|r  : 100% / 100%
 }
 
 STRING 9178
@@ -45838,43 +45844,43 @@ Rain Drops
 STRING 9180
 // Items: I01D (Digiseta), Description (Description)
 {
-Sana 50 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 50 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9181
 // Items: I01D (Digiseta), Ubertip (Tooltip - Extended)
 {
-Sana 50 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 50 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9182
 // Items: I01E (Carne), Description (Description)
 {
-Sana 150 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 150 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9183
 // Items: I01E (Carne), Ubertip (Tooltip - Extended)
 {
-Sana 150 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 150 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9184
 // Items: I01F (Carne Gigante), Description (Description)
 {
-Sana 300 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 300 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9185
 // Items: I01F (Carne Gigante), Ubertip (Tooltip - Extended)
 {
-Sana 300 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 300 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9188
-// Items: I060 (First Aid Pack), Ubertip (Tooltip - Extended)
+// Items: I060 (Paquete de primeros auxilios), Ubertip (Tooltip - Extended)
 {
-Use this to revive one of your digimons.|n|cffffff00This item will go to the digimon menu.|r
+Úsalo para revivir a uno de tus Digimones.|n|cffffff00Este ítem irá al menú Digimon.|r
 }
 
 STRING 9190
@@ -45890,9 +45896,9 @@ Bank roof
 }
 
 STRING 9192
-// Doodads: D08D (Floor Stone  N), Name (Name)
+// Doodads: D08D (Floor Piedra  N), Name (Name)
 {
-Floor Stone  N
+Floor Piedra  N
 }
 
 STRING 9193
@@ -45994,7 +46000,7 @@ Road 3
 STRING 9209
 // Items: gold (Digibits), Description (Description)
 {
-Gives bits to player.
+Da bits al jugador.
 }
 
 STRING 9214
@@ -46015,51 +46021,51 @@ Gomamon
 }
 
 STRING 9218
-// Items: I07J (Good Fish), Name (Name)
+// Items: I07J (Buen pescado), Name (Name)
 {
-Good Fish
+Buen pescado
 }
 
 STRING 9219
-// Items: I07J (Good Fish), Description (Description)
+// Items: I07J (Buen pescado), Description (Description)
 {
-Good Fish for Gomamon.
+Buen pescado para Gomamon.
 }
 
 STRING 9220
-// Items: I07J (Good Fish), Ubertip (Tooltip - Extended)
+// Items: I07J (Buen pescado), Ubertip (Tooltip - Extended)
 {
-Good Fish for Gomamon.
+Buen pescado para Gomamon.
 }
 
 STRING 9221
-// Items: I07J (Good Fish), Tip (Tooltip - Basic)
+// Items: I07J (Buen pescado), Tip (Tooltip - Basic)
 {
-Good Fish
+Buen pescado
 }
 
 STRING 9222
 // Items: I047 (|cff8080ffMedicina Centarus|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 120 Salud|n+ 75% Regeneración de energía|n+ 1 Regeneración de salud|n+ 2% Posibilidad de evasión|n+ 15% Chance to restore 60 Salud over 3 sec when attacked
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 120 Salud|n+ 75% Regeneración de energía|n+ 1 Regeneración de salud|n+ 2% Posibilidad de evasión|n+ 15% Posibilidad de recuperar 60 de salud durante 3 segundos al ser atacado.
 }
 
 STRING 9223
 // Items: I047 (|cff8080ffMedicina Centarus|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 120 Salud|n+ 75% Regeneración de energía|n+ 1 Regeneración de salud|n+ 2% Posibilidad de evasión|n+ 15% Chance to restore 60 Salud over 3 sec when attacked
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 120 Salud|n+ 75% Regeneración de energía|n+ 1 Regeneración de salud|n+ 2% Posibilidad de evasión|n+ 15% Posibilidad de recuperar 60 de salud durante 3 segundos al ser atacado.
 }
 
 STRING 9224
 // Items: I06O (|cffd45e19Piedra de la salud|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 150 Salud|n+ 100 Energía|n+ 2 Regeneración de salud|n+ 3% Impacto Crítico|n+ 30 Velocidad de movimiento|n+ 15% Chance to restore 60 Salud over 3 sec when attacked
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 150 Salud|n+ 100 Energía|n+ 2 Regeneración de salud|n+ 3% Impacto Crítico|n+ 30 Velocidad de movimiento|n+ 15% Posibilidad de recuperar 60 de salud durante 3 segundos al ser atacado.
 }
 
 STRING 9225
 // Items: I06O (|cffd45e19Piedra de la salud|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 150 Salud|n+ 100 Energía|n+ 2 Regeneración de salud|n+ 3% Impacto Crítico|n+ 30 Velocidad de movimiento|n+ 15% Chance to restore 60 Salud over 3 sec when attacked
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 150 Salud|n+ 100 Energía|n+ 2 Regeneración de salud|n+ 3% Impacto Crítico|n+ 30 Velocidad de movimiento|n+ 15% Posibilidad de recuperar 60 de salud durante 3 segundos al ser atacado.
 }
 
 STRING 9226
@@ -46076,12 +46082,12 @@ Veneno
 
 STRING 9228
 {
-¡Mataste al |cff800000Meramon|r !
+¡Mataste al |cff800000Meramon|r!
 }
 
 STRING 9229
 {
-|cffdcc800+350 Experiencia|r |cff8080ff+ 1 Blazing Skull|r
+|cffdcc800+350 Experiencia|r |cff8080ff+ 1 Calavera llameante|r
 }
 
 STRING 9231
@@ -46102,15 +46108,15 @@ STRING 9233
 }
 
 STRING 9234
-// Items: I07K (|cff8080ffBlazing Skull|r), Name (Name)
+// Items: I07K (|cff8080ffCalavera llameante|r), Name (Name)
 {
-|cff8080ffBlazing Skull|r
+|cff8080ffCalavera llameante|r
 }
 
 STRING 9235
-// Items: I07K (|cff8080ffBlazing Skull|r), Tip (Tooltip - Basic)
+// Items: I07K (|cff8080ffCalavera llameante|r), Tip (Tooltip - Basic)
 {
-|cff8080ffBlazing Skull|r
+|cff8080ffCalavera llameante|r
 }
 
 STRING 9238
@@ -46132,19 +46138,19 @@ Petaldramon
 }
 
 STRING 9241
-// Abilities: A0IH (Thorn Jab), Name (Name)
+// Abilities: A0IH (Golpe espinoso), Name (Name)
 {
-Thorn Jab
+Golpe espinoso
 }
 
 STRING 9242
-// Abilities: A0IH (Thorn Jab), Tip (Tooltip - Normal)
+// Abilities: A0IH (Golpe espinoso), Tip (Tooltip - Normal)
 {
-|cff008000Thorn Jab|r
+|cff008000Golpe espinoso|r
 }
 
 STRING 9245
-// Abilities: A0IH (Thorn Jab), EditorSuffix (Editor Suffix)
+// Abilities: A0IH (Golpe espinoso), EditorSuffix (Editor Suffix)
 {
 Groundramon
 }
@@ -46296,25 +46302,25 @@ Birds Green
 STRING 9273
 // Abilities: A01B (Cenizas), Ubertip (Tooltip - Normal - Extended)
 {
-Curses a target enemy unit, causing it to have a 20% chance to miss on an attack. |nDura 10 segundos.|n|cffffff00Genera una cantidad media de amenaza.|r
+Maldice a una unidad enemiga objetivo, provocando que tenga un 20% de probabilidad de fallar un ataque. |nDura 10 segundos.|n|cffffff00Genera una cantidad media de amenaza.|r
 }
 
 STRING 9275
 // Abilities: A076 (Robar), Ubertip (Tooltip - Normal - Extended)
 {
-Robars a positive buff from an enemy Digimon and applies it to a nearby friendly Digimon, or takes a negative buff from a friendly Digimon and applies it to a nearby enemy Digimon.|n|cffffff00Genera una cantidad media de amenaza.|r
+Roba una mejora positiva de un Digimon enemigo y la aplica a un Digimon aliado cercano, o toma una mejora negativa de un Digimon aliado y la aplica a un Digimon enemigo cercano.|n|cffffff00Genera una cantidad media de amenaza.|r
 }
 
 STRING 9278
 // Abilities: A07E (Protección), Ubertip (Tooltip - Normal - Extended)
 {
-Gives friendly nearby Digimons a 300% bonus Regeneración de salud and 2 armor. |nDura 10 segundos.|n|cffffff00Genera una gran cantidad de amenaza.|r
+Da a los Digimons amigables cercanos una bonificación del 300% de Regeneración de salud y 2 de armadura. |nDura 10 segundos.|n|cffffff00Genera una gran cantidad de amenaza.|r
 }
 
 STRING 9284
 // Abilities: A07I (Rugir), Ubertip (Tooltip - Normal - Extended)
 {
-Emits a terrifying roar that reduces nearby enemy units' attack damage by 35% for 10 seconds.|n|cffffff00Genera una gran cantidad de amenaza.|r
+Emite un rugido aterrador que reduce el daño de ataque de las unidades enemigas cercanas en un 35% durante 10 segundos.|n|cffffff00Genera una gran cantidad de amenaza.|r
 }
 
 STRING 9286
@@ -46324,15 +46330,15 @@ Aumenta la armadura del digimon en 4. |nDura 45 segundos.|n|cffffff00Genera una 
 }
 
 STRING 9287
-// Abilities: A0II (Hardened Skin BOSSSES 5), Name (Name)
+// Abilities: A0II (Piel endurecida JEFES 5), Name (Name)
 {
-Hardened Skin BOSSSES 5
+Piel endurecida JEFES 5
 }
 
 STRING 9288
-// Abilities: A0II (Hardened Skin BOSSSES 5), Tip (Tooltip - Normal)
+// Abilities: A0II (Piel endurecida JEFES 5), Tip (Tooltip - Normal)
 {
-Hardened Skin BOSSSES 5
+Piel endurecida JEFES 5
 }
 
 STRING 9289
@@ -46410,31 +46416,31 @@ Flora
 STRING 9301
 // Buffs/Effects: B02W (), Buffubertip (Tooltip - Extended)
 {
-This unit was hit by Flora; has less Velocidad de movimiento and takes damage over time.
+Esta unidad fue golpeada por Flora; tiene menor velocidad de movimiento y sufre daño con el tiempo.
 }
 
 STRING 9302
-// Items: I02G (Better Regalo Digimon), Name (Name)
+// Items: I02G (Mejor Regalo Digimon), Name (Name)
 {
-Better Regalo Digimon
+Mejor Regalo Digimon
 }
 
 STRING 9303
-// Items: I02G (Better Regalo Digimon), Tip (Tooltip - Basic)
+// Items: I02G (Mejor Regalo Digimon), Tip (Tooltip - Basic)
 {
 Regalo Digimon
 }
 
 STRING 9304
-// Items: I02G (Better Regalo Digimon), Ubertip (Tooltip - Extended)
+// Items: I02G (Mejor Regalo Digimon), Ubertip (Tooltip - Extended)
 {
-An digimon gift that has a chance to convince a digimon to join the party of the tamer.|n|cffffff00Este ítem irá a la mochila.|r
+Un regalo Digimon que tiene la posibilidad de convencer a un Digimon de unirse al grupo del domador.|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9305
-// Items: I02G (Better Regalo Digimon), Description (Description)
+// Items: I02G (Mejor Regalo Digimon), Description (Description)
 {
-An digimon gift that has a chance to convince a digimon to join the party of the tamer.|n|cffffff00Este ítem irá a la mochila.|r
+Un regalo Digimon que tiene la posibilidad de convencer a un Digimon de unirse al grupo del domador.|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9306
@@ -46462,27 +46468,27 @@ STRING 9310
 }
 
 STRING 9315
-// Abilities: A0IL (Fish), Name (Name)
+// Abilities: A0IL (Pez), Name (Name)
 {
-Fish
+Pez
 }
 
 STRING 9318
-// Abilities: A0IL (Fish), Tip (Tooltip - Normal)
+// Abilities: A0IL (Pez), Tip (Tooltip - Normal)
 {
-Fish
+Pez
 }
 
 STRING 9323
-// Abilities: A04X (|cff6f2583Colorful Spark|r), Name (Name)
+// Abilities: A04X (|cff6f2583Chispa colorida|r), Name (Name)
 {
-|cff6f2583Colorful Spark|r
+|cff6f2583Chispa colorida|r
 }
 
 STRING 9324
-// Abilities: A04X (|cff6f2583Colorful Spark|r), Tip (Tooltip - Normal)
+// Abilities: A04X (|cff6f2583Chispa colorida|r), Tip (Tooltip - Normal)
 {
-|cff6f2583Colorful Spark|r
+|cff6f2583Chispa colorida|r
 }
 
 STRING 9325
@@ -46492,219 +46498,219 @@ Ladder A
 }
 
 STRING 9326
-// Items: I07N (DigiAnchovy), Name (Name)
+// Items: I07N (Digianchoa), Name (Name)
 {
-DigiAnchovy
+Digianchoa
 }
 
 STRING 9327
-// Items: I07N (DigiAnchovy), Tip (Tooltip - Basic)
+// Items: I07N (Digianchoa), Tip (Tooltip - Basic)
 {
-DigiAnchovy
+Digianchoa
 }
 
 STRING 9328
-// Items: I07O (DigiSpearFish), Name (Name)
+// Items: I07O (DigiPezLanza), Name (Name)
 {
-DigiSpearFish
+DigiPezLanza
 }
 
 STRING 9331
-// Items: I07O (DigiSpearFish), Tip (Tooltip - Basic)
+// Items: I07O (DigiPezLanza), Tip (Tooltip - Basic)
 {
-DigiSpearFish
+DigiPezLanza
 }
 
 STRING 9332
-// Items: I07P (DigiSeabass), Name (Name)
+// Items: I07P (DigiLubina), Name (Name)
 {
-DigiSeabass
+DigiLubina
 }
 
 STRING 9335
-// Items: I07P (DigiSeabass), Tip (Tooltip - Basic)
+// Items: I07P (DigiLubina), Tip (Tooltip - Basic)
 {
-DigiSeabass
+DigiLubina
 }
 
 STRING 9336
-// Items: I07Q (DigiSnapper), Name (Name)
+// Items: I07Q (DigiPargo), Name (Name)
 {
-DigiSnapper
+DigiPargo
 }
 
 STRING 9339
-// Items: I07Q (DigiSnapper), Tip (Tooltip - Basic)
+// Items: I07Q (DigiPargo), Tip (Tooltip - Basic)
 {
-DigiSnapper
+DigiPargo
 }
 
 STRING 9340
-// Items: I07R (DigiCarp), Name (Name)
+// Items: I07R (DigiCarpa), Name (Name)
 {
-DigiCarp
+DigiCarpa
 }
 
 STRING 9343
-// Items: I07R (DigiCarp), Tip (Tooltip - Basic)
+// Items: I07R (DigiCarpa), Tip (Tooltip - Basic)
 {
-DigiCarp
+DigiCarpa
 }
 
 STRING 9344
-// Items: I07S (DigiTrout), Name (Name)
+// Items: I07S (Digitrucha), Name (Name)
 {
-DigiTrout
+Digitrucha
 }
 
 STRING 9347
-// Items: I07S (DigiTrout), Tip (Tooltip - Basic)
+// Items: I07S (Digitrucha), Tip (Tooltip - Basic)
 {
-DigiTrout
+Digitrucha
 }
 
 STRING 9348
-// Items: I07T (DigiTuna), Name (Name)
+// Items: I07T (DigiAtún), Name (Name)
 {
-DigiTuna
+DigiAtún
 }
 
 STRING 9351
-// Items: I07T (DigiTuna), Tip (Tooltip - Basic)
+// Items: I07T (DigiAtún), Tip (Tooltip - Basic)
 {
-DigiTuna
+DigiAtún
 }
 
 STRING 9352
-// Items: I07U (DigiDragonFish), Name (Name)
+// Items: I07U (DigiPezDragón), Name (Name)
 {
-DigiDragonFish
+DigiPezDragón
 }
 
 STRING 9355
-// Items: I07U (DigiDragonFish), Tip (Tooltip - Basic)
+// Items: I07U (DigiPezDragón), Tip (Tooltip - Basic)
 {
-DigiDragonFish
+DigiPezDragón
 }
 
 STRING 9356
-// Items: I07V (DeluxMushroom), Name (Name)
+// Items: I07V (Champiñón De Lujo), Name (Name)
 {
-DeluxMushroom
+Champiñón De Lujo
 }
 
 STRING 9357
-// Items: I07V (DeluxMushroom), Description (Description)
+// Items: I07V (Champiñón De Lujo), Description (Description)
 {
-Sana 250 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 250 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9358
-// Items: I07V (DeluxMushroom), Ubertip (Tooltip - Extended)
+// Items: I07V (Champiñón De Lujo), Ubertip (Tooltip - Extended)
 {
-Sana 250 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 250 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9359
-// Items: I07V (DeluxMushroom), Tip (Tooltip - Basic)
+// Items: I07V (Champiñón De Lujo), Tip (Tooltip - Basic)
 {
-DeluxMushroom
+Champiñón De Lujo
 }
 
 STRING 9360
-// Abilities: A0IL (Fish), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IL (Pez), Ubertip (Tooltip - Normal - Extended)
 {
-Try to fish something
+Intenta pescar algo
 }
 
 STRING 9361
-// Abilities: A0IM (DigiAnchovy), Name (Name)
+// Abilities: A0IM (Digianchoa), Name (Name)
 {
-DigiAnchovy
+Digianchoa
 }
 
 STRING 9362
-// Abilities: A0IM (DigiAnchovy), Tip (Tooltip - Normal)
+// Abilities: A0IM (Digianchoa), Tip (Tooltip - Normal)
 {
-DigiAnchovy
+Digianchoa
 }
 
 STRING 9363
-// Abilities: A0IM (DigiAnchovy), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IM (Digianchoa), Ubertip (Tooltip - Normal - Extended)
 {
-DigiAnchovy
+Digianchoa
 }
 
 STRING 9365
-// Items: I08K (DigiDragonFish), Name (Name)
+// Items: I08K (DigiPezDragón), Name (Name)
 {
-DigiDragonFish
+DigiPezDragón
 }
 
 STRING 9366
-// Abilities: A0IN (DigiDragonFish), Name (Name)
+// Abilities: A0IN (DigiPezDragón), Name (Name)
 {
-DigiDragonFish
+DigiPezDragón
 }
 
 STRING 9367
-// Abilities: A0IN (DigiDragonFish), Tip (Tooltip - Normal)
+// Abilities: A0IN (DigiPezDragón), Tip (Tooltip - Normal)
 {
-DigiDragonFish
+DigiPezDragón
 }
 
 STRING 9369
-// Abilities: A0IO (DigiCarp), Name (Name)
+// Abilities: A0IO (DigiCarpa), Name (Name)
 {
-DigiCarp
+DigiCarpa
 }
 
 STRING 9370
-// Abilities: A0IO (DigiCarp), Tip (Tooltip - Normal)
+// Abilities: A0IO (DigiCarpa), Tip (Tooltip - Normal)
 {
-DigiCarp
+DigiCarpa
 }
 
 STRING 9371
-// Abilities: A0IO (DigiCarp), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IO (DigiCarpa), Ubertip (Tooltip - Normal - Extended)
 {
-DigiCarp
+DigiCarpa
 }
 
 STRING 9373
-// Abilities: A0IP (DigiSeabass), Name (Name)
+// Abilities: A0IP (DigiLubina), Name (Name)
 {
-DigiSeabass
+DigiLubina
 }
 
 STRING 9374
-// Abilities: A0IP (DigiSeabass), Tip (Tooltip - Normal)
+// Abilities: A0IP (DigiLubina), Tip (Tooltip - Normal)
 {
-DigiSeabass
+DigiLubina
 }
 
 STRING 9375
-// Abilities: A0IP (DigiSeabass), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IP (DigiLubina), Ubertip (Tooltip - Normal - Extended)
 {
-DigiSeabass
+DigiLubina
 }
 
 STRING 9377
-// Abilities: A0IQ (DigiSnapper), Name (Name)
+// Abilities: A0IQ (DigiPargo), Name (Name)
 {
-DigiSnapper
+DigiPargo
 }
 
 STRING 9378
-// Abilities: A0IQ (DigiSnapper), Tip (Tooltip - Normal)
+// Abilities: A0IQ (DigiPargo), Tip (Tooltip - Normal)
 {
-DigiSnapper
+DigiPargo
 }
 
 STRING 9379
-// Abilities: A0IQ (DigiSnapper), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IQ (DigiPargo), Ubertip (Tooltip - Normal - Extended)
 {
-DigiSnapper
+DigiPargo
 }
 
 STRING 9381
@@ -46726,111 +46732,111 @@ DigiSpearfish
 }
 
 STRING 9385
-// Abilities: A0IS (DigiTrout), Name (Name)
+// Abilities: A0IS (Digitrucha), Name (Name)
 {
-DigiTrout
+Digitrucha
 }
 
 STRING 9386
-// Abilities: A0IS (DigiTrout), Tip (Tooltip - Normal)
+// Abilities: A0IS (Digitrucha), Tip (Tooltip - Normal)
 {
-DigiTrout
+Digitrucha
 }
 
 STRING 9387
-// Abilities: A0IS (DigiTrout), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IS (Digitrucha), Ubertip (Tooltip - Normal - Extended)
 {
-DigiTrout
+Digitrucha
 }
 
 STRING 9389
-// Abilities: A0IT (DigiTuna), Name (Name)
+// Abilities: A0IT (DigiAtún), Name (Name)
 {
-DigiTuna
+DigiAtún
 }
 
 STRING 9390
-// Abilities: A0IT (DigiTuna), Tip (Tooltip - Normal)
+// Abilities: A0IT (DigiAtún), Tip (Tooltip - Normal)
 {
-DigiTuna
+DigiAtún
 }
 
 STRING 9391
-// Abilities: A0IT (DigiTuna), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IT (DigiAtún), Ubertip (Tooltip - Normal - Extended)
 {
-DigiTuna
+DigiAtún
 }
 
 STRING 9393
-// Abilities: A0IU (DeluxMushroom), Name (Name)
+// Abilities: A0IU (Champiñón De Lujo), Name (Name)
 {
-DeluxMushroom
+Champiñón De Lujo
 }
 
 STRING 9394
-// Abilities: A0IU (DeluxMushroom), Tip (Tooltip - Normal)
+// Abilities: A0IU (Champiñón De Lujo), Tip (Tooltip - Normal)
 {
-DeluxMushroom
+Champiñón De Lujo
 }
 
 STRING 9395
-// Abilities: A0IU (DeluxMushroom), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IU (Champiñón De Lujo), Ubertip (Tooltip - Normal - Extended)
 {
-DeluxMushroom
+Champiñón De Lujo
 }
 
 STRING 9397
-// Abilities: A0IL (Fish), Hotkey (Hotkey - Normal)
+// Abilities: A0IL (Pez), Hotkey (Hotkey - Normal)
 {
 Y
 }
 
 STRING 9404
-// Items: I07W (Common Fishing Rod), Name (Name)
+// Items: I07W (Caña de pescar común), Name (Name)
 {
-Common Fishing Rod
+Caña de pescar común
 }
 
 STRING 9405
-// Items: I07W (Common Fishing Rod), Tip (Tooltip - Basic)
+// Items: I07W (Caña de pescar común), Tip (Tooltip - Basic)
 {
-Common Fishing Rod
+Caña de pescar común
 }
 
 STRING 9410
-// Units: N032 (Fishing Pole Shop), Name (Name)
+// Units: N032 (Tienda de cañas de pescar), Name (Name)
 {
-Fishing Pole Shop
+Tienda de cañas de pescar
 }
 
 STRING 9411
-// Units: N032 (Fishing Pole Shop), Propernames (Proper Names)
+// Units: N032 (Tienda de cañas de pescar), Propernames (Proper Names)
 {
 Penguimon
 }
 
 STRING 9412
-// Items: I07N (DigiAnchovy), Description (Description)
+// Items: I07N (Digianchoa), Description (Description)
 {
-Sana 75 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 75 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9413
-// Items: I07N (DigiAnchovy), Ubertip (Tooltip - Extended)
+// Items: I07N (Digianchoa), Ubertip (Tooltip - Extended)
 {
-Sana 75 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 75 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9416
-// Items: I07P (DigiSeabass), Description (Description)
+// Items: I07P (DigiLubina), Description (Description)
 {
-Sana 200 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 200 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9417
-// Items: I07P (DigiSeabass), Ubertip (Tooltip - Extended)
+// Items: I07P (DigiLubina), Ubertip (Tooltip - Extended)
 {
-Sana 200 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Cura 200 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9426
@@ -46840,9 +46846,9 @@ Trash Bin 3
 }
 
 STRING 9429
-// Abilities: A0IV (Bundle of Lumber 2), Name (Name)
+// Abilities: A0IV (Paquete de madera 2), Name (Name)
 {
-Bundle of Lumber 2
+Paquete de madera 2
 }
 
 STRING 9432
@@ -46852,147 +46858,147 @@ Fishing Rod
 }
 
 STRING 9433
-// Abilities: A02I (Digivolution), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A02I (Digievolución), Ubertip (Tooltip - Normal - Extended)
 {
-Need to meet all the minimum requirements to be able to digivolve!
+¡Debes cumplir con todos los requisitos mínimos para poder digievolucionar!
 }
 
 STRING 9434
-// Items: I07M (|cff80ff80Good Fishing Rod|r), Name (Name)
+// Items: I07M (|cff80ff80Buena caña de pescar|r), Name (Name)
 {
-|cff80ff80Good Fishing Rod|r
+|cff80ff80Buena caña de pescar|r
 }
 
 STRING 9435
-// Items: I07M (|cff80ff80Good Fishing Rod|r), Tip (Tooltip - Basic)
+// Items: I07M (|cff80ff80Buena caña de pescar|r), Tip (Tooltip - Basic)
 {
-|cff80ff80Good Fishing Rod|r
+|cff80ff80Buena caña de pescar|r
 }
 
 STRING 9440
-// Items: I07Z (DigiShark), Name (Name)
+// Items: I07Z (DigiTiburón), Name (Name)
 {
-DigiShark
+DigiTiburón
 }
 
 STRING 9443
-// Items: I07Z (DigiShark), Tip (Tooltip - Basic)
+// Items: I07Z (DigiTiburón), Tip (Tooltip - Basic)
 {
-DigiShark
+DigiTiburón
 }
 
 STRING 9444
-// Abilities: A0IW (DigiShark), Name (Name)
+// Abilities: A0IW (DigiTiburón), Name (Name)
 {
-DigiShark
+DigiTiburón
 }
 
 STRING 9445
-// Abilities: A0IW (DigiShark), Tip (Tooltip - Normal)
+// Abilities: A0IW (DigiTiburón), Tip (Tooltip - Normal)
 {
-DigiShark
+DigiTiburón
 }
 
 STRING 9446
-// Abilities: A0IW (DigiShark), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IW (DigiTiburón), Ubertip (Tooltip - Normal - Extended)
 {
-DigiShark
+DigiTiburón
 }
 
 STRING 9448
-// Items: I07X (|cffff0000Master Fishing Rod|r), Name (Name)
+// Items: I07X (|cffff0000Caña de pescar maestra|r), Name (Name)
 {
-|cffff0000Master Fishing Rod|r
+|cffff0000Caña de pescar maestra|r
 }
 
 STRING 9449
-// Items: I07X (|cffff0000Master Fishing Rod|r), Tip (Tooltip - Basic)
+// Items: I07X (|cffff0000Caña de pescar maestra|r), Tip (Tooltip - Basic)
 {
-|cffff0000Master Fishing Rod|r
+|cffff0000Caña de pescar maestra|r
 }
 
 STRING 9450
-// Items: I07Y (|cff00ffffRare Fishing Rod|r), Name (Name)
+// Items: I07Y (|cff00ffffCaña de pescar rara|r), Name (Name)
 {
-|cff00ffffRare Fishing Rod|r
+|cff00ffffCaña de pescar rara|r
 }
 
 STRING 9451
-// Items: I07Y (|cff00ffffRare Fishing Rod|r), Tip (Tooltip - Basic)
+// Items: I07Y (|cff00ffffCaña de pescar rara|r), Tip (Tooltip - Basic)
 {
-|cff00ffffRare Fishing Rod|r
+|cff00ffffCaña de pescar rara|r
 }
 
 STRING 9452
-// Items: I080 (Message in the Bottle), Name (Name)
+// Items: I080 (Mensaje en la botella), Name (Name)
 {
-Message in the Bottle
+Mensaje en la botella
 }
 
 STRING 9453
-// Items: I080 (Message in the Bottle), Description (Description)
+// Items: I080 (Mensaje en la botella), Description (Description)
 {
-Message in the Bottle
+Mensaje en la botella
 }
 
 STRING 9454
-// Items: I080 (Message in the Bottle), Ubertip (Tooltip - Extended)
+// Items: I080 (Mensaje en la botella), Ubertip (Tooltip - Extended)
 {
-Message in the Bottle
+Mensaje en la botella
 }
 
 STRING 9455
-// Items: I080 (Message in the Bottle), Tip (Tooltip - Basic)
+// Items: I080 (Mensaje en la botella), Tip (Tooltip - Basic)
 {
-Message in the Bottle
+Mensaje en la botella
 }
 
 STRING 9456
-// Items: I07M (|cff80ff80Good Fishing Rod|r), Description (Description)
+// Items: I07M (|cff80ff80Buena caña de pescar|r), Description (Description)
 {
-Allows your digimon to fish common fishes with a low chance for rare fishes.|n|cffff0000Debe estar cerca de aguas profundas.|r
+Permite que tu Digimon pesque peces comunes con una baja probabilidad de obtener peces raros.|n|cffff0000Debe estar cerca de aguas profundas.|r
 }
 
 STRING 9457
-// Items: I07M (|cff80ff80Good Fishing Rod|r), Ubertip (Tooltip - Extended)
+// Items: I07M (|cff80ff80Buena caña de pescar|r), Ubertip (Tooltip - Extended)
 {
-Allows your digimon to fish common fishes with a low chance for rare fishes.|n|cffff0000Debe estar cerca de aguas profundas.|r
+Permite que tu Digimon pesque peces comunes con una baja probabilidad de obtener peces raros.|n|cffff0000Debe estar cerca de aguas profundas.|r
 }
 
 STRING 9458
-// Items: I07O (DigiSpearFish), Description (Description)
+// Items: I07O (DigiPezLanza), Description (Description)
 {
-An expensive fish, Sana 225 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez caro, Sana 225 hp y mp del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9459
-// Items: I07O (DigiSpearFish), Ubertip (Tooltip - Extended)
+// Items: I07O (DigiPezLanza), Ubertip (Tooltip - Extended)
 {
-An expensive fish, Sana 225 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez caro, Sana 225 hp y mp del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9460
-// Items: I07R (DigiCarp), Description (Description)
+// Items: I07R (DigiCarpa), Description (Description)
 {
-An expensive fish, Cura 500 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez caro, Cura 500 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9461
-// Items: I07R (DigiCarp), Ubertip (Tooltip - Extended)
+// Items: I07R (DigiCarpa), Ubertip (Tooltip - Extended)
 {
-An expensive fish, Cura 500 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez caro, Cura 500 puntos de vida y de maná del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9462
-// Items: I07W (Common Fishing Rod), Description (Description)
+// Items: I07W (Caña de pescar común), Description (Description)
 {
-Allows your digimon to fish common fishes.|n|cffff0000Debe estar cerca de aguas profundas.|r
+Permite que tu Digimon pesque peces comunes.|n|cffff0000Debe estar cerca de aguas profundas.|r
 }
 
 STRING 9463
-// Items: I07W (Common Fishing Rod), Ubertip (Tooltip - Extended)
+// Items: I07W (Caña de pescar común), Ubertip (Tooltip - Extended)
 {
-Allows your digimon to fish common fishes.|n|cffff0000Debe estar cerca de aguas profundas.|r
+Permite que tu Digimon pesque peces comunes.|n|cffff0000Debe estar cerca de aguas profundas.|r
 }
 
 STRING 9464
@@ -47008,33 +47014,33 @@ Permite que tu Digimon pesque peces comunes con una alta probabilidad de obtener
 }
 
 STRING 9466
-// Items: I07Y (|cff00ffffRare Fishing Rod|r), Description (Description)
+// Items: I07Y (|cff00ffffCaña de pescar rara|r), Description (Description)
 {
-Allows your digimon to fish common fishes with a average chance for rare fishes.|n|cffff0000Debe estar cerca de aguas profundas.|r
+Permite que tu Digimon pesque peces comunes con una probabilidad media de obtener peces raros.|n|cffff0000Debe estar cerca de aguas profundas.|r
 }
 
 STRING 9467
-// Items: I07Y (|cff00ffffRare Fishing Rod|r), Ubertip (Tooltip - Extended)
+// Items: I07Y (|cff00ffffCaña de pescar rara|r), Ubertip (Tooltip - Extended)
 {
-Allows your digimon to fish common fishes with a average chance for rare fishes.|n|cffff0000Debe estar cerca de aguas profundas.|r
+Permite que tu Digimon pesque peces comunes con una probabilidad media de obtener peces raros.|n|cffff0000Debe estar cerca de aguas profundas.|r
 }
 
 STRING 9468
-// Items: I07Z (DigiShark), Description (Description)
+// Items: I07Z (DigiTiburón), Description (Description)
 {
-An very expensive fish, Sana 650 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez muy caro, Sana 650 hp y mp del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9469
-// Items: I07Z (DigiShark), Ubertip (Tooltip - Extended)
+// Items: I07Z (DigiTiburón), Ubertip (Tooltip - Extended)
 {
-An very expensive fish, Sana 650 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez muy caro, Sana 650 hp y mp del Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9475
 // Abilities: A0KE (LocalStrings2), Tip (Tooltip - Normal)
 {
-Sounds like Goburimon know who wrote the message!
+¡Parece que Goburimon sabe quién escribió el mensaje!
 }
 
 STRING 9476
@@ -47077,51 +47083,51 @@ Divermon
 }
 
 STRING 9501
-// Items: I081 (Map Piece), Name (Name)
+// Items: I081 (Pieza de mapa), Name (Name)
 {
-Map Piece
+Pieza de mapa
 }
 
 STRING 9502
-// Items: I081 (Map Piece), Description (Description)
+// Items: I081 (Pieza de mapa), Description (Description)
 {
-One of the pieces of Goburimon's map.
+Una de las piezas del mapa de Goburimon.
 }
 
 STRING 9503
-// Items: I081 (Map Piece), Ubertip (Tooltip - Extended)
+// Items: I081 (Pieza de mapa), Ubertip (Tooltip - Extended)
 {
-One of the pieces of Goburimon's map.
+Una de las piezas del mapa de Goburimon.
 }
 
 STRING 9504
-// Items: I081 (Map Piece), Tip (Tooltip - Basic)
+// Items: I081 (Pieza de mapa), Tip (Tooltip - Basic)
 {
-Map Piece
+Pieza de mapa
 }
 
 STRING 9505
-// Items: I082 (Missing Map Pieces), Name (Name)
+// Items: I082 (Piezas faltantes del mapa), Name (Name)
 {
-Missing Map Pieces
+Piezas faltantes del mapa
 }
 
 STRING 9506
-// Items: I082 (Missing Map Pieces), Description (Description)
+// Items: I082 (Piezas faltantes del mapa), Description (Description)
 {
-One of the missing pieces of Goburimon's map.
+Una de las piezas que faltan en el mapa de Goburimon.
 }
 
 STRING 9507
-// Items: I082 (Missing Map Pieces), Ubertip (Tooltip - Extended)
+// Items: I082 (Piezas faltantes del mapa), Ubertip (Tooltip - Extended)
 {
-One of the missing pieces of Goburimon's map.
+Una de las piezas que faltan en el mapa de Goburimon.
 }
 
 STRING 9508
-// Items: I082 (Missing Map Pieces), Tip (Tooltip - Basic)
+// Items: I082 (Piezas faltantes del mapa), Tip (Tooltip - Basic)
 {
-Missing Map Pieces
+Piezas faltantes del mapa
 }
 
 STRING 9511
@@ -47132,7 +47138,7 @@ STRING 9511
 STRING 9517
 // Abilities: A0KE (LocalStrings2), Tip (Tooltip - Normal)
 {
-You started digging... and you find the Treasure!!
+¡Empezaste a cavar... y encontraste el tesoro!
 }
 
 STRING 9532
@@ -47150,13 +47156,13 @@ Herramientas
 STRING 9534
 // Items: I083 (Herramientas), Description (Description)
 {
-Herramientas to dig the treasure from Goburimon's map.
+Herramientas para desenterrar el tesoro del mapa de Goburimon.
 }
 
 STRING 9535
 // Items: I083 (Herramientas), Ubertip (Tooltip - Extended)
 {
-Herramientas to dig the treasure from Goburimon's map.
+Herramientas para desenterrar el tesoro del mapa de Goburimon.
 }
 
 STRING 9536
@@ -47173,37 +47179,37 @@ Gogmamon
 
 STRING 9538
 {
-|cff808080+2500 Digibits|r |cffdcc800+500 Experiencia|r |cffff8080+5 DigiCristales|r |cff8080ff+ Ancient Coin|r
+|cff808080+2500 Digibits|r |cffdcc800+500 Experiencia|r |cffff8080+5 DigiCristales|r |cff8080ff+ Moneda antigua|r
 }
 
 STRING 9541
-// Items: I03A (PVP ticket), Name (Name)
+// Items: I03A (Boleto JcJ), Name (Name)
 {
-PVP ticket
+Boleto JcJ
 }
 
 STRING 9542
-// Items: I03A (PVP ticket), Tip (Tooltip - Basic)
+// Items: I03A (Boleto JcJ), Tip (Tooltip - Basic)
 {
-PVP ticket
+Boleto JcJ
 }
 
 STRING 9543
-// Items: I03A (PVP ticket), Ubertip (Tooltip - Extended)
+// Items: I03A (Boleto JcJ), Ubertip (Tooltip - Extended)
 {
-Use this ticked to fight with a player in the gym.|n|cffffff00When bought another player in the gym should also Comprar ticket to accept fighting with you.|r
+Usa este ticket para luchar con un jugador en el gimnasio.|n|cffffff00Cuando compres este ticket, otro jugador en el gimnasio también debería comprarlo para aceptar luchar contigo.|r
 }
 
 STRING 9544
-// Items: I03B (Grey Arena Ticket), Name (Name)
+// Items: I03B (Entrada a la Arena Gris), Name (Name)
 {
-Grey Arena Ticket
+Entrada a la Arena Gris
 }
 
 STRING 9545
-// Items: I03B (Grey Arena Ticket), Tip (Tooltip - Basic)
+// Items: I03B (Entrada a la Arena Gris), Tip (Tooltip - Basic)
 {
-Grey Arena Ticket
+Entrada a la Arena Gris
 }
 
 STRING 9546
@@ -47227,145 +47233,145 @@ Stand 3
 STRING 9550
 // Items: I00Q (|cff00ffffDigivice gris|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9551
 // Items: I00Q (|cff00ffffDigivice gris|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9552
 // Items: I00R (|cff00ffffDigivice azul|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9553
 // Items: I00R (|cff00ffffDigivice azul|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9554
 // Items: I00S (|cff00ffffDigivice verde|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9555
 // Items: I00S (|cff00ffffDigivice verde|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9556
 // Items: I00T (|cff00ffffDigivice oliva|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9557
 // Items: I00T (|cff00ffffDigivice oliva|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9558
 // Items: I00U (|cff00ffffDigivice naranja|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9559
 // Items: I00U (|cff00ffffDigivice naranja|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9560
 // Items: I00V (|cff00ffffDigivice rosa|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9561
 // Items: I00V (|cff00ffffDigivice rosa|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9562
 // Items: I00W (|cff00ffffDigivice morado|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9563
 // Items: I00W (|cff00ffffDigivice morado|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9564
 // Items: I00X (|cff00ffffDigivice rojo|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9565
 // Items: I00X (|cff00ffffDigivice rojo|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9566
 // Items: I018 (|cff80ff80Digivice carmesí|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 1 Regeneración de salud|n+ 50% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Champion Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 1 Regeneración de salud|n+ 50% Regeneración de energía|n+ Permitir que los Digimon digievolucionen a ciertas etapas de Campeón
 }
 
 STRING 9567
 // Items: I018 (|cff80ff80Digivice carmesí|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 1 Regeneración de salud|n+ 50% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Champion Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 1 Regeneración de salud|n+ 50% Regeneración de energía|n+ Permitir que los Digimon digievolucionen a ciertas etapas de Campeón
 }
 
 STRING 9568
 // Items: I019 (Digivice común), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 1 Regeneración de salud|n+ 50% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Champion Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 1 Regeneración de salud|n+ 50% Regeneración de energía|n+ Permitir que los Digimon digievolucionen a ciertas etapas de Campeón
 }
 
 STRING 9569
 // Items: I019 (Digivice común), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 1 Regeneración de salud|n+ 50% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Champion Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 1 Regeneración de salud|n+ 50% Regeneración de energía|n+ Permitir que los Digimon digievolucionen a ciertas etapas de Campeón
 }
 
 STRING 9570
 // Items: I01K (|cff00ffffDigivice verde azulado|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9571
 // Items: I01K (|cff00ffffDigivice verde azulado|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 75% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9572
 // Items: I050 (|cff8080ffDigivice Arcoiris|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 100% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 100% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9573
 // Items: I050 (|cff8080ffDigivice Arcoiris|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nCan only use 1 Digivice at a time.|n|r+ 2 Regeneración de salud|n+ 100% Regeneración de energía |n+ Allow Digimon to Digivolve to certain Perfect Stage
+|cffffc800Se ata al recogerlo.|nSolo se puede usar 1 Digivice a la vez.|n|r+ 2 Regeneración de salud|n+ 100% Regeneración de energía|n+ Permitir que los Digimon Digievolucionen a ciertas Etapas Perfectas
 }
 
 STRING 9574
@@ -47587,9 +47593,9 @@ STRING 9614
 }
 
 STRING 9615
-// Items: I060 (First Aid Pack), Description (Description)
+// Items: I060 (Paquete de primeros auxilios), Description (Description)
 {
-Item used to revive one of your digimons anywhere in the world, digimon will come back with very low hp and mp.|n|cffffff00This item will go to the digimon menu.|r
+Objeto utilizado para revivir a uno de tus Digimon en cualquier lugar del mundo. El Digimon volverá con muy poca vida y maná. |n|cffffff00Este ítem irá al menú Digimon.|r
 }
 
 STRING 9616
@@ -47611,13 +47617,13 @@ STRING 9618
 }
 
 STRING 9619
-// Items: rin1 (|cff808080Mantle of Intellect|r), Description (Description)
+// Items: rin1 (|cff808080Manto del intelecto|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 3 Sabiduría|n+ 10 Energía
 }
 
 STRING 9620
-// Items: rin1 (|cff808080Mantle of Intellect|r), Ubertip (Tooltip - Extended)
+// Items: rin1 (|cff808080Manto del intelecto|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 3 Sabiduría|n+ 10 Energía
 }
@@ -47659,63 +47665,63 @@ STRING 9626
 }
 
 STRING 9627
-// Items: ckng (|cff808080Heavy Helmet|r), Description (Description)
+// Items: ckng (|cff808080Casco pesado|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Sabiduría|n+ 4 Estámina|n+ 4 Destreza
 }
 
 STRING 9628
-// Items: ckng (|cff808080Heavy Helmet|r), Ubertip (Tooltip - Extended)
+// Items: ckng (|cff808080Casco pesado|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Sabiduría|n+ 4 Estámina|n+ 4 Destreza
 }
 
 STRING 9629
-// Items: I084 (Boleto a |cff808000Trash Mountain|r), Name (Name)
+// Items: I084 (Boleto a |cff808000Montaña Basura|r), Name (Name)
 {
-Boleto a |cff808000Trash Mountain|r
+Boleto a |cff808000Montaña Basura|r
 }
 
 STRING 9630
-// Items: I084 (Boleto a |cff808000Trash Mountain|r), Tip (Tooltip - Basic)
+// Items: I084 (Boleto a |cff808000Montaña Basura|r), Tip (Tooltip - Basic)
 {
-Boleto a |cff808000Trash Mountain|r
+Boleto a |cff808000Montaña Basura|r
 }
 
 STRING 9631
-// Items: I084 (Boleto a |cff808000Trash Mountain|r), Description (Description)
+// Items: I084 (Boleto a |cff808000Montaña Basura|r), Description (Description)
 {
-Un boleto para viajar a:  |cff808000Trash Mountain|r |cffffff00Nivel 31 - 36|r.
+Un boleto para viajar a: |cff808000Montaña Basura|r |cffffff00Nivel 31 - 36|r.
 }
 
 STRING 9632
-// Items: I084 (Boleto a |cff808000Trash Mountain|r), Ubertip (Tooltip - Extended)
+// Items: I084 (Boleto a |cff808000Montaña Basura|r), Ubertip (Tooltip - Extended)
 {
-Un boleto para viajar a:  |cff808000Trash Mountain|r |cffffff00Nivel 31 - 36|r.
+Un boleto para viajar a: |cff808000Montaña Basura|r |cffffff00Nivel 31 - 36|r.
 }
 
 STRING 9633
-// Items: I085 (Boleto a |cff644600Mangroove Region|r), Name (Name)
+// Items: I085 (Boleto a |cff644600Manglar|r), Name (Name)
 {
-Boleto a |cff644600Mangroove Region|r
+Boleto a |cff644600Manglar|r
 }
 
 STRING 9634
-// Items: I085 (Boleto a |cff644600Mangroove Region|r), Tip (Tooltip - Basic)
+// Items: I085 (Boleto a |cff644600Manglar|r), Tip (Tooltip - Basic)
 {
-Boleto a |cff644600Mangroove Region|r
+Boleto a |cff644600Manglar|r
 }
 
 STRING 9635
-// Items: I085 (Boleto a |cff644600Mangroove Region|r), Description (Description)
+// Items: I085 (Boleto a |cff644600Manglar|r), Description (Description)
 {
-Un boleto para viajar a: |cff644600Mangroove Region|r |cffffff00Nivel 31 - 36|r.
+Un boleto para viajar a: |cff644600Manglar|r |cffffff00Nivel 31 - 36|r.
 }
 
 STRING 9636
-// Items: I085 (Boleto a |cff644600Mangroove Region|r), Ubertip (Tooltip - Extended)
+// Items: I085 (Boleto a |cff644600Manglar|r), Ubertip (Tooltip - Extended)
 {
-Un boleto para viajar a: |cff644600Mangroove Region|r |cffffff00Nivel 31 - 36|r.
+Un boleto para viajar a: |cff644600Manglar|r |cffffff00Nivel 31 - 36|r.
 }
 
 STRING 9637
@@ -47743,27 +47749,27 @@ Un boleto para viajar a: |cffc80096Cementerio Overdell|r |cffffff00Nivel 43 - 48
 }
 
 STRING 9641
-// Items: I087 (Boleto a|cff00ff96|cff00ff96 Geko Swamp|r|r), Name (Name)
+// Items: I087 (Boleto a|cff00ff96|cff00ff96 Pantano Geko|r|r), Name (Name)
 {
-Boleto a|cff00ff96|cff00ff96 Geko Swamp|r|r
+Boleto a|cff00ff96|cff00ff96 Pantano Geko|r|r
 }
 
 STRING 9642
-// Items: I087 (Boleto a|cff00ff96|cff00ff96 Geko Swamp|r|r), Tip (Tooltip - Basic)
+// Items: I087 (Boleto a|cff00ff96|cff00ff96 Pantano Geko|r|r), Tip (Tooltip - Basic)
 {
-Boleto a|cff00ff96|cff00ff96 Geko Swamp|r|r
+Boleto a|cff00ff96|cff00ff96 Pantano Geko|r|r
 }
 
 STRING 9643
-// Items: I087 (Boleto a|cff00ff96|cff00ff96 Geko Swamp|r|r), Description (Description)
+// Items: I087 (Boleto a|cff00ff96|cff00ff96 Pantano Geko|r|r), Description (Description)
 {
-Un boleto para viajar a: |cff00ff96|cff00ff96 Geko Swamp|r|r |cffffff00Nivel 37 - 48|r.
+Un boleto para viajar a: |cff00ff96|cff00ff96Pantano Geko|r|r |cffffff00Nivel 37 - 48|r.
 }
 
 STRING 9644
-// Items: I087 (Boleto a|cff00ff96|cff00ff96 Geko Swamp|r|r), Ubertip (Tooltip - Extended)
+// Items: I087 (Boleto a|cff00ff96|cff00ff96 Pantano Geko|r|r), Ubertip (Tooltip - Extended)
 {
-Un boleto para viajar a: |cff00ff96|cff00ff96 Geko Swamp|r|r |cffffff00Nivel 37 - 48|r.
+Un boleto para viajar a: |cff00ff96|cff00ff96Pantano Geko|r|r |cffffff00Nivel 37 - 48|r.
 }
 
 STRING 9645
@@ -47844,27 +47850,27 @@ STRING 9657
 }
 
 STRING 9659
-// Items: I089 (Red Herbs), Name (Name)
+// Items: I089 (Hierbas rojas), Name (Name)
 {
-Red Herbs
+Hierbas rojas
 }
 
 STRING 9660
-// Items: I089 (Red Herbs), Description (Description)
+// Items: I089 (Hierbas rojas), Description (Description)
 {
-Herbs to give to Wormon.
+Hierbas para darle a Wormon.
 }
 
 STRING 9661
-// Items: I089 (Red Herbs), Ubertip (Tooltip - Extended)
+// Items: I089 (Hierbas rojas), Ubertip (Tooltip - Extended)
 {
-Herbs to give to Wormon.
+Hierbas para darle a Wormon.
 }
 
 STRING 9662
-// Items: I089 (Red Herbs), Tip (Tooltip - Basic)
+// Items: I089 (Hierbas rojas), Tip (Tooltip - Basic)
 {
-Red Herbs
+Hierbas rojas
 }
 
 STRING 9663
@@ -47886,25 +47892,25 @@ MudFrigimon
 }
 
 STRING 9666
-// Abilities: A0J0 (Summon Mudfrigimon), Name (Name)
+// Abilities: A0J0 (Invoca a Mudfrigimon), Name (Name)
 {
-Summon Mudfrigimon
+Invoca a Mudfrigimon
 }
 
 STRING 9667
-// Abilities: A0J0 (Summon Mudfrigimon), Tip (Tooltip - Normal)
+// Abilities: A0J0 (Invoca a Mudfrigimon), Tip (Tooltip - Normal)
 {
-Summon Mudfrigimon
+Invoca a Mudfrigimon
 }
 
 STRING 9668
-// Abilities: A0J0 (Summon Mudfrigimon), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0J0 (Invoca a Mudfrigimon), Ubertip (Tooltip - Normal - Extended)
 {
-Call a Tyranomon to help him.|nThe Tyranmon casts his normal skill blaze blast
+Llama a un Tyranmon para que le ayude.|nEl Tyranmon lanza su habilidad normal, Explosión de Fuego.
 }
 
 STRING 9669
-// Abilities: A0J0 (Summon Mudfrigimon), Hotkey (Hotkey - Normal)
+// Abilities: A0J0 (Invoca a Mudfrigimon), Hotkey (Hotkey - Normal)
 {
 D
 }
@@ -47934,21 +47940,21 @@ Demimeramon
 }
 
 STRING 9674
-// Abilities: A0J1 (Summon PetitMeramon), Name (Name)
+// Abilities: A0J1 (Invocar a PetitMeramon), Name (Name)
 {
-Summon PetitMeramon
+Invocar a PetitMeramon
 }
 
 STRING 9675
-// Abilities: A0J1 (Summon PetitMeramon), Tip (Tooltip - Normal)
+// Abilities: A0J1 (Invocar a PetitMeramon), Tip (Tooltip - Normal)
 {
-Summon PetitMeramon
+Invocar a PetitMeramon
 }
 
 STRING 9676
-// Abilities: A0J1 (Summon PetitMeramon), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0J1 (Invocar a PetitMeramon), Ubertip (Tooltip - Normal - Extended)
 {
-Call 2 Gekomon to help him.
+Llama a 2 Gekomon para que le ayuden.
 }
 
 STRING 9677
@@ -47970,15 +47976,15 @@ STRING 9679
 }
 
 STRING 9680
-// Abilities: A0J2 (Summon Saberdramon), Name (Name)
+// Abilities: A0J2 (Invoca a Saberdramon), Name (Name)
 {
-Summon Saberdramon
+Invoca a Saberdramon
 }
 
 STRING 9681
-// Abilities: A0J2 (Summon Saberdramon), Tip (Tooltip - Normal)
+// Abilities: A0J2 (Invoca a Saberdramon), Tip (Tooltip - Normal)
 {
-Summon Saberdramon
+Invoca a Saberdramon
 }
 
 STRING 9684
@@ -48000,9 +48006,9 @@ Sirenmon
 }
 
 STRING 9687
-// Units: o00Y (Stinky Raremon), Name (Name)
+// Units: o00Y (Raremon apestoso), Name (Name)
 {
-Stinky Raremon
+Raremon apestoso
 }
 
 STRING 9690
@@ -48024,15 +48030,15 @@ PriestAngemon
 }
 
 STRING 9693
-// Abilities: A0J3 (Heaven's Gate), Name (Name)
+// Abilities: A0J3 (La puerta del cielo), Name (Name)
 {
-Heaven's Gate
+La puerta del cielo
 }
 
 STRING 9694
-// Abilities: A0J3 (Heaven's Gate), Tip (Tooltip - Normal)
+// Abilities: A0J3 (La puerta del cielo), Tip (Tooltip - Normal)
 {
-|cffffff00Heaven's Gate|r
+|cffffff00La puerta del cielo|r
 }
 
 STRING 9697
@@ -48060,33 +48066,33 @@ STRING 9700
 }
 
 STRING 9701
-// Abilities: A0J4 (Summon Guardromon), Name (Name)
+// Abilities: A0J4 (Invocar Guardromon), Name (Name)
 {
-Summon Guardromon
+Invocar Guardromon
 }
 
 STRING 9702
-// Abilities: A0J4 (Summon Guardromon), Tip (Tooltip - Normal)
+// Abilities: A0J4 (Invocar Guardromon), Tip (Tooltip - Normal)
 {
-Summon Guardromon
+Invocar Guardromon
 }
 
 STRING 9703
-// Abilities: A0J5 (Summon Devidramon), Name (Name)
+// Abilities: A0J5 (Invocar a Devidramon), Name (Name)
 {
-Summon Devidramon
+Invocar a Devidramon
 }
 
 STRING 9704
-// Abilities: A0J5 (Summon Devidramon), Tip (Tooltip - Normal)
+// Abilities: A0J5 (Invocar a Devidramon), Tip (Tooltip - Normal)
 {
-Summon Devidramon
+Invocar a Devidramon
 }
 
 STRING 9705
-// Abilities: A0J6 (Hardened Skin Mobs 2), Name (Name)
+// Abilities: A0J6 (Piel endurecida turbas 2), Name (Name)
 {
-Hardened Skin Mobs 2
+Piel endurecida turbas 2
 }
 
 STRING 9706
@@ -48108,9 +48114,9 @@ H
 }
 
 STRING 9709
-// Units: hpea (|cff00ffffNew Age|r |cff0080002.0c|r), Name (Name)
+// Units: hpea (|cff00ffffNueva Era|r |cff0080002.0c|r), Name (Name)
 {
-|cff00ffffNew Age|r |cff0080002.0c|r
+|cff00ffffNueva Era|r |cff0080002.0c|r
 }
 
 STRING 9710
@@ -48137,51 +48143,51 @@ Phantomon
 }
 
 STRING 9718
-// Items: I08A (Moonlight Flower), Name (Name)
+// Items: I08A (Flor de luz de luna), Name (Name)
 {
-Moonlight Flower
+Flor de luz de luna
 }
 
 STRING 9719
-// Items: I08A (Moonlight Flower), Description (Description)
+// Items: I08A (Flor de luz de luna), Description (Description)
 {
-Moonlight flowers for Phantomon.
+Flores de luz de luna para Phantomon.
 }
 
 STRING 9720
-// Items: I08A (Moonlight Flower), Ubertip (Tooltip - Extended)
+// Items: I08A (Flor de luz de luna), Ubertip (Tooltip - Extended)
 {
-Moonlight flowers for Phantomon.
+Flores de luz de luna para Phantomon.
 }
 
 STRING 9721
-// Items: I08A (Moonlight Flower), Tip (Tooltip - Basic)
+// Items: I08A (Flor de luz de luna), Tip (Tooltip - Basic)
 {
-Moonlight Flower
+Flor de luz de luna
 }
 
 STRING 9722
-// Items: I06L (|cff80ff80Vile's Claw|r), Name (Name)
+// Items: I06L (|cff80ff80La garra Vil|r), Name (Name)
 {
-|cff80ff80Vile's Claw|r
+|cff80ff80La garra Vil|r
 }
 
 STRING 9723
-// Items: I06L (|cff80ff80Vile's Claw|r), Tip (Tooltip - Basic)
+// Items: I06L (|cff80ff80La garra Vil|r), Tip (Tooltip - Basic)
 {
-|cff80ff80Vile's Claw|r
+|cff80ff80La garra Vil|r
 }
 
 STRING 9724
-// Items: I08B (|cff8080ffThe Reaper|r), Name (Name)
+// Items: I08B (|cff8080ffEl segador|r), Name (Name)
 {
-|cff8080ffThe Reaper|r
+|cff8080ffEl segador|r
 }
 
 STRING 9725
-// Items: I08B (|cff8080ffThe Reaper|r), Tip (Tooltip - Basic)
+// Items: I08B (|cff8080ffEl segador|r), Tip (Tooltip - Basic)
 {
-|cff8080ffThe Reaper|r
+|cff8080ffEl segador|r
 }
 
 STRING 9729
@@ -48287,159 +48293,159 @@ STRING 9745
 }
 
 STRING 9746
-// Items: I08C (Comida Information), Name (Name)
+// Items: I08C (Information de comida), Name (Name)
 {
-Comida Information
+Information de comida
 }
 
 STRING 9747
-// Items: I08C (Comida Information), Tip (Tooltip - Basic)
+// Items: I08C (Information de comida), Tip (Tooltip - Basic)
 {
-Comida Information
+Information de comida
 }
 
 STRING 9748
-// Items: I08C (Comida Information), Ubertip (Tooltip - Extended)
+// Items: I08C (Information de comida), Ubertip (Tooltip - Extended)
 {
-Comida can only be used out of combat.|nYou can find Comida at the world map, defeating enemies, buying from shops or fishing.
+La comida solo se puede usar fuera de combate.|nPuedes encontrar comida en el mapa del mundo, derrotando enemigos, comprándola en tiendas o pescando.
 }
 
 STRING 9749
-// Items: I08D (Battle Information), Name (Name)
+// Items: I08D (Información de batallas), Name (Name)
 {
-Battle Information
+Información de batallas
 }
 
 STRING 9750
-// Items: I08D (Battle Information), Tip (Tooltip - Basic)
+// Items: I08D (Información de batallas), Tip (Tooltip - Basic)
 {
-Battle Information
+Información de batallas
 }
 
 STRING 9751
-// Items: I08D (Battle Information), Ubertip (Tooltip - Extended)
+// Items: I08D (Información de batallas), Ubertip (Tooltip - Extended)
 {
-All elements have Good and bad sides.|nOffense means how much more damage a digimon with that attack type will deal vs certain defenses.|nDefense means how much more damage a digimon will take from a certain attack types with his defense type.
+Todos los elementos tienen aspectos positivos y negativos.|nEl ataque indica cuánto daño adicional infligirá un Digimon con ese tipo de ataque contra ciertas defensas.|nLa defensa indica cuánto daño adicional recibirá un Digimon de ciertos tipos de ataque con su tipo de defensa.
 }
 
 STRING 9752
-// Items: I08E (Capturar Information), Name (Name)
+// Items: I08E (Información sobre capturar), Name (Name)
 {
-Capturar Information
+Información sobre capturar
 }
 
 STRING 9753
-// Items: I08E (Capturar Information), Tip (Tooltip - Basic)
+// Items: I08E (Información sobre capturar), Tip (Tooltip - Basic)
 {
-Capturar Information
+Información sobre capturar
 }
 
 STRING 9754
-// Items: I08E (Capturar Information), Ubertip (Tooltip - Extended)
+// Items: I08E (Información sobre capturar), Ubertip (Tooltip - Extended)
 {
-The lower the PS of a enemy digimon, the higher the chance to capture.|nYou can only capture rookies digimons.|nRookies can be found almost everywhere in the world, but a few of those can be very rare to find.
+Cuanto menor sea el PS de un Digimon enemigo, mayor será la probabilidad de capturarlo.|nSolo puedes capturar Digimon novatos.|nLos Digimon novatos se pueden encontrar en casi todo el mundo, pero algunos de ellos pueden ser muy raros de encontrar.
 }
 
 STRING 9755
-// Items: I08F (Sanar Information), Name (Name)
+// Items: I08F (Información sobre sanar), Name (Name)
 {
-Sanar Information
+Información sobre sanar
 }
 
 STRING 9756
-// Items: I08F (Sanar Information), Tip (Tooltip - Basic)
+// Items: I08F (Información sobre sanar), Tip (Tooltip - Basic)
 {
-Sanar Information
+Información sobre sanar
 }
 
 STRING 9757
-// Items: I08F (Sanar Information), Ubertip (Tooltip - Extended)
+// Items: I08F (Información sobre sanar), Ubertip (Tooltip - Extended)
 {
-If all your digimon dies, they will respaw here in the clinic.|nBut if you still have a digimon still alive, you will need to ask centarumon to Sanar them.|nYou also can always Comprar first aid kit to revive your digimon anywhere.
+Si todos tus Digimon mueren, reaparecerán aquí en la clínica.|nPero si aún te queda algún Digimon con vida, tendrás que pedirle a Centarumon que lo cure.|nTambién puedes comprar un botiquín de primeros auxilios para revivir a tus Digimones en cualquier lugar.
 }
 
 STRING 9758
-// Items: I08G (Meal Information), Name (Name)
+// Items: I08G (Información de comidas), Name (Name)
 {
-Meal Information
+Información de comidas
 }
 
 STRING 9759
-// Items: I08G (Meal Information), Tip (Tooltip - Basic)
+// Items: I08G (Información de comidas), Tip (Tooltip - Basic)
 {
-Meal Information
+Información de comidas
 }
 
 STRING 9760
-// Items: I08G (Meal Information), Ubertip (Tooltip - Extended)
+// Items: I08G (Información de comidas), Ubertip (Tooltip - Extended)
 {
-You can only have 1 Comida and 1 drink buff active at a time, if you get another one, the last one will replace the first one.|nThe Comida and drink buff can't be dispelled and will last 30 minutes.
+Solo puedes tener 1 mejora de comida y 1 de bebida activa a la vez; si consigues otra, la última reemplazará a la primera.|nLa mejora de comida y bebida no se puede disipar y durará 30 minutos.
 }
 
 STRING 9761
-// Items: I08H (Arena Information), Name (Name)
+// Items: I08H (Información de la arena), Name (Name)
 {
-Arena Information
+Información de la arena
 }
 
 STRING 9762
-// Items: I08H (Arena Information), Tip (Tooltip - Basic)
+// Items: I08H (Información de la arena), Tip (Tooltip - Basic)
 {
-Arena Information
+Información de la arena
 }
 
 STRING 9763
-// Items: I08H (Arena Information), Ubertip (Tooltip - Extended)
+// Items: I08H (Información de la arena), Ubertip (Tooltip - Extended)
 {
-Fighting in the arena give bonus to all your digimon stats as your rank raises up.|nWith higher ranks also give access to the prize shop.|nAnother fun thing of the arena is that you can challenge your friends for PVP matches.
+Luchar en la arena otorga bonificaciones a todas las estadísticas de tus Digimones a medida que subes de rango.|nLos rangos más altos también dan acceso a la tienda de premios.|nOtra cosa divertida de la arena es que puedes desafiar a tus amigos a combates JcJ.
 }
 
 STRING 9764
-// Items: I08I (Items Information), Name (Name)
+// Items: I08I (Información de ítems), Name (Name)
 {
-Items Information
+Información de ítems
 }
 
 STRING 9765
-// Items: I08I (Items Information), Tip (Tooltip - Basic)
+// Items: I08I (Información de ítems), Tip (Tooltip - Basic)
 {
-Items Information
+Información de ítems
 }
 
 STRING 9766
-// Items: I08I (Items Information), Ubertip (Tooltip - Extended)
+// Items: I08I (Información de ítems), Ubertip (Tooltip - Extended)
 {
-You can only equip 1 weapon, 1 shield, 2 accessories, 1 digivice and 1 crest in a digimon.|nIt's always a Good idea to have recoveries and support items like chits or Piloto automáticos, those can be very usefull.
+Solo puedes equipar 1 arma, 1 escudo, 2 accesorios, 1 digivice y 1 cresta en un digimon. Siempre es buena idea tener objetos de recuperación y apoyo como discos o Piloto automáticos, ya que pueden ser muy útiles.
 }
 
 STRING 9767
-// Items: I08J (Bank Information), Name (Name)
+// Items: I08J (Información del banco), Name (Name)
 {
-Bank Information
+Información del banco
 }
 
 STRING 9768
-// Items: I08J (Bank Information), Tip (Tooltip - Basic)
+// Items: I08J (Información del banco), Tip (Tooltip - Basic)
 {
-Bank Information
+Información del banco
 }
 
 STRING 9769
-// Items: I08J (Bank Information), Ubertip (Tooltip - Extended)
+// Items: I08J (Información del banco), Ubertip (Tooltip - Extended)
 {
-You can store any equipment and any of your digimons in the bank.|nIf you are full you can try expanding buying more spaces with agumon.
+Puedes guardar cualquier equipo y cualquiera de tus Digimon en el banco.|nSi estás lleno, puedes intentar expandirlo comprando más espacios con Agumon.
 }
 
 STRING 9772
-// Items: I08K (DigiDragonFish), Tip (Tooltip - Basic)
+// Items: I08K (DigiPezDragón), Tip (Tooltip - Basic)
 {
-DigiDragonFish (Original)
+DigiPezDragón (Original)
 }
 
 STRING 9773
-// Abilities: A0IN (DigiDragonFish), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IN (DigiPezDragón), Ubertip (Tooltip - Normal - Extended)
 {
-DigiDragonFish
+DigiPezDragón
 }
 
 STRING 9774
@@ -48653,189 +48659,189 @@ Z
 }
 
 STRING 9811
-// Items: I05K (Gargoyle Wing), Name (Name)
+// Items: I05K (Ala de gárgola), Name (Name)
 {
-Gargoyle Wing
+Ala de gárgola
 }
 
 STRING 9812
-// Items: I05K (Gargoyle Wing), Tip (Tooltip - Basic)
+// Items: I05K (Ala de gárgola), Tip (Tooltip - Basic)
 {
-Gargoyle Wing
+Ala de gárgola
 }
 
 STRING 9813
-// Items: I08L (|cff8080ffAncient Coin|r), Name (Name)
+// Items: I08L (|cff8080ffMoneda antigua|r), Name (Name)
 {
-|cff8080ffAncient Coin|r
+|cff8080ffMoneda antigua|r
 }
 
 STRING 9814
-// Items: I08L (|cff8080ffAncient Coin|r), Description (Description)
+// Items: I08L (|cff8080ffMoneda antigua|r), Description (Description)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 30 Destreza|n+ 30 Sabiduría|n+ 30 Estámina|n+ 6 Ataque
 }
 
 STRING 9815
-// Items: I08L (|cff8080ffAncient Coin|r), Ubertip (Tooltip - Extended)
+// Items: I08L (|cff8080ffMoneda antigua|r), Ubertip (Tooltip - Extended)
 {
 |cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 30 Destreza|n+ 30 Sabiduría|n+ 30 Estámina|n+ 6 Ataque
 }
 
 STRING 9816
-// Items: I08L (|cff8080ffAncient Coin|r), Tip (Tooltip - Basic)
+// Items: I08L (|cff8080ffMoneda antigua|r), Tip (Tooltip - Basic)
 {
-|cff8080ffAncient Coin|r
+|cff8080ffMoneda antigua|r
 }
 
 STRING 9818
 // Abilities: A088 (|cff6f2583Bombardero de brazo|r), Ubertip (Tooltip - Normal - Extended)
 {
-Hardens its body tissue to the level of Digizoide cromado by liberating all of the Energía within its body, then unleashes a mighty blow.|n|cffffff00Generate a high amount of threat.|r
+Endurece el tejido de su cuerpo al nivel de Digizoide cromado liberando toda la Energía dentro de su cuerpo, luego desata un poderoso golpe.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9819
 // Abilities: A08C (|cff0000ffTempestad titánica|r), Ubertip (Tooltip - Normal - Extended)
 {
-Rotates like a drill and strikes her enemy after withdrawing into its body.|n|cffffff00Generate a high amount of threat.|r
+Gira como un taladro y golpea a su enemigo después de replegarse dentro de su cuerpo.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9820
 // Abilities: A08I (|cff6f2583Síndrome de pesadilla|r), Ubertip (Tooltip - Normal - Extended)
 {
-Sends out its true form as a black ghost.|n|cffffff00Generate a high amount of threat.|r
+Envía su verdadera forma como un fantasma negro.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9821
 // Abilities: A08Q (|cff808080El martillo de Vulcano|r), Ubertip (Tooltip - Normal - Extended)
 {
-Strikes the opponent with the shock wave and sparks produced when it swings down its Thor's Hammer.|n|cffffff00Generate a high amount of threat.|r
+Golpea al oponente con la onda expansiva y las chispas producidas al blandir su Martillo de Thor.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9822
 // Abilities: A08R (|cff0000ffMaremoto|r), Ubertip (Tooltip - Normal - Extended)
 {
-Generates a giant tidal wave that destroys everything.|n|cffffff00Generate a high amount of threat.|r
+Genera un tsunami gigante que destruye todo.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9823
 // Abilities: A08Z (Garra maestra), Ubertip (Tooltip - Normal - Extended)
 {
-Pierces and crushes the enemy with its huge claws.|n|cffffff00Generate a high amount of threat.|r
+Perfora y aplasta al enemigo con sus enormes garras.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9824
 // Abilities: A090 (Cuerno Destructor), Ubertip (Tooltip - Normal - Extended)
 {
-Stabs the opponent with its gigantic horn.|n|cffffff00Generate a high amount of threat.|r
+Apuñala al oponente con su gigantesco cuerno.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9825
 // Abilities: A093 (|cff0000ffPuño de hielo|r), Ubertip (Tooltip - Normal - Extended)
 {
-Fires a blast of freezing air in the shape of a lion's head from its fist.|n|cffffff00Generate a high amount of threat.|r
+Dispara una ráfaga de aire helado con forma de cabeza de león desde su puño.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9826
 // Abilities: A096 (|cffff0000Bajo Magma|r), Ubertip (Tooltip - Normal - Extended)
 {
-Stuns the enemy with a heavy bass mike performance.|n|cffffff00Generate a high amount of threat.|r
+Sorprende al enemigo con una potente actuación de micrófono de bajos.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9827
 // Abilities: A09A (|cff00ffffPuño musical|r), Ubertip (Tooltip - Normal - Extended)
 {
-Causes the enemy's configuration data to vibrate using the ultra-low frequency waves from its vocals and horns, destroying them.|n|cffffff00Generate a high amount of threat.|r
+Hace vibrar los datos de configuración del enemigo utilizando las ondas de frecuencia ultrabaja de sus voces y cuernos, destruyéndolos.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9828
 // Abilities: A09C (Bola de fuego metálica), Ubertip (Tooltip - Normal - Extended)
 {
-Launches a destructive ball of Derretired metal from its mouth. Alternatively, it fires blue fire mixed with liquid metal so that it clings to an opponent.|n|cffffff00Generate a high amount of threat.|r
+Lanza una bola destructiva de metal retirado desde su boca. Como alternativa, dispara fuego azul mezclado con metal líquido que se adhiere al oponente.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9829
 // Abilities: A09O (|cffff0000Explosión de fuego|r), Ubertip (Tooltip - Normal - Extended)
 {
-Raises the power which covered its sword with a single flame, then inflicts slashes.|n|cffffff00Generate a high amount of threat.|r
+Intensifica el poder que envolvía su espada con una sola llama, y ​​luego asesta tajos.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9830
 // Abilities: A09Q (Trituradoras de colmillos), Ubertip (Tooltip - Normal - Extended)
 {
-Fires its tusks at the opponent like missles.|n|cffffff00Generate a high amount of threat.|r
+Dispara sus colmillos al oponente como misiles.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9831
 // Abilities: A09S (|cff808080Espada berserker|r), Ubertip (Tooltip - Normal - Extended)
 {
-Swings its greatsword like a berserker, cutting everything in two with a single stroke.|n|cffffff00Generate a high amount of threat.|r
+Blande su espada como un berserker, partiendo todo en dos de un solo golpe.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9832
 // Abilities: A09Y (|cff6f2583Guadaña de las Sombras|r), Ubertip (Tooltip - Normal - Extended)
 {
-Cuts even the opponent's soul to pieces with its gigantic sickle and chain, completely annihilating the soul.|n|cffffff00Generate a high amount of threat.|r
+Con su gigantesca hoz y cadena, incluso destroza el alma del oponente, aniquilándola por completo.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9833
 // Abilities: A0A0 (|cff6f2583Hora de fiesta II|r), Ubertip (Tooltip - Normal - Extended)
 {
-Lanza sus propias heces para defenderse de los intrusos.|n|cffffff00Generate a high amount of threat.|r
+Lanza sus propias heces para defenderse de los intrusos.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9834
 // Abilities: A0AU (Giga Grieta), Ubertip (Tooltip - Normal - Extended)
 {
-When it reaches the surface, it drops the opponent into fissures it generates by striking its whole body against the ground.|n|cffffff00Generate a high amount of threat.|r
+Al alcanzar la superficie, deja caer al oponente en las fisuras que genera al golpear todo su cuerpo contra el suelo.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9835
 // Abilities: A0CA (Ataque a velocidad de luz), Ubertip (Tooltip - Normal - Extended)
 {
-Pierces the Nyoikinkobou into the ground and extends it to a thundercloud in the sky, then accumulates the thunder Energía within itself, and rams the opponent like a bolt of thunder.|n|cffffff00Generate a high amount of threat.|r
+Clava el Nyoiskinkobou en el suelo y lo extiende hasta una nube de tormenta en el cielo, luego acumula la energía del trueno dentro de sí mismo y embiste al oponente como un rayo.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9836
 // Abilities: A0CW (Bomba energética), Ubertip (Tooltip - Normal - Extended)
 {
-Shoots a destructive Energía blast from the Psycho Blaster.|n|cffffff00Generate a high amount of threat.|r
+Dispara un rayo de energía destructiva desde el Psycho Blaster.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9837
 // Abilities: A0DT (Muralla del Castillo), Ubertip (Tooltip - Normal - Extended)
 {
-Uses a stubborn, immovable, steadfast defense.|n|cffffff00Generate a high amount of threat.|r
+Utiliza una defensa obstinada, inamovible e inquebrantable.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9838
 // Abilities: A0FK (Explosión Gatling), Ubertip (Tooltip - Normal - Extended)
 {
-Uses the guns on its sides, which fires 3,600 shots per second.|n|cffffff00Generate a high amount of threat.|r
+Utiliza los cañones de sus laterales, que disparan 3.600 tiros por segundo.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9839
 // Abilities: A0GK (Reflexión maldita), Ubertip (Tooltip - Normal - Extended)
 {
-Fires the light Energía it has accumulated from the tips of its crystals.|n|cffffff00Generate a high amount of threat.|r
+Dispara la energía luminosa que ha acumulado en las puntas de sus cristales.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9840
 // Abilities: A0GU (Pantano de jabalí), Ubertip (Tooltip - Normal - Extended)
 {
-Uses the guns on its sides, which fires 3,600 shots per second.|n|cffffff00Generate a high amount of threat.|r
+Utiliza los cañones de sus laterales, que disparan 3.600 tiros por segundo.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9841
-// Abilities: A0IH (Thorn Jab), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0IH (Golpe espinoso), Ubertip (Tooltip - Normal - Extended)
 {
-Makes innumerable roots lurking in the ground pop up onto the surface all at once, skewering enemies in the area.|n|cffffff00Generate a high amount of threat.|r
+Hace que innumerables raíces que acechaban en el suelo broten a la superficie de repente, ensartando a los enemigos de la zona.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9842
-// Abilities: A0J3 (Heaven's Gate), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0J3 (La puerta del cielo), Ubertip (Tooltip - Normal - Extended)
 {
-Uses its sword to manifest a door leading to a subspace from which there is no return, and consigns the opponent to oblivion through it.|n|cffffff00Generate a small amount of threat.|r
+Utiliza su espada para manifestar una puerta que conduce a un subespacio del que no hay retorno, y condena al oponente al olvido a través de ella.|n|cffffff00Genera una pequeña cantidad de amenaza.|r
 }
 
 STRING 9843
@@ -48847,13 +48853,13 @@ Toyagumon
 STRING 9844
 // Abilities: A02N (Calor), Ubertip (Tooltip - Normal - Extended)
 {
-All attacks cause 25% Sabiduría |cffff0000Llama|r damage over time for 3 sec.
+Todos los ataques causan un 25% de daño Sabiduría |cffff0000Llama|r con el tiempo durante 3 segundos.
 }
 
 STRING 9846
 // Abilities: A02X (Flora), Ubertip (Tooltip - Normal - Extended)
 {
-Every attack has 20% chance to entangling the target dealing 25% Sabiduría |cff008000Naturaleza|r over time damage.
+Cada ataque tiene un 20% de probabilidad de enredar al objetivo, infligiendo un 25% de daño de Sabiduría |cff008000Naturaleza|r con el tiempo.
 }
 
 STRING 9848
@@ -49355,15 +49361,15 @@ Zephyrmon
 }
 
 STRING 9933
-// Abilities: A0J8 (Electronic Blast Espada), Name (Name)
+// Abilities: A0J8 (Espada explosiva electrónica), Name (Name)
 {
-Electronic Blast Espada
+Espada explosiva electrónica
 }
 
 STRING 9934
-// Abilities: A0J8 (Electronic Blast Espada), Tip (Tooltip - Normal)
+// Abilities: A0J8 (Espada explosiva electrónica), Tip (Tooltip - Normal)
 {
-|cff00ffffElectronic Blast Espada|r
+|cff00ffffEspada explosiva electrónica|r
 }
 
 STRING 9935
@@ -49373,21 +49379,21 @@ Q
 }
 
 STRING 9936
-// Abilities: A0J8 (Electronic Blast Espada), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0J8 (Espada explosiva electrónica), Ubertip (Tooltip - Normal - Extended)
 {
-Cuts the enemy's configuration data in half with a sword that possesses terrifying sharpness.
+Corta por la mitad los datos de configuración del enemigo con una espada de filo aterrador.
 }
 
 STRING 9937
-// Abilities: A0J9 (Huracán Gale), Name (Name)
+// Abilities: A0J9 (Vendaval huracanado), Name (Name)
 {
-Huracán Gale
+Vendaval huracanado
 }
 
 STRING 9938
-// Abilities: A0J9 (Huracán Gale), Tip (Tooltip - Normal)
+// Abilities: A0J9 (Vendaval huracanado), Tip (Tooltip - Normal)
 {
-|cff00ffffHuracán Gale|r
+|cff00ffffVendaval huracanado|r
 }
 
 STRING 9939
@@ -49397,13 +49403,13 @@ Q
 }
 
 STRING 9940
-// Abilities: A0J9 (Huracán Gale), Ubertip (Tooltip - Normal - Extended)
+// Abilities: A0J9 (Vendaval huracanado), Ubertip (Tooltip - Normal - Extended)
 {
 Flies up into the air and hurls the feathers of its hair and wings as pointed arrows.
 }
 
 STRING 9941
-// Abilities: A0J9 (Huracán Gale), EditorSuffix (Editor Suffix)
+// Abilities: A0J9 (Vendaval huracanado), EditorSuffix (Editor Suffix)
 {
 aeroveedramon
 }
@@ -49427,21 +49433,21 @@ Vender Ítem
 }
 
 STRING 9947
-// Abilities: A0J1 (Summon PetitMeramon), Hotkey (Hotkey - Normal)
+// Abilities: A0J1 (Invocar a PetitMeramon), Hotkey (Hotkey - Normal)
 {
 F
 }
 
 STRING 9951
-// Items: rin1 (|cff808080Mantle of Intellect|r), Name (Name)
+// Items: rin1 (|cff808080Manto del intelecto|r), Name (Name)
 {
-|cff808080Mantle of Intellect|r
+|cff808080Manto del intelecto|r
 }
 
 STRING 9952
-// Items: rin1 (|cff808080Mantle of Intellect|r), Tip (Tooltip - Basic)
+// Items: rin1 (|cff808080Manto del intelecto|r), Tip (Tooltip - Basic)
 {
-|cff808080Mantle of Intellect|r
+|cff808080Manto del intelecto|r
 }
 
 STRING 9953
@@ -49453,7 +49459,7 @@ Danza lunática
 STRING 9956
 // Abilities: A0JA (Danza lunática), Ubertip (Tooltip - Normal - Extended)
 {
-Entrances the enemy with its dance-like steps, after which it finds an opening and slashes with the weapons, Nova Luna, that it wields in both hands.
+Engaña al enemigo con sus pasos danzantes, después encuentra una abertura y ataca con las armas, Luna Nova, que empuña con ambas manos.
 }
 
 STRING 9957
@@ -49463,81 +49469,81 @@ STRING 9957
 }
 
 STRING 9958
-// Items: I01Y (|cff80ff80Tunnel Crystal|r), Name (Name)
+// Items: I01Y (|cff80ff80Cristal del Túnel|r), Name (Name)
 {
-|cff80ff80Tunnel Crystal|r
+|cff80ff80Cristal del Túnel|r
 }
 
 STRING 9959
-// Items: I01Y (|cff80ff80Tunnel Crystal|r), Tip (Tooltip - Basic)
+// Items: I01Y (|cff80ff80Cristal del Túnel|r), Tip (Tooltip - Basic)
 {
-Adquirir |cff80ff80Tunnel Crystal|r
+Adquirir |cff80ff80Cristal del Túnel|r
 }
 
 STRING 9960
-// Items: I08M (|cffff0000Aztec Gold|r), Name (Name)
+// Items: I08M (|cffff0000Oro azteca|r), Name (Name)
 {
-|cffff0000Aztec Gold|r
+|cffff0000Oro azteca|r
 }
 
 STRING 9961
-// Items: I08M (|cffff0000Aztec Gold|r), Tip (Tooltip - Basic)
+// Items: I08M (|cffff0000Oro azteca|r), Tip (Tooltip - Basic)
 {
-|cffff0000Aztec Gold|r
+|cffff0000Oro azteca|r
 }
 
 STRING 9962
-// Items: I08M (|cffff0000Aztec Gold|r), Description (Description)
+// Items: I08M (|cffff0000Oro azteca|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Regeneración de salud|n+ 300% Regeneración de energía|n+ 600 Salud|n+ 5 Armadura|n+ 5 Daño|n+ 15% Boss Item drop Chance
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Regeneración de salud|n+ 300% Regeneración de energía|n+ 600 Salud|n+ 5 Armadura|n+ 5 Daño|n+ 15% Probabilidad de obtener objetos de los jefes
 }
 
 STRING 9963
-// Items: I08M (|cffff0000Aztec Gold|r), Ubertip (Tooltip - Extended)
+// Items: I08M (|cffff0000Oro azteca|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Regeneración de salud|n+ 300% Regeneración de energía|n+ 600 Salud|n+ 5 Armadura|n+ 5 Daño|n+ 15% Boss Item drop Chance
+|cffffc800Se ata al recogerlo.|nSolo se pueden usar 2 accesorios a la vez.|n|r+ 4 Regeneración de salud|n+ 300% Regeneración de energía|n+ 600 Salud|n+ 5 Armadura|n+ 5 Daño|n+ 15% Probabilidad de obtener objetos de los jefes
 }
 
 STRING 9965
 // Abilities: A0C6 (Guardar Ítem), Ubertip (Tooltip - Normal - Extended)
 {
-Send the item to the Bank.
+Envíe el ítem al banco.
 }
 
 STRING 9966
 // Abilities: A0F4 (Vender Ítem), Ubertip (Tooltip - Normal - Extended)
 {
-Sell the item.
+Vender el artículo.
 }
 
 STRING 9967
 // Upgrades: R00B (Saqueo), Ubertip (Tooltip - Extended)
 {
-The digimon sleeps to recover its power, while is sleeping recovers 2% of its Salud and Energía every second.|nIt wakes up when is attacked.
+El Digimon duerme para recuperar su poder, mientras duerme recupera un 2% de su Salud y Energía cada segundo.|nSe despierta cuando es atacado.
 }
 
 STRING 9968
-// Items: I08N (Stone), Name (Name)
+// Items: I08N (Piedra), Name (Name)
 {
-Stone
+Piedra
 }
 
 STRING 9969
-// Items: I08N (Stone), Description (Description)
+// Items: I08N (Piedra), Description (Description)
 {
-Matterial used for recipes.
+Materiales utilizados para las recetas.
 }
 
 STRING 9970
-// Items: I08N (Stone), Ubertip (Tooltip - Extended)
+// Items: I08N (Piedra), Ubertip (Tooltip - Extended)
 {
-Matterial used for recipes.
+Materiales utilizados para las recetas.
 }
 
 STRING 9971
-// Items: I08N (Stone), Tip (Tooltip - Basic)
+// Items: I08N (Piedra), Tip (Tooltip - Basic)
 {
-Stone
+Piedra
 }
 
 STRING 9972
@@ -49549,13 +49555,13 @@ Madera
 STRING 9973
 // Items: I08O (Madera), Description (Description)
 {
-Matterial used for recipes.
+Materiales utilizados para las recetas.
 }
 
 STRING 9974
 // Items: I08O (Madera), Ubertip (Tooltip - Extended)
 {
-Matterial used for recipes.
+Materiales utilizados para las recetas.
 }
 
 STRING 9975
@@ -49573,13 +49579,13 @@ Hojas
 STRING 9977
 // Items: I08P (Hojas), Description (Description)
 {
-Matterial used for recipes.
+Materiales utilizados para las recetas.
 }
 
 STRING 9978
 // Items: I08P (Hojas), Ubertip (Tooltip - Extended)
 {
-Matterial used for recipes.
+Materiales utilizados para las recetas.
 }
 
 STRING 9979
@@ -49589,33 +49595,33 @@ Hojas
 }
 
 STRING 9980
-// Items: I08Q (Recipe : |cff80ff80La garra de Garuda|r), Name (Name)
+// Items: I08Q (Receta: |cff80ff80La garra de Garuda|r), Name (Name)
 {
-Recipe : |cff80ff80La garra de Garuda|r
+Receta: |cff80ff80La garra de Garuda|r
 }
 
 STRING 9981
-// Items: I08Q (Recipe : |cff80ff80La garra de Garuda|r), Tip (Tooltip - Basic)
+// Items: I08Q (Receta: |cff80ff80La garra de Garuda|r), Tip (Tooltip - Basic)
 {
-Recipe : |cff80ff80La garra de Garuda|r
+Receta: |cff80ff80La garra de Garuda|r
 }
 
 STRING 9982
-// Items: I08Q (Recipe : |cff80ff80La garra de Garuda|r), Description (Description)
+// Items: I08Q (Receta: |cff80ff80La garra de Garuda|r), Description (Description)
 {
-|cffffc800Se ata al recogerlo.|nA recipe to Crear |cff80ff80La garra de Garuda|r|nWeapon Type|n|r+ 15 Ataque|n+ 5% Probabilidad de crítico
+|cffffc800Se ata al recogerlo.|nUna receta para crear |cff80ff80La garra de Garuda|r|nWeapon Type|n|r+ 15 Ataque|n+ 5% Probabilidad de crítico
 }
 
 STRING 9983
-// Items: I08Q (Recipe : |cff80ff80La garra de Garuda|r), Ubertip (Tooltip - Extended)
+// Items: I08Q (Receta: |cff80ff80La garra de Garuda|r), Ubertip (Tooltip - Extended)
 {
-|cffffc800Se ata al recogerlo.|nA recipe to Crear |cff80ff80La garra de Garuda|r|nWeapon Type|n|r+ 15 Ataque|n+ 5% Probabilidad de crítico
+|cffffc800Se ata al recogerlo.|nUna receta para crear |cff80ff80La garra de Garuda|r|nWeapon Type|n|r+ 15 Ataque|n+ 5% Probabilidad de crítico
 }
 
 STRING 9986
 // Abilities: A0F6 (Illusion), Ubertip (Tooltip - Normal - Extended)
 {
-Confuses the enemy by creating 2 illusion of the Digimon that deal 100% base damage and take 150% damage. Dispels all magic from the Digimon. |nDura 15 segundos.
+Confunde al enemigo creando dos ilusiones del Digimon que infligen el 100% del daño base y reciben el 150% del daño. Disipa toda la magia del Digimon. |nDura 15 segundos.
 }
 
 STRING 9987
@@ -49625,50 +49631,50 @@ R
 }
 
 STRING 9992
-// Items: I07U (DigiDragonFish), Description (Description)
+// Items: I07U (DigiPezDragón), Description (Description)
 {
-A very rare fish that gives lots of Bits and 1 crystal to the tamer, also Sana 1000 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez muy raro que otorga muchos Bits y 1 cristal al domador, además de 1000 hp y mp al Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9993
-// Items: I07U (DigiDragonFish), Ubertip (Tooltip - Extended)
+// Items: I07U (DigiPezDragón), Ubertip (Tooltip - Extended)
 {
-A very rare fish that gives lots of Bits and 1 crystal to the tamer, also Sana 1000 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez muy raro que otorga muchos Bits y 1 cristal al domador, además de 1000 hp y mp al Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9994
-// Items: I08K (DigiDragonFish), Description (Description)
+// Items: I08K (DigiPezDragón), Description (Description)
 {
-A very rare fish that gives lots of Bits and 1 crystal to the tamer, also Sana 1000 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez muy raro que otorga muchos Bits y 1 cristal al domador, además de 1000 hp y mp al Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9995
-// Items: I08K (DigiDragonFish), Ubertip (Tooltip - Extended)
+// Items: I08K (DigiPezDragón), Ubertip (Tooltip - Extended)
 {
-A very rare fish that gives lots of Bits and 1 crystal to the tamer, also Sana 1000 hp and mp of the selected Digimon over 5 seconds.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
+Un pez muy raro que otorga muchos Bits y 1 cristal al domador, además de 1000 hp y mp al Digimon seleccionado durante 5 segundos.|n|cffffff00El efecto se cancela si se ataca.|r|n|cffffff00Este ítem irá a la mochila.|r
 }
 
 STRING 9996
 // Abilities: A097 (Golpe volcánico II), Ubertip (Tooltip - Normal - Extended)
 {
-Shoots a fireball more powerful than Monochromon's at the enemy.|n|cffffff00Generate a high amount of threat.|r
+Dispara una bola de fuego más poderosa que la de Monochromon contra el enemigo.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9997
 // Abilities: A09R (Excálibur), Ubertip (Tooltip - Normal - Extended)
 {
-Slash the enemy using the holy sword, Excálibur.|n|cffffff00Generate a high amount of threat.|r
+Ataca al enemigo con la espada sagrada, Excálibur.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9998
 // Abilities: A0FA (Modestamente aturdido), Ubertip (Tooltip - Normal - Extended)
 {
-Restrains the enemy with its two appendages, paralyzing them with the stinger on its tail.|n|cffffff00Generate a high amount of threat.|r
+Inmoviliza al enemigo con sus dos apéndices, paralizándolo con el aguijón de su cola.|n|cffffff00Genera una alta cantidad de amenaza.|r
 }
 
 STRING 9999
 // Abilities: A031 (Envidia), Ubertip (Tooltip - Normal - Extended)
 {
-Every attack reduce 1% of the mana of the target and half of that is given to the attacker.|n|cffffff00Gives +15% Boss Item drop chance.|r
+Cada ataque reduce el 1% del maná del objetivo y la mitad de esa cantidad se otorga al atacante.|n|cffffff00Otorga un +15% de probabilidad de obtener objetos de jefe.|r
 }
 
