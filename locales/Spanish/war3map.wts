@@ -10530,7 +10530,7 @@ Arena Digimon Novato 2
 
 STRING 1759
 {
-|cff828282DigiBits|r is gathered from killing digimons and doing quests.
+|cff828282DigiBits|r Se obtiene al matar digimones y completar misiones.
 }
 
 STRING 1760
@@ -11568,7 +11568,7 @@ STRING 1931
 STRING 1932
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-Pero puedes llevar un registro de todo ello con DigiWiki.
+Pero puedes llevar un registro de todo ello en la DigiWiki.
 }
 
 STRING 1933
@@ -11604,7 +11604,7 @@ STRING 1937
 STRING 1938
 // Abilities: A0JQ (LocalStrings), Tip (Tooltip - Normal)
 {
-¡Tenemos muchos lugares para visitar aquí en Cuidad File!
+¡Tenemos muchos lugares para visitar aquí en la ciudad!
 }
 
 STRING 1939
@@ -14487,31 +14487,31 @@ Manglar
 STRING 2430
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
-What digimon you choose for %s?
+¿Qué Digimon eliges para %s?
 }
 
 STRING 2431
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
-Cancel
+Cancelar
 }
 
 STRING 2432
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
-%s is digievolving into...
+%s está digievolucionando a...
 }
 
 STRING 2433
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
-You can't carry more of this item.
+No puedes llevar más de este ítem.
 }
 
 STRING 2434
 // Abilities: A0JQ (LocalStrings), Untip (Tooltip - Turn Off)
 {
-You IV %s is maxed out.
+Tu IV %s está al máximo.
 }
 
 STRING 2435
@@ -14545,9 +14545,9 @@ Recuperación pequeña
 }
 
 STRING 2440
-// Items: I09W (Unstable Data), Name (Name)
+// Items: I09W (Datos inestables), Name (Name)
 {
-Unstable Data
+Datos inestables
 }
 
 STRING 2441
@@ -14563,27 +14563,27 @@ Recuperación mediana
 }
 
 STRING 2443
-// Items: I09V (Unstable Data Part), Name (Name)
+// Items: I09V (Parte de datos inestables), Name (Name)
 {
-Unstable Data Part
+Parte de datos inestables
 }
 
 STRING 2444
-// Items: I09V (Unstable Data Part), Tip (Tooltip - Basic)
+// Items: I09V (Parte de datos inestables), Tip (Tooltip - Basic)
 {
-Unstable Data Part
+Parte de datos inestables
 }
 
 STRING 2445
-// Items: I09W (Unstable Data), Description (Description)
+// Items: I09W (Datos inestables), Description (Description)
 {
-Use to re-roll item drops from a nearby dead boss.
+Se utiliza para volver a generar los objetos que suelta un jefe muerto cercano.
 }
 
 STRING 2446
-// Items: I09W (Unstable Data), Tip (Tooltip - Basic)
+// Items: I09W (Datos inestables), Tip (Tooltip - Basic)
 {
-Unstable Data
+Datos inestables
 }
 
 STRING 2447
@@ -14599,15 +14599,15 @@ Recuperación enorme
 }
 
 STRING 2449
-// Items: I09W (Unstable Data), Ubertip (Tooltip - Extended)
+// Items: I09W (Datos inestables), Ubertip (Tooltip - Extended)
 {
-Use to re-roll item drops from a nearby dead boss.
+Se utiliza para volver a generar los objetos que suelta un jefe muerto cercano.
 }
 
 STRING 2450
-// Abilities: A0JR (Unstable Data), Name (Name)
+// Abilities: A0JR (Datos inestables), Name (Name)
 {
-Unstable Data
+Datos inestables
 }
 
 STRING 2451
@@ -14619,13 +14619,13 @@ Hmm...
 STRING 2452
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Don't worry none of your digimon need Sanaring right now.
+No te preocupes, ninguno de tus Digimones necesita curase en este momento.
 }
 
 STRING 2453
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Keep taking care of yourself!
+¡Cuídate!
 }
 
 STRING 2454
@@ -14637,19 +14637,19 @@ Villa de los inicios
 STRING 2455
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Jijimon's House
+Casa de Jijimon
 }
 
 STRING 2456
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Restaurant
+Restaurante
 }
 
 STRING 2457
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Bank
+Banco
 }
 
 STRING 2458
@@ -14667,31 +14667,31 @@ Tienda de ítems
 STRING 2460
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Grey Arena Lobby
+Arena Gris Vestíbulo
 }
 
 STRING 2461
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Grey Arena 1
+Arena Gris 1
 }
 
 STRING 2462
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Grey Arena 2
+Arena Gris 2
 }
 
 STRING 2463
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Grey Arena 3
+Arena Gris 3
 }
 
 STRING 2464
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Grey Arena 4
+Arena Gris 4
 }
 
 STRING 2465
@@ -14703,7 +14703,7 @@ Bosque Nativo
 STRING 2466
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Centaur Clinic
+Clínica Centauro
 }
 
 STRING 2467
@@ -14715,7 +14715,7 @@ Túnel Taladro
 STRING 2468
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-Tropical Jungle
+Jungla Tropical
 }
 
 STRING 2469
@@ -14959,13 +14959,13 @@ Sala de trofeos
 }
 
 STRING 2509
-// Items: I09V (Unstable Data Part), Description (Description)
+// Items: I09V (Parte de datos inestables), Description (Description)
 {
 Reúne al menos 5 para volver a soltar los ítems que suelta un jefe muerto cercano.
 }
 
 STRING 2510
-// Items: I09V (Unstable Data Part), Ubertip (Tooltip - Extended)
+// Items: I09V (Parte de datos inestables), Ubertip (Tooltip - Extended)
 {
 Reúne al menos 5 para volver a soltar los ítems que suelta un jefe muerto cercano.
 }
@@ -16766,7 +16766,7 @@ Z
 STRING 2810
 // Abilities: A0JQ (LocalStrings), Unubertip (Tooltip - Turn Off - Extended)
 {
-|cff0091ffEsperando a que se carguen los datos|r
+|cff0091ffEsperando a cargar datos|r
 }
 
 STRING 2811
@@ -27944,7 +27944,7 @@ Haciendo amigos
 STRING 4673
 // Abilities: A0KE (LocalStrings2), Ubertip (Tooltip - Normal - Extended)
 {
-Completa las misiones de Kunemon, Gabumon, Salamon y Elecmon en la ciudad de archivos e infórmaselo a Tentomon.
+Completa las misiones de Kunemon, Gabumon, Salamon y Elecmon en la ciudad e infórmaselo a Tentomon.
 }
 
 STRING 4674
@@ -27956,13 +27956,13 @@ STRING 4674
 STRING 4675
 // Abilities: A0KE (LocalStrings2), Ubertip (Tooltip - Normal - Extended)
 {
-¿Eres nuevo por aquí? ¡Los Digimon de Ciudad Archivo podrían ayudarte!
+¿Eres nuevo por aquí? ¡Los Digimon de aquí podrían ayudarte!
 }
 
 STRING 4676
 // Abilities: A0KE (LocalStrings2), Ubertip (Tooltip - Normal - Extended)
 {
-¡Busca en Villa de los inicios Digimones que te ayuden! ¡Usa el botón de hablar para obtener sus tareas!
+¡Busca en la villa Digimones que te ayuden! ¡Usa el botón de hablar para obtener sus tareas!
 }
 
 STRING 4677
@@ -34004,7 +34004,7 @@ Disco de regeneracion de salud 4
 }
 
 STRING 5687
-// Abilities: A0JR (Unstable Data), Hotkey (Hotkey - Normal)
+// Abilities: A0JR (Datos inestables), Hotkey (Hotkey - Normal)
 {
 Z
 }

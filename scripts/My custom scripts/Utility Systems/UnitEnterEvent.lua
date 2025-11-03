@@ -75,7 +75,6 @@ OnInit("UnitEnterEvent", function ()
         DestroyGroup(preplacedUnits)
 
         EnumItemsInRect(WorldBounds.rect, nil, function ()
-            print("b")
             itemCreateEvent:run(GetEnumItem())
         end)
 
