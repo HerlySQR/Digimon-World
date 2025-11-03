@@ -1094,9 +1094,7 @@ OnInit("Diary", function ()
             end)
             actualItemRow[list] = actualItemRow[list] + 1
         else
-            local itm = CreateItem(id, 0, 0)
-            local which = GetItemType(itm)
-            RemoveItem(itm)
+            local which = udg_DiaryItemClass
             if which == ITEM_TYPE_PERMANENT then
                 list = ShieldsList
                 container = ShieldsContainer

@@ -3,6 +3,7 @@ OnInit(function ()
     Require "Backpack"
     Require "SyncedTable"
     Require "AddHook"
+    Require "UnitEnterEvent"
 
     ---@class Recipe
     ---@field itm integer
@@ -23,7 +24,7 @@ OnInit(function ()
     ---@param tooltip string
     ---@return string
     local function fixTooltip(recipe, tooltip)
-        local _, start = tooltip:find(GetLocalizedString("RECIPES_REQUIRE_HEADER"))
+        local top, start = tooltip:find(GetLocalizedString("RECIPES_REQUIRE_HEADER"))
         if start then
             local tooltipStart = tooltip:sub(1, start)
             local _, finish = tooltip:reverse():find("n|")
@@ -42,36 +43,24 @@ OnInit(function ()
                 requirements = requirements .. "- " .. amtReq .. " " .. GetObjectName(matReq) .. "|n"
             end
 
+            tooltipStart = BlzGetAbilityExtendedTooltip(recipe.resultItm, 0) .. "|n" .. GetLocalizedString("RECIPES_REQUIRE_HEADER")
             tooltip = tooltipStart .. requirements .. tooltipEnd
         end
         return tooltip
     end
-
-    local function hook(func)
-        local oldfunc
-        oldfunc = AddHook(func, function (...)
-            local itm = oldfunc(...)
-            if RecipeFromItm[GetItemTypeId(itm)] then
-                BlzSetItemDescription(itm, fixTooltip(RecipeFromItm[GetItemTypeId(itm)], BlzGetItemDescription(itm)))
-                --BlzSetItemExtendedTooltip(itm, fixTooltip(RecipeFromItm[GetItemTypeId(itm)], BlzGetItemExtendedTooltip(itm)))
-            end
-            return itm
-        end)
-    end
-
-    hook("CreateItem")
-    hook("BlzCreateItemWithSkin")
-    hook("UnitAddItemById")
-    hook("PlaceRandomItem")
-
-    OnInit.final(function ()
-        EnumItemsInRect(bj_mapInitialPlayableArea, nil, function ()
-            local itm = GetEnumItem()
-            if RecipeFromItm[GetItemTypeId(itm)] then
-                BlzSetItemDescription(itm, fixTooltip(RecipeFromItm[GetItemTypeId(itm)], BlzGetItemDescription(itm)))
-                --BlzSetItemExtendedTooltip(itm, fixTooltip(RecipeFromItm[GetItemTypeId(itm)], BlzGetItemExtendedTooltip(itm)))
-            end
-        end)
+    local done = {}
+    OnItemCreate(function (itm)
+        if RecipeFromItm[GetItemTypeId(itm)] then
+            Timed.call(function ()
+                local typ = GetItemTypeId(itm)
+                BlzSetItemDescription(itm, fixTooltip(RecipeFromItm[typ], BlzGetItemDescription(itm)))
+                --BlzSetItemExtendedTooltip(itm, fixTooltip(RecipeFromItm[typ], BlzGetItemExtendedTooltip(itm)))
+                if not done[typ] then
+                    done[typ] = true
+                    BlzSetAbilityExtendedTooltip(typ, fixTooltip(RecipeFromItm[typ], BlzGetAbilityExtendedTooltip(typ, 0)), 0)
+                end
+            end)
+        end
     end)
 
     ---@param itm integer
@@ -96,8 +85,6 @@ OnInit(function ()
         end
 
         RecipeFromItm[itm] = self
-
-        BlzSetAbilityExtendedTooltip(itm, fixTooltip(RecipeFromItm[itm], BlzGetAbilityExtendedTooltip(itm, 0)), 0)
 
         udg_BackpackItem = itm
         udg_BackpackAbility = spell

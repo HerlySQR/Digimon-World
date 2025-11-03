@@ -4,7 +4,7 @@ OnInit("DigimonBank", function ()
     Require "Menu"
     Require "Hotkeys"
     Require "EventListener"
-    Require "Clear Items"
+    Require "Fix Items"
     Require "PressSaveOrLoad"
     Require "Serializable"
     Require "Digimon"

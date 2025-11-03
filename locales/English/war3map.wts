@@ -36397,6 +36397,102 @@ STRING 6085
 You don't have the necessary materials
 }
 
+STRING 6086
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Attack
+}
+
+STRING 6087
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Defense
+}
+
+STRING 6088
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Health
+}
+
+STRING 6089
+// Abilities: A0L6 (LocalStrings3), Unubertip (Tooltip - Turn Off - Extended)
+{
+Damage
+}
+
+STRING 6090
+// Abilities: A0LC (LocalStrings4), Name (Name)
+{
+LocalStrings4
+}
+
+STRING 6091
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Dexterity
+}
+
+STRING 6092
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Critical%s+Chance
+}
+
+STRING 6093
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Evasion%s+Chance
+}
+
+STRING 6094
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Armor
+}
+
+STRING 6095
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Energy
+}
+
+STRING 6096
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Wisdom
+}
+
+STRING 6097
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Stamina
+}
+
+STRING 6098
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Attack%s+Speed
+}
+
+STRING 6099
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Critical%s+Impact
+}
+
+STRING 6100
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Health%s+Regen
+}
+
+STRING 6101
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Energy%s+Regen
+}
+
 STRING 6122
 // Items: I02W (|cff80ff80Cobra Hide|r), Tip (Tooltip - Basic)
 {

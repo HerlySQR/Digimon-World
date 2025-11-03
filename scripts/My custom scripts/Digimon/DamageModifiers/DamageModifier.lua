@@ -174,6 +174,11 @@ OnInit("DamageModifier", function ()
         end
     end
 
+    ---@param itm integer
+    function GetItemDamageModifier(itm)
+        return itemConds[itm]
+    end
+
     udg_DamageModifierCreate = CreateTrigger()
     TriggerAddAction(udg_DamageModifierCreate, function ()
         Create(
