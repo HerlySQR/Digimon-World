@@ -136,9 +136,9 @@ OnInit("Hotkeys", function ()
                 if frames[id] then
                     selectingKey = true
                     frameSelected = id
-                    BlzFrameSetText(HotkeyMessage, "|cffFFCC00Press a key to set the hotkey|r")
+                    BlzFrameSetText(HotkeyMessage, GetLocalizedString("HOTKEYS_PRESS_TO_SET"))
                 else
-                    BlzFrameSetText(HotkeyMessage, "|cffFF0000Error|r")
+                    BlzFrameSetText(HotkeyMessage, GetLocalizedString("HOTKEYS_ERROR"))
                 end
             end
         end)
@@ -197,7 +197,7 @@ OnInit("Hotkeys", function ()
                 frameWithKey[key] = list
             end
             edits = {}
-            BlzFrameSetText(HotkeyMessage, "|cff00FF00Hotkeys saved|r")
+            BlzFrameSetText(HotkeyMessage, GetLocalizedString("HOTKEYS_SAVED"))
         end
         SaveHotkeys(p)
     end
@@ -218,7 +218,7 @@ OnInit("Hotkeys", function ()
         BlzFrameSetVisible(HotkeyButton, false)
         AddFrameToMenu(HotkeyButton)
         SetFrameHotkey(HotkeyButton, udg_HOTKEYS_HOTKEY)
-        AddDefaultTooltip(HotkeyButton, "Hotkeys", "Edit the hotkeys of the UI.")
+        AddDefaultTooltip(HotkeyButton, GetLocalizedString("HOTKEYS"), GetLocalizedString("HOTKEYS_TOOLTIP"))
 
         BackdropHotkeyButton = BlzCreateFrameByType("BACKDROP", "BackdropHotkeyButton", HotkeyButton, "", 0)
         BlzFrameSetAllPoints(BackdropHotkeyButton, HotkeyButton)
@@ -241,7 +241,7 @@ OnInit("Hotkeys", function ()
         HotkeyBackpack = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
         BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.080000)
         BlzFrameSetPoint(HotkeyBackpack, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.22000)
-        BlzFrameSetText(HotkeyBackpack, "|cffFCD20DBackpack|r")
+        BlzFrameSetText(HotkeyBackpack, GetLocalizedString("BACKPACK"))
         OnClickEvent(HotkeyBackpack, HotkeyBackpackFunc)
 
         HotkeyBackpackSubMenu = BlzCreateFrameByType("BACKDROP", "BACKDROP", HotkeyMenu, "", 1)
@@ -258,7 +258,7 @@ OnInit("Hotkeys", function ()
         BlzFrameSetScale(HotkeyBackpackSubMenuText, 1.00)
         BlzFrameSetPoint(HotkeyBackpackSubMenuText, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.015000, -0.015000)
         BlzFrameSetPoint(HotkeyBackpackSubMenuText, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.18500)
-        BlzFrameSetText(HotkeyBackpackSubMenuText, "Use an item")
+        BlzFrameSetText(HotkeyBackpackSubMenuText, GetLocalizedString("BACKPACK_USE_ITEM"))
         BlzFrameSetEnable(HotkeyBackpackSubMenuText, false)
         BlzFrameSetTextAlignment(HotkeyBackpackSubMenuText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -266,7 +266,7 @@ OnInit("Hotkeys", function ()
         BlzFrameSetScale(HotkeyBackpackSubMenuDiscard, 0.858)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDiscard, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.095000, -0.19500)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDiscard, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.015000)
-        BlzFrameSetText(HotkeyBackpackSubMenuDiscard, "|cffFCD20DDiscard|r")
+        BlzFrameSetText(HotkeyBackpackSubMenuDiscard, GetLocalizedString("BACKPACK_DISCARD"))
 
         AsingHotkey(HotkeyBackpackSubMenuDiscard, 1)
 
@@ -274,7 +274,7 @@ OnInit("Hotkeys", function ()
         BlzFrameSetScale(HotkeyBackpackSubMenuDrop, 0.858)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDrop, FRAMEPOINT_TOPLEFT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.015000, -0.19500)
         BlzFrameSetPoint(HotkeyBackpackSubMenuDrop, FRAMEPOINT_BOTTOMRIGHT, HotkeyBackpackSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.095000, 0.015000)
-        BlzFrameSetText(HotkeyBackpackSubMenuDrop, "|cffFCD20DDrop|r")
+        BlzFrameSetText(HotkeyBackpackSubMenuDrop, GetLocalizedString("BACKPACK_DROP"))
 
         AsingHotkey(HotkeyBackpackSubMenuDrop, 2)
 
@@ -327,7 +327,7 @@ OnInit("Hotkeys", function ()
         HotkeyYourDigimons = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
         BlzFrameSetPoint(HotkeyYourDigimons, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.040000)
         BlzFrameSetPoint(HotkeyYourDigimons, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.30000, 0.26000)
-        BlzFrameSetText(HotkeyYourDigimons, "|cffFCD20DYour digimons|r")
+        BlzFrameSetText(HotkeyYourDigimons, GetLocalizedString("DIGI_BANK"))
         OnClickEvent(HotkeyYourDigimons, HotkeyYourDigimonsFunc)
 
         HotkeyYourDigimonsSubMenu = BlzCreateFrameByType("BACKDROP", "BACKDROP", HotkeyMenu, "", 1)
@@ -357,32 +357,32 @@ OnInit("Hotkeys", function ()
         local Text = BlzCreateFrameByType("TEXT", "name", HotkeyYourDigimonsSubMenuBackdrop, "", 0)
         BlzFrameSetPoint(Text, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.0050000, -0.015000)
         BlzFrameSetPoint(Text, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.23500)
-        BlzFrameSetText(Text, "|cffFFCC00Choose a Digimon|r")
+        BlzFrameSetText(Text, GetLocalizedString("DIGI_BANK_CHOOSE_DIGIMON"))
         BlzFrameSetEnable(Text, false)
         BlzFrameSetTextAlignment(Text, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
         local Summon = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
         BlzFrameSetPoint(Summon, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.0050000, -0.23500)
         BlzFrameSetPoint(Summon, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.065000, 0.010000)
-        BlzFrameSetText(Summon, "|cffFCD20DSummon|r")
+        BlzFrameSetText(Summon, GetLocalizedString("DIGI_BANK_SUMMON"))
         AsingHotkey(Summon, 29)
 
         local Store = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
         BlzFrameSetPoint(Store, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.065000, -0.23500)
         BlzFrameSetPoint(Store, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.010000)
-        BlzFrameSetText(Store, "|cffFCD20DStore|r")
+        BlzFrameSetText(Store, GetLocalizedString("DIGI_BANK_STORE"))
         AsingHotkey(Store, 30)
 
         local Free = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
         BlzFrameSetPoint(Free, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.0050000, -0.2600)
         BlzFrameSetPoint(Free, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.065000, -0.015000)
-        BlzFrameSetText(Free, "|cffFCD20DFree|r")
+        BlzFrameSetText(Free, GetLocalizedString("DIGI_BANK_FREE"))
         AsingHotkey(Free, 31)
 
         local Revive = BlzCreateFrame("ScriptDialogButton", HotkeyYourDigimonsSubMenuBackdrop,0,0)
         BlzFrameSetPoint(Revive, FRAMEPOINT_TOPLEFT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_TOPLEFT, 0.065000, -0.2600)
         BlzFrameSetPoint(Revive, FRAMEPOINT_BOTTOMRIGHT, HotkeyYourDigimonsSubMenuBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, -0.015000)
-        BlzFrameSetText(Revive, "|cffFCD20DRevive|r")
+        BlzFrameSetText(Revive, GetLocalizedString("DIGI_BANK_REVIVE"))
         AsingHotkey(Revive, 42)
 
         local Warning = BlzCreateFrame("QuestButtonBaseTemplate", Free,0,0)
@@ -392,19 +392,19 @@ OnInit("Hotkeys", function ()
         local AreYouSure = BlzCreateFrameByType("TEXT", "name", Warning, "", 0)
         BlzFrameSetPoint(AreYouSure, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.0050000, -0.0050000)
         BlzFrameSetPoint(AreYouSure, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.025000)
-        BlzFrameSetText(AreYouSure, "|cffFFCC00Are you sure you wanna free this digimon?|r")
+        BlzFrameSetText(AreYouSure, GetLocalizedString("DIGI_BANK_WANNA_FREE"))
         BlzFrameSetTextAlignment(AreYouSure, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
         local Yes = BlzCreateFrame("ScriptDialogButton", Warning,0,0)
         BlzFrameSetPoint(Yes, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.010000, -0.035000)
         BlzFrameSetPoint(Yes, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.070000, 0.0050000)
-        BlzFrameSetText(Yes, "|cffFCD20DYes|r")
+        BlzFrameSetText(Yes, GetLocalizedString("DIGI_BANK_YES"))
         AsingHotkey(Yes, 32)
 
         local No = BlzCreateFrame("ScriptDialogButton", Warning,0,0)
         BlzFrameSetPoint(No, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.070000, -0.035000)
         BlzFrameSetPoint(No, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0050000)
-        BlzFrameSetText(No, "|cffFCD20DNo|r")
+        BlzFrameSetText(No, GetLocalizedString("DIGI_BANK_NO"))
         AsingHotkey(No, 33)
 
         BlzFrameSetScale(HotkeyYourDigimonsSubMenuBackdrop, 0.9)
@@ -414,14 +414,14 @@ OnInit("Hotkeys", function ()
         BlzFrameSetScale(HotkeyExit, 1.00)
         BlzFrameSetPoint(HotkeyExit, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.34000, -0.30000)
         BlzFrameSetPoint(HotkeyExit, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.10000, 0.010000)
-        BlzFrameSetText(HotkeyExit, "|cffFCD20DExit|r")
+        BlzFrameSetText(HotkeyExit, GetLocalizedString("HOTKEYS_EXIT"))
         OnClickEvent(HotkeyExit, HotkeyExitFunc)
 
         HotkeySave = BlzCreateFrame("ScriptDialogButton", HotkeyMenu, 0, 0)
         BlzFrameSetScale(HotkeySave, 1.00)
         BlzFrameSetPoint(HotkeySave, FRAMEPOINT_TOPLEFT, HotkeyMenu, FRAMEPOINT_TOPLEFT, 0.10000, -0.30000)
         BlzFrameSetPoint(HotkeySave, FRAMEPOINT_BOTTOMRIGHT, HotkeyMenu, FRAMEPOINT_BOTTOMRIGHT, -0.34000, 0.010000)
-        BlzFrameSetText(HotkeySave, "|cffFCD20DSave|r")
+        BlzFrameSetText(HotkeySave, GetLocalizedString("HOTKEYS_SAVE"))
         OnClickEvent(HotkeySave, HotkeySaveFunc)
     end
 
@@ -451,7 +451,7 @@ OnInit("Hotkeys", function ()
                 local meta = BlzGetTriggerPlayerMetaKey()
                 if selectingKey then
                     if IsBannedKey(key) then
-                        BlzFrameSetText(HotkeyMessage, "|cffff0000Invalid key|r")
+                        BlzFrameSetText(HotkeyMessage, GetLocalizedString("HOTKEYS_INVALID_KEY"))
                     else
                         local frame = frames[frameSelected]
                         if frame then
@@ -526,7 +526,7 @@ OnInit("Hotkeys", function ()
         local loaded, code = pcall(GetSyncedData, p, FileIO.Read, SaveFile.getPath2(p, "Hotkeys"))
 
         if not loaded then
-            print(GetPlayerName(p) .. " can't load its data.")
+            print(GetLocalizedString("CANT_LOAD_DATA"):format(GetPlayerName(p)))
             return
         end
 

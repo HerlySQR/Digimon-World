@@ -499,14 +499,14 @@ OnInit("DigimonBank", function ()
             SetItemLifeSpan(m, math.maxinteger)
             return true
         else
-            ErrorMessage("Item bank is full.", self.p)
+            ErrorMessage(GetLocalizedString("DIGI_BANK_ITEM_FULL"), self.p)
             return false
         end
     end
 
     function Bank:dropItem()
         if not self.customer then
-            ErrorMessage("There are no customer.", self.p)
+            ErrorMessage(GetLocalizedString("DIGI_BANK_NO_CUSTOMER"), self.p)
             return
         end
         local m = table.remove(self.savedItems, self.itemClicked)
@@ -562,20 +562,6 @@ OnInit("DigimonBank", function ()
         self.itemClicked = -1
     end
 
-    --[[function Bank:resetCaster()
-        SetUnitOwner(self.caster, Digimon.PASSIVE, false)
-        if self.p == LocalPlayer then
-            ClearSelection()
-        end
-        RestartSelectedUnits(self.p)
-        self.usingCaster = false
-
-        if self.p == LocalPlayer then
-            BlzFrameSetEnable(SaveItem, true)
-            BlzFrameSetEnable(SellItem, true)
-        end
-    end]]
-
     ---@param d Digimon
     ---@return boolean
     function Bank:isStocked(d)
@@ -604,7 +590,7 @@ OnInit("DigimonBank", function ()
         for i = 0, MAX_STOCK - 1 do
             bank:storeDigimon(i, true)
         end
-        DisplayTextToPlayer(LocalPlayer, 0, 0, GetPlayerName(p) .. " was afk for too long, all its digimons were stored.")
+        DisplayTextToPlayer(LocalPlayer, 0, 0, GetLocalizedString("DIGI_BANK_PLAYER_AFK"):format(GetPlayerName(p)))
     end)
 
     local function getNewDigimonSlotCost(p)
@@ -625,13 +611,6 @@ OnInit("DigimonBank", function ()
         return digiBitsCost, digiCrystalsCost, rareDataCost
     end
 
-    --[[local dummyHeros = {} ---@type unit[]
-    local heroGlows = {} ---@type framehandle[]
-
-    for i = 1, 3 do
-        dummyHeros[i] = CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), FourCC('Hpal'), WorldBounds.maxX, WorldBounds.maxY, 0)
-    end]]
-
     OnInit.final(function ()
         ForForce(bj_FORCE_ALL_PLAYERS, function ()
             local p = GetEnumPlayer()
@@ -640,18 +619,9 @@ OnInit("DigimonBank", function ()
             bank.seller = CreateUnit(Digimon.PASSIVE, ITEM_BANK_SELLER, WorldBounds.maxX, WorldBounds.maxY, 0)
             bank.buyer = CreateUnit(Digimon.PASSIVE, ITEM_BANK_BUYER, WorldBounds.maxX, WorldBounds.maxY, 0)
             bank.allDeadWindow = CreateTimerDialog(bank.allDeadTimer)
-            TimerDialogSetTitle(bank.allDeadWindow, "Your digimon revive in:")
-            --[[for i = 1, 3 do
-                SetUnitOwner(dummyHeros[i], p, false)
-            end]]
+            TimerDialogSetTitle(bank.allDeadWindow, GetLocalizedString("DIGI_BANK_REVIVE_TIMER_TITLE"))
         end)
         AddItemToStock(CENTAURMON, REVIVE_DIGIMONS, 1, 1)
-        --[[for i = 0, 2 do
-            heroGlows[i] = BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i)
-        end
-        for i = 1, 3 do
-            RemoveUnit(dummyHeros[i])
-        end]]
     end)
 
     -- Always use this function in a "if player == GetLocalPlayer() then" block
@@ -671,7 +641,7 @@ OnInit("DigimonBank", function ()
                     BlzFrameSetTexture(BackdropSavedItemT[i], udg_BANK_EMPTY_BUTTON, 0, true)
                     BlzFrameSetEnable(SavedItemT[i], false)
 
-                    BlzFrameSetText(SaveItemTooltipText[i], "Empty")
+                    BlzFrameSetText(SaveItemTooltipText[i], GetLocalizedString("DIGI_BANK_DIGI_SLOT_EMPTY"))
                     BlzFrameSetSize(SaveItemTooltipText[i], 0, 0.01)
                 end
                 BlzFrameSetVisible(SaveItemLocked[i], false)
@@ -681,14 +651,14 @@ OnInit("DigimonBank", function ()
                     BlzFrameSetEnable(SavedItemT[i], true)
                     BlzFrameSetVisible(SaveItemLocked[i], false)
 
-                    BlzFrameSetText(SaveItemTooltipText[i], "Click to buy slot")
+                    BlzFrameSetText(SaveItemTooltipText[i], GetLocalizedString("DIGI_BANK_CLICK_TO_BUY_SLOT"))
                     BlzFrameSetSize(SaveItemTooltipText[i], 0, 0.01)
                 else
                     BlzFrameSetEnable(SavedItemT[i], false)
                     BlzFrameSetVisible(SaveItemLocked[i], true)
                     BlzFrameSetAlpha(SaveItemLocked[i], 127)
 
-                    BlzFrameSetText(SaveItemTooltipText[i], "Locked")
+                    BlzFrameSetText(SaveItemTooltipText[i], GetLocalizedString("DIGI_BANK_LOCKED"))
                     BlzFrameSetSize(SaveItemTooltipText[i], 0, 0.01)
                 end
             end
@@ -728,10 +698,8 @@ OnInit("DigimonBank", function ()
         local target = GetSpellTargetItem()
         local x, y = GetItemX(target), GetItemY(target)
 
-        --[[if not GetRandomUnitOnRange(x, y, MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
-            ErrorMessage("A digimon should be nearby the item", p)
-        else]]if GetPlayerController(GetItemPlayer(target)) == MAP_CONTROL_USER and GetItemPlayer(target) ~= p then
-            ErrorMessage("This item belongs to another player", p)
+        if GetPlayerController(GetItemPlayer(target)) == MAP_CONTROL_USER and GetItemPlayer(target) ~= p then
+            ErrorMessage(GetLocalizedString("THIS_ITEM_BELONGS_TO_OTHER_PLAYER"), p)
         else
             if GetSpellAbilityId() == SAVE_ITEM then
                 SetItemPlayer(target, p, false)
@@ -776,8 +744,7 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetTexture(BackdropUsingDigimonT[i], BlzGetAbilityIcon(id), 0, true)
 
                 -- Tooltip
-                local text = GetHeroProperName(d.root) .. " |cffccff00Level " .. GetHeroLevel(d.root)
-                          .. "|r\n\n|cffff4200Items: |r"
+                local text = GetLocalizedString("DIGI_BANK_DIGI_TOOLTIP"):format(GetHeroProperName(d.root), GetHeroLevel(d.root))
 
                 for j = 0, 5 do
                     local m = UnitItemInSlot(d.root, j)
@@ -789,9 +756,9 @@ OnInit("DigimonBank", function ()
                 text = text:sub(1, text:len() - 2) .. "\n\n"
 
                 if bank.inUse[i] then
-                    text = text .. "|cff0000ffIn use|r"
+                    text = text .. GetLocalizedString("DIGI_BANK_DIGI_IN_USE")
                 else
-                    text = text .. "|cff00ff00Stored|r"
+                    text = text .. GetLocalizedString("DIGI_BANK_DIGI_STORED")
                 end
                 BlzFrameSetText(UsingTooltipText[i], text)
                 BlzFrameSetSize(UsingTooltipText[i], 0.2, 0)
@@ -801,7 +768,7 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetTexture(BackdropUsingDigimonT[i], udg_BANK_EMPTY_BUTTON, 0, true)
 
                 -- Tooltip
-                BlzFrameSetText(UsingTooltipText[i], "Empty slot")
+                BlzFrameSetText(UsingTooltipText[i], GetLocalizedString("DIGI_BANK_DIGI_SLOT_EMPTY"))
                 BlzFrameSetSize(UsingTooltipText[i], 0, 0.01)
             end
             -- Re-size
@@ -818,8 +785,7 @@ OnInit("DigimonBank", function ()
                     BlzFrameSetTexture(BackdropSavedDigimonT[i], BlzGetAbilityIcon(id), 0, true)
 
                     -- Tooltip
-                    local text = GetHeroProperName(d.root) .. " |cffccff00Level " .. GetHeroLevel(d.root)
-                              .. "|r\n\n|cffff4200Items: |r"
+                    local text = GetLocalizedString("DIGI_BANK_DIGI_TOOLTIP"):format(GetHeroProperName(d.root), GetHeroLevel(d.root))
 
                     for j = 0, 5 do
                         local m = UnitItemInSlot(d.root, j)
@@ -837,7 +803,7 @@ OnInit("DigimonBank", function ()
                     BlzFrameSetEnable(SavedDigimonT[i], false)
                     BlzFrameSetTexture(BackdropSavedDigimonT[i], udg_BANK_EMPTY_BUTTON, 0, true)
 
-                    BlzFrameSetText(SavedTooltipText[i], "Empty slot")
+                    BlzFrameSetText(SavedTooltipText[i], GetLocalizedString("DIGI_BANK_DIGI_SLOT_EMPTY"))
                     BlzFrameSetSize(SavedTooltipText[i], 0, 0.01)
                 end
                 BlzFrameSetEnable(SavedDigimonT[i], not BlzFrameIsVisible(SavedTSelected[i]))
@@ -847,13 +813,13 @@ OnInit("DigimonBank", function ()
                     BlzFrameSetEnable(SavedDigimonT[i], true)
                     BlzFrameSetVisible(SavedDigimonLocked[i], false)
 
-                    BlzFrameSetText(SavedTooltipText[i], "Click to buy slot")
+                    BlzFrameSetText(SavedTooltipText[i], GetLocalizedString("DIGI_BANK_CLICK_TO_BUY_SLOT"))
                 else
                     BlzFrameSetEnable(SavedDigimonT[i], false)
                     BlzFrameSetVisible(SavedDigimonLocked[i], true)
                     BlzFrameSetAlpha(SavedDigimonLocked[i], 127)
 
-                    BlzFrameSetText(SavedTooltipText[i], "Locked")
+                    BlzFrameSetText(SavedTooltipText[i], GetLocalizedString("DIGI_BANK_LOCKED"))
                 end
                 BlzFrameSetSize(SavedTooltipText[i], 0, 0.01)
             end
@@ -902,8 +868,7 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetEnable(DigimonT[i], true)
                 BlzFrameSetTexture(BackdropDigimonT[i], BlzGetAbilityIcon(id), 0, true)
                 -- Tooltip
-                local text = GetHeroProperName(d.root) .. " |cffccff00Level " .. GetHeroLevel(d.root)
-                          .. "|r\n\n|cffff4200Items: |r"
+                local text = GetLocalizedString("DIGI_BANK_DIGI_TOOLTIP"):format(GetHeroProperName(d.root), GetHeroLevel(d.root))
 
                 for j = 0, 5 do
                     local m = UnitItemInSlot(d.root, j)
@@ -915,16 +880,16 @@ OnInit("DigimonBank", function ()
                 text = text:sub(1, text:len() - 2) .. "\n\n"
 
                 if bank.inUse[i] then
-                    text = text .. "|cff0000ffIn use|r"
+                    text = text .. GetLocalizedString("DIGI_BANK_DIGI_IN_USE")
                     BlzFrameSetVisible(DigimonTUsed[i], true)
                     BlzFrameSetAlpha(DigimonTUsed[i], 127)
                     BlzFrameSetVisible(DigimonTDead[i], false)
                 else
                     if d:isAlive() then
-                        text = text .. "|cff00ff00Stored|r"
+                        text = text .. GetLocalizedString("DIGI_BANK_DIGI_STORED")
                         BlzFrameSetVisible(DigimonTDead[i], false)
                     else
-                        text = text .. "|cffff0000Dead|r"
+                        text = text .. GetLocalizedString("DIGI_BANK_DIGI_DEAD")
                         BlzFrameSetVisible(DigimonTDead[i], true)
                         BlzFrameSetAlpha(DigimonTDead[i], 127)
                     end
@@ -939,7 +904,7 @@ OnInit("DigimonBank", function ()
                 BlzFrameSetEnable(DigimonT[i], false)
                 BlzFrameSetTexture(BackdropDigimonT[i], udg_BANK_EMPTY_BUTTON, 0, true)
                 -- Tooltip
-                BlzFrameSetText(DigimonTTooltipText[i], "Empty slot")
+                BlzFrameSetText(DigimonTTooltipText[i], GetLocalizedString("DIGI_BANK_DIGI_SLOT_EMPTY"))
                 BlzFrameSetSize(DigimonTTooltipText[i], 0, 0.01)
                 -- Hide
                 BlzFrameSetVisible(DigimonTUsed[i], false)
@@ -957,7 +922,7 @@ OnInit("DigimonBank", function ()
             BlzFrameClick(DigimonT[bank.pressed])
         end
 
-        BlzFrameSetText(Revive, (bank.reviveCooldown > 0 and ("[" .. math.floor(bank.reviveCooldown) .. "] ") or "") .. "|cffFCD20DRevive|r")
+        BlzFrameSetText(Revive, (bank.reviveCooldown > 0 and ("[" .. math.floor(bank.reviveCooldown) .. "] ") or "") .. GetLocalizedString("DIGI_BANK_DIGI_REVIVE"))
         if bank.reviveItems > 0 then
             BlzFrameSetVisible(ReviveItems, true)
             BlzFrameSetText(ReviveItemsCharges, tostring(bank.reviveItems))
@@ -975,63 +940,6 @@ OnInit("DigimonBank", function ()
             UpdateSave()
         end
     end)
-
-    --[[---@param p player
-    ---@param key string
-    local function UseCaster(p, key)
-        local bank = Bank[GetPlayerId(p)] ---@type Bank
-        SetUnitOwner(bank.caster, p, false)
-        SaveSelectedUnits(p)
-
-        if p == LocalPlayer then
-            BlzFrameSetEnable(SaveItem, false)
-            BlzFrameSetEnable(SellItem, false)
-            SelectUnitSingle(bank.caster)
-        end
-        Timed.echo(0.01, 1., function ()
-            SyncSelections()
-            if IsUnitSelected(bank.caster, p) then
-                if p == LocalPlayer then
-                    ForceUIKey(key)
-                end
-                return true
-            end
-        end, function ()
-            SyncSelections()
-            if not IsUnitSelected(bank.caster, p) then
-                bank:resetCaster()
-            end
-        end)
-        bank.usingCaster = true
-    end
-
-    OnInit.final(function ()
-        trig = CreateTrigger()
-        ForForce(bj_FORCE_ALL_PLAYERS, function ()
-            TriggerRegisterPlayerEvent(trig, GetEnumPlayer(), EVENT_PLAYER_MOUSE_DOWN)
-            TriggerRegisterPlayerEvent(trig, GetEnumPlayer(), EVENT_PLAYER_END_CINEMATIC)
-        end)
-        TriggerAddAction(trig, function ()
-            if GetTriggerEventId() ~= EVENT_PLAYER_MOUSE_DOWN or BlzGetTriggerPlayerMouseButton() == MOUSE_BUTTON_TYPE_RIGHT then
-                local bank = Bank[GetPlayerId(GetTriggerPlayer())] ---@type Bank
-                if bank.usingCaster then
-                    bank:resetCaster()
-                end
-            end
-        end)
-
-        trig = CreateTrigger()
-        ForForce(bj_FORCE_ALL_PLAYERS, function ()
-            TriggerRegisterPlayerUnitEvent(trig, GetEnumPlayer(), EVENT_PLAYER_UNIT_DESELECTED)
-        end)
-        TriggerAddAction(trig, function ()
-            local p = GetTriggerPlayer()
-            local bank = Bank[GetPlayerId(p)] ---@type Bank
-            if GetTriggerUnit() == bank.caster then
-                bank:resetCaster()
-            end
-        end)
-    end)]]
 
     local function SaveItemDropFunc(p)
         local bank = Bank[GetPlayerId(p)] ---@type Bank
@@ -1079,7 +987,7 @@ OnInit("DigimonBank", function ()
             if p == LocalPlayer then
                 local requiredGold = (bank.savedItemsStock - MIN_SAVED_ITEMS + 1) * NEW_ITEM_SLOT_COST_BITS
                 local requiredLumber = (bank.savedItemsStock - MIN_SAVED_ITEMS + 1) * NEW_ITEM_SLOT_COST_CRYSTALS
-                BlzFrameSetText(BuySlotMessage, "Do you want to buy a new item slot for |cff828282" .. requiredGold .. " digibits|r and |cffc882c8" ..requiredLumber .. " digiCrystals|r?")
+                BlzFrameSetText(BuySlotMessage, GetLocalizedString("DIGI_BANK_NEW_ITEM_SLOT_1"):format(requiredGold, requiredLumber))
                 for j = 1, bank.savedItemsStock + 1 do
                     if SavedItemT[j] then
                         BlzFrameSetEnable(SavedItemT[j], false)
@@ -1123,9 +1031,9 @@ OnInit("DigimonBank", function ()
                 bank.savedItemsStock = bank.savedItemsStock + 1
             else
                 if playerGold < requiredGold then
-                    ErrorMessage("You don't have enough digibits", p)
+                    ErrorMessage(GetLocalizedString("NOT_ENOUGH_DIGIBITS"), p)
                 else
-                    ErrorMessage("You don't have enough digicrystals", p)
+                    ErrorMessage(GetLocalizedString("NOT_ENOUGH_DIGICRYSTALS"), p)
                 end
             end
         elseif bank.wantDigimonSlot then
@@ -1138,11 +1046,11 @@ OnInit("DigimonBank", function ()
                 bank.savedDigimonsStock = bank.savedDigimonsStock + 1
             else
                 if playerGold < requiredGold then
-                    ErrorMessage("You don't have enough digibits", p)
+                    ErrorMessage(GetLocalizedString("NOT_ENOUGH_DIGIBITS"), p)
                 elseif playerLumber < requiredLumber then
-                    ErrorMessage("You don't have enough digicrystals", p)
+                    ErrorMessage(GetLocalizedString("NOT_ENOUGH_DIGICRYSTALS"), p)
                 else
-                    ErrorMessage("You don't have enough rare data", p)
+                    ErrorMessage(GetLocalizedString("NOT_ENOUGH_RARE_DATA"), p)
                 end
             end
         end
@@ -1215,9 +1123,9 @@ OnInit("DigimonBank", function ()
             if p == LocalPlayer then
                 local requiredGold, requiredLumber, requiredData = getNewDigimonSlotCost(p)
                 if requiredData == 0 then
-                    BlzFrameSetText(BuySlotMessage, "Do you want to buy a new digimon slot for |cff828282" .. requiredGold .. " digibits|r and |cffc882c8" ..requiredLumber .. " digiCrystals|r?")
+                    BlzFrameSetText(BuySlotMessage, GetLocalizedString("DIGI_BANK_NEW_DIGI_SLOT_1"):format(requiredGold, requiredLumber))
                 else
-                    BlzFrameSetText(BuySlotMessage, "Do you want to buy a new digimon slot for |cff828282" .. requiredGold .. " digibits|r, |cffc882c8" ..requiredLumber .. " digiCrystals|r and |cffd45e19" .. requiredData .. " rare data|r?")
+                    BlzFrameSetText(BuySlotMessage, GetLocalizedString("DIGI_BANK_NEW_DIGI_SLOT_2"):format(requiredGold, requiredLumber, requiredData))
                 end
                 for j = 0, bank.savedDigimonsStock do
                     if SavedDigimonT[j] then
@@ -1487,7 +1395,7 @@ OnInit("DigimonBank", function ()
         SummonADigimon = BlzCreateFrame("IconButtonTemplate", OriginFrame,0,0)
         AddButtonToTheRight(SummonADigimon, 0)
         SetFrameHotkey(SummonADigimon, udg_BANK_HOTKEY)
-        AddDefaultTooltip(SummonADigimon, "Your digimons", "Look your stored digimons.")
+        AddDefaultTooltip(SummonADigimon, GetLocalizedString("DIGI_BANK"), GetLocalizedString("DIGI_BANK_TOOLTIP"))
         AssignFrame(SummonADigimon, 20)
 
         BackdropSummonADigimon = BlzCreateFrameByType("BACKDROP", "BackdropSummonADigimon", SummonADigimon, "", 0)
@@ -1553,7 +1461,7 @@ OnInit("DigimonBank", function ()
             DigimonTTooltipText[i] = BlzCreateFrameByType("TEXT", "DigimonTTooltipText[" .. i .."]", DigimonTTooltip[i], "", 0)
             BlzFrameSetScale(DigimonTTooltipText[i], 1.14)
             BlzFrameSetPoint(DigimonTTooltipText[i], FRAMEPOINT_BOTTOMLEFT, DigimonT[i], FRAMEPOINT_BOTTOMLEFT, 0.025000, 0.025000)
-            BlzFrameSetText(DigimonTTooltipText[i], "Empty slot")
+            BlzFrameSetText(DigimonTTooltipText[i], GetLocalizedString("DIGI_BANK_DIGI_SLOT_EMPTY"))
             BlzFrameSetTextAlignment(DigimonTTooltipText[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
             BlzFrameSetSize(DigimonTTooltipText[i], 0, 0.005)
 
@@ -1566,7 +1474,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(Text, 1.00)
         BlzFrameSetPoint(Text, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.0050000, -0.015000)
         BlzFrameSetPoint(Text, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.23500)
-        BlzFrameSetText(Text, "|cffFFCC00Choose a Digimon|r")
+        BlzFrameSetText(Text, GetLocalizedString("DIGI_BANK_CHOOSE_DIGIMON"))
         BlzFrameSetEnable(Text, false)
         BlzFrameSetTextAlignment(Text, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
@@ -1574,7 +1482,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(Summon, 0.80)
         BlzFrameSetPoint(Summon, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.0050000, -0.23500)
         BlzFrameSetPoint(Summon, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.065000, 0.010000)
-        BlzFrameSetText(Summon, "|cffFCD20DSummon|r")
+        BlzFrameSetText(Summon, GetLocalizedString("DIGI_BANK_SUMMON"))
         OnClickEvent(Summon, SummonFunc)
         AssignFrame(Summon, 29)
 
@@ -1582,7 +1490,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(Store, 0.80)
         BlzFrameSetPoint(Store, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.0050000, -0.23500)
         BlzFrameSetPoint(Store, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.065000, 0.010000)
-        BlzFrameSetText(Store, "|cffFCD20DStore|r")
+        BlzFrameSetText(Store, GetLocalizedString("DIGI_BANK_STORE"))
         BlzFrameSetVisible(Store, false)
         OnClickEvent(Store, StoreFunc)
         AssignFrame(Store, 30)
@@ -1591,7 +1499,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(Revive, 0.80)
         BlzFrameSetPoint(Revive, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.0050000, -0.23500)
         BlzFrameSetPoint(Revive, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.065000, 0.010000)
-        BlzFrameSetText(Revive, "|cffFCD20DRevive|r")
+        BlzFrameSetText(Revive, GetLocalizedString("DIGI_BANK_REVIVE"))
         BlzFrameSetVisible(Revive, false)
         OnClickEvent(Revive, ReviveFunc)
         AssignFrame(Revive, 42)
@@ -1600,7 +1508,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(Free, 0.80)
         BlzFrameSetPoint(Free, FRAMEPOINT_TOPLEFT, StockedDigimonsMenu, FRAMEPOINT_TOPLEFT, 0.065000, -0.23500)
         BlzFrameSetPoint(Free, FRAMEPOINT_BOTTOMRIGHT, StockedDigimonsMenu, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.010000)
-        BlzFrameSetText(Free, "|cffFCD20DFree|r")
+        BlzFrameSetText(Free, GetLocalizedString("DIGI_BANK_FREE"))
         BlzFrameSetEnable(Free, false)
         OnClickEvent(Free, FreeFunc)
         AssignFrame(Free, 31)
@@ -1614,7 +1522,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(AreYouSure, 1.00)
         BlzFrameSetPoint(AreYouSure, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.0050000, -0.0050000)
         BlzFrameSetPoint(AreYouSure, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.0050000, 0.025000)
-        BlzFrameSetText(AreYouSure, "|cffFFCC00Are you sure you wanna free this digimon?|r")
+        BlzFrameSetText(AreYouSure, GetLocalizedString("DIGI_BANK_WANNA_FREE"))
         BlzFrameSetEnable(AreYouSure, false)
         BlzFrameSetTextAlignment(AreYouSure, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
@@ -1622,7 +1530,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(Yes, 1.00)
         BlzFrameSetPoint(Yes, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.010000, -0.035000)
         BlzFrameSetPoint(Yes, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.070000, 0.0050000)
-        BlzFrameSetText(Yes, "|cffFCD20DYes|r")
+        BlzFrameSetText(Yes, GetLocalizedString("DIGI_BANK_YES"))
         OnClickEvent(Yes, YesFunc)
         AssignFrame(Yes, 32)
 
@@ -1630,7 +1538,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(No, 1.00)
         BlzFrameSetPoint(No, FRAMEPOINT_TOPLEFT, Warning, FRAMEPOINT_TOPLEFT, 0.070000, -0.035000)
         BlzFrameSetPoint(No, FRAMEPOINT_BOTTOMRIGHT, Warning, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.0050000)
-        BlzFrameSetText(No, "|cffFCD20DNo|r")
+        BlzFrameSetText(No, GetLocalizedString("DIGI_BANK_NO"))
         OnClickEvent(No, NoFunc)
         AssignFrame(No, 33)
 
@@ -1663,7 +1571,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(Using, 1.29)
         BlzFrameSetPoint(Using, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.045000, -0.030000)
         BlzFrameSetPoint(Using, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.56500, 0.28000)
-        BlzFrameSetText(Using, "|cffFFCC00Using|r")
+        BlzFrameSetText(Using, GetLocalizedString("DIGI_BANK_USING"))
         BlzFrameSetEnable(Using, false)
         BlzFrameSetTextAlignment(Using, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
@@ -1729,7 +1637,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(Saved, 1.29)
         BlzFrameSetPoint(Saved, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.37500, -0.030000)
         BlzFrameSetPoint(Saved, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.23500, 0.28000)
-        BlzFrameSetText(Saved, "|cffFFCC00Saved|r")
+        BlzFrameSetText(Saved, GetLocalizedString("DIGI_BANK_SAVED"))
         BlzFrameSetEnable(Saved, false)
         BlzFrameSetTextAlignment(Saved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
@@ -1773,7 +1681,7 @@ OnInit("DigimonBank", function ()
             SavedTooltipText[i] = BlzCreateFrameByType("TEXT", "SavedTooltipText[" .. i .."]", SavedTooltip[i], "", 0)
             BlzFrameSetScale(SavedTooltipText[i], 1.14)
             BlzFrameSetPoint(SavedTooltipText[i], FRAMEPOINT_BOTTOMLEFT, SavedDigimonT[i], FRAMEPOINT_BOTTOMLEFT, 0.025000, 0.025000)
-            BlzFrameSetText(SavedTooltipText[i], "Empty slot")
+            BlzFrameSetText(SavedTooltipText[i], GetLocalizedString("DIGI_BANK_DIGI_SLOT_EMPTY"))
             BlzFrameSetTextAlignment(SavedTooltipText[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
             BlzFrameSetSize(SavedTooltipText[i], 0, 0.005)
 
@@ -1786,7 +1694,7 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(Swap, 1.29)
         BlzFrameSetPoint(Swap, FRAMEPOINT_TOPLEFT, SavedDigimons, FRAMEPOINT_TOPLEFT, 0.31000, -0.28000)
         BlzFrameSetPoint(Swap, FRAMEPOINT_BOTTOMRIGHT, SavedDigimons, FRAMEPOINT_BOTTOMRIGHT, -0.32000, 0.020000)
-        BlzFrameSetText(Swap, "|cffFCD20DSwap|r")
+        BlzFrameSetText(Swap, GetLocalizedString("DIGI_BANK_SWAP"))
         BlzFrameSetEnable(Swap, false)
         OnClickEvent(Swap, SwapFunc)
 
@@ -1814,14 +1722,14 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(SaveItemDrop, 1.00)
         BlzFrameSetPoint(SaveItemDrop, FRAMEPOINT_TOPLEFT, ItemMenu, FRAMEPOINT_TOPLEFT, 0.070000, -0.25000)
         BlzFrameSetPoint(SaveItemDrop, FRAMEPOINT_BOTTOMRIGHT, ItemMenu, FRAMEPOINT_BOTTOMRIGHT, -0.19000, 0.020000)
-        BlzFrameSetText(SaveItemDrop, "|cffFCD20DDrop|r")
+        BlzFrameSetText(SaveItemDrop, GetLocalizedString("BACKPACK_DROP"))
         OnClickEvent(SaveItemDrop, SaveItemDropFunc)
 
         SaveItemDiscard = BlzCreateFrame("ScriptDialogButton", ItemMenu, 0, 0)
         BlzFrameSetScale(SaveItemDiscard, 1.00)
         BlzFrameSetPoint(SaveItemDiscard, FRAMEPOINT_TOPLEFT, ItemMenu, FRAMEPOINT_TOPLEFT, 0.19000, -0.25000)
         BlzFrameSetPoint(SaveItemDiscard, FRAMEPOINT_BOTTOMRIGHT, ItemMenu, FRAMEPOINT_BOTTOMRIGHT, -0.070000, 0.020000)
-        BlzFrameSetText(SaveItemDiscard, "|cffFCD20DDiscard|r")
+        BlzFrameSetText(SaveItemDiscard, GetLocalizedString("BACKPACK_DISCARD"))
         OnClickEvent(SaveItemDiscard, SaveItemDiscardFunc)
 
         part = MAX_SAVED_ITEMS // 6
@@ -1862,7 +1770,7 @@ OnInit("DigimonBank", function ()
 
             SaveItemTooltipText[i] = BlzCreateFrameByType("TEXT", "name", SaveItemTooltip[i], "", 0)
             BlzFrameSetPoint(SaveItemTooltipText[i], FRAMEPOINT_BOTTOMRIGHT, SavedItemT[i], FRAMEPOINT_BOTTOMRIGHT, -0.025000, 0.025000)
-            BlzFrameSetText(SaveItemTooltipText[i], "Empty")
+            BlzFrameSetText(SaveItemTooltipText[i], GetLocalizedString("DIGI_BANK_CLICK_TO_BUY_SLOT"))
             BlzFrameSetEnable(SaveItemTooltipText[i], false)
             BlzFrameSetScale(SaveItemTooltipText[i], 1.00)
             BlzFrameSetTextAlignment(SaveItemTooltipText[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
@@ -1889,14 +1797,14 @@ OnInit("DigimonBank", function ()
         BlzFrameSetScale(BuySlotYes, 1.00)
         BlzFrameSetPoint(BuySlotYes, FRAMEPOINT_TOPLEFT, BuySlotMenu, FRAMEPOINT_TOPLEFT, 0.025000, -0.087500)
         BlzFrameSetPoint(BuySlotYes, FRAMEPOINT_BOTTOMRIGHT, BuySlotMenu, FRAMEPOINT_BOTTOMRIGHT, -0.10500, 0.0025000)
-        BlzFrameSetText(BuySlotYes, "|cffFCD20DYes|r")
+        BlzFrameSetText(BuySlotYes, GetLocalizedString("DIGI_BANK_YES"))
         OnClickEvent(BuySlotYes, BuySlotYesFunc)
 
         BuySlotNo = BlzCreateFrame("ScriptDialogButton", BuySlotMenu, 0, 0)
         BlzFrameSetScale(BuySlotNo, 1.00)
         BlzFrameSetPoint(BuySlotNo, FRAMEPOINT_TOPLEFT, BuySlotMenu, FRAMEPOINT_TOPLEFT, 0.10500, -0.087500)
         BlzFrameSetPoint(BuySlotNo, FRAMEPOINT_BOTTOMRIGHT, BuySlotMenu, FRAMEPOINT_BOTTOMRIGHT, -0.025000, 0.0025000)
-        BlzFrameSetText(BuySlotNo, "|cffFCD20DNo|r")
+        BlzFrameSetText(BuySlotNo, GetLocalizedString("DIGI_BANK_NO"))
         OnClickEvent(BuySlotNo, BuySlotNoFunc)
     end
 
@@ -2001,37 +1909,12 @@ OnInit("DigimonBank", function ()
             return false
         end
 
-        --[[if index == 1 then
-            local count = 0
-            Timed.echo(0.02, function ()
-                count = count + 0.02
-                print(count)
-                if count > 0.4 then
-                    return true
-                end
-            end)
-        end]]
-
         local d = bank.stocked[index] ---@type Digimon
         local b = false
 
         if d then
             d:setOwner(p)
 
-            --[[local orders = GetHeroButtonPos(p)
-            local syncedOrders = GetSyncedData(p, function ()
-                return orders
-            end)
-            while true do
-                if not table.remove(bank.priorities) then
-                    break
-                end
-            end
-            for i = 0, MAX_STOCK - 1 do
-                if syncedOrders[i] then
-                    table.insert(bank.priorities, Digimon.getInstance(syncedOrders[i]))
-                end
-            end]]
             local noAdded = true
             for i = 1, #bank.priorities do
                 if bank.priorities[i] == d then
@@ -2080,7 +1963,7 @@ OnInit("DigimonBank", function ()
                 end
             end)
             if count > MAX_USED then
-                DisplayTextToPlayer(p, 0, 0, "|cffff0000Warning:|r You are using more digimons than the " .. MAX_USED .. " allowed, so to prevent further bugs your digimons will be 'outlived'.\n We recommend to reload or restart the game and report it to the Discord server.")
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("DIGI_BANK_MAX_USED_WARNING"):format(MAX_USED))
                 ForUnitsOfPlayer(p, function (u)
                     if IsUnitType(u, UNIT_TYPE_HERO) and not IsMainDigimon(p, Digimon.getInstance(u)) then
                         KillUnit(u)
@@ -2232,7 +2115,7 @@ OnInit("DigimonBank", function ()
 
             -- If all the digimons died then the spawnpoint will be the clinic
             if allDead then
-                DisplayTextToPlayer(p, 0, 0, "All your digimons are death, they will respawn in the clinic")
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("DIGI_BANK_ALL_DEAD"))
 
                 if bank.punish then
                     SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, math.floor(0.95 * GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)))
@@ -2350,22 +2233,6 @@ OnInit("DigimonBank", function ()
             end
         end
     end
-
-    --[[---@param p player
-    ---@param flag boolean
-    function ShowSellItem(p, flag)
-        if p == LocalPlayer then
-            BlzFrameSetVisible(SellItem, flag)
-        end
-    end
-
-    ---@param p player
-    ---@param flag boolean
-    function ShowSaveItem(p, flag)
-        if p == LocalPlayer then
-            BlzFrameSetVisible(SaveItem, flag)
-        end
-    end]]
 
     ---@param p player
     ---@param x number
@@ -2549,38 +2416,6 @@ OnInit("DigimonBank", function ()
         end
     end
 
-    -- Replace if for whatever reason a player hero gets deleted
-    --[[OnUnitLeave(function (u)
-        local d = Digimon.getInstance(u)
-        if d and d.owner and IsPlayerInGame(d.owner) then
-            ShowUnitHide(u)
-            local new = CreateUnit(d.owner, GetUnitTypeId(u), GetUnitX(u), GetUnitY(u), GetUnitFacing(u))
-            d.root = new
-            d:setExp(GetHeroXP(u))
-            d:setIV(d.IVsta, d.IVdex, d.IVwis)
-            for i = 0, 5 do
-                local m = UnitItemInSlot(u, i)
-                if m then
-                    UnitRemoveItem(u, m)
-                    UnitAddItem(new, m)
-                    UnitDropItemSlot(new, m, i)
-                end
-            end
-            for _ = 1, GetUnitAbilityLevel(u, udg_STAMINA_TRAINING) do
-                SelectHeroSkill(new, udg_STAMINA_TRAINING)
-            end
-            for _ = 1, GetUnitAbilityLevel(u, udg_STAMINA_TRAINING) do
-                SelectHeroSkill(new, udg_DEXTERITY_TRAINING)
-            end
-            for _ = 1, GetUnitAbilityLevel(u, udg_STAMINA_TRAINING) do
-                SelectHeroSkill(new, udg_WISDOM_TRAINING)
-            end
-            for _, id in ipairs(d.cosmetics) do
-                ApplyCosmetic(d.owner, id, d)
-            end
-        end
-    end)]]
-
     GlobalRemap("udg_AddToBank", nil, function (value)
         AddToBank(Player(0), value)
     end)
@@ -2671,14 +2506,14 @@ OnInit("DigimonBank", function ()
         local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
 
         if not loaded then
-            print(GetPlayerName(p) .. " can't load its data.")
+            print(GetLocalizedString("CANT_LOAD_DATA"):format(GetPlayerName(p)))
             return
         end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
             if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
-                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("INVALID_FILE"):format(fileRoot))
                 return
             end
         end
@@ -2731,105 +2566,5 @@ OnInit("DigimonBank", function ()
         end
     end
 
-    --[=[
-    ---@async
-    ---Returns a table with indices from 0 to 2 with their respective hero if it exists, based on the hero button positions
-    ---@param p player
-    ---@return table<0|1|2, unit>
-    function GetHeroButtonPos(p)
-        local orders = {} ---@type table<0|1|2, unit>
-
-        local heros = {} ---@type unit[]
-        ForUnitsOfPlayer(p, function (u)
-            if IsUnitType(u, UNIT_TYPE_HERO) then
-                table.insert(heros, u)
-            end
-        end)
-
-        -- To prevent crashes
-        --[[for i = 0, #heros - 1 do
-            if BlzFrameGetChildrenCount(BlzGetOriginFrame(ORIGIN_FRAME_HERO_BUTTON, i)) < 3 then
-                return orders
-            end
-        end]]
-
-        if #heros == 1 then -- The only 1
-            if p == LocalPlayer then
-                orders[0] = heros[1]
-            end
-        elseif #heros > 1 then
-            local prevSkillPoints = __jarray(0) ---@type table<unit, integer>
-            for i = 1, #heros do
-                prevSkillPoints[heros[i]] = GetHeroSkillPoints(heros[i])
-                UnitModifySkillPoints(heros[i], -prevSkillPoints[heros[i]])
-            end
-
-            if #heros == 2 then -- Check who has it visible or not
-                UnitModifySkillPoints(heros[1], 1)
-
-                if p == LocalPlayer then
-                    if BlzFrameIsVisible(BlzFrameGetChild(heroGlows[0], 2)) then
-                        orders[0] = heros[1]
-                        orders[1] = heros[2]
-                    else
-                        orders[0] = heros[2]
-                        orders[1] = heros[1]
-                    end
-                end
-
-                UnitModifySkillPoints(heros[1], -1)
-            elseif #heros == 3 then -- Make visible 2 and check who is the other one
-                local indices = {0, 1, 2}
-
-                UnitModifySkillPoints(heros[1], 1)
-                UnitModifySkillPoints(heros[2], 1)
-
-                local noVisible = -1
-
-                if p == LocalPlayer then
-                    for i = 0, 2 do
-                        if not BlzFrameIsVisible(BlzFrameGetChild(heroGlows[i], 2)) then
-                            noVisible = i
-                        end
-                    end
-
-                    orders[noVisible] = heros[3]
-
-                    for i = 3, 1, -1 do
-                        if indices[i] == noVisible then
-                            table.remove(indices, i)
-                            break
-                        end
-                    end
-                end
-
-                -- Now repeat the same process of 2 with the rest of them
-                UnitModifySkillPoints(heros[2], -1)
-
-                local visible = -1
-
-                if p == LocalPlayer then
-                    for i = 1, 2 do
-                        if not BlzFrameIsVisible(BlzFrameGetChild(heroGlows[indices[i]], 2)) then
-                            noVisible = indices[i]
-                        else
-                            visible = indices[i]
-                        end
-                    end
-
-                    orders[visible] = heros[1]
-                    orders[noVisible] = heros[2]
-                end
-
-                UnitModifySkillPoints(heros[1], -1)
-            end
-
-            for i = 1, #heros do
-                UnitModifySkillPoints(heros[i], prevSkillPoints[heros[i]])
-            end
-        end
-
-        return orders
-    end]=]
 end)
 Debug.endFile()

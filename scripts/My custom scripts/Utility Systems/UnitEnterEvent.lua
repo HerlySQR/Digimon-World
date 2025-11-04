@@ -23,7 +23,6 @@ OnInit("UnitEnterEvent", function ()
 
     ---@param func fun(itm: item)
     function OnItemCreate(func)
-        print("a")
         itemCreateEvent:register(func)
     end
 

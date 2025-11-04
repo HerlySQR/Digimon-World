@@ -36493,16 +36493,250 @@ STRING 6101
 Energy%s+Regen
 }
 
-STRING 6103
+STRING 6102
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
+Item bank is full.
+}
+
+STRING 6103
+// Doodads: D06O (Block), Name (Name)
+{
 Block
+}
+
+STRING 6104
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+There are no customer.
+}
+
+STRING 6105
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+%s was afk for too long, all its digimons were stored.
+}
+
+STRING 6106
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Your digimon revive in:
+}
+
+STRING 6107
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Empty
+}
+
+STRING 6108
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Click to buy slot
+}
+
+STRING 6109
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Locked
+}
+
+STRING 6110
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+%s |cffccff00Level %d|r \n\n|cffff4200Items: |r
+}
+
+STRING 6111
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cff0000ffIn use|r
+}
+
+STRING 6112
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cff00ff00Stored|r
+}
+
+STRING 6113
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffff0000Dead|r
+}
+
+STRING 6114
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DRevive|r
+}
+
+STRING 6115
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Do you want to buy a new item slot for |cff828282%d digibits|r and |cffc882c8%d digiCrystals|r?
+}
+
+STRING 6116
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Do you want to buy a new digimon slot for |cff828282%d digibits|r and |cffc882c8%d digiCrystals|r?
+}
+
+STRING 6117
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Do you want to buy a new digimon slot for |cff828282%d digibits|r, |cffc882c8%d digiCrystals|r and |cffd45e19%d rare data|r?
+}
+
+STRING 6118
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Your digimons
+}
+
+STRING 6119
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Look your stored digimons.
+}
+
+STRING 6120
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00Choose a Digimon|r
+}
+
+STRING 6121
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DSummon|r
 }
 
 STRING 6122
 // Items: I02W (|cff80ff80Cobra Hide|r), Tip (Tooltip - Basic)
 {
 |cff80ff80Cobra Hide|r
+}
+
+STRING 6123
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DStore|r
+}
+
+STRING 6124
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DRevive|r
+}
+
+STRING 6125
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DFree|r
+}
+
+STRING 6126
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00Are you sure you wanna free this digimon?|r
+}
+
+STRING 6127
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DYes|r
+}
+
+STRING 6128
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DNo|r
+}
+
+STRING 6129
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00Using|r
+}
+
+STRING 6130
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00Saved|r
+}
+
+STRING 6131
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DSwap|r
+}
+
+STRING 6132
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffff0000Warning:|r You are using more digimons than the %d allowed, so to prevent further bugs your digimons will be 'outlived'.\n We recommend to reload or restart the game and report it to the Discord server.
+}
+
+STRING 6133
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+All your digimons are death, they will respawn in the clinic
+}
+
+STRING 6134
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+%s can't load its data.
+}
+
+STRING 6135
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00Press a key to set the hotkey|r
+}
+
+STRING 6136
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFF0000Error|r
+}
+
+STRING 6137
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cff00FF00Hotkeys saved|r
+}
+
+STRING 6138
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Hotkeys
+}
+
+STRING 6139
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Edit the hotkeys of the UI.
+}
+
+STRING 6140
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DExit|r
+}
+
+STRING 6141
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DSave|r
+}
+
+STRING 6142
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffff0000Invalid key|r
 }
 
 STRING 6145
@@ -41657,7 +41891,7 @@ STRING 7662
 }
 
 STRING 7663
-// Doodads: D06O (Block), Name (Name)
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
 Block
 }

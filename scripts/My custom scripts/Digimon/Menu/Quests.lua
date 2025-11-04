@@ -793,7 +793,7 @@ OnInit("Quests", function ()
         local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
 
         if not loaded then
-            print(GetPlayerName(p) .. " can't load its data.")
+            print(GetLocalizedString("CANT_LOAD_DATA"):format(GetPlayerName(p)))
             return
         end
 

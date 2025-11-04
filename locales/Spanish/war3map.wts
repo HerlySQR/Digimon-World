@@ -36493,16 +36493,250 @@ STRING 6101
 Regeneración%s+de%s+energía
 }
 
+STRING 6102
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+El banco de ítems está lleno.
+}
+
 STRING 6103
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
 Bloqueo
 }
 
+STRING 6104
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+No hay cliente.
+}
+
+STRING 6105
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+%s estuvo ausente demasiado tiempo, todos sus digimones fueron guardados.
+}
+
+STRING 6106
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Tu digimon revive en:
+}
+
+STRING 6107
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Vacío
+}
+
+STRING 6108
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Haz clic para comprar una ranura
+}
+
+STRING 6109
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Bloqueado
+}
+
+STRING 6110
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+%s |cffccff00Nivel %d|r \n\n|cffff4200Ítems: |r
+}
+
+STRING 6111
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cff0000ffEn uso|r
+}
+
+STRING 6112
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cff00ff00Almacenado|r
+}
+
+STRING 6113
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffff0000Muerto|r
+}
+
+STRING 6114
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DRevivir|r
+}
+
+STRING 6115
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¿Desea comprar un nuevo espacio para ítems por |cff828282%d digibits|r y |cffc882c8%d digicristales|r?
+}
+
+STRING 6116
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¿Quieres comprar un nuevo espacio para Digimon por |cff828282%d digibits|r y |cffc882c8%d digicristales|r?
+}
+
+STRING 6117
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¿Quieres comprar un nuevo espacio para Digimon por |cff828282%d digibits|r, |cffc882c8%d digicristales|r y |cffd45e19%d datos raros|r?
+}
+
+STRING 6118
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Tus digimones
+}
+
+STRING 6119
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Revisa tus Digimon almacenados.
+}
+
+STRING 6120
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00Elige un Digimon|r
+}
+
+STRING 6121
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DInvocar|r
+}
+
 STRING 6122
 // Items: I02W (|cff80ff80Piel de cobra|r), Tip (Tooltip - Basic)
 {
 |cff80ff80Piel de cobra|r
+}
+
+STRING 6123
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DAlmacenar|r
+}
+
+STRING 6124
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DRevivir|r
+}
+
+STRING 6125
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DLiberar|r
+}
+
+STRING 6126
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00¿Estás seguro de que quieres liberar a este digimon?|r
+}
+
+STRING 6127
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DSí|r
+}
+
+STRING 6128
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DNo|r
+}
+
+STRING 6129
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00Usando|r
+}
+
+STRING 6130
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00Guardado|r
+}
+
+STRING 6131
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DCambiar|r
+}
+
+STRING 6132
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffff0000Advertencia:|r Estás usando más digimons de los permitidos por %d, por lo que para evitar más errores, tus digimons serán eliminados.\n Recomendamos recargar o reiniciar el juego e informar del problema en el servidor de Discord.
+}
+
+STRING 6133
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Todos tus Digimon han muerto; reaparecerán en la clínica.
+}
+
+STRING 6134
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+%s no puede cargar sus datos.
+}
+
+STRING 6135
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFFCC00Pulsa una tecla para asignar la tecla de acceso rápido.|r
+}
+
+STRING 6136
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFF0000Error|r
+}
+
+STRING 6137
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cff00FF00Teclas de acceso rápido guardadas|r
+}
+
+STRING 6138
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Teclas de acceso rápido
+}
+
+STRING 6139
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Edita las teclas de acceso rápido de la interfaz de usuario.
+}
+
+STRING 6140
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DSalir|r
+}
+
+STRING 6141
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffFCD20DGuardar|r
+}
+
+STRING 6142
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffff0000Tecla no válida|r
 }
 
 STRING 6145
@@ -41657,7 +41891,7 @@ STRING 7662
 }
 
 STRING 7663
-// Doodads: D06O (Bloqueo), Name (Name)
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
 Bloqueo
 }
