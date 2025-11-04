@@ -36541,12 +36541,6 @@ STRING 6109
 Bloqueado
 }
 
-STRING 6110
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-%s |cffccff00Nivel %d|r \n\n|cffff4200Ítems: |r
-}
-
 STRING 6111
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
@@ -36673,12 +36667,6 @@ STRING 6131
 |cffFCD20DCambiar|r
 }
 
-STRING 6132
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-|cffff0000Advertencia:|r Estás usando más digimons de los permitidos por %d, por lo que para evitar más errores, tus digimons serán eliminados.\n Recomendamos recargar o reiniciar el juego e informar del problema en el servidor de Discord.
-}
-
 STRING 6133
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
@@ -36739,10 +36727,28 @@ STRING 6142
 |cffff0000Tecla no válida|r
 }
 
+STRING 6143
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Estás en modo un jugador, la opción de guardar está desactivada.
+}
+
+STRING 6144
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+%s |cffccff00Nivel %d|r |n|n|cffff4200Ítems: |r
+}
+
 STRING 6145
 // Items: I03Q (|cff00ffffDino-Espinas|r), Tip (Tooltip - Basic)
 {
 |cff00ffffDino-Espinas|r
+}
+
+STRING 6146
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+|cffff0000Advertencia:|r Estás usando más digimons de los %d permitidos, por lo que para evitar más errores, tus digimons serán 'desvividos'.|nRecomendamos recargar o reiniciar el juego e informar del problema en el servidor de Discord.
 }
 
 STRING 6148

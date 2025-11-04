@@ -472,7 +472,7 @@ OnInit("PressSaveOrLoad", function ()
         PolledWait(1.)
 
         if NotOnline then
-            print("You are on Singleplayer, save is disabled.")
+            print(GetLocalizedString("SL_SINGLEPLAYER"))
             BlzFrameSetEnable(AbsoluteSave, false)
         else
             -- Auto-save
