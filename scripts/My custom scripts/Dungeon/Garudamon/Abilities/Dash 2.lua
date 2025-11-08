@@ -4,7 +4,7 @@ OnInit(function ()
 
     local SPELL = FourCC('A0BN')
     local MAX_DIST = 700.
-    local DAMAGE = 75.
+    local DAMAGE = 270.
     local COLLISION = 192.
     local INTERVAL = 0.03125
 
@@ -14,7 +14,6 @@ OnInit(function ()
         local angle = math.atan(GetSpellTargetY() - GetUnitY(caster), GetSpellTargetX() - GetUnitX(caster))
         local affected = Set.create()
         SetUnitPathing(caster, false)
-        BossIsCasting(caster, true)
         local reached = 0
         Timed.echo(INTERVAL, 1, function ()
             local x = GetUnitX(caster)
@@ -25,7 +24,6 @@ OnInit(function ()
                 y = y + 50 * math.sin(angle)
                 if not IsTerrainWalkable(x, y) then
                     ResetUnitAnimation(caster)
-                    BossIsCasting(caster, false)
                     return true
                 else
                     SetUnitPosition(caster, x, y)
@@ -40,7 +38,6 @@ OnInit(function ()
                 end
             else
                 ResetUnitAnimation(caster)
-                BossIsCasting(caster, false)
                 SetUnitPathing(caster, true)
                 return true
             end

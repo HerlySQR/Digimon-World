@@ -4,7 +4,7 @@ OnInit(function ()
 
     local SPELL = FourCC('A00W')
     local ICE_CUBE = FourCC('n01C')
-    local DURATION = 8.
+    local DURATION = 9.
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()

@@ -1,6 +1,6 @@
 Debug.beginFile("ModifyThreat")
 OnInit("ModifyThreat", function ()
-    Require "ZTS"
+    Require "Threat System"
     Require "AbilityUtils"
 
     local DAMAGE_THREAT_FACTOR = 0.75
@@ -24,6 +24,9 @@ OnInit("ModifyThreat", function ()
         end
     end
 
+    ---@param source unit
+    ---@param threat number
+    ---@return number
     local function applyModifiers(source, threat)
         local index = 0
         while true do
@@ -44,8 +47,8 @@ OnInit("ModifyThreat", function ()
         local source = udg_DamageEventSource ---@type unit
         local target = udg_DamageEventTarget ---@type unit
 
-        if IsPlayerInGame(GetOwningPlayer(source)) and not IsPlayerInGame(GetOwningPlayer(target)) then
-            ZTS_ModifyThreat(source, target, applyModifiers(source, udg_DamageEventAmount * DAMAGE_THREAT_FACTOR), true)
+        if source and target and Threat.getType(source) == "playerunit" and Threat.getType(target) == "npc" then
+            Threat.modify(source, target, applyModifiers(source, udg_DamageEventAmount * DAMAGE_THREAT_FACTOR), true)
         end
     end)
 
@@ -55,16 +58,11 @@ OnInit("ModifyThreat", function ()
         local source = GetSpellAbilityUnit() ---@type unit
         local id = GetSpellAbilityId()
 
-        if abilityThreat[id] and IsPlayerInGame(GetOwningPlayer(source)) then
+        if abilityThreat[id] and Threat.getType(source) == "playerunit" then
             local threat = abilityThreat[id]
-            local g = ZTS_GetAttackers(source)
-            while true do
-                local u = FirstOfGroup(g)
-                if not u then break end
-                ZTS_ModifyThreat(source, u, applyModifiers(source, threat), true)
-                GroupRemoveUnit(g, u)
+            for _, u in ipairs(Threat.getAttackers(source)) do
+                Threat.modify(source, u, applyModifiers(source, threat), true)
             end
-            DestroyGroup(g)
         end
     end)
 

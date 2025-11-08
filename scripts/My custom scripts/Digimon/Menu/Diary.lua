@@ -5,6 +5,8 @@ OnInit("Diary", function ()
     Require "Environment"
     Require "Serializable"
     Require "FoodBonus"
+    Require "BitSet"
+    Require "SyncedTable"
 
     local LocalPlayer = GetLocalPlayer()
 
@@ -52,9 +54,9 @@ OnInit("Diary", function ()
     -- Items
     local ItemsButton = nil ---@type framehandle
     local ItemsBackdrop = nil ---@type framehandle
-    local ItemTypes = {} ---@type framehandle[]
-    local BackdropItemTypes= {} ---@type framehandle[]
-    local ItemsSprite = {} ---@type framehandle[]
+    local ItemTypes = {} ---@type table<integer, framehandle>
+    local BackdropItemTypes = {} ---@type table<integer, framehandle>
+    local ItemsSprite = {} ---@type table<integer, framehandle>
     local ConsumablesText = nil ---@type framehandle
     local MiscText = nil ---@type framehandle
     local MiscsContainer = nil ---@type framehandle
@@ -85,6 +87,21 @@ OnInit("Diary", function ()
     local ItemName = nil ---@type framehandle
     local ItemDescription = nil ---@type framehandle
 
+    -- Diary
+    local RecipesBackdrop = nil ---@type framehandle
+    local MaterialsLabel = nil ---@type framehandle
+    local RecipeMaterialInformation = nil ---@type framehandle
+    local MaterialsContainer = nil ---@type framehandle
+    local RecipesLabel = nil ---@type framehandle
+    local RecipesContainer = nil ---@type framehandle
+    local RecipesButton = nil ---@type framehandle
+    local RecipeMaterialName = nil ---@type framehandle
+    local RecipeMaterialDescription = nil ---@type framehandle
+    local RecipeResultButton = nil ---@type framehandle
+    local RecipeRequimentsContainer = nil ---@type framehandle
+    local RecipeRequirmentT = {} ---@type framehandle[]
+    local RecipeRequirmentButton = {} ---@type framehandle[]
+
     -- Map
     local MapBackdrop = nil ---@type framehandle
     local DigimonIcons = {} ---@type framehandle[]
@@ -100,14 +117,14 @@ OnInit("Diary", function ()
 
     local MAX_REGIONS = 30
 
-    local WATER_ICON = "war3mapImported\\ATTWater.blp"
-    local MACHINE_ICON = "war3mapImported\\ATTMetal.blp"
-    local BEAST_ICON = "war3mapImported\\ATTBEast.blp"
-    local FIRE_ICON = "war3mapImported\\ATTFlame.blp"
-    local NATURE_ICON = "war3mapImported\\ATTNature.blp"
-    local AIR_ICON = "war3mapImported\\ATTAir.blp"
-    local DARK_ICON = "war3mapImported\\ATTShadow.blp"
-    local HOLY_ICON = "war3mapImported\\ATTHoly.blp"
+    local WATER_ICON = "war3mapImported\\ATTAqua.blp"
+    local MACHINE_ICON = "war3mapImported\\ATTOre.blp"
+    local BEAST_ICON = "war3mapImported\\ATTBeastN.blp"
+    local FIRE_ICON = "war3mapImported\\ATTFlame2.blp"
+    local NATURE_ICON = "war3mapImported\\ATTNatureN.blp"
+    local AIR_ICON = "war3mapImported\\ATTAirN.blp"
+    local DARK_ICON = "war3mapImported\\ATTDark.blp"
+    local HOLY_ICON = "war3mapImported\\ATTLight.blp"
     local HERO_ICON = "war3mapImported\\ATTSystemMed.blp"
 
     local armorEquiv = {
@@ -128,7 +145,14 @@ OnInit("Diary", function ()
     BlzSetSpecialEffectColorByPlayer(glow, Player(GetHandleId(PLAYER_COLOR_SNOW)))
     BlzSetSpecialEffectScale(glow, 0.5)
     BlzSetSpecialEffectHeight(glow, BlzGetLocalSpecialEffectZ(glow) - 7.5)
-    BlzSetSpecialEffectAlpha(glow, 200)
+    BlzSetSpecialEffectAlpha(glow, 0)
+
+    local sourceModel = CreateUnit(Digimon.PASSIVE, NO_SKIN, GetRectCenterX(gg_rct_DiaryRecipeSourceModel), GetRectCenterY(gg_rct_DiaryRecipeSourceModel), 270)
+    local sourceGlow = AddSpecialEffect("war3mapImported\\GeneralHeroGlow.mdx", GetRectCenterX(gg_rct_DiaryRecipeSourceModel), GetRectCenterY(gg_rct_DiaryRecipeSourceModel))
+    BlzSetSpecialEffectColorByPlayer(sourceGlow, Player(GetHandleId(PLAYER_COLOR_SNOW)))
+    BlzSetSpecialEffectScale(sourceGlow, 0.4)
+    BlzSetSpecialEffectHeight(sourceGlow, BlzGetLocalSpecialEffectZ(sourceGlow) - 6)
+    BlzSetSpecialEffectAlpha(sourceGlow, 0)
 
     local NO_SKIN_ITEM = FourCC('I07L')
     local itemModel = CreateItem(NO_SKIN_ITEM, GetRectCenterX(gg_rct_DiaryModel), GetRectCenterY(gg_rct_DiaryModel))
@@ -153,7 +177,7 @@ OnInit("Diary", function ()
     ---@field dexPerLvl integer
     ---@field wisPerLvl integer
     ---@field evolveOptions EvolveCond[]
-    ---@field whereToBeFound rect
+    -----@field whereToBeFound rect
     ---@field abilities integer[]
     ---@field button framehandle
     ---@field backdrop framehandle
@@ -176,7 +200,7 @@ OnInit("Diary", function ()
     ---@field dexPerLvl boolean
     ---@field wisPerLvl boolean
     ---@field evolveOptions table<integer, EvolveUnlockedCond>
-    ---@field whereToBeFound boolean
+    -----@field whereToBeFound boolean
     local DigimonUnlockedInfo = setmetatable({}, Serializable)
     DigimonUnlockedInfo.__index = DigimonUnlockedInfo
 
@@ -200,11 +224,11 @@ OnInit("Diary", function ()
     local onSeeMapClosed = EventListener.create()
 
     for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
-        unlockedDigiInfos[Player(i)] = {}
+        unlockedDigiInfos[Player(i)] = SyncedTable.create()
         kills[Player(i)] = __jarray(0)
         deaths[Player(i)] = __jarray(0)
         vistedPlaces[Player(i)] = {}
-        unlockedItems[Player(i)] = {}
+        unlockedItems[Player(i)] = SyncedTable.create()
     end
 
     Timed.echo(0.02, function ()
@@ -219,7 +243,7 @@ OnInit("Diary", function ()
     ---@field dexPerLvl integer
     ---@field wisPerLvl integer
     ---@field evolveOptions EvolveCond[]
-    ---@field whereToBeFound rect
+    -----@field whereToBeFound rect
     ---@field abilities integer[]
     ---@field button framehandle
     ---@field backdrop framehandle
@@ -227,25 +251,23 @@ OnInit("Diary", function ()
 
     local MAX_DIST = 0.08
 
+    local xVals = __jarray(0)
+    local yVals = __jarray(0)
+    local rows = __jarray(0)
+
     ---@param quantity integer
     ---@param dist number
     ---@param center location
-    ---@return number[] xVals, number[] yVals
     local function createDistribution(quantity, dist, center)
         if quantity == 0 then
             error("You are distributing 0 elements")
         end
 
-        local xVals = __jarray(0)
-        local yVals = __jarray(0)
-
         if quantity == 1 then
             table.insert(xVals, GetLocationX(center))
             table.insert(yVals, GetLocationY(center))
-            return xVals, yVals
+            return
         end
-
-        local rows = __jarray(0)
         local maxSize = math.floor(MAX_DIST/dist) + 1
 
         local remain = quantity
@@ -310,9 +332,8 @@ OnInit("Diary", function ()
                     table.insert(yVals, dist * row + GetLocationY(center))
                 end
             end
+            rows[row] = nil
         end
-
-        return xVals, yVals
     end
 
     Timed.echo(0.02, function ()
@@ -347,6 +368,7 @@ OnInit("Diary", function ()
             RemoveLocation(glowOffset)
         else
             self.iconPos = glowOffset
+            Environment.get(name).iconPos = glowOffset
         end
 
         if mapPortion then
@@ -405,70 +427,109 @@ OnInit("Diary", function ()
 
             local j = 0
             for pos, digimons in pairs(groups) do
-                local xVals, yVals = createDistribution(#digimons, 0.02, pos)
+                createDistribution(#digimons, 0.02, pos)
                 for i = 1, #digimons do
                     j = j + 1
                     BlzFrameSetAbsPoint(DigimonIcons[j], FRAMEPOINT_CENTER, xVals[i], yVals[i])
                     BlzFrameSetTexture(DigimonIcons[j], BlzGetAbilityIcon(digimons[i]:getTypeId()), 0, true)
                     BlzFrameSetVisible(DigimonIcons[j], true)
+                    xVals[i] = nil
+                    yVals[i] = nil
                 end
             end
         end
     end
 
-    Timed.echo(1., UpdateDigimons)
+    Timed.echo(1.46, UpdateDigimons)
 
-    ---@param p player
-    ---@param id integer
-    function DigimonUnlockedInfo.create(p, id)
-        unlockedDigiInfos[p][id] = unlockedDigiInfos[p][id] or setmetatable({
+    ---@return DigimonUnlockedInfo
+    function DigimonUnlockedInfo.create()
+        return setmetatable({
             staPerLvl = false,
             dexPerLvl = false,
             wisPerLvl = false,
-            evolveOptions = {},
-            whereToBeFound = false
+            evolveOptions = {}--,
+            --whereToBeFound = false
         }, DigimonUnlockedInfo)
     end
 
     function DigimonUnlockedInfo:serializeProperties()
-        self:addProperty("sPL", self.staPerLvl)
-        self:addProperty("dPL", self.dexPerLvl)
-        self:addProperty("wPL", self.wisPerLvl)
+        self:addProperty("hstats", self.staPerLvl)
+
         local evoAmt = 0
         for id, unlocked in pairs(self.evolveOptions) do
             evoAmt = evoAmt + 1
             self:addProperty("eid" .. evoAmt, id)
-            self:addProperty("ueidl" .. evoAmt, unlocked.level)
-            self:addProperty("ueidp" .. evoAmt, unlocked.place)
-            self:addProperty("ueids" .. evoAmt, unlocked.stone)
-            self:addProperty("ueidstr" .. evoAmt, unlocked.str)
-            self:addProperty("ueidagi" .. evoAmt, unlocked.agi)
-            self:addProperty("ueidint" .. evoAmt, unlocked.int)
-            self:addProperty("ueidod" .. evoAmt, unlocked.onlyDay)
-            self:addProperty("ueidon" .. evoAmt, unlocked.onlyNight)
+
+            local bitSet = BitSet.create(0)
+            if unlocked.level then
+                bitSet:set(0)
+            end
+            if unlocked.place then
+                bitSet:set(1)
+            end
+            if unlocked.stone then
+                bitSet:set(2)
+            end
+            if unlocked.str then
+                bitSet:set(3)
+            end
+            if unlocked.agi then
+                bitSet:set(4)
+            end
+            if unlocked.int then
+                bitSet:set(5)
+            end
+            if unlocked.onlyDay then
+                bitSet:set(6)
+            end
+            if unlocked.onlyNight then
+                bitSet:set(7)
+            end
+            self:addProperty("edata" .. evoAmt, bitSet:toInt())
         end
         self:addProperty("evoAmt", evoAmt)
-        self:addProperty("uenid", self.whereToBeFound)
+        --self:addProperty("uenid", self.whereToBeFound)
     end
 
     function DigimonUnlockedInfo:deserializeProperties()
-        self.staPerLvl = self:getBoolProperty("sPL")
-        self.dexPerLvl = self:getBoolProperty("dPL")
-        self.wisPerLvl = self:getBoolProperty("wPL")
-        local evoAmt = self:getIntProperty("evoAmt")
-        for i = 1, evoAmt do
-            local id = self:getIntProperty("eid" .. i)
-            self.evolveOptions[id] = __jarray(false)
-            self.evolveOptions[id].level = self:getBoolProperty("ueidl" .. i)
-            self.evolveOptions[id].place = self:getBoolProperty("ueidp" .. i)
-            self.evolveOptions[id].stone = self:getBoolProperty("ueids" .. i)
-            self.evolveOptions[id].str = self:getBoolProperty("ueidstr" .. i)
-            self.evolveOptions[id].agi = self:getBoolProperty("ueidagi" .. i)
-            self.evolveOptions[id].int = self:getBoolProperty("ueidint" .. i)
-            self.evolveOptions[id].onlyDay = self:getBoolProperty("ueidod" .. i)
-            self.evolveOptions[id].onlyNight = self:getBoolProperty("ueidon" .. i)
+        if self:getBoolProperty("hstats") then
+            self.staPerLvl = self:getBoolProperty("hstats")
+            self.dexPerLvl = self:getBoolProperty("hstats")
+            self.wisPerLvl = self:getBoolProperty("hstats")
+            local evoAmt = self:getIntProperty("evoAmt")
+            for i = 1, evoAmt do
+                local id = self:getIntProperty("eid" .. i)
+                local bitSet = BitSet.create(self:getIntProperty("edata" .. i))
+                self.evolveOptions[id] = __jarray(false)
+                self.evolveOptions[id].level = bitSet:get(0)
+                self.evolveOptions[id].place = bitSet:get(1)
+                self.evolveOptions[id].stone = bitSet:get(2)
+                self.evolveOptions[id].str = bitSet:get(3)
+                self.evolveOptions[id].agi = bitSet:get(4)
+                self.evolveOptions[id].int = bitSet:get(5)
+                self.evolveOptions[id].onlyDay = bitSet:get(6)
+                self.evolveOptions[id].onlyNight = bitSet:get(7)
+            end
+        else -- Backwards compatibility
+            self.staPerLvl = self:getBoolProperty("sPL")
+            self.dexPerLvl = self:getBoolProperty("dPL")
+            self.wisPerLvl = self:getBoolProperty("wPL")
+            local evoAmt = self:getIntProperty("evoAmt")
+            for i = 1, evoAmt do
+                local id = self:getIntProperty("eid" .. i)
+                self.evolveOptions[id] = __jarray(false)
+                self.evolveOptions[id].level = self:getBoolProperty("ueidl" .. i)
+                self.evolveOptions[id].place = self:getBoolProperty("ueidp" .. i)
+                self.evolveOptions[id].stone = self:getBoolProperty("ueids" .. i)
+                self.evolveOptions[id].str = self:getBoolProperty("ueidstr" .. i)
+                self.evolveOptions[id].agi = self:getBoolProperty("ueidagi" .. i)
+                self.evolveOptions[id].int = self:getBoolProperty("ueidint" .. i)
+                self.evolveOptions[id].onlyDay = self:getBoolProperty("ueidod" .. i)
+                self.evolveOptions[id].onlyNight = self:getBoolProperty("ueidon" .. i)
+            end
         end
-        self.whereToBeFound = self:getBoolProperty("uenid")
+        --self.whereToBeFound = self:getBoolProperty("uenid")
     end
 
     ---@class UnlockedInfoData : Serializable
@@ -476,50 +537,47 @@ OnInit("Diary", function ()
     ---@field amount integer
     ---@field ids integer[]
     ---@field infos DigimonUnlockedInfo[]
-    ---@field killAmt integer
-    ---@field killWho integer[]
     ---@field killCount integer[]
-    ---@field deathAmt integer
-    ---@field deathWho integer[]
     ---@field deathCount integer[]
     ---@field itemsUnlocked integer
     ---@field items integer[]
+    ---@field slot integer
+    ---@field id string
     UnlockedInfoData = setmetatable({}, Serializable)
     UnlockedInfoData.__index = UnlockedInfoData
 
-    ---@param p player?
+    ---@overload fun(slot: integer): UnlockedInfoData
+    ---@param p player
+    ---@param slot integer
+    ---@param ind string
     ---@return UnlockedInfoData
-    function UnlockedInfoData.create(p)
+    function UnlockedInfoData.create(p, slot, ind)
         local self = setmetatable({
             p = p,
             amount = 0,
             ids = {},
             infos = {},
-            killAmt = 0,
-            killWho = {},
             killCount = {},
-            deathAmt = 0,
-            deathWho = {},
             deathCount = {},
             itemsUnlocked = 0,
             items = {},
         }, UnlockedInfoData)
+
+        if type(p) == "number" then
+            ind = slot
+            slot = p
+            p = nil
+        end
+        self.slot = slot
+        self.id = ind or ""
 
         if p then
             for id, info in pairs(unlockedDigiInfos[p]) do
                 self.amount = self.amount + 1
                 self.ids[self.amount] = id
                 self.infos[self.amount] = info
-            end
-            for id, count in pairs(kills[p]) do
-                self.killAmt = self.killAmt + 1
-                self.killWho[self.killAmt] = id
-                self.killCount[self.killAmt] = count
-            end
-            for id, count in pairs(deaths[p]) do
-                self.deathAmt = self.deathAmt + 1
-                self.deathWho[self.deathAmt] = id
-                self.deathCount[self.deathAmt] = count
+                self.killCount[self.amount] = kills[p][id]
+                self.deathCount[self.amount] = deaths[p][id]
             end
             for id, _ in pairs(unlockedItems[p]) do
                 self.itemsUnlocked = self.itemsUnlocked + 1
@@ -533,62 +591,61 @@ OnInit("Diary", function ()
     function UnlockedInfoData:serializeProperties()
         self:addProperty("amount", self.amount)
         for i = 1, self.amount do
-            self:addProperty("id" .. i, self.ids[i])
+            self:addProperty("id" .. i, BlzFourCC2S(self.ids[i]))
             self:addProperty("info"..i, self.infos[i]:serialize())
-        end
-        self:addProperty("killAmt", self.killAmt)
-        for i = 1, self.killAmt do
-            self:addProperty("kw" .. i, self.killWho[i])
-            self:addProperty("kc" .. i, self.killCount[i])
-        end
-        self:addProperty("deathAmt", self.deathAmt)
-        for i = 1, self.deathAmt do
-            self:addProperty("dw" .. i, self.deathWho[i])
-            self:addProperty("dc" .. i, self.deathCount[i])
+            if self.killCount[i] > 0 then
+                self:addProperty("kc" .. i, self.killCount[i])
+            end
+            if self.deathCount[i] > 0 then
+                self:addProperty("dc" .. i, self.deathCount[i])
+            end
         end
         self:addProperty("iU", self.itemsUnlocked)
         for i = 1, self.itemsUnlocked do
-            self:addProperty("itms" .. i, self.items[i])
+            self:addProperty("itms" .. i, BlzFourCC2S(self.items[i]))
         end
+        self:addProperty("slot", self.slot)
+        self:addProperty("id", self.id)
     end
 
     function UnlockedInfoData:deserializeProperties()
+        if self.slot ~= self:getIntProperty("slot") then
+            error("The slot is not the same.")
+            return
+        end
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
-            self.ids[i] = self:getIntProperty("id" .. i)
-            DigimonUnlockedInfo.create(self.p, self.ids[i])
-            self.infos[i] = unlockedDigiInfos[self.p][self.ids[i]]
+            if self:getStringProperty("id" .. i) ~= "" then
+                self.ids[i] = FourCC(self:getStringProperty("id" .. i))
+            else -- Backwards compatibility
+                self.ids[i] = self:getIntProperty("id" .. i)
+            end
+            self.infos[i] = DigimonUnlockedInfo.create()
             self.infos[i]:deserialize(self:getStringProperty("info"..i))
-        end
-        self.killAmt = self:getIntProperty("killAmt")
-        for i = 1, self.killAmt do
-            self.killWho[i] = self:getIntProperty("kw" .. i)
             self.killCount[i] = self:getIntProperty("kc" .. i)
-        end
-        self.deathAmt = self:getIntProperty("deathAmt")
-        for i = 1, self.deathAmt do
-            self.deathWho[i] = self:getIntProperty("dw" .. i)
             self.deathCount[i] = self:getIntProperty("dc" .. i)
         end
         self.itemsUnlocked = self:getIntProperty("iU")
         for i = 1, self.itemsUnlocked do
-            self.items[i] = self:getIntProperty("itms" .. i)
+            if self:getStringProperty("itms" .. i) ~= "" then
+                self.items[i] = FourCC(self:getStringProperty("itms" .. i))
+            else -- Backwards compatibility
+                self.items[i] = self:getIntProperty("itms" .. i)
+            end
         end
+        self.id = self:getStringProperty("id")
     end
 
     function UnlockedInfoData:apply()
+        ClearDiary(self.p)
         for i = 1, self.amount do
             unlockedDigiInfos[self.p][self.ids[i]] = self.infos[i]
             if self.p == LocalPlayer then
                 BlzFrameSetTexture(digiInfos[self.ids[i]].backdrop, BlzGetAbilityIcon(self.ids[i]), 0, true)
                 BlzFrameSetEnable(digiInfos[self.ids[i]].button, true)
             end
-        end
-        for i = 1, self.killAmt do
-            kills[self.p][self.killWho[i]] = self.killCount[i]
-        end
-        for i = 1, self.deathAmt do
-            deaths[self.p][self.deathWho[i]] = self.deathCount[i]
+            kills[self.p][self.ids[i]] = self.killCount[i]
+            deaths[self.p][self.ids[i]] = self.deathCount[i]
         end
         for i = 1, self.itemsUnlocked do
             unlockedItems[self.p][self.items[i]] = true
@@ -614,9 +671,9 @@ OnInit("Diary", function ()
             BlzFrameSetText(DigimonName, "|cffFFCC00" .. info.name .. "|r")
             BlzFrameSetTexture(DigimonAttackTypeIcon, info.attackIcon, 0, true)
             BlzFrameSetTexture(DigimonDefenseTypeIcon, info.defenseIcon, 0, true)
-            BlzFrameSetText(DigimonStamina, "|cffff7d00Stamina per level: |r" .. (unlockedInfo.staPerLvl and info.staPerLvl or "???"))
-            BlzFrameSetText(DigimonDexterity, "|cff007d20Dexterity per level: |r" .. (unlockedInfo.dexPerLvl and info.dexPerLvl or "???"))
-            BlzFrameSetText(DigimonWisdom, "|cff004ec8Wisdom per level: |r" .. (unlockedInfo.wisPerLvl and info.wisPerLvl or "???"))
+            BlzFrameSetText(DigimonStamina, GetLocalizedString("DIARY_STAMINA_PER_LEVEL") .. (unlockedInfo.staPerLvl and info.staPerLvl or GetLocalizedString("DIARY_UNKNOWN")))
+            BlzFrameSetText(DigimonDexterity, GetLocalizedString("DIARY_DEXTERITY_PER_LEVEL") .. (unlockedInfo.dexPerLvl and info.dexPerLvl or GetLocalizedString("DIARY_UNKNOWN")))
+            BlzFrameSetText(DigimonWisdom, GetLocalizedString("DIARY_WISDOM_PER_LEVEL") .. (unlockedInfo.wisPerLvl and info.wisPerLvl or GetLocalizedString("DIARY_UNKNOWN")))
 
             local conds = info.evolveOptions
             if conds then
@@ -627,32 +684,32 @@ OnInit("Diary", function ()
                         local unlockedCond = unlockedConds[cond.toEvolve]
                         if unlockedCond then
                             BlzFrameSetText(DigimonEvolvesToOption[i], cond.label)
-                            local result = "- " .. (unlockedCond.level and ("Have level " .. cond.level) or "???")
+                            local result = "- " .. (unlockedCond.level and (GetLocalizedString("DIARY_LEVEL_COND"):format(cond.level)) or GetLocalizedString("DIARY_UNKNOWN"))
                             if cond.stone then
-                                result = result .. "\n- " .. (unlockedCond.stone and ("Hold the " .. GetObjectName(cond.stone) .. " item.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.stone and (GetLocalizedString("DIARY_STONE_COND"):format(GetObjectName(cond.stone))) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.place then
-                                result = result .. "\n- " .. (unlockedCond.place and ("Stay on " .. rectNames[cond.place] .. ".") or "???")
+                                result = result .. "\n- " .. (unlockedCond.place and (GetLocalizedString("DIARY_PLACE_COND"):format(rectNames[cond.place])) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.str then
-                                result = result .. "\n- " .. (unlockedCond.str and ("Get " .. cond.str .. " stamina.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.str and (GetLocalizedString("DIARY_STA_COND"):format(cond.str)) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.agi then
-                                result = result .. "\n- " .. (unlockedCond.agi and ("Get " .. cond.agi .. " dexterity.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.agi and (GetLocalizedString("DIARY_AGI_COND"):format(cond.agi)) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.int then
-                                result = result .. "\n- " .. (unlockedCond.int and ("Get " .. cond.int .. " wisdom.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.int and (GetLocalizedString("DIARY_INT_COND"):format(cond.int)) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             if cond.onlyDay then
-                                result = result .. "\n- " .. (unlockedCond.onlyDay and ("Only during day.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.onlyDay and (GetLocalizedString("DIARY_DAY_COND")) or GetLocalizedString("DIARY_UNKNOWN"))
                             elseif cond.onlyNight then
-                                result = result .. "\n- " .. (unlockedCond.onlyNight and ("Only during night.") or "???")
+                                result = result .. "\n- " .. (unlockedCond.onlyNight and (GetLocalizedString("DIARY_NIGHT_COND")) or GetLocalizedString("DIARY_UNKNOWN"))
                             end
                             BlzFrameSetText(DigimonEvolveRequirementsText[i], result)
-                            BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], true)
+                            BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], unlockedDigiInfos[LocalPlayer][digimonSelected] ~= nil)
                         else
-                            BlzFrameSetText(DigimonEvolvesToOption[i], "???")
-                            BlzFrameSetText(DigimonEvolveRequirementsText[i], "???")
+                            BlzFrameSetText(DigimonEvolvesToOption[i], GetLocalizedString("DIARY_UNKNOWN"))
+                            BlzFrameSetText(DigimonEvolveRequirementsText[i], GetLocalizedString("DIARY_UNKNOWN"))
                             BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], false)
                         end
                         BlzFrameSetSize(DigimonEvolveRequirementsText[i], 0.17, 0)
@@ -706,6 +763,10 @@ OnInit("Diary", function ()
 
             BlzSetItemSkin(itemModel, itemSelected)
             BlzSetItemRealField(itemModel, ITEM_RF_SCALING_VALUE, 0.5*BlzGetItemRealField(itemModel, ITEM_RF_SCALING_VALUE))
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_RED, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_GREEN, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_BLUE, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_ALPHA, 255)
             BlzSetSpecialEffectAlpha(glow, 200)
         else
             BlzFrameSetVisible(ItemInformation, false)
@@ -713,16 +774,88 @@ OnInit("Diary", function ()
         end
     end
 
+    local recipeMaterialSelected = -1
+    local isRecipe = __jarray(false)
+    local requirementList = {}
+
+    local function UpdateRecipe()
+        BlzSetItemSkin(itemModel, NO_SKIN_ITEM) -- To reset the scale
+        if recipeMaterialSelected ~= -1 then
+            BlzFrameSetVisible(ItemsSprite[recipeMaterialSelected], false)
+            BlzFrameSetText(RecipeMaterialName, "|cffFFCC00" .. GetObjectName(recipeMaterialSelected) .. "|r")
+            if isRecipe[recipeMaterialSelected] then
+                local recipe = GetRecipe(recipeMaterialSelected)
+
+                BlzFrameSetEnable(RecipeResultButton, unlockedItems[LocalPlayer][recipe.resultItm])
+
+                BlzFrameSetText(RecipeMaterialDescription, GetLocalizedString("DIARY_TO_CREATE_RECIPE"):format(GetObjectName(recipe.resultItm)))
+
+                for i = #requirementList, 1, -1 do
+                    table.remove(requirementList, i)
+                end
+                if recipe.itmToUpgrade then
+                    table.insert(requirementList, recipe.itmToUpgrade)
+                end
+                for req, _ in pairs(recipe.requirements) do
+                    table.insert(requirementList, req)
+                end
+
+                for i = 1, 15 do
+                    if requirementList[i] then
+                        if recipe.itmToUpgrade and requirementList[i] == recipe.itmToUpgrade then
+                            BlzFrameSetText(RecipeRequirmentT[i-1], "- " .. GetLocalizedString("DIARY_TO_UPGRADE_ITEM"):format(GetObjectName(recipe.itmToUpgrade)))
+                            BlzFrameSetEnable(RecipeRequirmentButton[i-1], unlockedItems[LocalPlayer][recipe.itmToUpgrade])
+                        else
+                            BlzFrameSetText(RecipeRequirmentT[i-1], "- " .. recipe.requirements[requirementList[i]] .. " " .. GetObjectName(requirementList[i]) .. ".")
+                            BlzFrameSetEnable(RecipeRequirmentButton[i-1], unlockedItems[LocalPlayer][requirementList[i]])
+                        end
+                        BlzFrameSetVisible(RecipeRequirmentT[i-1], true)
+                    else
+                        BlzFrameSetText(RecipeRequirmentT[i-1], "")
+                        BlzFrameSetVisible(RecipeRequirmentT[i-1], false)
+                        BlzFrameSetEnable(RecipeRequirmentButton[i-1], false)
+                    end
+                end
+                BlzSetUnitSkin(sourceModel, NO_SKIN)
+                BlzSetSpecialEffectAlpha(sourceGlow, 0)
+
+                BlzFrameSetVisible(RecipeRequimentsContainer, true)
+            else
+                BlzFrameSetEnable(RecipeResultButton, false)
+                BlzFrameSetText(RecipeMaterialDescription, GetLocalizedString("DIARY_IT_COMES_FROM"):format(GetObjectName(recipeMaterialSelected)))
+                BlzFrameSetVisible(RecipeRequimentsContainer, false)
+
+                BlzSetUnitSkin(sourceModel, GetMaterialFromItem(recipeMaterialSelected).source)
+                SetUnitScale(sourceModel, 0.15*BlzGetUnitRealField(sourceModel, UNIT_RF_SCALING_VALUE), 0, 0)
+                BlzSetSpecialEffectAlpha(sourceGlow, 200)
+            end
+            BlzFrameSetVisible(RecipeMaterialInformation, true)
+
+            BlzSetItemSkin(itemModel, recipeMaterialSelected)
+            BlzSetItemRealField(itemModel, ITEM_RF_SCALING_VALUE, 0.5*BlzGetItemRealField(itemModel, ITEM_RF_SCALING_VALUE))
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_RED, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_GREEN, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_BLUE, 255)
+            BlzSetItemIntegerField(itemModel, ITEM_IF_TINTING_COLOR_ALPHA, 255)
+            BlzSetSpecialEffectAlpha(glow, 200)
+        else
+            BlzFrameSetVisible(RecipeMaterialInformation, false)
+            BlzSetSpecialEffectAlpha(glow, 0)
+        end
+    end
+
     ---@param p player
     ---@param id integer
     local function UnlockButton(p, id)
-        if p == LocalPlayer and digiInfos[id] and not unlockedDigiInfos[p][id] then
-            spriteRemain = 8
-            BlzFrameSetTexture(digiInfos[id].backdrop, BlzGetAbilityIcon(id), 0, true)
-            BlzFrameSetEnable(digiInfos[id].button, true)
-            BlzFrameSetVisible(digiInfos[id].sprite, true)
+        if digiInfos[id] and not unlockedDigiInfos[p][id] then
+            if p == LocalPlayer then
+                spriteRemain = 8
+                BlzFrameSetTexture(digiInfos[id].backdrop, BlzGetAbilityIcon(id), 0, true)
+                BlzFrameSetEnable(digiInfos[id].button, true)
+                BlzFrameSetVisible(digiInfos[id].sprite, true)
+            end
+            unlockedDigiInfos[p][id] = DigimonUnlockedInfo.create()
         end
-        DigimonUnlockedInfo.create(p, id)
     end
 
     ---@param id integer
@@ -730,19 +863,17 @@ OnInit("Diary", function ()
     local function AddDigimonToList(id, whereToBeFound)
         local list
         local container
-        local s = GetObjectName(id)
-        local space = s:find(" ")
-        local which = space and s:sub(1, space - 1) or s
-        if which == "Rookie" then
+        local which = GetObjectName(id)
+        if which == GetLocalizedString("ROOKIE_DIGIMON") then
             list = RookiesList
             container = RookiesContainer
-        elseif which == "Champion" then
+        elseif which == GetLocalizedString("CHAMPION_DIGIMON") then
             list = ChampionsList
             container = ChampionsContainer
-        elseif which == "Ultimate" then
+        elseif which == GetLocalizedString("ULTIMATE_DIGIMON") then
             list = UltimatesList
             container = UltimatesContainer
-        elseif which == "Mega" then
+        elseif which == GetLocalizedString("MEGA_DIGIMON") then
             list = MegasList
             container = MegasContainer
         else
@@ -779,7 +910,7 @@ OnInit("Diary", function ()
 
             local backdrop = BlzCreateFrameByType("BACKDROP", "DigimonType[" .. id .. "]", button, "", 0)
             BlzFrameSetAllPoints(backdrop, button)
-            BlzFrameSetTexture(backdrop, "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(backdrop, udg_DIARY_LOCKED_BUTTON, 0, true)
 
             digiInfos[id] = {
                 whereToBeFound = whereToBeFound,
@@ -789,11 +920,7 @@ OnInit("Diary", function ()
                 sprite = sprite
             }
 
-            local t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, button, FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function ()
-                local p = GetTriggerPlayer()
-
+            OnClickEvent(button, function (p)
                 if not digiInfos[id].name then
                     local conds = GetEvolutionConditions(id)
                     local u = CreateUnit(Digimon.NEUTRAL, id, WorldBounds.minX, WorldBounds.minY, 0)
@@ -950,17 +1077,14 @@ OnInit("Diary", function ()
 
                 BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
                 BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
-                BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
 
-                local t = CreateTrigger()
-                BlzTriggerRegisterFrameEvent(t, ItemTypes[id], FRAMEEVENT_CONTROL_CLICK)
-                TriggerAddAction(t, function ()
-                    local p = GetTriggerPlayer()
+                OnClickEvent(ItemTypes[id], function (p)
                     unlockedItems[p][id] = true
 
                     if p == LocalPlayer then
                         itemSelected = id
-                        UpdateInformation()
+                        UpdateItemInfo()
                     end
                 end)
 
@@ -970,9 +1094,7 @@ OnInit("Diary", function ()
             end)
             actualItemRow[list] = actualItemRow[list] + 1
         else
-            local itm = CreateItem(id, 0, 0)
-            local which = GetItemType(itm)
-            RemoveItem(itm)
+            local which = udg_DiaryItemClass
             if which == ITEM_TYPE_PERMANENT then
                 list = ShieldsList
                 container = ShieldsContainer
@@ -1006,13 +1128,9 @@ OnInit("Diary", function ()
 
                 BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
                 BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
-                BlzFrameSetTexture(BackdropItemTypes[id], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+                BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
 
-                local t = CreateTrigger()
-                BlzTriggerRegisterFrameEvent(t, ItemTypes[id], FRAMEEVENT_CONTROL_CLICK)
-                TriggerAddAction(t, function ()
-                    local p = GetTriggerPlayer()
-
+                OnClickEvent(ItemTypes[id], function (p)
                     if p == LocalPlayer then
                         itemSelected = id
                         UpdateItemInfo()
@@ -1024,50 +1142,148 @@ OnInit("Diary", function ()
         end
     end
 
+    local actMaterialIndex = 0
+
+    ---@param id integer
+    local function AddMaterial(id)
+        if not GetMaterialFromItem(id) then
+            print("Diary: The item " .. GetObjectName(id) .. " was not set as material.")
+            return
+        end
+
+        isRecipe[id] = false
+        local i, j = ModuloInteger(actMaterialIndex, 14), math.floor(actMaterialIndex / 14)
+        FrameLoaderAdd(function ()
+            ItemTypes[id] = BlzCreateFrame("IconButtonTemplate", MaterialsContainer, 0, 0)
+            BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_TOPLEFT, MaterialsContainer, FRAMEPOINT_TOPLEFT, 0.0000 + i*0.04, 0.0000 - j*0.04)
+            BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_BOTTOMRIGHT, MaterialsContainer, FRAMEPOINT_BOTTOMRIGHT, -0.52000 + i*0.04, 0.080000 - j*0.04)
+            BlzFrameSetEnable(ItemTypes[id], false)
+
+            ItemsSprite[id] =  BlzCreateFrameByType("SPRITE", "sprite", ItemTypes[id], "", 0)
+            BlzFrameSetModel(ItemsSprite[id], "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
+            BlzFrameClearAllPoints(ItemsSprite[id])
+            BlzFrameSetPoint(ItemsSprite[id], FRAMEPOINT_BOTTOMLEFT, ItemTypes[id], FRAMEPOINT_BOTTOMLEFT, -0.001, -0.00175)
+            BlzFrameSetSize(ItemsSprite[id], 0.00001, 0.00001)
+            BlzFrameSetScale(ItemsSprite[id], 1.1)
+            BlzFrameSetLevel(ItemsSprite[id], 10)
+            BlzFrameSetVisible(ItemsSprite[id], false)
+
+            BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
+            BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
+            BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
+
+            OnClickEvent(ItemTypes[id], function (p)
+                unlockedItems[p][id] = true
+
+                if p == LocalPlayer then
+                    recipeMaterialSelected = id
+                    UpdateRecipe()
+                end
+            end)
+        end)
+        actMaterialIndex = actMaterialIndex + 1
+    end
+
+    local actRecipeIndex = 0
+
+    ---@param id integer
+    local function AddRecipe(id)
+        if not GetRecipe(id) then
+            print("Diary: The item " .. GetObjectName(id) .. " was not set as recipe.")
+            return
+        end
+        isRecipe[id] = true
+        local i, j = ModuloInteger(actRecipeIndex, 14), math.floor(actRecipeIndex / 14)
+        FrameLoaderAdd(function ()
+            ItemTypes[id] = BlzCreateFrame("IconButtonTemplate", RecipesContainer, 0, 0)
+            BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_TOPLEFT, RecipesContainer, FRAMEPOINT_TOPLEFT, 0.0000 + i*0.04, 0.0000 - j*0.04)
+            BlzFrameSetPoint(ItemTypes[id], FRAMEPOINT_BOTTOMRIGHT, RecipesContainer, FRAMEPOINT_BOTTOMRIGHT, -0.52000 + i*0.04, 0.280000 - j*0.04)
+            BlzFrameSetEnable(ItemTypes[id], false)
+
+            ItemsSprite[id] =  BlzCreateFrameByType("SPRITE", "sprite", ItemTypes[id], "", 0)
+            BlzFrameSetModel(ItemsSprite[id], "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
+            BlzFrameClearAllPoints(ItemsSprite[id])
+            BlzFrameSetPoint(ItemsSprite[id], FRAMEPOINT_BOTTOMLEFT, ItemTypes[id], FRAMEPOINT_BOTTOMLEFT, -0.001, -0.00175)
+            BlzFrameSetSize(ItemsSprite[id], 0.00001, 0.00001)
+            BlzFrameSetScale(ItemsSprite[id], 1.1)
+            BlzFrameSetLevel(ItemsSprite[id], 10)
+            BlzFrameSetVisible(ItemsSprite[id], false)
+
+            BackdropItemTypes[id] = BlzCreateFrameByType("BACKDROP", "BackdropItemTypes[" .. id .. "]", ItemTypes[id], "", 0)
+            BlzFrameSetAllPoints(BackdropItemTypes[id], ItemTypes[id])
+            BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
+
+            OnClickEvent(ItemTypes[id], function (p)
+                unlockedItems[p][id] = true
+
+                if p == LocalPlayer then
+                    recipeMaterialSelected = id
+                    UpdateRecipe()
+                end
+            end)
+        end)
+        actRecipeIndex = actRecipeIndex + 1
+    end
+
     local function OpenMenu()
+        if actMenu ~= 0 then
+            BlzFrameSetVisible(DigimonsBackdrop, false)
+            BlzSetUnitSkin(model, NO_SKIN)
+        end
+        if actMenu ~= 1 then
+            BlzFrameSetVisible(ItemsBackdrop, false)
+            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
+        end
+        if actMenu ~= 2 then
+            BlzFrameSetVisible(RecipesBackdrop, false)
+            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
+            BlzSetUnitSkin(sourceModel, NO_SKIN)
+            BlzSetSpecialEffectAlpha(sourceGlow, 0)
+        end
+        if actMenu ~= 3 then
+            BlzFrameSetVisible(MapBackdrop, false)
+        end
+
         if actMenu == 0 then
             BlzFrameSetVisible(DigimonsBackdrop, true)
-            BlzFrameSetVisible(ItemsBackdrop, false)
-            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
-            BlzFrameSetVisible(MapBackdrop, false)
             UpdateInformation()
         elseif actMenu == 1 then
-            BlzFrameSetVisible(DigimonsBackdrop, false)
-            BlzSetUnitSkin(model, NO_SKIN)
             BlzFrameSetVisible(ItemsBackdrop, true)
-            BlzFrameSetVisible(MapBackdrop, false)
             UpdateItemInfo()
         elseif actMenu == 2 then
-            BlzFrameSetVisible(DigimonsBackdrop, false)
-            BlzSetUnitSkin(model, NO_SKIN)
-            BlzSetItemSkin(itemModel, NO_SKIN_ITEM)
+            BlzFrameSetVisible(RecipesBackdrop, true)
+            UpdateRecipe()
+        elseif actMenu == 3 then
             BlzSetSpecialEffectAlpha(glow, 0)
-            BlzFrameSetVisible(ItemsBackdrop, false)
             BlzFrameSetVisible(MapBackdrop, true)
             UpdateDigimons()
         end
     end
 
-    local function DigimonsButtonFunc()
-        local p = GetTriggerPlayer()
+    local function DigimonsButtonFunc(p)
         if p == LocalPlayer then
             actMenu = 0
             OpenMenu()
         end
     end
 
-    local function ItemsButtonFunc()
-        local p = GetTriggerPlayer()
+    local function ItemsButtonFunc(p)
         if p == LocalPlayer then
             actMenu = 1
             OpenMenu()
         end
     end
 
-    local function MapButtonFunc()
-        local p = GetTriggerPlayer()
+    local function RecipesButtonFunc(p)
         if p == LocalPlayer then
             actMenu = 2
+            OpenMenu()
+        end
+    end
+
+    local function MapButtonFunc(p)
+        if p == LocalPlayer then
+            actMenu = 3
             OpenMenu()
         end
         onSeeMapClicked:run(p)
@@ -1084,11 +1300,11 @@ OnInit("Diary", function ()
                 if BlzGetTriggerPlayerMetaKey() == 1 then
                     actMenu = actMenu - 1
                     if actMenu < 0 then
-                        actMenu = 2
+                        actMenu = 3
                     end
                 else
                     actMenu = actMenu + 1
-                    if actMenu > 2 then
+                    if actMenu > 3 then
                         actMenu = 0
                     end
                 end
@@ -1097,8 +1313,35 @@ OnInit("Diary", function ()
         end)
     end
 
-    local function DiaryFunc()
-        local p = GetTriggerPlayer()
+    local function RecipeRequirmentButtonFunc(p, i)
+        if p == LocalPlayer then
+            if unlockedItems[p][requirementList[i]] then
+                if isRecipe[recipeMaterialSelected] and GetRecipe(recipeMaterialSelected).itmToUpgrade == requirementList[i] then
+                    actMenu = 1
+                    OpenMenu()
+                    itemSelected = requirementList[i]
+                    UpdateItemInfo()
+                else
+                    recipeMaterialSelected = requirementList[i]
+                    UpdateRecipe()
+                end
+            end
+        end
+    end
+
+    local function RecipeResultButtonFunc(p)
+        if p == LocalPlayer then
+            local resultItm = GetRecipe(recipeMaterialSelected).resultItm
+            if unlockedItems[p][resultItm] then
+                actMenu = 1
+                OpenMenu()
+                itemSelected = resultItm
+                UpdateItemInfo()
+            end
+        end
+    end
+
+    local function DiaryFunc(p)
         if p == LocalPlayer then
             SaveCameraSetup()
         end
@@ -1115,11 +1358,14 @@ OnInit("Diary", function ()
             OpenMenu()
             inMenu = true
             spriteRemain = 0
+
+            if MenuWasHidden() then
+                ForceUICancel()
+            end
         end
     end
 
-    local function ExitFunc()
-        local p = GetTriggerPlayer()
+    local function ExitFunc(p)
         UnitShareVision(model, p, false)
         LockEnvironment(p, false)
         if p == LocalPlayer then
@@ -1138,16 +1384,14 @@ OnInit("Diary", function ()
         Diary = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(Diary, 7)
         AddFrameToMenu(Diary)
-        SetFrameHotkey(Diary, "V")
-        AddDefaultTooltip(Diary, "DigiWiki", "Look at your recopilated information about the digimons, items and the world.")
+        SetFrameHotkey(Diary, udg_DIARY_HOTKEY)
+        AddDefaultTooltip(Diary, GetLocalizedString("DIARY"), GetLocalizedString("DIARY_TOOLTIP"))
         BlzFrameSetVisible(Diary, false)
 
         BackdropDiary = BlzCreateFrameByType("BACKDROP", "BackdropSeeMap", Diary, "", 0)
         BlzFrameSetAllPoints(BackdropDiary, Diary)
-        BlzFrameSetTexture(BackdropDiary, "ReplaceableTextures\\CommandButtons\\BTNMap.blp", 0, true)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Diary, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, DiaryFunc)
+        BlzFrameSetTexture(BackdropDiary, udg_DIARY_BUTTON, 0, true)
+        OnClickEvent(Diary, DiaryFunc)
 
         Sprite = BlzCreateFrameByType("SPRITE", "Sprite", Diary, "", 0)
         BlzFrameSetModel(Sprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
@@ -1166,11 +1410,9 @@ OnInit("Diary", function ()
         Exit = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.71000, -0.030000)
         BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.54000)
-        BlzFrameSetText(Exit, "|cffFCD20DExit|r")
+        BlzFrameSetText(Exit, GetLocalizedString("DIARY_EXIT"))
         BlzFrameSetLevel(Exit, 3)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ExitFunc)
+        OnClickEvent(Exit, ExitFunc)
 
         -- Digimons
 
@@ -1182,17 +1424,15 @@ OnInit("Diary", function ()
         DigimonsButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(DigimonsButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.020000, -0.030000)
         BlzFrameSetPoint(DigimonsButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.71000, 0.54000)
-        BlzFrameSetText(DigimonsButton, "|cffFCD20DDigimons|r")
+        BlzFrameSetText(DigimonsButton, GetLocalizedString("DIARY_DIGIMONS"))
         BlzFrameSetLevel(DigimonsButton, 3)
-        TriggerDigimonsButton = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerDigimonsButton, DigimonsButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerDigimonsButton, DigimonsButtonFunc)
+        OnClickEvent(DigimonsButton, DigimonsButtonFunc)
 
         RookiesText = BlzCreateFrameByType("TEXT", "name", DigimonsBackdrop, "", 0)
         BlzFrameSetScale(RookiesText, 2.00)
         BlzFrameSetPoint(RookiesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.080000)
         BlzFrameSetPoint(RookiesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.50000)
-        BlzFrameSetText(RookiesText, "|cffFFCC00Rookies|r")
+        BlzFrameSetText(RookiesText, GetLocalizedString("DIARY_ROOKIES"))
         BlzFrameSetEnable(RookiesText, false)
         BlzFrameSetTextAlignment(RookiesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1210,7 +1450,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(ChampionsText, 2.00)
         BlzFrameSetPoint(ChampionsText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.20000)
         BlzFrameSetPoint(ChampionsText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.38000)
-        BlzFrameSetText(ChampionsText, "|cffFFCC00Champions|r")
+        BlzFrameSetText(ChampionsText, GetLocalizedString("DIARY_CHAMPIONS"))
         BlzFrameSetEnable(ChampionsText, false)
         BlzFrameSetTextAlignment(ChampionsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1228,7 +1468,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(UltimatesText, 2.00)
         BlzFrameSetPoint(UltimatesText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.32000)
         BlzFrameSetPoint(UltimatesText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.26000)
-        BlzFrameSetText(UltimatesText, "|cffFFCC00Ultimates|r")
+        BlzFrameSetText(UltimatesText, GetLocalizedString("DIARY_ULTIMATES"))
         BlzFrameSetEnable(UltimatesText, false)
         BlzFrameSetTextAlignment(UltimatesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1246,7 +1486,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(MegasText, 2.00)
         BlzFrameSetPoint(MegasText, FRAMEPOINT_TOPLEFT, DigimonsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.44000)
         BlzFrameSetPoint(MegasText, FRAMEPOINT_BOTTOMRIGHT, DigimonsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.14000)
-        BlzFrameSetText(MegasText, "|cffFFCC00Megas|r")
+        BlzFrameSetText(MegasText, GetLocalizedString("DIARY_MEGAS"))
         BlzFrameSetEnable(MegasText, false)
         BlzFrameSetTextAlignment(MegasText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1287,14 +1527,14 @@ OnInit("Diary", function ()
         DigimonAttackTypeLabel = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
         BlzFrameSetPoint(DigimonAttackTypeLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.11000, -0.060000)
         BlzFrameSetPoint(DigimonAttackTypeLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.45000)
-        BlzFrameSetText(DigimonAttackTypeLabel, "|cffffcc00Att|r")
+        BlzFrameSetText(DigimonAttackTypeLabel, GetLocalizedString("DIARY_ATTACK_TYPE"))
         BlzFrameSetEnable(DigimonAttackTypeLabel, false)
         BlzFrameSetTextAlignment(DigimonAttackTypeLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
         DigimonDefenseTypeLabel = BlzCreateFrameByType("TEXT", "name", DigimonInformation, "", 0)
         BlzFrameSetPoint(DigimonDefenseTypeLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.14000, -0.060000)
         BlzFrameSetPoint(DigimonDefenseTypeLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.45000)
-        BlzFrameSetText(DigimonDefenseTypeLabel, "|cffffcc00Def|r")
+        BlzFrameSetText(DigimonDefenseTypeLabel, GetLocalizedString("DIARY_DEFENSE_TYPE"))
         BlzFrameSetEnable(DigimonDefenseTypeLabel, false)
         BlzFrameSetTextAlignment(DigimonDefenseTypeLabel, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
@@ -1302,7 +1542,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigimonStamina, 1.43)
         BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.35000)
         BlzFrameSetPoint(DigimonStamina, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.15000)
-        BlzFrameSetText(DigimonStamina, "|cffff7d00Stamina per level: |r")
+        BlzFrameSetText(DigimonStamina, GetLocalizedString("DIARY_STAMINA_PER_LEVEL"))
         BlzFrameSetEnable(DigimonStamina, false)
         BlzFrameSetTextAlignment(DigimonStamina, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1310,7 +1550,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigimonDexterity, 1.43)
         BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.37000)
         BlzFrameSetPoint(DigimonDexterity, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.13000)
-        BlzFrameSetText(DigimonDexterity, "|cff007d20Dexterity per level: |r")
+        BlzFrameSetText(DigimonDexterity, GetLocalizedString("DIARY_DEXTERITY_PER_LEVEL"))
         BlzFrameSetEnable(DigimonDexterity, false)
         BlzFrameSetTextAlignment(DigimonDexterity, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1318,7 +1558,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigimonWisdom, 1.43)
         BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.39000)
         BlzFrameSetPoint(DigimonWisdom, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.11000)
-        BlzFrameSetText(DigimonWisdom, "|cff004ec8Wisdom per level: |r")
+        BlzFrameSetText(DigimonWisdom, GetLocalizedString("DIARY_WISDOM_PER_LEVEL"))
         BlzFrameSetEnable(DigimonWisdom, false)
         BlzFrameSetTextAlignment(DigimonWisdom, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1326,7 +1566,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigimonEvolvesToLabel, 1.57)
         BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_TOPLEFT, DigimonInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.42000)
         BlzFrameSetPoint(DigimonEvolvesToLabel, FRAMEPOINT_BOTTOMRIGHT, DigimonInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.080000)
-        BlzFrameSetText(DigimonEvolvesToLabel, "|cffffcc00Evolves to:|r")
+        BlzFrameSetText(DigimonEvolvesToLabel, GetLocalizedString("DIARY_EVOLVES_TO"))
         BlzFrameSetEnable(DigimonEvolvesToLabel, false)
         BlzFrameSetTextAlignment(DigimonEvolvesToLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1346,12 +1586,17 @@ OnInit("Diary", function ()
             DigimonEvolvesToOptionButton[i] = BlzCreateFrame("IconButtonTemplate", DigimonEvolvesToOption[i], 0, 0)
             BlzFrameSetAllPoints(DigimonEvolvesToOptionButton[i], DigimonEvolvesToOption[i])
             BlzFrameSetEnable(DigimonEvolvesToOptionButton[i], false)
-            local t2 = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t2, DigimonEvolvesToOptionButton[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t2, function ()
-                if GetTriggerPlayer() == LocalPlayer then
-                    digimonSelected = digiInfos[digimonSelected].evolveOptions[i].toEvolve
-                    UpdateInformation()
+            OnClickEvent(DigimonEvolvesToOptionButton[i], function (p)
+                if p == LocalPlayer then
+                    local id = digiInfos[digimonSelected].evolveOptions[i].toEvolve
+                    if digiInfos[id].name then
+                        digimonSelected = id
+                        UpdateInformation()
+                    else
+                        if BlzFrameGetEnable(digiInfos[id].button) and BlzFrameIsVisible(digiInfos[id].button) then
+                            BlzFrameClick(digiInfos[id].button)
+                        end
+                    end
                 end
             end)
 
@@ -1409,11 +1654,9 @@ OnInit("Diary", function ()
         ItemsButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
         BlzFrameSetPoint(ItemsButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.10000, -0.030000)
         BlzFrameSetPoint(ItemsButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.63000, 0.54000)
-        BlzFrameSetText(ItemsButton, "|cffFCD20DItems|r")
+        BlzFrameSetText(ItemsButton, GetLocalizedString("DIARY_ITEMS"))
         BlzFrameSetLevel(ItemsButton, 3)
-        TriggerItemsButton = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerItemsButton, ItemsButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerItemsButton, ItemsButtonFunc)
+        OnClickEvent(ItemsButton, ItemsButtonFunc)
 
         ItemsBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
         BlzFrameSetAllPoints(ItemsBackdrop, Backdrop)
@@ -1425,7 +1668,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(ConsumablesText, 2.00)
         BlzFrameSetPoint(ConsumablesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.070000)
         BlzFrameSetPoint(ConsumablesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.51000)
-        BlzFrameSetText(ConsumablesText, "|cffFFCC00Consumables|r")
+        BlzFrameSetText(ConsumablesText, GetLocalizedString("DIARY_CONSUMABLES"))
         BlzFrameSetEnable(ConsumablesText, false)
         BlzFrameSetTextAlignment(ConsumablesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1433,7 +1676,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(MiscText, 1.43)
         BlzFrameSetPoint(MiscText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.10000)
         BlzFrameSetPoint(MiscText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.48500)
-        BlzFrameSetText(MiscText, "|cff00ffffMiscellaneous|r")
+        BlzFrameSetText(MiscText, GetLocalizedString("DIARY_MISCELLANEOUS"))
         BlzFrameSetEnable(MiscText, false)
         BlzFrameSetTextAlignment(MiscText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1451,7 +1694,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(FoodText, 1.43)
         BlzFrameSetPoint(FoodText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.20000, -0.10000)
         BlzFrameSetPoint(FoodText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.46000, 0.48500)
-        BlzFrameSetText(FoodText, "|cff00ffffFoods|r")
+        BlzFrameSetText(FoodText, GetLocalizedString("DIARY_FOODS"))
         BlzFrameSetEnable(FoodText, false)
         BlzFrameSetTextAlignment(FoodText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1469,7 +1712,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DrinkText, 1.43)
         BlzFrameSetPoint(DrinkText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.39000, -0.10000)
         BlzFrameSetPoint(DrinkText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.27000, 0.48500)
-        BlzFrameSetText(DrinkText, "|cff00ffffDrinks|r")
+        BlzFrameSetText(DrinkText, GetLocalizedString("DIARY_DRINKS"))
         BlzFrameSetEnable(DrinkText, false)
         BlzFrameSetTextAlignment(DrinkText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1487,7 +1730,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(EquipmentsText, 2.00)
         BlzFrameSetPoint(EquipmentsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.21500)
         BlzFrameSetPoint(EquipmentsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.36500)
-        BlzFrameSetText(EquipmentsText, "|cffFFCC00Equipments|r")
+        BlzFrameSetText(EquipmentsText, GetLocalizedString("DIARY_EQUIPMENTS"))
         BlzFrameSetEnable(EquipmentsText, false)
         BlzFrameSetTextAlignment(EquipmentsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1495,7 +1738,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(ShieldsText, 1.43)
         BlzFrameSetPoint(ShieldsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.24500)
         BlzFrameSetPoint(ShieldsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.34000)
-        BlzFrameSetText(ShieldsText, "|cff00ffffShields|r")
+        BlzFrameSetText(ShieldsText, GetLocalizedString("DIARY_SHIELDS"))
         BlzFrameSetEnable(ShieldsText, false)
         BlzFrameSetTextAlignment(ShieldsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1513,7 +1756,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(WeaponsText, 1.43)
         BlzFrameSetPoint(WeaponsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.31550)
         BlzFrameSetPoint(WeaponsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.26950)
-        BlzFrameSetText(WeaponsText, "|cff00ffffWeapons|r")
+        BlzFrameSetText(WeaponsText, GetLocalizedString("DIARY_WEAPONS"))
         BlzFrameSetEnable(WeaponsText, false)
         BlzFrameSetTextAlignment(WeaponsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1531,7 +1774,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(AccesoriesText, 1.43)
         BlzFrameSetPoint(AccesoriesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.38600)
         BlzFrameSetPoint(AccesoriesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.19900)
-        BlzFrameSetText(AccesoriesText, "|cff00ffffAccesories|r")
+        BlzFrameSetText(AccesoriesText, GetLocalizedString("DIARY_ACCESORIES"))
         BlzFrameSetEnable(AccesoriesText, false)
         BlzFrameSetTextAlignment(AccesoriesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1549,7 +1792,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(DigivicesText, 1.43)
         BlzFrameSetPoint(DigivicesText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.45650)
         BlzFrameSetPoint(DigivicesText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.12850)
-        BlzFrameSetText(DigivicesText, "|cff00ffffDigivices|r")
+        BlzFrameSetText(DigivicesText, GetLocalizedString("DIARY_DIGIVICES"))
         BlzFrameSetEnable(DigivicesText, false)
         BlzFrameSetTextAlignment(DigivicesText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1567,7 +1810,7 @@ OnInit("Diary", function ()
         BlzFrameSetScale(CrestsText, 1.43)
         BlzFrameSetPoint(CrestsText, FRAMEPOINT_TOPLEFT, ItemsBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.52700)
         BlzFrameSetPoint(CrestsText, FRAMEPOINT_BOTTOMRIGHT, ItemsBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.058000)
-        BlzFrameSetText(CrestsText, "|cff00ffffCrests|r")
+        BlzFrameSetText(CrestsText, GetLocalizedString("DIARY_CRESTS"))
         BlzFrameSetEnable(CrestsText, false)
         BlzFrameSetTextAlignment(CrestsText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
@@ -1603,16 +1846,97 @@ OnInit("Diary", function ()
         BlzFrameSetEnable(ItemDescription, false)
         BlzFrameSetTextAlignment(ItemDescription, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
+        -- Recipes
+
+        RecipesButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
+        BlzFrameSetPoint(RecipesButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.18000, -0.030000)
+        BlzFrameSetPoint(RecipesButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.55000, 0.54000)
+        BlzFrameSetText(RecipesButton, GetLocalizedString("DIARY_RECIPES"))
+        OnClickEvent(RecipesButton, RecipesButtonFunc)
+
+        RecipesBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
+        BlzFrameSetAllPoints(RecipesBackdrop, Backdrop)
+        BlzFrameSetTexture(RecipesBackdrop, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        MaterialsLabel = BlzCreateFrameByType("TEXT", "name", RecipesBackdrop, "", 0)
+        BlzFrameSetScale(MaterialsLabel, 2.00)
+        BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.070000)
+        BlzFrameSetPoint(MaterialsLabel, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.51000)
+        BlzFrameSetText(MaterialsLabel, GetLocalizedString("DIARY_MATERIALS_LABEL"))
+        BlzFrameSetTextAlignment(MaterialsLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        MaterialsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipesBackdrop, "", 1)
+        BlzFrameSetPoint(MaterialsContainer, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.10000)
+        BlzFrameSetPoint(MaterialsContainer, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.38000)
+        BlzFrameSetTexture(MaterialsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        RecipesLabel = BlzCreateFrameByType("TEXT", "name", RecipesBackdrop, "", 0)
+        BlzFrameSetScale(RecipesLabel, 2.00)
+        BlzFrameSetPoint(RecipesLabel, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.23000)
+        BlzFrameSetPoint(RecipesLabel, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.65000, 0.35000)
+        BlzFrameSetText(RecipesLabel, GetLocalizedString("DIARY_RECIPES_LABEL"))
+        BlzFrameSetTextAlignment(RecipesLabel, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        RecipesContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipesBackdrop, "", 1)
+        BlzFrameSetPoint(RecipesContainer, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.010000, -0.26000)
+        BlzFrameSetPoint(RecipesContainer, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.23000, 0.020000)
+        BlzFrameSetTexture(RecipesContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        RecipeMaterialInformation = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipesBackdrop, "", 1)
+        BlzFrameSetPoint(RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, RecipesBackdrop, FRAMEPOINT_TOPLEFT, 0.61000, -0.11000)
+        BlzFrameSetPoint(RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, RecipesBackdrop, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.020000)
+        BlzFrameSetTexture(RecipeMaterialInformation, "war3mapImported\\EmptyBTN.blp", 0, true)
+
+        RecipeMaterialName = BlzCreateFrameByType("TEXT", "name", RecipeMaterialInformation, "", 0)
+        BlzFrameSetScale(RecipeMaterialName, 1.71)
+        BlzFrameSetPoint(RecipeMaterialName, FRAMEPOINT_TOPLEFT, RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.010000)
+        BlzFrameSetPoint(RecipeMaterialName, FRAMEPOINT_BOTTOMRIGHT, RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.42000)
+        BlzFrameSetText(RecipeMaterialName, "|cffFFCC00Agumon|r")
+        BlzFrameSetEnable(RecipeMaterialName, false)
+        BlzFrameSetTextAlignment(RecipeMaterialName, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        RecipeMaterialDescription = BlzCreateFrameByType("TEXT", "name", RecipeMaterialInformation, "", 0)
+        BlzFrameSetScale(RecipeMaterialDescription, 1.43)
+        BlzFrameSetPoint(RecipeMaterialDescription, FRAMEPOINT_TOPLEFT, RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.24000)
+        BlzFrameSetPoint(RecipeMaterialDescription, FRAMEPOINT_BOTTOMRIGHT, RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.010000)
+        BlzFrameSetText(RecipeMaterialDescription, "|cffffffffStamina per level: |r")
+        BlzFrameSetEnable(RecipeMaterialDescription, false)
+        BlzFrameSetTextAlignment(RecipeMaterialDescription, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+        BlzFrameSetLevel(RecipeMaterialDescription, 1)
+
+        RecipeResultButton = BlzCreateFrame("IconButtonTemplate", RecipeMaterialInformation, 0, 0)
+        BlzFrameSetPoint(RecipeResultButton, FRAMEPOINT_TOPLEFT, RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, 0.010000, -0.24000)
+        BlzFrameSetPoint(RecipeResultButton, FRAMEPOINT_BOTTOMRIGHT, RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.21700)
+        OnClickEvent(RecipeResultButton, RecipeResultButtonFunc)
+        BlzFrameSetLevel(RecipeResultButton, 2)
+
+        RecipeRequimentsContainer = BlzCreateFrameByType("BACKDROP", "BACKDROP", RecipeMaterialInformation, "", 1)
+        BlzFrameSetPoint(RecipeRequimentsContainer, FRAMEPOINT_TOPLEFT, RecipeMaterialInformation, FRAMEPOINT_TOPLEFT, 0.020000, -0.27000)
+        BlzFrameSetPoint(RecipeRequimentsContainer, FRAMEPOINT_BOTTOMRIGHT, RecipeMaterialInformation, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.020000)
+        BlzFrameSetTexture(RecipeRequimentsContainer, "war3mapImported\\EmptyBTN.blp", 0, true)
+        BlzFrameSetLevel(RecipeRequimentsContainer, 2)
+
+        for i = 0, 14 do
+            RecipeRequirmentT[i] = BlzCreateFrameByType("TEXT", "name", RecipeRequimentsContainer, "", 0)
+            BlzFrameSetPoint(RecipeRequirmentT[i], FRAMEPOINT_TOPLEFT, RecipeRequimentsContainer, FRAMEPOINT_TOPLEFT, 0.0000, 0.0000 - i*0.012000)
+            BlzFrameSetPoint(RecipeRequirmentT[i], FRAMEPOINT_BOTTOMRIGHT, RecipeRequimentsContainer, FRAMEPOINT_BOTTOMRIGHT, 0.0000, 0.16800 - i*0.012000)
+            BlzFrameSetText(RecipeRequirmentT[i], "|cffffffff- A requirment|r")
+            BlzFrameSetTextAlignment(RecipeRequirmentT[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+            RecipeRequirmentButton[i] = BlzCreateFrame("IconButtonTemplate", RecipeRequirmentT[i], 0, 0)
+            BlzFrameSetAllPoints(RecipeRequirmentButton[i], RecipeRequirmentT[i])
+            BlzFrameSetEnable(RecipeRequirmentButton[i], false)
+            OnClickEvent(RecipeRequirmentButton[i], function (p) RecipeRequirmentButtonFunc(p, i+1) end)
+        end
+
         -- Map
 
         MapButton = BlzCreateFrame("ScriptDialogButton", Backdrop, 0, 0)
-        BlzFrameSetPoint(MapButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.18000, -0.030000)
-        BlzFrameSetPoint(MapButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.55000, 0.54000)
-        BlzFrameSetText(MapButton, "|cffFCD20DMap|r")
+        BlzFrameSetPoint(MapButton, FRAMEPOINT_TOPLEFT, Backdrop, FRAMEPOINT_TOPLEFT, 0.26000, -0.030000)
+        BlzFrameSetPoint(MapButton, FRAMEPOINT_BOTTOMRIGHT, Backdrop, FRAMEPOINT_BOTTOMRIGHT, -0.47000, 0.54000)
+        BlzFrameSetText(MapButton, GetLocalizedString("DIARY_MAP"))
         BlzFrameSetLevel(MapButton, 3)
-        TriggerMapButton = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(TriggerMapButton, MapButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(TriggerMapButton, MapButtonFunc)
+        OnClickEvent(MapButton, MapButtonFunc)
 
         MapBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Backdrop, "", 1)
         BlzFrameSetAllPoints(MapBackdrop, Backdrop)
@@ -1622,7 +1946,7 @@ OnInit("Diary", function ()
 
         for i = 1, udg_MAX_USED_DIGIMONS do
             DigimonIcons[i] = BlzCreateFrameByType("BACKDROP", "DigimonIcons[" .. i .. "]", MapBackdrop, "", 1)
-            BlzFrameSetTexture(DigimonIcons[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
+            BlzFrameSetTexture(DigimonIcons[i], udg_DIARY_LOCKED_BUTTON, 0, true)
             BlzFrameSetLevel(DigimonIcons[i], 10)
             BlzFrameSetVisible(DigimonIcons[i], false)
             BlzFrameSetSize(DigimonIcons[i], 0.02, 0.02)
@@ -1718,9 +2042,9 @@ OnInit("Diary", function ()
 
         if not unlockedInfo.evolveOptions[toEvolve] then
             unlockedInfo.evolveOptions[toEvolve] = __jarray(false)
+        end
+        if not unlockedInfo.evolveOptions[toEvolve][condL] then
             unlockedInfo.evolveOptions[toEvolve][condL] = true
-
-            UnlockButton(owner, toEvolve)
 
             if owner == LocalPlayer then
                 spriteRemain = 8
@@ -1756,7 +2080,7 @@ OnInit("Diary", function ()
 
         if IsPlayerInGame(owner) then
             if digiInfos[kId] then
-                local killCount = kills[owner][kId] + 1
+                local killCount = math.min(kills[owner][kId] + 1, REQUIRED_KILLS_3)
                 kills[owner][kId] = killCount
 
                 local show = false
@@ -1782,7 +2106,7 @@ OnInit("Diary", function ()
             end
 
             if digiInfos[dId] then
-                local deathCount = deaths[owner][dId] + 1
+                local deathCount = math.min(deaths[owner][dId] + 1, REQUIRED_DEATHS)
                 deaths[owner][dId] = deathCount
 
                 if deathCount >= REQUIRED_DEATHS then
@@ -1838,6 +2162,7 @@ OnInit("Diary", function ()
                 vistedPlaces[p][i] = canBeVisted[i]
                 BlzFrameSetVisible(canBeVisted[i], true)
             else
+                vistedPlaces[p][i] = nil
                 BlzFrameSetVisible(canBeVisted[i], false)
             end
         end
@@ -1845,10 +2170,11 @@ OnInit("Diary", function ()
 
     ---@param p player
     ---@param slot integer
+    ---@param id string
     ---@return UnlockedInfoData
-    function SaveDiary(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Diary")
-        local data = UnlockedInfoData.create(p)
+    function SaveDiary(p, slot, id)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_DIARY_ROOT)
+        local data = UnlockedInfoData.create(p, slot, id)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then
@@ -1860,30 +2186,47 @@ OnInit("Diary", function ()
 
     ---@param p player
     ---@param slot integer
-    ---@return UnlockedInfoData
+    ---@return UnlockedInfoData?
     function LoadDiary(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Diary")
-        local data = UnlockedInfoData.create()
+        local fileRoot = SaveFile.getPath2(p, slot, udg_DIARY_ROOT)
+        local data = UnlockedInfoData.create(slot)
         data.p = p
-        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
+
+        if not loaded then
+            print(GetLocalizedString("CANT_LOAD_DATA"):format(GetPlayerName(p)))
+            return
+        end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode then
-                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
-                return data
+            if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("INVALID_FILE"):format(fileRoot))
+                return
             end
-            data:deserialize(decode)
         end
 
         return data
     end
 
     function ClearDiary(p)
-        unlockedDigiInfos[p] = {}
+        if p == LocalPlayer then
+            for id, _ in pairs(unlockedDigiInfos[p]) do
+                BlzFrameSetTexture(digiInfos[id].backdrop, udg_DIARY_LOCKED_BUTTON, 0, true)
+                BlzFrameSetEnable(digiInfos[id].button, false)
+                BlzFrameSetVisible(digiInfos[id].sprite, false)
+            end
+            for id, _ in pairs(unlockedItems[p]) do
+                BlzFrameSetTexture(BackdropItemTypes[id], udg_DIARY_LOCKED_BUTTON, 0, true)
+                BlzFrameSetEnable(ItemTypes[id], false)
+                BlzFrameSetVisible(ItemsSprite[id], false)
+            end
+        end
+        unlockedDigiInfos[p] = SyncedTable.create()
         kills[p] = __jarray(0)
         deaths[p] = __jarray(0)
-        unlockedItems[p] = {}
+        unlockedItems[p] = SyncedTable.create()
+        ApplyVisitedPlaces(p, {})
 
         if p == LocalPlayer then
             digimonSelected = -1
@@ -1916,6 +2259,18 @@ OnInit("Diary", function ()
     udg_AddItemToList = CreateTrigger()
     TriggerAddAction(udg_AddItemToList, function ()
         AddItemToList(udg_DigimonItemType)
+        udg_DigimonItemType = 0
+    end)
+
+    udg_AddMaterial = CreateTrigger()
+    TriggerAddAction(udg_AddMaterial, function ()
+        AddMaterial(udg_DigimonItemType)
+        udg_DigimonItemType = 0
+    end)
+
+    udg_AddRecipe = CreateTrigger()
+    TriggerAddAction(udg_AddRecipe, function ()
+        AddRecipe(udg_DigimonItemType)
         udg_DigimonItemType = 0
     end)
 end)

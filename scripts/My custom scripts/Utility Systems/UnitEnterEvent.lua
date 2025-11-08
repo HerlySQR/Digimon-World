@@ -9,6 +9,8 @@ OnInit("UnitEnterEvent", function ()
     local enterEvent = EventListener.create()
     local leaveEvent = EventListener.create()
 
+    local itemCreateEvent = EventListener.create()
+
     ---@param func fun(u: unit)
     function OnUnitEnter(func)
         enterEvent:register(func)
@@ -17,6 +19,11 @@ OnInit("UnitEnterEvent", function ()
     ---@param func fun(u: unit)
     function OnUnitLeave(func)
         leaveEvent:register(func)
+    end
+
+    ---@param func fun(itm: item)
+    function OnItemCreate(func)
+        itemCreateEvent:register(func)
     end
 
     ---@param u unit
@@ -30,6 +37,20 @@ OnInit("UnitEnterEvent", function ()
     for i = 0, bj_MAX_PLAYER_SLOTS - 1 do
         SetPlayerAbilityAvailable(Player(i), LEAVE_DETECTION, false)
     end
+
+    local function hook(func)
+        local oldfunc
+        oldfunc = AddHook(func, function (...)
+            local itm = oldfunc(...)
+            itemCreateEvent:run(itm)
+            return itm
+        end)
+    end
+
+    hook("CreateItem")
+    hook("BlzCreateItemWithSkin")
+    hook("UnitAddItemById")
+    hook("PlaceRandomItem")
 
     OnInit.final(function ()
         -- Create the enter event
@@ -51,5 +72,16 @@ OnInit("UnitEnterEvent", function ()
         ForGroup(preplacedUnits, function () prepareUnit(GetEnumUnit()) end)
         GroupClear(preplacedUnits)
         DestroyGroup(preplacedUnits)
+
+        EnumItemsInRect(WorldBounds.rect, nil, function ()
+            itemCreateEvent:run(GetEnumItem())
+        end)
+
+        t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SELL_ITEM)
+        TriggerAddAction(t, function ()
+            itemCreateEvent:run(GetSoldItem())
+        end)
     end)
 end)
+if Debug then Debug.endFile() end

@@ -5,9 +5,9 @@ OnInit(function ()
     local SPELL = FourCC('A00Z')
     local EFF1 = FourCC('SNhs') -- Northrend snow (heavy)
     local EFF2 = FourCC('WOcw') -- Outland wind (heavy)
-    local AREA = 600.
-    local DAMAGE = 10.
-    local DURATION = 10.
+    local AREA = 1400.
+    local DAMAGE = 6.
+    local DURATION = 55.
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
@@ -21,7 +21,7 @@ OnInit(function ()
         EnableWeatherEffect(eff2, true)
 
         Timed.call(1., function ()
-            Timed.echo(1., DURATION, function ()
+            Timed.echo(4.5, DURATION, function ()
                 ForUnitsInRange(x, y, AREA, function (u)
                     if UnitAlive(u) and IsUnitEnemy(u, owner) and not IsUnitType(u, UNIT_TYPE_MAGIC_IMMUNE) then
                         Damage.apply(caster, u, DAMAGE, true, false, udg_Water, DAMAGE_TYPE_LIGHTNING, WEAPON_TYPE_WHOKNOWS)

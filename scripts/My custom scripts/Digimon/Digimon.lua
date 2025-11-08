@@ -1,9 +1,8 @@
 Debug.beginFile("Digimon")
 OnInit("Digimon", function ()
     Require "UnitEnum"
-    Require "EventListener"
     Require "Damage"
-    Require "Environment"
+    --[[Require "Environment"]]
     Require "GlobalRemap"
     Require "NewBonus"
     Require "PlayerUtils"
@@ -12,6 +11,17 @@ OnInit("Digimon", function ()
     Require "Obj2Str"
 
     local LocalPlayer = GetLocalPlayer() ---@type player
+
+    -- Init damage types
+    udg_WaterAsInt = udg_ATTACK_TYPE_CHAOS
+    udg_BeastAsInt = udg_ATTACK_TYPE_MAGIC
+    udg_MachineAsInt = udg_ATTACK_TYPE_HERO
+    udg_AirAsInt = udg_ATTACK_TYPE_PIERCE
+    udg_DarkAsInt = udg_ATTACK_TYPE_SIEGE
+    udg_FireAsInt = udg_ATTACK_TYPE_NORMAL
+    udg_NatureAsInt = udg_ATTACK_TYPE_SPELLS
+    udg_HolyAsInt = 7
+    udg_Holy = ConvertAttackType(udg_HolyAsInt)
 
     local STAMINA_TRAINING = FourCC('A0CU')
     local DEXTERITY_TRAINING = FourCC('A0CT')
@@ -133,7 +143,7 @@ OnInit("Digimon", function ()
         if main then
             self.typeId = main:getTypeId()
             self.exp = main:getExp()
-            self.level = main:getLevel()
+            self.level = GetLevelFromXP(self.exp)
             self.IVsta = main.IVsta
             self.IVdex = main.IVdex
             self.IVwis = main.IVwis
@@ -151,34 +161,60 @@ OnInit("Digimon", function ()
     end
 
     function DigimonData:serializeProperties()
-        self:addProperty("typeId", self.typeId)
+        self:addProperty("typeId", BlzFourCC2S(self.typeId))
         self:addProperty("exp", self.exp)
-        self:addProperty("level", self.level)
-        self:addProperty("IVsta", self.IVsta)
-        self:addProperty("IVdex", self.IVdex)
-        self:addProperty("IVwis", self.IVwis)
+        --self:addProperty("level", self.level)
+        --self:addProperty("IVsta", self.IVsta)
+        --self:addProperty("IVdex", self.IVdex)
+        --self:addProperty("IVwis", self.IVwis)
+        self:addProperty("IV", self.IVsta * 2500 + self.IVdex * 50 + self.IVwis)
         for i = 0, 5 do
-            self:addProperty("invSlot" .. i, self["invSlot" .. i])
+            if self["invSlot" .. i] ~= 0 then
+                self:addProperty("invSlot" .. i, BlzFourCC2S(self["invSlot" .. i]))
+            end
         end
-        self:addProperty("lvlSta", self.lvlSta)
-        self:addProperty("lvlDex", self.lvlDex)
-        self:addProperty("lvlWis", self.lvlWis)
+        --self:addProperty("lvlSta", self.lvlSta)
+        --self:addProperty("lvlDex", self.lvlDex)
+        --self:addProperty("lvlWis", self.lvlWis)
+        self:addProperty("lvlTrain", self.lvlSta * 10000 + self.lvlDex * 100 + self.lvlWis)
         self:addProperty("cosmetics", Obj2Str(self.cosmetics))
     end
 
     function DigimonData:deserializeProperties()
-        self.typeId = self:getIntProperty("typeId")
-        self.exp = self:getIntProperty("exp")
-        self.level = self:getIntProperty("level")
-        self.IVsta = self:getIntProperty("IVsta")
-        self.IVdex = self:getIntProperty("IVdex")
-        self.IVwis = self:getIntProperty("IVwis")
-        for i = 0, 5 do
-            self["invSlot" .. i] = self:getIntProperty("invSlot" .. i)
+        if self:getStringProperty("typeId") ~= "" then
+            self.typeId = FourCC(self:getStringProperty("typeId"))
+        else -- Backwards compatibility
+            self.typeId = self:getIntProperty("typeId")
         end
-        self.lvlSta = self:getIntProperty("lvlSta")
-        self.lvlDex = self:getIntProperty("lvlDex")
-        self.lvlWis = self:getIntProperty("lvlWis")
+        self.exp = self:getIntProperty("exp")
+        self.level = GetLevelFromXP(self.exp)
+        if self:getIntProperty("IV") ~= 0 then
+            local iv = self:getIntProperty("IV")
+            self.IVsta = math.floor(iv / 2500)
+            self.IVdex = math.floor(ModuloInteger(iv, 2500) / 50)
+            self.IVwis = ModuloInteger(iv, 50)
+        else -- Backwards compatibility
+            self.IVsta = self:getIntProperty("IVsta")
+            self.IVdex = self:getIntProperty("IVdex")
+            self.IVwis = self:getIntProperty("IVwis")
+        end
+        for i = 0, 5 do
+            if self:getStringProperty("invSlot" .. i) ~= "" then
+                self["invSlot" .. i] = FourCC(self:getStringProperty("invSlot" .. i))
+            else -- Backwards compatibility
+                self["invSlot" .. i] = self:getIntProperty("invSlot" .. i)
+            end
+        end
+        if self:getIntProperty("lvlTrain") ~= 0 then
+            local lvlTrain = self:getIntProperty("lvlTrain")
+            self.lvlSta = math.floor(lvlTrain / 10000)
+            self.lvlDex = math.floor(ModuloInteger(lvlTrain, 10000) / 100)
+            self.lvlWis = ModuloInteger(lvlTrain, 100)
+        else -- Backwards compatibility
+            self.lvlSta = self:getIntProperty("lvlSta")
+            self.lvlDex = self:getIntProperty("lvlDex")
+            self.lvlWis = self:getIntProperty("lvlWis")
+        end
         self.cosmetics = Str2Obj(self:getStringProperty("cosmetics"))
     end
 
@@ -309,6 +345,17 @@ OnInit("Digimon", function ()
             end
         end
         SetHeroXP(self.root, e, true)
+
+        local newLevel = GetHeroLevel(self.root)
+        if (self.rank == Rank.ROOKIE and newLevel > udg_MAX_ROOKIE_LVL) then
+            self:setLevel(udg_MAX_ROOKIE_LVL)
+        elseif (self.rank == Rank.CHAMPION and newLevel > udg_MAX_CHAMPION_LVL) then
+            self:setLevel(udg_MAX_CHAMPION_LVL)
+        elseif (self.rank == Rank.ULTIMATE and newLevel > udg_MAX_ULTIMATE_LVL) then
+            self:setLevel(udg_MAX_ULTIMATE_LVL)
+        elseif (self.rank == Rank.MEGA and newLevel > udg_MAX_MEGA_LVL) then
+            self:setLevel(udg_MAX_MEGA_LVL)
+        end
     end
 
     ---@return boolean
@@ -334,6 +381,11 @@ OnInit("Digimon", function ()
     ---@return number
     function Digimon:getY()
         return GetUnitY(self.root)
+    end
+
+    ---@return number
+    function Digimon:getZ()
+        return GetUnitZ(self.root)
     end
 
     ---@param y number
@@ -447,6 +499,11 @@ OnInit("Digimon", function ()
         self.IVwis = wis
     end
 
+    ---@return integer
+    function Digimon:getCurrentOrder()
+        return GetUnitCurrentOrder(self.root)
+    end
+
     ---@param u unit
     ---@return Digimon
     function Digimon.getInstance(u)
@@ -555,7 +612,7 @@ OnInit("Digimon", function ()
                     udg_Red = 100.00
                     udg_Green = 100.00
                     udg_Blue = 100.00
-                    udg_Text = "miss"
+                    udg_Text = GetLocalizedString("MISS")
                     udg_Size = 10.00
                     udg_ZOffset = 0.00
                     TriggerExecute(gg_trg_Display_Damage_Ex)
@@ -646,6 +703,7 @@ OnInit("Digimon", function ()
     -- Kill
 
     Digimon.killEvent = EventListener.create()
+    Digimon.deathEvent = EventListener.create()
 
     do
         local t = CreateTrigger()
@@ -655,7 +713,10 @@ OnInit("Digimon", function ()
             local target = Digimon._instance[GetDyingUnit()]
 
             if target then
-                Digimon.killEvent:run({killer = killer and Digimon._instance[killer] or killer, target = target})
+                if killer then
+                    Digimon.killEvent:run({killer = killer and Digimon._instance[killer] or killer, target = target})
+                end
+                Digimon.deathEvent:run({killer = killer and Digimon._instance[killer] or killer, target = target})
 
                 if target.isSummon or (not IsUnitType(target.root, UNIT_TYPE_ANCIENT) and (target:getOwner() == Digimon.NEUTRAL or target:getOwner() == Digimon.PASSIVE)) then
                     target:remove(6.)
@@ -831,7 +892,19 @@ OnInit("Digimon", function ()
     Digimon.offCombatEvent = EventListener.create()
 
     do
-        local onCombat = __jarray(0) ---@type table<Digimon, integer>
+        local onCombat = SyncedTable.create() ---@type table<Digimon, integer>
+
+        Timed.echo(1., function ()
+            for d, cd in pairs(onCombat) do
+                if cd > 0 then
+                    onCombat[d] = cd - 1
+                else
+                    d.onCombat = false
+                    onCombat[d] = nil
+                    Digimon.offCombatEvent:run(d)
+                end
+            end
+        end)
 
         Digimon.postDamageEvent:register(function (info)
             local source = info.source ---@type Digimon
@@ -839,15 +912,6 @@ OnInit("Digimon", function ()
             if not source.onCombat then
                 source.onCombat = true
                 Digimon.onCombatEvent:run(source)
-                Timed.echo(1., function ()
-                    local cd = onCombat[source] - 1
-                    onCombat[source] = cd
-                    if cd <= 0 then
-                        source.onCombat = false
-                        Digimon.offCombatEvent:run(source)
-                        return true
-                    end
-                end)
             end
 
             local target = info.target ---@type Digimon
@@ -855,15 +919,6 @@ OnInit("Digimon", function ()
             if not target.onCombat then
                 target.onCombat = true
                 Digimon.onCombatEvent:run(target)
-                Timed.echo(1., function ()
-                    local cd = onCombat[target] - 1
-                    onCombat[target] = cd
-                    if cd <= 0 then
-                        target.onCombat = false
-                        Digimon.offCombatEvent:run(target)
-                        return true
-                    end
-                end)
             end
         end)
     end
@@ -963,6 +1018,7 @@ OnInit("Digimon", function ()
     Digimon.PASSIVE = Player(PLAYER_NEUTRAL_PASSIVE)
     Digimon.VILLAIN = Player(13)
     Digimon.CITY = Player(14)
+    Digimon.RESOURCE = Player(15)
 
     ---@param p player
     ---@return boolean
@@ -975,6 +1031,13 @@ OnInit("Digimon", function ()
     GlobalRemap("udg_SetRare", nil, function (id) rarities[id] = Rarity.RARE end)
     GlobalRemap("udg_SetEpic", nil, function (id) rarities[id] = Rarity.EPIC end)
     GlobalRemap("udg_SetLegendary", nil, function (id) rarities[id] = Rarity.LEGENDARY end)
+
+    -- Assign illusions as summons
+    Digimon.createEvent:register(function (d)
+        if IsUnitIllusion(d.root) then
+            d.isSummon = true
+        end
+    end)
 
     -- Init rarities
     OnInit.trig(function ()

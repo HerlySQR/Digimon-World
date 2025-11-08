@@ -4,8 +4,8 @@ OnInit(function ()
 
     local WARD = FourCC('o00Y')
     local SLOW = FourCC('BUau')
-    local DAMAGE_PER_SEC = 10.
-    local AREA = 350.
+    local DAMAGE_PER_SEC = 15.
+    local AREA = 1000.
 
     local t = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
@@ -19,7 +19,7 @@ OnInit(function ()
                 if UnitAlive(ward) then
                     ForUnitsInRange(x, y, AREA, function (u)
                         if UnitHasBuffBJ(u, SLOW) and IsUnitEnemy(u, owner) then
-                            Damage.apply(caster, u, DAMAGE_PER_SEC, true, false, udg_Nature, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
+                            Damage.apply(caster, u, DAMAGE_PER_SEC, true, false, udg_Dark, DAMAGE_TYPE_MIND, WEAPON_TYPE_WHOKNOWS)
                         end
                     end)
                 else

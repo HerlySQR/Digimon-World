@@ -482,7 +482,7 @@ OnInit("Transmission", function ()
                 end
                 if IsForceEmpty(curr.toForce) then
                     PauseTimer(curr._t)
-                    TimerStart(curr._t, RMinBJ(bj_TRANSMISSION_PORT_HANGTIME, TimerGetRemaining(curr._t)), false, function () curr:_what_call() end)
+                    TimerStart(curr._t, RMinBJ(0.1, TimerGetRemaining(curr._t)), false, function () curr:_what_call() end)
                 end
                 table.remove(AllInstances[player], i)
             end

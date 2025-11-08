@@ -44,6 +44,8 @@ OnInit("Quests", function ()
     local Origin = BlzGetFrameByName("ConsoleUIBackdrop", 0)
     local LocalPlayer = GetLocalPlayer()
     local PressedQuest = -1
+    local questMaxProgress = 1
+    local questLevel = 1
 
     ---@class QuestTemplate
     ---@field name string
@@ -52,6 +54,7 @@ OnInit("Quests", function ()
     ---@field level integer
     ---@field onlyOnce boolean
     ---@field maxProgress integer
+    ---@field petitioner unit
     ---@field questMark effect?
     ---@field questMarkDone effect?
     ---@field counter texttag?
@@ -78,12 +81,17 @@ OnInit("Quests", function ()
     ---@field prog integer[]
     ---@field comp boolean[]
     ---@field cret boolean[]
+    ---@field slot integer
+    ---@field ind string
     QuestData = setmetatable({}, Serializable)
     QuestData.__index = QuestData
 
-    ---@param p player?
+    ---@overload fun(slot: integer): QuestData
+    ---@param p player
+    ---@param slot integer
+    ---@param ind string
     ---@return QuestData | Serializable
-    function QuestData.create(p)
+    function QuestData.create(p, slot, ind)
         local self = setmetatable({
             amount = 0,
             id = __jarray(0),
@@ -91,6 +99,13 @@ OnInit("Quests", function ()
             comp = __jarray(false),
             cret = __jarray(false)
         }, QuestData)
+        if type(p) == "number" then
+            ind = slot
+            slot = p
+            p = nil
+        end
+        self.slot = slot
+        self.ind = ind or ""
         if p then
             for i = 0, MAX_QUESTS do
                 local quest = PlayerQuests[p][i]
@@ -114,9 +129,15 @@ OnInit("Quests", function ()
             self:addProperty("comp" .. i, self.comp[i])
             self:addProperty("cret" .. i, self.cret[i])
         end
+        self:addProperty("slot", self.slot)
+        self:addProperty("ind", self.ind)
     end
 
     function QuestData:deserializeProperties()
+        if self.slot ~= self:getIntProperty("slot") then
+            error("The slot is not the same.")
+            return
+        end
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
             self.id[i] = self:getIntProperty("id" .. i)
@@ -124,6 +145,7 @@ OnInit("Quests", function ()
             self.comp[i] = self:getBoolProperty("comp" .. i)
             self.cret[i] = self:getBoolProperty("cret" .. i)
         end
+        self.ind = self:getStringProperty("ind")
     end
 
     local function UpdateMenu()
@@ -159,7 +181,7 @@ OnInit("Quests", function ()
         end
         for i, q in pairs(PlayerQuests[LocalPlayer]) do
             if not QuestTemplates[i].isRequirement then
-                local progress = "In progress"
+                local progress = GetLocalizedString("QUEST_IN_PROGRESS")
                 local max = QuestTemplates[q.id].maxProgress
                 if max > 1 then
                     if q.progress < max then
@@ -168,13 +190,13 @@ OnInit("Quests", function ()
                         progress = progress .. " |cff00ff00" .. q.progress .. "/" .. max .. "|r"
                     end
                 end
-                BlzFrameSetText(QuestOptionText[i], "|cffFFCC00" .. q.name .. "|r" .. (q.level > 0 and (" - Level " .. q.level) or "") .. "\n" .. progress)
+                BlzFrameSetText(QuestOptionText[i], "|cffFFCC00" .. q.name .. "|r" .. (q.level > 0 and (GetLocalizedString("QUEST_LEVEL"):format(q.level)) or "") .. "\n" .. progress)
             end
         end
     end
 
-    local function ShowInformation(i)
-        if GetTriggerPlayer() == LocalPlayer then
+    local function ShowInformation(p, i)
+        if p == LocalPlayer then
             if PressedQuest ~= i then
                 BlzFrameSetVisible(QuestInformation, true)
                 PressedQuest = i
@@ -186,17 +208,16 @@ OnInit("Quests", function ()
         end
     end
 
-    local function ShowMenu()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function ShowMenu(p)
+        if p == LocalPlayer then
             if BlzFrameIsVisible(QuestMenu) then
                 RemoveButtonFromEscStack(QuestButton)
             else
                 AddButtonToEscStack(QuestButton)
             end
             BlzFrameSetVisible(QuestMenu, not BlzFrameIsVisible(QuestMenu))
+            PressedQuest = -1
             BlzFrameSetVisible(QuestInformation, false)
-            BlzFrameSetEnable(QuestButton, false)
-            BlzFrameSetEnable(QuestButton, true)
             UpdateMenu()
         end
     end
@@ -206,13 +227,11 @@ OnInit("Quests", function ()
 
         QuestButton = BlzCreateFrame("IconButtonTemplate", Origin, 0, 0)
         AddButtonToTheRight(QuestButton, 5)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, QuestButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ShowMenu)
+        OnClickEvent(QuestButton, ShowMenu)
         BlzFrameSetVisible(QuestButton, false)
         AddFrameToMenu(QuestButton)
-        SetFrameHotkey(QuestButton, "L")
-        AddDefaultTooltip(QuestButton, "Quest Log", "Look at the progress of your accepted quests.")
+        SetFrameHotkey(QuestButton, udg_QUEST_HOTKEY)
+        AddDefaultTooltip(QuestButton, GetLocalizedString("QUEST_LOG"), GetLocalizedString("QUEST_LOG_TOOLTIP"))
 
         BackdropQuestButton = BlzCreateFrameByType("BACKDROP", "BackdropQuestButton", QuestButton, "", 0)
         BlzFrameSetAllPoints(BackdropQuestButton, QuestButton)
@@ -240,7 +259,7 @@ OnInit("Quests", function ()
         QuestText = BlzCreateFrameByType("TEXT", "name", QuestMenu, "", 0)
         BlzFrameSetPoint(QuestText, FRAMEPOINT_TOPLEFT, QuestMenu, FRAMEPOINT_TOPLEFT, 0.0150000, -0.010000)
         BlzFrameSetPoint(QuestText, FRAMEPOINT_BOTTOMRIGHT, QuestMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.20500)
-        BlzFrameSetText(QuestText, "|cffFFCC00Quest Log|r")
+        BlzFrameSetText(QuestText, "|cffFFCC00" .. GetLocalizedString("QUEST_LOG") .. "|r")
         BlzFrameSetEnable(QuestText, false)
         BlzFrameSetScale(QuestText, 1)
         BlzFrameSetTextAlignment(QuestText, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
@@ -279,9 +298,7 @@ OnInit("Quests", function ()
             BlzFrameSetScale(QuestOptionT[i], 1.00)
             BlzFrameSetEnable(QuestOptionT[i], false)
             BlzFrameSetVisible(QuestOptionT[i], false)
-            t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, QuestOptionT[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function () ShowInformation(i) end)
+            OnClickEvent(QuestOptionT[i], function (p) ShowInformation(p, i) end)
 
             QuestOptionText[i] = BlzCreateFrameByType("TEXT", "name", QuestOptionT[i], "", 0)
             BlzFrameSetPoint(QuestOptionText[i], FRAMEPOINT_TOPLEFT, QuestOptionT[i], FRAMEPOINT_TOPLEFT, 0.0050000, -0.0050000)
@@ -330,9 +347,9 @@ OnInit("Quests", function ()
         end
         if PlayerQuests[p][id] then
             if PlayerQuests[p][id].completed then
-                ErrorMessage("You already completed this quest.", p)
+                ErrorMessage(GetLocalizedString("QUEST_ALREADY_COMPLETED"), p)
             else
-                ErrorMessage("You already have this quest.", p)
+                ErrorMessage(GetLocalizedString("QUEST_ALREADY_HAVE"), p)
             end
             return
         end
@@ -368,7 +385,7 @@ OnInit("Quests", function ()
             StartSound(bj_questDiscoveredSound)
             BlzFrameSetVisible(QuestButton, true)
             if not BlzFrameIsVisible(QuestMenu) then
-                DisplayTextToPlayer(p, 0, 0, "|cffFFCC00NEW QUEST:|r " .. PlayerQuests[p][id].name)
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("QUEST_NEW") .. " " .. PlayerQuests[p][id].name)
                 BlzFrameSetVisible(QuestButtonSprite, true)
                 BlzFrameSetSpriteAnimate(QuestButtonSprite, 1, 0)
             end
@@ -416,6 +433,8 @@ OnInit("Quests", function ()
             BlzSetSpecialEffectZ(questMarkDone, GetUnitZ(petitioner, true) + 175)
             BlzSetSpecialEffectAlpha(questMarkDone, 0)
             QuestTemplates[id].questMarkDone = questMarkDone
+
+            QuestTemplates[id].petitioner = petitioner
         end
         if setRequirements then
             QuestTemplates[id].isRequirement = true
@@ -442,14 +461,14 @@ OnInit("Quests", function ()
             local remain = DO_QUEST_AGAIN_DELAY
             if counter then
                 if p == LocalPlayer then
-                    SetTextTagTextBJ(counter, "Comeback in: " .. math.floor(DO_QUEST_AGAIN_DELAY), 10.)
+                    SetTextTagTextBJ(counter, GetLocalizedString("QUEST_COMEBACK") .. " " .. math.floor(DO_QUEST_AGAIN_DELAY), 10.)
                 end
             end
             Timed.echo(1., DO_QUEST_AGAIN_DELAY, function ()
                 remain = remain - 1
                 if counter then
                     if p == LocalPlayer then
-                        SetTextTagTextBJ(counter, "Comeback in: " .. math.floor(remain), 10.)
+                        SetTextTagTextBJ(counter, GetLocalizedString("QUEST_COMEBACK") .. " " .. math.floor(remain), 10.)
                     end
                 end
             end, function ()
@@ -480,7 +499,7 @@ OnInit("Quests", function ()
                 PressedQuest = -1
                 StartSound(bj_questCompletedSound)
                 if not BlzFrameIsVisible(QuestMenu) then
-                    DisplayTextToPlayer(p, 0, 0, "|cffFFCC00QUEST COMPLETED:|r |cff00ff00" .. PlayerQuests[p][id].name .. "|r")
+                    DisplayTextToPlayer(p, 0, 0, GetLocalizedString("QUEST_COMPLETED") .. " |cff00ff00" .. PlayerQuests[p][id].name .. "|r")
                 end
                 if QuestTemplates[id].questMark then
                     BlzPlaySpecialEffect(QuestTemplates[id].questMarkDone, ANIM_TYPE_DEATH)
@@ -517,62 +536,6 @@ OnInit("Quests", function ()
         end
         return QuestTemplates[id].maxProgress
     end
-
-    --[[---@overload fun(p: player)
-    ---@param p player
-    ---@param ids integer[]
-    ---@param progresses integer[]
-    ---@param isCompleted boolean[]
-    function SetQuestsData(p, ids, progresses, isCompleted)
-        local have = __jarray(false)
-        if ids then
-            for i = 1, #ids do
-                local id = ids[i]
-                if QuestTemplates[id] then
-                    PlayerQuests[p][id] = {
-                        name = QuestTemplates[id].name,
-                        description = QuestTemplates[id].description,
-                        owner = p,
-                        id = id,
-                        level = QuestTemplates[id].level,
-                        completed = isCompleted[i],
-                        progress = progresses[i]
-                    }
-                    if p == LocalPlayer then
-                        if not QuestTemplates[id].isRequirement then
-                            if isCompleted[i] then
-                                QuestList:remove(QuestOptionT[id])
-                            else
-                                BlzFrameSetEnable(QuestOptionT[id], true)
-                                BlzFrameSetVisible(QuestOptionT[id], true)
-                                QuestList:add(QuestOptionT[id])
-                            end
-                        end
-                        if QuestTemplates[id].questMark then
-                            BlzSetSpecialEffectAlpha(QuestTemplates[id].questMark, 0)
-                        end
-                        UpdateMenu()
-                        BlzFrameSetVisible(QuestButton, true)
-                    end
-                    have[id] = true
-                end
-            end
-        else
-            if p == LocalPlayer then
-                while QuestList:remove() do end
-            end
-        end
-        for i = 0, MAX_QUESTS do
-            if not have[i] and QuestTemplates[i] then
-                PlayerQuests[p][i] = nil
-                if p == LocalPlayer then
-                    if QuestTemplates[i].questMark then
-                        BlzSetSpecialEffectAlpha(QuestTemplates[i].questMark, 255)
-                    end
-                end
-            end
-        end
-    end]]
 
     ---@param id integer
     ---@return string
@@ -635,6 +598,7 @@ OnInit("Quests", function ()
                         BlzSetSpecialEffectColor(QuestTemplates[id].questMarkDone, GREEN)
                     end
                 end
+                DisplayTimedTextToPlayer(udg_QuestPlayer, 0, 0, 5., GetLocalizedString("QUEST_RETURN"):format(GetHeroProperName(QuestTemplates[id].petitioner)))
             end
         end)
     end)
@@ -787,13 +751,30 @@ OnInit("Quests", function ()
             udg_QuestPetitioner = savedFields[6]
         end
     end)
+    GlobalRemap("udg_QuestMaxProgress", function ()
+        if not QuestTemplates[udg_QuestId] then
+            return questMaxProgress
+        end
+        return QuestTemplates[udg_QuestId].maxProgress
+    end, function (value)
+        questMaxProgress = value
+    end)
+    GlobalRemap("udg_QuestLevel", function ()
+        if not QuestTemplates[udg_QuestId] then
+            return questLevel
+        end
+        return QuestTemplates[udg_QuestId].level
+    end, function (value)
+        questLevel = value
+    end)
 
     ---@param p player
     ---@param slot integer
+    ---@param id string
     ---@return QuestData
-    function SaveQuests(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Quests")
-        local data = QuestData.create(p)
+    function SaveQuests(p, slot, id)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_QUEST_ROOT)
+        local data = QuestData.create(p, slot, id)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then
@@ -807,17 +788,21 @@ OnInit("Quests", function ()
     ---@param slot integer
     ---@return QuestData?
     function LoadQuests(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Quests")
-        local data = QuestData.create()
-        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_QUEST_ROOT)
+        local data = QuestData.create(slot)
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
+
+        if not loaded then
+            print(GetLocalizedString("CANT_LOAD_DATA"):format(GetPlayerName(p)))
+            return
+        end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode then
-                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+            if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("INVALID_FILE"):format(fileRoot))
                 return
             end
-            data:deserialize(decode)
         end
 
         return data
@@ -850,7 +835,7 @@ OnInit("Quests", function ()
 
         for i = 1, data.amount do
             local id = data.id[i]
-            if QuestTemplates[id] then
+            if QuestTemplates[id] and (QuestTemplates[id].onlyOnce or not data.comp[i]) then
                 PlayerQuests[p][id] = {
                     name = QuestTemplates[id].name,
                     description = QuestTemplates[id].description,
@@ -894,6 +879,41 @@ OnInit("Quests", function ()
             BlzFrameSetVisible(QuestButton, true)
         end
     end
+
+    udg_QuestPrizeSend = CreateTrigger()
+    TriggerAddAction(udg_QuestPrizeSend, function ()
+        local p = udg_QuestPlayer
+        local message = ""
+        if udg_QuestPrizeBits > 0 then
+            AdjustPlayerStateBJ(udg_QuestPrizeBits, p, PLAYER_STATE_RESOURCE_GOLD)
+            message = message .. ("|cff808080+\x25d \x25s|r "):format(udg_QuestPrizeBits, GetLocalizedString("DIGIBITS"))
+        end
+        if udg_QuestPrizeCrystals > 0 then
+            AdjustPlayerStateBJ(udg_QuestPrizeCrystals, p, PLAYER_STATE_RESOURCE_LUMBER)
+            message = message .. ("|cffff8080+\x25d \x25s|r "):format(udg_QuestPrizeCrystals, GetLocalizedString("DIGICRYSTALS"))
+        end
+        if udg_QuestPrizeXP > 0 then
+            ForUnitsOfPlayer(p, function (u)
+                if IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitIllusion(u) and GetHeroLevel(u) >= udg_QuestPrizeLevelReq and GetHeroLevel(u) <= udg_QuestPrizeLevelMax then
+                    AddHeroXP(u, udg_QuestPrizeXP, true)
+                end
+            end)
+            message = message .. ("|cffdcc800+\x25d \x25s|r "):format(udg_QuestPrizeXP, GetLocalizedString("EXPERIENCE"))
+        end
+        if udg_QuestPrizeItem ~= 0 then
+            SetItemPlayer(UnitAddItemById(udg_QuestPrizeReceiver, udg_QuestPrizeItem), p, true)
+            message = message .. ("|cff8080ff+\x25s|r "):format(GetObjectName(udg_QuestPrizeItem))
+        end
+        DisplayTimedTextToPlayer(p, 0, 0, 5., message)
+
+        udg_QuestPrizeBits = 0
+        udg_QuestPrizeCrystals = 0
+        udg_QuestPrizeXP = 0
+        udg_QuestPrizeLevelReq = 0
+        udg_QuestPrizeLevelMax = 99
+        udg_QuestPrizeItem = 0
+        udg_QuestPrizeReceiver = nil
+    end)
 
 end)
 Debug.endFile()

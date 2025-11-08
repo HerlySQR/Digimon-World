@@ -3,13 +3,12 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A0BO')
-    local DAMAGE = 100.
-    local AREA = 150.
+    local DAMAGE = 350.
+    local AREA = 190.
 
     RegisterSpellEffectEvent(SPELL, function ()
         local caster = GetSpellAbilityUnit()
         local target = GetSpellTargetUnit()
-        BossIsCasting(caster, true)
 
         UnitAddAbility(caster, CROW_FORM_ID)
         UnitRemoveAbility(caster, CROW_FORM_ID)
@@ -24,7 +23,6 @@ OnInit(function ()
         Timed.call(3, function ()
             if not UnitAlive(caster) then
                 ShowUnitShow(target)
-                BossIsCasting(caster, false)
             else
                 SetUnitAnimation(caster, "attack")
                 local x, y = GetUnitX(caster), GetUnitY(caster)
@@ -58,7 +56,6 @@ OnInit(function ()
                         ShowUnitShow(target)
                     end
                     missile:launch()
-                    BossIsCasting(caster, false)
                 end)
             end
         end)

@@ -17,18 +17,18 @@ OnInit.final(function ()
     local DRAGOMON = FourCC('O023')
     local BLACK_KING_NUMEMON = FourCC('O03Q')
     local RAREMON_SUMMON_EFFECT = "Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl"
-    local MAX_RAREMON_PER_RECT = 20
+    local MAX_RAREMON_PER_RECT = 14
     local BOSSFIGHT_PLACE = gg_rct_PlatinumNumemon_1 ---@type rect
     local RAREMON_BAIT = FourCC('A0G0')
     local ESNARE = FourCC('A0G3')
     local ESNARE_BUFF = FourCC('Beng')
     local ESNARE_ORDER = Orders.ensnare
-    local SUMMON_RAREMON_TICK = 2. -- seconds
-    local EXTRA_HEALTH_FACTOR = 0.5
-    local EXTRA_DMG_FACTOR = 5.
-    local EXTRA_ARMOR = 5
+    local SUMMON_RAREMON_TICK = 4. -- seconds
+    local EXTRA_HEALTH_FACTOR = 0.75
+    local EXTRA_DMG_FACTOR = 1.8
+    local EXTRA_ARMOR = 18
     local EXTRA_MANA_REGEN = 5
-    local RAREMON_EXPLOSION_DAMAGE = 500.
+    local RAREMON_EXPLOSION_DAMAGE = 650.
     local FRENZY = FourCC('A0G8')
     local FRENZY_BUFF = FourCC('B02S')
 
@@ -67,11 +67,11 @@ OnInit.final(function ()
             table.insert(creepLevels, GetHeroLevel(u))
             table.insert(creepLocs, GetUnitLoc(u))
             table.insert(creepFacings, GetUnitFacing(u))
-            ZTS_AddThreatUnit(u, false)
+            Threat.addNPC(u, false)
             AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
-            AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
+            AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
 
             if GetUnitTypeId(u) == DRAGOMON then
                 table.insert(dragomons, u)
@@ -119,11 +119,11 @@ OnInit.final(function ()
                 end
                 u = CreateUnitAtLoc(Digimon.NEUTRAL, creepTypes[i], creepLocs[i], creepFacings[i])
                 SetHeroLevel(u, creepLevels[i], false)
-                ZTS_AddThreatUnit(u, false)
+                Threat.addNPC(u, false)
                 AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
-                AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
+                AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
                 creeps[i] = u
 
                 if GetUnitTypeId(u) == DRAGOMON then
@@ -178,7 +178,16 @@ OnInit.final(function ()
         end)
     end
 
-    Timed.echo(1., function ()
+    local function check(d)
+        local p = d.owner
+        if IsPlayerInGame(p) and IsUnitType(d.root, UNIT_TYPE_HERO) then
+            actHeros:addSingle(d)
+            players:addSingle(p)
+            heros[p] = heros[p] + 1
+        end
+    end
+
+    Timed.echo(1.5, function ()
         -- Set time
         local time = TimerGetRemaining(tm)
         if time > 0 then
@@ -194,16 +203,11 @@ OnInit.final(function ()
             heros[p] = 0
         end
 
-        players:clear()
+        if not players:isEmpty() then
+            players:clear()
+        end
 
-        Digimon.enumInRect(place, function (d)
-            local p = d.owner
-            if IsPlayerInGame(p) and IsUnitType(d.root, UNIT_TYPE_HERO) then
-                actHeros:addSingle(d)
-                players:addSingle(p)
-                heros[p] = heros[p] + 1
-            end
-        end)
+        Digimon.enumInRect(place, check)
 
         local newHeros = actHeros:except(prevHeros)
         for d in newHeros:elements() do
@@ -222,9 +226,9 @@ OnInit.final(function ()
             end
         end
 
-        if UnitAlive(boss) then
+        --if UnitAlive(boss) then
             --TimerDialogDisplay(window, players:contains(GetLocalPlayer()))
-        end
+        --end
 
         if not started and players:size() > 0 then
             startSewers()
@@ -262,7 +266,7 @@ OnInit.final(function ()
                         d:setLevel(85)
                         SetUnitMoveSpeed(d.root, 250)
                         SetUnitScale(d.root, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SCALING_VALUE), 0, 0)
-                        ZTS_AddThreatUnit(d.root, false)
+                        Threat.addNPC(d.root, false)
                         SetUnitState(d.root, UNIT_STATE_MANA, 0)
                         BlzSetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE, 0.6 * BlzGetUnitRealField(d.root, UNIT_RF_SELECTION_SCALE))
                         BlzSetUnitRealField(d.root, UNIT_RF_MANA_REGENERATION, 0)
@@ -277,7 +281,7 @@ OnInit.final(function ()
                     end
                     for j = summonCounts[i], 1, -1 do
                         local d = summonings[i][j]
-                        ZTS_ModifyThreat(u, d.root, 10., true)
+                        Threat.modify(u, d.root, 10., true)
                     end
                 end)
 
@@ -286,32 +290,33 @@ OnInit.final(function ()
                     local remove = false
 
                     if not exploding[d] then
-                        if math.random(10) == 1 then
+                        if math.random(5) == 1 then
                             exploding[d] = true
                             d:pause()
                             local eff = AddSpecialEffectTarget("Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl", d.root, "overhead")
                             BlzSetSpecialEffectScale(eff, 3.)
-                            DestroyEffectTimed(eff, SUMMON_RAREMON_TICK)
+                            BlzSetSpecialEffectColor(eff, 255, 0, 0)
+                            DestroyEffectTimed(eff, SUMMON_RAREMON_TICK/2)
                         end
                     else
                         if d:isAlive() then
                             local x, y = d:getPos()
                             ForUnitsInRange(x, y, 300., function (u)
                                 if IsUnitEnemy(d.root, GetOwningPlayer(u)) then
-                                    Damage.apply(d.root, u, RAREMON_EXPLOSION_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                                    Damage.apply(d.root, u, RAREMON_EXPLOSION_DAMAGE, false, false, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
                                 elseif GetUnitTypeId(u) == RAREMON then
                                     SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE) - RAREMON_EXPLOSION_DAMAGE)
                                 end
                             end)
                             DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Demon\\DemonLargeDeathExplode\\DemonLargeDeathExplode.mdl", x, y))
-                            DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\Mortar\\MortarMissile.mdl", x, y))
+                            DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", x, y))
                         end
                         d:destroy()
                     end
 
                     if not d:isAlive() then
                         remove = true
-                    elseif not ZTS_GetCombatState(d.root) then
+                    elseif not Threat.getCombatState(d.root) then
                         d:destroy()
                         remove = true
                     end
@@ -325,9 +330,13 @@ OnInit.final(function ()
             end
         end
 
-        prevHeros:clear()
-        prevHeros:addAll(actHeros)
-        actHeros:clear()
+        if not prevHeros:isEmpty() then
+            prevHeros:clear()
+        end
+        if not actHeros:isEmpty() then
+            prevHeros:addAll(actHeros)
+            actHeros:clear()
+        end
     end)
 
     local attractionPoints = SyncedTable.create() ---@type table<Digimon, {remain: number, x: number, y: number}>
@@ -336,7 +345,7 @@ OnInit.final(function ()
     RegisterSpellEffectEvent(RAREMON_BAIT, function ()
         local x, y = GetSpellTargetX(), GetSpellTargetY()
         Digimon.enumInRange(x, y, 1500., function (d)
-            if d:getTypeId() == RAREMON and d:getOwner() == Digimon.NEUTRAL then
+            if d:getTypeId() == RAREMON and RectContainsCoords(place, d:getPos()) then
                 if not attractionPoints[d] then
                     attractionPoints[d] = {}
                 end
@@ -347,10 +356,10 @@ OnInit.final(function ()
         end)
     end)
 
-    Timed.echo(0.5, function ()
+    Timed.echo(1.5, function ()
         for d, data in pairs(attractionPoints) do
             d:issueOrder(Orders.move, data.x, data.y)
-            data.remain = data.remain - 0.5
+            data.remain = data.remain - 1.5
             if data.remain <= 0 then
                 attractionPoints[d] = nil
             end
@@ -361,47 +370,71 @@ OnInit.final(function ()
 
     local inRange = MDTable.create(2, false) ---@type table<unit, table<unit, boolean>>
 
-    Timed.echo(1., function ()
-        for i = #dragomons, 1, -1 do
-            if UnitAlive(dragomons[i]) then
-                local x, y = GetLocationX(dragomonsPos[dragomons[i]]), GetLocationY(dragomonsPos[dragomons[i]])
-                ForUnitsInRange(x, y, 900, function (u)
-                    if IsPlayerInGame(GetOwningPlayer(u)) then
-                        local d = DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u))
-                        if d < 700. then
-                            inRange[dragomons[i]][u] = true
-                        elseif inRange[dragomons[i]][u] and not UnitHasBuffBJ(u, ESNARE_BUFF) then
-                            inRange[dragomons[i]] = nil
-                            IssueTargetOrderById(dragomons[i], ESNARE_ORDER, u)
-                        end
+    Timed.echo(2., function ()
+        if started then
+            for i = #dragomons, 1, -1 do
+                if UnitAlive(dragomons[i]) then
+                    if UnitCanCastAbility(dragomons[i], ESNARE) then
+                        local x, y = GetLocationX(dragomonsPos[dragomons[i]]), GetLocationY(dragomonsPos[dragomons[i]])
+                        ForUnitsInRange(x, y, 900, function (u)
+                            if IsPlayerInGame(GetOwningPlayer(u)) then
+                                local d = DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u))
+                                if d < 700. then
+                                    inRange[dragomons[i]][u] = true
+                                elseif inRange[dragomons[i]][u] and not UnitHasBuffBJ(u, ESNARE_BUFF) then
+                                    inRange[dragomons[i]] = nil
+                                    IssueTargetOrderById(dragomons[i], ESNARE_ORDER, u)
+                                end
+                            end
+                        end)
                     end
-                end)
-            else
-                RemoveLocation(dragomonsPos[dragomons[i]])
-                dragomonsPos[dragomons[i]] = nil
-                table.remove(dragomons, i)
+                else
+                    RemoveLocation(dragomonsPos[dragomons[i]])
+                    dragomonsPos[dragomons[i]] = nil
+                    table.remove(dragomons, i)
+                end
             end
         end
     end)
 
     -- Drop items
+
     do
+        local specialItems ---@type itempool
+
         local t = CreateTrigger()
         TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_DEATH)
-        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetDyingUnit()) == BLACK_KING_NUMEMON end))
+        TriggerAddCondition(t, Condition(function () return RectContainsUnit(place, GetDyingUnit()) end))
         TriggerAddAction(t, function ()
-            CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
-
-            local open = true
-            ForUnitsInRect(place, function (u)
-                if GetUnitTypeId(u) == BLACK_KING_NUMEMON and UnitAlive(u) then
-                    open = false
+            if not GetKillingUnit() then
+                return
+            end
+            if GetUnitTypeId(GetDyingUnit()) == BLACK_KING_NUMEMON then
+                if not specialItems then
+                    specialItems = CreateItemPool()
+                    for i = 1, #udg_SewersSpecialItems do
+                        ItemPoolAddItemType(specialItems, udg_SewersSpecialItems[i], udg_SewersSpecialItemsWeights[i])
+                    end
                 end
-            end)
+                if math.random(15) == 1 then
+                    PlaceRandomItem(specialItems, GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+                end
 
-            if open then
-                for _, d in ipairs(wall) do
-                    ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+                local open = true
+                ForUnitsInRect(place, function (u)
+                    if GetUnitTypeId(u) == BLACK_KING_NUMEMON and UnitAlive(u) then
+                        open = false
+                    end
+                end)
+
+                if open then
+                    for _, d in ipairs(wall) do
+                        ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+                    end
+                end
+            elseif GetUnitTypeId(GetDyingUnit()) ~= RAREMON then
+                if math.random(50) == 1 then
+                    CreateItem(udg_SewersItems[math.random(#udg_SewersItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
             end
         end)
@@ -409,8 +442,8 @@ OnInit.final(function ()
 
     -- Frenzy
 
-    Timed.echo(1., function ()
-        ForUnitsInRect(place, function (u)
+    Timed.echo(2., function ()
+        local function checkFrenzy(u)
             if GetUnitTypeId(u) == BLACK_KING_NUMEMON then
                 if GetUnitHPRatio(u) < 0.55 then
                     if GetUnitAbilityLevel(u, FRENZY) == 0 then
@@ -422,23 +455,21 @@ OnInit.final(function ()
                     end
                 end
             end
-        end)
+        end
+
+        ForUnitsInRect(place, checkFrenzy)
     end)
 
     do
         local t = CreateTrigger()
-        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_ORDER)
-        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER)
+        TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
         TriggerAddCondition(t, Condition(function ()
             return GetUnitTypeId(GetOrderedUnit()) == BLACK_KING_NUMEMON and GetUnitAbilityLevel(GetOrderedUnit(), FRENZY) > 0
         end))
         TriggerAddAction(t, function ()
-            if not ZTS_IsEvent() then
-                return
-            end
+            local numemon = GetOrderedUnit()
             DisableTrigger(t)
-            IssueImmediateOrderById(GetOrderedUnit(), Orders.frenzy)
+            IssueImmediateOrderById(numemon, Orders.frenzy)
             EnableTrigger(t)
         end)
     end

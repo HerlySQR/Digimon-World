@@ -5,7 +5,7 @@ OnInit(function ()
     Require "Set"
     Require "AbilityUtils"
     Require "Digimon Capture"
-    Require "ZTS"
+    Require "Threat System"
 
     local CREEPS_PER_PLAYER     ---@type integer
     local CREEPS_PER_REGION     ---@type integer
@@ -18,11 +18,12 @@ OnInit(function ()
     local RANGE_LEVEL_2         ---@type number
     local NEIGHBOURHOOD         ---@type number
     local INTERVAL              ---@type number
-    local CHANCE_COMMON = 0.5
+    local CHANCE_COMMON = 1.
     local CHANCE_UNCOMMON       ---@type number
     local CHANCE_RARE           ---@type number
     local CHANCE_LEGENDARY      ---@type number
     local ITEM_DROP_CHANCE      ---@type integer
+    local PARTITIONS = 4
 
     ---@class Creep : Digimon
     ---@field remaining number
@@ -67,7 +68,7 @@ OnInit(function ()
         creep.patrolling = true
         creep.rd = rd
 
-        ZTS_AddThreatUnit(creep.root, true)
+        Threat.addNPC(creep.root, true)
 
         return creep
     end
@@ -105,6 +106,7 @@ OnInit(function ()
                 table.insert(legendaries, id)
             end
         end
+        weight = weight/#types
 
         local chanceCommon = 1
         if CHANCE_LEGENDARY > 0 and #legendaries > 0 then
@@ -264,21 +266,42 @@ OnInit(function ()
 
     local PlayersInRegion = Set.create()
     local spawnQueue = {} ---@type RegionData[] 
+    local regionData, lvl, bossNearby
 
-    local function Update()
-        for node = 1, #All do
-            local regionData = All[node]
+    local function checkForPlayerUnits(u)
+        if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+            regionData.someoneClose = true
+            regionData.inregion = true
+            PlayersInRegion:addSingle(GetOwningPlayer(u))
+            lvl = math.max(lvl, GetHeroLevel(u))
+        end
+    end
+
+    local function checkForSomeoneClose(u)
+        if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
+            regionData.someoneClose = true
+        end
+    end
+
+    local function checkForBossNearby(u)
+        if GetOwningPlayer(u) == Digimon.VILLAIN then
+            bossNearby = true
+        end
+    end
+
+    local function Update(start, finish)
+        for node = start, finish do
+            regionData = All[node]
             -- Check if the unit nearby the spawn region belongs to a player
-            regionData.inregion = false
-            local lvl = 1
-            ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, function (u)
-                if GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-                    regionData.someoneClose = true
-                    regionData.inregion = true
-                    PlayersInRegion:addSingle(GetOwningPlayer(u))
-                    lvl = math.max(lvl, GetHeroLevel(u))
+            lvl = 1
+            if not regionData.inregion then
+                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_1, checkForPlayerUnits)
+                if regionData.inregion then
+                    for rd in regionData.sameRegion:elements() do
+                        rd.inregion = true
+                    end
                 end
-            end)
+            end
             -- Check if a unit is still nearby the spawn region
             regionData.someoneClose = true
             -- Control the creep or the spawn
@@ -294,18 +317,20 @@ OnInit(function ()
                 regionData.delay = regionData.delay - INTERVAL
                 regionData.waitToSpawn = regionData.waitToSpawn - INTERVAL
             else
-                regionData.someoneClose = false
-                ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, function (u)
-                    if not regionData.someoneClose and GetPlayerController(GetOwningPlayer(u)) == MAP_CONTROL_USER then
-                        regionData.someoneClose = true
+                if not regionData.someoneClose then
+                    ForUnitsInRange(regionData.spawnpoint.x, regionData.spawnpoint.y, RANGE_LEVEL_2, checkForSomeoneClose)
+                    if regionData.someoneClose then
+                        for rd in regionData.sameRegion:elements() do
+                            rd.inregion = true
+                        end
                     end
-                end)
+                end
                 regionData.delay = math.max(regionData.delay, DELAY_NORMAL)
             end
 
             for _, creep in ipairs(regionData.creeps) do
                 if creep.rd == regionData then
-                    creep.patrolling = not ZTS_GetCombatState(creep.root)
+                    creep.patrolling = not Threat.getCombatState(creep.root)
                     if creep.patrolling then
                         creep.remaining = creep.remaining - INTERVAL
                     end
@@ -331,36 +356,38 @@ OnInit(function ()
                         for r2 in regionData.sameRegion:elements() do
                             table.remove(r2.creeps, i)
                         end
+                        creep.rd = nil
                     end
                 end
 
-                local bossNearby = false
-                ForUnitsInRange(creep:getX(), creep:getY(), 1000., function (u)
-                    if GetOwningPlayer(u) == Digimon.VILLAIN then
-                        bossNearby = true
-                    end
-                end)
+                if creep:getCurrentOrder() ~= Orders.smart then
+                    bossNearby = false
+                    ForUnitsInRange(creep:getX(), creep:getY(), 1000., checkForBossNearby)
 
-                if not bossNearby then
-                    if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
-                        local dist = GetRandomReal(128, 384)
-                        local angle = GetRandomReal(0, 2*math.pi)
-                        local x, y = creep:getX() + dist * math.cos(angle), creep:getY() + dist * math.sin(angle)
-                        if IsTerrainWalkable(x, y) then
-                            creep:issueOrder(Orders.attack, x, y)
+                    if not bossNearby then
+                        if GetUnitCurrentOrder(creep.root) == 0 and math.random(10) == 1 then
+                            local dist = GetRandomReal(128, 384)
+                            local angle = GetRandomReal(0, 2*math.pi)
+                            local x, y = creep:getX() + dist * math.cos(angle), creep:getY() + dist * math.sin(angle)
+                            if IsTerrainWalkable(x, y) then
+                                creep:issueOrder(Orders.attack, x, y)
+                            end
                         end
+                    else
+                        creep:issueOrder(Orders.smart, regionData.spawnpoint.x, regionData.spawnpoint.y)
                     end
-                else
-                    creep:issueOrder(Orders.smart, regionData.spawnpoint.x, regionData.spawnpoint.y)
                 end
             end
             if not PlayersInRegion:isEmpty() then
                 PlayersInRegion:clear()
             end
+
+            regionData.inregion = false
+            regionData.someoneClose = false
         end
 
         while true do
-            local regionData = table.remove(spawnQueue)
+            regionData = table.remove(spawnQueue)
             if not regionData then break end
             for r in regionData.neighbourhood:elements() do
                 r.queued = false
@@ -425,19 +452,50 @@ OnInit(function ()
     end)
 
     OnInit.final(function ()
-        Timed.echo(INTERVAL, Update)
+        if #All < PARTITIONS then
+            Timed.echo(INTERVAL, function ()
+                Update(1, #All)
+            end)
+        else
+            local delay = INTERVAL / PARTITIONS
+            local delta = #All//PARTITIONS
+            local parts = {
+                1, delta,
+                delta+1, 2*delta,
+                2*delta+1, 3*delta,
+                3*delta+1, #All
+            }
+            TimerStart(CreateTimer(), INTERVAL, true, function ()
+                Update(parts[1], parts[2])
+            end)
+            Timed.call(delay, function ()
+                TimerStart(CreateTimer(), INTERVAL, true, function ()
+                    Update(parts[3], parts[4])
+                end)
+                Timed.call(delay, function ()
+                    TimerStart(CreateTimer(), INTERVAL, true, function ()
+                        Update(parts[5], parts[6])
+                    end)
+                    Timed.call(delay, function ()
+                        TimerStart(CreateTimer(), INTERVAL, true, function ()
+                            Update(parts[7], parts[8])
+                        end)
+                    end)
+                end)
+            end)
+        end
     end)
 
     Digimon.capturedEvent:register(function (info)
         local target = info.target ---@type Creep
         target.captured = true
-        ZTS_RemoveThreatUnit(target.root)
-        ZTS_AddPlayerUnit(target.root)
+        Threat.removeNPC(target.root)
+        Threat.addPlayerUnit(target.root)
     end)
-    Digimon.killEvent:register(function (info)
+    Digimon.deathEvent:register(function (info)
         local target = info.target ---@type Creep
         if target.rd then
-            ZTS_RemoveThreatUnit(target.root)
+            Threat.removeNPC(target.root)
             target.captured = true
             local itm = target.rd.itemTable[math.random(#target.rd.itemTable)]
             if itm then
@@ -447,6 +505,19 @@ OnInit(function ()
             end
         end
     end)
+
+    function RerollCreepItem(creep)
+        if creep.rd then
+            Threat.removeNPC(creep.root)
+            creep.captured = true
+            local itm = creep.rd.itemTable[math.random(#creep.rd.itemTable)]
+            if itm then
+                if math.random(100) <= ITEM_DROP_CHANCE then
+                    CreateItem(itm, creep:getPos())
+                end
+            end
+        end
+    end
 
     -- For GUI
     udg_CreepSpawnCreate = CreateTrigger()

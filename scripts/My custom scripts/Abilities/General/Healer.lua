@@ -4,7 +4,7 @@ OnInit(function ()
 
     local Spell = FourCC('A02J')
     local Buff = FourCC('B006')
-    local IntFactor = 3
+    local IntFactor = 0.25
     local Area = 600. -- The same as is in the object editor
     local CasterEff = "Abilities\\Spells\\Orc\\Disenchant\\DisenchantSpecialArt.mdl"
     local TargetEff = "Abilities\\Spells\\Human\\Heal\\HealTarget.mdl"
@@ -13,7 +13,7 @@ OnInit(function ()
     TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
     TriggerAddAction(t, function ()
         local caster = GetSpellAbilityUnit()
-        if GetUnitAbilityLevel(caster, Spell) > 0 then
+        if GetUnitAbilityLevel(caster, Spell) > 0 and BlzGetUnitAbilityManaCost(caster, GetSpellAbilityId(), GetUnitAbilityLevel(caster, GetSpellAbilityId())-1) > 0 then
             local eff = AddSpecialEffect(CasterEff, GetUnitX(caster), GetUnitY(caster))
             BlzSetSpecialEffectAlpha(eff, 127)
             BlzSetSpecialEffectScale(eff, 3.)

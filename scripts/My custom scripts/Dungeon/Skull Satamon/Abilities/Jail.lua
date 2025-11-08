@@ -9,7 +9,7 @@ OnInit(function ()
     local TARGET_EFFECT = "Abilities\\Spells\\Undead\\Darksummoning\\DarkSummonTarget.mdl"
     local JAIL_EFFECT = "Abilities\\Spells\\Undead\\UnholyAura\\UnholyAura.mdl"
     local KILL_EFFECT = "Abilities\\Spells\\Other\\Charm\\CharmTarget.mdl"
-    local DMG_PER_SEC = 10.
+    local DMG_PER_SEC = 60.
 
     local jails = {gg_dest_B07X_52154, gg_dest_B07X_52152, gg_dest_B07X_52153} ---@type destructable[]
     local facings = {190.99, 164.85, 119.37} -- Why there is not a GetDestructableFacing function?

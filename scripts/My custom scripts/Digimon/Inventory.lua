@@ -1,10 +1,7 @@
 Debug.beginFile("Inventory")
 OnInit(function ()
-    --Require "DigimonBank"
     Require "ErrorMessage"
-    --Require "Menu"
     Require "PlayerUtils"
-    --Require "AddHook"
 
     --[[
         Permanent = Shield (max. 1)
@@ -61,7 +58,7 @@ OnInit(function ()
                     end
 
                     if has then
-                        ErrorMessage("You can't carry more of this item.", GetOwningPlayer(u))
+                        ErrorMessage(GetLocalizedString("CANT_CARRY_MORE_OF_THIS_ITEM"), GetOwningPlayer(u))
                         UnitRemoveItem(u, m)
                     else
                         local slot
@@ -75,60 +72,15 @@ OnInit(function ()
                             else
                                 slot = ACCESORIES_SLOT_2
                             end
-                        --elseif typ == ITEM_TYPE_MISCELLANEOUS then
-                        --    slot = DIGIVICE_SLOT
                         elseif typ == ITEM_TYPE_CHARGED then
                             slot = CREST_SLOT
                         else
                             slot = DIGIVICE_SLOT
-                            --error("Item not identified")
                         end
                         UnitDropItemSlot(u, m, slot)
                     end
                 end)
             end
     end)
-
-    --[[Timed.echo(1., function ()
-        ForForce(FORCE_PLAYING, function ()
-            local p = GetEnumPlayer()
-            for _, d in ipairs(GetUsedDigimons(p)) do
-                for i = 0, 5 do
-                    local m = UnitItemInSlot(d.root, i)
-                    if m then
-                        local typ = GetItemType(m)
-                        if (typ == ITEM_TYPE_PERMANENT and i ~= SHIELD_SLOT)
-                            or (typ == ITEM_TYPE_ARTIFACT and i ~= WEAPON_SLOT)
-                            or (typ == ITEM_TYPE_CAMPAIGN and (i ~= ACCESORIES_SLOT_1 and i ~= ACCESORIES_SLOT_2))
-                            --or (typ == ITEM_TYPE_MISCELLANEOUS and i ~= DIGIVICE_SLOT)
-                            or (typ == ITEM_TYPE_CHARGED and i ~= CREST_SLOT) then
-
-                            local slot
-                            if typ == ITEM_TYPE_PERMANENT then
-                                slot = SHIELD_SLOT
-                            elseif typ == ITEM_TYPE_ARTIFACT then
-                                slot = WEAPON_SLOT
-                            elseif typ == ITEM_TYPE_CAMPAIGN then
-                                if UnitItemInSlot(d.root, ACCESORIES_SLOT_2) then
-                                    slot = ACCESORIES_SLOT_1
-                                else
-                                    slot = ACCESORIES_SLOT_2
-                                end
-                            --elseif typ == ITEM_TYPE_MISCELLANEOUS then
-                            --    slot = DIGIVICE_SLOT
-                            elseif typ == ITEM_TYPE_CHARGED then
-                                slot = CREST_SLOT
-                            else
-                                slot = DIGIVICE_SLOT
-                            end
-
-                            UnitDropItemSlot(d.root, m, slot)
-                            --ErrorMessage("This item doesn't belong to this slot.", p)
-                        end
-                    end
-                end
-            end
-        end)
-    end)]]
 end)
 Debug.endFile()

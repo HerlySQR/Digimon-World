@@ -4,8 +4,8 @@ OnInit("Obj2Str", function ()
     Require "AddHook"
 
     local MAX_DEPTH = 99
-    local handle2Int = setmetatable({}, {__mode = 'k'}) ---@type table<handle, integer>
-    local int2Handle = setmetatable({}, {__mode = 'v'}) ---@type table<integer, handle>
+    local handle2Int = {} ---@type table<handle, integer>
+    local int2Handle = {} ---@type table<integer, handle>
     local recycle = __jarray(0) ---@type table<integer, integer>
     local instanceCount = 0
 
@@ -40,7 +40,7 @@ OnInit("Obj2Str", function ()
         recycle[old] = recycle[0]
         recycle[0] = old
 
-        int2Handle[handle2Int[h]] = nil
+        int2Handle[old] = nil
         handle2Int[h] = nil
     end
 

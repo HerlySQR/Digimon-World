@@ -19,6 +19,17 @@ OnInit("DigimonEvolution", function ()
         evolveCondEvent:register(func)
     end
 
+    local starters = {
+        FourCC('H04W'), -- Kamemon
+        FourCC('H000'), -- Agumon S
+        FourCC('H00K'), -- Gaomon
+        FourCC('H00Q'), -- Gilmon
+        FourCC('H01E'), -- Renamon
+        FourCC('H01O'), -- Terriermon
+        FourCC('H00G'), -- Falcomon
+        FourCC('H011') -- Lalamon
+    }
+
     -- Evolution abilities
 
     EvolveAbil = FourCC('A02H')
@@ -213,7 +224,7 @@ OnInit("DigimonEvolution", function ()
 
         -- Update dialog
         DialogClear(EvolveDialog[p])
-        DialogSetMessage(EvolveDialog[p], "What digimon you choose for " .. GetHeroProperName(u) .. "?")
+        DialogSetMessage(EvolveDialog[p], GetLocalizedString("DIGIMON_EVOLUTION_WHAT"):format(GetHeroProperName(u)))
         EvolveOption[p] = {}
 
         local set = PossibleEvolution[Digimon.getInstance(u)]
@@ -226,7 +237,7 @@ OnInit("DigimonEvolution", function ()
                 RemoveUnit(u2)
             end
         end
-        DialogAddButton(EvolveDialog[p], "Cancel", 0)
+        DialogAddButton(EvolveDialog[p], GetLocalizedString("DIGIMON_EVOLUTION_CANCEL"), 0x1B)
 
         DialogDisplay(p, EvolveDialog[p], true)
     end)
@@ -294,7 +305,7 @@ OnInit("DigimonEvolution", function ()
 
             local cur = Transmission.create(Force(p))
             cur.isSkippable = false
-            cur:AddLine(u, nil, GetHeroProperName(u), nil, GetHeroProperName(u) .. " is digievolving into...", Transmission.SET, 1., true)
+            cur:AddLine(u, nil, GetHeroProperName(u), nil, GetLocalizedString("DIGIMON_EVOLUTION_TO"):format(GetHeroProperName(u)), Transmission.SET, 1., true)
             cur:AddActions(time - 2., function ()
                 SetUnitAnimation(u, "stand")
                 local alpha = 255
@@ -387,6 +398,51 @@ OnInit("DigimonEvolution", function ()
         udg_EvolveAgiCondition = nil
         udg_EvolveIntCondition = nil
     end)
+
+    local isStarter = {} ---@type table<integer, boolean>
+
+    ---@param starterId integer
+    ---@param id integer
+    ---@return boolean
+    local function searchForEvo(starterId, id)
+        if not EvolutionConditions[starterId] then
+            return false
+        end
+        for _, cond in ipairs(EvolutionConditions[starterId]) do
+            if cond.toEvolve == id then
+                isStarter[id] = true
+                return true
+            else
+                if searchForEvo(cond.toEvolve, id) then
+                    isStarter[id] = true
+                    return true
+                end
+            end
+        end
+        return false
+    end
+
+    ---@param d Digimon
+    ---@return boolean
+    function IsDigimonStarter(d)
+        local id = d:getTypeId()
+
+        if isStarter[id] then
+            return true
+        end
+
+        for _, starterId in ipairs(starters) do
+            if starterId == id then
+                isStarter[id] = true
+                return true
+            else
+                if searchForEvo(starterId, id) then
+                    return true
+                end
+            end
+        end
+        return false
+    end
 
 end)
 Debug.endFile()

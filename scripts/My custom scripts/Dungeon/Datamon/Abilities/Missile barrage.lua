@@ -5,9 +5,9 @@ OnInit(function ()
 
     local SPELL = FourCC('A0E0')
     local DELAY = 2.5
-    local DAMAGE_PER_SHOT = {32., 320.}
+    local DAMAGE_PER_SHOT = {180., 620.}
     local MAX_SHOTS = 12
-    local AREA = 175.
+    local AREA = 225.
     local MISSILE_MODEL = "Abilities\\Weapons\\GyroCopter\\GyroCopterMissile.mdl"
     local INTERVAL = 0.03125
 
@@ -17,13 +17,12 @@ OnInit(function ()
         local x = GetSpellTargetX()
         local y = GetSpellTargetY()
 
-        BossIsCasting(caster, true)
         PauseUnit(caster, true)
         SetUnitAnimation(caster, "spell")
 
         local bar = ProgressBar.create()
         bar:setColor(PLAYER_COLOR_PEANUT)
-        bar:setZOffset(250)
+        bar:setZOffset(450)
         bar:setSize(1.3)
         bar:setTargetUnit(caster)
 
@@ -40,10 +39,9 @@ OnInit(function ()
             if UnitAlive(caster) then
                 local counter = MAX_SHOTS
                 Timed.echo(INTERVAL, function ()
-                    if counter == 0 then
+                    if counter == 0 or not UnitAlive(caster) then
                         PauseUnit(caster, false)
                         ResetUnitAnimation(caster)
-                        BossIsCasting(caster, false)
                         return true
                     end
                     SetUnitAnimation(caster, "spell throw")

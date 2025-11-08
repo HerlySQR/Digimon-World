@@ -23,28 +23,50 @@ OnInit("PressSaveOrLoad", function ()
     end
 
     ---@class PlayerData: Serializable
+    ---@field id string
     ---@field gold integer
     ---@field lumber integer
     ---@field food integer
     ---@field date osdate
     ---@field vistedPlaces boolean[]
     ---@field vistedPlaceCount integer
+    ---@field unlockedInfo UnlockedInfoData
+    ---@field materials MaterialData
+    ---@field unstableDataParts integer
+    ---@field slot integer
     PlayerData = setmetatable({}, Serializable)
     PlayerData.__index = PlayerData
 
     ---@param p player?
+    ---@param slot integer
     ---@return PlayerData|Serializable
-    function PlayerData.create(p)
+    function PlayerData.create(p, slot)
         local self = setmetatable({
             vistedPlaces = __jarray(false)
         }, PlayerData)
+        if type(p) == "number" then
+            slot = p
+            p = nil
+        end
+        assert(type(slot) == "number", "The slot must be a number.")
+        self.slot = slot
         if p then
             self.gold = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
             self.lumber = GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)
             self.food = GetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED)
-            self.date = GetSyncedData(p, os.date, "*t")
+            _, self.date = pcall(GetSyncedData, p, os.date, "*t")
             self.vistedPlaces = GetVisitedPlaces(p)
             self.vistedPlaceCount = #self.vistedPlaces
+            self.materials = MaterialData.create(p)
+            self.unstableDataParts = GetUnstableDataParts(p)
+            local id = ""
+            for k, v in pairs(self.date) do
+                if k == "isdst" then
+                    v = v and "1" or "0"
+                end
+                id = id .. v
+            end
+            self.id = id
         end
         return self
     end
@@ -58,9 +80,17 @@ OnInit("PressSaveOrLoad", function ()
         for i = 1, self.vistedPlaceCount do
             self:addProperty("vp" .. i, self.vistedPlaces[i])
         end
+        self:addProperty("slot", self.slot)
+        self:addProperty("materials", self.materials:serialize())
+        self:addProperty("uDPs", self.unstableDataParts)
+        self:addProperty("id", self.id)
     end
 
     function PlayerData:deserializeProperties()
+        if self.slot ~= self:getIntProperty("slot") then
+            error("The slot is not the same.")
+            return
+        end
         self.gold = self:getIntProperty("gold")
         self.lumber = self:getIntProperty("lumber")
         self.food = self:getIntProperty("food")
@@ -69,6 +99,10 @@ OnInit("PressSaveOrLoad", function ()
         for i = 1, self.vistedPlaceCount do
             self.vistedPlaces[i] = self:getBoolProperty("vp" .. i)
         end
+        self.materials = MaterialData.create()
+        self.materials:deserialize(self:getStringProperty("materials"))
+        self.unstableDataParts = self:getIntProperty("uDPs")
+        self.id = self:getStringProperty("id")
     end
 
     local PlayerDatas = {} ---@type table<player, PlayerData[]>
@@ -98,11 +132,17 @@ OnInit("PressSaveOrLoad", function ()
         SetBank(p, BankData.create())
         SetBackpack(p, BackpackData.create())
         SetQuests(p, QuestData.create())
+        MaterialData.create():apply(p)
         EnumItemsInRect(WorldBounds.rect, nil, function ()
             if GetItemPlayer(GetEnumItem()) == p then
                 RemoveItem(GetEnumItem())
             end
         end)
+        ClearDiary(p)
+        SetUnstableDataParts(p, 0)
+        if p == GetLocalPlayer() then
+            RestartMusic()
+        end
 
         restartListener:run(p)
     end
@@ -110,8 +150,8 @@ OnInit("PressSaveOrLoad", function ()
     ---@param p player
     ---@param slot integer
     function SavePlayerData(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "PlayerData")
-        local data = PlayerData.create(p)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_PLAYER_DATA_ROOT)
+        local data = PlayerData.create(p, slot)
         local code = EncodeString(p, data:serialize())
 
         if p == GetLocalPlayer() then
@@ -119,47 +159,83 @@ OnInit("PressSaveOrLoad", function ()
         end
 
         PlayerDatas[p][slot] = data
-        DigimonDatas[p][slot] = SaveDigimons(p, slot)
-        BackpackDatas[p][slot] = SaveBackpack(p, slot)
-        QuestDatas[p][slot] = SaveQuests(p, slot)
+        DigimonDatas[p][slot] = SaveDigimons(p, slot, data.id)
+        BackpackDatas[p][slot] = SaveBackpack(p, slot, data.id)
+        QuestDatas[p][slot] = SaveQuests(p, slot, data.id)
+        data.unlockedInfo = SaveDiary(p, slot, data.id)
     end
 
     ---@param p player
     ---@param slot integer
     ---@return boolean
     function LoadPlayerData(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "PlayerData")
-        local data = PlayerData.create()
-        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_PLAYER_DATA_ROOT)
+        local data = PlayerData.create(slot)
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
+
+        if not loaded then
+            print(GetLocalizedString("CANT_LOAD_DATA"):format(GetPlayerName(p)))
+            return false
+        end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode then
-                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+            if not success or not decode or not xpcall(data.deserialize, print, data, decode) then
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("INVALID_FILE"):format(fileRoot))
                 return false
             end
-            data:deserialize(decode)
         else
             return false
         end
 
-        PlayerDatas[p][slot] = data
-        DigimonDatas[p][slot] = LoadDigimons(p, slot)
-        BackpackDatas[p][slot] = LoadBackpack(p, slot)
-        QuestDatas[p][slot] = LoadQuests(p, slot)
+        local id = data.id
 
-        loadListener:run(p)
+        local bdata = LoadDigimons(p, slot)
+        if not bdata or bdata.id ~= id then
+            return false
+        end
+
+        local pdata = LoadBackpack(p, slot)
+        if not pdata or pdata.ind ~= id then
+            return false
+        end
+
+        local qdata = LoadQuests(p, slot)
+        if not qdata or qdata.ind ~= id then
+            return false
+        end
+
+        data.unlockedInfo = LoadDiary(p, slot)
+        if not data.unlockedInfo or data.unlockedInfo.id ~= id then
+            return false
+        end
+
+        PlayerDatas[p][slot] = data
+        DigimonDatas[p][slot] = bdata
+        BackpackDatas[p][slot] = pdata
+        QuestDatas[p][slot] = qdata
 
         return true
     end
 
     function SetPlayerData(p, slot)
+        EnumItemsInRect(WorldBounds.rect, nil, function ()
+            if GetItemPlayer(GetEnumItem()) == p then
+                RemoveItem(GetEnumItem())
+            end
+        end)
+        if QuestDatas[p][slot] then
+            SetQuests(p, QuestDatas[p][slot])
+        end
         if PlayerDatas[p][slot] then
             local data = PlayerDatas[p][slot]
             SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, data.gold)
             SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, data.lumber)
             SetPlayerState(p, PLAYER_STATE_RESOURCE_FOOD_USED, data.food)
+            data.unlockedInfo:apply()
             ApplyVisitedPlaces(p, data.vistedPlaces)
+            data.materials:apply(p)
+            SetUnstableDataParts(p, data.unstableDataParts)
         end
         if DigimonDatas[p][slot] then
             SetBank(p, DigimonDatas[p][slot])
@@ -167,19 +243,19 @@ OnInit("PressSaveOrLoad", function ()
         if BackpackDatas[p][slot] then
             SetBackpack(p, BackpackDatas[p][slot])
         end
-        if QuestDatas[p][slot] then
-            SetQuests(p, QuestDatas[p][slot])
+        if p == GetLocalPlayer() then
+            RestartMusic()
         end
+
+        loadListener:run(p)
     end
 
     local MAX_DIGIMONS = udg_MAX_DIGIMONS
-    local MAX_SAVED = udg_MAX_SAVED_DIGIMONS
+    local MAX_SAVED = udg_MAX_SAVED_DIGIMONS_2
     local MAX_QUESTS = udg_MAX_QUESTS
 
     local CHUNK_SIZE = 150
 
-    local NormalColor = "FCD20D"
-    local DisabledColor = "FFFFFF"
     local LocalPlayer = GetLocalPlayer()
 
     local Pressed = __jarray(0) ---@type table<player, integer>
@@ -207,6 +283,7 @@ OnInit("PressSaveOrLoad", function ()
     local TooltipSaved = nil ---@type framehandle
     local TooltipBackpack = nil ---@type framehandle
     local TooltipSavedItems = nil ---@type framehandle
+    local TooltipMaterials = nil ---@type framehandle
     local TooltipQuests = nil ---@type framehandle
     local TooltipQuestsArea = nil ---@type FrameList
     local TooltipQuestsName = {} ---@type framehandle[]
@@ -216,28 +293,42 @@ OnInit("PressSaveOrLoad", function ()
 
     local NotOnline = false
     local QuestsAdded = {}
-
-    OnInit.final(function ()
-        NotOnline = GameStatus.get() ~= GameStatus.ONLINE and not udg_SaveOnSinglePlayer
-
-        PolledWait(1.)
-
-        if NotOnline then
-            print("You are in single player, save data is disabled.")
-            BlzFrameSetEnable(AbsoluteSave, false)
-        end
-    end)
+    local paused = __jarray(true)
 
     ---This function always should be in a "if player == GetLocalPlayer() then" block
     local function UpdateMenu()
         local list = PlayerDatas[LocalPlayer]
-        for i = 1, 5 do
-            if list[i] then
-                BlzFrameSetText(SaveSlotT[i-1], "|cffFCD20DSaved Slot " .. i .. "|r")
+        for i = 1, 6 do
+            if i == 6 then
+                BlzFrameSetText(SaveSlotT[i-1], GetLocalizedString("SL_AUTO_SAVE"))
             else
-                BlzFrameSetText(SaveSlotT[i-1], "|cffFCD20DEmpty|r")
+                if list[i] then
+                    BlzFrameSetText(SaveSlotT[i-1], GetLocalizedString("SL_SAVED_SLOT"):format(i))
+                else
+                    BlzFrameSetText(SaveSlotT[i-1], GetLocalizedString("SL_EMPTY_SLOT"):format(i))
+                end
             end
         end
+    end
+
+    local days = {GetLocalizedString("SL_SUNDAY"), GetLocalizedString("SL_MONDAY"), GetLocalizedString("SL_TUESDAY"), GetLocalizedString("SL_WEDNESDAY"), GetLocalizedString("SL_THURSDAY"), GetLocalizedString("SL_FRIDAY"), GetLocalizedString("SL_SATURDAY")}
+    local months = {GetLocalizedString("SL_JANUARY"), GetLocalizedString("SL_FEBRUARY"), GetLocalizedString("SL_MARCH"), GetLocalizedString("SL_APRIL"), GetLocalizedString("SL_MAY"), GetLocalizedString("SL_JUNE"), GetLocalizedString("SL_JULY"), GetLocalizedString("SL_AUGUST"), GetLocalizedString("SL_SEPTEMBER"), GetLocalizedString("SL_OCTOBER"), GetLocalizedString("SL_NOVEMBER"), GetLocalizedString("SL_DECEMBER")}
+
+    ---@param template string
+    ---@param valors osdate
+    ---@return string
+    local function replaceDate(template, valors)
+        return (template:gsub("\x25$`(.-)`", function (k)
+            if k == "wday" then
+                return days[valors[k] or 1]
+            elseif k == "month" then
+                return months[valors[k] or 1]
+            elseif k == "hour" or k == "min" or k == "sec" then
+                return ("\x2502d"):format(valors[k] or 0)
+            else
+                return tostring(valors[k] or "?")
+            end
+        end))
     end
 
     -- This function always should be in a "if player == GetLocalPlayer() then" block
@@ -253,11 +344,11 @@ OnInit("PressSaveOrLoad", function ()
         QuestsAdded = {}
 
         if pData then
-            BlzFrameSetText(TooltipName, "|cffff6600Information|r")
-            BlzFrameSetText(TooltipDate, os.date("\x25c", os.time(pData.date)))
-            BlzFrameSetText(TooltipGold, "|cff828282DigiBits: |r" .. pData.gold)
-            BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal: |r" .. pData.lumber)
-            BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank: |r" .. pData.food)
+            BlzFrameSetText(TooltipName, GetLocalizedString("SL_INFORMATION"))
+            BlzFrameSetText(TooltipDate, replaceDate(GetLocalizedString("SL_DATE_FORMAT"), pData.date))
+            BlzFrameSetText(TooltipGold, GetLocalizedString("SL_DIGIBITS") .. pData.gold)
+            BlzFrameSetText(TooltipLumber, GetLocalizedString("SL_DIGICRYSTAL") .. pData.lumber)
+            BlzFrameSetText(TooltipFood, GetLocalizedString("SL_TAMER_RANK") .. pData.food)
             for i = 0, MAX_DIGIMONS - 1 do
                 local index = i
                 if dData.stocked[i] then
@@ -270,19 +361,19 @@ OnInit("PressSaveOrLoad", function ()
                             end
                         end
                     end
-                    BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r" .. s)
+                    BlzFrameSetText(TooltipDigimonItemsT[index], GetLocalizedString("SL_ITEMS") .. s)
                     BlzFrameSetTexture(TooltipDigimonIconT[index], BlzGetAbilityIcon(dData.stocked[i].typeId), 0, true)
-                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level " .. I2S(dData.stocked[i].level) .. "|r")
-                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r" .. dData.stocked[i].lvlSta .. " (+" .. dData.stocked[i].IVsta .. ")")
-                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r" .. dData.stocked[i].lvlDex .. " (+" .. dData.stocked[i].IVdex .. ")")
-                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r" .. dData.stocked[i].lvlWis .. " (+" .. dData.stocked[i].IVwis .. ")")
+                    BlzFrameSetText(TooltipDigimonLevelT[index], GetLocalizedString("SL_LEVEL"):format(math.floor(dData.stocked[i].level)))
+                    BlzFrameSetText(TooltipDigimonStamina[index], GetLocalizedString("SL_STA") .. dData.stocked[i].lvlSta .. " (+" .. dData.stocked[i].IVsta .. ")")
+                    BlzFrameSetText(TooltipDigimonDexterity[index], GetLocalizedString("SL_DEX") .. dData.stocked[i].lvlDex .. " (+" .. dData.stocked[i].IVdex .. ")")
+                    BlzFrameSetText(TooltipDigimonWisdom[index], GetLocalizedString("SL_WIS") .. dData.stocked[i].lvlWis .. " (+" .. dData.stocked[i].IVwis .. ")")
                 else
-                    BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r")
+                    BlzFrameSetText(TooltipDigimonItemsT[index], GetLocalizedString("SL_ITEMS"))
                     BlzFrameSetTexture(TooltipDigimonIconT[index], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
-                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level 0|r")
-                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r")
-                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r")
-                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r")
+                    BlzFrameSetText(TooltipDigimonLevelT[index], GetLocalizedString("SL_LEVEL"):format(0))
+                    BlzFrameSetText(TooltipDigimonStamina[index], GetLocalizedString("SL_STA"))
+                    BlzFrameSetText(TooltipDigimonDexterity[index], GetLocalizedString("SL_DEX"))
+                    BlzFrameSetText(TooltipDigimonWisdom[index], GetLocalizedString("SL_WIS"))
                 end
             end
             for i = 0, udg_MAX_SAVED_DIGIMONS - 1 do
@@ -297,28 +388,28 @@ OnInit("PressSaveOrLoad", function ()
                             end
                         end
                     end
-                    BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r" .. s)
+                    BlzFrameSetText(TooltipDigimonItemsT[index], GetLocalizedString("SL_ITEMS") .. s)
                     BlzFrameSetTexture(TooltipDigimonIconT[index], BlzGetAbilityIcon(dData.saved[i].typeId), 0, true)
-                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level " .. I2S(dData.saved[i].level) .. "|r")
-                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r" .. dData.saved[i].lvlSta .. " (+" .. dData.saved[i].IVsta .. ")")
-                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r" .. dData.saved[i].lvlDex .. " (+" .. dData.saved[i].IVdex .. ")")
-                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r" .. dData.saved[i].lvlWis .. " (+" .. dData.saved[i].IVwis .. ")")
+                    BlzFrameSetText(TooltipDigimonLevelT[index],  GetLocalizedString("SL_LEVEL"):format(math.floor(dData.saved[i].level)))
+                    BlzFrameSetText(TooltipDigimonStamina[index], GetLocalizedString("SL_STA") .. dData.saved[i].lvlSta .. " (+" .. dData.saved[i].IVsta .. ")")
+                    BlzFrameSetText(TooltipDigimonDexterity[index], GetLocalizedString("SL_DEX") .. dData.saved[i].lvlDex .. " (+" .. dData.saved[i].IVdex .. ")")
+                    BlzFrameSetText(TooltipDigimonWisdom[index], GetLocalizedString("SL_WIS") .. dData.saved[i].lvlWis .. " (+" .. dData.saved[i].IVwis .. ")")
                 else
-                    BlzFrameSetText(TooltipDigimonItemsT[index], "|cff00ffffItems: |r")
+                    BlzFrameSetText(TooltipDigimonItemsT[index], GetLocalizedString("SL_ITEMS"))
                     BlzFrameSetTexture(TooltipDigimonIconT[index], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
-                    BlzFrameSetText(TooltipDigimonLevelT[index], "|cffFFCC00Level 0|r")
-                    BlzFrameSetText(TooltipDigimonStamina[index], "|cffff7d00STA:|r")
-                    BlzFrameSetText(TooltipDigimonDexterity[index], "|cff007d32DEX:|r")
-                    BlzFrameSetText(TooltipDigimonWisdom[index], "|cff0078c8WIS:|r")
+                    BlzFrameSetText(TooltipDigimonLevelT[index],  GetLocalizedString("SL_LEVEL"):format(0))
+                    BlzFrameSetText(TooltipDigimonStamina[index], GetLocalizedString("SL_STA"))
+                    BlzFrameSetText(TooltipDigimonDexterity[index], GetLocalizedString("SL_DEX"))
+                    BlzFrameSetText(TooltipDigimonWisdom[index], GetLocalizedString("SL_WIS"))
                 end
             end
-            BlzFrameSetText(TooltipSaved, "|cff00eeffSaved:|r |cffffff00Max. " .. dData.maxSaved .. "|r")
+            BlzFrameSetText(TooltipSaved, GetLocalizedString("SL_MAX_SAVED"):format(dData.maxSaved))
 
             local result = ""
             for i = 1, bData.amount do
                 result = result .. GetObjectName(bData.id[i]) .. "(" .. bData.charges[i] .. "), "
             end
-            BlzFrameSetText(TooltipBackpack, "|cff3874ffBackpack:|r\n" .. result:sub(1, result:len() - 2))
+            BlzFrameSetText(TooltipBackpack, GetLocalizedString("SL_BACKPACK") .. "\n" .. result:sub(1, result:len() - 2))
 
             result = ""
             for i = 1, dData.sItmsSto do
@@ -332,7 +423,13 @@ OnInit("PressSaveOrLoad", function ()
                     end
                 end
             end
-            BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r |cffffff00Max. " .. dData.sItmsSto .. "|r\n" .. result)
+            BlzFrameSetText(TooltipSavedItems, GetLocalizedString("SL_MAX_SAVED_ITEMS"):format(dData.sItmsSto) .. "\n" .. result)
+
+            result = ""
+            for i = 1, pData.materials.count do
+                result = result .. pData.materials.amounts[i] .. " " .. GetObjectName(pData.materials.itms[i]) .. ", "
+            end
+            BlzFrameSetText(TooltipMaterials, GetLocalizedString("SL_MATERIALS") .. "\n" .. result:sub(1, result:len() - 2))
 
             for i = 1, qData.amount do
                 local id = qData.id[i]
@@ -352,48 +449,88 @@ OnInit("PressSaveOrLoad", function ()
                 end
             end
         else
-            BlzFrameSetText(TooltipName, "|cffff6600Empty|r")
-            BlzFrameSetText(TooltipDate, "Date")
-            BlzFrameSetText(TooltipGold, "|cff828282DigiBits:|r")
-            BlzFrameSetText(TooltipLumber, "|cffc882c8DigiCrystal:|r")
-            BlzFrameSetText(TooltipFood, "|cff8080ffTamer Rank:|r")
+            BlzFrameSetText(TooltipName, GetLocalizedString("SL_EMPTY_SLOT"))
+            BlzFrameSetText(TooltipDate, GetLocalizedString("SL_DATE"))
+            BlzFrameSetText(TooltipGold, GetLocalizedString("SL_DIGIBITS"))
+            BlzFrameSetText(TooltipLumber, GetLocalizedString("SL_DIGICRYSTAL"))
+            BlzFrameSetText(TooltipFood, GetLocalizedString("SL_TAMER_RANK"))
             for i = 0, MAX_DIGIMONS + MAX_SAVED - 1 do
-                BlzFrameSetText(TooltipDigimonItemsT[i], "|cff00ffffItems:|r")
+                BlzFrameSetText(TooltipDigimonItemsT[i], GetLocalizedString("SL_ITEMS"))
                 BlzFrameSetTexture(TooltipDigimonIconT[i], "ReplaceableTextures\\CommandButtons\\BTNCancel.blp", 0, true)
-                BlzFrameSetText(TooltipDigimonLevelT[i], "|cffFFCC00Level 0|r")
+                BlzFrameSetText(TooltipDigimonLevelT[i], GetLocalizedString("SL_LEVEL"):format(0))
             end
-            BlzFrameSetText(TooltipBackpack, "|cff3874ffBackpack:|r")
-            BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r")
+            BlzFrameSetText(TooltipBackpack, GetLocalizedString("SL_BACKPACK"))
+            BlzFrameSetText(TooltipSavedItems, GetLocalizedString("SL_SAVED_ITEMS_NO_MAX"))
+            BlzFrameSetText(TooltipMaterials, GetLocalizedString("SL_MATERIALS_NO_MAX"))
             BlzFrameSetEnable(AbsoluteLoad, false)
         end
     end
 
-    local function SaveLoadActions(slot)
-        local p = GetTriggerPlayer()
+    OnInit.final(function ()
+        NotOnline = not udg_SaveOnSinglePlayer and GameStatus.get() ~= GameStatus.ONLINE
+
+        PolledWait(1.)
+
+        if NotOnline then
+            print(GetLocalizedString("SL_SINGLEPLAYER"))
+            BlzFrameSetEnable(AbsoluteSave, false)
+        else
+            -- Auto-save
+            local interval = 300.
+            local timers = __jarray(0)
+            ForForce(FORCE_PLAYING, function ()
+                local p = GetEnumPlayer()
+                timers[p] = interval
+
+                Timed.echo(1., function ()
+                    if not paused[p] and GetAllDigimonCount(p) > 0 then
+                        timers[p] = timers[p] - 1.
+                    end
+
+                    if timers[p] <= 0. then
+                        timers[p] = interval
+
+                        if IsPlayerInGame(p) then
+                            SavePlayerData(p, 6)
+                            if p == LocalPlayer then
+                                UpdateMenu()
+                                UpdateInformation()
+                            end
+                        else
+                            return true
+                        end
+                    end
+                end)
+            end)
+        end
+    end)
+
+    local function SaveLoadActions(p, slot)
         local oldSlot = Pressed[p] - 1
         Pressed[p] = slot + 1
-        if GetTriggerPlayer() == LocalPlayer then
+        if p == LocalPlayer then
             BlzFrameSetEnable(SaveSlotT[oldSlot], true)
             BlzFrameSetEnable(SaveSlotT[slot], false)
             BlzFrameSetVisible(Information, true)
-            BlzFrameSetEnable(AbsoluteSave, BlzFrameIsVisible(AbsoluteSave) and not NotOnline)
+            BlzFrameSetEnable(AbsoluteSave, slot ~= 5 and BlzFrameIsVisible(AbsoluteSave) and not NotOnline)
             BlzFrameSetEnable(AbsoluteLoad, BlzFrameIsVisible(AbsoluteLoad))
             UpdateInformation()
         end
     end
 
-    local function ExitFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function ExitFunc(p)
+        if p == LocalPlayer then
             BlzFrameSetEnable(SaveSlotT[Pressed[LocalPlayer] - 1], true)
             BlzFrameSetVisible(Information, false)
             BlzFrameSetVisible(SaveLoadMenu, false)
             RemoveButtonFromEscStack(Exit)
         end
+        paused[p] = false
     end
 
-    local function SaveFunc()
-        ExitFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function SaveFunc(p)
+        ExitFunc(p)
+        if p == LocalPlayer then
             if not BlzFrameIsVisible(SaveLoadMenu) then
                 AddButtonToEscStack(Exit)
             end
@@ -403,11 +540,12 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetVisible(AbsoluteLoad, false)
             UpdateMenu()
         end
+        paused[p] = true
     end
 
-    local function LoadFunc()
-        ExitFunc()
-        if GetTriggerPlayer() == LocalPlayer then
+    local function LoadFunc(p)
+        ExitFunc(p)
+        if p == LocalPlayer then
             if not BlzFrameIsVisible(SaveLoadMenu) then
                 AddButtonToEscStack(Exit)
             end
@@ -417,10 +555,10 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetEnable(AbsoluteLoad, false)
             UpdateMenu()
         end
+        paused[p] = true
     end
 
-    local function AbsoluteSaveFunc()
-        local p = GetTriggerPlayer()
+    local function AbsoluteSaveFunc(p)
         SavePlayerData(p, Pressed[p])
         if p == LocalPlayer then
             UpdateMenu()
@@ -428,150 +566,130 @@ OnInit("PressSaveOrLoad", function ()
         end
     end
 
-    local function AbsoluteLoadFunc()
-        local p = GetTriggerPlayer()
+    local function AbsoluteLoadFunc(p)
         TriggerExecute(gg_trg_Absolute_Load)
         SetPlayerData(p, Pressed[p])
-        ExitFunc()
+        ExitFunc(p)
     end
 
     local function InitFrames()
-        local t = nil ---@type trigger
-
         BlzLoadTOCFile("ButtonsTOC.toc")
         BlzLoadTOCFile("war3mapImported\\slider.toc")
 
         -- Save Button
         SaveButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(SaveButton, 9)
-        BlzFrameSetText(SaveButton, "|cff" .. NormalColor .. "Save|r")
         BlzFrameSetVisible(SaveButton, false)
         AddFrameToMenu(SaveButton)
-        SetFrameHotkey(SaveButton, "J")
-        AddDefaultTooltip(SaveButton, "Save", "Save your progress.")
+        SetFrameHotkey(SaveButton, udg_SAVE_HOTKEY)
+        AddDefaultTooltip(SaveButton, GetLocalizedString("SL_SAVE"), GetLocalizedString("SL_SAVE_TOOLTIP"))
 
         BackdropSaveButton = BlzCreateFrameByType("BACKDROP", "BackdropSaveButton", SaveButton, "", 0)
         BlzFrameSetAllPoints(BackdropSaveButton, SaveButton)
         BlzFrameSetTexture(BackdropSaveButton, "ReplaceableTextures\\CommandButtons\\BTNSave.blp", 0, true)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, SaveButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, SaveFunc)
+        OnClickEvent(SaveButton, SaveFunc)
 
         -- Load Button
 
-        LoadButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
+        LoadButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(LoadButton, 10)
-        BlzFrameSetText(LoadButton, "|cff" .. NormalColor .. "Load|r")
         BlzFrameSetVisible(LoadButton, false)
         AddFrameToMenu(LoadButton)
-        SetFrameHotkey(LoadButton, "K")
-        AddDefaultTooltip(LoadButton, "Load", "Load your progress.")
+        SetFrameHotkey(LoadButton, udg_LOAD_HOTKEY)
+        AddDefaultTooltip(LoadButton, GetLocalizedString("SL_LOAD"), GetLocalizedString("SL_LOAD_TOOLTIP"))
 
         BackdropLoadButton = BlzCreateFrameByType("BACKDROP", "BackdropLoadButton", LoadButton, "", 0)
         BlzFrameSetAllPoints(BackdropLoadButton, LoadButton)
         BlzFrameSetTexture(BackdropLoadButton, "ReplaceableTextures\\CommandButtons\\BTNLoad.blp", 0, true)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, LoadButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, LoadFunc)
+        OnClickEvent(LoadButton, LoadFunc)
 
         -- Menu
 
         SaveLoadMenu = BlzCreateFrame("QuestButtonPushedBackdropTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0),0,0)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.27, 0.535000)
-        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.315000)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.280000)
         BlzFrameSetVisible(SaveLoadMenu, false)
         AddFrameToMenu(SaveLoadMenu)
 
-        for i = 0, 4 do
+        for i = 0, 5 do
             SaveSlotT[i] = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
             BlzFrameSetPoint(SaveSlotT[i], FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.010000, -0.01000 - i * 0.035)
-            BlzFrameSetPoint(SaveSlotT[i], FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.18000 - i * 0.035)
-            BlzFrameSetText(SaveSlotT[i], "|cffFCD20DEmpty|r")
-            t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, SaveSlotT[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function () SaveLoadActions(i) end) -- :D
+            BlzFrameSetPoint(SaveSlotT[i], FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.21500 - i * 0.035)
+            if i == 5 then
+                BlzFrameSetText(SaveSlotT[i], GetLocalizedString("SL_AUTO_SAVE"))
+            else
+                BlzFrameSetText(SaveSlotT[i], GetLocalizedString("SL_EMPTY"))
+            end
+            OnClickEvent(SaveSlotT[i], function (p) SaveLoadActions(p, i) end) -- :D
         end
 
         AbsoluteSave = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
-        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.18000)
-        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.010000)
-        BlzFrameSetText(AbsoluteSave, "|cffFCD20DSave|r")
+        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.22000)
+        BlzFrameSetPoint(AbsoluteSave, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.0050000)
+        BlzFrameSetText(AbsoluteSave, GetLocalizedString("SL_ABSOLUTE_SAVE"))
         BlzFrameSetVisible(AbsoluteSave, false)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, AbsoluteSave, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, AbsoluteSaveFunc)
+        OnClickEvent(AbsoluteSave, AbsoluteSaveFunc)
 
         AbsoluteLoad = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
-        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.18000)
-        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.010000)
-        BlzFrameSetText(AbsoluteLoad, "|cffFCD20DLoad|r")
+        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.030000, -0.22000)
+        BlzFrameSetPoint(AbsoluteLoad, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.12000, 0.0050000)
+        BlzFrameSetText(AbsoluteLoad, GetLocalizedString("SL_ABSOLUTE_LOAD"))
         BlzFrameSetVisible(AbsoluteLoad, false)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, AbsoluteLoad, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, AbsoluteLoadFunc)
+        OnClickEvent(AbsoluteLoad, AbsoluteLoadFunc)
 
         Exit = BlzCreateFrame("ScriptDialogButton", SaveLoadMenu,0,0)
-        BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.12000, -0.18000)
-        BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.010000)
-        BlzFrameSetText(Exit, "|cffFCD20DExit|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Exit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ExitFunc)
+        BlzFrameSetPoint(Exit, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, 0.12000, -0.22000)
+        BlzFrameSetPoint(Exit, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.030000, 0.0050000)
+        BlzFrameSetText(Exit, GetLocalizedString("SL_EXIT"))
+        OnClickEvent(Exit, ExitFunc)
 
         -- Tooltip
 
         Information = BlzCreateFrame("CheckListBox", SaveLoadMenu, 0, 0)
-        BlzFrameSetPoint(Information, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, -0.50000, 0.0000)
-        BlzFrameSetPoint(Information, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.22000, -0.30000)
+        BlzFrameSetPoint(Information, FRAMEPOINT_TOPLEFT, SaveLoadMenu, FRAMEPOINT_TOPLEFT, -0.50000, 0.0050000)
+        BlzFrameSetPoint(Information, FRAMEPOINT_BOTTOMRIGHT, SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, -0.22000, -0.26000)
         BlzFrameSetLevel(Information, 100)
 
         TooltipName = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipName, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.010000)
         BlzFrameSetPoint(TooltipName, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.49000)
         BlzFrameSetText(TooltipName, "|cffff6600Name|r")
-        BlzFrameSetEnable(TooltipName, false)
         BlzFrameSetTextAlignment(TooltipName, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         TooltipDate = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipDate, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.25000, -0.010000)
         BlzFrameSetPoint(TooltipDate, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.49000)
         BlzFrameSetText(TooltipDate, "Date")
-        BlzFrameSetEnable(TooltipDate, false)
         BlzFrameSetTextAlignment(TooltipDate, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_RIGHT)
 
         TooltipGold = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipGold, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.030000)
         BlzFrameSetPoint(TooltipGold, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.33000, 0.47000)
         BlzFrameSetText(TooltipGold, "|cffFFCC00Gold: |r")
-        BlzFrameSetEnable(TooltipGold, false)
         BlzFrameSetTextAlignment(TooltipGold, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         TooltipLumber = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipLumber, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.17000, -0.030000)
         BlzFrameSetPoint(TooltipLumber, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.17000, 0.47000)
         BlzFrameSetText(TooltipLumber, "|cff20bc20Lumber: |r")
-        BlzFrameSetEnable(TooltipLumber, false)
         BlzFrameSetTextAlignment(TooltipLumber, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         TooltipFood = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipFood, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.33000, -0.030000)
         BlzFrameSetPoint(TooltipFood, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.47000)
         BlzFrameSetText(TooltipFood, "|cffa34f00Food: |r")
-        BlzFrameSetEnable(TooltipFood, false)
         BlzFrameSetTextAlignment(TooltipFood, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         TooltipUsing = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipUsing, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.050000)
         BlzFrameSetPoint(TooltipUsing, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.38500, 0.45000)
         BlzFrameSetText(TooltipUsing, "|cff00eeffUsing:|r")
-        BlzFrameSetEnable(TooltipUsing, false)
         BlzFrameSetTextAlignment(TooltipUsing, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         TooltipSaved = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipSaved, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.25000)
         BlzFrameSetPoint(TooltipSaved, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.38500, 0.25000)
         BlzFrameSetText(TooltipSaved, "|cff00eeffSaved:|r")
-        BlzFrameSetEnable(TooltipSaved, false)
         BlzFrameSetTextAlignment(TooltipSaved, TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
         TooltipSavedDigimonsBackdrop = BlzCreateFrameByType("BACKDROP", "BACKDROP", Information, "", 1)
@@ -637,14 +755,12 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetPoint(TooltipDigimonItemsT[i], FRAMEPOINT_TOPLEFT, TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, 0.045000, -0.0032500)
             BlzFrameSetPoint(TooltipDigimonItemsT[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.0045000, 0.010000)
             BlzFrameSetText(TooltipDigimonItemsT[i], "|cff00ffffItems:|r")
-            BlzFrameSetEnable(TooltipDigimonItemsT[i], false)
             BlzFrameSetTextAlignment(TooltipDigimonItemsT[i], TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
             TooltipDigimonLevelT[i] = BlzCreateFrameByType("TEXT", "name", TooltipDigimonT[i], "", 0)
             BlzFrameSetPoint(TooltipDigimonLevelT[i], FRAMEPOINT_TOPLEFT, TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, 0.0037500, -0.040750)
             BlzFrameSetPoint(TooltipDigimonLevelT[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.10625, 0.0000)
             BlzFrameSetText(TooltipDigimonLevelT[i], "|cffFFCC00Level 0|r")
-            BlzFrameSetEnable(TooltipDigimonLevelT[i], false)
             BlzFrameSetTextAlignment(TooltipDigimonLevelT[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
 
             TooltipDigimonStamina[i] = BlzCreateFrameByType("TEXT", "name", TooltipDigimonT[i], "", 0)
@@ -652,7 +768,6 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetPoint(TooltipDigimonStamina[i], FRAMEPOINT_TOPLEFT, TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, 0.045000, -0.045750)
             BlzFrameSetPoint(TooltipDigimonStamina[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.071500, 0.0000)
             BlzFrameSetText(TooltipDigimonStamina[i], "")
-            BlzFrameSetEnable(TooltipDigimonStamina[i], false)
             BlzFrameSetTextAlignment(TooltipDigimonStamina[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             TooltipDigimonDexterity[i] = BlzCreateFrameByType("TEXT", "name", TooltipDigimonT[i], "", 0)
@@ -660,7 +775,6 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetPoint(TooltipDigimonDexterity[i], FRAMEPOINT_TOPLEFT, TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, 0.078500, -0.045750)
             BlzFrameSetPoint(TooltipDigimonDexterity[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.038000, 0.0000)
             BlzFrameSetText(TooltipDigimonDexterity[i], "")
-            BlzFrameSetEnable(TooltipDigimonDexterity[i], false)
             BlzFrameSetTextAlignment(TooltipDigimonDexterity[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
 
             TooltipDigimonWisdom[i] = BlzCreateFrameByType("TEXT", "name", TooltipDigimonT[i], "", 0)
@@ -668,7 +782,6 @@ OnInit("PressSaveOrLoad", function ()
             BlzFrameSetPoint(TooltipDigimonWisdom[i], FRAMEPOINT_TOPLEFT, TooltipDigimonT[i], FRAMEPOINT_TOPLEFT, 0.11200, -0.045750)
             BlzFrameSetPoint(TooltipDigimonWisdom[i], FRAMEPOINT_BOTTOMRIGHT, TooltipDigimonT[i], FRAMEPOINT_BOTTOMRIGHT, -0.0045000, 0.0000)
             BlzFrameSetText(TooltipDigimonWisdom[i], "")
-            BlzFrameSetEnable(TooltipDigimonWisdom[i], false)
             BlzFrameSetTextAlignment(TooltipDigimonWisdom[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
         end
 
@@ -676,21 +789,24 @@ OnInit("PressSaveOrLoad", function ()
         BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.010000, -0.39000)
         BlzFrameSetPoint(TooltipBackpack, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.34000, 0.010000)
         BlzFrameSetText(TooltipBackpack, "|cff3874ffBackpack:|r")
-        BlzFrameSetEnable(TooltipBackpack, false)
         BlzFrameSetTextAlignment(TooltipBackpack, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         TooltipSavedItems = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipSavedItems, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.17500, -0.39000)
-        BlzFrameSetPoint(TooltipSavedItems, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.17500, 0.010000)
+        BlzFrameSetPoint(TooltipSavedItems, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.17500, 0.075000)
         BlzFrameSetText(TooltipSavedItems, "|cff4566ffSaved Items:|r")
-        BlzFrameSetEnable(TooltipSavedItems, false)
         BlzFrameSetTextAlignment(TooltipSavedItems, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
+
+        TooltipMaterials = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
+        BlzFrameSetPoint(TooltipMaterials, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.17500, -0.45500)
+        BlzFrameSetPoint(TooltipMaterials, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.17500, 0.010000)
+        BlzFrameSetText(TooltipMaterials, "|cff3874ffMaterials:|r")
+        BlzFrameSetTextAlignment(TooltipMaterials, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         TooltipQuests = BlzCreateFrameByType("TEXT", "name", Information, "", 0)
         BlzFrameSetPoint(TooltipQuests, FRAMEPOINT_TOPLEFT, Information, FRAMEPOINT_TOPLEFT, 0.34000, -0.39000)
         BlzFrameSetPoint(TooltipQuests, FRAMEPOINT_BOTTOMRIGHT, Information, FRAMEPOINT_BOTTOMRIGHT, -0.010000, 0.030000)
         BlzFrameSetText(TooltipQuests, "|cff5257ffQuests:|r")
-        BlzFrameSetEnable(TooltipQuests, false)
         BlzFrameSetTextAlignment(TooltipQuests, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         TooltipQuestsArea = FrameList.create(false, TooltipQuests)
@@ -703,7 +819,6 @@ OnInit("PressSaveOrLoad", function ()
                 TooltipQuestsName[i] = BlzCreateFrameByType("TEXT", "name", TooltipQuests, "", 0)
                 BlzFrameSetSize(TooltipQuestsName[i], 0.13, 0.015)
                 BlzFrameSetText(TooltipQuestsName[i], GetQuestName(i))
-                BlzFrameSetEnable(TooltipQuestsName[i], false)
                 BlzFrameSetTextAlignment(TooltipQuestsName[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_LEFT)
                 BlzFrameSetVisible(TooltipQuestsName[i], false)
             end
@@ -715,7 +830,7 @@ OnInit("PressSaveOrLoad", function ()
     OnChangeDimensions(function ()
         BlzFrameClearAllPoints(SaveLoadMenu)
         BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.27, 0.535000)
-        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.315000)
+        BlzFrameSetAbsPoint(SaveLoadMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.280000)
     end)
 
     OnLeaderboard(function ()
@@ -737,6 +852,9 @@ OnInit("PressSaveOrLoad", function ()
     function ShowSave(p, flag)
         if p == LocalPlayer then
             BlzFrameSetVisible(SaveButton, flag)
+            if not flag then
+                BlzFrameSetEnable(SaveLoadMenu, false)
+            end
         end
     end
 
@@ -745,6 +863,9 @@ OnInit("PressSaveOrLoad", function ()
     function ShowLoad(p, flag)
         if p == LocalPlayer then
             BlzFrameSetVisible(LoadButton, flag)
+            if not flag then
+                BlzFrameSetEnable(SaveLoadMenu, false)
+            end
         end
     end
 
@@ -872,5 +993,17 @@ OnInit("PressSaveOrLoad", function ()
 
     hookReal("GetItemCharges")
     hookReal("GetHeroXP")
+
+    local oldGetOwningPlayer
+    oldGetOwningPlayer = AddHook("GetOwningPlayer", function (whichUnit)
+        if not whichUnit then
+            error("You are trying to get the owner of no unit.", 2)
+        end
+        local p = oldGetOwningPlayer(whichUnit)
+        if not p then
+            error("It wasn't possible to get the owner of this unit.", 2)
+        end
+        return p
+    end)
 end)
 Debug.endFile()

@@ -33,5 +33,11 @@ OnInit("DamageBonusSystem", function ()
         udg_DamageBonusItem = nil
         udg_DamageBonusAmount = 0
     end)
+
+    ---@param itm integer
+    ---@return integer
+    function GetItemDamageBonus(itm)
+        return Requirements[itm] or 0
+    end
 end)
 if Debug then Debug.endFile() end

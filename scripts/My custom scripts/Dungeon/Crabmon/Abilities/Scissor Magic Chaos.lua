@@ -1,7 +1,6 @@
 Debug.beginFile("Crabmon\\Abilities\\Scissor Magic Chaos")
 OnInit(function ()
     Require "BossFightUtils"
-    local ProgressBar = Require "ProgressBar" ---@type ProgressBar
 
     local SPELL = FourCC('A0C4')
     local DELAY = 2.5
@@ -17,7 +16,6 @@ OnInit(function ()
         local x = GetSpellTargetX()
         local y = GetSpellTargetY()
 
-        BossIsCasting(caster, true)
         PauseUnit(caster, true)
         SetUnitAnimation(caster, "spell")
 
@@ -43,7 +41,6 @@ OnInit(function ()
                     if counter == 0 then
                         PauseUnit(caster, false)
                         ResetUnitAnimation(caster)
-                        BossIsCasting(caster, false)
                         return true
                     end
                     SetUnitAnimation(caster, "spell throw")

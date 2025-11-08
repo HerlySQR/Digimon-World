@@ -13,11 +13,9 @@ OnInit("Help", function ()
     local DiscordLink = nil ---@type framehandle
     local DiscordText = nil ---@type framehandle
 
-    local DISCORD_LINK = "https://discord.gg/RZVSYWzA7b"
+    local DISCORD_LINK = udg_DISCORD_LINK -- https://discord.gg/RZVSYWzA7b
 
-    local function ShowImage()
-        local p = GetTriggerPlayer()
-
+    local function ShowImage(p)
         if p == GetLocalPlayer() then
             BlzFrameSetVisible(HelpImage, true)
             BlzFrameSetAlpha(HelpImage, 255)
@@ -31,17 +29,15 @@ OnInit("Help", function ()
         HelpButton = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         AddButtonToTheRight(HelpButton, 11)
         BlzFrameSetVisible(HelpButton, false)
-        local t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, HelpButton, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, ShowImage)
+        OnClickEvent(HelpButton, ShowImage)
         BlzFrameSetVisible(HelpButton, false)
         AddFrameToMenu(HelpButton)
-        SetFrameHotkey(HelpButton, "X")
+        SetFrameHotkey(HelpButton, udg_HELP_HOTKEY)
         AddDefaultTooltip(HelpButton, "Help", "Press to get help about the UI.")
 
         BackdropHelpButton = BlzCreateFrameByType("BACKDROP", "BackdropHelpButton", HelpButton, "", 0)
         BlzFrameSetAllPoints(BackdropHelpButton, HelpButton)
-        BlzFrameSetTexture(BackdropHelpButton, "ReplaceableTextures\\CommandButtons\\BTNHelp3.blp", 0, true)
+        BlzFrameSetTexture(BackdropHelpButton, udg_HELP_BUTTON, 0, true)
 
         HelpImage = BlzCreateFrameByType("BACKDROP", "HelpImage", BlzGetFrameByName("ConsoleUIBackdrop", 0), "", 0)
         BlzFrameSetAbsPoint(HelpImage, FRAMEPOINT_TOPRIGHT, GetMaxScreenX(), 0)
@@ -53,13 +49,6 @@ OnInit("Help", function ()
     end
 
     FrameLoaderAdd(InitFrames)
-
-    --[[OnChangeDimensions(function ()
-        BlzFrameClearAllPoints(HelpImage)
-        BlzFrameSetSize(HelpImage, 0.8, 0.6)
-        BlzFrameSetAbsPoint(HelpImage, FRAMEPOINT_TOPRIGHT, GetMaxScreenX() - 0.05, 0)
-        BlzFrameSetAbsPoint(HelpImage, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0)
-    end)]]
 
     OnInit.final(function ()
         BlzFrameClick(BlzGetFrameByName("UpperButtonBarQuestsButton", 0))

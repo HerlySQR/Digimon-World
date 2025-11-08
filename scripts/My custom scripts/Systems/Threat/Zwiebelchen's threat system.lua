@@ -179,7 +179,7 @@ OnInit("ZTS", function ()
     local ReturnRange      = 1500  ---@type number --The range the unit can move away from the original camping position, before being ordered to return.
     local TimeToPort      = 10  ---@type number --This timer expires once a unit tries to return to its camping position.
                                           --If it reaches 0 before reaching the camp position, the unit will be teleported immediately.
-    local HealUnitsOnReturn         = false  ---@type boolean --If this is true, returning units will be healed to 100% health.
+    local HealUnitsOnReturn         = true  ---@type boolean --If this is true, returning units will be healed to 100% health.
     
     
 --      Do not edit below here!
@@ -206,7 +206,7 @@ OnInit("ZTS", function ()
     ---@return boolean
     function ZTS_IsEvent()
         if EventBool then
-            EventBool = false
+            --EventBool = false
             return true
         end
         return false

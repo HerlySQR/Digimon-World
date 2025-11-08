@@ -135,16 +135,14 @@ OnInit("Cosmetic", function ()
         end
     end
 
+    ---@param p player
     ---@param id integer
-    local function CosmeticActions(id)
-        local p = GetTriggerPlayer()
+    local function CosmeticActions(p, id)
         clickedEffect[p] = id
         UpdateModel(p)
     end
 
-    local function CosmeticOpenFunc()
-        local p = GetTriggerPlayer()
-
+    local function CosmeticOpenFunc(p)
         if p == LocalPlayer then
             SaveCameraSetup()
         end
@@ -172,15 +170,20 @@ OnInit("Cosmetic", function ()
             AddButtonToEscStack(CosmeticExit)
         end
         UpdateModel(p)
+
+        if p == LocalPlayer then
+            if MenuWasHidden() then
+                ForceUICancel()
+            end
+        end
     end
 
-    local function CosmeticAcceptFunc()
-        local p = GetTriggerPlayer()
+    local function CosmeticAcceptFunc(p)
         if clickedEffect[p] == -1 then
             return
         end
         if p == LocalPlayer then
-            BlzFrameSetText(CosmeticText, "|cff00FF00Effect applied|r")
+            BlzFrameSetText(CosmeticText, GetLocalizedString("COSMETIC_EFFECT_APPLIED"))
         end
 
         ApplyCosmetic(p, clickedEffect[p], digimonTypes[p][selectedDigimon[p]])
@@ -191,15 +194,13 @@ OnInit("Cosmetic", function ()
         UpdateModel(p)
 
         Timed.call(3, function ()
-            if p == LocalPlayer and BlzFrameGetText(CosmeticText) == "|cff00FF00Effect applied|r" then
-                BlzFrameSetText(CosmeticText, "|cffFFCC00Choose an effect|r")
+            if p == LocalPlayer and BlzFrameGetText(CosmeticText) == GetLocalizedString("COSMETIC_EFFECT_APPLIED") then
+                BlzFrameSetText(CosmeticText, GetLocalizedString("COSMETIC_CHOOSE_EFFECT"))
             end
         end)
     end
 
-    local function CosmeticExitFunc()
-        local p = GetTriggerPlayer()
-
+    local function CosmeticExitFunc(p)
         LockEnvironment(p, false)
         clickedEffect[p] = -1
 
@@ -210,8 +211,6 @@ OnInit("Cosmetic", function ()
         end
 
         UnitShareVision(model, p, false)
-
-        RestartSelectedUnits(p)
 
         if p == LocalPlayer then
             ShowMenu(true)
@@ -226,9 +225,10 @@ OnInit("Cosmetic", function ()
 
             RemoveButtonFromEscStack(CosmeticExit)
 
-            BlzFrameSetText(CosmeticUnlockText, "|cffFFCC00Enter a code to unlock a cosmetic|r")
+            BlzFrameSetText(CosmeticUnlockText, GetLocalizedString("COSMETIC_ENTER_CODE"))
             BlzFrameSetText(CosmeticUnlockCode, "")
         end
+        RestartSelectedUnits(p)
         UpdateModel(p)
     end
 
@@ -245,8 +245,7 @@ OnInit("Cosmetic", function ()
         inputCode[GetTriggerPlayer()] = BlzGetTriggerFrameText()
     end
 
-    local function CosmeticUnlockYesFunc()
-        local p = GetTriggerPlayer()
+    local function CosmeticUnlockYesFunc(p)
         UnlockCosmetic(p, inputCode[p])
         if p == LocalPlayer then
             BlzFrameSetText(CosmeticUnlockCode, "")
@@ -262,21 +261,19 @@ OnInit("Cosmetic", function ()
         Timed.call(3., function ()
             if p == LocalPlayer then
                 if BlzFrameGetText(CosmeticUnlockText) == msg then
-                    BlzFrameSetText(CosmeticUnlockText, "|cffFFCC00Enter a code to unlock a cosmetic|r")
+                    BlzFrameSetText(CosmeticUnlockText, GetLocalizedString("COSMETIC_ENTER_CODE"))
                 end
             end
         end)
     end
 
-    local function CosmeticPreviousDigimonFunc()
-        local p = GetTriggerPlayer()
+    local function CosmeticPreviousDigimonFunc(p)
         local actDigi = selectedDigimon[p]
         selectedDigimon[p] = actDigi <= 1 and #digimonTypes[p] or actDigi - 1
         UpdateModel(p)
     end
 
-    local function CosmeticNextDigimonFunc()
-        local p = GetTriggerPlayer()
+    local function CosmeticNextDigimonFunc(p)
         local actDigi = selectedDigimon[p]
         selectedDigimon[p] = actDigi >= #digimonTypes[p] and 1 or actDigi + 1
         UpdateModel(p)
@@ -289,15 +286,13 @@ OnInit("Cosmetic", function ()
         AddButtonToTheRight(CosmeticOpen, 2)
         BlzFrameSetVisible(CosmeticOpen, false)
         AddFrameToMenu(CosmeticOpen)
-        SetFrameHotkey(CosmeticOpen, "N")
-        AddDefaultTooltip(CosmeticOpen, "Cosmetics", "Look to the effects you can apply to your digimons.")
+        SetFrameHotkey(CosmeticOpen, udg_COSMETIC_HOTKEY)
+        AddDefaultTooltip(CosmeticOpen, GetLocalizedString("COSMETICS"), GetLocalizedString("COSMETICS_TOOLTIP"))
 
         BackdropCosmeticOpen = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticOpen", CosmeticOpen, "", 0)
         BlzFrameSetAllPoints(BackdropCosmeticOpen, CosmeticOpen)
-        BlzFrameSetTexture(BackdropCosmeticOpen, "ReplaceableTextures\\CommandButtons\\BTNAura.blp", 0, true)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticOpen, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticOpenFunc)
+        BlzFrameSetTexture(BackdropCosmeticOpen, udg_COSMETIC_BUTTON, 0, true)
+        OnClickEvent(CosmeticOpen, CosmeticOpenFunc)
 
         CosmeticMenu = BlzCreateFrame("EscMenuBackdrop", BlzGetFrameByName("ConsoleUIBackdrop", 0), 0, 0)
         BlzFrameSetAbsPoint(CosmeticMenu, FRAMEPOINT_TOPLEFT, 0.500000, 0.490000)
@@ -307,29 +302,22 @@ OnInit("Cosmetic", function ()
         CosmeticText = BlzCreateFrameByType("TEXT", "name", CosmeticMenu, "", 0)
         BlzFrameSetPoint(CosmeticText, FRAMEPOINT_TOPLEFT, CosmeticMenu, FRAMEPOINT_TOPLEFT, 0.020000, -0.020000)
         BlzFrameSetPoint(CosmeticText, FRAMEPOINT_BOTTOMRIGHT, CosmeticMenu, FRAMEPOINT_BOTTOMRIGHT, -0.13000, 0.22000)
-        BlzFrameSetText(CosmeticText, "|cffFFCC00Choose an effect|r")
+        BlzFrameSetText(CosmeticText, GetLocalizedString("COSMETIC_CHOOSE_EFFECT"))
         BlzFrameSetEnable(CosmeticText, false)
-        BlzFrameSetScale(CosmeticText, 1.00)
         BlzFrameSetTextAlignment(CosmeticText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         CosmeticAccept = BlzCreateFrame("ScriptDialogButton", CosmeticMenu, 0, 0)
         BlzFrameSetPoint(CosmeticAccept, FRAMEPOINT_TOPLEFT, CosmeticMenu, FRAMEPOINT_TOPLEFT, 0.050000, -0.22000)
         BlzFrameSetPoint(CosmeticAccept, FRAMEPOINT_BOTTOMRIGHT, CosmeticMenu, FRAMEPOINT_BOTTOMRIGHT, -0.15000, 0.010000)
-        BlzFrameSetText(CosmeticAccept, "|cffFCD20DAccept|r")
-        BlzFrameSetScale(CosmeticAccept, 1.00)
+        BlzFrameSetText(CosmeticAccept, GetLocalizedString("COSMETIC_ACCEPT"))
         BlzFrameSetEnable(CosmeticAccept, false)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticAccept, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticAcceptFunc)
+        OnClickEvent(CosmeticAccept, CosmeticAcceptFunc)
 
         CosmeticExit = BlzCreateFrame("ScriptDialogButton", CosmeticMenu, 0, 0)
         BlzFrameSetPoint(CosmeticExit, FRAMEPOINT_TOPLEFT, CosmeticMenu, FRAMEPOINT_TOPLEFT, 0.15000, -0.22000)
         BlzFrameSetPoint(CosmeticExit, FRAMEPOINT_BOTTOMRIGHT, CosmeticMenu, FRAMEPOINT_BOTTOMRIGHT, -0.050000, 0.010000)
-        BlzFrameSetText(CosmeticExit, "|cffFCD20DExit|r")
-        BlzFrameSetScale(CosmeticExit, 1.00)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticExit, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticExitFunc)
+        BlzFrameSetText(CosmeticExit, GetLocalizedString("COSMETIC_EXIT"))
+        OnClickEvent(CosmeticExit, CosmeticExitFunc)
 
         CosmeticEffects = BlzCreateFrameByType("BACKDROP", "BACKDROP", CosmeticMenu, "", 1)
         BlzFrameSetPoint(CosmeticEffects, FRAMEPOINT_TOPLEFT, CosmeticMenu, FRAMEPOINT_TOPLEFT, 0.020000, -0.050000)
@@ -348,7 +336,7 @@ OnInit("Cosmetic", function ()
         CosmeticUnlockText = BlzCreateFrameByType("TEXT", "name", CosmeticUnlock, "", 0)
         BlzFrameSetPoint(CosmeticUnlockText, FRAMEPOINT_TOPLEFT, CosmeticUnlock, FRAMEPOINT_TOPLEFT, 0.020000, -0.015000)
         BlzFrameSetPoint(CosmeticUnlockText, FRAMEPOINT_BOTTOMRIGHT, CosmeticUnlock, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.035000)
-        BlzFrameSetText(CosmeticUnlockText, "|cffFFCC00Enter a code to unlock a cosmetic|r")
+        BlzFrameSetText(CosmeticUnlockText, GetLocalizedString("COSMETIC_ENTER_CODE"))
         BlzFrameSetEnable(CosmeticUnlockText, false)
         BlzFrameSetScale(CosmeticUnlockText, 1.00)
         BlzFrameSetTextAlignment(CosmeticUnlockText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
@@ -366,28 +354,22 @@ OnInit("Cosmetic", function ()
         BlzFrameSetScale(CosmeticUnlockYes, 0.8)
         BlzFrameSetPoint(CosmeticUnlockYes, FRAMEPOINT_TOPLEFT, CosmeticUnlock, FRAMEPOINT_TOPLEFT, 0.22000, -0.030000)
         BlzFrameSetPoint(CosmeticUnlockYes, FRAMEPOINT_BOTTOMRIGHT, CosmeticUnlock, FRAMEPOINT_BOTTOMRIGHT, -0.020000, 0.010000)
-        BlzFrameSetText(CosmeticUnlockYes, "|cffFCD20DYes|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticUnlockYes, FRAMEEVENT_CONTROL_CLICK) 
-        TriggerAddAction(t, CosmeticUnlockYesFunc)
+        BlzFrameSetText(CosmeticUnlockYes, GetLocalizedString("COSMETIC_YES"))
+        OnClickEvent(CosmeticUnlockYes, CosmeticUnlockYesFunc)
 
         CosmeticPreviousDigimon = BlzCreateFrame("ScriptDialogButton", CosmeticMenu, 0, 0)
         BlzFrameSetAbsPoint(CosmeticPreviousDigimon, FRAMEPOINT_TOPLEFT, 0.0800000, 0.420000)
         BlzFrameSetAbsPoint(CosmeticPreviousDigimon, FRAMEPOINT_BOTTOMRIGHT, 0.110000, 0.380000)
         BlzFrameSetText(CosmeticPreviousDigimon, "|cffFCD20D<|r")
         BlzFrameSetScale(CosmeticPreviousDigimon, 1.00)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticPreviousDigimon, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticPreviousDigimonFunc)
+        OnClickEvent(CosmeticPreviousDigimon, CosmeticPreviousDigimonFunc)
 
         CosmeticNextDigimon = BlzCreateFrame("ScriptDialogButton", CosmeticMenu, 0, 0)
         BlzFrameSetAbsPoint(CosmeticNextDigimon, FRAMEPOINT_TOPLEFT, 0.370000, 0.420000)
         BlzFrameSetAbsPoint(CosmeticNextDigimon, FRAMEPOINT_BOTTOMRIGHT, 0.400000, 0.380000)
         BlzFrameSetText(CosmeticNextDigimon, "|cffFCD20D>|r")
         BlzFrameSetScale(CosmeticNextDigimon, 1.00)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, CosmeticNextDigimon, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, CosmeticNextDigimonFunc)
+        OnClickEvent(CosmeticNextDigimon, CosmeticNextDigimonFunc)
     end
 
     FrameLoaderAdd(InitFrames)
@@ -442,9 +424,7 @@ OnInit("Cosmetic", function ()
             local backdrop = BlzCreateFrameByType("BACKDROP", "BackdropCosmeticEffect[" .. id .. "]", button, "", 0)
             BlzFrameSetAllPoints(backdrop, button)
             BlzFrameSetTexture(backdrop, icon, 0, true)
-            local t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, button, FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function () CosmeticActions(id) end)
+            OnClickEvent(button, function (p) CosmeticActions(p, id) end)
 
             if unlockDesc then
                 local lockButton = BlzCreateFrame("IconButtonTemplate", actualContainer, 0, 0)
@@ -453,7 +433,7 @@ OnInit("Cosmetic", function ()
 
                 local lockFrame = BlzCreateFrameByType("BACKDROP", "BackdropLockCosmeticEffect[" .. id .. "]", lockButton, "", 0)
                 BlzFrameSetAllPoints(lockFrame, button)
-                BlzFrameSetTexture(lockFrame, "ReplaceableTextures\\CommandButtons\\BTNLock.blp", 0, true)
+                BlzFrameSetTexture(lockFrame, udg_COSMETIC_LOCKED_BUTTON, 0, true)
 
                 local tooltip = BlzCreateFrame("QuestButtonBaseTemplate", lockButton, 0, 0)
 
@@ -509,8 +489,15 @@ OnInit("Cosmetic", function ()
     function LoadUnlockedCosmetics(p)
         local list = __jarray(false)
         local path = SaveFile.getPath2(p, "UnlockedCosmetics")
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, path)
+
+        if not loaded then
+            print(GetLocalizedString("CANT_LOAD_DATA"):format(GetPlayerName(p)))
+            return
+        end
+
         local savecode = Savecode.create()
-        if savecode:Load(p, GetSyncedData(p, FileIO.Read, path), 1) then
+        if savecode:Load(p, code, 1) then
             local amount = savecode:Decode(udg_MAX_COSMETICS) -- Load the amount of cosmetics
             for _ = 1, amount do
                 local unlocked = savecode:Decode(udg_MAX_COSMETICS) -- Load the id of the cosmetics
@@ -533,76 +520,16 @@ OnInit("Cosmetic", function ()
         end
     end
 
-    --[[---@param p player
-    ---@param slot integer
-    ---@return table<integer, integer[]>
-    function SaveUsedCosmetics(p, slot)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\UsingSlot_" .. slot .. ".pld"
-        local savecode = Savecode.create()
-        local digis = GetAllDigimons(p)
-        local result = {}
-
-        for i, d in ipairs(digis) do
-            local amount = 0
-            result[i] = __jarray(0)
-            for _, c in pairs(d.cosmetics) do
-                savecode:Encode(c.id, udg_MAX_COSMETICS) -- Save the id of cosmetic of the digimon
-                amount = amount + 1
-                result[i][amount] = c.id
-            end
-            savecode:Encode(amount, udg_MAX_COSMETICS) -- Save the amount of effects has the digimon
-            savecode:Encode(i, udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Save the place the digimon is in the list
-        end
-        savecode:Encode(#digis, udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Save the amount of digimons
-
-        local s = savecode:Save(p, 1)
-
-        if p == LocalPlayer then
-            FileIO.Write(path, s)
-        end
-
-        savecode:destroy()
-
-        return result
-    end
-
-    ---@param p player
-    ---@param slot integer
-    ---@return table<integer, integer[]>
-    function LoadUsedCosmetics(p, slot)
-        local path = SaveFile.getFolder() .. "\\" .. GetPlayerName(p) .. "\\Cosmetics\\UsingSlot_" .. slot .. ".pld"
-        local result = {}
-        local savecode = Savecode.create()
-        if savecode:Load(p, GetSyncedData(p, FileIO.Read, path), 1) then
-            local length = savecode:Decode(udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Load the amount of digimons
-
-            for _ = 1, length do
-                local place = savecode:Decode(udg_MAX_DIGIMONS + udg_MAX_SAVED_DIGIMONS) -- Load the place the digimon is in the list
-                local amount = savecode:Decode(udg_MAX_COSMETICS) -- Load the amount of effects has the digimon
-
-                result[place] = __jarray(0)
-
-                for j = amount, 1, -1 do
-                    result[place][j] = savecode:Decode(udg_MAX_COSMETICS) -- Load the id of cosmetic of the digimon
-                end
-            end
-        end
-
-        savecode:destroy()
-
-        return result
-    end]]--
-
     ---@param p player
     ---@param id integer
     ---@param d Digimon
     function ApplyCosmetic(p, id, d)
         if not d then
-            ErrorMessage("Invalid digimon", p)
+            ErrorMessage(GetLocalizedString("COSMETIC_INVALID_DIGIMON"), p)
             return
         end
         if not UnlockedCosmetics[p][id] then
-            ErrorMessage("This cosmetic is locked", p)
+            ErrorMessage(GetLocalizedString("COSMETIC_IS_LOCKED"), p)
             return
         end
 
@@ -654,7 +581,7 @@ OnInit("Cosmetic", function ()
         local savecode = Savecode.create()
 
         if not savecode:Load(p, key, 2) then
-            EditUnlockMessage(p, "|cffff0000Your passed an invalid code (can't be loaded).|r")
+            EditUnlockMessage(p, GetLocalizedString("COSMETIC_UNLOCK_ERROR_LOAD"))
             savecode:destroy()
             return
         end
@@ -670,12 +597,12 @@ OnInit("Cosmetic", function ()
         local id = LockedCosmetics[password]
 
         if not id then
-            EditUnlockMessage(p, "|cffff0000Your passed an invalid code (this code doesn't work).|r")
+            EditUnlockMessage(p, GetLocalizedString("COSMETIC_UNLOCK_ERROR_FLAW"))
             return
         end
 
         if UnlockedCosmetics[p][id] then
-            EditUnlockMessage(p, "|cff00ffccYou already unlocked this cosmetic.|r")
+            EditUnlockMessage(p, GetLocalizedString("COSMETIC_UNLOCK_ERROR_ALREADY"))
             return
         end
 
@@ -686,7 +613,7 @@ OnInit("Cosmetic", function ()
             BlzFrameSetVisible(Cosmetics[id].button, true)
         end
 
-        EditUnlockMessage(p, "|cff00ff00Cosmetic unlocked successfully.|r")
+        EditUnlockMessage(p, GetLocalizedString("COSMETIC_UNLOCK_SUCCESS"))
 
         SaveUnlockedCosmetics(p)
     end

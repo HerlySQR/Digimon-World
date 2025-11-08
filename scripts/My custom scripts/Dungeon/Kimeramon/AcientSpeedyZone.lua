@@ -10,17 +10,17 @@ OnInit.final(function ()
     Require "AbilityUtils"
 
     local MAX_HEROS = 2
-    local MAX_TIME = 5400.
+    local MAX_TIME = 3600.
+    local RESET_ASZ = FourCC('A0JO')
     local NPC = gg_unit_N02I_0192 ---@type unit
-    local BOSS = gg_unit_O06V_0193 ---@type unit
     local ENTER = FourCC('I05Y')
     local TRICERAMON = FourCC('O054')
     local VERMILIMON = FourCC('O064')
     local METEORMON = FourCC('O036')
     local VOLCAMON = FourCC('O056')
     local EXTRA_HEALTH_FACTOR = 0.75
-    local EXTRA_DMG_FACTOR = 6.25
-    local EXTRA_ARMOR = 5
+    local EXTRA_DMG_FACTOR = 3.
+    local EXTRA_ARMOR = 15
     local EXTRA_MANA_REGEN = 5
     local SLOW = FourCC('A0G9')
     local SLOW_BUFF = FourCC('B02T')
@@ -28,6 +28,9 @@ OnInit.final(function ()
     local STUN = FourCC('BPSE')
     local VOLCANIC_EXPLOSION = FourCC('A0GA')
     local VOLCANIC_EXPLOSION_ORDER = Orders.summongrizzly
+    local SCORCHING_HEAT = FourCC('A02C')
+    local SCORCHING_HEAT_ORDER = Orders.thunderclap
+    local THUNDERCLAP = FourCC('A0JP')
 
     local boss = gg_unit_O06V_0193 ---@type unit
     local place = gg_rct_Ancient_Speedy_Zone ---@type rect
@@ -48,6 +51,7 @@ OnInit.final(function ()
     local specialCasterBuffs = {[TRICERAMON] = SLOW_BUFF, [METEORMON] = STUN} ---@type table<integer, integer>
     local volcamons = {} ---@type unit[]
     local wall = {gg_dest_Dofw_53415} ---@type destructable[]
+    local canReset = false
     local summonPlace = gg_rct_ASRSummonCreeps
     local summonTrigger = gg_rct_ASRSummonCreepsTrigger
     local summonReferencePoint = gg_rct_KimeramonEntrance
@@ -63,11 +67,11 @@ OnInit.final(function ()
             table.insert(creepLevels, GetHeroLevel(u))
             table.insert(creepLocs, GetUnitLoc(u))
             table.insert(creepFacings, GetUnitFacing(u))
-            ZTS_AddThreatUnit(u, false)
+            Threat.addNPC(u, false)
             AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
-            AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
+            AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
 
             if typ == TRICERAMON or typ == METEORMON then
                 table.insert(specialCasters, u)
@@ -76,6 +80,7 @@ OnInit.final(function ()
             elseif typ == VOLCAMON then
                 table.insert(volcamons, u)
                 UnitAddAbility(u, VOLCANIC_EXPLOSION)
+                UnitAddAbility(u, SCORCHING_HEAT)
                 AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
@@ -112,28 +117,23 @@ OnInit.final(function ()
                 SetUnitPositionLoc(u, creepLocs[i])
                 BlzSetUnitFacingEx(u, creepFacings[i])
             else
-                local typ = GetUnitTypeId(u)
-
-                if typ ~= 0 then
-                    RemoveUnit(u)
-                end
-
                 u = CreateUnitAtLoc(Digimon.NEUTRAL, creepTypes[i], creepLocs[i], creepFacings[i])
                 SetHeroLevel(u, creepLevels[i], false)
-                ZTS_AddThreatUnit(u, false)
+                Threat.addNPC(u, false)
                 AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
-                AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
+                AddUnitBonus(u, BONUS_ARMOR, EXTRA_ARMOR)
                 creeps[i] = u
 
-                if typ == TRICERAMON or typ == METEORMON then
+                if creepTypes[i] == TRICERAMON or creepTypes[i] == METEORMON then
                     table.insert(specialCasters, u)
                     specialCastersLocs[u] = GetUnitLoc(u)
-                    UnitAddAbility(u, specialCasterSpells[typ])
-                elseif typ == VOLCAMON then
+                    UnitAddAbility(u, specialCasterSpells[creepTypes[i]])
+                elseif creepTypes[i] == VOLCAMON then
                     table.insert(volcamons, u)
                     UnitAddAbility(u, VOLCANIC_EXPLOSION)
+                    UnitAddAbility(u, SCORCHING_HEAT)
                     AddUnitBonus(u, BONUS_STRENGTH, math.floor(GetHeroStr(u, false) * EXTRA_HEALTH_FACTOR))
                     AddUnitBonus(u, BONUS_AGILITY, math.floor(GetHeroAgi(u, false) * EXTRA_HEALTH_FACTOR))
                     AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
@@ -167,6 +167,16 @@ OnInit.final(function ()
         started = true
         TimerStart(tm, MAX_TIME, false, resetAcientSpeedyZone)
         SetTextTagVisibility(text, true)
+    end
+
+    do
+        local t = CreateTrigger()
+        TriggerRegisterUnitEvent(t, NPC, EVENT_UNIT_SPELL_EFFECT)
+        TriggerAddCondition(t, Condition(function () return GetSpellAbilityId() == RESET_ASZ end))
+        TriggerAddAction(t, function ()
+            PauseTimer(tm)
+            resetAcientSpeedyZone()
+        end)
     end
 
     Timed.echo(1., function ()
@@ -223,20 +233,44 @@ OnInit.final(function ()
 
         if started then
             if players:isEmpty() then
-                resetAcientSpeedyZone()
+                if not canReset then
+                    canReset = true
+                    UnitAddAbility(NPC, RESET_ASZ)
+                end
+            else
+                if canReset then
+                    canReset = false
+                    UnitRemoveAbility(NPC, RESET_ASZ)
+                end
             end
-        end
 
-        -- Move creeps
-        for _, u in ipairs(creeps) do
-            local typ = GetUnitTypeId(u)
-            if (typ == TRICERAMON or typ == VERMILIMON) and not ZTS_GetCombatState(u) and GetUnitCurrentOrder(u) == 0 and math.random(5) == 1 then
-                local angle = 2*math.pi*math.random()
-                local dist = GetRandomReal(200., 600.)
-                local newX, newY = GetUnitX(u) + dist*math.cos(angle), GetUnitY(u) + dist*math.sin(angle)
-
-                if IsTerrainWalkable(newX, newY) then
-                    IssuePointOrderById(u, Orders.smart, newX, newY)
+            for d in actHeros:elements() do
+                if math.random(5) == 1 then
+                    local angle = 2 * math.pi * math.random()
+                    local dist = 3000 * math.random()
+                    local x, y = d:getX() + dist*math.cos(angle), d:getY() + dist*math.sin(angle)
+                    if RectContainsCoords(place, x, y) then
+                        local circle = AddSpecialEffect("war3mapImported\\EnduranceAuraTarget.mdl", x, y)
+                        BlzSetSpecialEffectScale(circle, 3)
+                        Timed.call(1., function ()
+                            DestroyEffect(AddSpecialEffect("Effect\\MeteorStrike.mdl", x, y))
+                            Timed.call(1., function ()
+                                DestroyEffect(circle)
+                                DummyCast(
+                                    DistanceBetweenCoords(GetUnitX(boss), GetUnitY(boss), x, y) > 1000. and Digimon.NEUTRAL or Digimon.VILLAIN,
+                                    x, y,
+                                    THUNDERCLAP,
+                                    Orders.thunderclap,
+                                    1,
+                                    CastType.IMMEDIATE)
+                                ForUnitsInRange(x, y, 225., function (u)
+                                    if IsPlayerInGame(GetOwningPlayer(u)) then
+                                        Damage.apply(boss, u, 250, false, false, udg_Fire, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                                    end
+                                end)
+                            end)
+                        end)
+                    end
                 end
             end
         end
@@ -248,22 +282,40 @@ OnInit.final(function ()
 
     -- Drop items
     do
+        local specialItems ---@type itempool
+
         local t = CreateTrigger()
         TriggerRegisterPlayerUnitEvent(t, Digimon.NEUTRAL, EVENT_PLAYER_UNIT_DEATH)
-        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetDyingUnit()) == VOLCAMON end))
+        TriggerAddCondition(t, Condition(function () return RectContainsUnit(place, GetDyingUnit()) end))
         TriggerAddAction(t, function ()
-            CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
-
-            local open = true
-            ForUnitsInRect(place, function (u)
-                if GetUnitTypeId(u) == VOLCAMON and UnitAlive(u) then
-                    open = false
+            if not GetKillingUnit() then
+                return
+            end
+            if GetUnitTypeId(GetDyingUnit()) == VOLCAMON then
+                if not specialItems then
+                    specialItems = CreateItemPool()
+                    for i = 1, #udg_AcientSpeedyZoneSpecialItems do
+                        ItemPoolAddItemType(specialItems, udg_AcientSpeedyZoneSpecialItems[i], udg_AcientSpeedyZoneSpecialItemsW[i])
+                    end
                 end
-            end)
+                if math.random(15) == 1 then
+                    PlaceRandomItem(specialItems, GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
+                end
+                local open = true
+                ForUnitsInRect(place, function (u)
+                    if GetUnitTypeId(u) == VOLCAMON and UnitAlive(u) then
+                        open = false
+                    end
+                end)
 
-            if open then
-                for _, d in ipairs(wall) do
-                    ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+                if open then
+                    for _, d in ipairs(wall) do
+                        ModifyGateBJ(bj_GATEOPERATION_OPEN, d)
+                    end
+                end
+            else
+                if math.random(50) == 1 then
+                    CreateItem(udg_AcientSpeedyZoneItems[math.random(#udg_AcientSpeedyZoneItems)], GetUnitX(GetDyingUnit()), GetUnitY(GetDyingUnit()))
                 end
             end
         end)
@@ -274,43 +326,49 @@ OnInit.final(function ()
     local inRange = MDTable.create(2, false) ---@type table<unit, table<unit, boolean>>
 
     Timed.echo(1., function ()
-        for i = #specialCasters, 1, -1 do
-            if UnitAlive(specialCasters[i]) then
-                local typ = GetUnitTypeId(specialCasters[i])
-                local x, y = GetLocationX(specialCastersLocs[specialCasters[i]]), GetLocationY(specialCastersLocs[specialCasters[i]])
-                ForUnitsInRange(x, y, 900, function (u)
-                    if IsPlayerInGame(GetOwningPlayer(u)) then
-                        local d = DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u))
-                        if d < 700. then
-                            inRange[specialCasters[i]][u] = true
-                        elseif inRange[specialCasters[i]][u] and not UnitHasBuffBJ(u, specialCasterBuffs[typ]) then
-                            inRange[specialCasters[i]] = nil
-                            IssueTargetOrderById(specialCasters[i], specialCasterOrders[typ], u)
+        if started then
+            for i = #specialCasters, 1, -1 do
+                if UnitAlive(specialCasters[i]) then
+                    local typ = GetUnitTypeId(specialCasters[i])
+                    if UnitCanCastAbility(specialCasters[i], specialCasterSpells[typ]) then
+                        local x, y = GetLocationX(specialCastersLocs[specialCasters[i]]), GetLocationY(specialCastersLocs[specialCasters[i]])
+                        ForUnitsInRange(x, y, 900, function (u)
+                            if IsPlayerInGame(GetOwningPlayer(u)) then
+                                local d = DistanceBetweenCoords(x, y, GetUnitX(u), GetUnitY(u))
+                                if d < 700. then
+                                    inRange[specialCasters[i]][u] = true
+                                elseif inRange[specialCasters[i]][u] and not UnitHasBuffBJ(u, specialCasterBuffs[typ]) then
+                                    inRange[specialCasters[i]] = nil
+                                    IssueTargetOrderById(specialCasters[i], specialCasterOrders[typ], u)
+                                end
+                            end
+                        end)
+                    end
+                else
+                    RemoveLocation(specialCastersLocs[specialCasters[i]])
+                    specialCastersLocs[specialCasters[i]] = nil
+                    table.remove(specialCasters, i)
+                end
+            end
+            for i = #volcamons, 1, -1 do
+                if UnitAlive(volcamons[i]) then
+                    if UnitCanCastAbility(volcamons[i], VOLCANIC_EXPLOSION) then
+                        local x, y = GetUnitX(volcamons[i]), GetUnitY(volcamons[i])
+                        local cast = false
+                        if GetUnitHPRatio(volcamons[i]) < 0.9 then
+                            ForUnitsInRange(x, y, 275., function (u)
+                                if IsUnitEnemy(u, Digimon.NEUTRAL) then
+                                    cast = true
+                                end
+                            end)
+                        end
+                        if cast then
+                            IssueImmediateOrderById(volcamons[i], math.random(2) == 1 and VOLCANIC_EXPLOSION_ORDER or SCORCHING_HEAT_ORDER)
                         end
                     end
-                end)
-            else
-                RemoveLocation(specialCastersLocs[specialCasters[i]])
-                specialCastersLocs[specialCasters[i]] = nil
-                table.remove(specialCasters, i)
-            end
-        end
-        for i = #volcamons, 1, -1 do
-            if UnitAlive(volcamons[i]) then
-                local x, y = GetUnitX(volcamons[i]), GetUnitY(volcamons[i])
-                local cast = false
-                if GetUnitHPRatio(volcamons[i]) < 0.9 then
-                    ForUnitsInRange(x, y, 275., function (u)
-                        if IsUnitEnemy(u, Digimon.NEUTRAL) then
-                            cast = true
-                        end
-                    end)
+                else
+                    table.remove(volcamons, i)
                 end
-                if cast then
-                    IssueImmediateOrderById(volcamons[i], VOLCANIC_EXPLOSION_ORDER)
-                end
-            else
-                table.remove(volcamons, i)
             end
         end
     end)
@@ -333,8 +391,8 @@ OnInit.final(function ()
                 AddUnitBonus(u, BONUS_INTELLIGENCE, math.floor(GetHeroInt(u, false) * EXTRA_HEALTH_FACTOR))
                 AddUnitBonus(u, BONUS_DAMAGE, math.floor(GetAvarageAttack(u) * EXTRA_DMG_FACTOR))
                 GroupAddUnit(ambushUnits, u)
-                ZTS_AddThreatUnit(u, true)
-                ZTS_ModifyThreat(GetEnteringUnit(), u, 1, true)
+                Threat.addNPC(u, true)
+                Threat.modify(GetEnteringUnit(), u, 1, true)
                 SetUnitX(u, GetRectCenterX(summonPlace))
                 SetUnitY(u, GetRectCenterY(summonPlace))
             end

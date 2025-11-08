@@ -3,12 +3,12 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A0DM')
-    local DAMAGE = 50.
-    local DURATION = 15. -- Same as object editor
-    local MAMOTHMON_SPEED = 400.
+    local DAMAGE = 500.
+    local DURATION = 8. -- Same as object editor
+    local MAMOTHMON_SPEED = 200.
     local MAMOTHMON_MODEL = "war3mapImported\\MammonDMO - optimized.mdl"
     local EXPLOSION_MODEL = "Abilities\\Spells\\Other\\Stampede\\StampedeMissileDeath.mdl"
-    local MAX_DIST = 1250.
+    local MAX_DIST = 1050.
     local MAX_DIST_2 = MAX_DIST/2
     local ORDER = Orders.breathoffire
 
@@ -20,7 +20,7 @@ OnInit(function ()
 
         BossIsCasting(caster, true)
 
-        Timed.echo(0.3, DURATION, function ()
+        Timed.echo(0.4, DURATION, function ()
             if not UnitAlive(caster) or GetUnitCurrentOrder(caster) ~= ORDER then
                 BossIsCasting(caster, false)
                 return true
@@ -32,7 +32,7 @@ OnInit(function ()
                                                x + MAX_DIST_2*math.cos(convAngle), y + MAX_DIST_2*math.sin(convAngle), 0)
             mammothmon:model(MAMOTHMON_MODEL)
             mammothmon:speed(MAMOTHMON_SPEED)
-            mammothmon:scale(0.25)
+            mammothmon:scale(0.4)
             mammothmon:animation(5)
             mammothmon.collision = 32.
             mammothmon.owner = owner

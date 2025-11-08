@@ -1,7 +1,7 @@
 if Debug then Debug.beginFile("ProgressBar") end
 OnInit("ProgressBar", function ()
     Require "Timed"
-    local Color = Require "Color"
+    Require "Color"
     --[[*************************************************************
     *
     *   Based on ProgressBars v2.0.1 by TriggerHappy https://www.hiveworkshop.com/threads/progressbars-v2-0-1.245414/
@@ -70,7 +70,7 @@ OnInit("ProgressBar", function ()
     ---@field private reverse boolean
     ---@field private done boolean
     ---@field private recycle boolean
-    local ProgressBar = {}
+    ProgressBar = {}
     ProgressBar.__index = ProgressBar
 
     ---@param x number
@@ -244,7 +244,5 @@ OnInit("ProgressBar", function ()
             self.t_enabled = false
         end
     end
-
-    return ProgressBar
 end)
 if Debug then Debug.endFile() end

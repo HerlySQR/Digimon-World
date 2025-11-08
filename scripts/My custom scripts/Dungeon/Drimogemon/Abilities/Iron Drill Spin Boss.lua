@@ -5,9 +5,9 @@ OnInit(function ()
     local Spell = FourCC('A0H7')
     local StrDmgFactor = 0.6
     local AgiDmgFactor = 0.6
-    local IntDmgFactor = 0.2
-    local AttackFactor = 1.5
-    local MissileModel = "Missile\\TCSlashProj.mdx"
+    local IntDmgFactor = 0.6
+    local AttackFactor = 2.0
+    local MissileModel = "war3mapImported\\drill.mdx"
     local TargetUnitEffect = "Effect\\Ephemeral Cut Silver.mdx"
 
     RegisterSpellEffectEvent(Spell, function ()
@@ -24,9 +24,9 @@ OnInit(function ()
         missile.damage = damage
         missile:model(MissileModel)
         missile:playerColor(20)
-        missile:scale(2)
-        missile:speed(400.)
-        missile:arc(50.)
+        missile:scale(1.8)
+        missile:speed(800.)
+        missile:arc(15.)
         missile.collision = 32.
         missile.collideZ = true
         missile.onFinish = function ()

@@ -6,7 +6,7 @@ OnInit(function ()
     local Color = Require "Color" ---@type Color
 
     local GENERATOR = FourCC('n01U')
-    local ELECTRIC_TRAP_TICKS_CD = 8
+    local ELECTRIC_TRAP_TICKS_CD = 9
     local ELECTRIC_TRAP_EFFECT = "Abilities\\Spells\\Orc\\LightningShield\\LightningShieldBuff.mdl"
     local ENERGY_FIELD = FourCC('YZef')
     local RESTORE_EFFECT = "Objects\\Spawnmodels\\Undead\\UDeathSmall\\UDeathSmall.mdl"
@@ -14,7 +14,7 @@ OnInit(function ()
     local TELEPORT_EFFECT_TARGET = "Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl"
     local GUARDROMON = FourCC('O01I')
     local GUARDROMON_EFFECT = "Abilities\\Spells\\Demon\\DemonBoltImpact\\DemonBoltImpact.mdl"
-    local MISSILE_BARRAGE = FourCC('A0E0')
+    local SUMMON_GUARDROMON = FourCC('A0J4')
 
     local boss = gg_unit_O03P_0105 ---@type unit
     local originalSize = BlzGetUnitRealField(boss, UNIT_RF_SCALING_VALUE)
@@ -108,13 +108,26 @@ OnInit(function ()
         TriggerAddAction(t, function ()
             if not canTrap and (GetDyingUnit() == boss or (RectContainsUnit(generatorRect, GetDyingUnit()) and (allGeneratorUnitsDead() or allGeneratorsDead()))) then
                 Timed.call(2., function ()
+                    local unitToTeleportTo = {}
+                    ForUnitsInRect(gg_rct_Datamon_1, function (u2)
+                        if not unitToTeleportTo[GetOwningPlayer(u2)] and not RectContainsUnit(generatorRect, u2) then
+                            unitToTeleportTo[GetOwningPlayer(u2)] = u2
+                        end
+                    end)
                     for u2 in generatorUnits:elements() do
                         if UnitAlive(u2) then
                             DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT, GetUnitX(u2), GetUnitY(u2)))
-                            local l = GetRandomLocInRect(returnPlace)
-                            SetUnitPositionLoc(u2, l)
-                            DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
-                            RemoveLocation(l)
+                            local toTp = unitToTeleportTo[GetOwningPlayer(u2)]
+                            if toTp then
+                                local toX, toY = GetUnitX(toTp), GetUnitY(toTp)
+                                SetUnitPosition(u2, toX, toY)
+                                DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT_TARGET, toX, toY))
+                            else
+                                local l = GetRandomLocInRect(returnPlace)
+                                SetUnitPositionLoc(u2, l)
+                                DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
+                                RemoveLocation(l)
+                            end
                         end
                     end
                     generatorUnits:clear()
@@ -155,11 +168,199 @@ OnInit(function ()
         end)
     end
 
-    RegisterSpellEffectEvent(FourCC('A0H5'), function ()
-        if GetSpellAbilityUnit() == boss then
-            BossMove(boss, 1, 1000, 150, math.random(2) == 1)
-        end
-    end)
+    local HM_MISSILE_MODEL = "Abilities\\Weapons\\Mortar\\MortarMissile.mdl"
+    local HM_TARGET_EFFECT = "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl"
+    local HM_DURATION = 5
+    local HM_WARNING_1 = 3
+    local HM_WARNING_2 = 3.5
+    local HM_DAMAGE = 350
+    local HM_PUSH_DIST = 300
+
+    local function onHommingMissile(caster, target)
+        SetUnitAnimation(caster, "spell")
+        Timed.call(0.5, function ()
+            ResetUnitAnimation(caster)
+
+            SetUnitVertexColor(target, 255, 50, 50, 255)
+            local m = Missiles:create(GetUnitX(caster), GetUnitY(caster), 50, GetUnitX(target), GetUnitY(target), 50)
+            local speed = 300
+            local duration = HM_DURATION
+            local orange = false
+            local red = false
+            m.owner = GetOwningPlayer(caster)
+            m.target = target
+            m:model(HM_MISSILE_MODEL)
+            m:speed(speed)
+            m.onPeriod = function ()
+                duration = duration - 0.025
+                if not orange and duration <= HM_WARNING_1 then
+                    orange = true
+                    m:color(255, 150, 150)
+                end
+                if not red and duration <= HM_WARNING_2 then
+                    red = true
+                    m:color(255, 50, 50)
+                end
+                if duration <= 0 then
+                    return true
+                end
+            end
+            m.onFinish = function ()
+                ForUnitsInRange(GetUnitX(target), GetUnitY(target), 200., function (u)
+                    if IsUnitEnemy(u, m.owner) then
+                        Damage.apply(caster, u, HM_DAMAGE, false, false, udg_Machine, DAMAGE_TYPE_DEMOLITION, WEAPON_TYPE_WHOKNOWS)
+                    end
+                end)
+                Knockback(
+                    target,
+                    m:getYaw(),
+                    HM_PUSH_DIST,
+                    2000.,
+                    HM_TARGET_EFFECT,
+                    nil
+                )
+            end
+            m.onRemove = function ()
+                SetUnitVertexColor(target, 255, 255, 255, 255)
+            end
+
+            Timed.call(2., function ()
+                m:launch()
+            end)
+        end)
+    end
+
+    local MB_DELAY = 3.
+    local MB_DAMAGE_PER_SHOT = {180., 520.}
+    local MB_MAX_SHOTS = 12
+    local MB_AREA = 325.
+    local MB_MISSILE_MODEL = "Abilities\\Weapons\\GyroCopter\\GyroCopterMissile.mdl"
+    local MB_INTERVAL = 0.03125
+
+    local function onMissileBarrage(caster, x, y)
+        local owner = GetOwningPlayer(caster)
+        PauseUnit(caster, true)
+        SetUnitAnimation(caster, "spell")
+        BossIsCasting(caster, true)
+
+        local bar = ProgressBar.create()
+        bar:setColor(PLAYER_COLOR_PEANUT)
+        bar:setZOffset(450)
+        bar:setSize(1.3)
+        bar:setTargetUnit(caster)
+
+        local progress = 0
+        Timed.echo(0.02, MB_DELAY, function ()
+            if not UnitAlive(caster) then
+                bar:destroy()
+                return true
+            end
+            progress = progress + 0.02
+            bar:setPercentage((progress/MB_DELAY)*100, 1)
+        end, function ()
+            bar:destroy()
+            if UnitAlive(caster) then
+                local counter = MB_MAX_SHOTS
+                Timed.echo(MB_INTERVAL, function ()
+                    if counter == 0 or not UnitAlive(caster) then
+                        PauseUnit(caster, false)
+                        ResetUnitAnimation(caster)
+                        BossIsCasting(caster, false)
+                        return true
+                    end
+                    SetUnitAnimation(caster, "spell throw")
+
+                    local angle = 2 * math.pi * math.random()
+                    local dist = MB_AREA * math.random()
+                    local tx = x + dist * math.cos(angle)
+                    local ty = y + dist * math.sin(angle)
+                    local missile = Missiles:create(GetUnitX(caster), GetUnitY(caster), 25, tx, ty, 0)
+                    missile.source = caster
+                    missile.owner = owner
+                    missile.damage = MB_DAMAGE_PER_SHOT[secondPhase and 2 or 1]
+                    missile:model(MB_MISSILE_MODEL)
+                    missile:speed(900.)
+                    missile:arc(60.)
+                    missile.onFinish = function ()
+                        ForUnitsInRange(missile.x, missile.y, 128., function (u)
+                            if IsUnitEnemy(u, missile.owner) then
+                                Damage.apply(caster, u, missile.damage, true, false, udg_Water, DAMAGE_TYPE_COLD, WEAPON_TYPE_WHOKNOWS)
+                            end
+                        end)
+                    end
+                    missile:launch()
+                    counter = counter - 1
+                end)
+            end
+        end)
+    end
+
+    local SO_DELAY = 2.5
+    local SO_DAMAGE_PER_ORB = {200., 400.}
+    local SO_ORBS = {4, 6}
+    local SO_COLISION = 256.
+    local SO_MISSILE_MODEL = "Abilities\\Spells\\Orc\\Purge\\PurgeBuffTarget.mdl"
+    local SO_MAX_DISTANCE = 600.
+
+    local function onShockingOrbs(caster)
+        local owner = GetOwningPlayer(caster)
+
+        PauseUnit(caster, true)
+        SetUnitAnimation(caster, "spell")
+        BossIsCasting(caster, true)
+
+        local bar = ProgressBar.create()
+        bar:setColor(PLAYER_COLOR_CYAN)
+        bar:setZOffset(450)
+        bar:setSize(1.3)
+        bar:setTargetUnit(caster)
+
+        local progress = 0
+        Timed.echo(0.02, SO_DELAY, function ()
+            if not UnitAlive(caster) then
+                bar:destroy()
+                return true
+            end
+            progress = progress + 0.02
+            bar:setPercentage((progress/SO_DELAY)*100, 1)
+        end, function ()
+            bar:destroy()
+            if UnitAlive(caster) then
+                PauseUnit(caster, false)
+                SetUnitAnimation(caster, "spell throw")
+                BossIsCasting(caster, false)
+
+                local count = SO_ORBS[secondPhase and 2 or 1]
+                local x = GetUnitX(caster)
+                local y = GetUnitY(caster)
+                for i = 1, count do
+                    local angle = (i + math.random()) * (2 * math.pi / count)
+                    local tx = x + SO_MAX_DISTANCE * math.cos(angle)
+                    local ty = y + SO_MAX_DISTANCE * math.sin(angle)
+                    local missile = Missiles:create(x, y, 25, tx, ty, 25)
+                    missile.source = caster
+                    missile.owner = owner
+                    missile.damage = SO_DAMAGE_PER_ORB[secondPhase and 2 or 1]
+                    missile.collision = SO_COLISION
+                    missile:model(SO_MISSILE_MODEL)
+                    missile:arc(0.)
+                    missile:speed(200.)
+                    missile.onPeriod = function ()
+                        if missile.Speed < 900. then
+                            missile:speed(missile.Speed + 25.)
+                        end
+                    end
+                    missile.onHit = function (u)
+                        if IsUnitEnemy(u, missile.owner) then
+                            Damage.apply(caster, u, missile.damage, true, false, udg_Machine, DAMAGE_TYPE_LIGHTNING, WEAPON_TYPE_WHOKNOWS)
+                            DummyCast(owner, GetUnitX(u), GetUnitY(u), PURGE_SPELL, PURGE_ORDER, 1, CastType.TARGET, u)
+                        end
+                    end
+                    missile:launch()
+                end
+            end
+        end)
+    end
 
     InitBossFight({
         name = "Datamon",
@@ -168,14 +369,13 @@ OnInit(function ()
         forceWall = {gg_dest_Dofw_52713},
         inner = gg_rct_DatamonInner,
         entrance = gg_rct_DatamonEntrance,
+        moveOption = 1,
         spells = {
-            5, Orders.shadowstrike, CastType.TARGET, -- Homming Missile
-            3, Orders.clusterrockets, CastType.POINT, -- Missile Barrage
-            2, Orders.avengerform, CastType.IMMEDIATE, -- Move
+            5, CastType.TARGET, onHommingMissile, -- Homming Missile
+            4, CastType.POINT, onMissileBarrage, -- Missile Barrage
+            4, CastType.IMMEDIATE, onShockingOrbs-- Shocking Orbs
         },
         actions = function (u, unitsInTheField)
-            --BossMove(boss, math.random(0, 3), 600., 100., math.random(0, 1) == 1)
-
             if canTrap then
                 cooldown = cooldown - 1
                 if cooldown <= 0 then
@@ -188,12 +388,17 @@ OnInit(function ()
                             list[GetOwningPlayer(u2)] = u2
                         end
                     end
-                    for _, u2 in pairs(list) do
+                    for p, u2 in pairs(list) do
                         DestroyEffect(AddSpecialEffect(TELEPORT_EFFECT, GetUnitX(u2), GetUnitY(u2)))
                         local l = GetRandomLocInRect(generatorRect)
                         SetUnitPositionLoc(u2, l)
                         DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, l))
                         RemoveLocation(l)
+
+                        if GetMainDigimon(p) == Digimon.getInstance(u2) then
+                            SearchNewMainDigimon(p)
+                        end
+
                         if u == u2 then
                             IssuePointOrderById(boss, Orders.attack, GetUnitX(boss), GetUnitY(boss))
                         end
@@ -216,14 +421,15 @@ OnInit(function ()
                     SetUnitInvulnerable(boss, true)
                     BlzSetUnitIntegerField(boss, UNIT_IF_MOVE_TYPE, 0)
                     SetUnitMoveSpeed(boss, 0)
+                    BossCanLeave(boss, true)
+                    UnitRemoveAbility(boss, SUMMON_GUARDROMON)
 
                     local needToKill = CreateGroup()
                     local guardromons = {} ---@type Digimon[]
 
                     for j = 1, minions do
                         local l = GetRandomLocInRect(returnPlace)
-                        guardromons[j] = Digimon.create(Digimon.VILLAIN, GUARDROMON, GetLocationX(l), GetLocationY(l), bj_UNIT_FACING)
-                        guardromons[j].isSummon = true
+                        guardromons[j] = SummonMinion(boss, GUARDROMON, GetLocationX(l), GetLocationY(l), bj_UNIT_FACING)
                         guardromons[j]:setLevel(GetHeroLevel(boss))
                         DestroyEffect(AddSpecialEffectLoc(GUARDROMON_EFFECT, l))
                         RemoveLocation(l)
@@ -254,10 +460,14 @@ OnInit(function ()
                             SetUnitPositionLoc(boss, previousPos)
                             DestroyEffect(AddSpecialEffectLoc(TELEPORT_EFFECT_TARGET, previousPos))
                             RemoveLocation(previousPos)
+                            BossCanLeave(boss, false)
+                            UnitAddAbility(boss, SUMMON_GUARDROMON)
                             return true
                         end
                         for u2 in unitsInTheField:elements() do
-                            canSeeHim[GetOwningPlayer(u2)] = true
+                            if UnitAlive(u2) and GetUnitTypeId(u2) ~= 0 then
+                                canSeeHim[GetOwningPlayer(u2)] = true
+                            end
                         end
                         for k, _ in pairs(canSeeHim) do
                             UnitShareVision(boss, k, true)
@@ -269,7 +479,6 @@ OnInit(function ()
             if not metamorphosis then
                 if goMetamorphosis then
                     metamorphosis = true
-                    SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 2)
                     BossChangeAttack(boss, 1)
                     local current = 0
                     Timed.echo(0.02, 1., function ()
@@ -283,10 +492,12 @@ OnInit(function ()
         onReset = function ()
             secondPhase = false
             goMetamorphosis = false
+            if GetUnitAbilityLevel(boss, SUMMON_GUARDROMON) == 0  then
+                UnitAddAbility(boss, SUMMON_GUARDROMON)
+            end
 
             if metamorphosis then
                 metamorphosis = false
-                SetUnitAbilityLevel(boss, MISSILE_BARRAGE, 1)
                 BossChangeAttack(boss, 0)
                 local current = 0
                 Timed.echo(0.02, 1., function ()

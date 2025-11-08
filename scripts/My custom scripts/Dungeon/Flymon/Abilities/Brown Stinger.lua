@@ -3,7 +3,7 @@ OnInit(function ()
     Require "BossFightUtils"
 
     local SPELL = FourCC('A06Z')
-    local DAMAGE = 80.
+    local DAMAGE = 120.
     local MISSILE_MODEL = "Abilities\\Weapons\\PoisonArrow\\PoisonArrowMissile.mdl"
 
     RegisterSpellEffectEvent(SPELL, function ()
@@ -25,13 +25,7 @@ OnInit(function ()
                 if IsUnitEnemy(u, missile.owner) then
                     Damage.apply(caster, u, DAMAGE, true, false, udg_Nature, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
                     -- Poison
-                    DummyCast(GetOwningPlayer(caster),
-                        GetUnitX(caster), GetUnitY(caster),
-                        POISON_SPELL,
-                        POISON_ORDER,
-                        1,
-                        CastType.TARGET,
-                        u)
+                    PoisonUnit(caster, u)
                 end
             end)
         end

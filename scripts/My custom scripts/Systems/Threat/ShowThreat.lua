@@ -1,6 +1,6 @@
 Debug.beginFile("ShowThreat")
 OnInit(function ()
-    Require "ZTS"
+    Require "Threat System"
     Require "Menu"
     Require "AbilityUtils"
 
@@ -11,16 +11,19 @@ OnInit(function ()
     local ThreatArrow = nil ---@type framehandle
     local ThreatPlayerUnitT = {} ---@type framehandle[]
     local ThreatPlayerUnitPercent = {} ---@type framehandle[]
+    local HealthBar = {} ---@type framehandle[]
 
     local bosses = {} ---@type unit[]
     local canSee = CreateForce()
     local units = {}
     local colors = {
-        [0] = "ff00ff",
+        "ff00ff",
         "ffff00",
         "00ff00",
         "ffffff"
     }
+    local red = Color.new(0xFF0000)
+    local green = Color.new(0x00FF00)
     --local speedMove = 0.005
     --local speedAlpha = 8
 
@@ -32,24 +35,25 @@ OnInit(function ()
 
     Timed.echo(1., function ()
         BlzFrameSetVisible(ThreatBackdrop, false)
+        for j = 0, 3 do
+            BlzFrameSetVisible(HealthBar[j], false)
+        end
         for i = 1, #bosses do
             local boss = bosses[i]
-            local attackers = ZTS_GetAttackers(boss)
             local totalThreat = 0
-            for j = 0, 3 do
-                local u = BlzGroupUnitAt(attackers, j)
+            for j = 1, 4 do
+                local u = Threat.getSlotUnit(boss, j)
                 if u then
                     ForceAddPlayer(canSee, GetOwningPlayer(u))
                 end
                 units[j] = u
-                totalThreat = totalThreat + ZTS_GetThreatUnitAmount(boss, u)
+                totalThreat = totalThreat + Threat.getUnitAmount(boss, u)
             end
-            DestroyGroup(attackers)
             if IsPlayerInForce(LocalPlayer, canSee) then
                 BlzFrameSetVisible(ThreatBackdrop, true)
                 BlzFrameSetTexture(ThreatBoss, BlzGetAbilityIcon(GetUnitTypeId(boss)), 0, true)
                 for j = 0, 3 do
-                    local u = units[#units-j] -- I don't know why they are in inverse order
+                    local u = units[j+1] -- I don't know why they are in inverse order
                     if u then
                         BlzFrameSetVisible(ThreatPlayerUnitT[j], true)
                         BlzFrameSetTexture(ThreatPlayerUnitT[j], BlzGetAbilityIcon(GetUnitTypeId(u)), 0, true)
@@ -57,12 +61,17 @@ OnInit(function ()
                             BlzFrameSetVisible(ThreatPlayerUnitPercent[j], false)
                         else
                             BlzFrameSetVisible(ThreatPlayerUnitPercent[j], true)
-                            BlzFrameSetText(ThreatPlayerUnitPercent[j], "|cff" .. colors[j] .. math.floor(ZTS_GetThreatUnitAmount(boss, u)/totalThreat * 100) .. "\x25|r")
+                            BlzFrameSetText(ThreatPlayerUnitPercent[j], "|cff" .. colors[j+1] .. math.floor(Threat.getUnitAmount(boss, u)/totalThreat * 100) .. "\x25|r")
                         end
+
+                        local ratio = GetUnitHPRatio(u)
+                        BlzFrameSetVertexColor(HealthBar[j], ILerpColors(red, ratio, green))
+                        BlzFrameSetValue(HealthBar[j], math.round(ratio*100))
                     else
                         BlzFrameSetVisible(ThreatPlayerUnitT[j], false)
                     end
                     BlzFrameSetVisible(ThreatPlayerUnitPercent[j], BlzFrameIsVisible(ThreatPlayerUnitT[j]))
+                    BlzFrameSetVisible(HealthBar[j], BlzFrameIsVisible(ThreatPlayerUnitT[j]))
                 end
             end
             ForceClear(canSee)
@@ -101,6 +110,14 @@ OnInit(function ()
             BlzFrameSetAllPoints(ThreatPlayerUnitPercent[i], ThreatPlayerUnitT[i])
             BlzFrameSetText(ThreatPlayerUnitPercent[i], "0\x25")
             BlzFrameSetTextAlignment(ThreatPlayerUnitPercent[i], TEXT_JUSTIFY_CENTER, TEXT_JUSTIFY_MIDDLE)
+
+            HealthBar[i] = BlzCreateFrameByType("SIMPLESTATUSBAR", "", ThreatPlayerUnitT[i], "", 0)
+            BlzFrameSetTexture(HealthBar[i], "replaceabletextures\\teamcolor\\teamcolor21", 0, true)
+            BlzFrameSetPoint(HealthBar[i], FRAMEPOINT_TOPLEFT, ThreatPlayerUnitT[i], FRAMEPOINT_TOPLEFT, 0.0010000, -0.020500)
+            BlzFrameSetPoint(HealthBar[i], FRAMEPOINT_BOTTOMRIGHT, ThreatPlayerUnitT[i], FRAMEPOINT_BOTTOMRIGHT, -0.0015000, -0.0050000)
+            BlzFrameSetMinMaxValue(HealthBar[i], 0, 100)
+            BlzFrameSetValue(HealthBar[i], 50)
+            BlzFrameSetVisible(HealthBar[i], false)
         end
     end)
 end)

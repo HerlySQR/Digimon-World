@@ -14,7 +14,7 @@ OnInit("UnitEnum", function ()
     ---@param includeLocust? boolean
     function ForUnitsInRange(x, y, radius, callback, includeLocust)
         table.insert(callbacks, function (u)
-            if not includeLocust or GetUnitAbilityLevel(u, LOCUST_ID) > 0 then
+            if includeLocust or GetUnitAbilityLevel(u, LOCUST_ID) == 0 then
                 callback(u)
             end
         end)
@@ -27,7 +27,7 @@ OnInit("UnitEnum", function ()
     ---@param includeLocust? boolean
     function ForUnitsInRect(where, callback, includeLocust)
         table.insert(callbacks, function (u)
-            if not includeLocust or GetUnitAbilityLevel(u, LOCUST_ID) > 0 then
+            if includeLocust or GetUnitAbilityLevel(u, LOCUST_ID) == 0 then
                 callback(u)
             end
         end)

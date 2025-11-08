@@ -45,9 +45,9 @@ OnInit("Backpack", function ()
     ---@field charges integer
     ---@field description string
     ---@field spellCooldown integer
-    ---@field slot integer
     ---@field stopped boolean
     ---@field noConsummable boolean
+    ---@field noTarget boolean
 
     ---@class Backpack
     ---@field owner player
@@ -64,26 +64,36 @@ OnInit("Backpack", function ()
     ---@field amount integer
     ---@field id integer[]
     ---@field charges integer[]
-    ---@field slot integer[]
+    ---@field sslot integer
+    ---@field ind string
     BackpackData = setmetatable({}, Serializable)
     BackpackData.__index = BackpackData
 
-    ---@param backpack? Backpack
+    ---@overload fun(slot: integer): BackpackData
+    ---@param backpack Backpack
+    ---@param sslot integer
+    ---@param ind string
     ---@return Serializable
-    function BackpackData.create(backpack)
+    function BackpackData.create(backpack, sslot, ind)
         local self = setmetatable({
             amount = 0,
             id = {},
-            charges = {},
-            slot = {},
+            charges = {}
         }, BackpackData)
+
+        if type(backpack) == "number" then
+            ind = sslot
+            sslot = backpack
+            backpack = nil
+        end
+        self.sslot = sslot
+        self.ind = ind or ""
 
         if backpack then
             for i, data in ipairs(backpack.items) do
                 self.amount = self.amount + 1
                 self.id[i] = data.id
                 self.charges[i] = data.charges
-                self.slot[i] = data.slot
             end
         end
 
@@ -93,19 +103,28 @@ OnInit("Backpack", function ()
     function BackpackData:serializeProperties()
         self:addProperty("amount", self.amount)
         for i = 1, self.amount do
-            self:addProperty("id" .. i, self.id[i])
+            self:addProperty("id" .. i, BlzFourCC2S(self.id[i]))
             self:addProperty("charges" .. i, self.charges[i])
-            self:addProperty("slot" .. i, self.slot[i])
         end
+        self:addProperty("sslot", self.sslot)
+        self:addProperty("ind", self.ind)
     end
 
     function BackpackData:deserializeProperties()
+        if self.sslot ~= self:getIntProperty("sslot") then
+            error("The slot is not the same.")
+            return
+        end
         self.amount = self:getIntProperty("amount")
         for i = 1, self.amount do
-            self.id[i] = self:getIntProperty("id" .. i)
+            if self:getStringProperty("id" .. i) ~= "" then
+                self.id[i] = FourCC(self:getStringProperty("id" .. i))
+            else -- Backwards compatibility
+                self.id[i] = self:getIntProperty("id" .. i)
+            end
             self.charges[i] = self:getIntProperty("charges" .. i)
-            self.slot[i] = self:getIntProperty("slot" .. i)
         end
+        self.ind = self:getStringProperty("ind")
     end
 
     local Backpacks = {} ---@type table<player, Backpack>
@@ -150,9 +169,14 @@ OnInit("Backpack", function ()
             charges = 0,
             description = GetObjectName(itemId) .. "\n" .. BlzGetAbilityExtendedTooltip(itemId, 0),
             stopped = false,
-            noConsummable = AllowedItems[itemId].noConsummable
+            noConsummable = AllowedItems[itemId].noConsummable,
+            noTarget = AllowedItems[itemId].noTarget
         }
         itemData.spellCooldown = math.floor(BlzGetAbilityCooldown(itemData.spell, itemData.level - 1))
+        local i = itemData.description:find(GetLocalizedString("BACKPACK_STRIP_TEXT"))
+        if i then
+            itemData.description = itemData.description:sub(1, i - 1)
+        end
 
         return itemData
     end
@@ -194,8 +218,7 @@ OnInit("Backpack", function ()
         UpdateCooldowns()
     end
 
-    local function BackpackFunc()
-        local p = GetTriggerPlayer()
+    local function BackpackFunc(p)
         Backpacks[p].discardMode = false
         if p == LocalPlayer then
             -- To unfocus the button
@@ -203,7 +226,7 @@ OnInit("Backpack", function ()
             BlzFrameSetEnable(Backpack, true)
 
             if not BlzFrameIsVisible(BackpackMenu) then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                 BlzFrameSetVisible(BackpackMenu, true)
                 AddButtonToEscStack(Backpack)
                 UpdateMenu()
@@ -214,14 +237,13 @@ OnInit("Backpack", function ()
         end
     end
 
-    local function UseItem(i)
-        local p = GetTriggerPlayer()
+    local function UseItem(p, i)
         local backpack = Backpacks[p]
         if backpack.discardMode then
             backpack.discardMode = false
             table.remove(backpack.items, i)
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                 UpdateMenu()
             end
         elseif backpack.dropMode then
@@ -229,12 +251,12 @@ OnInit("Backpack", function ()
             local d = GetMainDigimon(p)
             if not d then
                 if p == LocalPlayer then
-                    BlzFrameSetText(BackpackText, "|cffffcc00There is no a main digimon|r")
+                    BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_NO_MAIN_DIGIMON"))
                 end
                 Timed.call(2., function ()
                     if p == LocalPlayer then
-                        if BlzFrameGetText(BackpackText) == "|cffffcc00There is no a main digimon|r" then
-                            BlzFrameSetText(BackpackText, "Use an item")
+                        if BlzFrameGetText(BackpackText) == GetLocalizedString("BACKPACK_NO_MAIN_DIGIMON") then
+                            BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                         end
                     end
                 end)
@@ -247,7 +269,7 @@ OnInit("Backpack", function ()
             SetItemCharges(m, data.charges)
 
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                 UpdateMenu()
             end
         else
@@ -259,12 +281,12 @@ OnInit("Backpack", function ()
 
             if backpack.cooldowns[itemData.id] > 0 then
                 if p == LocalPlayer then
-                    BlzFrameSetText(BackpackText, "|cffffcc00Item is on cooldown|r")
+                    BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_ITEM_ON_COOLDOWN"))
                 end
                 Timed.call(2., function ()
                     if p == LocalPlayer then
-                        if BlzFrameGetText(BackpackText) == "|cffffcc00Item is on cooldown|r" then
-                            BlzFrameSetText(BackpackText, "Use an item")
+                        if BlzFrameGetText(BackpackText) == GetLocalizedString("BACKPACK_ITEM_ON_COOLDOWN") then
+                            BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
                         end
                     end
                 end)
@@ -277,6 +299,8 @@ OnInit("Backpack", function ()
             UnitAddAbility(caster, itemData.spell)
             backpack.actualItemData = itemData
 
+            itemData.stopped = true -- This will set to false if is casts
+
             if p == LocalPlayer then
                 SelectUnitSingle(caster)
             end
@@ -288,20 +312,9 @@ OnInit("Backpack", function ()
                 end
                 BlzFrameSetEnable(BackpackDiscard, false)
                 BlzFrameSetEnable(BackpackDrop, false)
-                BlzFrameSetText(BackpackText, "|cff00ff00Select a target|r")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_SELECT_TARGET"))
             end
         end
-    end
-
-    do
-        local t = CreateTrigger()
-        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SELECTED)
-        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetTriggerUnit()) == DUMMY_CASTER end))
-        TriggerAddAction(t, function ()
-            if GetTriggerPlayer() == LocalPlayer then
-                ForceUIKey("Q")
-            end
-        end)
     end
 
     ---@param backpack Backpack
@@ -325,28 +338,61 @@ OnInit("Backpack", function ()
         backpack.usingCaster = false
 
         if backpack.owner == LocalPlayer then
-            BlzFrameSetText(BackpackText, "Use an item")
+            BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
         end
+    end
+
+    do
+        local t = CreateTrigger()
+        TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SELECTED)
+        TriggerAddCondition(t, Condition(function () return GetUnitTypeId(GetTriggerUnit()) == DUMMY_CASTER end))
+        TriggerAddAction(t, function ()
+            local p = GetTriggerPlayer()
+            local backpack = Backpacks[p]
+            local itemData = backpack.actualItemData
+
+            if itemData.charges <= 0 then
+                for i = 1, #backpack.items do
+                    if backpack.items[i] == itemData then
+                        table.remove(backpack.items, i)
+                        break
+                    end
+                end
+                if p == LocalPlayer then
+                    UpdateMenu()
+                end
+                BackpackDummyCastEnd(backpack)
+            else
+                if p == LocalPlayer then
+                    ForceUIKey("Z")
+                end
+            end
+        end)
     end
 
     local trig = CreateTrigger()
     TriggerRegisterAnyUnitEventBJ(trig, EVENT_PLAYER_UNIT_SPELL_CAST)
     TriggerAddAction(trig, function ()
         local caster = GetSpellAbilityUnit()
+        if not caster then
+            return
+        end
         local p = GetOwningPlayer(caster)
         local itemData = Backpacks[p].actualItemData
 
-        if itemData and itemData.spell == GetSpellAbilityId() then
-
-            itemData.stopped = true -- This will set to false if is casts
-
-            local target = GetSpellTargetUnit()
-            local x = target and GetUnitX(target) or GetSpellTargetX()
-            local y = target and GetUnitY(target) or GetSpellTargetY()
+        if itemData and itemData.spell == GetSpellAbilityId() and not itemData.noTarget then
+            local x, y
+            if GetSpellTargetUnit() then
+                x, y = GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit())
+            elseif GetSpellTargetItem() then
+                x, y = GetItemX(GetSpellTargetItem()), GetItemY(GetSpellTargetItem())
+            else
+                x, y = GetSpellTargetX(), GetSpellTargetY()
+            end
 
             if not GetRandomUnitOnRange(x, y, MinRange, function (u2) return GetOwningPlayer(u2) == p and Digimon.getInstance(u2) ~= nil end) then
                 UnitAbortCurrentOrder(caster)
-                ErrorMessage("A digimon should be nearby the target", p)
+                ErrorMessage(GetLocalizedString("BACKPACK_DIGIMON_NEARBY"), p)
             end
         end
     end)
@@ -373,28 +419,29 @@ OnInit("Backpack", function ()
         local itemData = backpack.actualItemData
 
         if itemData and itemData.spell == GetSpellAbilityId() then
-            local i = itemData.slot
-
             if not itemData.stopped then
                 itemData.charges = itemData.charges - 1
 
                 if itemData.charges <= 0 then
-                    table.remove(backpack.items, i)
-                    for newSlot, otherData in ipairs(backpack.items) do
-                        otherData.slot = newSlot
+                    for i = 1, #backpack.items do
+                        if backpack.items[i] == itemData then
+                            table.remove(backpack.items, i)
+                            break
+                        end
                     end
                 else
                     if itemData.spellCooldown > 0 then
-                        backpack.cooldowns[itemData.id] = itemData.spellCooldown
+                        local id = itemData.id
+                        backpack.cooldowns[id] = itemData.spellCooldown
                         if p == LocalPlayer then
                             UpdateCooldowns()
                         end
                         Timed.echo(1., function ()
-                            backpack.cooldowns[itemData.id] = backpack.cooldowns[itemData.id] - 1
+                            backpack.cooldowns[id] = backpack.cooldowns[id] - 1
                             if p == LocalPlayer then
                                 UpdateCooldowns()
                             end
-                            if backpack.cooldowns[itemData.id] <= 0 then
+                            if backpack.cooldowns[id] <= 0 then
                                 return true
                             end
                         end)
@@ -439,55 +486,49 @@ OnInit("Backpack", function ()
         end)
     end)
 
-    local function BackpackDiscardFunc()
-        local p = GetTriggerPlayer()
-        local backpack = Backpacks[GetTriggerPlayer()]
+    local function BackpackDiscardFunc(p)
+        local backpack = Backpacks[p]
         if not backpack.discardMode then
             backpack.discardMode = true
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "|cffffcc00Select to discard an item.|r Press again to cancel")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_DISCARD_PRESS_AGAIN"))
             end
         else
             backpack.discardMode = false
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
             end
         end
     end
 
-    local function BackpackDropFunc()
-        local p = GetTriggerPlayer()
-        local backpack = Backpacks[GetTriggerPlayer()]
+    local function BackpackDropFunc(p)
+        local backpack = Backpacks[p]
         if not backpack.dropMode then
             backpack.dropMode = true
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "|cffffcc00Select to drop an item.|r Press again to cancel")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_DROP_PRESS_AGAIN"))
             end
         else
             backpack.dropMode = false
             if p == LocalPlayer then
-                BlzFrameSetText(BackpackText, "Use an item")
+                BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
             end
         end
     end
 
     local function InitFrames()
-        local t = nil ---@type trigger
-
         Backpack = BlzCreateFrame("IconButtonTemplate", OriginFrame, 0, 0)
         AddButtonToTheRight(Backpack, 8)
         BlzFrameSetVisible(Backpack, false)
         AddFrameToMenu(Backpack)
         AssignFrame(Backpack, 0) -- 0
-        SetFrameHotkey(Backpack, "B")
-        AddDefaultTooltip(Backpack, "Backpack", "Look your stored consummable items.")
+        SetFrameHotkey(Backpack, udg_BACKPACK_HOTKEY)
+        AddDefaultTooltip(Backpack, GetLocalizedString("BACKPACK"), GetLocalizedString("BACKPACK_TOOLTIP"))
 
         BackdropBackpack = BlzCreateFrameByType("BACKDROP", "BackdropBackpack", Backpack, "", 0)
         BlzFrameSetAllPoints(BackdropBackpack, Backpack)
-        BlzFrameSetTexture(BackdropBackpack, "ReplaceableTextures\\CommandButtons\\BTNBag.blp", 0, true)
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, Backpack, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, BackpackFunc)
+        BlzFrameSetTexture(BackdropBackpack, udg_BACKPACK_BUTTON, 0, true)
+        OnClickEvent(Backpack, BackpackFunc)
 
         BackpackSprite =  BlzCreateFrameByType("SPRITE", "BackpackSprite", Backpack, "", 0)
         BlzFrameSetModel(BackpackSprite, "UI\\Feedback\\Autocast\\UI-ModalButtonOn.mdl", 0)
@@ -498,37 +539,32 @@ OnInit("Backpack", function ()
         BlzFrameSetVisible(BackpackSprite, false)
 
         BackpackMenu = BlzCreateFrame("EscMenuBackdrop", OriginFrame, 0, 0)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.21000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.23500)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.01000)
         BlzFrameSetVisible(BackpackMenu, false)
         AddFrameToMenu(BackpackMenu)
 
         BackpackText = BlzCreateFrameByType("TEXT", "name", BackpackMenu, "", 0)
         BlzFrameSetPoint(BackpackText, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.015000)
-        BlzFrameSetPoint(BackpackText, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.16000)
-        BlzFrameSetText(BackpackText, "Use an item for the focused digimon")
+        BlzFrameSetPoint(BackpackText, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.040000, 0.18500)
+        BlzFrameSetText(BackpackText, GetLocalizedString("BACKPACK_USE_ITEM"))
         BlzFrameSetEnable(BackpackText, false)
-        BlzFrameSetScale(BackpackText, 1.00)
         BlzFrameSetTextAlignment(BackpackText, TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
         BackpackDiscard = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
         BlzFrameSetScale(BackpackDiscard, 0.858)
-        BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.095000, -0.16000)
+        BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.095000, -0.18500)
         BlzFrameSetPoint(BackpackDiscard, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.015000, 0.015000)
-        BlzFrameSetText(BackpackDiscard, "|cffFCD20DDiscard|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, BackpackDiscard, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, BackpackDiscardFunc)
+        BlzFrameSetText(BackpackDiscard, GetLocalizedString("BACKPACK_DISCARD"))
+        OnClickEvent(BackpackDiscard, BackpackDiscardFunc)
         AssignFrame(BackpackDiscard, 1)
 
         BackpackDrop = BlzCreateFrame("ScriptDialogButton", BackpackMenu, 0, 0)
         BlzFrameSetScale(BackpackDrop, 0.858)
-        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.16000)
+        BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_TOPLEFT, BackpackMenu, FRAMEPOINT_TOPLEFT, 0.015000, -0.18500)
         BlzFrameSetPoint(BackpackDrop, FRAMEPOINT_BOTTOMRIGHT, BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, -0.095000, 0.015000)
-        BlzFrameSetText(BackpackDrop, "|cffFCD20DDrop|r")
-        t = CreateTrigger()
-        BlzTriggerRegisterFrameEvent(t, BackpackDrop, FRAMEEVENT_CONTROL_CLICK)
-        TriggerAddAction(t, BackpackDropFunc)
+        BlzFrameSetText(BackpackDrop, GetLocalizedString("BACKPACK_DROP"))
+        OnClickEvent(BackpackDrop, BackpackDropFunc)
         AssignFrame(BackpackDrop, 2)
 
         BackpackItems = BlzCreateFrameByType("BACKDROP", "BACKDROP", BackpackMenu, "", 1)
@@ -540,7 +576,7 @@ OnInit("Backpack", function ()
         local stepSize = 0.025
 
         local startY = 0
-        for row = 1, 5 do
+        for row = 1, 6 do
             local startX = 0
             for colum = 1, 5 do
                 local index = 5 * (row - 1) + colum
@@ -553,7 +589,7 @@ OnInit("Backpack", function ()
             startY = startY - stepSize
         end
 
-        local indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 34, 35, 36, 37, 38, 39, 40, 41}
+        local indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44, 45, 46, 47}
         for i = 1, MAX_ITEMS do
             BackpackItemT[i] = BlzCreateFrame("IconButtonTemplate", BackpackItems, 0, 0)
             BlzFrameSetPoint(BackpackItemT[i], FRAMEPOINT_TOPLEFT, BackpackItems, FRAMEPOINT_TOPLEFT, x[i], y[i])
@@ -564,9 +600,7 @@ OnInit("Backpack", function ()
             BackdropBackpackItemT[i] = BlzCreateFrameByType("BACKDROP", "BackdropBackpackItemT[" .. i .. "]", BackpackItemT[i], "", 0)
             BlzFrameSetAllPoints(BackdropBackpackItemT[i], BackpackItemT[i])
             BlzFrameSetTexture(BackdropBackpackItemT[i], "", 0, true)
-            t = CreateTrigger()
-            BlzTriggerRegisterFrameEvent(t, BackpackItemT[i], FRAMEEVENT_CONTROL_CLICK)
-            TriggerAddAction(t, function () UseItem(i) end)
+            OnClickEvent(BackpackItemT[i], function (p) UseItem(p, i) end)
 
             BackPackItemChargesBackdrop[i] = BlzCreateFrameByType("BACKDROP", "BACKDROP", BackpackItemT[i], "", 1)
             BlzFrameSetPoint(BackPackItemChargesBackdrop[i], FRAMEPOINT_TOPLEFT, BackpackItemT[i], FRAMEPOINT_TOPLEFT, 0.015000, -0.015000)
@@ -608,7 +642,7 @@ OnInit("Backpack", function ()
 
     OnChangeDimensions(function ()
         BlzFrameClearAllPoints(BackpackMenu)
-        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.21000)
+        BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_TOPLEFT, GetMaxScreenX() - 0.205, 0.23500)
         BlzFrameSetAbsPoint(BackpackMenu, FRAMEPOINT_BOTTOMRIGHT, GetMaxScreenX() - 0.05, 0.01000)
     end)
 
@@ -632,7 +666,7 @@ OnInit("Backpack", function ()
 
             if GetPlayerController(GetItemPlayer(m)) == MAP_CONTROL_USER and GetItemPlayer(m) ~= p then
                 UnitRemoveItem(u, m)
-                ErrorMessage("This item belongs to another player", p)
+                ErrorMessage(GetLocalizedString("THIS_ITEM_BELONGS_TO_OTHER_PLAYER"), p)
                 return
             end
 
@@ -640,18 +674,6 @@ OnInit("Backpack", function ()
 
             local id = GetItemTypeId(m)
             local itemData ---@type ItemData
-
-            if not gotItem[p] then
-                if p == LocalPlayer then
-                    BlzFrameSetVisible(BackpackSprite, true)
-                    BlzFrameSetSpriteAnimate(BackpackSprite, 1, 0)
-                end
-                Timed.call(8., function ()
-                    if p == LocalPlayer then
-                        BlzFrameSetVisible(BackpackSprite, false)
-                    end
-                end)
-            end
 
             gotItem[p] = true
             ShowBackpack(p, true)
@@ -666,12 +688,22 @@ OnInit("Backpack", function ()
             if not itemData then
                 if #items >= MAX_ITEMS then
                     UnitRemoveItem(u, m)
-                    ErrorMessage("Backpack is full", p)
+                    ErrorMessage(GetLocalizedString("BACKPACK_FULL"), p)
                     return
                 end
+
+                if p == LocalPlayer then
+                    BlzFrameSetVisible(BackpackSprite, true)
+                    BlzFrameSetSpriteAnimate(BackpackSprite, 1, 0)
+                end
+                Timed.call(8., function ()
+                    if p == LocalPlayer then
+                        BlzFrameSetVisible(BackpackSprite, false)
+                    end
+                end)
+
                 itemData = CreateItemData(id)
                 table.insert(items, itemData)
-                itemData.slot = #items
             end
             itemData.charges = itemData.charges + GetItemCharges(m)
 
@@ -683,7 +715,7 @@ OnInit("Backpack", function ()
                 UnitAddItem(u, newItem)
             end
 
-            RemoveItem(m)
+            Timed.call(function () RemoveItem(m) end)
 
             if p == LocalPlayer then
                 UpdateMenu()
@@ -722,7 +754,7 @@ OnInit("Backpack", function ()
             end
 
             IssueTargetOrderById(u, Orders.attack, u)
-            ErrorMessage("Backpack is full", p)
+            ErrorMessage(GetLocalizedString("BACKPACK_FULL"), p)
         end
     end)
 
@@ -733,13 +765,15 @@ OnInit("Backpack", function ()
         AllowedItems[udg_BackpackItem] = {
             ability = udg_BackpackAbility,
             level = udg_BackpackLevel,
-            noConsummable = udg_BackpackNoConsummable
+            noConsummable = udg_BackpackNoConsummable,
+            noTarget = udg_BackpackNoTarget
         }
 
         udg_BackpackItem = 0
         udg_BackpackAbility = 0
         udg_BackpackLevel = 1
         udg_BackpackNoConsummable = false
+        udg_BackpackNoTarget = false
     end)
 
     ---@param p any
@@ -778,7 +812,7 @@ OnInit("Backpack", function ()
 
         for i = #items, 1, -1 do
             if items[i] == 0 then
-                DisplayTextToPlayer(p, 0, 0, "You loaded an invalid object in the backpack.")
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("BACKPACK_LOAD_ERROR"))
                 table.remove(items, i)
                 if charges then
                     table.remove(charges, i)
@@ -855,7 +889,6 @@ OnInit("Backpack", function ()
             while diff > 0 do
                 local itemData = CreateItemData(itm)
                 table.insert(items, itemData)
-                itemData.slot = #items
                 itemData.charges = math.min(diff, MAX_STACK)
                 diff = diff - MAX_STACK
             end
@@ -880,9 +913,11 @@ OnInit("Backpack", function ()
                 diff = diff - left
                 itemData.charges = itemData.charges - left
                 if itemData.charges <= 0 then
-                    table.remove(items, itemData.slot)
-                    for newSlot, otherData in ipairs(backpack.items) do
-                        otherData.slot = newSlot
+                    for i = 1, #items do
+                        if items[i] == itemData then
+                            table.remove(items, i)
+                            break
+                        end
                     end
                 end
                 if diff <= 0 then
@@ -903,10 +938,11 @@ OnInit("Backpack", function ()
 
     ---@param p player
     ---@param slot integer
+    ---@param id string
     ---@return BackpackData
-    function SaveBackpack(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Backpack")
-        local data = BackpackData.create(Backpacks[p])
+    function SaveBackpack(p, slot, id)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_BACKPACK_ROOT)
+        local data = BackpackData.create(Backpacks[p], slot, id)
         local code = EncodeString(p, data:serialize())
 
         if p == LocalPlayer then
@@ -920,17 +956,21 @@ OnInit("Backpack", function ()
     ---@param slot integer
     ---@return BackpackData?
     function LoadBackpack(p, slot)
-        local fileRoot = SaveFile.getPath2(p, slot, "Backpack")
-        local data = BackpackData.create()
-        local code = GetSyncedData(p, FileIO.Read, fileRoot)
+        local fileRoot = SaveFile.getPath2(p, slot, udg_BACKPACK_ROOT)
+        local data = BackpackData.create(slot)
+        local loaded, code = pcall(GetSyncedData, p, FileIO.Read, fileRoot)
+
+        if not loaded then
+            print(GetLocalizedString("CANT_LOAD_DATA"):format(GetPlayerName(p)))
+            return nil
+        end
 
         if code ~= "" then
             local success, decode = xpcall(DecodeString, print, p, code)
-            if not success or not decode then
-                DisplayTextToPlayer(p, 0, 0, "The file " .. fileRoot .. " has invalid data.")
+            if not success or not decode or not pcall(data.deserialize, data, decode) then
+                DisplayTextToPlayer(p, 0, 0, GetLocalizedString("INVALID_FILE"):format(fileRoot))
                 return
             end
-            data:deserialize(decode)
         end
 
         return data
@@ -944,32 +984,16 @@ OnInit("Backpack", function ()
 
         for i = 1, data.amount do
             backpack.items[i] = CreateItemData(data.id[i])
-            backpack.items[i].slot = data.slot[i]
-            backpack.items[i].charges = data.charges[i]
+            if not backpack.items[i] then
+                DisplayTextToPlayer(p, 0, 0, "You are trying to load a backpack item that no longer exists in this map version.")
+            else
+                backpack.items[i].charges = data.charges[i]
+            end
         end
 
         if p == LocalPlayer then
             UpdateMenu()
         end
     end
---[[
-    do
-        local tr = CreateTrigger()
-        TriggerRegisterPlayerChatEvent(tr, Player(0), "b ", false)
-        TriggerAddAction(tr, function ()
-            local amount = tonumber(GetEventPlayerChatString():sub(3))
-            local p = GetTriggerPlayer()
-            SetBackpackItemCharges(p, Backpacks[p].items[1].id, amount)
-        end)
-    end
-    do
-        local tr = CreateTrigger()
-        TriggerRegisterPlayerChatEvent(tr, Player(0), "p", false)
-        TriggerAddAction(tr, function ()
-            local p = GetTriggerPlayer()
-            print(GetBackpackItemCharges(p, Backpacks[p].items[1].id))
-        end)
-    end
-]]
 end)
 Debug.endFile()

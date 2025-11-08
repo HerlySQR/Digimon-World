@@ -1,5 +1,8 @@
+Debug.beginFile("Item Spawn System")
 OnInit(function ()
     Require "AddHook"
+    Require "SyncedTable"
+    Require "Timed"
 
     local INTERVAL = 15.
 
@@ -15,7 +18,7 @@ OnInit(function ()
     ---@field count integer
 
     local All = {} ---@type ItemSpawnInfo[]
-    local Reference = {} ---@type table<item, RectInfo>
+    local Reference = SyncedTable.create() ---@type table<item, RectInfo>
 
     ---@param rects rect[]
     ---@param types integer[]
@@ -46,8 +49,10 @@ OnInit(function ()
     end
 
     local function Update()
-        for _, itemSpawn in ipairs(All) do
-            for _, where in ipairs(itemSpawn.rectInfos) do
+        for i = 1, #All do
+            local itemSpawn = All[i]
+            for j = 1, #itemSpawn.rectInfos do
+                local where = itemSpawn.rectInfos[j]
                 -- Only create an item if didn't surpassed their max
                 if itemSpawn.count < itemSpawn.maxItems then
                     -- Create an item in a random position of the rect
@@ -88,6 +93,15 @@ OnInit(function ()
     -- Start update
     Timed.call(function ()
         Timed.echo(INTERVAL, Update)
+        Timed.echo(1., function ()
+            for itm, info in pairs(Reference) do
+                if GetWidgetLife(itm) < 0.401 then
+                    Reference[itm] = nil
+                    info.parent.count = info.parent.count - 1
+                    info.amount = info.amount - 1
+                end
+            end
+        end)
     end)
 
     -- For GUI
@@ -110,3 +124,4 @@ OnInit(function ()
         oldRemoveItem(m)
     end)
 end)
+Debug.endFile()

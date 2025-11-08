@@ -19,13 +19,11 @@ OnInit(function ()
         Timed.echo(0.02, DELAY, function ()
             if not UnitAlive(caster) or GetUnitCurrentOrder(caster) ~= ORDER then
                 bar:destroy()
-                BossIsCasting(caster, false)
                 return true
             end
             progress = progress + 0.02
             bar:setPercentage((progress/DELAY)*100, 1)
         end, function ()
-            BossIsCasting(caster, false)
             bar:destroy()
         end)
     end)

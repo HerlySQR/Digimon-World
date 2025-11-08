@@ -11,11 +11,10 @@ OnInit(function ()
 
     local METEORMON = FourCC('O036')
     local VOLCAMON = FourCC('O056')
-    local FIRE_RAY = FourCC('A0GE')
     local TORNADO = FourCC('n02J')
     local LIGHTNING_ATTACK = FourCC('A0GH')
-    local EXTRA_HEALTH_FACTOR = 0.6
-    local EXTRA_DMG_FACTOR = 6.
+    local EXTRA_HEALTH_FACTOR = 0.2
+    local EXTRA_DMG_FACTOR = 2.
 
     local summons = {} ---@type Digimon[]
 
@@ -69,18 +68,17 @@ OnInit(function ()
         end)
         for i = 1, math.min(#spawns, math.round(4.235*math.exp(0.166*amount))) do
             local x, y = GetRectCenterX(spawns[options[i][1]]), GetRectCenterY(spawns[options[i][1]])
-            local d = Digimon.create(Digimon.VILLAIN, METEORMON, x, y, options[i][3])
+            local d = SummonMinion(boss, METEORMON, x, y, options[i][3])
             table.insert(summons, d)
             d:setLevel(95)
             AddUnitBonus(d.root, BONUS_STRENGTH, math.floor(GetHeroStr(d.root, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(d.root, BONUS_AGILITY, math.floor(GetHeroAgi(d.root, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(d.root, BONUS_INTELLIGENCE, math.floor(GetHeroInt(d.root, false) * EXTRA_HEALTH_FACTOR))
             AddUnitBonus(d.root, BONUS_DAMAGE, math.floor(GetAvarageAttack(d.root) * EXTRA_DMG_FACTOR))
-            d.isSummon = true
             DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", x, y))
-            ZTS_AddThreatUnit(d.root, false)
+            Threat.addNPC(d.root, false)
             if options[i][4] then
-                ZTS_ModifyThreat(options[i][4], d.root, 1, false)
+                Threat.modify(options[i][4], d.root, 1, false)
             end
             Timed.echo(1., 60., function ()
                 if not UnitAlive(boss) and d:isAlive() then
@@ -156,7 +154,7 @@ OnInit(function ()
             Timed.call(0.5, function ()
                 DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Volcano\\VolcanoDeath.mdl", actX, actY))
                 Timed.call(1., function ()
-                    local d = Digimon.create(Digimon.VILLAIN, VOLCAMON, actX, actY, bj_UNIT_FACING)
+                    local d = SummonMinion(boss, VOLCAMON, actX, actY, bj_UNIT_FACING)
                     table.insert(summons, d)
                     d:setLevel(95)
                     AddUnitBonus(d.root, BONUS_STRENGTH, math.floor(GetHeroStr(d.root, false) * EXTRA_HEALTH_FACTOR))
@@ -172,7 +170,7 @@ OnInit(function ()
         SetUnitTimeScale(boss, 2)
         SetUnitPathing(boss, false)
 
-        ZTS_RemoveThreatUnit(boss)
+        Threat.removeNPC(boss)
 
         Timed.call(2., function ()
             ShowUnitHide(boss)
@@ -211,7 +209,7 @@ OnInit(function ()
                     SetUnitPathing(boss, true)
                     flying = false
 
-                    ZTS_AddThreatUnit(boss, false)
+                    Threat.addNPC(boss, false)
 
                     if grabbed then
                         SetUnitFlyHeight(grabbed, defaultGrabbedFly, 999999)
@@ -225,27 +223,224 @@ OnInit(function ()
 
     local impale = FourCC('A0GB')
 
+    local CC_DELAY = 1.5 -- Same as object editor
+    local CC_DISTANCE = 1100.
+    local CC_TORNADO = "Abilities\\Spells\\Other\\Tornado\\TornadoElemental.mdl"
+    local CC_DUMMY_CYCLONE = FourCC('A0GD')
+
+    local function onCycloneClap(caster, tx, ty)
+        SetUnitAnimation(caster, "spell")
+
+        local bar = ProgressBar.create()
+        bar:setColor(PLAYER_COLOR_AQUA)
+        bar:setZOffset(300)
+        bar:setSize(1.5)
+        bar:setTargetUnit(caster)
+
+        local progress = 0
+        Timed.echo(0.02, CC_DELAY, function ()
+            if not UnitAlive(caster) then
+                bar:destroy()
+                return true
+            end
+            progress = progress + 0.02
+            bar:setPercentage((progress/CC_DELAY)*100, 1)
+        end, function ()
+            bar:destroy()
+
+            local x, y = GetUnitX(caster), GetUnitY(caster)
+            local angle = math.atan(ty - y, tx - x)
+            for _ = 0, 2 do
+                local tornado = Missiles:create(x, y, 0, tx + CC_DISTANCE*math.cos(angle), ty + CC_DISTANCE*math.sin(angle), 0)
+                tornado.source = caster
+                tornado.owner = GetOwningPlayer(caster)
+                tornado:scale(1.2)
+                tornado:model(CC_TORNADO)
+                tornado:speed(900.)
+                tornado.collision = 200.
+                tornado.onHit = function (u)
+                    if IsUnitEnemy(u, tornado.owner) then
+                        DummyCast(tornado.owner, GetUnitX(u), GetUnitY(u), CC_DUMMY_CYCLONE, Orders.cyclone, 1, CastType.TARGET, u)
+                    end
+                end
+                tornado:launch()
+                angle = angle + GetRandomReal(math.pi/6, math.pi/3)
+            end
+        end)
+    end
+
+    local FR_DELAY = 2. -- Same as object editor
+    local FR_DMG_PER_TICK = 15.
+    local FR_DISTANCE = 1250.
+    local FR_DURATION = 15.
+    local FR_RAY = "HWSB"
+    local FR_FIRE_EFFECT = "Abilities\\Weapons\\FireBallMissile\\FireBallMissile.mdl"
+    local FR_RED = Color.new(0xFF0000)
+    local FR_YELLOW = Color.new(0xFFFF00)
+
+    local function onFireRay(caster)
+        SetUnitAnimation(caster, "spell")
+
+        local bar = ProgressBar.create()
+        bar:setColor(PLAYER_COLOR_RED)
+        bar:setZOffset(300)
+        bar:setSize(1.5)
+        bar:setTargetUnit(caster)
+
+        local progress = 0
+        Timed.echo(0.02, FR_DELAY, function ()
+            if not UnitAlive(caster) then
+                bar:destroy()
+                return true
+            end
+            progress = progress + 0.02
+            bar:setPercentage((progress/FR_DELAY)*100, 1)
+        end, function ()
+            bar:destroy()
+
+            local x, y = GetUnitX(caster), GetUnitY(caster)
+            local face = math.rad(GetUnitFacing(caster))
+            local lightnings = {} ---@type lightning[]
+            SetUnitMoveSpeed(caster, 200)
+            for i = -5, 5 do
+                local xOffset = x + 8*i*math.cos(face+math.pi/2)
+                local yOffset = y + 8*i*math.sin(face+math.pi/2)
+                local newX, newY = xOffset + FR_DISTANCE*math.cos(face), yOffset + FR_DISTANCE*math.sin(face)
+                lightnings[i] = AddLightningEx(FR_RAY, true, xOffset, yOffset, GetUnitZ(caster, true) + 100, newX, newY, GetPosZ(newX, newY))
+                SetLightningColor(lightnings[i], FR_RED:lerp(FR_YELLOW, math.exp(-(i/2)^2)))
+            end
+            local oldTurn = BlzGetUnitRealField(caster, UNIT_RF_TURN_RATE)
+            BlzSetUnitWeaponBooleanField(caster, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, false)
+            BlzSetUnitWeaponBooleanField(caster, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, false)
+            BlzSetUnitRealField(caster, UNIT_RF_TURN_RATE, 0.05)
+
+            local function onFinish()
+                SetUnitMoveSpeed(caster, GetUnitDefaultMoveSpeed(caster))
+                for i = -5, 5 do
+                    DestroyLightning(lightnings[i])
+                end
+                BlzSetUnitWeaponBooleanField(caster, UNIT_WEAPON_BF_ATTACKS_ENABLED, 0, true)
+                BlzSetUnitWeaponBooleanField(caster, UNIT_WEAPON_BF_ATTACKS_ENABLED, 1, true)
+                BlzSetUnitRealField(caster, UNIT_RF_TURN_RATE, oldTurn)
+            end
+
+            local tick = 0
+            Timed.echo(0.02, FR_DURATION, function ()
+                x, y = GetUnitX(caster), GetUnitY(caster)
+
+                for i = -5, 5 do
+                    local xOffset = x + 8*i*math.cos(face+math.pi/2)
+                    local yOffset = y + 8*i*math.sin(face+math.pi/2)
+                    local newX, newY = xOffset + FR_DISTANCE*math.cos(face), yOffset + FR_DISTANCE*math.sin(face)
+                    MoveLightningEx(lightnings[i], true, xOffset, yOffset, GetUnitZ(caster, true) + 100, newX, newY, GetPosZ(newX, newY))
+                end
+
+                if tick >= 5 then
+                    tick = 0
+                    local u = Threat.getSlotUnit(caster, 1)
+                    if u then
+                        SetUnitFacing(caster, math.deg(math.atan(GetUnitY(u) - y, GetUnitX(u) - x)))
+                    end
+                    face = math.rad(GetUnitFacing(caster))
+                    local ax, ay = x + 64*math.cos(face+math.pi/2), y + 64*math.sin(face+math.pi/2)
+                    local bx, by = x + 64*math.cos(face-math.pi/2), y + 64*math.sin(face-math.pi/2)
+                    local cx, cy = bx + FR_DISTANCE*math.cos(face), by + FR_DISTANCE*math.sin(face)
+                    local dx, dy = ax + FR_DISTANCE*math.cos(face), ay + FR_DISTANCE*math.sin(face)
+
+                    ForUnitsInRange(x, y, FR_DISTANCE + 100, function (u2)
+                        if IsUnitEnemy(caster, GetOwningPlayer(u2)) and IsPointInRectangle(ax, ay, bx, by, cx, cy, dx, dy, GetUnitX(u2), GetUnitY(u2)) then
+                            Damage.apply(caster, u2, FR_DMG_PER_TICK, false, false, udg_Fire, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
+                            DestroyEffect(AddSpecialEffectTarget(FR_FIRE_EFFECT, u2, "chest"))
+                        end
+                    end)
+                end
+                tick = tick + 1
+                if not UnitAlive(caster) then
+                    onFinish()
+                    return true
+                end
+            end, onFinish)
+        end)
+    end
+
+    local VM_MIN_RANGE = 50.
+    local VM_MAX_RANGE = 325.
+    local VM_AREA = 128.
+    local VM_DMG = 750.
+    local VM_ROCK = "Abilities\\Spells\\Other\\Volcano\\VolcanoMissile.mdl"
+
+    local function onVolcanicExplosion(caster)
+        local owner = GetOwningPlayer(caster)
+        SetUnitAnimation(caster, "spell")
+        Timed.call(0.5, function ()
+            ResetUnitAnimation(caster)
+            local i = -1
+            Timed.echo(0.02, 0.09, function ()
+                i = i + 1
+                Timed.echo(0.02, 0.09, function ()
+                    local angle = math.pi/2 * (i + math.random())
+                    local dist = GetRandomReal(VM_MIN_RANGE, VM_MAX_RANGE)
+                    local x, y = GetUnitX(caster), GetUnitY(caster)
+
+                    local rock = Missiles:create(x, y, 160., x + dist * math.cos(angle), y + dist * math.sin(angle), 0)
+                    rock:model(VM_ROCK)
+                    rock.owner = owner
+                    rock:speed(300.)
+                    rock:arc(53.)
+                    rock.damage = VM_DMG + 0.8 * GetHeroStr(caster, true)
+                    rock.onFinish = function ()
+                        ForUnitsInRange(rock.x, rock.y, VM_AREA, function (u)
+                            if IsUnitEnemy(u, owner) and not IsUnitType(u, UNIT_TYPE_MAGIC_IMMUNE) then
+                                Damage.apply(caster, u, rock.damage, false, false, udg_Fire, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
+                                -- Stun
+                                DummyCast(
+                                    owner,
+                                    GetUnitX(caster), GetUnitY(caster),
+                                    STUN_SPELL,
+                                    STUN_ORDER,
+                                    2,
+                                    CastType.TARGET,
+                                    u
+                                )
+                            end
+                        end)
+                    end
+                    rock:launch()
+                end)
+            end)
+        end)
+    end
+
     InitBossFight({
         name = "Kimeramon",
         boss = boss,
         manualRevive = true,
-        maxPlayers = 4,
+        maxPlayers = 5,
         forceWall = {gg_dest_Dofv_53414},
         returnPlace = gg_rct_ASRReturn,
         returnEnv = "Ancient Dino Region",
         inner = gg_rct_KimeramonInner,
         entrance = gg_rct_KimeramonEntrance,
         toTeleport = gg_rct_Ancient_Speedy_Zone,
+        moveOption = 0,
         spells = {
-            3, Orders.howlofterror, CastType.IMMEDIATE, -- Howl
-            4, Orders.tornado, CastType.POINT, -- Cyclone Clap
-            0, Orders.impale, CastType.TARGET, -- Impale
-            5, Orders.clusterrockets, CastType.POINT, -- Heat viper
-            6, Orders.impale, CastType.TARGET, -- Impale
-            3, Orders.creepthunderclap, CastType.IMMEDIATE, -- Fire Ray
+            4, CastType.POINT, onCycloneClap, -- Cyclone Clap
+            5, CastType.IMMEDIATE, onFireRay, -- Fire Ray
+            5, CastType.IMMEDIATE, onVolcanicExplosion -- Volcanic Explosion
         },
-        castCondition = function ()
-            return not flying
+        extraSpells = {
+            FourCC('A07F'), Orders.howlofterror, CastType.IMMEDIATE, -- Howl
+            FourCC('A0GB'), Orders.impale, CastType.TARGET, -- Impale
+            FourCC('A0F3'), Orders.clusterrockets, CastType.POINT, -- Heat viper
+        },
+        castCondition = function (spell)
+            if flying then
+                return false
+            end
+            if spell == onFireRay then
+                return secondPhase, true
+            end
+            return true
         end,
         actions = function (u, unitsInTheField)
             if GetUnitHPRatio(boss) < 0.6 then
@@ -284,10 +479,6 @@ OnInit(function ()
                     end)
                 end
 
-                if math.random(100) > 90 then
-                    BossMove(boss, 0, 600., GetHeroStr(boss, true), true)
-                end
-
                 -- Make the summons follow the nearest player unit to them
                 for i = #summons, 1, -1 do
                     local d = summons[i]
@@ -299,7 +490,7 @@ OnInit(function ()
                             end
                         end)
                         if not follow then
-                            ZTS_RemoveThreatUnit(d.root)
+                            Threat.removeNPC(d.root)
                             local nearby
                             local shortestDistance = math.huge
                             local x, y = d:getPos()
@@ -314,7 +505,7 @@ OnInit(function ()
                                 d:issueOrder(Orders.attack, GetUnitX(nearby), GetUnitY(nearby))
                             end
                         else
-                            ZTS_AddThreatUnit(d.root, false)
+                            Threat.addNPC(d.root, false)
                         end
                     else
                         table.remove(summons, i)
@@ -322,38 +513,35 @@ OnInit(function ()
                 end
 
                 -- Summon moving tornado
-                if math.random(4) == 1 then
+                if math.random(5) == 1 then
                     SetUnitAnimation(boss, "spell")
                     local face = math.rad(GetUnitFacing(boss))
 
-                    local tornado = CreateUnit(Digimon.VILLAIN, TORNADO, GetUnitX(boss) + 400.*math.cos(face), GetUnitY(boss) + 400.*math.sin(face), bj_UNIT_FACING)
-                    DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\GryphonRiderMissile\\GryphonRiderMissileTarget.mdl", GetUnitX(tornado), GetUnitY(tornado)))
-                    SetUnitScale(tornado, 0.1, 0, 0)
+                    local tornado = SummonMinion(boss, TORNADO, GetUnitX(boss) + 400.*math.cos(face), GetUnitY(boss) + 400.*math.sin(face), bj_UNIT_FACING, 120.)
+                    DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\GryphonRiderMissile\\GryphonRiderMissileTarget.mdl", tornado:getPos()))
+                    SetUnitScale(tornado.root, 0.1, 0, 0)
                     local scale = 0.1
                     Timed.echo(0.02, 1, function ()
                         scale = scale + 0.018
-                        SetUnitScale(tornado, scale, 0, 0)
+                        SetUnitScale(tornado.root, scale, 0, 0)
                     end)
 
                     local xDir = math.cos(-face)
                     local yDir = math.sin(-face)
 
-                    Timed.echo(0.02, 120., function ()
-                        SetUnitX(tornado, GetUnitX(tornado) + 2 * xDir)
-                        SetUnitY(tornado, GetUnitY(tornado) + 2 * yDir)
-
-                        if GetUnitX(tornado) > GetRectMaxX(tornadoPlace) or GetUnitX(tornado) < GetRectMinX(tornadoPlace) then
-                            xDir = -xDir
-                        end
-                        if GetUnitY(tornado) > GetRectMaxY(tornadoPlace) or GetUnitY(tornado) < GetRectMinY(tornadoPlace) then
-                            yDir = -yDir
-                        end
-                        if not UnitAlive(boss) then
-                            KillUnit(tornado)
+                    Timed.echo(0.02, function ()
+                        if not tornado:isAlive() then
                             return true
                         end
-                    end, function ()
-                        KillUnit(tornado)
+                        tornado:setX(tornado:getX() + 2 * xDir)
+                        tornado:setY(tornado:getY() + 2 * yDir)
+
+                        if tornado:getX() > GetRectMaxX(tornadoPlace) or tornado:getX() < GetRectMinX(tornadoPlace) then
+                            xDir = -xDir
+                        end
+                        if tornado:getY() > GetRectMaxY(tornadoPlace) or tornado:getY() < GetRectMinY(tornadoPlace) then
+                            yDir = -yDir
+                        end
                     end)
                 end
             end
@@ -367,8 +555,7 @@ OnInit(function ()
                         SetUnitScale(boss, Lerp(originalSize, current, increasedSize), 0., 0.)
                         current = current + 0.02
                     end)
-                    AddUnitBonus(boss, BONUS_DAMAGE, 100)
-                    UnitAddAbility(boss, FIRE_RAY)
+                    AddUnitBonus(boss, BONUS_DAMAGE, 200)
                     BossChangeAttack(boss, 1)
                     UnitAddAbility(boss, LIGHTNING_ATTACK)
                 end
@@ -381,9 +568,12 @@ OnInit(function ()
                     ForceAddPlayer(owners, GetOwningPlayer(u))
                 end
             end)
-            ForForce(owners, function ()
-                CreateItem(RARE_DATA, GetUnitX(boss), GetUnitY(boss))
-            end)
+            for i = 1, math.ceil(CountPlayersInForceBJ(owners)/3) do
+                CreateItem(udg_RARE_DATA, GetUnitX(boss), GetUnitY(boss))
+                if i == 2 then
+                    RerollItemDrop(boss)
+                end
+            end
             DestroyForce(owners)
         end,
         onReset = function ()
@@ -402,8 +592,7 @@ OnInit(function ()
                     SetUnitScale(boss, Lerp(increasedSize, current, originalSize), 0., 0.)
                     current = current + 0.02
                 end)
-                AddUnitBonus(boss, BONUS_DAMAGE, -100)
-                UnitRemoveAbility(boss, FIRE_RAY)
+                AddUnitBonus(boss, BONUS_DAMAGE, -200)
                 BossChangeAttack(boss, 0)
                 UnitRemoveAbility(boss, LIGHTNING_ATTACK)
             end

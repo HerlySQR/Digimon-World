@@ -1,12 +1,13 @@
 Debug.beginFile("AbilityUtils")
 OnInit("AbilityUtils", function ()
-    Require "Digimon"
+    --Require "Digimon"
     Require "RegisterSpellEvent"
     Require "Missiles"
     Require "Knockback"
     local MCT = Require "MCT" ---@type MCT
     Require "NewBonus"
     Require "MDTable"
+    Require "Color"
 
     LOCUST_ID = FourCC('Aloc')
     CROW_FORM_ID = FourCC('Arav')
@@ -39,15 +40,13 @@ OnInit("AbilityUtils", function ()
     PURGE_SPELL = FourCC('A034')
     PURGE_ORDER = Orders.purge
 
-    RARE_DATA = FourCC('I05V')
-
     -- Remove sleep when is attacked
     local SLEEP_BUFF = FourCC('B005')
-    Digimon.postDamageEvent:register(function (info)
+    --[[Digimon.postDamageEvent:register(function (info)
         if info.target:hasAbility(SLEEP_BUFF) and not udg_IsDamageCode then
             info.target:removeAbility(SLEEP_BUFF)
         end
-    end)
+    end)]]
 
     ---Return a damage based in the hero attributes
     ---@param caster unit
@@ -214,6 +213,38 @@ OnInit("AbilityUtils", function ()
     ---@return number
     function Lerp(n1, alpha, n2)
         return n1 * (1 - alpha) + (n2 * alpha)
+    end
+
+    ---Integer linear interpolation
+    ---@param n1 integer
+    ---@param alpha number
+    ---@param n2 integer
+    ---@return integer
+    function ILerp(n1, alpha, n2)
+        return math.round(Lerp(n1, alpha, n2))
+    end
+
+    ---Color linear interpolation
+    ---@param col1 Color
+    ---@param alpha number
+    ---@param col2 Color
+    ---@return integer
+    function ILerpColors(col1, alpha, col2)
+        return BlzConvertColor(
+            ILerp(col1.alpha, alpha, col2.alpha),
+            ILerp(col1.red, alpha, col2.red),
+            ILerp(col1.green, alpha, col2.green),
+            ILerp(col1.blue, alpha, col2.blue)
+        )
+    end
+
+    ---Color linear interpolation
+    ---@param col1 Color
+    ---@param alpha number
+    ---@param col2 Color
+    ---@return string
+    function LerpColors(col1, alpha, col2)
+        return Hex2Str(ILerpColors(col1, alpha, col2))
     end
 
     ---Return if all the units in the group are alive
@@ -412,6 +443,13 @@ OnInit("AbilityUtils", function ()
             end)
         end
         counters[source][target] = POISON_DURATION
+    end
+
+    ---@param caster unit
+    ---@param abil integer
+    ---@return boolean
+    function UnitCanCastAbility(caster, abil)
+        return BlzGetUnitAbilityCooldownRemaining(caster, abil) <= 0 and BlzGetUnitAbilityManaCost(caster, abil, GetUnitAbilityLevel(caster, abil)-1) <= GetUnitState(caster, UNIT_STATE_MANA)
     end
 
 end)

@@ -8,7 +8,7 @@ OnInit(function ()
     local DURATION = 5
     local WARNING_1 = 3
     local WARNING_2 = 1.5
-    local DAMAGE = 200
+    local DAMAGE = 350
     local PUSH_DIST = 300
 
     RegisterSpellEffectEvent(SPELL, function ()

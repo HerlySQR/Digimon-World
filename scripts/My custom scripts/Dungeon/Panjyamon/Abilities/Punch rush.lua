@@ -3,7 +3,7 @@ OnInit(function ()
     Require "AbilityUtils"
 
     local SPELL = FourCC('A0DL')
-    local MAX_HITS = 5
+    local MAX_HITS = 8
     local BUFF = FourCC('B01L')
 
     local hits = __jarray(0) ---@type table<unit, integer>
