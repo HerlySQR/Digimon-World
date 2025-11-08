@@ -13062,7 +13062,7 @@ Flora
 STRING 2181
 // Abilities: A0JQ (LocalStrings), Ubertip (Tooltip - Normal - Extended)
 {
-Nivel de rango
+Rango
 }
 
 STRING 2182
@@ -36433,18 +36433,6 @@ STRING 6091
 Destreza
 }
 
-STRING 6092
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Probabilidad%s+de%s+crítico
-}
-
-STRING 6093
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Probabilidad%s+de%s+evasión
-}
-
 STRING 6094
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
@@ -36469,29 +36457,6 @@ STRING 6097
 Estámina
 }
 
-STRING 6098
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Velocidad%s+de%s+ataque
-}
-
-STRING 6099
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Impacto%s+Crítico
-}
-
-STRING 6100
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Regeneración%s+de%s+salud
-}
-
-STRING 6101
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Regeneración%s+de%s+energía
-}
 
 STRING 6102
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
@@ -36539,6 +36504,12 @@ STRING 6109
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
 Bloqueado
+}
+
+STRING 6110
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Posibilidad de crítico
 }
 
 STRING 6111
@@ -36667,6 +36638,12 @@ STRING 6131
 |cffFCD20DCambiar|r
 }
 
+STRING 6132
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Posibilidad de evasión
+}
+
 STRING 6133
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
@@ -36751,10 +36728,28 @@ STRING 6146
 |cffff0000Advertencia:|r Estás usando más digimons de los %d permitidos, por lo que para evitar más errores, tus digimons serán 'desvividos'.|nRecomendamos recargar o reiniciar el juego e informar del problema en el servidor de Discord.
 }
 
+STRING 6147
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Velocidad de ataque
+}
+
 STRING 6148
 // Items: I03S (|cff00ffffLanza relámpago|r), Tip (Tooltip - Basic)
 {
 |cff00ffffLanza relámpago|r
+}
+
+STRING 6149
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Impacto Crítico
+}
+
+STRING 6150
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Regeneración de salud
 }
 
 STRING 6151
@@ -36781,6 +36776,12 @@ STRING 6154
 (+30 Agility)
 }
 
+STRING 6155
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Regeneración de energía
+}
+
 STRING 6156
 // Abilities: A0CO (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
 {
@@ -36791,6 +36792,12 @@ STRING 6157
 // Abilities: A0CP (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
 {
 (+15 Agility)
+}
+
+STRING 6158
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+No tienes la caña correcta para este lugar.
 }
 
 STRING 6159
@@ -36809,6 +36816,30 @@ STRING 6161
 // Doodads: D066 (Ice Santuary), Name (Name)
 {
 Ice Santuary
+}
+
+STRING 6162
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¿Qué le pasó a tu caña?
+}
+
+STRING 6163
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Ya tienes una caña de pescar
+}
+
+STRING 6164
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+No hay ningún Digimon disponible para pescar
+}
+
+STRING 6165
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¡Éxito!
 }
 
 STRING 6166
@@ -36889,6 +36920,12 @@ STRING 6178
 |cffff0000Calor|r
 }
 
+STRING 6179
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¡Fallaste!
+}
+
 STRING 6180
 // Abilities: A02O (Eficiencia), Tip (Tooltip - Normal)
 {
@@ -36907,10 +36944,28 @@ STRING 6182
 |cffff80a0Diana|r
 }
 
+STRING 6183
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Pescar
+}
+
 STRING 6184
 // Abilities: A02Q (Fuerza bruta), Tip (Tooltip - Normal)
 {
 |cffff80a0Fuerza bruta|r
+}
+
+STRING 6185
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Hace que todos los Digimones que tengan una caña de pescar y estén cerca de aguas profundas puedan pescar.
+}
+
+STRING 6186
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¡Oye, no tan rápido!
 }
 
 STRING 6187
@@ -36925,10 +36980,22 @@ STRING 6188
 |cffffff00Mente tranquila|r
 }
 
+STRING 6189
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Detrás de mí está la |cffd45e19Antigua Zona Veloz|r.
+}
+
 STRING 6190
 // Abilities: A02V (Alas fuertes), Tip (Tooltip - Normal)
 {
 |cff00ffffAlas fuertes|r
+}
+
+STRING 6191
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Solo entrará el más fuerte.
 }
 
 STRING 6192
@@ -36937,16 +37004,34 @@ STRING 6192
 |cff00ffffEvasivo|r
 }
 
+STRING 6193
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+No me pidas ayuda
+}
+
 STRING 6194
 // Abilities: A02J (Sanador), Tip (Tooltip - Normal)
 {
 |cffffff00Sanador|r
 }
 
+STRING 6195
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Estás solo.
+}
+
 STRING 6196
 // Abilities: A02K (Insaciable), Tip (Tooltip - Normal)
 {
 |cffff80a0Insaciable|r
+}
+
+STRING 6197
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¿Qué?
 }
 
 STRING 6198
@@ -36967,10 +37052,22 @@ STRING 6200
 |cff008000Flora|r
 }
 
+STRING 6201
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¿No soportas que te caigan meteoritos encima?
+}
+
 STRING 6202
 // Abilities: A02Z (Furia), Tip (Tooltip - Normal)
 {
 |cffff80a0Furia|r
+}
+
+STRING 6203
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Así que decidiste entrar.
 }
 
 STRING 6204
@@ -36979,16 +37076,34 @@ STRING 6204
 |cff0000ffCuerpo frio|r
 }
 
+STRING 6205
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Si no ganas, solo te habrás condenado a ti mismo.
+}
+
 STRING 6206
 // Abilities: A031 (Envidia), Tip (Tooltip - Normal)
 {
 |cff6f2583Envidia|r
 }
 
+STRING 6207
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+¿Sientes curiosidad por las alcantarillas?
+}
+
 STRING 6208
 // Abilities: A032 (Respaldo), Tip (Tooltip - Normal)
 {
 |cff808080Respaldo|r
+}
+
+STRING 6209
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Esta es una zona muy peligrosa, ¡no deberías ir solo!
 }
 
 STRING 6210

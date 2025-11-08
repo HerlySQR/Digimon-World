@@ -36433,18 +36433,6 @@ STRING 6091
 Dexterity
 }
 
-STRING 6092
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Critical%s+Chance
-}
-
-STRING 6093
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Evasion%s+Chance
-}
-
 STRING 6094
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
@@ -36467,30 +36455,6 @@ STRING 6097
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
 Stamina
-}
-
-STRING 6098
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Attack%s+Speed
-}
-
-STRING 6099
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Critical%s+Impact
-}
-
-STRING 6100
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Health%s+Regen
-}
-
-STRING 6101
-// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
-{
-Energy%s+Regen
 }
 
 STRING 6102
@@ -36539,6 +36503,12 @@ STRING 6109
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
 Locked
+}
+
+STRING 6110
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Critical Chance
 }
 
 STRING 6111
@@ -36667,6 +36637,12 @@ STRING 6131
 |cffFCD20DSwap|r
 }
 
+STRING 6132
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Evasion Chance
+}
+
 STRING 6133
 // Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
 {
@@ -36751,10 +36727,28 @@ STRING 6146
 |cffff0000Warning:|r You are using more digimons than the %d allowed, so to prevent further bugs your digimons will be 'outlived'.|nWe recommend to reload or restart the game and report it to the Discord server.
 }
 
+STRING 6147
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Attack Speed
+}
+
 STRING 6148
 // Items: I03S (|cff00ffffLightning Spear|r), Tip (Tooltip - Basic)
 {
 |cff00ffffLightning Spear|r
+}
+
+STRING 6149
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Critical Impact
+}
+
+STRING 6150
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Health Regen
 }
 
 STRING 6151
@@ -36781,6 +36775,12 @@ STRING 6154
 (+30 Agility)
 }
 
+STRING 6155
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Energy Regen
+}
+
 STRING 6156
 // Abilities: A0CO (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
 {
@@ -36791,6 +36791,12 @@ STRING 6157
 // Abilities: A0CP (Objeto - Bonificación de atributo de héroe), EditorSuffix (Editor Suffix)
 {
 (+15 Agility)
+}
+
+STRING 6158
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+You don't have to right rod for this place.
 }
 
 STRING 6159
@@ -36809,6 +36815,30 @@ STRING 6161
 // Doodads: D066 (Ice Santuary), Name (Name)
 {
 Ice Santuary
+}
+
+STRING 6162
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+What happened with your rod?
+}
+
+STRING 6163
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+You already have a fishing rod
+}
+
+STRING 6164
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+No digimon available to fish
+}
+
+STRING 6165
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Success!
 }
 
 STRING 6166
@@ -36889,6 +36919,12 @@ STRING 6178
 |cffff0000Hot|r
 }
 
+STRING 6179
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Fail!
+}
+
 STRING 6180
 // Abilities: A02O (Efficiency), Tip (Tooltip - Normal)
 {
@@ -36907,10 +36943,28 @@ STRING 6182
 |cffff80a0Bullseye|r
 }
 
+STRING 6183
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Fish
+}
+
 STRING 6184
 // Abilities: A02Q (Brute Force), Tip (Tooltip - Normal)
 {
 |cffff80a0Brute Force|r
+}
+
+STRING 6185
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Makes all the digimons that has a rod and is nearby deep water to fish.
+}
+
+STRING 6186
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Hey, not so fast!
 }
 
 STRING 6187
@@ -36925,10 +36979,22 @@ STRING 6188
 |cffffff00Calm Mind|r
 }
 
+STRING 6189
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Behind me is the |cffd45e19Acient Speedy Zone|r.
+}
+
 STRING 6190
 // Abilities: A02V (Strong Wings), Tip (Tooltip - Normal)
 {
 |cff00ffffStrong Wings|r
+}
+
+STRING 6191
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Only the strongest shall enter.
 }
 
 STRING 6192
@@ -36937,16 +37003,34 @@ STRING 6192
 |cff00ffffEvasive|r
 }
 
+STRING 6193
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Don't ask me for help
+}
+
 STRING 6194
 // Abilities: A02J (Healer), Tip (Tooltip - Normal)
 {
 |cffffff00Healer|r
 }
 
+STRING 6195
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+You are on your own.
+}
+
 STRING 6196
 // Abilities: A02K (Insatiable), Tip (Tooltip - Normal)
 {
 |cffff80a0Insatiable|r
+}
+
+STRING 6197
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+What?
 }
 
 STRING 6198
@@ -36967,10 +37051,22 @@ STRING 6200
 |cff008000Flora|r
 }
 
+STRING 6201
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+You can't stand meteors falling over your head?
+}
+
 STRING 6202
 // Abilities: A02Z (Fury), Tip (Tooltip - Normal)
 {
 |cffff80a0Fury|r
+}
+
+STRING 6203
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+So you decided to enter.
 }
 
 STRING 6204
@@ -36979,16 +37075,34 @@ STRING 6204
 |cff0000ffCold Body|r
 }
 
+STRING 6205
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+If you don't win, you'll only have condemned yourself.
+}
+
 STRING 6206
 // Abilities: A031 (Envy), Tip (Tooltip - Normal)
 {
 |cff6f2583Envy|r
 }
 
+STRING 6207
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+Are you curious about the sewers?
+}
+
 STRING 6208
 // Abilities: A032 (BackUp), Tip (Tooltip - Normal)
 {
 |cff808080BackUp|r
+}
+
+STRING 6209
+// Abilities: A0LC (LocalStrings4), Tip (Tooltip - Normal)
+{
+This is a very dungerous area, you should not go alone!
 }
 
 STRING 6210

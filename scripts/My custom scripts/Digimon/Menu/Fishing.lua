@@ -85,7 +85,7 @@ OnInit(function ()
             end
 
             if fishes:isEmpty() then
-                ErrorMessage("You don't have to right rod for this place.", GetOwningPlayer(u))
+                ErrorMessage(GetLocalizedString("FISHING_NO_RIGHT_ROD"), GetOwningPlayer(u))
                 return
             end
 
@@ -111,7 +111,7 @@ OnInit(function ()
                 end
             end
         else
-            ErrorMessage("What happened with your rod?", GetOwningPlayer(u))
+            ErrorMessage(GetLocalizedString("FISHING_ROD_DISAPPEARED"), GetOwningPlayer(u))
         end
     end
 
@@ -217,7 +217,7 @@ OnInit(function ()
                 end
             end
             if uHasRod then
-                ErrorMessage("You already have a fishing rod", GetOwningPlayer(u))
+                ErrorMessage(GetLocalizedString("FISHING_ALREADY_HAVE_ROD"), GetOwningPlayer(u))
                 UnitRemoveItem(u, m)
             end
         end)
@@ -278,7 +278,7 @@ OnInit(function ()
                         local stepY = step * math.sin(angle) * 1.25
                         local stepZ = (GetPosZ(targetX, targetY) - actZ) / 40
 
-                        local line = AddLightningEx( "LEAS", true, actX, actY, actZ, actX, actY, actZ)
+                        local line = AddLightningEx("LEAS", true, actX, actY, actZ, actX, actY, actZ)
                         SetLightningColor(line, 0.5, 1., 1., 1.)
 
                         Timed.echo(0.02, 1., function ()
@@ -340,7 +340,7 @@ OnInit(function ()
             end
         end
         if not success then
-            ErrorMessage("No digimon available to fish", p)
+            ErrorMessage(GetLocalizedString("FISHING_NO_DIGIMON"), p)
         end
     end
 
@@ -359,14 +359,14 @@ OnInit(function ()
                 if linePos[u] >= GREEN_AREA_START and linePos[u] <= GREEN_AREA_END then
                     if getRod(u) > 1 and linePos[u] >= YELLOW_AREA_START and linePos[u] <= YELLOW_AREA_END then
                         catch[u] = 3
-                        SetTextTagText(tt, "Success!", 0.030)
+                        SetTextTagText(tt, GetLocalizedString("FISHING_SUCCESS"), 0.030)
                         SetTextTagColor(tt, 255, 127, 0, 255)
                         if p == LocalPlayer then
                             StartSound(bj_questHintSound)
                         end
                     else
                         catch[u] = 1
-                        SetTextTagText(tt, "Success!", 0.023)
+                        SetTextTagText(tt, GetLocalizedString("FISHING_SUCCESS"), 0.023)
                         SetTextTagColor(tt, 0, 255, 0, 255)
                         if p == LocalPlayer then
                             StartSound(bj_questItemAcquiredSound)
@@ -374,7 +374,7 @@ OnInit(function ()
                     end
                 else
                     catch[u] = 2
-                    SetTextTagText(tt, "Fail!", 0.023)
+                    SetTextTagText(tt, GetLocalizedString("FISHING_FAIL"), 0.023)
                     SetTextTagColor(tt, 255, 0, 0, 255)
                     if p == LocalPlayer then
                         StartSound(bj_questFailedSound)
@@ -389,7 +389,7 @@ OnInit(function ()
         Fish = BlzCreateFrame("IconButtonTemplate", BlzGetFrameByName("ConsoleUIBackdrop",  0), 0, 0)
         AddButtonToTheRight(Fish, 4)
         SetFrameHotkey(Fish, udg_FISHING_HOTKEY)
-        AddDefaultTooltip(Fish, "Fish", "Makes all the digimons that has a rod and is nearby deep water to fish.")
+        AddDefaultTooltip(Fish, GetLocalizedString("FISHING"), GetLocalizedString("FISHING_TOOLTIP"))
         AddFrameToMenu(Fish)
         BlzFrameSetVisible(Fish, false)
 
